@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -55,7 +54,7 @@ class PatternSortingTest {
         RouteCardData.Leaf(
             lineOrRoute = lineOrRoute,
             stop = stop,
-            directionId = pattern.directionId,
+            direction = Direction(pattern.directionId, lineOrRoute.sortRoute),
             routePatterns = listOf(pattern),
             stopIds = emptySet(),
             upcomingTrips = (1..trips).map { trip(pattern) },
@@ -79,7 +78,7 @@ class PatternSortingTest {
         stopData(stop, singleLineOrRoute(), *leaf)
 
     private fun stopData(stop: Stop, lineOrRoute: LineOrRoute, vararg leaf: RouteCardData.Leaf) =
-        RouteCardData.RouteStopData(lineOrRoute, stop, leaf.asList(), GlobalResponse(objects))
+        RouteCardData.RouteStopData(lineOrRoute, stop, leaf.asList())
 
     private fun routeCard(route: Route, vararg stops: RouteCardData.RouteStopData) =
         routeCard(LineOrRoute.Route(route), *stops)

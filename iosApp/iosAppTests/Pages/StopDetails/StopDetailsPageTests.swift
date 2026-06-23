@@ -57,7 +57,7 @@ final class StopDetailsPageTests: XCTestCase {
                     data: [.init(
                         lineOrRoute: .route(route),
                         stop: stop,
-                        directionId: 0,
+                        direction: .init(directionId: 0, route: route),
                         routePatterns: [routePattern],
                         stopIds: [stop.id],
                         upcomingTrips: [.init(trip: trip, schedule: schedule)],
@@ -67,8 +67,7 @@ final class StopDetailsPageTests: XCTestCase {
                         subwayServiceStartTime: nil,
                         alertsDownstream: [],
                         context: .stopDetailsFiltered
-                    )],
-                    globalData: .init(objects: objects)
+                    )]
                 )
             ),
             alertSummaries: [:],

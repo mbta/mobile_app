@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.utils
 
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Prediction
@@ -93,7 +94,7 @@ public open class RouteCardPreviewData {
                 RouteCardData.Leaf(
                         lineOrRoute,
                         stop,
-                        0,
+                        Direction(0, lineOrRoute.sortRoute),
                         patterns.filter { it.directionId == 0 },
                         setOf(stop.id),
                         trips.filter { it.trip.directionId == 0 },
@@ -108,7 +109,7 @@ public open class RouteCardPreviewData {
                 RouteCardData.Leaf(
                         lineOrRoute,
                         stop,
-                        1,
+                        Direction(1, lineOrRoute.sortRoute),
                         patterns.filter { it.directionId == 1 },
                         setOf(stop.id),
                         trips.filter { it.trip.directionId == 1 },
@@ -121,7 +122,6 @@ public open class RouteCardPreviewData {
                     )
                     .takeUnless { it.routePatterns.isEmpty() },
             ),
-            global,
         )
 
     private fun card(

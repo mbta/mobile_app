@@ -195,7 +195,7 @@ struct FavoriteDepartures: View {
         VStack(alignment: .leading, spacing: 0) {
             ForEach(stopData.data.enumerated().sorted(by: { $0.offset < $1.offset }), id: \.element.id) { index, leaf in
                 let formatted = leaf.format(now: EasternTimeInstant.now(), globalData: globalData)
-                let direction: Direction = stopData.directions.first(where: { $0.id == leaf.directionId })!
+                let direction: Direction = leaf.direction
                 let favoriteSettings: FavoriteSettings? = favorites[leaf.routeStopDirection] ?? nil
 
                 HStack(alignment: .center, spacing: 0) {

@@ -162,7 +162,7 @@ final class HomeMapViewTests: XCTestCase {
                     .init(
                         lineOrRoute: .route(route),
                         stop: stop,
-                        directionId: 0,
+                        direction: .init(directionId: 0, route: route),
                         routePatterns: [pattern],
                         stopIds: [stop.id],
                         upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction, vehicle: vehicle)],
@@ -173,7 +173,7 @@ final class HomeMapViewTests: XCTestCase {
                         alertsDownstream: [],
                         context: .stopDetailsFiltered
                     ),
-                ], globalData: .init(objects: objectCollection)),
+                ]),
             ],
             at: EasternTimeInstant.now()
         )]

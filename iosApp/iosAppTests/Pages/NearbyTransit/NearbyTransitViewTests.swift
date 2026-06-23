@@ -135,26 +135,34 @@ final class NearbyTransitViewTests: XCTestCase {
         }
 
         let nearbyVM = iosApp.NearbyViewModel()
-        nearbyVM.routeCardData = [.init(lineOrRoute: route,
-                                        stopData: [.init(lineOrRoute: route,
-                                                         stop: stop,
-                                                         data: [.init(lineOrRoute: route,
-                                                                      stop: stop,
-                                                                      directionId: 0,
-                                                                      routePatterns: [
-                                                                          TestData.getRoutePattern(id: "67-4-0"),
-                                                                      ],
-                                                                      stopIds: ["14121"],
-                                                                      upcomingTrips: [.init(trip: trip,
-                                                                                            prediction: prediction)],
-                                                                      alertsHere: [],
-                                                                      allDataLoaded: true,
-                                                                      hasSchedulesToday: true,
-                                                                      subwayServiceStartTime: nil,
-                                                                      alertsDownstream: [],
-                                                                      context: .nearbyTransit)],
-                                                         globalData: GlobalResponse(objects: objects))],
-                                        at: now)]
+        nearbyVM.routeCardData = [
+            .init(lineOrRoute: route,
+                  stopData: [
+                      .init(lineOrRoute: route,
+                            stop: stop,
+                            data: [
+                                .init(lineOrRoute: route,
+                                      stop: stop,
+                                      direction: .init(
+                                          directionId: 0,
+                                          route: route.sortRoute
+                                      ),
+                                      routePatterns: [
+                                          TestData.getRoutePattern(id: "67-4-0"),
+                                      ],
+                                      stopIds: ["14121"],
+                                      upcomingTrips: [.init(trip: trip,
+                                                            prediction: prediction)],
+                                      alertsHere: [],
+                                      allDataLoaded: true,
+                                      hasSchedulesToday: true,
+                                      subwayServiceStartTime: nil,
+                                      alertsDownstream: [],
+                                      context: .nearbyTransit)
+                            ])
+                  ],
+                  at: now)
+        ]
 
         let sut = NearbyTransitView(
             predictionsRepository: MockPredictionsRepository(),
@@ -465,25 +473,33 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let route: LineOrRoute = .route(TestData.getRoute(id: "67"))
         let stop = objects.getStop(id: "14121")
-        nearbyVM.routeCardData = [.init(lineOrRoute: route,
-                                        stopData: [.init(lineOrRoute: route,
-                                                         stop: stop,
-                                                         data: [.init(lineOrRoute: route,
-                                                                      stop: stop,
-                                                                      directionId: 0,
-                                                                      routePatterns: [
-                                                                          TestData.getRoutePattern(id: "67-4-0"),
-                                                                      ],
-                                                                      stopIds: ["14121"],
-                                                                      upcomingTrips: [],
-                                                                      alertsHere: [],
-                                                                      allDataLoaded: true,
-                                                                      hasSchedulesToday: true,
-                                                                      subwayServiceStartTime: nil,
-                                                                      alertsDownstream: [],
-                                                                      context: .nearbyTransit)],
-                                                         globalData: GlobalResponse(objects: objects))],
-                                        at: now)]
+        nearbyVM.routeCardData = [
+            .init(lineOrRoute: route,
+                  stopData: [
+                      .init(lineOrRoute: route,
+                            stop: stop,
+                            data: [
+                                .init(lineOrRoute: route,
+                                      stop: stop,
+                                      direction: .init(
+                                          directionId: 0,
+                                          route: route.sortRoute
+                                      ),
+                                      routePatterns: [
+                                          TestData.getRoutePattern(id: "67-4-0"),
+                                      ],
+                                      stopIds: ["14121"],
+                                      upcomingTrips: [],
+                                      alertsHere: [],
+                                      allDataLoaded: true,
+                                      hasSchedulesToday: true,
+                                      subwayServiceStartTime: nil,
+                                      alertsDownstream: [],
+                                      context: .nearbyTransit)
+                            ])
+                  ],
+                  at: now)
+        ]
 
         let sut = NearbyTransitView(
             predictionsRepository: MockPredictionsRepository(),

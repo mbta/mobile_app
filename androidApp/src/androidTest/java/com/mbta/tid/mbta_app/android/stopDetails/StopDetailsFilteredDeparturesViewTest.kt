@@ -178,7 +178,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leaf = routeStopData.data.first { it.direction.id == 0 }
         val routeData =
             StopDetailsViewModel.RouteData.Filtered(
                 StopDetailsPageFilters(stop.id, filterState, null),
@@ -193,7 +193,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = null,
                 now = now,
                 updateTripFilter = {},
@@ -227,7 +227,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leaf = routeStopData.data.first { it.direction.id == 0 }
 
         val routeData =
             StopDetailsViewModel.RouteData.Filtered(
@@ -243,7 +243,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = null,
                 now = now,
                 updateTripFilter = { tripFilter = it },
@@ -313,7 +313,7 @@ class StopDetailsFilteredDeparturesViewTest {
             RouteCardData.Leaf(
                 lineOrRoute,
                 stop,
-                trip.directionId,
+                Direction(null, null, trip.directionId),
                 listOf(routePattern),
                 setOf(stop.id),
                 listOf(UpcomingTrip(trip, schedule, prediction)),
@@ -324,7 +324,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 alertsDownstream = emptyList(),
                 RouteCardData.Context.StopDetailsFiltered,
             )
-        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf), globalResponse)
+        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf))
 
         val stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId)
         val tripFilter = TripDetailsFilter(trip.id, null, null, false)
@@ -344,7 +344,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = stopFilter,
                 tripFilter = tripFilter,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = null,
                 now = now,
                 updateTripFilter = {},
@@ -429,7 +429,7 @@ class StopDetailsFilteredDeparturesViewTest {
             RouteCardData.Leaf(
                 lineOrRoute,
                 stop,
-                trip.directionId,
+                Direction(null, null, trip.directionId),
                 listOf(routePattern),
                 setOf(stop.id),
                 listOf(UpcomingTrip(trip, schedule, prediction)),
@@ -440,7 +440,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 alertsDownstream = emptyList(),
                 RouteCardData.Context.StopDetailsFiltered,
             )
-        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf), globalResponse)
+        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf))
 
         val stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId)
         val tripFilter = TripDetailsFilter(trip.id, null, null, false)
@@ -476,7 +476,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = stopFilter,
                 tripFilter = tripFilter,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = AlertsStreamDataResponse(mapOf(alert.id to alert)),
                 now = now,
                 updateTripFilter = {},
@@ -509,7 +509,7 @@ class StopDetailsFilteredDeparturesViewTest {
             RouteCardData.Leaf(
                 lineOrRoute,
                 stop,
-                0,
+                Direction(0, route),
                 emptyList(),
                 setOf(stop.id),
                 emptyList(),
@@ -529,7 +529,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = StopDetailsFilter(route.id, 0),
                 tripFilter = null,
                 leaf = leaf,
-                selectedDirection = Direction(null, null, 0),
+                selectedDirection = Direction(0, route),
                 allAlerts = null,
                 now = now,
                 viewModel = viewModel,
@@ -585,7 +585,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leaf = routeStopData.data.first { it.direction.id == 0 }
 
         val routeData =
             StopDetailsViewModel.RouteData.Filtered(
@@ -602,7 +602,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = null,
                 now = now,
                 viewModel = viewModel,
@@ -674,7 +674,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leaf = routeStopData.data.first { it.direction.id == 0 }
         val alertSummaries =
             mapOf(alert.id to alert.summary(stop.id, 0, listOf(alertPattern), now, null, global))
 
@@ -694,7 +694,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = null,
                 now = now,
                 updateTripFilter = {},
@@ -740,7 +740,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leaf = routeStopData.data.first { it.direction.id == 0 }
         val alertSummaries =
             mapOf(
                 alert.id to
@@ -769,7 +769,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = alertResponse,
                 now = now,
                 updateTripFilter = {},
@@ -814,7 +814,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leaf = routeStopData.data.first { it.direction.id == 0 }
 
         val routeData =
             StopDetailsViewModel.RouteData.Filtered(
@@ -831,7 +831,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = null,
                 now = now,
                 updateTripFilter = {},
@@ -894,7 +894,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leaf = routeStopData.data.first { it.direction.id == 0 }
 
         val routeData =
             StopDetailsViewModel.RouteData.Filtered(
@@ -911,7 +911,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = null,
                 now = now,
                 updateTripFilter = {},
@@ -945,7 +945,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leaf = routeStopData.data.first { it.direction.id == 0 }
 
         val routeData =
             StopDetailsViewModel.RouteData.Filtered(
@@ -961,7 +961,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = null,
                 now = now,
                 updateTripFilter = {},
@@ -987,7 +987,7 @@ class StopDetailsFilteredDeparturesViewTest {
             RouteCardData.Leaf(
                 lineOrRoute,
                 stop,
-                0,
+                Direction(0, route),
                 emptyList(),
                 setOf(stop.id),
                 emptyList(),
@@ -1018,7 +1018,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = StopDetailsFilter(route.id, 0),
                 tripFilter = null,
                 leaf = leaf,
-                selectedDirection = Direction(null, null, 0),
+                selectedDirection = Direction(0, route),
                 allAlerts = null,
                 now = now,
                 viewModel = viewModel,
@@ -1077,7 +1077,7 @@ class StopDetailsFilteredDeparturesViewTest {
             RouteCardData.Leaf(
                 lineOrRoute,
                 stop,
-                trip.directionId,
+                Direction(null, null, trip.directionId),
                 listOf(routePattern),
                 setOf(stop.id),
                 listOf(UpcomingTrip(trip, schedule, null)),
@@ -1088,7 +1088,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 alertsDownstream = emptyList(),
                 RouteCardData.Context.StopDetailsFiltered,
             )
-        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf), globalResponse)
+        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf))
 
         val stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId)
         val tripFilter = TripDetailsFilter(trip.id, null, null, false)
@@ -1108,7 +1108,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = stopFilter,
                 tripFilter = tripFilter,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = null,
                 now = now,
                 updateTripFilter = {},
@@ -1175,7 +1175,7 @@ class StopDetailsFilteredDeparturesViewTest {
             RouteCardData.Leaf(
                 lineOrRoute,
                 stop,
-                trip.directionId,
+                Direction(null, null, trip.directionId),
                 listOf(routePattern),
                 setOf(stop.id),
                 listOf(UpcomingTrip(trip, schedule, prediction)),
@@ -1186,7 +1186,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 alertsDownstream = emptyList(),
                 RouteCardData.Context.StopDetailsFiltered,
             )
-        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf), globalResponse)
+        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf))
 
         val stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId)
         val tripFilter = TripDetailsFilter(trip.id, null, null, false)
@@ -1206,7 +1206,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = stopFilter,
                 tripFilter = tripFilter,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = null,
                 now = now,
                 updateTripFilter = {},
@@ -1233,7 +1233,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 RouteCardData.Leaf(
                     LineOrRoute.Route(route),
                     stop,
-                    directionId = 0,
+                    Direction(0, route),
                     listOf(WorldCupService.routePatternOutbound),
                     stopIds = emptySet(),
                     upcomingTrips = emptyList(),

@@ -29,10 +29,10 @@ final class RouteCardDeparturesTests: XCTestCase {
         let stopData = RouteCardData.RouteStopData(
             lineOrRoute: .route(route),
             stop: stop,
-            directions: [.init(name: "Outbound", destination: "Harvard", id: 0)],
             data: [.init(
                 lineOrRoute: .route(route), stop: stop,
-                directionId: 0, routePatterns: [pattern], stopIds: [stop.id],
+                direction: .init(name: "Outbound", destination: "Harvard", id: 0), routePatterns: [pattern],
+                stopIds: [stop.id],
                 upcomingTrips: [], alertsHere: [], allDataLoaded: true,
                 hasSchedulesToday: true, subwayServiceStartTime: nil, alertsDownstream: [],
                 context: .nearbyTransit
@@ -73,10 +73,10 @@ final class RouteCardDeparturesTests: XCTestCase {
         let stopData = RouteCardData.RouteStopData(
             lineOrRoute: .route(route),
             stop: stop,
-            directions: [.init(name: "South", destination: "Forest Hills", id: 0)],
             data: [.init(
                 lineOrRoute: .route(route), stop: stop,
-                directionId: 0, routePatterns: [pattern], stopIds: [stop.id],
+                direction: .init(name: "South", destination: "Forest Hills", id: 0), routePatterns: [pattern],
+                stopIds: [stop.id],
                 upcomingTrips: [.init(trip: trip, schedule: schedule)], alertsHere: [], allDataLoaded: true,
                 hasSchedulesToday: true, subwayServiceStartTime: nil, alertsDownstream: [],
                 context: .nearbyTransit
@@ -199,14 +199,10 @@ final class RouteCardDeparturesTests: XCTestCase {
         let stopData = RouteCardData.RouteStopData(
             lineOrRoute: lineOrRoute,
             stop: stop,
-            directions: [
-                .init(name: "West", destination: "Copley & West", id: 0),
-                .init(name: "East", destination: "Park St & North", id: 1),
-            ],
             data: [.init(
                 lineOrRoute: lineOrRoute,
                 stop: stop,
-                directionId: 0,
+                direction: .init(name: "West", destination: "Copley & West", id: 0),
                 routePatterns: [Green.shared.rpB0, Green.shared.rpC0, Green.shared.rpE0],
                 stopIds: [stop.id],
                 upcomingTrips: [
@@ -221,7 +217,7 @@ final class RouteCardDeparturesTests: XCTestCase {
             .init(
                 lineOrRoute: lineOrRoute,
                 stop: stop,
-                directionId: 1,
+                direction: .init(name: "East", destination: "Park St & North", id: 1),
                 routePatterns: [Green.shared.rpB1, Green.shared.rpC1, Green.shared.rpE1],
                 stopIds: [stop.id],
                 upcomingTrips: [
@@ -286,14 +282,10 @@ final class RouteCardDeparturesTests: XCTestCase {
         let stopData = RouteCardData.RouteStopData(
             lineOrRoute: lineOrRoute,
             stop: stop,
-            directions: [
-                .init(name: "West", destination: "Riverside", id: 0),
-                .init(name: "East", destination: "Park St & North", id: 1),
-            ],
             data: [.init(
                 lineOrRoute: lineOrRoute,
                 stop: stop,
-                directionId: 0,
+                direction: .init(name: "West", destination: "Riverside", id: 0),
                 routePatterns: [routePattern],
                 stopIds: [stop.id],
                 upcomingTrips: [trip],
@@ -334,14 +326,10 @@ final class RouteCardDeparturesTests: XCTestCase {
         let stopData = RouteCardData.RouteStopData(
             lineOrRoute: lineOrRoute,
             stop: stop,
-            directions: [
-                .init(name: "West", destination: "Riverside", id: 0),
-                .init(name: "East", destination: "Park St & North", id: 1),
-            ],
             data: [.init(
                 lineOrRoute: lineOrRoute,
                 stop: stop,
-                directionId: 0,
+                direction: .init(name: "West", destination: "Riverside", id: 0),
                 routePatterns: [routePattern],
                 stopIds: [stop.id],
                 upcomingTrips: [trip],
@@ -375,7 +363,7 @@ final class RouteCardDeparturesTests: XCTestCase {
             stopData: .init(route: route, stop: stop, data: [.init(
                 lineOrRoute: .Route(route: route),
                 stop: stop,
-                directionId: 0,
+                direction: .init(directionId: 0, route: route),
                 routePatterns: [WorldCupService.shared.routePatternOutbound],
                 stopIds: [],
                 upcomingTrips: [],
@@ -385,7 +373,7 @@ final class RouteCardDeparturesTests: XCTestCase {
                 subwayServiceStartTime: nil,
                 alertsDownstream: [],
                 context: .nearbyTransit
-            )], globalData: .init(objects: objects)),
+            )]),
             global: .init(objects: objects),
             now: .now(),
             isFavorite: { _ in false },

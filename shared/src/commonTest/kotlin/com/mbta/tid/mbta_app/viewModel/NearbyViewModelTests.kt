@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -185,7 +186,7 @@ internal class NearbyViewModelTests : KoinTest {
                                 RouteCardData.Leaf(
                                     LineOrRoute.Route(route1),
                                     stop1,
-                                    directionId = 0,
+                                    Direction(0, route1),
                                     listOf(patterns.getValue(route1).getValue(0)),
                                     setOf(stop1.id),
                                     upcomingTrips =
@@ -207,7 +208,7 @@ internal class NearbyViewModelTests : KoinTest {
                                 RouteCardData.Leaf(
                                     LineOrRoute.Route(route1),
                                     stop1,
-                                    directionId = 1,
+                                    Direction(1, route1),
                                     listOf(patterns.getValue(route1).getValue(1)),
                                     setOf(stop1.id),
                                     upcomingTrips =
@@ -227,7 +228,6 @@ internal class NearbyViewModelTests : KoinTest {
                                     context = RouteCardData.Context.NearbyTransit,
                                 ),
                             ),
-                            globalData,
                         )
                     ),
                     now,
@@ -242,7 +242,7 @@ internal class NearbyViewModelTests : KoinTest {
                                 RouteCardData.Leaf(
                                     LineOrRoute.Route(route2),
                                     stop2,
-                                    directionId = 0,
+                                    Direction(0, route2),
                                     listOf(patterns.getValue(route2).getValue(0)),
                                     setOf(stop2.id),
                                     upcomingTrips =
@@ -264,7 +264,7 @@ internal class NearbyViewModelTests : KoinTest {
                                 RouteCardData.Leaf(
                                     LineOrRoute.Route(route2),
                                     stop2,
-                                    directionId = 1,
+                                    Direction(1, route2),
                                     listOf(patterns.getValue(route2).getValue(1)),
                                     setOf(stop2.id),
                                     upcomingTrips =
@@ -284,7 +284,6 @@ internal class NearbyViewModelTests : KoinTest {
                                     context = RouteCardData.Context.NearbyTransit,
                                 ),
                             ),
-                            globalData,
                         )
                     ),
                     now,

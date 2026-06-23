@@ -36,7 +36,6 @@ class RouteCardTest {
                             LineOrRoute.Route(route),
                             stop,
                             emptyList(),
-                            emptyList(),
                         )
                     ),
                     now,
@@ -72,7 +71,6 @@ class RouteCardTest {
                         RouteCardData.RouteStopData(
                             LineOrRoute.Route(route),
                             stop,
-                            emptyList(),
                             emptyList(),
                         )
                     ),
@@ -111,7 +109,6 @@ class RouteCardTest {
                         RouteCardData.RouteStopData(
                             LineOrRoute.Route(route),
                             stop,
-                            emptyList(),
                             emptyList(),
                         )
                     ),

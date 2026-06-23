@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
+import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
@@ -159,12 +160,11 @@ class SubscribeToVehiclesTest {
                             RouteCardData.RouteStopData(
                                 line,
                                 stop,
-                                directions = listOf(),
                                 listOf(
                                     RouteCardData.Leaf(
                                         line,
                                         stop,
-                                        0,
+                                        Direction(0, route1),
                                         listOf(),
                                         setOf(stop.id),
                                         listOf(

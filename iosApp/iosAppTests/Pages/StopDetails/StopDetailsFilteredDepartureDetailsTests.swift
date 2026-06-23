@@ -81,7 +81,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         return RouteCardData.Leaf(
             lineOrRoute: lineOrRoute,
             stop: stop,
-            directionId: 0,
+            direction: .init(directionId: 0, route: route),
             routePatterns: patterns,
             stopIds: Set([stop.id]).union(Set(stop.childStopIds)),
             upcomingTrips: upcomingTrips,
@@ -844,7 +844,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             context: .stopDetailsFiltered
         )!.first!
         let routeStopData = try XCTUnwrap(routeCardData.stopData.first)
-        let leaf = try XCTUnwrap(routeStopData.data.first { $0.directionId == 0 })
+        let leaf = try XCTUnwrap(routeStopData.data.first { $0.direction.id == 0 })
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -1065,7 +1065,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             leaf: .init(
                 lineOrRoute: .Route(route: route),
                 stop: stop,
-                directionId: 0,
+                direction: .init(directionId: 0, route: route),
                 routePatterns: [WorldCupService.shared.routePatternOutbound],
                 stopIds: [],
                 upcomingTrips: [],

@@ -72,11 +72,14 @@ public object LoadingPlaceholders {
         val lineOrRoute =
             if (line != null) LineOrRoute.Line(line, setOf(route)) else LineOrRoute.Route(route)
 
+        val direction0 = Direction(0, route)
+        val direction1 = Direction(1, route)
+
         val leaf1 =
             RouteCardData.Leaf(
                 lineOrRoute = lineOrRoute,
                 stop = stop,
-                directionId = 0,
+                direction = direction0,
                 routePatterns = listOf(pattern1),
                 stopIds = setOf(stop.id),
                 upcomingTrips = (1..trips).map { newTrip(pattern1, (it * 2).minutes) },
@@ -91,7 +94,7 @@ public object LoadingPlaceholders {
             RouteCardData.Leaf(
                 lineOrRoute = lineOrRoute,
                 stop = stop,
-                directionId = 1,
+                direction = direction1,
                 routePatterns = listOf(pattern2),
                 stopIds = setOf(stop.id),
                 upcomingTrips = (1..trips).map { newTrip(pattern2, (it * 2).minutes) },
@@ -107,7 +110,6 @@ public object LoadingPlaceholders {
             RouteCardData.RouteStopData(
                 lineOrRoute,
                 stop,
-                listOf(Direction("Loading", null, 0), Direction("Loading", null, 1)),
                 listOf(leaf1, leaf2),
             )
 

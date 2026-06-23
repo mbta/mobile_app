@@ -11,7 +11,7 @@ public object StopDetailsUtils {
      */
     public fun autoStopFilter(routeCardData: List<RouteCardData>?): StopDetailsFilter? {
         val route = routeCardData?.singleOrNull() ?: return null
-        val directions = route.stopData.flatMap { it.data }.map { it.directionId }.toSet()
+        val directions = route.stopData.flatMap { it.data }.map { it.direction.id }.toSet()
         if (directions.size != 1) {
             return null
         }
@@ -30,7 +30,7 @@ public object StopDetailsUtils {
             routeCardData?.find { it.lineOrRoute.id == stopFilter?.routeId }
                 ?: return currentTripFilter
         val leaf =
-            route.stopData.singleOrNull()?.data?.find { it.directionId == stopFilter?.directionId }
+            route.stopData.singleOrNull()?.data?.find { it.direction.id == stopFilter?.directionId }
                 ?: return currentTripFilter
         if (currentTripFilter?.selectionLock == true) return currentTripFilter
 
@@ -86,12 +86,10 @@ public object StopDetailsUtils {
         val selectedRoute =
             routeCardData?.firstOrNull { it.lineOrRoute.id == stopFilter.routeId } ?: return null
         val selectedStop = selectedRoute.stopData.singleOrNull() ?: return null
-        val trip =
-            selectedStop.data
-                .flatMap { it.upcomingTrips }
-                .find { it.trip.id == previousFilters.tripFilter?.tripId }
+        val selectedLeaf = selectedStop.data.find { it.direction.id == stopFilter.directionId } ?: return null
+        val trip = selectedLeaf.upcomingTrips.find { it.trip.id == previousFilters.tripFilter?.tripId }
         val destination =
-            trip?.trip?.headsign ?: selectedStop.directions[stopFilter.directionId].destination
+            trip?.trip?.headsign ?: selectedLeaf.direction.destination
 
         return ScreenReaderContext(
             selectedRoute.lineOrRoute.type,

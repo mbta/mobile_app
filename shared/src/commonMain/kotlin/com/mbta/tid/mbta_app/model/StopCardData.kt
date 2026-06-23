@@ -4,6 +4,15 @@ import org.maplibre.spatialk.geojson.Position
 import org.maplibre.spatialk.units.Length
 
 public data class StopCardData(val stop: Stop, val data: List<RouteCardData.Leaf>) {
+    val elevatorAlerts: List<Alert>
+        get() =
+            data
+                .flatMap { it.alertsHere() }
+                .filter { alert -> alert.effect == Alert.Effect.ElevatorClosure }
+                .distinct()
+
+    val routeStopDirections: Set<RouteStopDirection> = data.map { it.routeStopDirection }.toSet()
+
     internal fun distanceFrom(position: Position): Length = this.stop.distanceFrom(position)
 
     public companion object {

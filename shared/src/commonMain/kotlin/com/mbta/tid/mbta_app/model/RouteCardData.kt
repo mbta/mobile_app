@@ -66,36 +66,20 @@ public data class RouteCardData(
     public data class RouteStopData(
         val lineOrRoute: LineOrRoute,
         val stop: Stop,
-        val directions: List<Direction>,
         val data: List<Leaf>,
     ) {
-        // convenience constructors for when directions are not directly under test
         public constructor(
             route: Route,
             stop: Stop,
             data: List<Leaf>,
-            globalData: GlobalResponse,
-        ) : this(LineOrRoute.Route(route), stop, data, globalData)
+        ) : this(LineOrRoute.Route(route), stop, data)
 
         internal constructor(
             line: Line,
             routes: Set<Route>,
             stop: Stop,
             data: List<Leaf>,
-            globalData: GlobalResponse,
-        ) : this(LineOrRoute.Line(line, routes), stop, data, globalData)
-
-        public constructor(
-            lineOrRoute: LineOrRoute,
-            stop: Stop,
-            data: List<Leaf>,
-            globalData: GlobalResponse,
-        ) : this(
-            lineOrRoute,
-            stop,
-            lineOrRoute.directions(globalData, stop, data.map { it.routePatterns }.flatten()),
-            data,
-        )
+        ) : this(LineOrRoute.Line(line, routes), stop, data)
 
         internal val id = stop.id
 
@@ -103,7 +87,7 @@ public data class RouteCardData(
             data.map { it.routeStopDirection }.toSet()
 
         /** The directions for the lineOrRoute that are actually served by this stop */
-        val availableDirections: Set<Int> = data.map { it.directionId }.toSet()
+        val availableDirections: Set<Int> = data.map { it.direction.id }.toSet()
 
         val elevatorAlerts: List<Alert>
             get() =
@@ -120,7 +104,7 @@ public data class RouteCardData(
     internal constructor(
         val lineOrRoute: LineOrRoute,
         val stop: Stop,
-        val directionId: Int,
+        val direction: Direction,
         val routePatterns: List<RoutePattern>,
         internal val stopIds: Set<String>,
         val upcomingTrips: List<UpcomingTrip>,
@@ -136,7 +120,7 @@ public data class RouteCardData(
         public constructor(
             lineOrRoute: LineOrRoute,
             stop: Stop,
-            directionId: Int,
+            direction: Direction,
             routePatterns: List<RoutePattern>,
             stopIds: Set<String>,
             upcomingTrips: List<UpcomingTrip>,
@@ -149,7 +133,7 @@ public data class RouteCardData(
         ) : this(
             lineOrRoute,
             stop,
-            directionId,
+            direction,
             routePatterns,
             stopIds,
             upcomingTrips,
@@ -171,7 +155,7 @@ public data class RouteCardData(
         }
 
         public val routeStopDirection: RouteStopDirection =
-            RouteStopDirection(lineOrRoute.id, stop.id, directionId)
+            RouteStopDirection(lineOrRoute.id, stop.id, direction.id)
 
         internal val hasSchedulesToday: Boolean = hasSchedulesTodayByPattern.any { it.value }
 
@@ -321,7 +305,7 @@ public data class RouteCardData(
                 val majorAlert =
                     Alert.applicableAlerts(
                         alertsHere.filter { it.significance(atTime) >= AlertSignificance.Major },
-                        directionId,
+                        direction.id,
                         routePatterns.map { it.routeId },
                         lineOrRoute.type,
                         stopIds,
@@ -734,7 +718,6 @@ public data class RouteCardData(
                                                     emptyStops.map { stop ->
                                                         mapOf(
                                                             "stop" to stop.id,
-                                                            "directions" to stop.directions,
                                                         )
                                                     },
                                             ),
@@ -823,7 +806,6 @@ public data class RouteCardData(
                                             RouteStopDataBuilder(
                                                 lineOrRoute,
                                                 stop,
-                                                directions = directions,
                                                 data =
                                                     patternsForStop.allPatterns
                                                         .groupBy { pattern -> pattern.directionId }
@@ -831,7 +813,10 @@ public data class RouteCardData(
                                                             LeafBuilder(
                                                                 lineOrRoute = lineOrRoute,
                                                                 stop = stop,
-                                                                directionId = directionId,
+                                                                direction =
+                                                                    directions.first {
+                                                                        it.id == directionId
+                                                                    },
                                                                 routePatterns = patterns,
                                                                 patternsNotSeenAtEarlierStops =
                                                                     patterns
@@ -918,7 +903,7 @@ public data class RouteCardData(
                                 leafBuilder.lineOrRoute.containsRoute(it.routeId) &&
                                     leafBuilder.stopIds.orEmpty().contains(it.stopId) &&
                                     schedules.trips[it.tripId]?.directionId ==
-                                        leafBuilder.directionId
+                                        leafBuilder.direction.id
                             }
                             ?.mapNotNull { it.stopTime }
                             ?.minOrNull()
@@ -1107,46 +1092,25 @@ public data class RouteCardData(
     internal data class RouteStopDataBuilder(
         val lineOrRoute: LineOrRoute,
         val stop: Stop,
-        val directions: List<Direction>,
         var data: ByDirectionBuilder,
     ) {
-        // convenience constructors for when directions are not directly under test
         constructor(
             route: Route,
             stop: Stop,
             data: ByDirectionBuilder,
-            globalData: GlobalResponse,
-        ) : this(stop, LineOrRoute.Route(route), data, globalData)
+        ) : this(LineOrRoute.Route(route), stop, data)
 
         constructor(
             line: Line,
             routes: Set<Route>,
             stop: Stop,
             data: ByDirectionBuilder,
-            globalData: GlobalResponse,
-        ) : this(stop, LineOrRoute.Line(line, routes), data, globalData)
-
-        constructor(
-            stop: Stop,
-            lineOrRoute: LineOrRoute,
-            data: ByDirectionBuilder,
-            globalData: GlobalResponse,
-        ) : this(
-            lineOrRoute,
-            stop,
-            lineOrRoute.directions(
-                globalData,
-                stop,
-                data.values.mapNotNull { it.routePatterns }.flatten(),
-            ),
-            data,
-        )
+        ) : this(LineOrRoute.Line(line, routes), stop, data)
 
         fun build(): RouteStopData {
             return RouteStopData(
                 lineOrRoute,
                 stop,
-                directions,
                 data.values.map { it.build() }.sort(),
             )
         }
@@ -1155,7 +1119,7 @@ public data class RouteCardData(
     internal data class LeafBuilder(
         val lineOrRoute: LineOrRoute,
         val stop: Stop,
-        val directionId: Int,
+        val direction: Direction,
         var routePatterns: List<RoutePattern>? = null,
         var patternsNotSeenAtEarlierStops: Set<String>? = routePatterns?.map { it.id }?.toSet(),
         var stopIds: Set<String>? = null,
@@ -1172,7 +1136,7 @@ public data class RouteCardData(
             return Leaf(
                 lineOrRoute,
                 stop,
-                directionId,
+                direction,
                 checkNotNull(routePatterns),
                 checkNotNull(stopIds),
                 this.upcomingTrips ?: emptyList(),

@@ -91,8 +91,7 @@ final class StopDetailsViewTests: XCTestCase {
                     stopData: [.init(
                         route: route,
                         stop: stop,
-                        data: [],
-                        globalData: .init(objects: objects)
+                        data: []
                     )],
                     at: EasternTimeInstant.now()
                 )]
@@ -139,7 +138,7 @@ final class StopDetailsViewTests: XCTestCase {
                         data: [.init(
                             lineOrRoute: .route(route),
                             stop: stop,
-                            directionId: 0,
+                            direction: .init(directionId: 0, route: route),
                             routePatterns: [],
                             stopIds: [],
                             upcomingTrips: [],
@@ -149,8 +148,7 @@ final class StopDetailsViewTests: XCTestCase {
                             subwayServiceStartTime: nil,
                             alertsDownstream: [],
                             context: .stopDetailsUnfiltered
-                        )],
-                        globalData: .init(objects: objects)
+                        )]
                     )],
                     at: EasternTimeInstant.now()
                 )]
@@ -193,7 +191,7 @@ final class StopDetailsViewTests: XCTestCase {
         let leaf = RouteCardData.Leaf(
             lineOrRoute: .route(route),
             stop: stop,
-            directionId: 0,
+            direction: .init(directionId: 0, route: route),
             routePatterns: [routePattern],
             stopIds: Set([stop.id]),
             upcomingTrips: [.init(trip: trip, prediction: prediction)],
@@ -204,10 +202,6 @@ final class StopDetailsViewTests: XCTestCase {
         let stopData = RouteCardData.RouteStopData(
             lineOrRoute: .route(route),
             stop: stop,
-            directions: [
-                .init(directionId: 0, route: route),
-                .init(directionId: 1, route: route),
-            ],
             data: [leaf]
         )
 

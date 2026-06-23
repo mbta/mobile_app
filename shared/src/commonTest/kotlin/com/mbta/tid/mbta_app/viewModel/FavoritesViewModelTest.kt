@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -237,7 +238,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                 RouteCardData.Leaf(
                                     LineOrRoute.Route(route1),
                                     stop1,
-                                    directionId = 0,
+                                    Direction(0, route1),
                                     listOf(patterns.getValue(route1).getValue(0)),
                                     setOf(stop1.id),
                                     upcomingTrips = emptyList(),
@@ -249,7 +250,6 @@ internal class FavoritesViewModelTest : KoinTest {
                                     context = RouteCardData.Context.Favorites,
                                 )
                             ),
-                            globalData,
                         )
                     ),
                     now,
@@ -264,7 +264,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                 RouteCardData.Leaf(
                                     LineOrRoute.Route(route2),
                                     stop2,
-                                    directionId = 1,
+                                    Direction(1, route2),
                                     listOf(patterns.getValue(route2).getValue(1)),
                                     setOf(stop2.id),
                                     upcomingTrips = emptyList(),
@@ -276,7 +276,6 @@ internal class FavoritesViewModelTest : KoinTest {
                                     context = RouteCardData.Context.Favorites,
                                 )
                             ),
-                            globalData,
                         )
                     ),
                     now,
@@ -294,7 +293,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                 RouteCardData.Leaf(
                                     LineOrRoute.Route(route1),
                                     stop1,
-                                    directionId = 0,
+                                    Direction(0, route1),
                                     listOf(patterns.getValue(route1).getValue(0)),
                                     setOf(stop1.id),
                                     upcomingTrips =
@@ -314,7 +313,6 @@ internal class FavoritesViewModelTest : KoinTest {
                                     context = RouteCardData.Context.Favorites,
                                 )
                             ),
-                            globalData,
                         )
                     ),
                     now,
@@ -329,7 +327,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                 RouteCardData.Leaf(
                                     LineOrRoute.Route(route2),
                                     stop2,
-                                    directionId = 1,
+                                    Direction(1, route2),
                                     listOf(patterns.getValue(route2).getValue(1)),
                                     setOf(stop2.id),
                                     upcomingTrips =
@@ -349,7 +347,6 @@ internal class FavoritesViewModelTest : KoinTest {
                                     context = RouteCardData.Context.Favorites,
                                 )
                             ),
-                            globalData,
                         )
                     ),
                     now,
@@ -437,7 +434,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                 RouteCardData.Leaf(
                                     LineOrRoute.Route(route1),
                                     stop1,
-                                    0,
+                                    Direction(0, route1),
                                     listOf(patterns.getValue(route1).getValue(0)),
                                     setOf(stop1.id),
                                     upcomingTrips = emptyList(),
@@ -449,7 +446,6 @@ internal class FavoritesViewModelTest : KoinTest {
                                     RouteCardData.Context.Favorites,
                                 )
                             ),
-                            globalData,
                         )
                     ),
                     now,
@@ -467,7 +463,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                 RouteCardData.Leaf(
                                     LineOrRoute.Route(route2),
                                     stop2,
-                                    1,
+                                    Direction(1, route2),
                                     listOf(patterns.getValue(route2).getValue(1)),
                                     setOf(stop2.id),
                                     upcomingTrips = emptyList(),
@@ -479,7 +475,6 @@ internal class FavoritesViewModelTest : KoinTest {
                                     RouteCardData.Context.Favorites,
                                 )
                             ),
-                            globalData,
                         )
                     ),
                     now,
@@ -580,7 +575,11 @@ internal class FavoritesViewModelTest : KoinTest {
                                 RouteCardData.Leaf(
                                     LineOrRoute.Route(route1),
                                     stop1,
-                                    0,
+                                    Direction(
+                                        route1.directionNames[0],
+                                        route1.directionDestinations[0],
+                                        0,
+                                    ),
                                     listOf(patterns.getValue(route1).getValue(0)),
                                     setOf(stop1.id),
                                     upcomingTrips = emptyList(),
@@ -592,7 +591,6 @@ internal class FavoritesViewModelTest : KoinTest {
                                     RouteCardData.Context.Favorites,
                                 )
                             ),
-                            globalData,
                         )
                     ),
                     now,
@@ -850,7 +848,7 @@ internal class FavoritesViewModelTest : KoinTest {
                     RouteCardData.Leaf(
                         LineOrRoute.Route(route1),
                         stop1,
-                        0,
+                        Direction(0, route1),
                         listOf(patterns.getValue(route1).getValue(0)),
                         setOf(stop1.id),
                         upcomingTrips = emptyList(),
@@ -862,7 +860,6 @@ internal class FavoritesViewModelTest : KoinTest {
                         RouteCardData.Context.Favorites,
                     )
                 ),
-                globalData,
             )
 
         val stop2Data =
@@ -873,7 +870,7 @@ internal class FavoritesViewModelTest : KoinTest {
                     RouteCardData.Leaf(
                         LineOrRoute.Route(route2),
                         stop2,
-                        1,
+                        Direction(1, route2),
                         listOf(patterns.getValue(route2).getValue(1)),
                         setOf(stop2.id),
                         upcomingTrips = emptyList(),
@@ -885,7 +882,6 @@ internal class FavoritesViewModelTest : KoinTest {
                         RouteCardData.Context.Favorites,
                     )
                 ),
-                globalData,
             )
 
         val stop3Data =
@@ -896,7 +892,7 @@ internal class FavoritesViewModelTest : KoinTest {
                     RouteCardData.Leaf(
                         LineOrRoute.Route(route2),
                         stop3,
-                        1,
+                        Direction(1, route2),
                         listOf(patterns.getValue(route2).getValue(1)),
                         setOf(stop3.id),
                         upcomingTrips = emptyList(),
@@ -908,7 +904,6 @@ internal class FavoritesViewModelTest : KoinTest {
                         RouteCardData.Context.Favorites,
                     )
                 ),
-                globalData,
             )
         val routeCard1Data = RouteCardData(LineOrRoute.Route(route1), listOf(stop1Data), now)
 
@@ -1133,7 +1128,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                 RouteCardData.Leaf(
                                     LineOrRoute.Route(route1),
                                     stop1,
-                                    0,
+                                    Direction(0, route1),
                                     listOf(patterns.getValue(route1).getValue(0)),
                                     setOf(stop1.id),
                                     upcomingTrips = emptyList(),
@@ -1145,7 +1140,6 @@ internal class FavoritesViewModelTest : KoinTest {
                                     RouteCardData.Context.Favorites,
                                 )
                             ),
-                            globalData,
                         )
                     ),
                     now,

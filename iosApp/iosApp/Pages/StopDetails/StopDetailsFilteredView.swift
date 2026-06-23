@@ -112,7 +112,7 @@ struct StopDetailsFilteredView: View {
     var leaf: RouteCardData.Leaf? {
         realtimeStopData?.data
             .first {
-                $0.stop.id == stopId && $0.lineOrRoute.id == stopFilter.routeId && $0.directionId == stopFilter
+                $0.stop.id == stopId && $0.lineOrRoute.id == stopFilter.routeId && $0.direction.id == stopFilter
                     .directionId
             }
     }
@@ -251,15 +251,16 @@ struct StopDetailsFilteredView: View {
             now: nowInstant
         )
 
+        let leaf = routeData.stopData.first!.data.first!
         return StopDetailsFilteredDepartureDetails(
             stopId: stopId,
             stopFilter: stopFilter,
             tripFilter: tripFilter,
             setStopFilter: setStopFilter,
             setTripFilter: setTripFilter,
-            leaf: routeData.stopData.first!.data.first!,
+            leaf: leaf,
             alertSummaries: alertSummaries,
-            selectedDirection: routeData.stopData.first!.directions[Int(stopFilter.directionId)],
+            selectedDirection: leaf.direction,
             favorite: isFavorite,
             now: now.toEasternInstant(),
             errorBannerVM: errorBannerVM,

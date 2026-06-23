@@ -38,6 +38,7 @@ class DeparturesTest {
             objects.route {
                 longName = "Route"
                 type = RouteType.LIGHT_RAIL
+                directionDestinations = listOf("A", "B")
             }
 
         val aTrip = objects.trip { headsign = "A" }
@@ -49,12 +50,11 @@ class DeparturesTest {
             RouteCardData.RouteStopData(
                 lineOrRoute,
                 stop,
-                listOf(Direction("A Headsign", null, 0), Direction("B Headsign", null, 1)),
                 listOf(
                     RouteCardData.Leaf(
                         lineOrRoute,
                         stop,
-                        0,
+                        Direction(0, route),
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
                         listOf(
@@ -73,7 +73,7 @@ class DeparturesTest {
                     RouteCardData.Leaf(
                         lineOrRoute,
                         stop,
-                        1,
+                        Direction(1, route),
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
                         listOf(
@@ -115,6 +115,7 @@ class DeparturesTest {
             objects.route {
                 longName = "Route"
                 type = RouteType.LIGHT_RAIL
+                directionDestinations = listOf("A", "B")
             }
 
         val aTrip = objects.trip { headsign = "A" }
@@ -127,12 +128,11 @@ class DeparturesTest {
             RouteCardData.RouteStopData(
                 lineOrRoute,
                 stop,
-                listOf(Direction("A Headsign", null, 0), Direction("B Headsign", null, 1)),
                 listOf(
                     RouteCardData.Leaf(
                         lineOrRoute,
                         stop,
-                        0,
+                        Direction(0, route),
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
                         listOf(
@@ -152,7 +152,7 @@ class DeparturesTest {
                     RouteCardData.Leaf(
                         lineOrRoute,
                         stop,
-                        1,
+                        Direction(1, route),
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
                         listOf(
@@ -204,12 +204,11 @@ class DeparturesTest {
             RouteCardData.RouteStopData(
                 lineOrRoute,
                 stop,
-                listOf(Direction("West", "Riverside", 0), Direction("East", "Park St & North", 1)),
                 listOf(
                     RouteCardData.Leaf(
                         lineOrRoute,
                         stop,
-                        0,
+                        Direction("West", "Riverside", 0),
                         listOf(routePattern),
                         setOf(stop.id),
                         listOf(trip),
@@ -239,6 +238,7 @@ class DeparturesTest {
             objects.route {
                 longName = "Route"
                 type = RouteType.LIGHT_RAIL
+                directionDestinations = listOf("A", "B")
             }
 
         val aTrip = objects.trip { headsign = "A" }
@@ -250,12 +250,11 @@ class DeparturesTest {
             RouteCardData.RouteStopData(
                 lineOrRoute,
                 stop,
-                listOf(Direction("A Headsign", null, 0), Direction("B Headsign", null, 1)),
                 listOf(
                     RouteCardData.Leaf(
                         lineOrRoute,
                         stop,
-                        0,
+                        Direction(0, route),
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
                         listOf(
@@ -274,7 +273,7 @@ class DeparturesTest {
                     RouteCardData.Leaf(
                         lineOrRoute,
                         stop,
-                        1,
+                        Direction(1, route),
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
                         listOf(
@@ -340,7 +339,7 @@ class DeparturesTest {
                             RouteCardData.Leaf(
                                 LineOrRoute.Route(route),
                                 stop,
-                                directionId = 0,
+                                Direction(0, route),
                                 routePatterns = listOf(WorldCupService.routePatternOutbound),
                                 stopIds = emptySet(),
                                 upcomingTrips = emptyList(),
@@ -352,7 +351,6 @@ class DeparturesTest {
                                 context = RouteCardData.Context.NearbyTransit,
                             )
                         ),
-                        GlobalResponse(objects),
                     ),
                 globalData = GlobalResponse(objects),
                 now = EasternTimeInstant.now(),

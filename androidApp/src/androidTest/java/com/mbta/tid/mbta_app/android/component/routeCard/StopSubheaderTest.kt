@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -30,7 +31,6 @@ class StopSubheaderTest {
                     LineOrRoute.Route(route),
                     stop,
                     emptyList(),
-                    emptyList(),
                 )
             )
         }
@@ -51,7 +51,6 @@ class StopSubheaderTest {
                 RouteCardData.RouteStopData(
                     LineOrRoute.Route(route),
                     stop,
-                    emptyList(),
                     emptyList(),
                 )
             )
@@ -74,7 +73,6 @@ class StopSubheaderTest {
                 RouteCardData.RouteStopData(
                     LineOrRoute.Route(route),
                     stop,
-                    emptyList(),
                     emptyList(),
                 )
             )
@@ -104,12 +102,11 @@ class StopSubheaderTest {
                 RouteCardData.RouteStopData(
                     lineOrRoute,
                     stop,
-                    emptyList(),
                     listOf(
                         RouteCardData.Leaf(
                             lineOrRoute,
                             stop,
-                            0,
+                            Direction(0, route),
                             emptyList(),
                             emptySet(),
                             emptyList(),

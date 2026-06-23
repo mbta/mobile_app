@@ -271,7 +271,7 @@ private fun FavoriteDepartures(
     Column {
         stopData.data.withIndex().forEach { (index, leaf) ->
             val formatted = leaf.format(EasternTimeInstant.now(), globalData)
-            val direction = stopData.directions.first { it.id == leaf.directionId }
+            val direction = leaf.direction
             val overriddenClickLabel = stringResource(R.string.delete)
             val visible = !removedFavorites.contains(leaf.routeStopDirection)
             AnimatedVisibility(visible = visible) {

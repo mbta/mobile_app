@@ -112,7 +112,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             lineOrRoute: LineOrRoute.Route(route: route),
             stop: stop,
             // key piece: directionId here is 0
-            directionId: 0,
+            direction: .init(directionId: 0, route: route),
             routePatterns: [],
             stopIds: Set([stop.id]),
             upcomingTrips: [upcomingTrip0],
@@ -125,7 +125,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         ), RouteCardData.Leaf(
             lineOrRoute: LineOrRoute.Route(route: route),
             stop: stop,
-            directionId: 1,
+            direction: .init(directionId: 1, route: route),
             routePatterns: [],
             stopIds: Set([stop.id]),
             upcomingTrips: [upcomingTrip1],
@@ -135,8 +135,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             subwayServiceStartTime: nil,
             alertsDownstream: [],
             context: .stopDetailsFiltered
-        )],
-        globalData: GlobalResponse(objects: objects))
+        )])
 
         let routeData = StopDetailsViewModel.RouteDataFiltered(
             filteredWith: .init(stopId: stop.id, stopFilter: .init(routeId: route.id, directionId: 1),
@@ -290,7 +289,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         let stopData: RouteCardData.RouteStopData = .init(route: route, stop: stop, data: [RouteCardData.Leaf(
             lineOrRoute: LineOrRoute.Route(route: route),
             stop: stop,
-            directionId: 0,
+            direction: .init(directionId: 0, route: route),
             routePatterns: [],
             stopIds: Set([stop.id]),
             upcomingTrips: [upcomingTrip0],
@@ -303,7 +302,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         ), RouteCardData.Leaf(
             lineOrRoute: LineOrRoute.Route(route: route),
             stop: stop,
-            directionId: 1,
+            direction: .init(directionId: 1, route: route),
             routePatterns: [],
             stopIds: Set([stop.id]),
             upcomingTrips: [upcomingTrip1],
@@ -313,8 +312,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             subwayServiceStartTime: nil,
             alertsDownstream: [],
             context: .stopDetailsFiltered
-        )],
-        globalData: GlobalResponse(objects: objects))
+        )])
 
         let routeData = try StopDetailsViewModel.RouteDataFiltered(
             filteredWith: .init(
