@@ -6,6 +6,7 @@ public enum class SharedString {
     CommuterRailAndFerryTickets,
     DebugMode,
     FareInformation,
+    FavoritesByStop,
     FeatureFlagsSection,
     ForceNotificationsBeta,
     MapDisplay,
