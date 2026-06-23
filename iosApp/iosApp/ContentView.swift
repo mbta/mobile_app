@@ -557,11 +557,8 @@ struct ContentView: View {
                     VStack {
                         navSheetContents
                             .presentationDetents([.small, .medium, .almostFull], selection: $selectedDetent)
-                            // Setting background color helps preserve contrast with accessibility setting "Show
-                            // Borders" turned on
-                            .presentationBackground(Color(.sheetBackground))
+                            .presentationBackgroundInteraction(.enabled(upThrough: .medium))
                             .interactiveDismissDisabled()
-                            .modifier(AllowsBackgroundInteraction())
                     }
                     // within the sheet to prevent issues on iOS 16 with two modal views open at once
                     .fullScreenCover(
@@ -740,12 +737,5 @@ struct ContentView: View {
                 && !searchObserver.isSearching
 
         tabBarVisibility = shouldShowTabBar ? .visible : .hidden
-    }
-
-    struct AllowsBackgroundInteraction: ViewModifier {
-        func body(content: Content) -> some View {
-            content.presentationBackgroundInteraction(.enabled(upThrough: .medium))
-                .enableInjection()
-        }
     }
 }
