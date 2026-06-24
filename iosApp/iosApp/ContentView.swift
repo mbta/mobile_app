@@ -10,8 +10,10 @@ struct ContentView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.accessibilityVoiceOverEnabled) var voiceOver
 
+    @StateObject var navManager = NavigationManager()
     @StateObject var searchObserver = TextFieldObserver()
     @EnvironmentObject var locationDataManager: LocationDataManager
+
     @EnvironmentObject var socketProvider: SocketProvider
     @EnvironmentObject var viewportProvider: ViewportProvider
 
@@ -24,13 +26,12 @@ struct ContentView: View {
         (UIScreen.current?.bounds.height ?? 0) * PresentationDetent.mediumDetentFraction
     @State var errorBannerVM = ViewModelDI().errorBanner
     @State var favoritesVM = ViewModelDI().favorites
+    @State var nearbyVM = ViewModelDI().nearby
     @State var routeCardDataVM = ViewModelDI().routeCardData
     @State var stopDetailsVM = ViewModelDI().stopDetails
     @State var toastVM = ViewModelDI().toast
 
     @State var scheduleCache = RepositoryDI().scheduleCache
-
-    @StateObject var nearbyVM = NearbyViewModel()
     @State var mapVM = ViewModelDI().map
 
     @EnvironmentObject var settingsCache: SettingsCache
@@ -44,7 +45,8 @@ struct ContentView: View {
     let inspection = Inspection<Self>()
 
     @State var selectedDetent: PresentationDetent = .medium
-    @State private var selectedTab: SelectedTab? = nil
+    @State private var alerts: AlertsStreamDataResponse?
+    @State private var selectedTab: SelectedTab?
     @State private var showingLocationPermissionAlert = false
     @State private var tabBarVisibility = Visibility.hidden
     @State private var selectedVehicle: Vehicle?
@@ -65,14 +67,8 @@ struct ContentView: View {
             contentHeight = height
         }
         .withScenePhaseHandlers(
-            onActive: {
-                socketProvider.socket.attach()
-                nearbyVM.joinAlertsChannel()
-            },
-            onBackground: {
-                nearbyVM.leaveAlertsChannel()
-                socketProvider.socket.detach()
-            }
+            onActive: { socketProvider.socket.attach() },
+            onBackground: { socketProvider.socket.detach() }
         )
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onAppear {
@@ -92,7 +88,7 @@ struct ContentView: View {
             analytics.recordSession(stationAccessibility: includeAccessibility)
             updateTabBarVisibility()
 
-            if let screen = nearbyVM.navigationStack.lastSafe().analyticsScreen {
+            if let screen = navManager.navigationStack.lastSafe().analyticsScreen {
                 analytics.track(screen: screen)
             }
         }
@@ -102,6 +98,7 @@ struct ContentView: View {
                 notificationDeepLinkOwner.notificationDeepLink = nil
             }
         }
+        .alerts($alerts)
         .global($globalData, errorKey: ErrorKey(sheets: [], id: "ContentView"))
         .handleFcmTokenSubscriptions(
             fcmToken: fcmTokenContainer.token,
@@ -117,7 +114,7 @@ struct ContentView: View {
         .onChange(of: contentVM.defaultTab) { newTab in
             // if we aren't on an entrypoint, then the default tab may have loaded after
             // we navigated via deeplink. Don't navigate away from the deeplinked location
-            if nearbyVM.navigationStack.lastSafe().isEntrypoint {
+            if navManager.navigationStack.lastSafe().isEntrypoint {
                 selectedTab = switch newTab {
                 case .favorites: .favorites
                 case .nearby: .nearby
@@ -127,16 +124,16 @@ struct ContentView: View {
         }
         .onChange(of: selectedTab) { nextTab in
             if let nextTab {
-                nearbyVM.pushNavEntry(nextTab.associatedSheetNavEntry)
+                navManager.pushNavEntry(nextTab.associatedSheetNavEntry)
                 updateTabBarVisibility()
             }
         }
-        .onChange(of: nearbyVM.navigationStack.lastSafe()) { _ in
+        .onChange(of: navManager.navigationStack.lastSafe()) { _ in
             updateTabBarVisibility()
         }
         .onChange(of: AnalyticsParams(
-            stopId: nearbyVM.navigationStack.lastSafe().stopId(),
-            analyticsScreen: nearbyVM.navigationStack.lastSafe().analyticsScreen
+            stopId: navManager.navigationStack.lastSafe().stopId(),
+            analyticsScreen: navManager.navigationStack.lastSafe().analyticsScreen
         )) { params in
             guard let screen = params.analyticsScreen else { return }
             analytics.track(screen: screen)
@@ -160,7 +157,7 @@ struct ContentView: View {
             }
         }
         .withBackgroundTimer {
-            nearbyVM.popToEntrypoint()
+            navManager.popToEntrypoint()
             mapVM.recenter(type: .currentLocation)
         }
         .onReceive(
@@ -197,8 +194,8 @@ struct ContentView: View {
                 ZStack(alignment: .top) {
                     searchHeaderBackground
                     VStack {
-                        if nearbyVM.navigationStack.lastSafe().isEntrypoint {
-                            SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM)
+                        if navManager.navigationStack.lastSafe().isEntrypoint {
+                            SearchOverlay(searchObserver: searchObserver, navManager: navManager)
                                 .padding(.top, 12)
                             if !searchObserver.isSearching {
                                 LocationAuthButton(showingAlert: $showingLocationPermissionAlert)
@@ -206,7 +203,7 @@ struct ContentView: View {
                             }
                         }
 
-                        if !(nearbyVM.navigationStack.lastSafe().isEntrypoint && searchObserver.isSearching) {
+                        if !(navManager.navigationStack.lastSafe().isEntrypoint && searchObserver.isSearching) {
                             mapWithSheets
                         }
                     }
@@ -216,14 +213,14 @@ struct ContentView: View {
                     mapWithSheets.accessibilityHidden(searchObserver.isSearching)
                     searchHeaderBackground
                     VStack(alignment: .center, spacing: 20) {
-                        if nearbyVM.navigationStack.lastSafe().isEntrypoint {
-                            SearchOverlay(searchObserver: searchObserver, nearbyVM: nearbyVM)
+                        if navManager.navigationStack.lastSafe().isEntrypoint {
+                            SearchOverlay(searchObserver: searchObserver, navManager: navManager)
 
                             if !searchObserver.isSearching {
                                 LocationAuthButton(showingAlert: $showingLocationPermissionAlert)
                             }
                         }
-                        if !searchObserver.isSearching || !nearbyVM.navigationStack.lastSafe().isEntrypoint {
+                        if !searchObserver.isSearching || !navManager.navigationStack.lastSafe().isEntrypoint {
                             HStack(alignment: .top) {
                                 VStack(alignment: .leading) {
                                     if navCallbacks.backButtonPresentation == .floating {
@@ -232,7 +229,7 @@ struct ContentView: View {
                                             label: Text("Back", comment: "VoiceOver label for a generic back button"),
                                             size: 18.67
                                         ) {
-                                            nearbyVM.goBack()
+                                            navManager.goBack()
                                         }
                                     }
                                 }
@@ -240,7 +237,7 @@ struct ContentView: View {
                                 VStack(alignment: .trailing, spacing: 20) {
                                     if !viewportProvider.viewport.isFollowing,
                                        locationDataManager.currentLocation != nil,
-                                       nearbyVM.navigationStack.lastSafe().showCurrentLocation {
+                                       navManager.navigationStack.lastSafe().showCurrentLocation {
                                         RecenterButton(icon: .faLocationArrowSolid, label: Text(
                                             "Recenter map on my location",
                                             comment: "Screen reader text describing the behavior of the map recenter on current location button"
@@ -267,7 +264,7 @@ struct ContentView: View {
             }
         }
         .notificationsBeta(
-            navEntry: nearbyVM.navigationStack.lastSafe(),
+            navEntry: navManager.navigationStack.lastSafe(),
             onToastTap: { selectedTab = .more(highlight: .publicBetas) },
             onDismissDialog: { Task { await contentVM.loadOnboardingScreens() } },
         )
@@ -276,7 +273,7 @@ struct ContentView: View {
 
     @ViewBuilder
     var sheetContents: some View {
-        let navEntry = nearbyVM.navigationStack.lastSafe()
+        let navEntry = navManager.navigationStack.lastSafe()
         NavigationStack {
             VStack {
                 switch navEntry {
@@ -289,12 +286,12 @@ struct ContentView: View {
                     TabView {
                         RouteDetailsView(
                             selectionId: navEntry.routeId, context: navEntry.context,
-                            onOpenStopDetails: { nearbyVM.pushNavEntry(.stopDetails(
+                            onOpenStopDetails: { navManager.pushNavEntry(.stopDetails(
                                 stopId: $0,
                                 stopFilter: nil,
                                 tripFilter: nil
                             )) },
-                            pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
+                            pushNavEntry: { entry in navManager.pushNavEntry(entry) },
                             navCallbacks: navCallbacks,
                             errorBannerVM: errorBannerVM,
                         )
@@ -311,7 +308,7 @@ struct ContentView: View {
                             path: navEntry.path,
                             errorBannerVM: errorBannerVM,
                             onOpenRouteDetails: { routeId, context in
-                                nearbyVM.pushNavEntry(
+                                navManager.pushNavEntry(
                                     SheetNavigationStackEntry.routeDetails(
                                         SheetRoutes.RouteDetails(routeId: routeId, context: context)
                                     )
@@ -319,7 +316,7 @@ struct ContentView: View {
                             },
                             onOpenPickerPath: { path, context in
                                 if navEntry.path != path {
-                                    nearbyVM.pushNavEntry(
+                                    navManager.pushNavEntry(
                                         SheetNavigationStackEntry.routePicker(
                                             SheetRoutes.RoutePicker(path: path, context: context)
                                         )
@@ -345,12 +342,13 @@ struct ContentView: View {
                                 tripFilter: tripFilter
                             ),
                             navCallbacks: navCallbacks,
+                            alerts: alerts,
                             errorBannerVM: errorBannerVM,
-                            nearbyVM: nearbyVM,
                             mapVM: mapVM,
                             routeCardDataVM: routeCardDataVM,
                             stopDetailsVM: stopDetailsVM,
-                            viewportProvider: viewportProvider
+                            navManager: navManager,
+                            viewportProvider: viewportProvider,
                         )
                         .toolbar(.hidden, for: .tabBar)
                     }
@@ -366,8 +364,9 @@ struct ContentView: View {
                     TabView {
                         TripDetailsPage(
                             filter: filter,
+                            alerts: alerts,
                             navCallbacks: navCallbacks,
-                            nearbyVM: nearbyVM,
+                            navManager: navManager,
                         )
                         .toolbar(.hidden, for: .tabBar)
                     }
@@ -380,7 +379,7 @@ struct ContentView: View {
                 default: EmptyView()
                 }
             }
-            .animation(.easeOut, value: nearbyVM.navigationStack.lastSafe().sheetItemIdentifiable()?.id)
+            .animation(.easeOut, value: navManager.navigationStack.lastSafe().sheetItemIdentifiable()?.id)
             .background { Color.fill2.ignoresSafeArea(edges: .all).animation(nil, value: "") }
         }
         .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { handleDeepLink(url: $0.webpageURL) }
@@ -452,7 +451,7 @@ struct ContentView: View {
 
     @ViewBuilder
     var favoritesPage: some View {
-        let navEntry = nearbyVM.navigationStack.lastSafe()
+        let navEntry = navManager.navigationStack.lastSafe()
         VStack {
             if case .editFavorites = navEntry {
                 // Wrapping in a TabView helps the page to animate in as a single unit
@@ -466,7 +465,7 @@ struct ContentView: View {
                             backButtonPresentation: .header
                         ),
                         onOpenEditModal: { rsd in
-                            nearbyVM.pushNavEntry(
+                            navManager.pushNavEntry(
                                 .saveFavorite(
                                     routeId: rsd.route,
                                     stopId: rsd.stop,
@@ -483,9 +482,10 @@ struct ContentView: View {
                 .transition(transition)
             } else {
                 FavoritesPage(
+                    alerts: alerts,
                     errorBannerVM: errorBannerVM,
                     favoritesVM: favoritesVM,
-                    nearbyVM: nearbyVM,
+                    navManager: navManager,
                     viewportProvider: viewportProvider
                 )
                 .transition(transition)
@@ -498,9 +498,10 @@ struct ContentView: View {
     @ViewBuilder
     var nearbyPage: some View {
         NearbyTransitPage(
+            alerts: alerts,
             errorBannerVM: errorBannerVM,
             nearbyVM: nearbyVM,
-            viewportProvider: viewportProvider,
+            navManager: navManager,
             noNearbyStops: { NoNearbyStopsView(
                 onOpenSearch: { searchObserver.isFocused = true },
                 onPanToDefaultCenter: {
@@ -514,27 +515,28 @@ struct ContentView: View {
     @ViewBuilder
     var map: some View {
         HomeMapView(
+            alerts: alerts,
             contentVM: contentVM,
             mapVM: mapVM,
-            nearbyVM: nearbyVM,
             routeCardDataVM: routeCardDataVM,
-            viewportProvider: viewportProvider,
-            locationDataManager: locationDataManager,
             sheetHeight: $sheetHeight,
-            selectedVehicle: $selectedVehicle
+            selectedVehicle: $selectedVehicle,
+            locationDataManager: locationDataManager,
+            navManager: navManager,
+            viewportProvider: viewportProvider,
         ).accessibilityHidden(searchObserver.isSearching)
     }
 
     @ViewBuilder var mapWithSheets: some View {
-        let nav = nearbyVM.navigationStack.lastSafe()
+        let nav = navManager.navigationStack.lastSafe()
         let sheetRoute = nav.toSheetRoute()
         if hideMaps {
             navSheetContents
                 .fullScreenCover(item: .constant(nav.coverItemIdentifiable()), onDismiss: {
                     // Don't navigate back if hideMaps has been changed and the cover is being switched over
                     if hideMaps == false { return }
-                    switch nearbyVM.navigationStack.last {
-                    case .alertDetails, .more, .saveFavorite: nearbyVM.goBack()
+                    switch navManager.navigationStack.last {
+                    case .alertDetails, .more, .saveFavorite: navManager.goBack()
                     default: break
                     }
                 }, content: coverContents)
@@ -566,8 +568,8 @@ struct ContentView: View {
                         onDismiss: {
                             // Don't navigate back if hideMaps has been changed and the cover is being switched over
                             if hideMaps { return }
-                            switch nearbyVM.navigationStack.last {
-                            case .alertDetails, .more, .saveFavorite: nearbyVM.goBack()
+                            switch navManager.navigationStack.last {
+                            case .alertDetails, .more, .saveFavorite: navManager.goBack()
                             default: break
                             }
                         },
@@ -599,7 +601,14 @@ struct ContentView: View {
         NavigationStack {
             switch entry {
             case let .alertDetails(alertId, line, routes, stop):
-                AlertDetailsPage(alertId: alertId, line: line, routes: routes, stop: stop, nearbyVM: nearbyVM)
+                AlertDetailsPage(
+                    alertId: alertId,
+                    alerts: alerts,
+                    line: line,
+                    routes: routes,
+                    stop: stop,
+                    navManager: navManager,
+                )
 
             case let .more(category):
                 TabView(selection: $selectedTab) {
@@ -636,7 +645,6 @@ struct ContentView: View {
                         )
                     },
                     navCallbacks: navCallbacks,
-                    nearbyVM: nearbyVM,
                 )
 
             default:
@@ -645,21 +653,21 @@ struct ContentView: View {
         }
     }
 
-    var navCallbacks: NavigationCallbacks {
-        .init(
-            onBack: { nearbyVM.goBack() },
-            onClose: { nearbyVM.popToEntrypoint() },
-            backButtonPresentation: selectedDetent == .almostFull || hideMaps ||
-                !nearbyVM.navigationStack.hasFloatingBackButton() ? .header : .floating
-        )
-    }
-
     @ViewBuilder
     var searchHeaderBackground: some View {
         (
-            searchObserver.isSearching && nearbyVM.navigationStack.lastSafe().isEntrypoint
+            searchObserver.isSearching && navManager.navigationStack.lastSafe().isEntrypoint
                 ? Color.fill2 : Color.clear
         ).ignoresSafeArea(.all)
+    }
+
+    var navCallbacks: NavigationCallbacks {
+        .init(
+            onBack: { navManager.goBack() },
+            onClose: { navManager.popToEntrypoint() },
+            backButtonPresentation: selectedDetent == .almostFull || hideMaps ||
+                !navManager.navigationStack.hasFloatingBackButton() ? .header : .floating
+        )
     }
 
     private func handleDeepLink(url: URL?) {
@@ -668,12 +676,12 @@ struct ContentView: View {
     }
 
     private func handleDeepLink(deepLinkState: DeepLinkState) {
-        nearbyVM.popToEntrypoint()
+        navManager.popToEntrypoint()
 
         switch onEnum(of: deepLinkState) {
         case let .stop(stop):
             let nav = stop.sheetRoute
-            nearbyVM.pushNavEntry(.stopDetails(
+            navManager.pushNavEntry(.stopDetails(
                 stopId: nav.stopId,
                 stopFilter: nav.stopFilter,
                 tripFilter: nav.tripFilter
@@ -682,7 +690,7 @@ struct ContentView: View {
         case let .alert(alert):
             var stop: Stop?
             if let stopId = alert.stopId {
-                nearbyVM.pushNavEntry(
+                navManager.pushNavEntry(
                     .stopDetails(stopId: stopId, stopFilter: nil, tripFilter: nil)
                 )
                 stop = globalData?.getStop(stopId: alert.stopId)
@@ -701,7 +709,7 @@ struct ContentView: View {
                 default: break
                 }
             }
-            nearbyVM.pushNavEntry(
+            navManager.pushNavEntry(
                 .alertDetails(alertId: alert.alertId, line: line, routes: routes, stop: stop)
             )
 
@@ -733,7 +741,7 @@ struct ContentView: View {
 
     private func updateTabBarVisibility() {
         let shouldShowTabBar =
-            nearbyVM.navigationStack.lastSafe().isEntrypoint
+            navManager.navigationStack.lastSafe().isEntrypoint
                 && !searchObserver.isSearching
 
         tabBarVisibility = shouldShowTabBar ? .visible : .hidden

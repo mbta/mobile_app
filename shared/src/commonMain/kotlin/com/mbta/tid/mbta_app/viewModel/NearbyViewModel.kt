@@ -17,6 +17,7 @@ import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.utils.isRoughlyEqualTo
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
@@ -42,6 +43,7 @@ public interface INearbyViewModel {
     public fun setNow(now: EasternTimeInstant)
 }
 
+@OptIn(ExperimentalObjCRefinement::class)
 public class NearbyViewModel(
     private val nearbyRepository: INearbyRepository,
     private val sentryRepository: ISentryRepository,
@@ -56,14 +58,17 @@ public class NearbyViewModel(
 
     public sealed interface Event {
         public data class SetActive(val active: Boolean, val wasSentToBackground: Boolean) : Event
+
+        public data class SetLocation(val location: Position?) : Event
     }
 
     public data class State(
         val awaitingPredictionsAfterBackground: Boolean,
         val routeCardData: List<RouteCardData>?,
         val loadedLocation: Position?,
+        val loadedStopIds: List<String>?,
     ) {
-        public constructor() : this(false, null, null)
+        public constructor() : this(false, null, null, null)
     }
 
     @set:JvmName("setAlertsState")
@@ -78,6 +83,7 @@ public class NearbyViewModel(
         var loadedLocation: Position? by remember { mutableStateOf(null) }
         var nearbyResponse: NearbyResponse? by remember { mutableStateOf(null) }
         var stopIds: List<String>? by remember { mutableStateOf(null) }
+        var loadedStopIds: List<String>? by remember { mutableStateOf(null) }
 
         var active: Boolean by remember { mutableStateOf(false) }
 
@@ -95,6 +101,11 @@ public class NearbyViewModel(
 
         EventSink(eventHandlingTimeout = 2.seconds, sentryRepository = sentryRepository) { event ->
             when (event) {
+                is Event.SetLocation -> {
+                    if (!(event.location?.let { loadedLocation?.isRoughlyEqualTo(it) } ?: false)) {
+                        location = event.location
+                    }
+                }
                 is Event.SetActive -> {
                     active = event.active
                     if (event.wasSentToBackground) {
@@ -104,8 +115,6 @@ public class NearbyViewModel(
             }
         }
 
-        LaunchedEffect(location) { routeCardData = null }
-
         LaunchedEffect(globalData, location) {
             val resolvedLocation = location
             if (globalData == null || resolvedLocation == null) return@LaunchedEffect
@@ -113,12 +122,24 @@ public class NearbyViewModel(
             stopIds = nearbyResponse?.filter(globalData, alerts, now)
         }
 
+        LaunchedEffect(stopIds) {
+            if (stopIds?.toSet() != loadedStopIds?.toSet()) {
+                routeCardData = null
+                loadedLocation = null
+                loadedStopIds = null
+            }
+        }
+
         LaunchedEffect(stopIds, globalData, location, schedules, predictions, alerts, now) {
             val resolvedStopIds = stopIds
             if (resolvedStopIds == null || globalData == null || location == null) {
                 routeCardData = null
+                loadedLocation = null
+                loadedStopIds = null
             } else if (resolvedStopIds.isEmpty()) {
                 routeCardData = emptyList()
+                loadedLocation = location
+                loadedStopIds = emptyList()
             } else {
                 routeCardData =
                     RouteCardData.routeCardsForStopList(
@@ -134,10 +155,16 @@ public class NearbyViewModel(
                         coroutineDispatcher,
                     )
                 loadedLocation = location
+                loadedStopIds = resolvedStopIds
             }
         }
 
-        return State(awaitingPredictionsAfterBackground, routeCardData, loadedLocation)
+        return State(
+            awaitingPredictionsAfterBackground,
+            routeCardData,
+            loadedLocation,
+            loadedStopIds,
+        )
     }
 
     override val models: StateFlow<State>
@@ -150,9 +177,7 @@ public class NearbyViewModel(
         this.alerts = alerts
     }
 
-    override fun setLocation(location: Position?) {
-        this.location = location
-    }
+    override fun setLocation(location: Position?): Unit = fireEvent(Event.SetLocation(location))
 
     override fun setNow(now: EasternTimeInstant) {
         this.now = now

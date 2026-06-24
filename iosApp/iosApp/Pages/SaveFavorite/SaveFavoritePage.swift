@@ -18,7 +18,6 @@ struct SaveFavoritePage: View {
 
     let updateFavorites: ([RouteStopDirection: FavoriteSettings?]) -> Void
     var navCallbacks: NavigationCallbacks
-    var nearbyVM: NearbyViewModel
     var toastVM: IToastViewModel
     var notificationPermissionManager: INotificationPermissionManager
 
@@ -38,7 +37,6 @@ struct SaveFavoritePage: View {
         context: EditFavoritesContext,
         updateFavorites: @escaping ([RouteStopDirection: FavoriteSettings?]) -> Void,
         navCallbacks: NavigationCallbacks,
-        nearbyVM: NearbyViewModel,
         toastVM: IToastViewModel = ViewModelDI().toast,
         notificationPermissionManager: INotificationPermissionManager = NotificationPermissionManager(),
     ) {
@@ -48,7 +46,6 @@ struct SaveFavoritePage: View {
         self.context = context
         self.updateFavorites = updateFavorites
         self.navCallbacks = navCallbacks
-        self.nearbyVM = nearbyVM
         self.toastVM = toastVM
         self.notificationPermissionManager = notificationPermissionManager
         pendingSettings = .init(.init())

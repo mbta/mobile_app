@@ -16,36 +16,29 @@ import SwiftUI
 struct NearbyTransitView: View {
     @ObserveInjection var inject
 
-    var analytics: Analytics = AnalyticsProvider.shared
-    @State var predictionsRepository = RepositoryDI().predictions
-    var schedulesRepository = RepositoryDI().schedules
+    var alerts: AlertsStreamDataResponse?
     @Binding var location: CLLocationCoordinate2D?
     let setIsReturningFromBackground: (Bool) -> Void
+    let noNearbyStops: () -> NoNearbyStopsView
+    var nearbyVM: INearbyViewModel
+    @ObservedObject var navManager: NavigationManager
+    @ObservedObject var viewportProvider: ViewportProvider
+
+    var analytics: Analytics = AnalyticsProvider.shared
+
     @State var favorites: Favorites = LoadedFavorites.last
     @State var globalData: GlobalResponse?
-    @ObservedObject var nearbyVM: NearbyViewModel
-    @State var scheduleResponse: ScheduleResponse?
-    @State var now = Date.now
-    @State var predictionsByStop: PredictionsByStopJoinResponse?
+    @State var now = EasternTimeInstant.now()
+    @State var nearbyTransitState: Shared.NearbyViewModel.State?
 
-    var errorBannerRepository = RepositoryDI().errorBanner
-    let noNearbyStops: () -> NoNearbyStopsView
+    private let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     let inspection = Inspection<Self>()
     let scrollSubject = PassthroughSubject<LineOrRoute.Id, Never>()
 
-    struct RouteCardParams: Equatable {
-        let state: NearbyViewModel.NearbyTransitState
-        let global: GlobalResponse?
-        let schedules: ScheduleResponse?
-        let predictions: PredictionsByStopJoinResponse?
-        let alerts: AlertsStreamDataResponse?
-        let now: Date
-    }
-
     var body: some View {
         VStack(spacing: 0) {
-            if let routeCardData = nearbyVM.routeCardData,
+            if let routeCardData = nearbyTransitState?.routeCardData,
                let global = globalData {
                 nearbyList(routeCardData, global)
                     .onAppear { didLoadData?(self) }
@@ -56,75 +49,44 @@ struct NearbyTransitView: View {
         .favorites($favorites)
         .global($globalData, errorKey: .companion.fromSheetTypes(sheetTypes: [.nearbyTransit], id: "NearbyTransitView"))
         .onAppear {
-            loadEverything()
+            nearbyVM.setActive(active: true, wasSentToBackground: false)
+            nearbyVM.setAlerts(alerts: alerts)
+            nearbyVM.setLocation(location: location?.positionKt)
+            nearbyVM.setNow(now: now)
             didAppear?(self)
         }
-        .onChange(of: globalData) { globalData in
-            getNearby(location: location, globalData: globalData, alerts: nearbyVM.alerts, atTime: now)
+        .task { for await state in nearbyVM.models {
+            nearbyTransitState = state
+        } }
+        .onChange(of: alerts) { alerts in nearbyVM.setAlerts(alerts: alerts) }
+        .onChange(of: location) { newLocation in nearbyVM.setLocation(location: newLocation?.positionKt) }
+        .onChange(of: now) { now in nearbyVM.setNow(now: now) }
+        .onChange(of: nearbyTransitState?
+            .loadedStopIds) { [oldValue = nearbyTransitState?.loadedStopIds] newNearbyStops in
+                let oldSet = oldValue != nil ? Set(oldValue ?? []) : nil
+                let newSet = newNearbyStops != nil ? Set(newNearbyStops ?? []) : nil
+                if oldSet != newSet { scrollToTop() }
         }
-        .onChange(of: location) { newLocation in
-            getNearby(location: newLocation, globalData: globalData, alerts: nearbyVM.alerts, atTime: now)
-        }
-        .onChange(of: nearbyVM.alerts) { alerts in
-            filterNearby(globalData: globalData, alerts: alerts, atTime: now)
-        }
-        .onChange(of: now) { now in
-            filterNearby(globalData: globalData, alerts: nearbyVM.alerts, atTime: now)
-        }
-        .onChange(of: nearbyVM.nearbyState.stopIds) { [oldValue = nearbyVM.nearbyState.stopIds] newNearbyStops in
-            let oldSet = oldValue != nil ? Set(oldValue ?? []) : nil
-            let newSet = newNearbyStops != nil ? Set(newNearbyStops ?? []) : nil
-            if oldSet != newSet {
-                getSchedule(newNearbyStops)
-                joinPredictions(newNearbyStops)
-                scrollToTop()
+        .onChange(of: nearbyTransitState?.loadedLocation) { loadedLocation in
+            if let loadedLocation {
+                viewportProvider.lastLoadedLocation = loadedLocation.coordinate
+                viewportProvider.isTargeting = false
             }
         }
-        .onChange(of: RouteCardParams(
-            state: nearbyVM.nearbyState,
-            global: globalData,
-            schedules: scheduleResponse,
-            predictions: predictionsByStop,
-            alerts: nearbyVM.alerts,
-            now: now,
-        )) { newParams in
-            DispatchQueue.main.async {
-                // KB: Potential problem? - state.stopIds might not match the loaded schedules & predictions
-                nearbyVM.loadRouteCardData(
-                    state: newParams.state,
-                    global: newParams.global,
-                    schedules: newParams.schedules,
-                    predictions: newParams.predictions,
-                    alerts: newParams.alerts,
-                    now: newParams.now,
-                )
+        .onChange(of: nearbyTransitState?.awaitingPredictionsAfterBackground) { awaitingPredictions in
+            if let awaitingPredictions {
+                setIsReturningFromBackground(awaitingPredictions)
             }
         }
+        .onReceive(timer) { input in now = input.toEasternInstant() }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
-        .onDisappear {
-            leavePredictions()
-        }
-        .task {
-            while !Task.isCancelled {
-                now = Date.now
-                checkPredictionsStale()
-                try? await Task.sleep(for: .seconds(5))
-            }
-        }
+        .onDisappear { nearbyVM.setActive(active: false, wasSentToBackground: false) }
         .withScenePhaseHandlers(
             onActive: {
-                if let predictionsByStop,
-                   predictionsRepository
-                   .shouldForgetPredictions(predictionCount: predictionsByStop.predictionQuantity()) {
-                    self.predictionsByStop = nil
-                }
-                joinPredictions(nearbyVM.nearbyState.stopIds)
+                nearbyVM.setActive(active: true, wasSentToBackground: false)
             },
-            onInactive: leavePredictions,
-            onBackground: {
-                leavePredictions()
-                setIsReturningFromBackground(true)
-            }
+            onInactive: { nearbyVM.setActive(active: false, wasSentToBackground: false) },
+            onBackground: { nearbyVM.setActive(active: false, wasSentToBackground: true) }
         )
         .enableInjection()
     }
@@ -143,9 +105,9 @@ struct NearbyTransitView: View {
                             RouteCard(
                                 cardData: cardData,
                                 global: global,
-                                now: now.toEasternInstant(),
+                                now: now,
                                 isFavorite: { favorites.isFavorite($0) },
-                                pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
+                                pushNavEntry: { entry in navManager.pushNavEntry(entry) },
                                 showStopHeader: true
                             )
                         }
@@ -169,7 +131,7 @@ struct NearbyTransitView: View {
                     RouteCard(
                         cardData: LoadingPlaceholders.shared.nearbyRoute(),
                         global: globalData,
-                        now: now.toEasternInstant(),
+                        now: now,
                         isFavorite: { _ in false },
                         pushNavEntry: { _ in },
                         showStopHeader: true
@@ -185,123 +147,8 @@ struct NearbyTransitView: View {
     var didAppear: ((Self) -> Void)?
     var didLoadData: ((Self) -> Void)?
 
-    private func loadEverything() {
-        getNearby(location: location, globalData: globalData, alerts: nearbyVM.alerts, atTime: now)
-        joinPredictions(nearbyVM.nearbyState.stopIds)
-        getSchedule(nearbyVM.nearbyState.stopIds)
-    }
-
-    func getNearby(
-        location: CLLocationCoordinate2D?,
-        globalData: GlobalResponse?,
-        alerts: AlertsStreamDataResponse?,
-        atTime: Date
-    ) {
-        self.location = location
-        self.globalData = globalData
-        guard let globalData else { return }
-        guard let location else {
-            // if location was set to nil, forget previously loaded data
-            predictionsByStop = nil
-            scheduleResponse = nil
-            return
-        }
-        nearbyVM.getNearbyStops(
-            global: globalData,
-            location: location,
-            alerts: alerts,
-            atTime: atTime.toEasternInstant()
-        )
-    }
-
-    func filterNearby(
-        globalData: GlobalResponse?,
-        alerts: AlertsStreamDataResponse?,
-        atTime: Date
-    ) {
-        guard let globalData else { return }
-        nearbyVM.filterNearbyStops(
-            global: globalData,
-            alerts: alerts,
-            atTime: atTime.toEasternInstant()
-        )
-    }
-
-    func getSchedule(_ stopIds: [String]?) {
-        Task {
-            guard let stopIds = stopIds ?? nearbyVM.nearbyState.stopIds else {
-                scheduleResponse = nil
-                return
-            }
-            await fetchApi(
-                errorKey: .companion.fromSheetTypes(sheetTypes: [.nearbyTransit], id: "NearbyTransitView.getSchedule"),
-                getData: { try await schedulesRepository.getSchedule(stopIds: stopIds) },
-                onSuccess: { scheduleResponse = $0 },
-                onRefreshAfterError: loadEverything
-            )
-        }
-    }
-
-    func joinPredictions(_ stopIds: [String]?) {
-        guard let stopIds else { return }
-        predictionsRepository.connect(
-            stopIds: stopIds,
-            errorKey: .companion.fromSheetTypes(sheetTypes: [.nearbyTransit], id: "NearbyTransitView.joinPredictions"),
-            onJoin: { outcome in
-                DispatchQueue.main.async {
-                    switch onEnum(of: outcome) {
-                    case let .ok(result):
-                        predictionsByStop = result.data
-                        checkPredictionsStale()
-                    case .error: break
-                    }
-                    setIsReturningFromBackground(false)
-                }
-            },
-            onMessage: { outcome in
-                DispatchQueue.main.async {
-                    switch onEnum(of: outcome) {
-                    case let .ok(result):
-                        if let existingPredictionsByStop = predictionsByStop {
-                            predictionsByStop = existingPredictionsByStop
-                                .mergePredictions(updatedPredictions: result.data)
-                        } else {
-                            predictionsByStop = PredictionsByStopJoinResponse(
-                                partialResponse: result.data
-                            )
-                        }
-                        checkPredictionsStale()
-                    case .error: break
-                    }
-                    setIsReturningFromBackground(false)
-                }
-            }
-        )
-    }
-
-    func leavePredictions() {
-        predictionsRepository.disconnect()
-    }
-
-    private func checkPredictionsStale() {
-        if let lastPredictions = predictionsRepository.lastUpdated {
-            errorBannerRepository.checkPredictionsStale(
-                predictionsLastUpdated: lastPredictions,
-                predictionQuantity: Int32(
-                    predictionsByStop?.predictionQuantity() ??
-                        0
-                ),
-                checkingSheetRoute: .NearbyTransit(),
-                action: {
-                    leavePredictions()
-                    joinPredictions(nearbyVM.nearbyState.stopIds)
-                }
-            )
-        }
-    }
-
     private func scrollToTop() {
-        guard let id = nearbyVM.routeCardData?.first?.lineOrRoute.id else { return }
+        guard let id = nearbyTransitState?.routeCardData?.first?.lineOrRoute.id else { return }
         scrollSubject.send(id)
     }
 }

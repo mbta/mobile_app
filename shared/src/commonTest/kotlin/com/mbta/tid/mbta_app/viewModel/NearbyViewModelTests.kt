@@ -41,18 +41,19 @@ internal class NearbyViewModelTests : KoinTest {
     val objects = ObjectCollectionBuilder()
     val stop1 =
         objects.stop {
+            id = "stop1"
             latitude = 0.0
             longitude = 0.0
         }
     val stop2 =
         objects.stop {
-            id = "stop1"
+            id = "stop2"
             latitude = 1.0
             longitude = 1.0
         }
     val stop3 =
         objects.stop {
-            id = "stop2"
+            id = "stop3"
             latitude = -0.5
             longitude = -0.5
         }
@@ -143,6 +144,7 @@ internal class NearbyViewModelTests : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     routeCardData = null,
                     loadedLocation = null,
+                    loadedStopIds = null,
                 ),
                 awaitItem(),
             )
@@ -151,6 +153,7 @@ internal class NearbyViewModelTests : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     routeCardData = null,
                     loadedLocation = stop1.position,
+                    loadedStopIds = listOf(stop1.id, stop2.id),
                 ),
                 awaitItem(),
             )
@@ -297,6 +300,7 @@ internal class NearbyViewModelTests : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     routeCardData = null,
                     loadedLocation = null,
+                    loadedStopIds = null,
                 ),
                 awaitItem(),
             )
@@ -305,11 +309,18 @@ internal class NearbyViewModelTests : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     routeCardData = null,
                     loadedLocation = stop1.position,
+                    loadedStopIds = listOf(stop1.id, stop2.id),
                 ),
                 awaitItem(),
             )
             awaitItemSatisfying {
-                it == NearbyViewModel.State(false, expectedRealtimeData, stop1.position)
+                it ==
+                    NearbyViewModel.State(
+                        false,
+                        expectedRealtimeData,
+                        stop1.position,
+                        listOf(stop1.id, stop2.id),
+                    )
             }
         }
     }
