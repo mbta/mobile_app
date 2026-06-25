@@ -631,7 +631,6 @@ public data class RouteCardData(
             coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
         ): List<RouteCardData>? =
             withContext(coroutineDispatcher) {
-
                 // if predictions or alerts are still loading, this is the loading state
                 if (predictions == null || alerts == null) return@withContext null
 

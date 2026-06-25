@@ -50,14 +50,15 @@ final class HomeMapViewTests: XCTestCase {
         let sheetHeight: Binding<CGFloat> = .constant(100)
 
         let sut = HomeMapView(
+            alerts: .init(alerts: [:]),
             contentVM: .init(),
             mapVM: MockMapViewModel(),
-            nearbyVM: .init(),
             routeCardDataVM: MockRouteCardDataViewModel(),
-            viewportProvider: viewportProvider,
-            locationDataManager: .init(),
             sheetHeight: sheetHeight,
-            selectedVehicle: .constant(nil)
+            selectedVehicle: .constant(nil),
+            locationDataManager: .init(),
+            navManager: .init(),
+            viewportProvider: viewportProvider,
         )
 
         let exp = sut.inspection.inspect { view in
@@ -70,14 +71,15 @@ final class HomeMapViewTests: XCTestCase {
     func testNoLocationDefaultCenter() {
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
+            alerts: .init(alerts: [:]),
             contentVM: .init(),
             mapVM: MockMapViewModel(),
-            nearbyVM: .init(),
             routeCardDataVM: MockRouteCardDataViewModel(),
-            viewportProvider: ViewportProvider(),
-            locationDataManager: locationDataManager,
             sheetHeight: .constant(0),
-            selectedVehicle: .constant(nil)
+            selectedVehicle: .constant(nil),
+            locationDataManager: locationDataManager,
+            navManager: .init(),
+            viewportProvider: ViewportProvider(),
         )
         XCTAssertEqual(sut.viewportProvider.viewport.camera?.center, ViewportProvider.Defaults.center)
     }
@@ -91,14 +93,15 @@ final class HomeMapViewTests: XCTestCase {
         let newLocation: CLLocation = .init(latitude: 42, longitude: -71)
 
         var sut = HomeMapView(
+            alerts: .init(alerts: [:]),
             contentVM: .init(),
             mapVM: MockMapViewModel(),
-            nearbyVM: .init(),
             routeCardDataVM: MockRouteCardDataViewModel(),
-            viewportProvider: ViewportProvider(),
-            locationDataManager: locationDataManager,
             sheetHeight: .constant(0),
-            selectedVehicle: .constant(nil)
+            selectedVehicle: .constant(nil),
+            locationDataManager: locationDataManager,
+            navManager: .init(),
+            viewportProvider: ViewportProvider(),
         )
 
         let hasAppeared = sut.on(\.didAppear) { _ in
@@ -178,32 +181,38 @@ final class HomeMapViewTests: XCTestCase {
             at: EasternTimeInstant.now()
         )]
         let routeCardDataVM = MockRouteCardDataViewModel(initialState: .init(data: routeCardData))
-        let nearbyVM: iosApp.NearbyViewModel = .init(routeCardData: routeCardData)
+        let nearbyVM = MockNearbyViewModel(initialState: .init(
+            awaitingPredictionsAfterBackground: false,
+            routeCardData: routeCardData,
+            loadedLocation: stop.position,
+            loadedStopIds: [stop.id],
+        ))
 
         let initialNav: SheetNavigationStackEntry = try .stopDetails(
             stopId: stop.id,
             stopFilter: .init(routeId: XCTUnwrap(vehicle.routeId), directionId: vehicle.directionId),
             tripFilter: nil
         )
-        nearbyVM.navigationStack = [initialNav]
+        let navManager = NavigationManager(navigationStack: [initialNav])
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
+            alerts: .init(alerts: [:]),
             contentVM: .init(),
             mapVM: MockMapViewModel(),
-            nearbyVM: nearbyVM,
             routeCardDataVM: routeCardDataVM,
-            viewportProvider: ViewportProvider(),
             vehiclesRepository: MockVehiclesRepository(vehicles: [vehicle]),
-            locationDataManager: locationDataManager,
             sheetHeight: .constant(0),
-            selectedVehicle: .constant(nil)
+            selectedVehicle: .constant(nil),
+            locationDataManager: locationDataManager,
+            navManager: navManager,
+            viewportProvider: ViewportProvider(),
         )
 
         let hasAppeared = sut.inspection.inspect(after: 1) { sut in
-            XCTAssertEqual(nearbyVM.navigationStack.last, initialNav)
+            XCTAssertEqual(navManager.navigationStack.last, initialNav)
             try sut.find(HomeMapView.self).actualView().handleTapVehicle(vehicle)
             XCTAssertEqual(
-                nearbyVM.navigationStack.last,
+                navManager.navigationStack.last,
                 .tripDetails(filter: .init(
                     tripId: trip.id,
                     vehicleId: vehicle.id,
@@ -241,14 +250,15 @@ final class HomeMapViewTests: XCTestCase {
         let viewportProvider: ViewportProvider = FakeViewportProvider(updateCameraExpectation:
             updateCameraExpectation)
         let sut = HomeMapView(
+            alerts: .init(alerts: [:]),
             contentVM: .init(),
             mapVM: MockMapViewModel(),
-            nearbyVM: .init(),
             routeCardDataVM: MockRouteCardDataViewModel(),
-            viewportProvider: viewportProvider,
-            locationDataManager: locationDataManager,
             sheetHeight: .constant(0),
-            selectedVehicle: .constant(nil)
+            selectedVehicle: .constant(nil),
+            locationDataManager: locationDataManager,
+            navManager: .init(),
+            viewportProvider: viewportProvider,
         )
 
         sut.handleCameraChange(.init(
@@ -267,23 +277,25 @@ final class HomeMapViewTests: XCTestCase {
 
     func testJoinsVehiclesChannelOnActiveWhenTripDetails() {
         let joinsVehiclesExp = XCTestExpectation(description: "Joins vehicles channel")
+        let navManager = NavigationManager(navigationStack: [
+            .stopDetails(
+                stopId: "stop",
+                stopFilter: .init(routeId: Route.Id("r"), directionId: 0),
+                tripFilter: .init(tripId: "t", vehicleId: "v", stopSequence: 0, selectionLock: false)
+            ),
+        ])
 
         var sut = HomeMapView(
+            alerts: .init(alerts: [:]),
             contentVM: .init(),
             mapVM: MockMapViewModel(),
-            nearbyVM: .init(navigationStack: [
-                .stopDetails(
-                    stopId: "stop",
-                    stopFilter: .init(routeId: Route.Id("r"), directionId: 0),
-                    tripFilter: .init(tripId: "t", vehicleId: "v", stopSequence: 0, selectionLock: false)
-                ),
-            ]),
             routeCardDataVM: MockRouteCardDataViewModel(),
-            viewportProvider: ViewportProvider(),
             vehiclesRepository: CallbackVehiclesRepo(connectExp: joinsVehiclesExp),
-            locationDataManager: .init(),
             sheetHeight: .constant(0),
-            selectedVehicle: .constant(nil)
+            selectedVehicle: .constant(nil),
+            locationDataManager: .init(),
+            navManager: navManager,
+            viewportProvider: ViewportProvider(),
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -298,21 +310,23 @@ final class HomeMapViewTests: XCTestCase {
         let joinsVehiclesExp = XCTestExpectation(description: "Joins vehicles channel")
 
         let stop = ObjectCollectionBuilder().stop { _ in }
+        let navManager = NavigationManager(navigationStack: [.stopDetails(
+            stopId: stop.id,
+            stopFilter: .init(routeId: Route.Id("routeId"), directionId: 0),
+            tripFilter: nil
+        )])
 
         var sut = HomeMapView(
+            alerts: .init(alerts: [:]),
             contentVM: .init(),
             mapVM: MockMapViewModel(),
-            nearbyVM: .init(navigationStack: [.stopDetails(
-                stopId: stop.id,
-                stopFilter: .init(routeId: Route.Id("routeId"), directionId: 0),
-                tripFilter: nil
-            )]),
             routeCardDataVM: MockRouteCardDataViewModel(),
-            viewportProvider: ViewportProvider(),
             vehiclesRepository: CallbackVehiclesRepo(connectExp: joinsVehiclesExp),
-            locationDataManager: .init(),
             sheetHeight: .constant(0),
-            selectedVehicle: .constant(nil)
+            selectedVehicle: .constant(nil),
+            locationDataManager: .init(),
+            navManager: navManager,
+            viewportProvider: ViewportProvider(),
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -329,17 +343,23 @@ final class HomeMapViewTests: XCTestCase {
         joinsVehiclesExp.isInverted = true
 
         let stop = ObjectCollectionBuilder().stop { _ in }
+        let navManager = NavigationManager(navigationStack: [.stopDetails(
+            stopId: stop.id,
+            stopFilter: nil,
+            tripFilter: nil
+        )])
 
         var sut = HomeMapView(
+            alerts: .init(alerts: [:]),
             contentVM: .init(),
             mapVM: MockMapViewModel(),
-            nearbyVM: .init(navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]),
             routeCardDataVM: MockRouteCardDataViewModel(),
-            viewportProvider: ViewportProvider(),
             vehiclesRepository: CallbackVehiclesRepo(connectExp: joinsVehiclesExp),
-            locationDataManager: .init(),
             sheetHeight: .constant(0),
-            selectedVehicle: .constant(nil)
+            selectedVehicle: .constant(nil),
+            locationDataManager: .init(),
+            navManager: navManager,
+            viewportProvider: ViewportProvider(),
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -354,21 +374,23 @@ final class HomeMapViewTests: XCTestCase {
         let leavesVehiclesExp = XCTestExpectation(description: "Leaves vehicles channel")
 
         let stop = ObjectCollectionBuilder().stop { _ in }
+        let navManager = NavigationManager(navigationStack: [.stopDetails(
+            stopId: stop.id,
+            stopFilter: .init(routeId: Route.Id("routeId"), directionId: 0),
+            tripFilter: nil
+        )])
 
         var sut = HomeMapView(
+            alerts: .init(alerts: [:]),
             contentVM: .init(),
             mapVM: MockMapViewModel(),
-            nearbyVM: .init(navigationStack: [.stopDetails(
-                stopId: stop.id,
-                stopFilter: .init(routeId: Route.Id("routeId"), directionId: 0),
-                tripFilter: nil
-            )]),
             routeCardDataVM: MockRouteCardDataViewModel(),
-            viewportProvider: ViewportProvider(),
             vehiclesRepository: CallbackVehiclesRepo(disconnectExp: leavesVehiclesExp),
-            locationDataManager: .init(),
             sheetHeight: .constant(0),
-            selectedVehicle: .constant(nil)
+            selectedVehicle: .constant(nil),
+            locationDataManager: .init(),
+            navManager: navManager,
+            viewportProvider: ViewportProvider(),
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -387,25 +409,26 @@ final class HomeMapViewTests: XCTestCase {
         let vehicle = ObjectCollectionBuilder().vehicle { vehicle in
             vehicle.currentStatus = .inTransitTo
         }
+        let navManager = NavigationManager(navigationStack: [
+            .stopDetails(
+                stopId: stop.id,
+                stopFilter: .init(routeId: Route.Id("routeId"), directionId: 0),
+                tripFilter: nil
+            ),
+        ])
 
         var sut = HomeMapView(
+            alerts: .init(alerts: [:]),
             contentVM: .init(),
             mapVM: MockMapViewModel(),
-            nearbyVM: .init(navigationStack: [
-                .stopDetails(
-                    stopId: stop.id,
-                    stopFilter: .init(routeId: Route.Id("routeId"), directionId: 0),
-                    tripFilter: nil
-                ),
-            ]),
             routeCardDataVM: MockRouteCardDataViewModel(),
-            viewportProvider: ViewportProvider(),
             vehiclesData: [vehicle],
             vehiclesRepository: CallbackVehiclesRepo(disconnectExp: leavesVehiclesExp),
-
-            locationDataManager: .init(),
             sheetHeight: .constant(0),
-            selectedVehicle: .constant(nil)
+            selectedVehicle: .constant(nil),
+            locationDataManager: .init(),
+            navManager: navManager,
+            viewportProvider: ViewportProvider(),
         )
 
         let hasAppeared = sut.on(\.didAppear) { view in
@@ -441,14 +464,15 @@ final class HomeMapViewTests: XCTestCase {
         let contentVM = ContentViewModel()
         let locationFetcher = FakeLocationFetcher()
         var sut = HomeMapView(
+            alerts: .init(alerts: [:]),
             contentVM: contentVM,
             mapVM: MockMapViewModel(),
-            nearbyVM: .init(),
             routeCardDataVM: MockRouteCardDataViewModel(),
-            viewportProvider: .init(),
-            locationDataManager: .init(locationFetcher: locationFetcher),
             sheetHeight: .constant(0),
-            selectedVehicle: .constant(nil)
+            selectedVehicle: .constant(nil),
+            locationDataManager: .init(locationFetcher: locationFetcher),
+            navManager: .init(),
+            viewportProvider: .init(),
         )
         let exp = sut.on(\.didAppear) { view in
             XCTAssertFalse(locationFetcher.didRequestAuthorization)

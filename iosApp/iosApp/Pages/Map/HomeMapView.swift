@@ -14,13 +14,14 @@ import SwiftUI
 
 struct HomeMapView: View {
     @ObserveInjection var inject
+    var alerts: AlertsStreamDataResponse?
     var analytics: Analytics = AnalyticsProvider.shared
     @ObservedObject var contentVM: ContentViewModel
     var mapVM: IMapViewModel
-    @ObservedObject var nearbyVM: NearbyViewModel
     var routeCardDataVM: IRouteCardDataViewModel
-    @ObservedObject var viewportProvider: ViewportProvider
     var tripDetailsVM: ITripDetailsViewModel
+    @ObservedObject var navManager: NavigationManager
+    @ObservedObject var viewportProvider: ViewportProvider
 
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var settingsCache: SettingsCache
@@ -46,38 +47,40 @@ struct HomeMapView: View {
 
     private var shouldShowLoadedLocation: Bool {
         !viewportProvider.viewport.isFollowing
-            && nearbyVM.navigationStack.lastSafe().allowTargeting
-            && !nearbyVM.isTargeting
+            && navManager.navigationStack.lastSafe().allowTargeting
+            && !viewportProvider.isTargeting
     }
 
     private var allowTargeting: Bool {
-        nearbyVM.navigationStack.lastSafe().allowTargeting
+        navManager.navigationStack.lastSafe().allowTargeting
     }
 
     init(
+        alerts: AlertsStreamDataResponse?,
         contentVM: ContentViewModel,
         mapVM: IMapViewModel,
-        nearbyVM: NearbyViewModel,
         routeCardDataVM: IRouteCardDataViewModel,
-        viewportProvider: ViewportProvider,
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         vehiclesData: [Vehicle]? = nil,
         vehiclesRepository: IVehiclesRepository = RepositoryDI().vehicles,
-        locationDataManager: LocationDataManager,
         sheetHeight: Binding<CGFloat>,
         globalMapData _: GlobalMapData? = nil,
         selectedVehicle: Binding<Vehicle?>,
-        tripDetailsVM: ITripDetailsViewModel = ViewModelDI().tripDetails
+        tripDetailsVM: ITripDetailsViewModel = ViewModelDI().tripDetails,
+        locationDataManager: LocationDataManager,
+        navManager: NavigationManager,
+        viewportProvider: ViewportProvider,
     ) {
+        self.alerts = alerts
         self.contentVM = contentVM
         self.mapVM = mapVM
-        self.nearbyVM = nearbyVM
         self.routeCardDataVM = routeCardDataVM
-        self.viewportProvider = viewportProvider
         self.errorBannerRepository = errorBannerRepository
         self.vehiclesData = vehiclesData
         self.vehiclesRepository = vehiclesRepository
         self.tripDetailsVM = tripDetailsVM
+        self.navManager = navManager
+        self.viewportProvider = viewportProvider
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
         _sheetHeight = sheetHeight
         _selectedVehicle = selectedVehicle
@@ -86,7 +89,7 @@ struct HomeMapView: View {
     var body: some View {
         realtimeResponsiveMap
             .overlay(alignment: .center) {
-                if nearbyVM.isTargeting, allowTargeting {
+                if viewportProvider.isTargeting, allowTargeting {
                     crosshairs
                 }
             }
@@ -103,12 +106,12 @@ struct HomeMapView: View {
                 }
 
                 // If the selected vehicle already matches the vehicle filter, don't set it to nil
-                let skipSettingVehicle = selectedVehicle?.id == nearbyVM.navigationStack.lastSafe()
+                let skipSettingVehicle = selectedVehicle?.id == navManager.navigationStack.lastSafe()
                     .vehicleId() && vehicle == nil
                 guard !skipSettingVehicle else { return }
                 selectedVehicle = vehicle
             }
-            .onChange(of: nearbyVM.navigationStack) { navStack in
+            .onChange(of: navManager.navigationStack) { navStack in
                 Task {
                     let currentNavEntry = navStack.lastSafe()
                     mapVM.navChanged(currentNavEntry: currentNavEntry.toSheetRoute())
@@ -116,9 +119,9 @@ struct HomeMapView: View {
                 }
             }
             .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
-                guard isManuallyCentering, nearbyVM.navigationStack.lastSafe().allowTargeting else { return }
+                guard isManuallyCentering, navManager.navigationStack.lastSafe().allowTargeting else { return }
                 // This will be set to false after nearby is loaded to avoid the crosshair dissapearing and re-appearing
-                nearbyVM.isTargeting = true
+                viewportProvider.isTargeting = true
             }
             .onChange(of: contentVM.onboardingScreensPending) { _ in
                 checkOnboardingLoaded()
@@ -138,8 +141,8 @@ struct HomeMapView: View {
     var realtimeResponsiveMap: some View {
         staticResponsiveMap
             .manageVM(routeCardDataVM, $routeCardDataState)
-            .onChange(of: nearbyVM.alerts) { _ in
-                mapVM.alertsChanged(alerts: nearbyVM.alerts)
+            .onChange(of: alerts) { _ in
+                mapVM.alertsChanged(alerts: alerts)
             }
             .onDisappear {
                 leaveVehiclesChannel()
@@ -147,7 +150,7 @@ struct HomeMapView: View {
             }
             .withScenePhaseHandlers(
                 onActive: {
-                    let lastNavEntry = nearbyVM.navigationStack.lastSafe()
+                    let lastNavEntry = navManager.navigationStack.lastSafe()
                     handleNavStackChange(entry: lastNavEntry)
                 },
                 onInactive: leaveVehiclesChannel,
@@ -161,7 +164,7 @@ struct HomeMapView: View {
                 for await mapUpdate in tripDetailsVM.mapUpdates {
                     switch onEnum(of: mapUpdate) {
                     case let .selectedVehicle(mapUpdate):
-                        let currentNavEntry = nearbyVM.navigationStack.lastSafe()
+                        let currentNavEntry = navManager.navigationStack.lastSafe()
                         let follow = switch currentNavEntry {
                         case .tripDetails: viewportProvider.isVehicleOverview
                         default: false
@@ -194,12 +197,12 @@ struct HomeMapView: View {
     var annotatedMap: some View {
         let vehicles: [Vehicle]? = vehiclesData?.filter { $0.id != selectedVehicle?.id }
         AnnotatedMap(
-            filter: nearbyVM.navigationStack.lastStopDetailsFilter,
-            targetedLocation: shouldShowLoadedLocation ? nearbyVM.lastLoadedLocation : nil,
+            filter: navManager.navigationStack.lastStopDetailsFilter,
+            targetedLocation: shouldShowLoadedLocation ? viewportProvider.lastLoadedLocation : nil,
             globalData: globalData,
             selectedVehicle: selectedVehicle,
             sheetHeight: sheetHeight,
-            showPuck: nearbyVM.navigationStack.lastSafe().showCurrentLocation,
+            showPuck: navManager.navigationStack.lastSafe().showCurrentLocation,
             vehicles: vehicles,
             handleCameraChange: handleCameraChange,
             handleStyleLoaded: { mapVM.mapStyleLoaded() },

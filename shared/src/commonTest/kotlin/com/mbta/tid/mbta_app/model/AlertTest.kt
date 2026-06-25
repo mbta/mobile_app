@@ -598,7 +598,7 @@ class AlertTest {
     }
 
     @Test
-    fun `downstreamAlerts returns alerts for first downstream alerting stop`() {
+    fun `downstreamAlerts returns alerts for all downstream alerting stops`() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val targetStop = objects.stop()
@@ -670,7 +670,102 @@ class AlertTest {
                 setOf(targetStop.id),
             )
 
-        assertEquals(listOf(firstRideAlert), downstreamAlerts)
+        assertEquals(listOf(firstRideAlert, secondRideAlert), downstreamAlerts)
+    }
+
+    @Test
+    fun `downstreamAlerts returns alerts for all downstream alerting stops before suspension`() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val targetStop = objects.stop()
+        val stopWithBoardAlert = objects.stop()
+        val firstStopWithRideAlert = objects.stop()
+        val secondStopWithRideAlert = objects.stop()
+        val thirdStopWithRideAlert = objects.stop()
+
+        val alertRideTargetStop =
+            objects.alert {
+                effect = Alert.Effect.ServiceChange
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Ride),
+                    route = route.id.idText,
+                    stop = targetStop.id,
+                    directionId = 0,
+                )
+            }
+
+        val alertBoard =
+            objects.alert {
+                effect = Alert.Effect.ServiceChange
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    route = route.id.idText,
+                    stop = stopWithBoardAlert.id,
+                    directionId = 0,
+                )
+            }
+        val firstRideAlert =
+            objects.alert {
+                effect = Alert.Effect.ServiceChange
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Ride),
+                    route = route.id.idText,
+                    stop = firstStopWithRideAlert.id,
+                    directionId = null,
+                )
+            }
+
+        val secondRideAlert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Ride),
+                    route = route.id.idText,
+                    stop = secondStopWithRideAlert.id,
+                    directionId = null,
+                )
+            }
+
+        val thirdRideAlert =
+            objects.alert {
+                effect = Alert.Effect.ServiceChange
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Ride),
+                    route = route.id.idText,
+                    stop = thirdStopWithRideAlert.id,
+                    directionId = null,
+                )
+            }
+
+        val trip =
+            objects.trip {
+                routeId = route.id.idText
+                directionId = 0
+                stopIds =
+                    listOf(
+                        targetStop.id,
+                        stopWithBoardAlert.id,
+                        firstStopWithRideAlert.id,
+                        secondStopWithRideAlert.id,
+                        thirdRideAlert.id,
+                    )
+            }
+
+        val downstreamAlerts =
+            Alert.downstreamAlerts(
+                listOf(
+                    alertRideTargetStop,
+                    alertBoard,
+                    firstRideAlert,
+                    secondRideAlert,
+                    thirdRideAlert,
+                ),
+                trip,
+                route.type,
+                setOf(targetStop.id),
+            )
+
+        assertEquals(listOf(firstRideAlert, secondRideAlert), downstreamAlerts)
     }
 
     @Test
@@ -892,9 +987,9 @@ class AlertTest {
             }
         val upcomingTripAlewife = objects.upcomingTrip(scheduleAlewife)
 
-        val shawmutShuttleAlert =
+        val shawmutClosureAlert =
             objects.alert {
-                effect = Alert.Effect.Shuttle
+                effect = Alert.Effect.StationClosure
                 activePeriod(time - 1.seconds, null)
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
@@ -947,7 +1042,7 @@ class AlertTest {
                 alerts =
                     listOf(
                         ashmontShuttleAlert,
-                        shawmutShuttleAlert,
+                        shawmutClosureAlert,
                         parkShuttleAlert,
                         alewifeShuttleAlert,
                     ),
@@ -957,14 +1052,14 @@ class AlertTest {
                 tripsById = global.trips,
             )
         // ashmont alert not included b/c only first downstream alert on pattern returned
-        assertEquals(listOf(shawmutShuttleAlert), southboundDownstreamAlerts)
+        assertEquals(listOf(shawmutClosureAlert, ashmontShuttleAlert), southboundDownstreamAlerts)
 
         val northboundDownstreamAlerts =
             Alert.alertsDownstreamForPatterns(
                 alerts =
                     listOf(
                         ashmontShuttleAlert,
-                        shawmutShuttleAlert,
+                        shawmutClosureAlert,
                         parkShuttleAlert,
                         alewifeShuttleAlert,
                     ),

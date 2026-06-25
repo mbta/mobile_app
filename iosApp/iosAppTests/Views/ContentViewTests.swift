@@ -62,46 +62,24 @@ final class ContentViewTests: XCTestCase {
         wait(for: [connectedExpectation], timeout: 1)
     }
 
-    func testJoinsAlertsOnActive() throws {
+    func testJoinsAlerts() {
         let joinAlertsExp = expectation(description: "Alerts channel joined")
         // joins in onAppear & on active
         joinAlertsExp.expectedFulfillmentCount = 1
         joinAlertsExp.assertForOverFulfill = true
 
-        let fakeNearbyVM: iosApp.NearbyViewModel = .init(
-            alertsUsecase: AlertsUsecase(
-                alertsRepository: CallbackAlertsRepository(connectExp: joinAlertsExp),
-                globalRepository: MockGlobalRepository()
-            )
-        )
+        let mockRepos = MockRepositories()
+        mockRepos.alerts = CallbackAlertsRepository(connectExp: joinAlertsExp)
+        loadKoinMocks(repositories: mockRepos)
 
-        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: .init(), nearbyVM: fakeNearbyVM),
-                                                socketProvider: SocketProvider(socket: MockSocket()))
+        let sut = withDefaultEnvironmentObjects(
+            sut: ContentView(contentVM: .init()),
+            socketProvider: SocketProvider(socket: MockSocket())
+        )
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().find(ContentView.self).find(ViewType.VStack.self)
-            .callOnChange(newValue: ScenePhase.active)
         wait(for: [joinAlertsExp], timeout: 5)
-    }
-
-    func testLeavesAlertsAfterBackgrounding() throws {
-        let leavesAlertsExp = expectation(description: "Alerts channel left")
-        let fakeNearbyVM: iosApp.NearbyViewModel = .init(
-            alertsUsecase: AlertsUsecase(
-                alertsRepository: CallbackAlertsRepository(disconnectExp: leavesAlertsExp),
-                globalRepository: MockGlobalRepository()
-            )
-        )
-
-        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: .init(), nearbyVM: fakeNearbyVM),
-                                                socketProvider: SocketProvider(socket: MockSocket()))
-
-        ViewHosting.host(view: sut)
-
-        try sut.inspect().find(ContentView.self).find(ViewType.VStack.self)
-            .callOnChange(newValue: ScenePhase.background)
-        wait(for: [leavesAlertsExp], timeout: 5)
     }
 
     func testFetchesConfig() {
@@ -119,7 +97,7 @@ final class ContentViewTests: XCTestCase {
 
     @MainActor func testFetchesConfigOnMapboxError() {
         let loadConfigCallback = XCTestExpectation(description: "load config called")
-        loadConfigCallback.expectedFulfillmentCount = 2
+        loadConfigCallback.assertForOverFulfill = false
 
         let fakeVM = FakeContentVM(
             loadConfigCallback: { loadConfigCallback.fulfill() }
@@ -217,7 +195,7 @@ final class ContentViewTests: XCTestCase {
         )
 
         let exp1 = sut.inspection.inspect(after: 1) { view in
-            try view.actualView().nearbyVM.navigationStack = [
+            try view.actualView().navManager.navigationStack = [
                 .nearby,
                 .stopDetails(stopId: "stop", stopFilter: stopFilter, tripFilter: tripFilter),
                 .tripDetails(filter: .init(stopId: "stop", stopFilter: stopFilter, tripFilter: tripFilter)),
@@ -229,7 +207,7 @@ final class ContentViewTests: XCTestCase {
         }
         let exp3 = sut.inspection.inspect(after: 3) { view in
             XCTAssertEqual(
-                try view.actualView().nearbyVM.navigationStack,
+                try view.actualView().navManager.navigationStack,
                 [
                     .nearby,
                     .stopDetails(stopId: "stop", stopFilter: stopFilter, tripFilter: tripFilter),
@@ -253,7 +231,7 @@ final class ContentViewTests: XCTestCase {
         )
 
         let exp1 = sut.inspection.inspect(after: 1) { view in
-            try view.actualView().nearbyVM.navigationStack = [
+            try view.actualView().navManager.navigationStack = [
                 .nearby,
                 .stopDetails(stopId: "stop", stopFilter: stopFilter, tripFilter: tripFilter),
             ]

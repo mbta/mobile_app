@@ -12,10 +12,12 @@ import SwiftUI
 struct AlertDetailsPage: View {
     @ObserveInjection var inject
     var alertId: String
+    var alerts: AlertsStreamDataResponse?
     var line: Line?
     var routes: [Route]?
     var stop: Stop?
-    var nearbyVM: NearbyViewModel
+
+    @ObservedObject var navManager: NavigationManager
 
     @State private var alert: Shared.Alert?
     @State var globalResponse: GlobalResponse?
@@ -68,7 +70,7 @@ struct AlertDetailsPage: View {
             Text("Alert Details", comment: "Header on the alert details page").font(Typography.headlineBold)
             Spacer()
             ActionButton(kind: .close) {
-                nearbyVM.goBack()
+                navManager.goBack()
             }
         }
         .padding(16)
@@ -86,7 +88,7 @@ struct AlertDetailsPage: View {
                     routes: routes,
                     stop: stop,
                     affectedStops: affectedStops,
-                    stopId: nearbyVM.navigationStack.lastStopId,
+                    stopId: navManager.navigationStack.lastStopId,
                     now: now.toEasternInstant()
                 )
             } else {
@@ -96,20 +98,20 @@ struct AlertDetailsPage: View {
         .background(Color.fill2)
         .global($globalResponse, errorKey: ErrorKey(sheets: [], id: "AlertDetailsPage"))
         .onAppear { updateAlert() }
-        .onChange(of: nearbyVM.alerts) { _ in updateAlert() }
+        .onChange(of: alerts) { _ in updateAlert() }
         .onReceive(timer) { input in now = input }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .enableInjection()
     }
 
     private func updateAlert() {
-        guard let alerts = nearbyVM.alerts else { return }
+        guard let alerts else { return }
         let nextAlert = alerts.getAlert(alertId: alertId)
         // If no alert is already set, and no alert was found with the provided ID,
         // something went wrong, and the alert didn't exist in the data to begin with,
         // navigate back to the previous page.
         if alert == nil, nextAlert == nil {
-            nearbyVM.navigationStack.removeAll { nav in
+            navManager.navigationStack.removeAll { nav in
                 if case let .alertDetails(alertId, _, _, _) = nav {
                     alertId == self.alertId
                 } else {

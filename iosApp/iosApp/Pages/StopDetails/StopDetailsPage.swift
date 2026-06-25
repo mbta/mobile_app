@@ -24,6 +24,7 @@ struct StopDetailsPage: View {
     var filters: StopDetailsPageFilters
     var navCallbacks: NavigationCallbacks
 
+    var alerts: AlertsStreamDataResponse?
     @State var favorites: Favorites = LoadedFavorites.last
     @State var global: GlobalResponse?
     @State var loadingFavorites = true
@@ -33,10 +34,10 @@ struct StopDetailsPage: View {
     @State var vmState: StopDetailsViewModel.State?
 
     var errorBannerVM: IErrorBannerViewModel
-    @ObservedObject var nearbyVM: NearbyViewModel
     var mapVM: IMapViewModel
     var routeCardDataVM: IRouteCardDataViewModel
     var stopDetailsVM: IStopDetailsViewModel
+    @ObservedObject var navManager: NavigationManager
     @ObservedObject var viewportProvider: ViewportProvider
 
     @EnvironmentObject var settingsCache: SettingsCache
@@ -50,20 +51,22 @@ struct StopDetailsPage: View {
     init(
         filters: StopDetailsPageFilters,
         navCallbacks: NavigationCallbacks,
+        alerts: AlertsStreamDataResponse?,
         errorBannerVM: IErrorBannerViewModel,
-        nearbyVM: NearbyViewModel,
         mapVM: IMapViewModel,
         routeCardDataVM: IRouteCardDataViewModel,
         stopDetailsVM: IStopDetailsViewModel,
-        viewportProvider: ViewportProvider
+        navManager: NavigationManager,
+        viewportProvider: ViewportProvider,
     ) {
         self.filters = filters
         self.navCallbacks = navCallbacks
+        self.alerts = alerts
         self.errorBannerVM = errorBannerVM
-        self.nearbyVM = nearbyVM
         self.mapVM = mapVM
         self.routeCardDataVM = routeCardDataVM
         self.stopDetailsVM = stopDetailsVM
+        self.navManager = navManager
         self.viewportProvider = viewportProvider
     }
 
@@ -72,17 +75,18 @@ struct StopDetailsPage: View {
         StopDetailsView(
             filters: filters,
             routeData: vmState?.routeData,
+            alerts: alerts,
             favorites: favorites,
             global: global,
             now: now,
             onUpdateFavorites: { loadingFavorites = true },
-            setStopFilter: { filter in nearbyVM.setLastStopDetailsFilter(stopId, filter) },
-            setTripFilter: { filter in nearbyVM.setLastTripDetailsFilter(stopId, filter) },
+            setStopFilter: { filter in navManager.setLastStopDetailsFilter(stopId, filter) },
+            setTripFilter: { filter in navManager.setLastTripDetailsFilter(stopId, filter) },
             navCallbacks: navCallbacks,
             errorBannerVM: errorBannerVM,
-            nearbyVM: nearbyVM,
             mapVM: mapVM,
-            stopDetailsVM: stopDetailsVM
+            stopDetailsVM: stopDetailsVM,
+            navManager: navManager,
         )
     }
 
@@ -93,12 +97,12 @@ struct StopDetailsPage: View {
                 $global,
                 errorKey: .companion.fromSheetTypes(sheetTypes: [.stopDetails], id: "StopDetailsPage")
             )
-            .manageVM(stopDetailsVM, $vmState, alerts: nearbyVM.alerts, filters: filters, now: now.toEasternInstant())
+            .manageVM(stopDetailsVM, $vmState, alerts: alerts, filters: filters, now: now.toEasternInstant())
             .manageVM(routeCardDataVM, $routeCardDataState)
             .task {
                 for await filterUpdate in stopDetailsVM.filterUpdates {
                     if let filterUpdate {
-                        nearbyVM.setLastStopDetailsPageFilter(filterUpdate)
+                        navManager.setLastStopDetailsPageFilter(filterUpdate)
                     }
                 }
             }

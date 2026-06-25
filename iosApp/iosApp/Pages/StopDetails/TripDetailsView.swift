@@ -23,9 +23,10 @@ struct TripDetailsView: View {
     let onOpenAlertDetails: (Shared.Alert) -> Void
 
     var errorBannerVM: IErrorBannerViewModel
-    @ObservedObject var nearbyVM: NearbyViewModel
     var mapVM: IMapViewModel
     var tripDetailsVM: ITripDetailsViewModel
+
+    @ObservedObject var navManager: NavigationManager
 
     @State var explainer: Explainer?
     @State var global: GlobalResponse?
@@ -43,10 +44,10 @@ struct TripDetailsView: View {
         routeAccents: TripRouteAccents,
         onOpenAlertDetails: @escaping (Shared.Alert) -> Void,
         errorBannerVM: IErrorBannerViewModel,
-        nearbyVM: NearbyViewModel,
         mapVM: IMapViewModel,
         tripDetailsVM: ITripDetailsViewModel = ViewModelDI().tripDetails,
-        analytics: Analytics = AnalyticsProvider.shared
+        navManager: NavigationManager,
+        analytics: Analytics = AnalyticsProvider.shared,
     ) {
         self.tripFilter = tripFilter
         self.alertSummaries = alertSummaries
@@ -55,9 +56,9 @@ struct TripDetailsView: View {
         self.routeAccents = routeAccents
         self.onOpenAlertDetails = onOpenAlertDetails
         self.errorBannerVM = errorBannerVM
-        self.nearbyVM = nearbyVM
         self.mapVM = mapVM
         self.tripDetailsVM = tripDetailsVM
+        self.navManager = navManager
         self.analytics = analytics
     }
 
@@ -70,7 +71,7 @@ struct TripDetailsView: View {
     func onFollowTrip() {
         if let tripData = tripDetailsVMState?.tripData, let trip = tripData.trip, tripData.tripFilter == tripFilter {
             let dataFilter = tripData.tripFilter
-            nearbyVM.pushNavEntry(.tripDetails(filter: TripDetailsPageFilter(
+            navManager.pushNavEntry(.tripDetails(filter: TripDetailsPageFilter(
                 tripId: dataFilter.tripId,
                 vehicleId: dataFilter.vehicleId,
                 routeId: trip.routeId,
@@ -252,9 +253,9 @@ struct TripDetailsView: View {
     }
 
     private func setVehicle(_ vehicle: Vehicle?) {
-        let stop = global?.getStop(stopId: nearbyVM.navigationStack.lastStopId)
-        let stopFilter = nearbyVM.navigationStack.lastStopDetailsFilter
-        let tripDetailsFilter = nearbyVM.navigationStack.lastTripDetailsFilter
+        let stop = global?.getStop(stopId: navManager.navigationStack.lastStopId)
+        let stopFilter = navManager.navigationStack.lastStopDetailsFilter
+        let tripDetailsFilter = navManager.navigationStack.lastTripDetailsFilter
         if let tripDetailsFilter {
             mapVM.selectedTrip(
                 stopFilter: stopFilter,
@@ -269,7 +270,7 @@ struct TripDetailsView: View {
     func onTapStop(stop: TripDetailsStopList.Entry) {
         let parentStop = if let global { stop.stop.resolveParent(global: global) }
         else { stop.stop }
-        nearbyVM.appendNavEntry(.stopDetails(stopId: parentStop.id, stopFilter: nil, tripFilter: nil))
+        navManager.appendNavEntry(.stopDetails(stopId: parentStop.id, stopFilter: nil, tripFilter: nil))
         analytics.tappedDownstreamStop(
             routeId: tripDetailsVMState?.tripData?.trip?.routeId,
             stopId: stop.stop.id,

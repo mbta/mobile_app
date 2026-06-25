@@ -313,6 +313,7 @@ class MapAndSheetPageTest : KoinTest {
                         ),
                     ),
                     loadedLocation = Position(0.0, 0.0),
+                    loadedStopIds = listOf(sampleStop.id, greenLineStop.id),
                 )
             )
         val flow = MutableStateFlow(null).asStateFlow()

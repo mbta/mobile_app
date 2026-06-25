@@ -24,7 +24,8 @@ struct StopDetailsUnfilteredView: View {
 
     let navCallbacks: NavigationCallbacks
     var errorBannerVM: IErrorBannerViewModel
-    @ObservedObject var nearbyVM: NearbyViewModel
+
+    @ObservedObject var navManager: NavigationManager
 
     @EnvironmentObject var settingsCache: SettingsCache
     var stationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
@@ -41,7 +42,7 @@ struct StopDetailsUnfilteredView: View {
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         navCallbacks: NavigationCallbacks,
         errorBannerVM: IErrorBannerViewModel,
-        nearbyVM: NearbyViewModel
+        navManager: NavigationManager,
     ) {
         self.stopId = stopId
         self.routeData = routeData
@@ -51,7 +52,7 @@ struct StopDetailsUnfilteredView: View {
         self.setStopFilter = setStopFilter
         self.navCallbacks = navCallbacks
         self.errorBannerVM = errorBannerVM
-        self.nearbyVM = nearbyVM
+        self.navManager = navManager
     }
 
     var stop: Stop? {
@@ -134,7 +135,7 @@ struct StopDetailsUnfilteredView: View {
                                                        tripId: nil,
                                                        routeAccents: .init(),
                                                        onRowTap: { id, _ in
-                                                           nearbyVM.pushNavEntry(.alertDetails(
+                                                           navManager.pushNavEntry(.alertDetails(
                                                                alertId: id,
                                                                line: nil,
                                                                routes: nil,
@@ -165,7 +166,7 @@ struct StopDetailsUnfilteredView: View {
                                         global: global,
                                         now: now,
                                         isFavorite: { favorites.isFavorite($0) },
-                                        pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
+                                        pushNavEntry: { entry in navManager.pushNavEntry(entry) },
                                         showStopHeader: false
                                     )
                                     .padding(.top, 2)
