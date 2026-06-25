@@ -32,7 +32,6 @@ struct RouteCardDepartures: View {
                         tripFilter: nil
                     ),
                     action: { entry in
-                        print(entry)
                         pushNavEntry(entry)
                         analyticsTappedDeparture(leaf: leaf, formatted: formatted)
                     },
