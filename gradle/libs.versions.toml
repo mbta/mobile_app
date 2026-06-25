@@ -52,7 +52,7 @@ sentry-kmp = "0.26.0"
 skie = "0.10.12"
 spatialk = "0.7.0"
 # changelog: https://github.com/diffplug/spotless/blob/main/plugin-gradle/CHANGES.md
-spotless = "8.6.0"
+spotless = "8.7.0"
 turbine = "1.2.1"
 testLogger = "4.0.0"
 
