@@ -216,7 +216,7 @@ struct StopDetailsUnfilteredView: View {
               let route = routeCardData.first(where: { $0.lineOrRoute.id == filterId }) else { return }
         analytics.tappedRouteFilter(routeId: route.lineOrRoute.id, stopId: stopId)
         let defaultDirectionId = route.stopData.flatMap { stopData in
-            stopData.data.map(\.directionId)
+            stopData.data.map(\.direction.id)
         }.min() ?? 0
         setStopFilter(.init(routeId: filterId, directionId: defaultDirectionId))
     }

@@ -33,7 +33,7 @@ final class FavoritesViewTests: XCTestCase {
         let realtimeLeaf = RouteCardData.Leaf(
             lineOrRoute: .route(route),
             stop: stop,
-            directionId: 0,
+            direction: .init(directionId: 0, route: route),
             routePatterns: [routePattern],
             stopIds: [stop.id],
             upcomingTrips: [trip],
@@ -47,7 +47,7 @@ final class FavoritesViewTests: XCTestCase {
         let staticLeaf = RouteCardData.Leaf(
             lineOrRoute: .route(route),
             stop: stop,
-            directionId: 0,
+            direction: .init(directionId: 0, route: route),
             routePatterns: [routePattern],
             stopIds: [stop.id],
             upcomingTrips: [],
@@ -68,8 +68,7 @@ final class FavoritesViewTests: XCTestCase {
                 stopData: [.init(
                     route: route,
                     stop: stop,
-                    data: [realtimeLeaf],
-                    globalData: globalData
+                    data: [realtimeLeaf]
                 )],
                 at: now
             )],
@@ -79,8 +78,7 @@ final class FavoritesViewTests: XCTestCase {
                 stopData: [.init(
                     route: route,
                     stop: stop,
-                    data: [staticLeaf],
-                    globalData: globalData
+                    data: [staticLeaf]
                 )],
                 at: now
             )],
@@ -128,7 +126,7 @@ final class FavoritesViewTests: XCTestCase {
         let realtimeLeaf = RouteCardData.Leaf(
             lineOrRoute: .route(route),
             stop: stop,
-            directionId: 0,
+            direction: .init(directionId: 0, route: route),
             routePatterns: [routePattern],
             stopIds: [stop.id],
             upcomingTrips: [trip],
@@ -142,7 +140,7 @@ final class FavoritesViewTests: XCTestCase {
         let staticLeaf = RouteCardData.Leaf(
             lineOrRoute: .route(route),
             stop: stop,
-            directionId: 0,
+            direction: .init(directionId: 0, route: route),
             routePatterns: [routePattern],
             stopIds: [stop.id],
             upcomingTrips: [],
@@ -163,8 +161,7 @@ final class FavoritesViewTests: XCTestCase {
                 stopData: [.init(
                     route: route,
                     stop: stop,
-                    data: [realtimeLeaf],
-                    globalData: globalData
+                    data: [realtimeLeaf]
                 )],
                 at: now
             )],
@@ -174,8 +171,7 @@ final class FavoritesViewTests: XCTestCase {
                 stopData: [.init(
                     route: route,
                     stop: stop,
-                    data: [staticLeaf],
-                    globalData: globalData
+                    data: [staticLeaf]
                 )],
                 at: now
             )],

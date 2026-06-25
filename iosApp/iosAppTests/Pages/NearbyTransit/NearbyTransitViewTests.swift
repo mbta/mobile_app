@@ -103,7 +103,10 @@ final class NearbyTransitViewTests: XCTestCase {
                                 .init(
                                     lineOrRoute: route,
                                     stop: stop,
-                                    directionId: 0,
+                                    direction: .init(
+                                        directionId: 0,
+                                        route: route.sortRoute
+                                    ),
                                     routePatterns: [TestData.getRoutePattern(id: "67-4-0"),],
                                     stopIds: ["14121"],
                                     upcomingTrips: [.init(trip: trip, prediction: prediction)],
@@ -114,8 +117,7 @@ final class NearbyTransitViewTests: XCTestCase {
                                     alertsDownstream: [],
                                     context: .nearbyTransit
                                 )
-                            ],
-                            globalData: GlobalResponse(objects: objects)
+                            ]
                         )
                     ],
                     at: now
@@ -216,7 +218,10 @@ final class NearbyTransitViewTests: XCTestCase {
                     data: [.init(
                         lineOrRoute: route,
                         stop: stop,
-                        directionId: 0,
+                        direction: .init(
+                            directionId: 0,
+                            route: route.sortRoute
+                        ),
                         routePatterns: [TestData.getRoutePattern(id: "67-4-0")],
                         stopIds: ["14121"],
                         upcomingTrips: [],
@@ -226,8 +231,7 @@ final class NearbyTransitViewTests: XCTestCase {
                         subwayServiceStartTime: nil,
                         alertsDownstream: [],
                         context: .nearbyTransit
-                    )],
-                    globalData: GlobalResponse(objects: objects)
+                    )]
                 )],
                 at: now
             )],

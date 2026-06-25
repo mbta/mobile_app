@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -25,14 +26,7 @@ class StopSubheaderTest {
         val stop = objects.stop {}
 
         composeTestRule.setContent {
-            StopSubheader(
-                RouteCardData.RouteStopData(
-                    LineOrRoute.Route(route),
-                    stop,
-                    emptyList(),
-                    emptyList(),
-                )
-            )
+            StopSubheader(RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()))
         }
         composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
     }
@@ -47,14 +41,7 @@ class StopSubheaderTest {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            StopSubheader(
-                RouteCardData.RouteStopData(
-                    LineOrRoute.Route(route),
-                    stop,
-                    emptyList(),
-                    emptyList(),
-                )
-            )
+            StopSubheader(RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()))
         }
         composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
         composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertDoesNotExist()
@@ -70,14 +57,7 @@ class StopSubheaderTest {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            StopSubheader(
-                RouteCardData.RouteStopData(
-                    LineOrRoute.Route(route),
-                    stop,
-                    emptyList(),
-                    emptyList(),
-                )
-            )
+            StopSubheader(RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()))
         }
         composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
         composeTestRule.onNodeWithText("Not accessible").assertIsDisplayed()
@@ -104,12 +84,11 @@ class StopSubheaderTest {
                 RouteCardData.RouteStopData(
                     lineOrRoute,
                     stop,
-                    emptyList(),
                     listOf(
                         RouteCardData.Leaf(
                             lineOrRoute,
                             stop,
-                            0,
+                            Direction(0, route),
                             emptyList(),
                             emptySet(),
                             emptyList(),

@@ -5,7 +5,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlinx.serialization.Serializable
 
 @Serializable
-public data class Direction(var name: String?, var destination: String?, var id: Int) {
+public data class Direction(val name: String?, val destination: String?, val id: Int) {
     /**
      * This constructor is used to provide additional context to a Direction to allow for overriding
      * the destination label in cases where a route or line has branching. We want to display a

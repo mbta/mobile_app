@@ -54,7 +54,7 @@ class StopCardDataTest {
             RouteCardData.Leaf(
                 ol,
                 ruggles,
-                0,
+                Direction(0, ol.route),
                 listOf(objects.getRoutePattern("Orange-3-0")),
                 ruggles.childStopIds.toSet(),
                 upcomingTrips = emptyList(),
@@ -70,7 +70,7 @@ class StopCardDataTest {
             RouteCardData.Leaf(
                 ol,
                 ruggles,
-                1,
+                Direction(1, ol.route),
                 listOf(objects.getRoutePattern("Orange-3-1")),
                 ruggles.childStopIds.toSet(),
                 upcomingTrips = emptyList(),
@@ -86,7 +86,7 @@ class StopCardDataTest {
             RouteCardData.Leaf(
                 bus43,
                 ruggles,
-                1,
+                Direction(1, bus43.route),
                 listOf(bus43Inbound),
                 ruggles.childStopIds.toSet(),
                 upcomingTrips = emptyList(),
@@ -102,7 +102,7 @@ class StopCardDataTest {
             RouteCardData.Leaf(
                 bus43,
                 tremontAtMelneaCass,
-                1,
+                Direction(1, bus43.route),
                 listOf(bus43Inbound),
                 setOf(tremontAtMelneaCass.id),
                 upcomingTrips = emptyList(),
@@ -118,7 +118,7 @@ class StopCardDataTest {
             RouteCardData.Leaf(
                 gl,
                 boylston,
-                0,
+                Direction(null, null, 0),
                 listOf(
                     objects.getRoutePattern("Green-B-812-0"),
                     objects.getRoutePattern("Green-C-832-0"),
@@ -144,7 +144,6 @@ class StopCardDataTest {
                             ol,
                             ruggles,
                             listOf(olSouthboundLeaf, olNorthboundLeaf),
-                            global,
                         )
                     ),
                     now,
@@ -152,26 +151,18 @@ class StopCardDataTest {
                 RouteCardData(
                     bus43,
                     listOf(
-                        RouteCardData.RouteStopData(
-                            bus43,
-                            ruggles,
-                            listOf(bus43RugglesLeaf),
-                            global,
-                        ),
+                        RouteCardData.RouteStopData(bus43, ruggles, listOf(bus43RugglesLeaf)),
                         RouteCardData.RouteStopData(
                             bus43,
                             tremontAtMelneaCass,
                             listOf(bus43TremontAtMelneaCassLeaf),
-                            global,
                         ),
                     ),
                     now,
                 ),
                 RouteCardData(
                     gl,
-                    listOf(
-                        RouteCardData.RouteStopData(gl, boylston, listOf(glWestboundLeaf), global)
-                    ),
+                    listOf(RouteCardData.RouteStopData(gl, boylston, listOf(glWestboundLeaf))),
                     now,
                 ),
             )

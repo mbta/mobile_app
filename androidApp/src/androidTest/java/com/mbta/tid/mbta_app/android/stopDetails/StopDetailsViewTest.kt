@@ -13,6 +13,7 @@ import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -139,7 +140,7 @@ class StopDetailsViewTest {
                                             RouteCardData.Leaf(
                                                 lineOrRoute,
                                                 stop,
-                                                directionId = 0,
+                                                Direction(0, route),
                                                 listOf(routePatternOne),
                                                 setOf(stop.id),
                                                 listOf(UpcomingTrip(trip, prediction)),
@@ -152,7 +153,6 @@ class StopDetailsViewTest {
                                                     RouteCardData.Context.StopDetailsUnfiltered,
                                             )
                                         ),
-                                        global,
                                     )
                                 ),
                                 now,
@@ -208,7 +208,7 @@ class StopDetailsViewTest {
                                 RouteCardData.Leaf(
                                     lineOrRoute,
                                     stop,
-                                    directionId = 0,
+                                    Direction(0, route),
                                     listOf(routePatternOne),
                                     setOf(stop.id),
                                     listOf(UpcomingTrip(trip, prediction)),
@@ -220,7 +220,6 @@ class StopDetailsViewTest {
                                     context = RouteCardData.Context.StopDetailsFiltered,
                                 )
                             ),
-                            global,
                         ),
                     )
                 )
@@ -291,7 +290,7 @@ class StopDetailsViewTest {
                                             RouteCardData.Leaf(
                                                 lineOrRoute,
                                                 stop,
-                                                directionId = 0,
+                                                Direction(0, route),
                                                 listOf(routePatternOne),
                                                 setOf(stop.id),
                                                 listOf(UpcomingTrip(trip, prediction)),
@@ -304,7 +303,6 @@ class StopDetailsViewTest {
                                                     RouteCardData.Context.StopDetailsUnfiltered,
                                             )
                                         ),
-                                        global,
                                     )
                                 ),
                                 now,
@@ -374,7 +372,7 @@ class StopDetailsViewTest {
                                 RouteCardData.Leaf(
                                     lineOrRoute,
                                     stop,
-                                    directionId = 0,
+                                    Direction(0, route),
                                     listOf(routePatternOne),
                                     setOf(stop.id),
                                     listOf(UpcomingTrip(trip, prediction)),
@@ -386,7 +384,6 @@ class StopDetailsViewTest {
                                     context = RouteCardData.Context.StopDetailsFiltered,
                                 )
                             ),
-                            global,
                         ),
                     ),
                     mapOf(

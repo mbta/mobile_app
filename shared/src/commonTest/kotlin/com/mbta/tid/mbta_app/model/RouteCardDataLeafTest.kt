@@ -46,7 +46,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     LineOrRoute.Route(route),
                     objects.stop(),
-                    0,
+                    Direction(0, route),
                     emptyList(),
                     emptySet(),
                     emptyList(),
@@ -101,7 +101,7 @@ class RouteCardDataLeafTest {
                 RouteCardData.Leaf(
                         LineOrRoute.Route(route),
                         objects.stop(),
-                        0,
+                        Direction(0, route),
                         emptyList(),
                         emptySet(),
                         emptyList(),
@@ -151,7 +151,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     LineOrRoute.Route(route),
                     objects.stop(),
-                    0,
+                    Direction(0, route),
                     emptyList(),
                     emptySet(),
                     listOf(upcomingTrip),
@@ -225,7 +225,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     LineOrRoute.Route(route),
                     objects.stop(),
-                    0,
+                    Direction(0, route),
                     emptyList(),
                     emptySet(),
                     listOf(upcomingTrip),
@@ -281,7 +281,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     LineOrRoute.Route(route),
                     objects.stop(),
-                    0,
+                    Direction(0, route),
                     emptyList(),
                     emptySet(),
                     listOf(upcomingTrip),
@@ -341,7 +341,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     LineOrRoute.Route(route),
                     objects.stop(),
-                    0,
+                    Direction(0, route),
                     emptyList(),
                     emptySet(),
                     listOf(upcomingTrip),
@@ -396,7 +396,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     LineOrRoute.Route(route),
                     objects.stop(),
-                    0,
+                    Direction(0, route),
                     emptyList(),
                     emptySet(),
                     listOf(upcomingTrip),
@@ -447,7 +447,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     LineOrRoute.Route(route),
                     objects.stop(),
-                    0,
+                    Direction(0, route),
                     emptyList(),
                     emptySet(),
                     listOf(upcomingTrip),
@@ -478,7 +478,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     LineOrRoute.Route(route),
                     objects.stop(),
-                    0,
+                    Direction(0, route),
                     emptyList(),
                     emptySet(),
                     emptyList(),
@@ -513,7 +513,7 @@ class RouteCardDataLeafTest {
                 RouteCardData.Leaf(
                         LineOrRoute.Route(route),
                         objects.stop(),
-                        0,
+                        Direction(0, route),
                         emptyList(),
                         emptySet(),
                         emptyList(),
@@ -553,7 +553,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     LineOrRoute.Route(route),
                     objects.stop(),
-                    0,
+                    Direction(0, route),
                     emptyList(),
                     emptySet(),
                     listOf(objects.upcomingTrip(schedule)),
@@ -637,7 +637,7 @@ class RouteCardDataLeafTest {
                 RouteCardData.Leaf(
                         LineOrRoute.Route(route),
                         stop,
-                        0,
+                        Direction(0, route),
                         listOf(patternTypicalA, patternTypicalB, patternAtypicalA),
                         setOf(stop.id) + stop.childStopIds,
                         listOf(objects.upcomingTrip(schedule)),
@@ -686,7 +686,7 @@ class RouteCardDataLeafTest {
                 RouteCardData.Leaf(
                         LineOrRoute.Route(route),
                         objects.stop(),
-                        0,
+                        Direction(0, route),
                         emptyList(),
                         emptySet(),
                         listOf(objects.upcomingTrip(schedule)),
@@ -713,7 +713,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     LineOrRoute.Route(route),
                     objects.stop(),
-                    0,
+                    Direction(0, route),
                     listOf(pattern),
                     emptySet(),
                     emptyList(),
@@ -770,7 +770,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     LineOrRoute.Route(route),
                     objects.stop(),
-                    0,
+                    Direction(0, route),
                     emptyList(),
                     emptySet(),
                     listOf(upcomingTrip1, upcomingTrip2),
@@ -829,7 +829,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     LineOrRoute.Route(subwayRoute),
                     objects.stop(),
-                    0,
+                    Direction(0, subwayRoute),
                     emptyList(),
                     emptySet(),
                     listOf(upcomingTrip1, upcomingTrip2),
@@ -867,7 +867,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     LineOrRoute.Route(busRoute),
                     objects.stop(),
-                    0,
+                    Direction(0, busRoute),
                     emptyList(),
                     emptySet(),
                     listOf(upcomingTrip1, upcomingTrip2),
@@ -898,7 +898,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     LineOrRoute.Route(route),
                     objects.stop(),
-                    0,
+                    Direction(0, route),
                     emptyList(),
                     emptySet(),
                     emptyList(),
@@ -1014,7 +1014,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     RedLine.lineOrRoute,
                     RedLine.jfkUmass.itself,
-                    0,
+                    Direction(0, RedLine.route),
                     listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
                     setOf(RedLine.jfkUmass.south1.id, RedLine.jfkUmass.south2.id),
                     listOf(
@@ -1114,7 +1114,7 @@ class RouteCardDataLeafTest {
                 RouteCardData.Leaf(
                         RedLine.lineOrRoute,
                         RedLine.jfkUmass.itself,
-                        0,
+                        Direction(0, RedLine.route),
                         listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
                         setOf(RedLine.jfkUmass.south1.id, RedLine.jfkUmass.south2.id),
                         listOf(
@@ -1185,7 +1185,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     RedLine.lineOrRoute,
                     RedLine.jfkUmass.itself,
-                    1,
+                    Direction(1, RedLine.route),
                     listOf(RedLine.ashmontNorth, RedLine.braintreeNorth),
                     setOf(RedLine.jfkUmass.north1.id, RedLine.jfkUmass.north2.id),
                     listOf(
@@ -1272,7 +1272,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     RedLine.lineOrRoute,
                     RedLine.jfkUmass.itself,
-                    0,
+                    Direction(0, RedLine.route),
                     listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
                     setOf(RedLine.jfkUmass.south1.id, RedLine.jfkUmass.south2.id),
                     listOf(
@@ -1374,7 +1374,7 @@ class RouteCardDataLeafTest {
                 RouteCardData.Leaf(
                         RedLine.lineOrRoute,
                         RedLine.jfkUmass.itself,
-                        0,
+                        Direction(0, RedLine.route),
                         listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
                         setOf(RedLine.jfkUmass.south1.id, RedLine.jfkUmass.south2.id),
                         listOf(
@@ -1497,7 +1497,7 @@ class RouteCardDataLeafTest {
                 RouteCardData.Leaf(
                         RedLine.lineOrRoute,
                         RedLine.jfkUmass.itself,
-                        0,
+                        Direction(0, RedLine.route),
                         listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
                         setOf(RedLine.jfkUmass.south1.id, RedLine.jfkUmass.south2.id),
                         listOf(
@@ -1574,7 +1574,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     RedLine.lineOrRoute,
                     RedLine.jfkUmass.itself,
-                    1,
+                    Direction(1, RedLine.route),
                     listOf(RedLine.ashmontNorth, RedLine.braintreeNorth),
                     setOf(RedLine.jfkUmass.north1.id, RedLine.jfkUmass.north2.id),
                     listOf(
@@ -1655,7 +1655,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     LineOrRoute.Route(route),
                     objects.stop(),
-                    0,
+                    Direction(0, route),
                     emptyList(),
                     emptySet(),
                     listOf(upcomingTrip1, upcomingTrip2, upcomingTrip3),
@@ -1770,7 +1770,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     LineOrRoute.Route(route),
                     objects.stop(),
-                    0,
+                    Direction(0, route),
                     emptyList(),
                     emptySet(),
                     listOf(
@@ -1895,7 +1895,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     GreenLine.lineOrRoute,
                     GreenLine.boylston,
-                    0,
+                    Direction(null, null, 0),
                     listOf(
                         GreenLine.bWestbound,
                         GreenLine.cWestbound,
@@ -1971,7 +1971,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     GreenLine.lineOrRoute,
                     GreenLine.reservoir,
-                    0,
+                    Direction(null, null, 0),
                     listOf(GreenLine.dWestbound),
                     emptySet(),
                     listOf(
@@ -2105,7 +2105,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     ProvidenceStoughtonLine.lineOrRoute,
                     ProvidenceStoughtonLine.ruggles,
-                    0,
+                    Direction(0, ProvidenceStoughtonLine.route),
                     listOf(
                         ProvidenceStoughtonLine.toProvidence,
                         ProvidenceStoughtonLine.toStoughton,
@@ -2184,7 +2184,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     ProvidenceStoughtonLine.lineOrRoute,
                     ProvidenceStoughtonLine.ruggles,
-                    1,
+                    Direction(1, ProvidenceStoughtonLine.route),
                     listOf(
                         ProvidenceStoughtonLine.fromProvidence,
                         ProvidenceStoughtonLine.fromStoughton,
@@ -2271,7 +2271,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     `87`.lineOrRoute,
                     objects.stop(),
-                    0,
+                    Direction(0, `87`.route),
                     listOf(`87`.outboundTypical, `87`.outboundDeviation),
                     emptySet(),
                     listOf(
@@ -2360,7 +2360,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     `87`.lineOrRoute,
                     objects.stop(),
-                    0,
+                    Direction(0, `87`.route),
                     listOf(`87`.outboundTypical, `87`.outboundDeviation),
                     emptySet(),
                     listOf(
@@ -2431,7 +2431,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     `87`.lineOrRoute,
                     objects.stop(),
-                    0,
+                    Direction(0, `87`.route),
                     listOf(`87`.outboundTypical, `87`.outboundDeviation),
                     emptySet(),
                     listOf(
@@ -2501,7 +2501,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     `87`.lineOrRoute,
                     objects.stop(),
-                    0,
+                    Direction(0, `87`.route),
                     listOf(`87`.outboundTypical, `87`.outboundDeviation),
                     emptySet(),
                     listOf(
@@ -2566,7 +2566,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                     `87`.lineOrRoute,
                     objects.stop(),
-                    0,
+                    Direction(0, `87`.route),
                     listOf(`87`.outboundTypical, `87`.outboundDeviation),
                     emptySet(),
                     listOf(objects.upcomingTrip(prediction1), objects.upcomingTrip(prediction2)),
@@ -2628,7 +2628,7 @@ class RouteCardDataLeafTest {
                 RouteCardData.Leaf(
                         RedLine.lineOrRoute,
                         objects.stop(),
-                        0,
+                        Direction(0, RedLine.route),
                         listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
                         emptySet(),
                         listOf(
@@ -2661,7 +2661,7 @@ class RouteCardDataLeafTest {
                 RouteCardData.Leaf(
                         RedLine.lineOrRoute,
                         objects.stop(),
-                        0,
+                        Direction(0, RedLine.route),
                         listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
                         emptySet(),
                         emptyList(),
@@ -2743,7 +2743,7 @@ class RouteCardDataLeafTest {
                 RouteCardData.Leaf(
                         GreenLine.lineOrRoute,
                         GreenLine.boylston,
-                        0,
+                        Direction(null, null, 0),
                         listOf(
                             GreenLine.bWestbound,
                             GreenLine.cWestbound,
@@ -2793,7 +2793,7 @@ class RouteCardDataLeafTest {
                 RouteCardData.Leaf(
                         GreenLine.lineOrRoute,
                         GreenLine.boylston,
-                        0,
+                        Direction(null, null, 0),
                         listOf(
                             GreenLine.bWestbound,
                             GreenLine.cWestbound,
@@ -2891,7 +2891,7 @@ class RouteCardDataLeafTest {
                 RouteCardData.Leaf(
                         GreenLine.lineOrRoute,
                         GreenLine.kenmore,
-                        0,
+                        Direction(null, null, 0),
                         listOf(
                             GreenLine.bWestbound,
                             GreenLine.cWestbound,
@@ -2988,7 +2988,7 @@ class RouteCardDataLeafTest {
                 RouteCardData.Leaf(
                         GreenLine.lineOrRoute,
                         GreenLine.kenmore,
-                        0,
+                        Direction(null, null, 0),
                         listOf(
                             GreenLine.bWestbound,
                             GreenLine.cWestbound,
@@ -3089,7 +3089,7 @@ class RouteCardDataLeafTest {
                 RouteCardData.Leaf(
                         GreenLine.lineOrRoute,
                         GreenLine.boylston,
-                        0,
+                        Direction(null, null, 0),
                         listOf(
                             GreenLine.bWestbound,
                             GreenLine.cWestbound,
@@ -3174,7 +3174,7 @@ class RouteCardDataLeafTest {
                 RouteCardData.Leaf(
                         GreenLine.lineOrRoute,
                         GreenLine.boylston,
-                        0,
+                        Direction(null, null, 0),
                         listOf(
                             GreenLine.bWestbound,
                             GreenLine.cWestbound,
@@ -3276,7 +3276,7 @@ class RouteCardDataLeafTest {
                 RouteCardData.Leaf(
                         LineOrRoute.Route(route),
                         stop1,
-                        0,
+                        Direction(0, route),
                         listOf(rp1, rp2),
                         setOf(stop1.id),
                         listOf(UpcomingTrip(representativeTrip, schedule)),
@@ -3313,7 +3313,7 @@ class RouteCardDataLeafTest {
             RouteCardData.Leaf(
                 LineOrRoute.Route(route),
                 stop,
-                directionId = 0,
+                direction = Direction(0, route),
                 routePatterns = emptyList(),
                 stopIds = emptySet(),
                 upcomingTrips = listOf(),

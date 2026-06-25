@@ -18,10 +18,20 @@ final class WorldCupBlurbTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let sut = WorldCupBlurb(
-            leaf: .init(lineOrRoute: .Route(route: WorldCupService.shared.route), stop: stop, directionId: 0,
-                        routePatterns: [WorldCupService.shared.routePatternOutbound], stopIds: [], upcomingTrips: [],
-                        alertsHere: [], allDataLoaded: true, hasSchedulesToday: false, subwayServiceStartTime: nil,
-                        alertsDownstream: [], context: .nearbyTransit),
+            leaf: .init(
+                lineOrRoute: .Route(route: WorldCupService.shared.route),
+                stop: stop,
+                direction: .init(directionId: 0, route: WorldCupService.shared.route),
+                routePatterns: [WorldCupService.shared.routePatternOutbound],
+                stopIds: [],
+                upcomingTrips: [],
+                alertsHere: [],
+                allDataLoaded: true,
+                hasSchedulesToday: false,
+                subwayServiceStartTime: nil,
+                alertsDownstream: [],
+                context: .nearbyTransit
+            ),
             routeAccents: .init(route: WorldCupService.shared.route),
             offerDetails: false
         )
@@ -33,10 +43,20 @@ final class WorldCupBlurbTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let sut = WorldCupBlurb(
-            leaf: .init(lineOrRoute: .Route(route: WorldCupService.shared.route), stop: stop, directionId: 1,
-                        routePatterns: [WorldCupService.shared.routePatternInbound], stopIds: [], upcomingTrips: [],
-                        alertsHere: [], allDataLoaded: true, hasSchedulesToday: false, subwayServiceStartTime: nil,
-                        alertsDownstream: [], context: .nearbyTransit),
+            leaf: .init(
+                lineOrRoute: .Route(route: WorldCupService.shared.route),
+                stop: stop,
+                direction: .init(directionId: 1, route: WorldCupService.shared.route),
+                routePatterns: [WorldCupService.shared.routePatternInbound],
+                stopIds: [],
+                upcomingTrips: [],
+                alertsHere: [],
+                allDataLoaded: true,
+                hasSchedulesToday: false,
+                subwayServiceStartTime: nil,
+                alertsDownstream: [],
+                context: .nearbyTransit
+            ),
             routeAccents: .init(route: WorldCupService.shared.route),
             offerDetails: false
         )
@@ -48,10 +68,20 @@ final class WorldCupBlurbTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let sut = WorldCupBlurb(
-            leaf: .init(lineOrRoute: .Route(route: WorldCupService.shared.route), stop: stop, directionId: 0,
-                        routePatterns: [WorldCupService.shared.routePatternOutbound], stopIds: [], upcomingTrips: [],
-                        alertsHere: [], allDataLoaded: true, hasSchedulesToday: false, subwayServiceStartTime: nil,
-                        alertsDownstream: [], context: .nearbyTransit),
+            leaf: .init(
+                lineOrRoute: .Route(route: WorldCupService.shared.route),
+                stop: stop,
+                direction: .init(directionId: 0, route: WorldCupService.shared.route),
+                routePatterns: [WorldCupService.shared.routePatternOutbound],
+                stopIds: [],
+                upcomingTrips: [],
+                alertsHere: [],
+                allDataLoaded: true,
+                hasSchedulesToday: false,
+                subwayServiceStartTime: nil,
+                alertsDownstream: [],
+                context: .nearbyTransit
+            ),
             routeAccents: .init(route: WorldCupService.shared.route),
             offerDetails: false
         )
@@ -62,10 +92,20 @@ final class WorldCupBlurbTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let sut = WorldCupBlurb(
-            leaf: .init(lineOrRoute: .Route(route: WorldCupService.shared.route), stop: stop, directionId: 0,
-                        routePatterns: [WorldCupService.shared.routePatternOutbound], stopIds: [], upcomingTrips: [],
-                        alertsHere: [], allDataLoaded: true, hasSchedulesToday: false, subwayServiceStartTime: nil,
-                        alertsDownstream: [], context: .nearbyTransit),
+            leaf: .init(
+                lineOrRoute: .Route(route: WorldCupService.shared.route),
+                stop: stop,
+                direction: .init(directionId: 0, route: WorldCupService.shared.route),
+                routePatterns: [WorldCupService.shared.routePatternOutbound],
+                stopIds: [],
+                upcomingTrips: [],
+                alertsHere: [],
+                allDataLoaded: true,
+                hasSchedulesToday: false,
+                subwayServiceStartTime: nil,
+                alertsDownstream: [],
+                context: .nearbyTransit
+            ),
             routeAccents: .init(route: WorldCupService.shared.route),
             offerDetails: true
         )

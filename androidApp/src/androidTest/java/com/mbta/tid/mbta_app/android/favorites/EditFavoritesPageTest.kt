@@ -200,12 +200,11 @@ class EditFavoritesPageTest : KoinTest {
                 RouteCardData.RouteStopData(
                     lineOrRoute,
                     sampleStop,
-                    listOf(Direction(0, route)),
                     listOf(
                         RouteCardData.Leaf(
                             lineOrRoute,
                             sampleStop,
-                            0,
+                            Direction(0, route),
                             listOf(routePatternOne),
                             setOf(sampleStop.id),
                             listOf(UpcomingTrip(trip1, prediction)),
@@ -229,12 +228,11 @@ class EditFavoritesPageTest : KoinTest {
                 RouteCardData.RouteStopData(
                     greenLineOrRoute,
                     greenLineStop,
-                    listOf(Direction(0, greenLineRoute)),
                     listOf(
                         RouteCardData.Leaf(
                             greenLineOrRoute,
                             greenLineStop,
-                            0,
+                            Direction(0, greenLineRoute),
                             listOf(greenLineRoutePatternOne),
                             setOf(greenLineStop.id),
                             listOf(UpcomingTrip(greenLineTrip, greenLinePrediction)),

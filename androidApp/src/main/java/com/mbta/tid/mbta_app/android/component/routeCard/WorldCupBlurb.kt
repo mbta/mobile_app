@@ -38,6 +38,7 @@ import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsFilteredDeparturesVi
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -67,7 +68,7 @@ fun WorldCupBlurb(leaf: RouteCardData.Leaf, routeAccents: TripRouteAccents, offe
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(
                     AnnotatedString.fromHtml(
-                        if (leaf.directionId == 0)
+                        if (leaf.direction.id == 0)
                             stringResource(R.string.world_cup_service_outbound)
                         else stringResource(R.string.world_cup_service_inbound)
                     ),
@@ -135,7 +136,7 @@ private fun WorldCupBlurbNearbyPreview() {
                         RouteCardData.Leaf(
                             LineOrRoute.Route(route),
                             stop,
-                            directionId = 0,
+                            direction = Direction(0, route),
                             routePatterns = emptyList(),
                             stopIds = emptySet(),
                             upcomingTrips = emptyList(),
@@ -147,7 +148,6 @@ private fun WorldCupBlurbNearbyPreview() {
                             RouteCardData.Context.NearbyTransit,
                         )
                     ),
-                    global,
                 )
             ),
             EasternTimeInstant.now(),
@@ -185,7 +185,7 @@ private fun WorldCupBlurbStopDetailsPreview() {
                         RouteCardData.Leaf(
                             LineOrRoute.Route(route),
                             stop,
-                            directionId = 0,
+                            direction = Direction(0, route),
                             routePatterns = emptyList(),
                             stopIds = emptySet(),
                             upcomingTrips = emptyList(),
@@ -197,7 +197,6 @@ private fun WorldCupBlurbStopDetailsPreview() {
                             RouteCardData.Context.NearbyTransit,
                         )
                     ),
-                    global,
                 )
             ),
             EasternTimeInstant.now(),
@@ -220,7 +219,7 @@ private fun WorldCupBlurbStopDetailsPreview() {
             StopDetailsFilter(route.id, 0),
             tripFilter = null,
             leaf = data.stopData.single().data.single(),
-            selectedDirection = data.stopData.single().directions.first(),
+            selectedDirection = data.stopData.single().data.first().direction,
             allAlerts = null,
             now = EasternTimeInstant.now(),
             updateTripFilter = {},

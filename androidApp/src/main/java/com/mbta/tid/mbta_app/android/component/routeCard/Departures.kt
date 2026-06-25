@@ -27,6 +27,7 @@ import com.mbta.tid.mbta_app.android.component.PillDecoration
 import com.mbta.tid.mbta_app.android.generated.drawableByName
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
+import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LeafFormat
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -63,7 +64,7 @@ fun Departures(
                         RouteStopDirection(
                             stopData.lineOrRoute.id,
                             stopData.stop.id,
-                            leaf.directionId,
+                            leaf.direction.id,
                         )
                     ) ?: false,
                     leaf.alertsHere().isNotEmpty(),
@@ -73,7 +74,7 @@ fun Departures(
             }
 
             val formatted = leaf.format(now, globalData)
-            val direction = stopData.directions.first { it.id == leaf.directionId }
+            val direction = leaf.direction
 
             NavDrilldownRow(
                 onClick = {
@@ -195,7 +196,7 @@ private fun DeparturesPreview() {
                 RouteCardData.Leaf(
                     lineOrRoute,
                     jfkUmass,
-                    0,
+                    Direction(0, redLine),
                     listOf(redLineAshmontSouthbound, redLineBraintreeSouthbound),
                     setOf(jfkUmass.id),
                     listOf(
@@ -228,7 +229,7 @@ private fun DeparturesPreview() {
                 RouteCardData.Leaf(
                     lineOrRoute,
                     jfkUmass,
-                    1,
+                    Direction(1, redLine),
                     listOf(redLineAshmontNorthbound, redLineBraintreeNorthbound),
                     setOf(jfkUmass.id),
                     listOf(
@@ -253,7 +254,6 @@ private fun DeparturesPreview() {
                     context,
                 ),
             ),
-            global,
         )
 
     MyApplicationTheme {

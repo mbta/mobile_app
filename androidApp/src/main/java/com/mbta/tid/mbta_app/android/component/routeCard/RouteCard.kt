@@ -56,7 +56,7 @@ fun RouteCard(
     RouteCardContainer(data = data, showStopHeader = showStopHeader) {
         Departures(it, globalData, now, { routeStopDirection -> isFavorite(routeStopDirection) }) {
             leaf ->
-            onOpenStopDetails(it.stop.id, StopDetailsFilter(data.lineOrRoute.id, leaf.directionId))
+            onOpenStopDetails(it.stop.id, StopDetailsFilter(data.lineOrRoute.id, leaf.direction.id))
         }
     }
 }
