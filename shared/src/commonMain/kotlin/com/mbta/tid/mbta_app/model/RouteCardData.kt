@@ -12,8 +12,6 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
 import kotlin.jvm.JvmName
 import kotlin.math.max
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -638,21 +636,12 @@ public data class RouteCardData(
                 // annoying
                 if (globalData == null) return@withContext null
 
-                val hideNonTypicalPatternsBeyondNext: Duration? =
-                    when (context) {
-                        Context.NearbyTransit -> 120.minutes
-                        Context.StopDetailsUnfiltered -> 120.minutes
-                        Context.StopDetailsFiltered,
-                        Context.Favorites -> null
-                    }
-
-                val cutoffTime = hideNonTypicalPatternsBeyondNext?.let { now + it }
                 val allDataLoaded = schedules != null
 
                 ListBuilder(allDataLoaded, context, now)
                     .addStaticStopsData(stopIds, globalData, context, alerts, favorites)
                     .addUpcomingTrips(schedules, predictions, now, globalData, alerts)
-                    .filterIrrelevantData(now, cutoffTime, context, globalData)
+                    .filterIrrelevantData(now, null, context, globalData)
                     .addAlerts(
                         alerts,
                         includeMinorAlerts = context.isStopDetails(),
@@ -1029,15 +1018,15 @@ public data class RouteCardData(
 
             val showAllPatternsWhileLoading = context.isStopDetails()
             for (entry in this.data) {
-                val (routeOrLineId, byStopId) = entry
+                val (_, byStopId) = entry
                 for (stopEntry in byStopId.stopData) {
-                    val (stopId, byDirectionId) = stopEntry
+                    val (_, byDirectionId) = stopEntry
                     val lineOrRoute = byStopId.lineOrRoute
 
                     byDirectionId.data =
                         byDirectionId.data
                             .filter {
-                                val (directionId, leafBuilder) = it
+                                val (_, leafBuilder) = it
                                 leafBuilder.shouldShow(
                                     byDirectionId.stop,
                                     filterAtTime,
@@ -1048,7 +1037,7 @@ public data class RouteCardData(
                                 )
                             }
                             .mapValues {
-                                val (directionId, leafBuilder) = it
+                                val (_, leafBuilder) = it
                                 leafBuilder.filterArrivalOnly()
                             }
                 }

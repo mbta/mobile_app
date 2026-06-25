@@ -2518,7 +2518,7 @@ class RouteCardDataTest {
         }
 
     @Test
-    fun `RouteCardData routeCardsForStopList hides rare direction with no predictions in next 120 min`() =
+    fun `RouteCardData routeCardsForStopList shows rare direction with no predictions in next 120 min`() =
         runBlocking {
             val objects = ObjectCollectionBuilder()
 
@@ -2595,7 +2595,24 @@ class RouteCardDataTest {
                                             subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
-                                        )
+                                        ),
+                                        RouteCardData.Leaf(
+                                            lineOrRoute = lineOrRoute1,
+                                            stop = stop1,
+                                            direction = Direction(1, route1),
+                                            routePatterns = listOf(deviationInbound),
+                                            stopIds = setOf(stop1.id),
+                                            upcomingTrips =
+                                                listOf(
+                                                    objects.upcomingTrip(deviationInboundPrediction)
+                                                ),
+                                            alertsHere = emptyList(),
+                                            allDataLoaded = false,
+                                            hasSchedulesToday = false,
+                                            subwayServiceStartTime = null,
+                                            alertsDownstream = emptyList(),
+                                            context = context,
+                                        ),
                                     ),
                                 )
                             ),
@@ -3282,6 +3299,7 @@ class RouteCardDataTest {
             val objects = ObjectCollectionBuilder()
 
             val stop1 = objects.stop()
+            val stop2 = objects.stop()
 
             val route1 = objects.route()
             val route2 = objects.route()
@@ -3304,7 +3322,7 @@ class RouteCardDataTest {
                     sortOrder = 2
                     representativeTrip { headsign = "Schedule Soon" }
                 }
-            // exclude, schedule too late
+            // include, schedule too late
             val scheduleLater =
                 objects.routePattern(route2) {
                     sortOrder = 3
@@ -3330,7 +3348,7 @@ class RouteCardDataTest {
                     sortOrder = 6
                     representativeTrip { headsign = "Prediction Soon" }
                 }
-            // exclude, prediction later
+            // include, prediction later
             val predictionLater =
                 objects.routePattern(route4) {
                     sortOrder = 7
@@ -3375,9 +3393,10 @@ class RouteCardDataTest {
                     trip = objects.trip(scheduleLater)
                     departureTime = time + 121.minutes
                 }
+            // stop id has to be different to current stop otherwise is considered boarding
             val predictionPastPrediction =
                 objects.prediction {
-                    stopId = stop1.id
+                    stopId = stop2.id
                     trip = objects.trip(predictionPast)
                     departureTime = time - 1.minutes
                 }
@@ -3409,7 +3428,9 @@ class RouteCardDataTest {
                 }
 
             val lineOrRoute1 = LineOrRoute.Route(route1)
+            val lineOrRoute2 = LineOrRoute.Route(route2)
             val lineOrRoute3 = LineOrRoute.Route(route3)
+            val lineOrRoute4 = LineOrRoute.Route(route4)
             assertEquals(
                 listOf(
                     RouteCardData(
@@ -3432,6 +3453,34 @@ class RouteCardDataTest {
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
                                             subwayServiceStartTime = scheduleSoonSchedule.stopTime,
+                                            alertsDownstream = emptyList(),
+                                            context = context,
+                                        )
+                                    ),
+                                )
+                            ),
+                        time,
+                    ),
+                    RouteCardData(
+                        lineOrRoute = lineOrRoute2,
+                        stopData =
+                            listOf(
+                                RouteCardData.RouteStopData(
+                                    route2,
+                                    stop1,
+                                    listOf(
+                                        RouteCardData.Leaf(
+                                            lineOrRoute = lineOrRoute2,
+                                            stop = stop1,
+                                            Direction(0, route2),
+                                            routePatterns = listOf(scheduleLater),
+                                            stopIds = setOf(stop1.id),
+                                            upcomingTrips =
+                                                listOf(objects.upcomingTrip(scheduleLaterSchedule)),
+                                            alertsHere = emptyList(),
+                                            allDataLoaded = true,
+                                            hasSchedulesToday = true,
+                                            subwayServiceStartTime = scheduleLaterSchedule.stopTime,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )
@@ -3485,6 +3534,36 @@ class RouteCardDataTest {
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         ),
+                                    ),
+                                )
+                            ),
+                        time,
+                    ),
+                    RouteCardData(
+                        lineOrRoute = lineOrRoute4,
+                        stopData =
+                            listOf(
+                                RouteCardData.RouteStopData(
+                                    route4,
+                                    stop1,
+                                    listOf(
+                                        RouteCardData.Leaf(
+                                            lineOrRoute = lineOrRoute4,
+                                            stop = stop1,
+                                            Direction(0, route4),
+                                            routePatterns = listOf(predictionLater),
+                                            stopIds = setOf(stop1.id),
+                                            upcomingTrips =
+                                                listOf(
+                                                    objects.upcomingTrip(predictionLaterPrediction)
+                                                ),
+                                            alertsHere = emptyList(),
+                                            allDataLoaded = true,
+                                            hasSchedulesToday = false,
+                                            subwayServiceStartTime = null,
+                                            alertsDownstream = emptyList(),
+                                            context = context,
+                                        )
                                     ),
                                 )
                             ),
