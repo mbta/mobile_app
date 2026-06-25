@@ -106,12 +106,7 @@ public object LoadingPlaceholders {
                 context = context,
             )
 
-        val stopData =
-            RouteCardData.RouteStopData(
-                lineOrRoute,
-                stop,
-                listOf(leaf1, leaf2),
-            )
+        val stopData = RouteCardData.RouteStopData(lineOrRoute, stop, listOf(leaf1, leaf2))
 
         val routeData = RouteCardData(lineOrRoute, stopData = listOf(stopData), now)
 

@@ -86,10 +86,11 @@ public object StopDetailsUtils {
         val selectedRoute =
             routeCardData?.firstOrNull { it.lineOrRoute.id == stopFilter.routeId } ?: return null
         val selectedStop = selectedRoute.stopData.singleOrNull() ?: return null
-        val selectedLeaf = selectedStop.data.find { it.direction.id == stopFilter.directionId } ?: return null
-        val trip = selectedLeaf.upcomingTrips.find { it.trip.id == previousFilters.tripFilter?.tripId }
-        val destination =
-            trip?.trip?.headsign ?: selectedLeaf.direction.destination
+        val selectedLeaf =
+            selectedStop.data.find { it.direction.id == stopFilter.directionId } ?: return null
+        val trip =
+            selectedLeaf.upcomingTrips.find { it.trip.id == previousFilters.tripFilter?.tripId }
+        val destination = trip?.trip?.headsign ?: selectedLeaf.direction.destination
 
         return ScreenReaderContext(
             selectedRoute.lineOrRoute.type,

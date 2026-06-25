@@ -716,9 +716,7 @@ public data class RouteCardData(
                                                 "route" to route,
                                                 "emptyStops" to
                                                     emptyStops.map { stop ->
-                                                        mapOf(
-                                                            "stop" to stop.id,
-                                                        )
+                                                        mapOf("stop" to stop.id)
                                                     },
                                             ),
                                     )
@@ -1108,11 +1106,7 @@ public data class RouteCardData(
         ) : this(LineOrRoute.Line(line, routes), stop, data)
 
         fun build(): RouteStopData {
-            return RouteStopData(
-                lineOrRoute,
-                stop,
-                data.values.map { it.build() }.sort(),
-            )
+            return RouteStopData(lineOrRoute, stop, data.values.map { it.build() }.sort())
         }
     }
 

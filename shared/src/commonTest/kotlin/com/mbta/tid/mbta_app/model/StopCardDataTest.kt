@@ -151,11 +151,7 @@ class StopCardDataTest {
                 RouteCardData(
                     bus43,
                     listOf(
-                        RouteCardData.RouteStopData(
-                            bus43,
-                            ruggles,
-                            listOf(bus43RugglesLeaf),
-                        ),
+                        RouteCardData.RouteStopData(bus43, ruggles, listOf(bus43RugglesLeaf)),
                         RouteCardData.RouteStopData(
                             bus43,
                             tremontAtMelneaCass,
@@ -166,9 +162,7 @@ class StopCardDataTest {
                 ),
                 RouteCardData(
                     gl,
-                    listOf(
-                        RouteCardData.RouteStopData(gl, boylston, listOf(glWestboundLeaf))
-                    ),
+                    listOf(RouteCardData.RouteStopData(gl, boylston, listOf(glWestboundLeaf))),
                     now,
                 ),
             )
