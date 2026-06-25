@@ -77,7 +77,7 @@ struct AnnotatedMap: View {
             ))
             .mapStyle(.init(uri: appVariant.styleUri(colorScheme: colorScheme)))
             .debugOptions(settingsCache.get(.devDebugMode) ? .camera : [])
-            .cameraBounds(.init(maxZoom: 18, minZoom: 6))
+            .cameraBounds(.init(maxZoom: 18, minZoom: 7.5))
             .onCameraChanged { change in handleCameraChange(change) }
             .ornamentOptions(.init(
                 scaleBar: .init(visibility: .hidden),
