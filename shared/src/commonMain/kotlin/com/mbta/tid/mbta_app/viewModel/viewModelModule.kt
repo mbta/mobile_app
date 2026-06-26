@@ -77,5 +77,5 @@ public fun viewModelModule(): Module = module {
             )
         }
         .bind(ITripDetailsViewModel::class)
-    single { MoreViewModel(get(named("coroutineDispatcherIO")), get(), get()) }
+    single { MoreViewModel(get(named("coroutineDispatcherIO")), get(), get(), get()) }
 }

@@ -11,6 +11,7 @@ public enum class SharedString {
     MapDisplay,
     MTicketApp,
     Notifications,
+    PingSentry,
     PrivacyPolicy,
     ResourcesSection,
     RouteSearch,

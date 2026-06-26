@@ -58,6 +58,7 @@ extension SharedString {
                 "Disruption Notifications",
                 comment: "A setting on the More page to enable the disruption notification beta"
             )
+        case .pingSentry: "Ping Sentry" // dev only, no i18n
         case .privacyPolicy:
             NSLocalizedString(
                 "Privacy Policy",

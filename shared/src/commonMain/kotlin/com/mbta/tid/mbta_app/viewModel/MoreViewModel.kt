@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.model.morePage.MoreItem
 import com.mbta.tid.mbta_app.model.morePage.MoreSection
 import com.mbta.tid.mbta_app.model.morePage.feedbackFormUrl
 import com.mbta.tid.mbta_app.repositories.IOnboardingRepository
+import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.repositories.ISubscriptionsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.SharedString
@@ -17,6 +18,7 @@ public class MoreViewModel(
     private val coroutineDispatcher: CoroutineDispatcher,
     private val subscriptionsRepository: ISubscriptionsRepository,
     private val onboardingRepository: IOnboardingRepository,
+    private val sentryRepository: ISentryRepository,
 ) {
 
     public fun getSections(
@@ -116,6 +118,15 @@ public class MoreViewModel(
                                 CoroutineScope(coroutineDispatcher).launch {
                                     onboardingRepository.notificationsBetaResetAndForce()
                                 }
+                            },
+                        ),
+                        MoreItem.Action(
+                            label = SharedString.PingSentry,
+                            action = {
+                                sentryRepository.captureException(
+                                    Throwable("Debug Test: ${platform.name}")
+                                )
+                                sentryRepository.captureMessage("Debug Test: ${platform.name}")
                             },
                         ),
                     ),

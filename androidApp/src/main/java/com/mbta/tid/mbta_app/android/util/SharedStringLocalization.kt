@@ -21,6 +21,7 @@ val SharedString.value: String
             SharedString.MapDisplay -> stringResource(R.string.setting_toggle_map_display)
             SharedString.MTicketApp -> stringResource(R.string.resources_link_mticket_note)
             SharedString.Notifications -> stringResource(R.string.notifications_beta_toggle_label)
+            SharedString.PingSentry -> "Ping Sentry"
             SharedString.PrivacyPolicy -> stringResource(R.string.other_link_privacy_policy)
             SharedString.ResourcesSection -> stringResource(R.string.more_section_resources)
             SharedString.RouteSearch -> stringResource(R.string.feature_flag_route_search)
