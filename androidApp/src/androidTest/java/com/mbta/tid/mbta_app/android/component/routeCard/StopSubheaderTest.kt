@@ -26,7 +26,10 @@ class StopSubheaderTest {
         val stop = objects.stop {}
 
         composeTestRule.setContent {
-            StopSubheader(RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()))
+            StopSubheader(
+                RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
+                includeIcon = false,
+            )
         }
         composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
     }
@@ -41,7 +44,10 @@ class StopSubheaderTest {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            StopSubheader(RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()))
+            StopSubheader(
+                RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
+                includeIcon = false,
+            )
         }
         composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
         composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertDoesNotExist()
@@ -57,7 +63,10 @@ class StopSubheaderTest {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            StopSubheader(RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()))
+            StopSubheader(
+                RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
+                includeIcon = false,
+            )
         }
         composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
         composeTestRule.onNodeWithText("Not accessible").assertIsDisplayed()
@@ -100,7 +109,8 @@ class StopSubheaderTest {
                             RouteCardData.Context.StopDetailsUnfiltered,
                         )
                     ),
-                )
+                ),
+                includeIcon = false,
             )
         }
         composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()

@@ -118,6 +118,10 @@ public class MoreViewModel(
                                 }
                             },
                         ),
+                        MoreItem.Toggle(
+                            label = SharedString.FavoritesByStop,
+                            settings = Settings.FavoritesByStop,
+                        ),
                     ),
             ),
             MoreSection(

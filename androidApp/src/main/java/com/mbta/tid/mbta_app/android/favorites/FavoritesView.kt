@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.favorites
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -23,9 +24,12 @@ import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.NavTextButton
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardList
+import com.mbta.tid.mbta_app.android.component.stopCard.StopCardList
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.contrastTranslucent
 import com.mbta.tid.mbta_app.android.util.timer
+import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
@@ -57,6 +61,7 @@ fun FavoritesView(
     val state by favoritesViewModel.models.collectAsState()
 
     val notificationsEnabled = SettingsCache.get(Settings.Notifications)
+    val groupByStop = SettingsCache.get(Settings.FavoritesByStop)
 
     fun onAddFavorites() {
         favoritesViewModel.setIsFirstExposureToNewFavorites(false)
@@ -118,6 +123,20 @@ fun FavoritesView(
     }
 
     val routeCardData = state.routeCardData
+    val stopCardData = state.stopCardData
+
+    val chosenCardData = if (groupByStop) stopCardData else routeCardData
+
+    val emptyView: @Composable ColumnScope.() -> Unit = {
+        NoFavoritesView(::onAddFavorites)
+        Spacer(Modifier.weight(1f))
+    }
+    val isFavorite = { rsd: RouteStopDirection ->
+        (state.favorites?.keys ?: emptySet()).contains(rsd)
+    }
+    val onOpenStopDetails = { stopId: String, filter: StopDetailsFilter? ->
+        openSheetRoute(SheetRoutes.StopDetails(stopId, filter, null))
+    }
 
     Column {
         SheetHeader(
@@ -130,7 +149,7 @@ fun FavoritesView(
                 ),
             rightActionContents = {
                 Row(Modifier, Arrangement.spacedBy(8.dp), Alignment.CenterVertically) {
-                    if (!routeCardData.isNullOrEmpty()) {
+                    if (!chosenCardData.isNullOrEmpty()) {
                         ActionButton(
                             ActionButtonKind.Plus,
                             colors = ButtonDefaults.contrastTranslucent(),
@@ -156,18 +175,24 @@ fun FavoritesView(
 
         ErrorBanner(errorBannerViewModel, modifier = Modifier.padding(top = 8.dp))
         DebugView(content = {})
-        RouteCardList(
-            routeCardData = routeCardData,
-            emptyView = {
-                NoFavoritesView(::onAddFavorites)
-                Spacer(Modifier.weight(1f))
-            },
-            global = globalResponse,
-            now = now,
-            isFavorite = { rsd -> (state.favorites?.keys ?: emptySet()).contains(rsd) },
-            onOpenStopDetails = { stopId, filter ->
-                openSheetRoute(SheetRoutes.StopDetails(stopId, filter, null))
-            },
-        )
+        if (groupByStop) {
+            StopCardList(
+                stopCardData = stopCardData,
+                emptyView = { emptyView() },
+                global = globalResponse,
+                now = now,
+                isFavorite = isFavorite,
+                onOpenStopDetails = onOpenStopDetails,
+            )
+        } else {
+            RouteCardList(
+                routeCardData = routeCardData,
+                emptyView = { emptyView() },
+                global = globalResponse,
+                now = now,
+                isFavorite = isFavorite,
+                onOpenStopDetails = onOpenStopDetails,
+            )
+        }
     }
 }

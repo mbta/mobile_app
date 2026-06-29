@@ -16,6 +16,7 @@ val SharedString.value: String
                 stringResource(R.string.resources_link_mticket)
             SharedString.DebugMode -> stringResource(R.string.feature_flag_debug_mode)
             SharedString.FareInformation -> stringResource(R.string.resources_link_fare_info)
+            SharedString.FavoritesByStop -> "Group favorites by stop"
             SharedString.FeatureFlagsSection -> stringResource(R.string.more_section_feature_flags)
             SharedString.ForceNotificationsBeta -> "Reset and force notifications beta"
             SharedString.MapDisplay -> stringResource(R.string.setting_toggle_map_display)

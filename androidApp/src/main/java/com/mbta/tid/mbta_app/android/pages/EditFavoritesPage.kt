@@ -62,6 +62,7 @@ import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.LoadingRouteCard
 import com.mbta.tid.mbta_app.android.component.routeCard.StopSubheader
 import com.mbta.tid.mbta_app.android.component.routeCard.TransitHeader
+import com.mbta.tid.mbta_app.android.component.stopCard.LoadingStopCard
 import com.mbta.tid.mbta_app.android.favorites.NoFavoritesView
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
@@ -73,8 +74,10 @@ import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.LeafFormat
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.model.StopCardData
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
@@ -97,6 +100,7 @@ fun EditFavoritesPage(
     val state by favoritesViewModel.models.collectAsState()
     val resources = LocalResources.current
     val currentLocale = stringResource(R.string.current_locale)
+    val groupByStop = SettingsCache.get(Settings.FavoritesByStop)
 
     val removeToastText = stringResource(R.string.favorites_toast_remove)
     val removeToastFallbackText = stringResource(R.string.favorites_toast_remove_fallback)
@@ -111,10 +115,14 @@ fun EditFavoritesPage(
     // to make deletion animations work nicely, we persist the first staticRouteCardData we saw, and
     // then we visually hide things that are no longer in the favorites
     var firstStaticRouteCardData by remember { mutableStateOf<List<RouteCardData>?>(null) }
+    var firstStaticStopCardData by remember { mutableStateOf<List<StopCardData>?>(null) }
     val firstDataFavorites =
-        firstStaticRouteCardData.orEmpty().flatMap { it.routeStopDirections }.toSet()
+        if (groupByStop)
+            firstStaticStopCardData.orEmpty().flatMap { it.routeStopDirections }.toSet()
+        else firstStaticRouteCardData.orEmpty().flatMap { it.routeStopDirections }.toSet()
     val currentDataFavorites =
-        state.staticRouteCardData.orEmpty().flatMap { it.routeStopDirections }
+        if (groupByStop) state.staticStopCardData.orEmpty().flatMap { it.routeStopDirections }
+        else state.staticRouteCardData.orEmpty().flatMap { it.routeStopDirections }
     val removedFavorites = firstDataFavorites - currentDataFavorites
     // to avoid breaking creation, we reset the staticRouteCardData if anything appears that we
     // didn’t already know about
@@ -124,6 +132,13 @@ fun EditFavoritesPage(
                 !firstDataFavorites.containsAll(currentDataFavorites))
     ) {
         firstStaticRouteCardData = state.staticRouteCardData
+    }
+    if (
+        state.staticStopCardData != null &&
+            (firstStaticStopCardData == null ||
+                !firstDataFavorites.containsAll(currentDataFavorites))
+    ) {
+        firstStaticStopCardData = state.staticStopCardData
     }
 
     LaunchedEffect(Unit) { favoritesViewModel.setContext(FavoritesViewModel.Context.Edit) }
@@ -136,60 +151,73 @@ fun EditFavoritesPage(
             navCallbacks = navCallbacks,
             buttonColors = ButtonDefaults.key(),
         )
-        EditFavoritesList(
-            state.favorites,
-            firstStaticRouteCardData,
-            removedFavorites,
-            global,
-            deleteFavorite = { deletedFavorite ->
-                val deletedSettings = state.favorites?.get(deletedFavorite) ?: FavoriteSettings()
-                favoritesViewModel.updateFavorites(
-                    mapOf(deletedFavorite to null),
-                    EditFavoritesContext.Favorites,
-                    deletedFavorite.direction,
-                    fcmToken,
-                    currentLocale,
-                )
+        val deleteFavorite: (RouteStopDirection) -> Unit = { deletedFavorite ->
+            val deletedSettings = state.favorites?.get(deletedFavorite) ?: FavoriteSettings()
+            favoritesViewModel.updateFavorites(
+                mapOf(deletedFavorite to null),
+                EditFavoritesContext.Favorites,
+                deletedFavorite.direction,
+                fcmToken,
+                currentLocale,
+            )
 
-                toastViewModel.showToast(
-                    ToastViewModel.Toast(
-                        getToastLabel(deletedFavorite),
-                        duration = ToastViewModel.Duration.Short,
-                        action =
-                            ToastViewModel.ToastAction.Custom(
-                                actionLabel = removeToastUndoButtonText,
-                                onAction = {
-                                    favoritesViewModel.updateFavorites(
-                                        mapOf(deletedFavorite to deletedSettings),
-                                        EditFavoritesContext.Favorites,
-                                        deletedFavorite.direction,
-                                        fcmToken,
-                                        currentLocale,
-                                    )
-                                    toastViewModel.hideToast()
-                                },
-                            ),
-                    )
+            toastViewModel.showToast(
+                ToastViewModel.Toast(
+                    getToastLabel(deletedFavorite),
+                    duration = ToastViewModel.Duration.Short,
+                    action =
+                        ToastViewModel.ToastAction.Custom(
+                            actionLabel = removeToastUndoButtonText,
+                            onAction = {
+                                favoritesViewModel.updateFavorites(
+                                    mapOf(deletedFavorite to deletedSettings),
+                                    EditFavoritesContext.Favorites,
+                                    deletedFavorite.direction,
+                                    fcmToken,
+                                    currentLocale,
+                                )
+                                toastViewModel.hideToast()
+                            },
+                        ),
                 )
-            },
-            editFavorite = { selectedFavorite ->
-                openModalWithCloseCallback(
-                    ModalRoutes.SaveFavorite(
-                        selectedFavorite.route,
-                        selectedFavorite.stop,
-                        selectedFavorite.direction,
-                        EditFavoritesContext.Favorites,
-                    )
-                ) {
-                    favoritesViewModel.reloadFavorites()
-                }
-            },
-        )
+            )
+        }
+        val editFavorite: (RouteStopDirection) -> Unit = { selectedFavorite ->
+            openModalWithCloseCallback(
+                ModalRoutes.SaveFavorite(
+                    selectedFavorite.route,
+                    selectedFavorite.stop,
+                    selectedFavorite.direction,
+                    EditFavoritesContext.Favorites,
+                )
+            ) {
+                favoritesViewModel.reloadFavorites()
+            }
+        }
+        if (groupByStop) {
+            EditFavoritesList(
+                state.favorites,
+                firstStaticStopCardData,
+                removedFavorites,
+                global,
+                deleteFavorite = deleteFavorite,
+                editFavorite = editFavorite,
+            )
+        } else {
+            EditFavoritesListGroupedByRoute(
+                state.favorites,
+                firstStaticRouteCardData,
+                removedFavorites,
+                global,
+                deleteFavorite = deleteFavorite,
+                editFavorite = editFavorite,
+            )
+        }
     }
 }
 
 @Composable
-private fun EditFavoritesList(
+private fun EditFavoritesListGroupedByRoute(
     favorites: Map<RouteStopDirection, FavoriteSettings>?,
     routeCardData: List<RouteCardData>?,
     removedFavorites: Set<RouteStopDirection>,
@@ -233,11 +261,13 @@ private fun EditFavoritesList(
                             stopData.data.any { leaf ->
                                 !removedFavorites.contains(leaf.routeStopDirection)
                             }
-                        AnimatedVisibility(visible = visible) { StopSubheader(stopData) }
+                        AnimatedVisibility(visible = visible) {
+                            StopSubheader(stopData, includeIcon = false)
+                        }
 
                         FavoriteDepartures(
                             favorites,
-                            stopData,
+                            stopData.data,
                             removedFavorites,
                             global,
                             { leaf -> deleteFavorite(leaf.routeStopDirection) },
@@ -258,18 +288,80 @@ private fun EditFavoritesList(
 }
 
 @Composable
+private fun EditFavoritesList(
+    favorites: Map<RouteStopDirection, FavoriteSettings>?,
+    stopCardData: List<StopCardData>?,
+    removedFavorites: Set<RouteStopDirection>,
+    global: GlobalResponse?,
+    deleteFavorite: (RouteStopDirection) -> Unit,
+    editFavorite: (RouteStopDirection) -> Unit,
+) {
+    val notificationsFlag = SettingsCache.get(Settings.Notifications)
+
+    val displayedFavorites =
+        stopCardData?.filter { data -> !removedFavorites.containsAll(data.routeStopDirections) }
+
+    if (displayedFavorites == null) {
+        CompositionLocalProvider(IsLoadingSheetContents provides true) {
+            ScrollSeparatorLazyColumn(
+                contentPadding =
+                    PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                items(5) { LoadingStopCard() }
+                item { Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars)) }
+            }
+        }
+    } else if (displayedFavorites.isEmpty()) {
+        ScrollSeparatorColumn(Modifier.padding(8.dp).navigationBarsPadding(), Arrangement.Center) {
+            NoFavoritesView({}, false)
+        }
+    } else {
+        ScrollSeparatorLazyColumn(
+            contentPadding = PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            items(displayedFavorites, key = { it.stop.id }) {
+                Column(Modifier.animateItem().haloContainer(1.dp)) {
+                    StopSubheader(it.stop, it.elevatorAlerts, includeIcon = true)
+
+                    FavoriteDepartures(
+                        favorites,
+                        it.data,
+                        removedFavorites,
+                        global,
+                        { leaf -> deleteFavorite(leaf.routeStopDirection) },
+                    ) { leaf ->
+                        val selectedFavorite = leaf.routeStopDirection
+                        if (notificationsFlag) {
+                            editFavorite(selectedFavorite)
+                        } else {
+                            deleteFavorite(selectedFavorite)
+                        }
+                    }
+                }
+            }
+            item { Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars)) }
+        }
+    }
+}
+
+@Composable
 private fun FavoriteDepartures(
     favorites: Map<RouteStopDirection, FavoriteSettings>?,
-    stopData: RouteCardData.RouteStopData,
+    leaves: List<RouteCardData.Leaf>,
     removedFavorites: Set<RouteStopDirection>,
     globalData: GlobalResponse?,
     onDrag: (RouteCardData.Leaf) -> Unit,
     onClick: (RouteCardData.Leaf) -> Unit,
 ) {
     val notificationsFlag = SettingsCache.get(Settings.Notifications)
+    val groupByStop = SettingsCache.get(Settings.FavoritesByStop)
 
     Column {
-        stopData.data.withIndex().forEach { (index, leaf) ->
+        leaves.withIndex().forEach { (index, leaf) ->
             val formatted = leaf.format(EasternTimeInstant.now(), globalData)
             val direction = leaf.direction
             val overriddenClickLabel = stringResource(R.string.delete)
@@ -337,6 +429,13 @@ private fun FavoriteDepartures(
                                     }
                                 }
                     ) {
+                        if (groupByStop) {
+                            RoutePill(
+                                (leaf.lineOrRoute as? LineOrRoute.Route)?.route,
+                                (leaf.lineOrRoute as? LineOrRoute.Line)?.line,
+                                type = RoutePillType.Fixed,
+                            )
+                        }
                         when (formatted) {
                             is LeafFormat.Single -> {
                                 Column(
@@ -351,11 +450,11 @@ private fun FavoriteDepartures(
                                     ) {
                                         DirectionLabel(
                                             direction,
+                                            modifier = Modifier.weight(1f),
                                             pillDecoration =
                                                 formatted.route?.let {
                                                     PillDecoration.OnDirectionDestination(it)
                                                 },
-                                            modifier = Modifier.weight(1f),
                                         )
                                         rightContent()
                                     }
@@ -383,7 +482,7 @@ private fun FavoriteDepartures(
                     }
                 }
 
-                if (index < stopData.data.lastIndex) {
+                if (index < leaves.lastIndex) {
                     HaloSeparator()
                 }
             }

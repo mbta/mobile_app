@@ -15,17 +15,20 @@ struct DirectionLabel: View {
     let showDestination: Bool
     let pillDecoration: PredictionRowView.PillDecoration
     let isTitle: Bool
+    let routeNamePrefix: String?
 
     init(
         direction: Direction,
         showDestination: Bool = true,
         pillDecoration: PredictionRowView.PillDecoration = .none,
-        isTitle: Bool = false
+        isTitle: Bool = false,
+        routeNamePrefix: String? = nil,
     ) {
         self.direction = direction
         self.showDestination = showDestination
         self.pillDecoration = pillDecoration
         self.isTitle = isTitle
+        self.routeNamePrefix = routeNamePrefix
     }
 
     private static let localizedDirectionNames: [String: String] = [
@@ -44,15 +47,16 @@ struct DirectionLabel: View {
 
     @ViewBuilder
     func directionTo(_ direction: Direction) -> some View {
-        Text("\(DirectionLabel.directionNameFormatted(direction)) to",
-             comment: """
-             Label the direction a list of arrivals is for.
-             Possible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound.
-             For example, "[Northbound] to [Alewife]"
-             """)
-             .font(Typography.footnote)
-             .textCase(.none)
-             .multilineTextAlignment(.leading)
+        let routeNamePrefix = if let routeNamePrefix { "\(routeNamePrefix) " } else { "" }
+        let directionTo = String(format: NSLocalizedString("%@ to", comment: """
+        Label the direction a list of arrivals is for.
+        Possible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound.
+        For example, "[Northbound] to [Alewife]"
+        """), Self.directionNameFormatted(direction))
+        Text(routeNamePrefix + directionTo)
+            .font(Typography.footnote)
+            .textCase(.none)
+            .multilineTextAlignment(.leading)
     }
 
     @ViewBuilder

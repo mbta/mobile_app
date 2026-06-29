@@ -38,6 +38,7 @@ internal class SettingsRepositoryTest : KoinTest {
         assertEquals(
             mapOf(
                 Settings.DevDebugMode to true,
+                Settings.FavoritesByStop to false,
                 Settings.HideMaps to false,
                 Settings.Notifications to false,
                 Settings.SearchRouteResults to false,
