@@ -202,7 +202,7 @@ fun HomeMapView(
                         return@addOnMapClickListener false
                     }
                     map.mapboxMap.setBounds(
-                        CameraBoundsOptions.Builder().maxZoom(18.0).minZoom(6.0).build()
+                        CameraBoundsOptions.Builder().maxZoom(18.0).minZoom(7.5).build()
                     )
                     map.location.setLocationProvider(locationProvider)
                     map.location.updateSettings {
