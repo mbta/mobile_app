@@ -358,6 +358,7 @@ private fun FavoriteDepartures(
     onClick: (RouteCardData.Leaf) -> Unit,
 ) {
     val notificationsFlag = SettingsCache.get(Settings.Notifications)
+    val groupByStop = SettingsCache.get(Settings.FavoritesByStop)
 
     Column {
         leaves.withIndex().forEach { (index, leaf) ->
@@ -428,11 +429,13 @@ private fun FavoriteDepartures(
                                     }
                                 }
                     ) {
-                        RoutePill(
-                            (leaf.lineOrRoute as? LineOrRoute.Route)?.route,
-                            (leaf.lineOrRoute as? LineOrRoute.Line)?.line,
-                            type = RoutePillType.Fixed,
-                        )
+                        if (groupByStop) {
+                            RoutePill(
+                                (leaf.lineOrRoute as? LineOrRoute.Route)?.route,
+                                (leaf.lineOrRoute as? LineOrRoute.Line)?.line,
+                                type = RoutePillType.Fixed,
+                            )
+                        }
                         when (formatted) {
                             is LeafFormat.Single -> {
                                 Column(

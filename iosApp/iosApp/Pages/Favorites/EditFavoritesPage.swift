@@ -263,6 +263,7 @@ struct FavoriteDepartures: View {
     let onClick: (RouteCardData.Leaf) -> Void
 
     @EnvironmentObject var settingsCache: SettingsCache
+    var groupByStop: Bool { settingsCache.get(.favoritesByStop) }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -272,11 +273,13 @@ struct FavoriteDepartures: View {
                 let favoriteSettings: FavoriteSettings? = favorites[leaf.routeStopDirection] ?? nil
 
                 HStack(alignment: .center, spacing: 0) {
-                    RoutePill(
-                        route: (leaf.lineOrRoute as? LineOrRoute.Route)?.route,
-                        line: (leaf.lineOrRoute as? LineOrRoute.Line)?.line,
-                        type: .fixed
-                    )
+                    if groupByStop {
+                        RoutePill(
+                            route: (leaf.lineOrRoute as? LineOrRoute.Route)?.route,
+                            line: (leaf.lineOrRoute as? LineOrRoute.Line)?.line,
+                            type: .fixed
+                        )
+                    }
                     switch onEnum(of: formatted) {
                     case let .single(single):
                         HStack(alignment: .center, spacing: 8) {

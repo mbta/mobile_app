@@ -48,15 +48,15 @@ struct DirectionLabel: View {
     @ViewBuilder
     func directionTo(_ direction: Direction) -> some View {
         let routeNamePrefix = if let routeNamePrefix { "\(routeNamePrefix) " } else { "" }
-        Text(routeNamePrefix + NSLocalizedString("\(DirectionLabel.directionNameFormatted(direction)) to",
-                                                 comment: """
-                                                 Label the direction a list of arrivals is for.
-                                                 Possible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound.
-                                                 For example, "[Northbound] to [Alewife]"
-                                                 """))
-                                                 .font(Typography.footnote)
-                                                 .textCase(.none)
-                                                 .multilineTextAlignment(.leading)
+        let directionTo = String(format: NSLocalizedString("%@ to", comment: """
+        Label the direction a list of arrivals is for.
+        Possible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound.
+        For example, "[Northbound] to [Alewife]"
+        """), Self.directionNameFormatted(direction))
+        Text(routeNamePrefix + directionTo)
+            .font(Typography.footnote)
+            .textCase(.none)
+            .multilineTextAlignment(.leading)
     }
 
     @ViewBuilder
