@@ -54,11 +54,11 @@ fun StopSubheader(stop: Stop, elevatorAlerts: List<Alert>, includeIcon: Boolean)
                     else R.drawable.stop_bus
                 ),
                 null,
-                Modifier.width(24.dp),
+                Modifier.placeholderIfLoading().width(24.dp),
             )
         }
         Column(
-            modifier = Modifier.height(IntrinsicSize.Min).padding(start = 8.dp),
+            modifier = Modifier.height(IntrinsicSize.Min).padding(start = 12.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalAlignment = Alignment.Start,
         ) {

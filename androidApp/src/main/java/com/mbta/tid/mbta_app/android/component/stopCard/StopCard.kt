@@ -113,7 +113,7 @@ fun Departures(
                     analyticsTappedDeparture(formatted)
                 },
                 onClickLabel = stringResource(R.string.open_for_more_arrivals),
-                modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp),
+                modifier = Modifier.padding(vertical = 10.dp).padding(start = 8.dp, end = 16.dp),
             ) { modifier ->
                 val branchedNoRoutePills =
                     formatted is LeafFormat.Branched &&
@@ -122,7 +122,7 @@ fun Departures(
                     RoutePill(
                         (leaf.lineOrRoute as? LineOrRoute.Route)?.route,
                         (leaf.lineOrRoute as? LineOrRoute.Line)?.line,
-                        RoutePillType.Fixed,
+                        RoutePillType.FlexCompact,
                     )
                 }
                 Column(

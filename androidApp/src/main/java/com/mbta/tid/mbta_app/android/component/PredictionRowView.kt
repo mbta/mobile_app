@@ -55,21 +55,28 @@ fun PredictionRowView(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (pillDecoration is PillDecoration.OnRow) {
-            RoutePill(
-                pillDecoration.route,
-                line = null,
-                RoutePillType.Flex,
-                modifier =
-                    if (predictions.warningAlert == null) Modifier.padding(end = 8.dp) else Modifier,
-            )
-        }
-        predictions.warningAlert?.let { warningAlert ->
-            Image(
-                painterResource(drawableByName(warningAlert.iconName)),
-                stringResource(R.string.alert),
-                modifier = Modifier.placeholderIfLoading().padding(end = 8.dp),
-            )
+        Row(modifier = Modifier.padding(end = 8.dp)) {
+            if (pillDecoration is PillDecoration.OnRow) {
+                Row(horizontalArrangement = Arrangement.spacedBy(-8.dp)) {
+                    RoutePill(pillDecoration.route, line = null, RoutePillType.FlexCompact)
+
+                    predictions.warningAlert?.let { warningAlert ->
+                        Image(
+                            painterResource(drawableByName(warningAlert.iconName)),
+                            stringResource(R.string.alert),
+                            modifier = Modifier.placeholderIfLoading(),
+                        )
+                    }
+                }
+            } else {
+                predictions.warningAlert?.let { warningAlert ->
+                    Image(
+                        painterResource(drawableByName(warningAlert.iconName)),
+                        stringResource(R.string.alert),
+                        modifier = Modifier.placeholderIfLoading(),
+                    )
+                }
+            }
         }
 
         Column(modifier = DestinationPredictionBalance.destinationWidth()) { destination() }
