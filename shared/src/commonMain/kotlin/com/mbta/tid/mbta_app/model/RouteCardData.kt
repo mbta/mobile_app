@@ -1184,14 +1184,20 @@ public data class RouteCardData(
             val isBus = lineOrRoute.type == RouteType.BUS
             val isSubway = lineOrRoute.isSubway
 
-            // Only take the next 2 (if bus) or 3 upcoming trips into account, since more than that
-            // can never be shown in nearby transit.
+            // Filter out trips in the past unless vehicle is at the stop or prediction has status
+            // and only take the next 2 (if bus) or 3 upcoming trips into account, since more than
+            // that can never be shown in nearby transit.
             val upcomingTripsInCutoff =
                 when (cutoffTime) {
-                    null -> this.upcomingTrips?.filter { it.isUpcoming() }
-                    else ->
-                        this.upcomingTrips?.filter { it.isUpcomingWithin(filterAtTime, cutoffTime) }
-                }?.take(if (isBus) TYPICAL_LEAF_ROWS else BRANCHING_LEAF_ROWS)
+                        null -> this.upcomingTrips?.filter { it.isUpcoming() }
+                        else -> this.upcomingTrips?.filter { it.isUpcomingWithin(cutoffTime) }
+                    }
+                    ?.filter {
+                        it.isInTheFuture(filterAtTime) ||
+                            it.isVehicleAtTheStop() ||
+                            it.doesPredictionHaveStatus()
+                    }
+                    ?.take(if (isBus) TYPICAL_LEAF_ROWS else BRANCHING_LEAF_ROWS)
 
             val hasUnseenUpcomingTrip =
                 upcomingTripsInCutoff?.any { upcomingTrip ->

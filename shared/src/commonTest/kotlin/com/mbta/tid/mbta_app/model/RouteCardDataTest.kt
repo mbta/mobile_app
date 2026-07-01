@@ -2534,7 +2534,6 @@ class RouteCardDataTest {
                     typicality = RoutePattern.Typicality.Typical
                     representativeTrip { headsign = "Typical Out" }
                 }
-            // should not be included because not typical and prediction beyond 120 minutes
             val deviationInbound =
                 objects.routePattern(route1) {
                     directionId = 1
@@ -2784,7 +2783,6 @@ class RouteCardDataTest {
                     typicality = RoutePattern.Typicality.Typical
                     representativeTrip { headsign = "Typical Out" }
                 }
-            // should not be included because not typical and prediction beyond 120 minutes
             val deviationOutbound =
                 objects.routePattern(route1) {
                     directionId = 0
@@ -3299,7 +3297,6 @@ class RouteCardDataTest {
             val objects = ObjectCollectionBuilder()
 
             val stop1 = objects.stop()
-            val stop2 = objects.stop()
 
             val route1 = objects.route()
             val route2 = objects.route()
@@ -3396,7 +3393,7 @@ class RouteCardDataTest {
             // stop id has to be different to current stop otherwise is considered boarding
             val predictionPastPrediction =
                 objects.prediction {
-                    stopId = stop2.id
+                    stopId = stop1.id
                     trip = objects.trip(predictionPast)
                     departureTime = time - 1.minutes
                 }
