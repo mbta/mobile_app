@@ -33,14 +33,18 @@ struct PredictionRowView: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            if let warningAlert = predictions.warningAlert {
-                Image(warningAlert.iconName)
-                    .accessibilityLabel("Alert")
-                    .frame(width: 18, height: 18)
-                    .padding(.trailing, 8)
-            }
             if case let .onRow(route) = pillDecoration {
-                RoutePill(route: route, type: .flex).padding(.trailing, 8)
+                RoutePill(route: route, type: .flexCompact).padding(.trailing, predictions.warningAlert == nil ? 8 : 0)
+                if let warningAlert = predictions.warningAlert {
+                    warningIcon(warningAlert)
+                        .padding(.leading, -8)
+                        .padding(.trailing, 8)
+                }
+            } else {
+                if let warningAlert = predictions.warningAlert {
+                    warningIcon(warningAlert)
+                        .padding(.trailing, 8)
+                }
             }
             AnyView(destination())
             Spacer(minLength: 8)
@@ -49,6 +53,13 @@ struct PredictionRowView: View {
         .background(Color.fill3)
         .frame(maxWidth: .infinity, minHeight: 24)
         .enableInjection()
+    }
+
+    @ViewBuilder
+    func warningIcon(_ warningAlert: UpcomingFormat.WarningAlert) -> some View {
+        Image(warningAlert.iconName)
+            .accessibilityLabel("Alert")
+            .frame(width: 18, height: 18)
     }
 
     @ViewBuilder

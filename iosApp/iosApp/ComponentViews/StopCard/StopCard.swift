@@ -87,7 +87,7 @@ struct StopCardDepartures: View {
                             route: (leaf.lineOrRoute as? LineOrRoute.Route)?.route,
                             line: (leaf.lineOrRoute as? LineOrRoute.Line)?.line,
                             type: .fixed
-                        )
+                        ).padding(.trailing, 8)
                     }
                     if leaf.lineOrRoute.id == WorldCupService.shared.route.id {
                         WorldCupBlurb(
@@ -104,8 +104,7 @@ struct StopCardDepartures: View {
                     }
                 }
                 .tint(.fill3)
-                .padding(.leading, 16)
-                .padding(.trailing, 8)
+                .padding(.horizontal, 8)
                 .padding(.vertical, 10)
                 .accessibilityHint(Text("Open for more arrivals"))
                 if index < stopData.data.count - 1 {
