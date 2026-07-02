@@ -317,7 +317,11 @@ public sealed class AlertSummary {
 
             val affectedStops = global.getAlertAffectedStops(alert, routes) ?: return null
 
-            if (alert.stopSkipped && affectedStops.isNotEmpty() && alert.isActive(atTime)) {
+            if (
+                alert.stopSkipped &&
+                    affectedStops.isNotEmpty() &&
+                    (alert.isActive(atTime) || alert.willBeActiveSoon(atTime))
+            ) {
                 return Location.AffectedStops(affectedStops.map { it.name })
             }
 
