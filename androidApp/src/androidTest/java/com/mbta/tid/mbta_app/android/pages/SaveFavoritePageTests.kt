@@ -1,10 +1,12 @@
 package com.mbta.tid.mbta_app.android.pages
 
+import android.os.Build
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.test.rule.GrantPermissionRule
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.FavoriteSettings
@@ -22,6 +24,11 @@ import org.junit.Test
 
 class SaveFavoritePageTests {
     @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule
+    val runtimePermissionRule =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            GrantPermissionRule.grant(android.Manifest.permission.POST_NOTIFICATIONS)
+        else GrantPermissionRule.grant()
 
     @Test
     fun testCloses() {
