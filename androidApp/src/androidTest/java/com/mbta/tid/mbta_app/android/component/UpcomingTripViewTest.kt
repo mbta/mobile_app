@@ -11,10 +11,10 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.onRoot
-import com.mbta.tid.mbta_app.android.assertContentDescriptionMatches
-import com.mbta.tid.mbta_app.android.assertHasColor
-import com.mbta.tid.mbta_app.android.hasContentDescriptionMatching
-import com.mbta.tid.mbta_app.android.hasTextMatching
+import com.mbta.tid.mbta_app.android.testUtils.assertContentDescriptionMatches
+import com.mbta.tid.mbta_app.android.testUtils.assertHasColor
+import com.mbta.tid.mbta_app.android.testUtils.hasContentDescriptionMatching
+import com.mbta.tid.mbta_app.android.testUtils.hasTextMatching
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
