@@ -65,7 +65,11 @@ class AlertDetailsTest {
         composeTestRule.onNodeWithText("Red Line Suspension").assertIsDisplayed()
         composeTestRule.onNodeWithText("Unruly Passenger").assertIsDisplayed()
         composeTestRule
-            .onNode(hasTextMatching(Regex("Wednesday, Jan 22, 10:35\\sAM")))
+            .onNode(
+                hasTextMatching(
+                    Regex("Wednesday, (Jan 22|22 Jan), 10:35\\sAM", RegexOption.IGNORE_CASE)
+                )
+            )
             .assertIsDisplayed()
         composeTestRule.onNodeWithText("3 affected stops").assertIsDisplayed()
         composeTestRule.onNodeWithText("3 affected stops").performClick()
@@ -79,7 +83,11 @@ class AlertDetailsTest {
         // as of probably API 34, this has a U+202F Narrow No-Break Space instead of U+0020 Space,
         // so to make the test work either way we need a regex
         composeTestRule
-            .onNode(hasTextMatching(Regex("Updated: 1/22/25, 10:36\\sAM")))
+            .onNode(
+                hasTextMatching(
+                    Regex("Updated: (0?1/22|22/0?1)/25, 10:36\\sAM", RegexOption.IGNORE_CASE)
+                )
+            )
             .assertIsDisplayed()
     }
 
@@ -109,7 +117,11 @@ class AlertDetailsTest {
         }
 
         composeTestRule
-            .onNode(hasTextMatching(Regex("Tuesday, Jul 29, 9:25\\sAM")))
+            .onNode(
+                hasTextMatching(
+                    Regex("Tuesday, (Jul 29|29 Jul), 9:25\\sAM", RegexOption.IGNORE_CASE)
+                )
+            )
             .assertIsDisplayed()
     }
 
@@ -138,9 +150,13 @@ class AlertDetailsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Tuesday, Jul 29, start of service").assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("Tuesday, (Jul 29|29 Jul), start of service")))
+            .assertIsDisplayed()
         composeTestRule.onNodeWithText("3:00", substring = true).assertDoesNotExist()
-        composeTestRule.onNodeWithText("Tuesday, Jul 29, end of service").assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("Tuesday, (Jul 29|29 Jul), end of service")))
+            .assertIsDisplayed()
         composeTestRule.onNodeWithText("2:59", substring = true).assertDoesNotExist()
     }
 
@@ -385,9 +401,13 @@ class AlertDetailsTest {
         }
 
         composeTestRule.onNodeWithText("Daily").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Fri, Jan 23 – Sun, Jan 25").assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("Fri, (Jan 23|23 Jan) – Sun, (Jan 25|25 Jan)")))
+            .assertIsDisplayed()
         composeTestRule.onNodeWithText("From").assertIsDisplayed()
-        composeTestRule.onNode(hasTextMatching(Regex("9:41\\sAM – 11:41\\sAM"))).assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("9:41\\sAM – 11:41\\sAM", RegexOption.IGNORE_CASE)))
+            .assertIsDisplayed()
     }
 
     @Test
@@ -421,7 +441,9 @@ class AlertDetailsTest {
         composeTestRule.onNodeWithText("Daily").assertIsDisplayed()
         composeTestRule.onNodeWithText("Until further notice").assertIsDisplayed()
         composeTestRule.onNodeWithText("From").assertIsDisplayed()
-        composeTestRule.onNode(hasTextMatching(Regex("9:41\\sAM – 11:41\\sAM"))).assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("9:41\\sAM – 11:41\\sAM", RegexOption.IGNORE_CASE)))
+            .assertIsDisplayed()
     }
 
     @Test
@@ -450,10 +472,14 @@ class AlertDetailsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("January 23 – January 25").assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("(January 23|23 January) – (January 25|25 January)")))
+            .assertIsDisplayed()
         composeTestRule.onNodeWithText("Sunday, Friday").assertIsDisplayed()
         composeTestRule.onNodeWithText("From").assertIsDisplayed()
-        composeTestRule.onNode(hasTextMatching(Regex("9:41\\sAM – 11:41\\sAM"))).assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("9:41\\sAM – 11:41\\sAM", RegexOption.IGNORE_CASE)))
+            .assertIsDisplayed()
     }
 
     @Test
@@ -486,10 +512,14 @@ class AlertDetailsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("May 4 – May 11").assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("(May 4|4 May) – (May 11|11 May)")))
+            .assertIsDisplayed()
         composeTestRule.onNodeWithText("Weekdays").assertIsDisplayed()
         composeTestRule.onNodeWithText("From").assertIsDisplayed()
-        composeTestRule.onNode(hasTextMatching(Regex("1:38\\sPM – 3:38\\sPM"))).assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("1:38\\sPM – 3:38\\sPM", RegexOption.IGNORE_CASE)))
+            .assertIsDisplayed()
     }
 
     @Test
@@ -519,10 +549,14 @@ class AlertDetailsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("May 3 – May 10").assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("(May 3|3 May) – (May 10|10 May)")))
+            .assertIsDisplayed()
         composeTestRule.onNodeWithText("Weekends").assertIsDisplayed()
         composeTestRule.onNodeWithText("From").assertIsDisplayed()
-        composeTestRule.onNode(hasTextMatching(Regex("1:38\\sPM – 3:38\\sPM"))).assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("1:38\\sPM – 3:38\\sPM", RegexOption.IGNORE_CASE)))
+            .assertIsDisplayed()
     }
 
     @Test

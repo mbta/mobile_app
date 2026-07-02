@@ -98,7 +98,9 @@ class TripStopRowTest {
             )
         }
 
-        composeTestRule.onNode(hasTextMatching(Regex("3:37\\sPM"))).assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("3:37\\sPM", RegexOption.IGNORE_CASE)))
+            .assertIsDisplayed()
     }
 
     @Test

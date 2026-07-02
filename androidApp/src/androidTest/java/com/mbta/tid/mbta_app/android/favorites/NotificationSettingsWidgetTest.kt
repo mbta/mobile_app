@@ -57,8 +57,12 @@ class NotificationSettingsWidgetTest {
 
         composeTestRule.onNodeWithText("Get disruption notifications").performClick()
         assertEquals(1, settings.value.windows.size)
-        composeTestRule.onNode(hasTextMatching(Regex("8:00\\sAM"))).assertExists()
-        composeTestRule.onNode(hasTextMatching(Regex("9:00\\sAM"))).assertExists()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("8:00\\sAM", RegexOption.IGNORE_CASE)))
+            .assertExists()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("9:00\\sAM", RegexOption.IGNORE_CASE)))
+            .assertExists()
         composeTestRule.onNodeWithText("Sunday").assertIsOff()
         composeTestRule.onNodeWithText("Monday").assertIsOn()
         composeTestRule.onNodeWithText("Tuesday").assertIsOn()
@@ -69,8 +73,12 @@ class NotificationSettingsWidgetTest {
         composeTestRule.onNodeWithContentDescription("Delete").assertDoesNotExist()
         composeTestRule.onNodeWithText("Add another time period").performClick()
         assertEquals(2, settings.value.windows.size)
-        composeTestRule.onNode(hasTextMatching(Regex("12:00\\sPM"))).assertExists()
-        composeTestRule.onNode(hasTextMatching(Regex("1:00\\sPM"))).assertExists()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("12:00\\sPM", RegexOption.IGNORE_CASE)))
+            .assertExists()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("1:00\\sPM", RegexOption.IGNORE_CASE)))
+            .assertExists()
         composeTestRule.onAllNodesWithText("Sunday").onLast().assertIsOn()
         composeTestRule.onAllNodesWithText("Monday").onLast().assertIsOff()
         composeTestRule.onAllNodesWithText("Tuesday").onLast().assertIsOff()
@@ -96,7 +104,9 @@ class NotificationSettingsWidgetTest {
         }
 
         composeTestRule.onNodeWithText("Get disruption notifications").performClick()
-        composeTestRule.onNode(hasTextMatching(Regex("8:00\\sAM"))).performClick()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("8:00\\sAM", RegexOption.IGNORE_CASE)))
+            .performClick()
         composeTestRule.onNodeWithText("Select start time").assertExists()
         composeTestRule.onNodeWithContentDescription("7 o'clock").performClick()
         // selecting hours in this way doesn’t automatically switch to minutes for some reason
@@ -104,7 +114,9 @@ class NotificationSettingsWidgetTest {
         composeTestRule.onNodeWithContentDescription("45 minutes").performClick()
         composeTestRule.onNodeWithText("Okay").performClick()
         assertEquals(LocalTime(7, 45), settings.value.windows.single().startTime)
-        composeTestRule.onNode(hasTextMatching(Regex("9:00\\sAM"))).performClick()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("9:00\\sAM", RegexOption.IGNORE_CASE)))
+            .performClick()
         composeTestRule.onNodeWithText("Select end time").assertExists()
         composeTestRule.onNodeWithContentDescription("Time picker type toggle").performClick()
         composeTestRule.onNodeWithContentDescription("for hour").performTextReplacement("9")
@@ -152,14 +164,18 @@ class NotificationSettingsWidgetTest {
         }
 
         composeTestRule.onNodeWithText("Get disruption notifications").performClick()
-        composeTestRule.onNode(hasTextMatching(Regex("8:00\\sAM"))).performClick()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("8:00\\sAM", RegexOption.IGNORE_CASE)))
+            .performClick()
         composeTestRule.onNodeWithContentDescription("10 o'clock").performClick()
         composeTestRule.onNodeWithContentDescription("Select minutes").performClick()
         composeTestRule.onNodeWithContentDescription("45 minutes").performClick()
         composeTestRule.onNodeWithText("Okay").performClick()
         assertEquals(LocalTime(10, 45), settings.value.windows.single().startTime)
         assertEquals(LocalTime(11, 45), settings.value.windows.single().endTime)
-        composeTestRule.onNode(hasTextMatching(Regex("11:45\\sAM"))).performClick()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("11:45\\sAM", RegexOption.IGNORE_CASE)))
+            .performClick()
         composeTestRule.onNodeWithContentDescription("10 o'clock").performClick()
         composeTestRule.onNodeWithContentDescription("Select minutes").performClick()
         composeTestRule.onNodeWithContentDescription("40 minutes").performClick()

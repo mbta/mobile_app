@@ -1031,7 +1031,7 @@ class StopDetailsFilteredDeparturesViewTest {
         }
 
         composeTestRule
-            .onNode(hasTextMatching(Regex("^Next trip on \\w+, Dec 8$")))
+            .onNode(hasTextMatching(Regex("^Next trip on \\w+, (Dec 8|8 Dec)$")))
             .assertIsDisplayed()
     }
 

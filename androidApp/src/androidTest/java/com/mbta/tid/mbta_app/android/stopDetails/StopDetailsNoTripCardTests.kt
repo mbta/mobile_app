@@ -48,7 +48,8 @@ class StopDetailsNoTripCardTests {
             .onNode(
                 hasTextMatching(
                     Regex(
-                        "^The first Forest Hills train is scheduled to arrive at 9:44\\sAM. We don’t have predictions to show you yet, but they’ll appear here closer to the scheduled time.$"
+                        "^The first Forest Hills train is scheduled to arrive at 9:44\\sAM. We don’t have predictions to show you yet, but they’ll appear here closer to the scheduled time.$",
+                        RegexOption.IGNORE_CASE,
                     )
                 )
             )
@@ -128,7 +129,9 @@ class StopDetailsNoTripCardTests {
         composeTestRule.onNodeWithTag("route_slash_icon").assertIsDisplayed()
         composeTestRule.onNodeWithText("Service ended").assertIsDisplayed()
         composeTestRule
-            .onNode(hasTextMatching(Regex("^Next trip at 9:15\\sAM tomorrow$")))
+            .onNode(
+                hasTextMatching(Regex("^Next trip at 9:15\\sAM tomorrow$", RegexOption.IGNORE_CASE))
+            )
             .assertIsDisplayed()
     }
 
@@ -155,7 +158,7 @@ class StopDetailsNoTripCardTests {
         composeTestRule.onNodeWithTag("route_slash_icon").assertIsDisplayed()
         composeTestRule.onNodeWithText("No service today").assertIsDisplayed()
         composeTestRule
-            .onNode(hasTextMatching(Regex("^Next trip at 9:15\\sAM$")))
+            .onNode(hasTextMatching(Regex("^Next trip at 9:15\\sAM$", RegexOption.IGNORE_CASE)))
             .assertIsDisplayed()
     }
 }

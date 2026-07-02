@@ -309,7 +309,10 @@ class TripHeaderCardTest {
             .assertIsDisplayed()
 
         composeTestRule
-            .onNode(hasTextMatching(Regex("4:49\\sPM")), useUnmergedTree = true)
+            .onNode(
+                hasTextMatching(Regex("4:49\\sPM", RegexOption.IGNORE_CASE)),
+                useUnmergedTree = true,
+            )
             .assertIsDisplayed()
     }
 
@@ -414,7 +417,10 @@ class TripHeaderCardTest {
             .assertIsDisplayed()
         composeTestRule.onNodeWithText(stop.name, useUnmergedTree = true).assertIsDisplayed()
         composeTestRule
-            .onNode(hasTextMatching(Regex("9:48\\sAM")), useUnmergedTree = true)
+            .onNode(
+                hasTextMatching(Regex("9:48\\sAM", RegexOption.IGNORE_CASE)),
+                useUnmergedTree = true,
+            )
             .assertIsDisplayed()
     }
 

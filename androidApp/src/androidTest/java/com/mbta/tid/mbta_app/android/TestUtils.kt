@@ -15,6 +15,9 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.mp.KoinPlatformTools
 
+fun assertMatches(regex: Regex, actual: String) =
+    assert(regex.matches(actual)) { "$actual does not match $regex" }
+
 /**
  * Loads mock repositories into the global Koin instance for use in tests, based on the given
  * [objects] by default but with whatever overridden repositories are provided.
