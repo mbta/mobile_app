@@ -1,10 +1,10 @@
 package com.mbta.tid.mbta_app.android.alertDetails
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -83,13 +83,13 @@ class AlertDetailsPageTest {
 
         composeTestRule.waitForIdle()
 
-        composeTestRule.onNodeWithText("Orange Line Suspension").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Fire").assertIsDisplayed()
-        composeTestRule.onNodeWithText("3 affected stops").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Orange Line Suspension").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Fire").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("3 affected stops").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("3 affected stops").performClick()
-        composeTestRule.onNodeWithText("Stop 1").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Stop 2").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Stop 3").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Stop 1").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Stop 2").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Stop 3").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Stop 1a").assertDoesNotExist()
         composeTestRule.onNodeWithText("Stop 1b").assertDoesNotExist()
         composeTestRule.onNodeWithText("Stop 2a").assertDoesNotExist()

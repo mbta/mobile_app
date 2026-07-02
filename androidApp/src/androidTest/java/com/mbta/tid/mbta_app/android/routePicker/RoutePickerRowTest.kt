@@ -1,10 +1,10 @@
 package com.mbta.tid.mbta_app.android.routePicker
 
 import androidx.compose.ui.test.assertHasClickAction
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
@@ -26,7 +26,7 @@ class RoutePickerRowTest {
 
         composeTestRule.setContent { RoutePickerRow(LineOrRoute.Route(route)) {} }
 
-        composeTestRule.onNodeWithText("66").assertIsDisplayed()
+        composeTestRule.onNodeWithText("66").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Harvard Square - Nubian Station").assertHasClickAction()
     }
 

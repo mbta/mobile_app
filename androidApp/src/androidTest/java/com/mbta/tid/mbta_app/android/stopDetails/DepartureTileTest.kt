@@ -4,11 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assert
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.hasClickActionLabel
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
@@ -53,8 +53,8 @@ class DepartureTileTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("headsign").assertIsDisplayed()
-        composeTestRule.onNodeWithText("5 min").assertIsDisplayed()
+        composeTestRule.onNodeWithText("headsign").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("5 min").assertCanBeDisplayed()
     }
 
     @Test
@@ -94,7 +94,7 @@ class DepartureTileTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("B").assertIsDisplayed()
+        composeTestRule.onNodeWithText("B").assertCanBeDisplayed()
     }
 
     @Test

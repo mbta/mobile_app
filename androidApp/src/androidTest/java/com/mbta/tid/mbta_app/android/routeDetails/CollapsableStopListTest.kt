@@ -1,12 +1,12 @@
 package com.mbta.tid.mbta_app.android.routeDetails
 
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.hasClickActionLabel
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDoesNotExistDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
@@ -64,7 +64,7 @@ class CollapsableStopListTest {
         }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
-        composeTestRule.onNodeWithText("Less common stop").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Less common stop").assertCanBeDisplayed()
         composeTestRule.onNodeWithText(stop1.name).performClick()
         assertTrue(clicked)
     }
@@ -120,12 +120,12 @@ class CollapsableStopListTest {
         composeTestRule.onNodeWithText(stop1.name).assertIsNotDisplayed()
         composeTestRule.onNode(hasClickActionLabel("expand stops")).assertExists()
 
-        composeTestRule.onNodeWithText("2 less common stops").assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithText("2 less common stops").assertCanBeDisplayed().performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
         composeTestRule.onNode(hasClickActionLabel("collapse stops")).assertExists()
-        composeTestRule.onNodeWithText(stop2.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop2.name).assertCanBeDisplayed()
 
-        composeTestRule.onNodeWithText("2 less common stops").assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithText("2 less common stops").assertCanBeDisplayed().performClick()
         composeTestRule.waitUntilDoesNotExistDefaultTimeout(hasText(stop1.name))
     }
 }

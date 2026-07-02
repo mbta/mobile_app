@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertCountEquals
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsOff
@@ -22,6 +21,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.hasTextMatching
 import com.mbta.tid.mbta_app.android.util.ConstantPermissionState
 import com.mbta.tid.mbta_app.model.FavoriteSettings
@@ -204,6 +204,6 @@ class NotificationSettingsWidgetTest {
         composeTestRule.onNodeWithText("Allow Notifications in Settings").assertIsNotDisplayed()
         hasRequestedPermission.value = true
 
-        composeTestRule.onNodeWithText("Allow Notifications in Settings").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Allow Notifications in Settings").assertCanBeDisplayed()
     }
 }

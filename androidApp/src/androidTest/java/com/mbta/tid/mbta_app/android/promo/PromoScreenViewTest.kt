@@ -1,9 +1,9 @@
 package com.mbta.tid.mbta_app.android.promo
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.FeaturePromo
 import kotlin.test.assertTrue
 import org.junit.Rule
@@ -19,10 +19,10 @@ class PromoScreenViewTest {
         composeTestRule.setContent {
             PromoScreenView(FeaturePromo.EnhancedFavorites) { calledOnAdvance = true }
         }
-        composeTestRule.onNodeWithText("Add your favorites").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Add your favorites").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText("Now save your frequently used stops", substring = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
 
         composeTestRule.onNodeWithText("Got it").performClick()
 

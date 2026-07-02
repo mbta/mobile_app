@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.android.onboarding
 
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.hasText
@@ -10,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.rule.GrantPermissionRule
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.hasRole
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.model.OnboardingScreen
@@ -45,7 +45,7 @@ class OnboardingScreenViewTest {
                 "We use your location to show you nearby transit options.",
                 substring = true,
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Continue").performClick()
 
         composeTestRule.waitForIdle()
@@ -75,14 +75,14 @@ class OnboardingScreenViewTest {
 
         composeTestRule
             .onNodeWithText("Set station accessibility info preference")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText(
                 " we can show you which stations are inaccessible or have elevator closures.",
                 substring = true,
             )
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithText("Continue").assertIsDisplayed()
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Continue").assertCanBeDisplayed()
         composeTestRule
             .onNode(hasText("Station Accessibility Info") and hasRole(Role.Switch))
             .performClick()
@@ -119,13 +119,13 @@ class OnboardingScreenViewTest {
             .onNodeWithText(
                 "When using TalkBack, we can hide maps to make the app easier to navigate."
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
 
         composeTestRule.waitForIdle()
 
         composeTestRule
             .onNodeWithText("Map Display")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertIsOff()
             .performClick()
 
@@ -133,7 +133,7 @@ class OnboardingScreenViewTest {
 
         composeTestRule.onNodeWithText("Map Display").assertIsOn()
 
-        composeTestRule.onNodeWithText("Continue").assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithText("Continue").assertCanBeDisplayed().performClick()
         composeTestRule.waitForIdle()
         assertTrue(savedSetting)
         assertTrue(advanced)
@@ -149,12 +149,12 @@ class OnboardingScreenViewTest {
                 locationDataManager = MockLocationDataManager(),
             )
         }
-        composeTestRule.onNodeWithText("Now get disruption notifications").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Add a Favorite stop").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Set your own schedule").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Now get disruption notifications").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Add a Favorite stop").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Set your own schedule").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText("We’ll tell you about any problems before you go!")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Got it").performClick()
 
         composeTestRule.waitForIdle()
@@ -176,7 +176,7 @@ class OnboardingScreenViewTest {
                 "MBTA Go is in the early stages! We want your feedback" +
                     " as we continue making improvements and adding new features."
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Get started").performClick()
 
         composeTestRule.waitForIdle()

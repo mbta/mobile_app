@@ -4,12 +4,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.captureToImage
+import androidx.compose.ui.test.filter
+import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.onAncestors
+import androidx.compose.ui.test.performScrollTo
 import kotlin.math.abs
 import org.junit.Assert
 
 fun SemanticsNodeInteraction.assertContentDescriptionMatches(regex: Regex) =
     assert(hasContentDescriptionMatching(regex))
+
+/** Scrolls this element into view, if possible, before asserting that it is displayed. */
+fun SemanticsNodeInteraction.assertCanBeDisplayed(): SemanticsNodeInteraction {
+    if (this.onAncestors().filter(hasScrollAction()).fetchSemanticsNodes().isNotEmpty()) {
+        this.performScrollTo()
+    }
+    return this.assertIsDisplayed()
+}
+
+/** Does not scroll this element into view before asserting that it is displayed. */
+fun SemanticsNodeInteraction.assertIsAlreadyOnScreen() = assertIsDisplayed()
 
 @OptIn(ExperimentalStdlibApi::class)
 private fun colorToHex(color: Color): String {

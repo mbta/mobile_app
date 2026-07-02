@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.android.stopDetails
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertHasClickAction
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -11,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.hasTextMatching
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
@@ -356,13 +356,13 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Trip cancelled").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Trip cancelled").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText("This trip has been cancelled. We’re sorry for the inconvenience.")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule
             .onNodeWithTag("route_slash_icon", useUnmergedTree = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -541,7 +541,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Service ended").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Service ended").assertCanBeDisplayed()
     }
 
     @OptIn(ExperimentalTestApi::class)
@@ -781,7 +781,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Service suspended", true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Service suspended", true).assertCanBeDisplayed()
     }
 
     @Test
@@ -844,7 +844,7 @@ class StopDetailsFilteredDeparturesViewTest {
         }
 
         composeTestRule.onNodeWithText("Elevator Closure").assertDoesNotExist()
-        composeTestRule.onNodeWithText("Elevator Alert Header").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Elevator Alert Header").assertCanBeDisplayed()
     }
 
     @Test
@@ -923,7 +923,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Delays due to heavy ridership").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Delays due to heavy ridership").assertCanBeDisplayed()
     }
 
     @Test
@@ -973,7 +973,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         }
 
-        composeTestRule.onNodeWithText("This stop is not accessible").assertIsDisplayed()
+        composeTestRule.onNodeWithText("This stop is not accessible").assertCanBeDisplayed()
     }
 
     @Test
@@ -1032,7 +1032,7 @@ class StopDetailsFilteredDeparturesViewTest {
 
         composeTestRule
             .onNode(hasTextMatching(Regex("^Next trip on \\w+, (Dec 8|8 Dec)$")))
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -1120,8 +1120,8 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         }
 
-        composeTestRule.onNodeWithTag("sunrise").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Good morning!").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("sunrise").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Good morning!").assertCanBeDisplayed()
     }
 
     @Test
@@ -1256,8 +1256,10 @@ class StopDetailsFilteredDeparturesViewTest {
         }
         composeTestRule
             .onNodeWithText("Service from South Station to today’s World Cup match")
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithText("Boston Stadium Train ticket required").assertIsDisplayed()
-        composeTestRule.onNodeWithText("View details").assertIsDisplayed()
+            .assertCanBeDisplayed()
+        composeTestRule
+            .onNodeWithText("Boston Stadium Train ticket required")
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("View details").assertCanBeDisplayed()
     }
 }

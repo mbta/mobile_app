@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -15,6 +14,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.requestFocus
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilAtLeastOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
@@ -188,8 +188,8 @@ class SearchBarOverlayTest : KoinTest {
         searchNode.performTextInput("anything")
         composeTestRule.waitForIdle()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Routes"))
-        composeTestRule.onNodeWithText("3½").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Here - There").assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithText("3½").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Here - There").assertCanBeDisplayed().performClick()
         composeTestRule.waitUntilDefaultTimeout { navigated }
     }
 

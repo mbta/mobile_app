@@ -2,12 +2,12 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.hasTextMatching
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
@@ -50,7 +50,7 @@ class TripHeaderCardTest {
             )
         }
 
-        composeTestRule.onNodeWithText(stop.name, useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop.name, useUnmergedTree = true).assertCanBeDisplayed()
     }
 
     @Test
@@ -111,7 +111,7 @@ class TripHeaderCardTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Next stop", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Next stop", useUnmergedTree = true).assertCanBeDisplayed()
 
         val incomingVehicle =
             objects.vehicle {
@@ -121,7 +121,7 @@ class TripHeaderCardTest {
 
         vehicleState.value = incomingVehicle
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Approaching", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Approaching", useUnmergedTree = true).assertCanBeDisplayed()
 
         val stoppedVehicle =
             objects.vehicle {
@@ -132,7 +132,7 @@ class TripHeaderCardTest {
         vehicleState.value = stoppedVehicle
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Now at", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Now at", useUnmergedTree = true).assertCanBeDisplayed()
     }
 
     @Test
@@ -164,7 +164,7 @@ class TripHeaderCardTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Not crowded", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Not crowded", useUnmergedTree = true).assertCanBeDisplayed()
 
         vehicleState.value =
             objects.vehicle {
@@ -173,7 +173,9 @@ class TripHeaderCardTest {
                 occupancyStatus = Vehicle.OccupancyStatus.FewSeatsAvailable
             }
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Some crowding", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("Some crowding", useUnmergedTree = true)
+            .assertCanBeDisplayed()
 
         vehicleState.value =
             objects.vehicle {
@@ -182,7 +184,7 @@ class TripHeaderCardTest {
                 occupancyStatus = Vehicle.OccupancyStatus.CrushedStandingRoomOnly
             }
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Crowded", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Crowded", useUnmergedTree = true).assertCanBeDisplayed()
     }
 
     @Test
@@ -204,7 +206,7 @@ class TripHeaderCardTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Finishing another trip").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Finishing another trip").assertCanBeDisplayed()
         composeTestRule.onNodeWithText(stop.name, useUnmergedTree = true).assertDoesNotExist()
     }
 
@@ -221,7 +223,7 @@ class TripHeaderCardTest {
         }
         composeTestRule
             .onNodeWithText("Location not available yet", useUnmergedTree = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule.onNodeWithText(stop.name, useUnmergedTree = true).assertDoesNotExist()
     }
 
@@ -254,7 +256,7 @@ class TripHeaderCardTest {
 
         composeTestRule
             .onNodeWithTag("stop_pin_indicator", useUnmergedTree = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -303,17 +305,17 @@ class TripHeaderCardTest {
 
         composeTestRule
             .onNodeWithText("Waiting to depart", useUnmergedTree = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule
             .onNodeWithTag("stop_pin_indicator", useUnmergedTree = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
 
         composeTestRule
             .onNode(
                 hasTextMatching(Regex("4:49\\sPM", RegexOption.IGNORE_CASE)),
                 useUnmergedTree = true,
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -371,7 +373,7 @@ class TripHeaderCardTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Track 5", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Track 5", useUnmergedTree = true).assertCanBeDisplayed()
     }
 
     @Test
@@ -414,14 +416,14 @@ class TripHeaderCardTest {
 
         composeTestRule
             .onNodeWithText("Scheduled to depart", useUnmergedTree = true)
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithText(stop.name, useUnmergedTree = true).assertIsDisplayed()
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(stop.name, useUnmergedTree = true).assertCanBeDisplayed()
         composeTestRule
             .onNode(
                 hasTextMatching(Regex("9:48\\sAM", RegexOption.IGNORE_CASE)),
                 useUnmergedTree = true,
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     /*
@@ -491,7 +493,7 @@ class TripHeaderCardTest {
                 "Selected bus Approaching stop, selected stop",
                 useUnmergedTree = true,
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -552,10 +554,10 @@ class TripHeaderCardTest {
                 "Selected train Now at Ruggles, selected stop",
                 useUnmergedTree = true,
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule
             .onNodeWithContentDescription("Boarding on track 3", useUnmergedTree = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -589,7 +591,7 @@ class TripHeaderCardTest {
                 "Selected bus Approaching other stop",
                 useUnmergedTree = true,
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -633,7 +635,7 @@ class TripHeaderCardTest {
                 "Selected bus scheduled to depart stop, selected stop",
                 useUnmergedTree = true,
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -679,7 +681,7 @@ class TripHeaderCardTest {
                 "Selected bus scheduled to depart other stop",
                 useUnmergedTree = true,
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -723,15 +725,21 @@ class TripHeaderCardTest {
             )
         }
 
-        composeTestRule.onNodeWithContentDescription("Train crowding diagram").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Car 1 of 5, Not crowded").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithContentDescription("Train crowding diagram")
+            .assertCanBeDisplayed()
+        composeTestRule
+            .onNodeWithContentDescription("Car 1 of 5, Not crowded")
+            .assertCanBeDisplayed()
         composeTestRule
             .onNodeWithContentDescription("Car 2 of 5, Some crowding")
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Car 3 of 5, Crowded").assertIsDisplayed()
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithContentDescription("Car 3 of 5, Crowded").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithContentDescription("Car 4 of 5, Crowding unknown")
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Car 5 of 5, Not crowded").assertIsDisplayed()
+            .assertCanBeDisplayed()
+        composeTestRule
+            .onNodeWithContentDescription("Car 5 of 5, Not crowded")
+            .assertCanBeDisplayed()
     }
 }

@@ -158,33 +158,23 @@ spotless {
         custom(
             "use custom default wait timeout in android UI tests",
             object : Serializable, FormatterFunc.NeedsFile {
-                override fun applyWithFile(text: String, file: File): String {
-                    if (
-                        !file.path.contains("androidTest") ||
-                            file.name == "ComposeTestRuleExtension.kt" ||
-                            file.name == "RetryableComposeTestRule.kt"
+                val replacements =
+                    mapOf(
+                        "waitUntil(" to "waitUntilDefaultTimeout(",
+                        "waitUntil {" to "waitUntilDefaultTimeout {",
+                        "waitUntilAtLeastOneExists(" to "waitUntilAtLeastOneExistsDefaultTimeout(",
+                        "waitUntilDoesNotExist(" to "waitUntilDoesNotExistDefaultTimeout(",
+                        "waitUntilExactlyOneExists(" to "waitUntilExactlyOneExistsDefaultTimeout(",
+                        "waitUntilNodeCount(" to "waitUntilNodeCountDefaultTimeout(",
+                        ".assertIsDisplayed()" to ".assertCanBeDisplayed()",
                     )
+
+                override fun applyWithFile(text: String, file: File): String {
+                    if (!file.path.contains("androidTest") || file.path.contains("testUtils"))
                         return text
-                    val lines = text.lines()
-                    for (line in lines.withIndex()) {
-                        for (fnText in
-                            arrayOf(
-                                "waitUntil(",
-                                "waitUntil {",
-                                "waitUntilAtLeastOneExists(",
-                                "waitUntilDoesNotExist(",
-                                "waitUntilExactlyOneExists(",
-                                "waitUntilNodeCount(",
-                            )) {
-                            val column = line.value.indexOf(fnText, 0, false)
-                            if (column != -1) {
-                                throw IllegalStateException(
-                                    "${file.path}:${line.index + 1}:${column + 1} calls $fnText. Replace with ${fnText.dropLast(1)}DefaultTimeout to prevent CI flakiness."
-                                )
-                            }
-                        }
-                    }
-                    return text
+                    return replacements
+                        .toList()
+                        .fold(text, { text, (bad, good) -> text.replace(bad, good) })
                 }
             },
         )

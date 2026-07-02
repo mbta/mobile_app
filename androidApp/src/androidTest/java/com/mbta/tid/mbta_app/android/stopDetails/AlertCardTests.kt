@@ -1,11 +1,11 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.hasTextMatching
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
@@ -48,7 +48,7 @@ class AlertCardTests {
             )
         }
 
-        composeTestRule.onNodeWithText("Detour ahead").assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithText("Detour ahead").assertCanBeDisplayed().performClick()
         composeTestRule.onNodeWithText("Alert header").assertIsNotDisplayed()
         assertTrue { onViewDetailsClicked }
     }
@@ -71,8 +71,8 @@ class AlertCardTests {
             )
         }
 
-        composeTestRule.onNodeWithText("Suspension").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Alert header").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Suspension").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Alert header").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("View details").performClick()
         assertTrue { onViewDetailsClicked }
     }
@@ -95,7 +95,7 @@ class AlertCardTests {
             )
         }
 
-        composeTestRule.onNodeWithText("Detour").assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithText("Detour").assertCanBeDisplayed().performClick()
         composeTestRule.onNodeWithText("Alert header").assertIsNotDisplayed()
         assertTrue { onViewDetailsClicked }
     }
@@ -118,7 +118,7 @@ class AlertCardTests {
             )
         }
 
-        composeTestRule.onNodeWithText("Alert header").assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithText("Alert header").assertCanBeDisplayed().performClick()
         assertTrue { onViewDetailsClicked }
     }
 
@@ -152,7 +152,7 @@ class AlertCardTests {
 
         composeTestRule
             .onNodeWithText("Elevator closure (Elevator name)")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .performClick()
         assertTrue { onViewDetailsClicked }
     }
@@ -167,7 +167,7 @@ class AlertCardTests {
             }
         composeTestRule.setContent { AlertCard(alert, null, AlertCardSpec.Delay, routeAccents, {}) }
 
-        composeTestRule.onNodeWithText("Delays due to heavy ridership").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Delays due to heavy ridership").assertCanBeDisplayed()
     }
 
     @Test
@@ -200,7 +200,7 @@ class AlertCardTests {
                     Regex("Delay on Red Line starting 9:00\\sAM today", RegexOption.IGNORE_CASE)
                 )
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -213,7 +213,7 @@ class AlertCardTests {
             }
         composeTestRule.setContent { AlertCard(alert, null, AlertCardSpec.Delay, routeAccents, {}) }
 
-        composeTestRule.onNodeWithText("Delays").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Delays").assertCanBeDisplayed()
     }
 
     @Test
@@ -227,7 +227,7 @@ class AlertCardTests {
             }
         composeTestRule.setContent { AlertCard(alert, null, AlertCardSpec.Delay, routeAccents, {}) }
 
-        composeTestRule.onNodeWithText("Single Tracking").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Single Tracking").assertCanBeDisplayed()
     }
 
     @Test
@@ -250,8 +250,8 @@ class AlertCardTests {
             )
         }
 
-        composeTestRule.onNodeWithText("Suspension").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Service suspended through Saturday").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Suspension").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Service suspended through Saturday").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Alert header").assertDoesNotExist()
         composeTestRule.onNodeWithText("View details").performClick()
     }
@@ -276,7 +276,7 @@ class AlertCardTests {
 
         composeTestRule
             .onNode(hasTextMatching(Regex("Detour through 9:00\\sAM", RegexOption.IGNORE_CASE)))
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Alert header").assertIsNotDisplayed()
     }
 
@@ -307,7 +307,7 @@ class AlertCardTests {
 
         composeTestRule
             .onNodeWithText("All clear: Regular service from Start Stop to End Stop")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -341,7 +341,7 @@ class AlertCardTests {
 
         composeTestRule
             .onNodeWithText("Update: Shuttle buses from Start Stop to End Stop through tomorrow")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -365,7 +365,7 @@ class AlertCardTests {
                 onViewDetails = {},
             )
         }
-        composeTestRule.onNodeWithText("Train cancelled").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Train cancelled").assertCanBeDisplayed()
 
         composeTestRule
             .onNode(
@@ -376,7 +376,7 @@ class AlertCardTests {
                     )
                 )
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -396,11 +396,11 @@ class AlertCardTests {
                 onViewDetails = {},
             )
         }
-        composeTestRule.onNodeWithText("Train suspended").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Train suspended").assertCanBeDisplayed()
 
         composeTestRule
             .onNodeWithText("Multiple trips are suspended today due to holiday")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -424,7 +424,7 @@ class AlertCardTests {
                 onViewDetails = {},
             )
         }
-        composeTestRule.onNodeWithText("Shuttle bus").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Shuttle bus").assertCanBeDisplayed()
 
         composeTestRule
             .onNode(
@@ -435,7 +435,7 @@ class AlertCardTests {
                     )
                 )
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -459,7 +459,7 @@ class AlertCardTests {
                 onViewDetails = {},
             )
         }
-        composeTestRule.onNodeWithText("Shuttle bus").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Shuttle bus").assertCanBeDisplayed()
 
         composeTestRule
             .onNode(
@@ -470,7 +470,7 @@ class AlertCardTests {
                     )
                 )
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -495,7 +495,7 @@ class AlertCardTests {
                 onViewDetails = {},
             )
         }
-        composeTestRule.onNodeWithText("Stop skipped").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Stop skipped").assertCanBeDisplayed()
 
         composeTestRule
             .onNode(
@@ -506,7 +506,7 @@ class AlertCardTests {
                     )
                 )
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -526,11 +526,11 @@ class AlertCardTests {
                 onViewDetails = {},
             )
         }
-        composeTestRule.onNodeWithText("Stop Skipped").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Stop Skipped").assertCanBeDisplayed()
 
         composeTestRule
             .onNodeWithText("Trains will not stop at Back Bay and Ruggles until further notice")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -550,11 +550,11 @@ class AlertCardTests {
                 onViewDetails = {},
             )
         }
-        composeTestRule.onNodeWithText("Stop Skipped").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Stop Skipped").assertCanBeDisplayed()
 
         composeTestRule
             .onNodeWithText("Buses will not stop at Back Bay and Ruggles until further notice")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -579,7 +579,7 @@ class AlertCardTests {
                 onViewDetails = {},
             )
         }
-        composeTestRule.onNodeWithText("Train cancelled").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Train cancelled").assertCanBeDisplayed()
 
         composeTestRule
             .onNode(
@@ -590,7 +590,7 @@ class AlertCardTests {
                     )
                 )
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -621,7 +621,7 @@ class AlertCardTests {
                 onViewDetails = {},
             )
         }
-        composeTestRule.onNodeWithText("Shuttle bus").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Shuttle bus").assertCanBeDisplayed()
 
         composeTestRule
             .onNode(
@@ -632,7 +632,7 @@ class AlertCardTests {
                     )
                 )
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -659,7 +659,7 @@ class AlertCardTests {
                 onViewDetails = {},
             )
         }
-        composeTestRule.onNodeWithText("Shuttle bus").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Shuttle bus").assertCanBeDisplayed()
 
         composeTestRule
             .onNode(
@@ -669,6 +669,6 @@ class AlertCardTests {
                     )
                 )
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 }

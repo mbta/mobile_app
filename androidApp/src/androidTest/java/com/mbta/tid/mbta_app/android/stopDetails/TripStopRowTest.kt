@@ -3,13 +3,13 @@ package com.mbta.tid.mbta_app.android.stopDetails
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.hasTextMatching
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
@@ -64,7 +64,7 @@ class TripStopRowTest {
             )
         }
 
-        composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop.name).assertCanBeDisplayed()
     }
 
     @Test
@@ -100,7 +100,7 @@ class TripStopRowTest {
 
         composeTestRule
             .onNode(hasTextMatching(Regex("3:37\\sPM", RegexOption.IGNORE_CASE)))
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -141,8 +141,8 @@ class TripStopRowTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Track 2").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Boarding on track 2").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Track 2").assertCanBeDisplayed()
+        composeTestRule.onNodeWithContentDescription("Boarding on track 2").assertCanBeDisplayed()
     }
 
     @Test
@@ -184,20 +184,20 @@ class TripStopRowTest {
             )
         }
 
-        composeTestRule.onNodeWithContentDescription("stop").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("stop").assertCanBeDisplayed()
 
         selected = true
 
-        composeTestRule.onNodeWithContentDescription("stop, selected stop").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("stop, selected stop").assertCanBeDisplayed()
 
         first = true
 
         composeTestRule
             .onNodeWithContentDescription("stop, selected stop, first stop")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
 
         selected = false
-        composeTestRule.onNodeWithContentDescription("stop, first stop").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("stop, first stop").assertCanBeDisplayed()
     }
 
     @Test
@@ -290,10 +290,10 @@ class TripStopRowTest {
 
         composeTestRule
             .onNodeWithTag("wheelchair_not_accessible", useUnmergedTree = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule
             .onNodeWithContentDescription("This stop is not accessible", useUnmergedTree = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
 
         composeTestRule.onNodeWithTag("elevator_alert", useUnmergedTree = true).assertDoesNotExist()
 
@@ -311,10 +311,12 @@ class TripStopRowTest {
         composeTestRule
             .onNodeWithTag("wheelchair_not_accessible", useUnmergedTree = true)
             .assertDoesNotExist()
-        composeTestRule.onNodeWithTag("elevator_alert", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("elevator_alert", useUnmergedTree = true)
+            .assertCanBeDisplayed()
         composeTestRule
             .onNodeWithContentDescription("This stop has 1 elevator closed", useUnmergedTree = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -359,6 +361,6 @@ class TripStopRowTest {
 
         composeTestRule
             .onNodeWithText("Shuttle buses from Roxbury Crossing to Green Street through tomorrow")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 }
