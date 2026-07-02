@@ -80,5 +80,5 @@ internal object PatternSorting {
         )
 
     fun compareLeavesAtStop(): Comparator<RouteCardData.Leaf> =
-        compareBy({ patternServiceBucket(it, EasternTimeInstant.now()) }, { it.directionId })
+        compareBy({ patternServiceBucket(it, EasternTimeInstant.now()) }, { it.direction.id })
 }

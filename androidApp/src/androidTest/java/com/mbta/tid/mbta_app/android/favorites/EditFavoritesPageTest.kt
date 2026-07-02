@@ -22,6 +22,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.StopCardData
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
@@ -199,12 +200,11 @@ class EditFavoritesPageTest : KoinTest {
                 RouteCardData.RouteStopData(
                     lineOrRoute,
                     sampleStop,
-                    listOf(Direction(0, route)),
                     listOf(
                         RouteCardData.Leaf(
                             lineOrRoute,
                             sampleStop,
-                            0,
+                            Direction(0, route),
                             listOf(routePatternOne),
                             setOf(sampleStop.id),
                             listOf(UpcomingTrip(trip1, prediction)),
@@ -228,12 +228,11 @@ class EditFavoritesPageTest : KoinTest {
                 RouteCardData.RouteStopData(
                     greenLineOrRoute,
                     greenLineStop,
-                    listOf(Direction(0, greenLineRoute)),
                     listOf(
                         RouteCardData.Leaf(
                             greenLineOrRoute,
                             greenLineStop,
-                            0,
+                            Direction(0, greenLineRoute),
                             listOf(greenLineRoutePatternOne),
                             setOf(greenLineStop.id),
                             listOf(UpcomingTrip(greenLineTrip, greenLinePrediction)),
@@ -251,8 +250,13 @@ class EditFavoritesPageTest : KoinTest {
         )
 
     val routeCardData = listOf(routeCard)
+    val stopCardData = StopCardData.fromRouteCardData(routeCardData, sortByDistanceFrom = null)
     val greenLineRouteCardData = listOf(greenLineRouteCard)
+    val greenLineStopCardData =
+        StopCardData.fromRouteCardData(greenLineRouteCardData, sortByDistanceFrom = null)
     val combinedRouteCardData = listOf(routeCard, greenLineRouteCard)
+    val combinedStopCardData =
+        StopCardData.fromRouteCardData(combinedRouteCardData, sortByDistanceFrom = null)
 
     val globalResponse = GlobalResponse(builder)
 
@@ -275,7 +279,9 @@ class EditFavoritesPageTest : KoinTest {
                     false,
                     false,
                     routeCardData,
+                    stopCardData,
                     routeCardData,
+                    stopCardData,
                     null,
                 )
             )
@@ -308,6 +314,8 @@ class EditFavoritesPageTest : KoinTest {
                     emptyMap(),
                     false,
                     false,
+                    emptyList(),
+                    emptyList(),
                     emptyList(),
                     emptyList(),
                     null,
@@ -346,7 +354,9 @@ class EditFavoritesPageTest : KoinTest {
                     false,
                     false,
                     combinedRouteCardData,
+                    combinedStopCardData,
                     combinedRouteCardData,
+                    combinedStopCardData,
                     null,
                 )
             )
@@ -361,7 +371,9 @@ class EditFavoritesPageTest : KoinTest {
                     false,
                     false,
                     greenLineRouteCardData,
+                    greenLineStopCardData,
                     greenLineRouteCardData,
+                    greenLineStopCardData,
                     null,
                 )
             }
@@ -421,7 +433,9 @@ class EditFavoritesPageTest : KoinTest {
                     false,
                     false,
                     combinedRouteCardData,
+                    combinedStopCardData,
                     combinedRouteCardData,
+                    combinedStopCardData,
                     null,
                 )
             )
@@ -437,8 +451,10 @@ class EditFavoritesPageTest : KoinTest {
                     false,
                     if (updatedFavorites.size == 1) greenLineRouteCardData
                     else combinedRouteCardData,
+                    if (updatedFavorites.size == 1) greenLineStopCardData else combinedStopCardData,
                     if (updatedFavorites.size == 1) greenLineRouteCardData
                     else combinedRouteCardData,
+                    if (updatedFavorites.size == 1) greenLineStopCardData else combinedStopCardData,
                     null,
                 )
             }
@@ -513,7 +529,9 @@ class EditFavoritesPageTest : KoinTest {
                     false,
                     false,
                     combinedRouteCardData,
+                    combinedStopCardData,
                     combinedRouteCardData,
+                    combinedStopCardData,
                     null,
                 )
             )
@@ -578,7 +596,9 @@ class EditFavoritesPageTest : KoinTest {
                     false,
                     false,
                     combinedRouteCardData,
+                    combinedStopCardData,
                     combinedRouteCardData,
+                    combinedStopCardData,
                     null,
                 )
             )

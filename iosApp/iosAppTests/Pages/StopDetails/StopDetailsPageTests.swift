@@ -37,9 +37,6 @@ final class StopDetailsPageTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let nearbyVM = NearbyViewModel()
-        nearbyVM.alerts = .init(alerts: [:])
-
         let filters = StopDetailsPageFilters(
             stopId: stop.id,
             stopFilter: .init(
@@ -57,7 +54,7 @@ final class StopDetailsPageTests: XCTestCase {
                     data: [.init(
                         lineOrRoute: .route(route),
                         stop: stop,
-                        directionId: 0,
+                        direction: .init(directionId: 0, route: route),
                         routePatterns: [routePattern],
                         stopIds: [stop.id],
                         upcomingTrips: [.init(trip: trip, schedule: schedule)],
@@ -67,8 +64,7 @@ final class StopDetailsPageTests: XCTestCase {
                         subwayServiceStartTime: nil,
                         alertsDownstream: [],
                         context: .stopDetailsFiltered
-                    )],
-                    globalData: .init(objects: objects)
+                    )]
                 )
             ),
             alertSummaries: [:],
@@ -78,11 +74,12 @@ final class StopDetailsPageTests: XCTestCase {
         let sut = StopDetailsPage(
             filters: filters,
             navCallbacks: .companion.empty,
+            alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
             routeCardDataVM: MockRouteCardDataViewModel(),
             stopDetailsVM: stopDetailsVM,
+            navManager: .init(),
             viewportProvider: viewportProvider
         )
 
@@ -97,8 +94,6 @@ final class StopDetailsPageTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
-        let nearbyVM = NearbyViewModel()
-
         let closeExp = expectation(description: "close button pressed")
 
         let sut = StopDetailsPage(
@@ -108,11 +103,12 @@ final class StopDetailsPageTests: XCTestCase {
                 tripFilter: nil
             ),
             navCallbacks: .init(onBack: nil, onClose: { closeExp.fulfill() }, backButtonPresentation: .floating),
+            alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
             routeCardDataVM: MockRouteCardDataViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
+            navManager: .init(),
             viewportProvider: .init()
         ).withFixedSettings([:])
 
@@ -147,11 +143,12 @@ final class StopDetailsPageTests: XCTestCase {
                 tripFilter: nil
             ),
             navCallbacks: .companion.empty,
+            alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             routeCardDataVM: MockRouteCardDataViewModel(),
             stopDetailsVM: stopDetailsVM,
+            navManager: .init(),
             viewportProvider: viewportProvider
         )
 
@@ -165,7 +162,7 @@ final class StopDetailsPageTests: XCTestCase {
     }
 
     @MainActor
-    func testAppliesStopFilterAutomatically() async throws {
+    func testAppliesStopFilterAutomatically() {
         let objects = ObjectCollectionBuilder()
 
         let route = objects.route()
@@ -191,49 +188,49 @@ final class StopDetailsPageTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
-        let nearbyVM: iosApp.NearbyViewModel = .init(
-            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
-        )
-        nearbyVM.alerts = .init(alerts: [:])
+        let navManager = NavigationManager(navigationStack: [.stopDetails(
+            stopId: stop.id,
+            stopFilter: nil,
+            tripFilter: nil
+        )])
 
+        let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let updatedFilter = StopDetailsFilter(
             routeId: route.id,
             directionId: routePattern.directionId,
             autoFilter: true
         )
         let stopDetailsVM = MockStopDetailsViewModel()
+
+        let sut = StopDetailsPage(
+            filters: .init(stopId: stop.id, stopFilter: nil, tripFilter: nil),
+            navCallbacks: .companion.empty,
+            alerts: .init(alerts: [:]),
+            errorBannerVM: MockErrorBannerViewModel(),
+            mapVM: MockMapViewModel(),
+            routeCardDataVM: MockRouteCardDataViewModel(),
+            stopDetailsVM: stopDetailsVM,
+            navManager: navManager,
+            viewportProvider: viewportProvider
+        )
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+
         stopDetailsVM.filterUpdates.tryEmit(value: .init(
             stopId: stop.id,
             stopFilter: updatedFilter,
             tripFilter: nil
         ))
 
-        let sut = StopDetailsPage(
-            filters: .init(
-                stopId: stop.id,
-                stopFilter: nil,
-                tripFilter: nil
-            ),
-            navCallbacks: .companion.empty,
-            errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
-            mapVM: MockMapViewModel(),
-            routeCardDataVM: MockRouteCardDataViewModel(),
-            stopDetailsVM: stopDetailsVM,
-            viewportProvider: viewportProvider
-        )
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-
-        try await Task.sleep(for: .seconds(1))
-        XCTAssertEqual(
-            nearbyVM.navigationStack.lastStopDetailsFilter,
-            updatedFilter
-        )
+        sut.inspection.inspect(after: 1) { _ in
+            XCTAssertEqual(
+                navManager.navigationStack.lastStopDetailsFilter,
+                updatedFilter
+            )
+        }
     }
 
     @MainActor
-    func testAppliesTripFilterAutomatically() async throws {
+    func testAppliesTripFilterAutomatically() {
         let objects = ObjectCollectionBuilder()
 
         let route = objects.route()
@@ -263,11 +260,12 @@ final class StopDetailsPageTests: XCTestCase {
         loadKoinMocks(objects: objects)
 
         let stopFilter: StopDetailsFilter = .init(routeId: route.id, directionId: 0)
+        let navManager = NavigationManager(navigationStack: [.stopDetails(
+            stopId: stop.id,
+            stopFilter: stopFilter,
+            tripFilter: nil
+        )])
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
-        let nearbyVM: iosApp.NearbyViewModel = .init(
-            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: stopFilter, tripFilter: nil)]
-        )
-        nearbyVM.alerts = .init(alerts: [:])
 
         let initialFilters = StopDetailsPageFilters(
             stopId: stop.id,
@@ -286,20 +284,22 @@ final class StopDetailsPageTests: XCTestCase {
         let sut = StopDetailsPage(
             filters: initialFilters,
             navCallbacks: .companion.empty,
+            alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
             routeCardDataVM: MockRouteCardDataViewModel(),
             stopDetailsVM: stopDetailsVM,
+            navManager: navManager,
             viewportProvider: viewportProvider
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
-        try await Task.sleep(for: .seconds(1))
 
-        XCTAssertEqual(
-            nearbyVM.navigationStack.lastTripDetailsFilter,
-            updatedTripFilter
-        )
+        sut.inspection.inspect(after: 1) { _ in
+            XCTAssertEqual(
+                navManager.navigationStack.lastTripDetailsFilter,
+                updatedTripFilter
+            )
+        }
     }
 }

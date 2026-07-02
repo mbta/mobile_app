@@ -44,8 +44,8 @@ final class SearchResultViewTests: XCTestCase {
 
         var sut = SearchResultsContainer(
             query: "hay",
-            nearbyVM: NearbyViewModel(),
-            searchVM: searchVM
+            searchVM: searchVM,
+            navManager: .init(),
         )
 
         let hasAppeared = sut.on(\.didAppear) { _ in }
@@ -84,14 +84,14 @@ final class SearchResultViewTests: XCTestCase {
 
         let sut = SearchOverlay(
             searchObserver: searchObserver,
-            nearbyVM: NearbyViewModel(),
             searchVM: SearchViewModel(
                 analytics: MockAnalytics(),
                 globalRepository: MockGlobalRepository(),
                 searchResultRepository: FakeRepo(getSearchResultsExpectation: getSearchResultsExpectation),
                 sentryRepository: MockSentryRepository(),
-                visitHistoryUsecase: .init(repository: MockVisitHistoryRepository())
-            )
+                visitHistoryUsecase: .init(repository: MockVisitHistoryRepository()),
+            ),
+            navManager: .init(),
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))

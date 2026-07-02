@@ -11,6 +11,7 @@ import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.model.StopCardData
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.ErrorKey
@@ -112,10 +113,12 @@ public class FavoritesViewModel(
         val shouldShowFirstTimeToast: Boolean = false,
         val shouldShowNotificationsHint: Boolean = false,
         val routeCardData: List<RouteCardData>?,
+        val stopCardData: List<StopCardData>?,
         val staticRouteCardData: List<RouteCardData>?,
+        val staticStopCardData: List<StopCardData>?,
         val loadedLocation: Position?,
     ) {
-        public constructor() : this(false, null, false, false, null, null, null)
+        public constructor() : this(false, null, false, false, null, null, null, null, null)
     }
 
     @set:JvmName("setAlertsState")
@@ -139,7 +142,9 @@ public class FavoritesViewModel(
         var shouldShowNotificationsHint: Boolean by remember { mutableStateOf(false) }
 
         var routeCardData: List<RouteCardData>? by remember { mutableStateOf(null) }
+        var stopCardData: List<StopCardData>? by remember { mutableStateOf(null) }
         var staticRouteCardData: List<RouteCardData>? by remember { mutableStateOf(null) }
+        var staticStopCardData: List<StopCardData>? by remember { mutableStateOf(null) }
         var loadedLocation: Position? by remember { mutableStateOf(null) }
 
         var active: Boolean by remember { mutableStateOf(false) }
@@ -307,6 +312,10 @@ public class FavoritesViewModel(
                     )
                 loadedLocation = location
             }
+            stopCardData =
+                routeCardData?.let {
+                    StopCardData.fromRouteCardData(it, sortByDistanceFrom = location)
+                }
         }
 
         LaunchedEffect(stopIds, globalData, favorites, location) {
@@ -328,6 +337,10 @@ public class FavoritesViewModel(
                         sentryRepository,
                     )
             }
+            staticStopCardData =
+                staticRouteCardData?.let {
+                    StopCardData.fromRouteCardData(it, sortByDistanceFrom = location)
+                }
         }
 
         LaunchedEffect(hadOldPinnedRoutes, isFirstExposureToNewFavorites) {
@@ -340,7 +353,9 @@ public class FavoritesViewModel(
             shouldShowFirstTimeToast,
             shouldShowNotificationsHint && favorites?.isNotEmpty() == true,
             routeCardData,
+            stopCardData,
             staticRouteCardData,
+            staticStopCardData,
             loadedLocation,
         )
     }

@@ -76,19 +76,20 @@ constructor(
     /** Checks if a trip has a time */
     internal fun isUpcoming() = time != null
 
-    /**
-     * Checks if a trip exists in the near future, or the recent past if the vehicle has not yet
-     * left this stop or a custom status string is still set.
-     */
-    internal fun isUpcomingWithin(
-        currentTime: EasternTimeInstant,
-        cutoffTime: EasternTimeInstant,
-    ): Boolean =
-        time != null &&
-            time < cutoffTime &&
-            (time >= currentTime ||
-                (prediction != null &&
-                    (prediction.stopId == vehicle?.stopId || prediction.status != null)))
+    /** Checks that trip time is in the future */
+    internal fun isInTheFuture(currentTime: EasternTimeInstant) =
+        time != null && time >= currentTime
+
+    /** Check the vehicle and the prediction stop id are the same */
+    internal fun isVehicleAtTheStop() =
+        prediction != null && vehicle != null && prediction.stopId == vehicle.stopId
+
+    /** Checks prediction status */
+    internal fun doesPredictionHaveStatus() = prediction?.status?.isNotBlank() ?: false
+
+    /** Checks if a trip exists in the near future */
+    internal fun isUpcomingWithin(cutoffTime: EasternTimeInstant): Boolean =
+        time != null && time < cutoffTime
 
     override fun compareTo(other: UpcomingTrip): Int =
         nullsLast<EasternTimeInstant>().compare(time, other.time)

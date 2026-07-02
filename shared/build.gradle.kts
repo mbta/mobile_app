@@ -4,6 +4,7 @@ import com.diffplug.spotless.Lint
 import com.mbta.tid.mbta_app.gradle.CachedExecTask
 import com.mbta.tid.mbta_app.gradle.CycloneDxBomTransformTask
 import com.mbta.tid.mbta_app.gradle.DependencyCodegenTask
+import com.mbta.tid.mbta_app.gradle.EnvReader
 import com.mbta.tid.mbta_app.gradle.GithubLicenseResponse
 import de.undercouch.gradle.tasks.download.Download
 import java.io.Serializable
@@ -70,6 +71,8 @@ kotlin {
             export(libs.sentry.kmp)
         }
 
+        xcodeConfigurationToNativeBuildType["LocalDebug"] = NativeBuildType.DEBUG
+        xcodeConfigurationToNativeBuildType["LocalRelease"] = NativeBuildType.RELEASE
         xcodeConfigurationToNativeBuildType["DevOrangeDebug"] = NativeBuildType.DEBUG
         xcodeConfigurationToNativeBuildType["DevOrangeRelease"] = NativeBuildType.RELEASE
         xcodeConfigurationToNativeBuildType["StagingDebug"] = NativeBuildType.DEBUG
@@ -181,6 +184,33 @@ spotless {
                 }
             },
         )
+    }
+}
+
+run {
+    val env = EnvReader()
+
+    val localBackendOriginAndroid = env["LOCAL_BACKEND_ORIGIN_ANDROID"] ?: "http://10.0.2.2:4000"
+    val buildFolderAndroid =
+        layout.buildDirectory.dir("generated/localBackendOrigin/androidMain").get()
+    buildFolderAndroid.asFile.mkdirs()
+    buildFolderAndroid.file("AppVariant.android.kt").asFile.bufferedWriter().use {
+        it.appendLine("package com.mbta.tid.mbta_app")
+        it.appendLine()
+        it.appendLine("internal actual val localBackendOrigin = \"$localBackendOriginAndroid\"")
+    }
+    kotlin.sourceSets.getByName("androidMain") { kotlin.srcDirs(buildFolderAndroid) }
+
+    if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
+        val localBackendOriginIos = env["LOCAL_BACKEND_ORIGIN_IOS"] ?: "http://127.0.0.1:4000"
+        val buildFolderIos = layout.buildDirectory.dir("generated/localBackendOrigin/iosMain").get()
+        buildFolderIos.asFile.mkdirs()
+        buildFolderIos.file("AppVariant.ios.kt").asFile.bufferedWriter().use {
+            it.appendLine("package com.mbta.tid.mbta_app")
+            it.appendLine()
+            it.appendLine("internal actual val localBackendOrigin = \"$localBackendOriginIos\"")
+        }
+        kotlin.sourceSets.getByName("iosMain") { kotlin.srcDirs(buildFolderIos) }
     }
 }
 
@@ -425,19 +455,34 @@ tasks.register<CycloneDxBomTransformTask>("bomIosSwiftPM") {
                             "/license?ref=v"
                         else "/license?ref=",
                     )
-            val apiResponse =
-                try {
-                    val gh = providers.exec { commandLine("gh", "api", licenseApiPath) }
-                    gh.standardOutput.asText.get()
-                } catch (e: ProcessExecutionException) {
+            val apiResponse = run {
+                val gh =
+                    providers.exec {
+                        commandLine("gh", "api", licenseApiPath)
+                        isIgnoreExitValue = true
+                    }
+                val result = gh.result.get()
+                if (result.exitValue != 0) {
                     throw IllegalStateException(
-                        "\nerror: `gh api $licenseApiPath` failed, ${when {
-                            DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX -> "`brew install gh`"
-                            else -> "install it"
-                        }} and try `gh auth login`",
-                        e,
+                        buildString {
+                            appendLine()
+                            append("error: `gh api ")
+                            append(licenseApiPath)
+                            append("` failed with exit code ")
+                            append(result.exitValue)
+                            appendLine(" and standard err")
+                            append(gh.standardError.asText.get())
+                            when {
+                                DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX ->
+                                    append("`brew install gh`")
+                                else -> append("install it")
+                            }
+                            append(" and try `gh auth login`")
+                        }
                     )
                 }
+                gh.standardOutput.asText.get()
+            }
             val licenseResponse = GithubLicenseResponse.decode(apiResponse)
 
             component.licenses.addLicense(

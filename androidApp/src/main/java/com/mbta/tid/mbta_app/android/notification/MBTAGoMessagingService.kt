@@ -59,6 +59,7 @@ class MBTAGoMessagingService : FirebaseMessagingService() {
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
         val notificationManager = NotificationManagerCompat.from(applicationContext)
 

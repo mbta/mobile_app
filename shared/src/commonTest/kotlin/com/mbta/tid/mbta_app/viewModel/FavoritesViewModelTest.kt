@@ -6,11 +6,13 @@ import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.model.StopCardData
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
@@ -63,18 +65,19 @@ internal class FavoritesViewModelTest : KoinTest {
     val objects = ObjectCollectionBuilder()
     val stop1 =
         objects.stop {
+            id = "stop1"
             latitude = 0.0
             longitude = 0.0
         }
     val stop2 =
         objects.stop {
-            id = "stop1"
+            id = "stop2"
             latitude = 1.0
             longitude = 1.0
         }
     val stop3 =
         objects.stop {
-            id = "stop2"
+            id = "stop3"
             latitude = -0.5
             longitude = -0.5
         }
@@ -173,7 +176,9 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = null,
                     routeCardData = null,
+                    stopCardData = null,
                     staticRouteCardData = null,
+                    staticStopCardData = null,
                     loadedLocation = null,
                 ),
                 awaitItem(),
@@ -183,7 +188,9 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = emptyMap(),
                     routeCardData = null,
+                    stopCardData = null,
                     staticRouteCardData = null,
+                    staticStopCardData = null,
                     loadedLocation = null,
                 ),
                 awaitItem(),
@@ -193,7 +200,9 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = emptyMap(),
                     routeCardData = emptyList(),
+                    stopCardData = emptyList(),
                     staticRouteCardData = emptyList(),
+                    staticStopCardData = emptyList(),
                     loadedLocation = null,
                 ),
                 awaitItem(),
@@ -229,7 +238,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                 RouteCardData.Leaf(
                                     LineOrRoute.Route(route1),
                                     stop1,
-                                    directionId = 0,
+                                    Direction(0, route1),
                                     listOf(patterns.getValue(route1).getValue(0)),
                                     setOf(stop1.id),
                                     upcomingTrips = emptyList(),
@@ -241,7 +250,6 @@ internal class FavoritesViewModelTest : KoinTest {
                                     context = RouteCardData.Context.Favorites,
                                 )
                             ),
-                            globalData,
                         )
                     ),
                     now,
@@ -256,7 +264,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                 RouteCardData.Leaf(
                                     LineOrRoute.Route(route2),
                                     stop2,
-                                    directionId = 1,
+                                    Direction(1, route2),
                                     listOf(patterns.getValue(route2).getValue(1)),
                                     setOf(stop2.id),
                                     upcomingTrips = emptyList(),
@@ -268,7 +276,6 @@ internal class FavoritesViewModelTest : KoinTest {
                                     context = RouteCardData.Context.Favorites,
                                 )
                             ),
-                            globalData,
                         )
                     ),
                     now,
@@ -286,7 +293,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                 RouteCardData.Leaf(
                                     LineOrRoute.Route(route1),
                                     stop1,
-                                    directionId = 0,
+                                    Direction(0, route1),
                                     listOf(patterns.getValue(route1).getValue(0)),
                                     setOf(stop1.id),
                                     upcomingTrips =
@@ -306,7 +313,6 @@ internal class FavoritesViewModelTest : KoinTest {
                                     context = RouteCardData.Context.Favorites,
                                 )
                             ),
-                            globalData,
                         )
                     ),
                     now,
@@ -321,7 +327,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                 RouteCardData.Leaf(
                                     LineOrRoute.Route(route2),
                                     stop2,
-                                    directionId = 1,
+                                    Direction(1, route2),
                                     listOf(patterns.getValue(route2).getValue(1)),
                                     setOf(stop2.id),
                                     upcomingTrips =
@@ -341,7 +347,6 @@ internal class FavoritesViewModelTest : KoinTest {
                                     context = RouteCardData.Context.Favorites,
                                 )
                             ),
-                            globalData,
                         )
                     ),
                     now,
@@ -354,7 +359,9 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = null,
                     routeCardData = null,
+                    stopCardData = null,
                     staticRouteCardData = null,
+                    staticStopCardData = null,
                     loadedLocation = null,
                 ),
                 awaitItem(),
@@ -364,7 +371,9 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = favorites.routeStopDirection,
                     routeCardData = null,
+                    stopCardData = null,
                     staticRouteCardData = null,
+                    staticStopCardData = null,
                     loadedLocation = null,
                 ),
                 awaitItem(),
@@ -378,7 +387,15 @@ internal class FavoritesViewModelTest : KoinTest {
                         false,
                         false,
                         expectedRealtimeData,
+                        StopCardData.fromRouteCardData(
+                            expectedRealtimeData,
+                            sortByDistanceFrom = stop1.position,
+                        ),
                         expectedStaticData,
+                        StopCardData.fromRouteCardData(
+                            expectedStaticData,
+                            sortByDistanceFrom = stop1.position,
+                        ),
                         stop1.position,
                     )
             }
@@ -417,7 +434,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                 RouteCardData.Leaf(
                                     LineOrRoute.Route(route1),
                                     stop1,
-                                    0,
+                                    Direction(0, route1),
                                     listOf(patterns.getValue(route1).getValue(0)),
                                     setOf(stop1.id),
                                     upcomingTrips = emptyList(),
@@ -429,7 +446,6 @@ internal class FavoritesViewModelTest : KoinTest {
                                     RouteCardData.Context.Favorites,
                                 )
                             ),
-                            globalData,
                         )
                     ),
                     now,
@@ -447,7 +463,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                 RouteCardData.Leaf(
                                     LineOrRoute.Route(route2),
                                     stop2,
-                                    1,
+                                    Direction(1, route2),
                                     listOf(patterns.getValue(route2).getValue(1)),
                                     setOf(stop2.id),
                                     upcomingTrips = emptyList(),
@@ -459,7 +475,6 @@ internal class FavoritesViewModelTest : KoinTest {
                                     RouteCardData.Context.Favorites,
                                 )
                             ),
-                            globalData,
                         )
                     ),
                     now,
@@ -472,7 +487,13 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = favoritesBefore.routeStopDirection,
                     routeCardData = emptyList(),
+                    stopCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataBefore,
+                    staticStopCardData =
+                        StopCardData.fromRouteCardData(
+                            expectedStaticDataBefore,
+                            sortByDistanceFrom = stop1.position,
+                        ),
                     loadedLocation = stop1.position,
                 ),
                 awaitItemSatisfying {
@@ -486,7 +507,13 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = favoritesAfter.routeStopDirection,
                     routeCardData = emptyList(),
+                    stopCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataBefore,
+                    staticStopCardData =
+                        StopCardData.fromRouteCardData(
+                            expectedStaticDataBefore,
+                            sortByDistanceFrom = stop1.position,
+                        ),
                     loadedLocation = stop1.position,
                 ),
                 awaitItem(),
@@ -496,7 +523,13 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = favoritesAfter.routeStopDirection,
                     routeCardData = emptyList(),
+                    stopCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataAfter,
+                    staticStopCardData =
+                        StopCardData.fromRouteCardData(
+                            expectedStaticDataAfter,
+                            sortByDistanceFrom = stop1.position,
+                        ),
                     loadedLocation = stop1.position,
                 ),
                 awaitItem(),
@@ -542,7 +575,11 @@ internal class FavoritesViewModelTest : KoinTest {
                                 RouteCardData.Leaf(
                                     LineOrRoute.Route(route1),
                                     stop1,
-                                    0,
+                                    Direction(
+                                        route1.directionNames[0],
+                                        route1.directionDestinations[0],
+                                        0,
+                                    ),
                                     listOf(patterns.getValue(route1).getValue(0)),
                                     setOf(stop1.id),
                                     upcomingTrips = emptyList(),
@@ -554,7 +591,6 @@ internal class FavoritesViewModelTest : KoinTest {
                                     RouteCardData.Context.Favorites,
                                 )
                             ),
-                            globalData,
                         )
                     ),
                     now,
@@ -568,7 +604,13 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = favoritesBefore.routeStopDirection,
                     routeCardData = emptyList(),
+                    stopCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataBefore,
+                    staticStopCardData =
+                        StopCardData.fromRouteCardData(
+                            expectedStaticDataBefore,
+                            sortByDistanceFrom = stop1.position,
+                        ),
                     loadedLocation = stop1.position,
                 ),
                 awaitItemSatisfying {
@@ -806,7 +848,7 @@ internal class FavoritesViewModelTest : KoinTest {
                     RouteCardData.Leaf(
                         LineOrRoute.Route(route1),
                         stop1,
-                        0,
+                        Direction(0, route1),
                         listOf(patterns.getValue(route1).getValue(0)),
                         setOf(stop1.id),
                         upcomingTrips = emptyList(),
@@ -818,7 +860,6 @@ internal class FavoritesViewModelTest : KoinTest {
                         RouteCardData.Context.Favorites,
                     )
                 ),
-                globalData,
             )
 
         val stop2Data =
@@ -829,7 +870,7 @@ internal class FavoritesViewModelTest : KoinTest {
                     RouteCardData.Leaf(
                         LineOrRoute.Route(route2),
                         stop2,
-                        1,
+                        Direction(1, route2),
                         listOf(patterns.getValue(route2).getValue(1)),
                         setOf(stop2.id),
                         upcomingTrips = emptyList(),
@@ -841,7 +882,6 @@ internal class FavoritesViewModelTest : KoinTest {
                         RouteCardData.Context.Favorites,
                     )
                 ),
-                globalData,
             )
 
         val stop3Data =
@@ -852,7 +892,7 @@ internal class FavoritesViewModelTest : KoinTest {
                     RouteCardData.Leaf(
                         LineOrRoute.Route(route2),
                         stop3,
-                        1,
+                        Direction(1, route2),
                         listOf(patterns.getValue(route2).getValue(1)),
                         setOf(stop3.id),
                         upcomingTrips = emptyList(),
@@ -864,7 +904,6 @@ internal class FavoritesViewModelTest : KoinTest {
                         RouteCardData.Context.Favorites,
                     )
                 ),
-                globalData,
             )
         val routeCard1Data = RouteCardData(LineOrRoute.Route(route1), listOf(stop1Data), now)
 
@@ -882,7 +921,13 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = favoritesBefore.routeStopDirection,
                     routeCardData = emptyList(),
+                    stopCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataBefore,
+                    staticStopCardData =
+                        StopCardData.fromRouteCardData(
+                            expectedStaticDataBefore,
+                            sortByDistanceFrom = stop3.position,
+                        ),
                     loadedLocation = stop3.position,
                 ),
                 awaitItemSatisfying {
@@ -1083,7 +1128,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                 RouteCardData.Leaf(
                                     LineOrRoute.Route(route1),
                                     stop1,
-                                    0,
+                                    Direction(0, route1),
                                     listOf(patterns.getValue(route1).getValue(0)),
                                     setOf(stop1.id),
                                     upcomingTrips = emptyList(),
@@ -1095,7 +1140,6 @@ internal class FavoritesViewModelTest : KoinTest {
                                     RouteCardData.Context.Favorites,
                                 )
                             ),
-                            globalData,
                         )
                     ),
                     now,
@@ -1109,7 +1153,13 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = favoritesBefore.routeStopDirection,
                     routeCardData = emptyList(),
+                    stopCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataBefore,
+                    staticStopCardData =
+                        StopCardData.fromRouteCardData(
+                            expectedStaticDataBefore,
+                            sortByDistanceFrom = stop1.position,
+                        ),
                     loadedLocation = stop1.position,
                 ),
                 awaitItemSatisfying {

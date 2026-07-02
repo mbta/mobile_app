@@ -31,6 +31,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             stopFilter: .init(routeId: route.id, directionId: directionId),
             tripFilter: nil,
             routeData: nil,
+            alerts: .init(alerts: [:]),
             favorites: .init(routeStopDirection: [:]),
             global: .init(objects: objects),
             now: Date.now,
@@ -39,9 +40,9 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
+            navManager: .init(),
         )
 
         let tappedPublisher = PassthroughSubject<Void, Never>()
@@ -112,7 +113,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             lineOrRoute: LineOrRoute.Route(route: route),
             stop: stop,
             // key piece: directionId here is 0
-            directionId: 0,
+            direction: .init(directionId: 0, route: route),
             routePatterns: [],
             stopIds: Set([stop.id]),
             upcomingTrips: [upcomingTrip0],
@@ -125,7 +126,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         ), RouteCardData.Leaf(
             lineOrRoute: LineOrRoute.Route(route: route),
             stop: stop,
-            directionId: 1,
+            direction: .init(directionId: 1, route: route),
             routePatterns: [],
             stopIds: Set([stop.id]),
             upcomingTrips: [upcomingTrip1],
@@ -135,8 +136,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             subwayServiceStartTime: nil,
             alertsDownstream: [],
             context: .stopDetailsFiltered
-        )],
-        globalData: GlobalResponse(objects: objects))
+        )])
 
         let routeData = StopDetailsViewModel.RouteDataFiltered(
             filteredWith: .init(stopId: stop.id, stopFilter: .init(routeId: route.id, directionId: 1),
@@ -154,6 +154,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             stopFilter: .init(routeId: route.id, directionId: 1),
             tripFilter: nil,
             routeData: routeData,
+            alerts: .init(alerts: [:]),
             favorites: .init(routeStopDirection: [:]),
             global: .init(objects: objects),
             now: Date.now,
@@ -162,9 +163,9 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
+            navManager: .init(),
         )
 
         let exp = sut.inspection.inspect(after: 2) { view in
@@ -238,6 +239,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             stopFilter: .init(routeId: route.id, directionId: directionId),
             tripFilter: nil,
             routeData: nil,
+            alerts: .init(alerts: [:]),
             favorites: .init(routeStopDirection: [:]),
             global: .init(objects: objects),
             now: Date.now,
@@ -246,9 +248,9 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
+            navManager: .init(),
         )
 
         let exp = sut.inspection.inspect(after: 2) { view in
@@ -290,7 +292,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         let stopData: RouteCardData.RouteStopData = .init(route: route, stop: stop, data: [RouteCardData.Leaf(
             lineOrRoute: LineOrRoute.Route(route: route),
             stop: stop,
-            directionId: 0,
+            direction: .init(directionId: 0, route: route),
             routePatterns: [],
             stopIds: Set([stop.id]),
             upcomingTrips: [upcomingTrip0],
@@ -303,7 +305,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         ), RouteCardData.Leaf(
             lineOrRoute: LineOrRoute.Route(route: route),
             stop: stop,
-            directionId: 1,
+            direction: .init(directionId: 1, route: route),
             routePatterns: [],
             stopIds: Set([stop.id]),
             upcomingTrips: [upcomingTrip1],
@@ -313,8 +315,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             subwayServiceStartTime: nil,
             alertsDownstream: [],
             context: .stopDetailsFiltered
-        )],
-        globalData: GlobalResponse(objects: objects))
+        )])
 
         let routeData = try StopDetailsViewModel.RouteDataFiltered(
             filteredWith: .init(
@@ -336,6 +337,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             stopFilter: .init(routeId: XCTUnwrap(route.lineId), directionId: directionId),
             tripFilter: nil,
             routeData: nil,
+            alerts: .init(alerts: [:]),
             favorites: .init(routeStopDirection: [:]),
             global: .init(objects: objects),
             now: Date.now,
@@ -344,14 +346,13 @@ final class StopDetailsFilteredViewTests: XCTestCase {
                 setStopFilterExp.fulfill()
             } else {
                 XCTFail("setStopFilter called with wrong params \(filter?.directionId) \(filter?.routeId)")
-            }
-            },
+            } },
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
+            navManager: .init(),
         )
 
         let exp = sut.inspection.inspect(after: 2) { view in

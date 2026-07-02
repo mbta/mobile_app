@@ -61,8 +61,10 @@ fun NearbyTransitView(
     }
 
     LaunchedEffect(state.loadedLocation) {
-        state.loadedLocation?.let { setLastLocation(it) }
-        setIsTargeting(false)
+        state.loadedLocation?.let {
+            setLastLocation(it)
+            setIsTargeting(false)
+        }
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

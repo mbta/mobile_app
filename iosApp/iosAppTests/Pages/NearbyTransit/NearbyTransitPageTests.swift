@@ -24,58 +24,13 @@ final class NearbyTransitPageTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
-    func testClearsNearbyStateWhenManuallyCentering() throws {
-        let viewportProvider = ViewportProvider(
-            viewport: nil,
-            isManuallyCentering: false
-        )
-        let nearbyVM = iosApp.NearbyViewModel()
-        nearbyVM.nearbyState = .init(loadedLocation: .init(latitude: 0, longitude: 0))
-        nearbyVM.routeCardData = []
-
-        let sut = NearbyTransitPage(
-            errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
-            viewportProvider: viewportProvider,
-            noNearbyStops: noNearbyStops
-        )
-        try sut.inspect().find(ViewType.VStack.self).callOnChange(newValue: true)
-
-        XCTAssertNil(nearbyVM.nearbyState.loadedLocation)
-        XCTAssertNil(nearbyVM.routeCardData)
-    }
-
     @MainActor func testReloadsWhenLocationChanges() {
-        class FakeNearbyVM: iosApp.NearbyViewModel {
-            let expectation: XCTestExpectation
-            let closure: (CLLocationCoordinate2D) -> Void
-
-            init(_ expectation: XCTestExpectation, _ closure: @escaping (CLLocationCoordinate2D) -> Void) {
-                self.expectation = expectation
-                self.closure = closure
-                super.init()
-            }
-
-            override func getNearbyStops(
-                global _: GlobalResponse,
-                location: CLLocationCoordinate2D,
-                alerts _: AlertsStreamDataResponse?,
-                atTime _: EasternTimeInstant
-            ) {
-                debugPrint("ViewModel getting nearby")
-                closure(location)
-                expectation.fulfill()
-            }
-        }
-
         let globalDataLoaded = PassthroughSubject<Void, Never>()
 
         let repositories = MockRepositories()
         repositories.global = MockGlobalRepository(onGet: { globalDataLoaded.send() })
         loadKoinMocks(repositories: repositories)
 
-        let getNearbyExpectation = expectation(description: "getNearby")
-        getNearbyExpectation.assertForOverFulfill = false
         let newCameraState = CameraState(
             center: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0),
             padding: .zero,
@@ -83,15 +38,21 @@ final class NearbyTransitPageTests: XCTestCase {
             bearing: 0.0,
             pitch: 0.0
         )
-        let fakeVM = FakeNearbyVM(getNearbyExpectation) { location in
-            XCTAssertEqual(location, newCameraState.center)
+        let locationChangeExpectation = expectation(description: "getNearbyNotCalled")
+        let mockNearbyVM = MockNearbyViewModel(initialState: .init())
+        mockNearbyVM.onSetLocation = { location in
+            if let location {
+                XCTAssertEqual(location.coordinate, newCameraState.center)
+                locationChangeExpectation.fulfill()
+            }
         }
         let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
         let sut = NearbyTransitPage(
+            alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: fakeVM,
-            viewportProvider: viewportProvider,
-            noNearbyStops: noNearbyStops
+            nearbyVM: mockNearbyVM,
+            navManager: .init(),
+            noNearbyStops: noNearbyStops,
         )
         let hasAppeared = sut.inspection.inspect(onReceive: globalDataLoaded) { view in
             XCTAssertNil(try view.find(NearbyTransitView.self).actualView().location)
@@ -103,74 +64,25 @@ final class NearbyTransitPageTests: XCTestCase {
                 .callOnChange(newValue: newCameraState.center)
         }
 
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [hasAppeared, getNearbyExpectation], timeout: 10)
-    }
-
-    @MainActor func testNoReloadWhenNotVisbleAndLocationChanges() {
-        class FakeNearbyVM: iosApp.NearbyViewModel {
-            let expectation: XCTestExpectation
-
-            init(_ expectation: XCTestExpectation, navigationStack: [SheetNavigationStackEntry]) {
-                self.expectation = expectation
-                super.init(navigationStack: navigationStack)
-            }
-
-            override func getNearbyStops(
-                global _: GlobalResponse,
-                location _: CLLocationCoordinate2D,
-                alerts _: AlertsStreamDataResponse?,
-                atTime _: EasternTimeInstant
-            ) {
-                expectation.fulfill()
-            }
-        }
-
-        let getNearbyNotCalledExpectation = expectation(description: "getNearbyNotCalled")
-        getNearbyNotCalledExpectation.isInverted = true
-        let objects = ObjectCollectionBuilder()
-        let stop = objects.stop { _ in }
-
-        let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
-        let fakeVM = FakeNearbyVM(getNearbyNotCalledExpectation, navigationStack: [
-            .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
-        ])
-        let sut = NearbyTransitPage(
-            errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: fakeVM,
-            viewportProvider: viewportProvider,
-            noNearbyStops: noNearbyStops
-        )
-
-        let newCameraState = CameraState(
-            center: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0),
-            padding: .zero,
-            zoom: ViewportProvider.Defaults.zoom,
-            bearing: 0.0,
-            pitch: 0.0
-        )
-        let appearancePublisher = PassthroughSubject<Bool, Never>()
-        let hasAppeared = sut.inspection.inspect(after: 1) { view in
-            XCTAssertNil(try view.find(NearbyTransitView.self).actualView().location)
-            try view.actualView().viewportProvider.updateCameraState(newCameraState)
-            appearancePublisher.send(true)
-        }
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [hasAppeared, getNearbyNotCalledExpectation], timeout: 5)
+        ViewHosting.host(view: sut.environmentObject(viewportProvider).withFixedSettings([:]))
+        wait(for: [hasAppeared, locationChangeExpectation], timeout: 10)
     }
 
     @MainActor func testErrorBanner() {
         let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
 
         let sut = NearbyTransitPage(
-            errorBannerVM: MockErrorBannerViewModel(initialState: .init(loadingWhenPredictionsStale: false,
-                                                                        errorState: .DataError(messages: [],
-                                                                                               details: [],
-                                                                                               action: {}))),
-            nearbyVM: iosApp.NearbyViewModel(),
-            viewportProvider: viewportProvider,
+            alerts: .init(alerts: [:]),
+            errorBannerVM: MockErrorBannerViewModel(
+                initialState: .init(
+                    loadingWhenPredictionsStale: false,
+                    errorState: .DataError(messages: [], details: [], action: {})
+                )
+            ),
+            nearbyVM: MockNearbyViewModel(),
+            navManager: .init(),
             noNearbyStops: noNearbyStops
-        ).withFixedSettings([:])
+        ).environmentObject(viewportProvider).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(ErrorBanner.self))
     }

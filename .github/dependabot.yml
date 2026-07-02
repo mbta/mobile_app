@@ -43,3 +43,12 @@ updates:
     rebase-strategy: disabled
     cooldown:
       default-days: 7
+    groups:
+      firebase:
+        patterns:
+          - "firebase/*"
+          - "google/*"
+          - "googleads/*"
+      mapbox:
+        patterns:
+          - "mapbox/*"

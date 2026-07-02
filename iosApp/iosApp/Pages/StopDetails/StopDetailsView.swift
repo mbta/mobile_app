@@ -18,6 +18,7 @@ struct StopDetailsView: View {
     var filters: StopDetailsPageFilters
 
     var routeData: StopDetailsViewModel.RouteData?
+    var alerts: AlertsStreamDataResponse?
     var favorites: Favorites
     var global: GlobalResponse?
     var now: Date
@@ -28,9 +29,10 @@ struct StopDetailsView: View {
     var navCallbacks: NavigationCallbacks
 
     var errorBannerVM: IErrorBannerViewModel
-    @ObservedObject var nearbyVM: NearbyViewModel
     var mapVM: IMapViewModel
     var stopDetailsVM: IStopDetailsViewModel
+
+    @ObservedObject var navManager: NavigationManager
 
     let inspection = Inspection<Self>()
 
@@ -41,6 +43,7 @@ struct StopDetailsView: View {
                 stopFilter: stopFilter,
                 tripFilter: filters.tripFilter,
                 routeData: routeData,
+                alerts: alerts,
                 favorites: favorites,
                 global: global,
                 now: now,
@@ -49,9 +52,9 @@ struct StopDetailsView: View {
                 setTripFilter: setTripFilter,
                 navCallbacks: navCallbacks,
                 errorBannerVM: errorBannerVM,
-                nearbyVM: nearbyVM,
                 mapVM: mapVM,
-                stopDetailsVM: stopDetailsVM
+                stopDetailsVM: stopDetailsVM,
+                navManager: navManager,
             )
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .enableInjection()
@@ -65,7 +68,7 @@ struct StopDetailsView: View {
                 setStopFilter: setStopFilter,
                 navCallbacks: navCallbacks,
                 errorBannerVM: errorBannerVM,
-                nearbyVM: nearbyVM,
+                navManager: navManager,
             )
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .enableInjection()

@@ -181,13 +181,12 @@ class NearbyTransitViewTest : KoinTest {
                 RouteCardData.RouteStopData(
                     LineOrRoute.Route(route),
                     stop,
-                    directions = listOf(Direction(0, route), Direction(1, route)),
                     data =
                         listOf(
                             RouteCardData.Leaf(
                                 LineOrRoute.Route(route),
                                 stop,
-                                0,
+                                Direction(0, route),
                                 listOf(routePatternOne),
                                 setOf(stop.id),
                                 listOf(UpcomingTrip(trip, prediction = prediction)),
@@ -201,7 +200,7 @@ class NearbyTransitViewTest : KoinTest {
                             RouteCardData.Leaf(
                                 LineOrRoute.Route(route),
                                 stop,
-                                1,
+                                Direction(null, null, 1),
                                 listOf(routePatternTwo),
                                 setOf(sampleStop.id),
                                 emptyList(),
@@ -225,13 +224,12 @@ class NearbyTransitViewTest : KoinTest {
                 RouteCardData.RouteStopData(
                     LineOrRoute.Line(greenLine, setOf(greenLineRoute)),
                     greenLineStop,
-                    directions = listOf(Direction(0, greenLineRoute)),
                     data =
                         listOf(
                             RouteCardData.Leaf(
                                 LineOrRoute.Line(greenLine, setOf(greenLineRoute)),
                                 greenLineStop,
-                                0,
+                                Direction(0, greenLineRoute),
                                 listOf(greenLineRoutePatternOne),
                                 setOf(greenLineStop.id),
                                 listOf(
@@ -269,7 +267,8 @@ class NearbyTransitViewTest : KoinTest {
                 NearbyViewModel.State(
                     false,
                     listOf(routeCardData(), glRouteCardData()),
-                    loadedLocation = Position(0.0, 0.0),
+                    Position(0.0, 0.0),
+                    listOf(sampleStop.id, greenLineStop.id),
                 )
             )
 
@@ -327,7 +326,8 @@ class NearbyTransitViewTest : KoinTest {
                 NearbyViewModel.State(
                     false,
                     listOf(routeCardData()),
-                    loadedLocation = Position(0.0, 0.0),
+                    Position(0.0, 0.0),
+                    listOf(sampleStop.id, greenLineStop.id),
                 )
             )
 
@@ -414,7 +414,8 @@ class NearbyTransitViewTest : KoinTest {
                 NearbyViewModel.State(
                     false,
                     listOf(routeCardData(harvardNorthbound)),
-                    loadedLocation = Position(0.0, 0.0),
+                    Position(0.0, 0.0),
+                    listOf(harvardNorthbound.id, centralNorthbound.id),
                 )
             )
 

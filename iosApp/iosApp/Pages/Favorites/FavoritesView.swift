@@ -12,15 +12,18 @@ import SwiftUI
 
 struct FavoritesView: View {
     @ObserveInjection var inject
+    @Binding var location: CLLocationCoordinate2D?
+    var alerts: AlertsStreamDataResponse?
     var errorBannerVM: IErrorBannerViewModel
     var favoritesVM: IFavoritesViewModel
     @State var favoritesVMState: FavoritesViewModel.State = .init()
-    @ObservedObject var nearbyVM: NearbyViewModel
     var toastVM: IToastViewModel
-    @Binding var location: CLLocationCoordinate2D?
+    @ObservedObject var navManager: NavigationManager
+    @ObservedObject var viewportProvider: ViewportProvider
 
     @EnvironmentObject var settingsCache: SettingsCache
     var notificationsEnabled: Bool { settingsCache.get(.notifications) }
+    var groupByStop: Bool { settingsCache.get(.favoritesByStop) }
 
     @State var globalData: GlobalResponse?
     var globalRepository = RepositoryDI().global
@@ -42,7 +45,9 @@ struct FavoritesView: View {
                 title: NSLocalizedString("Favorites", comment: "Header for favorites sheet"),
                 navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
                 rightActionContents: {
-                    if let routeCardData = favoritesVMState.routeCardData, !routeCardData.isEmpty {
+                    if let chosenCardData: [Any] = groupByStop ? favoritesVMState.stopCardData : favoritesVMState
+                        .routeCardData,
+                        !chosenCardData.isEmpty {
                         ActionButton(kind: .plus, circleColor: Color.translucentContrast, action: { onAddStops() })
                         NavTextButton(
                             string: NSLocalizedString("Edit", comment: "Button text to enter edit favorites flow"),
@@ -51,7 +56,7 @@ struct FavoritesView: View {
                             height: editButtonHeight,
                             width: 64
                         ) {
-                            nearbyVM.pushNavEntry(.editFavorites)
+                            navManager.pushNavEntry(.editFavorites)
                         }
                     }
                 }
@@ -59,34 +64,38 @@ struct FavoritesView: View {
 
             if notificationsEnabled, favoritesVMState.shouldShowNotificationsHint {
                 NotificationsHint(onTap: {
-                    nearbyVM.pushNavEntry(.editFavorites)
+                    navManager.pushNavEntry(.editFavorites)
                     favoritesVM.dismissNotificationsHint()
                 }, onDismiss: { favoritesVM.dismissNotificationsHint() })
             }
 
             ErrorBanner(errorBannerVM, padding: .init([.horizontal, .bottom], 16))
             DebugView { EmptyView() }
-            RouteCardList(
-                routeCardData: favoritesVMState.routeCardData,
-                emptyView: {
-                    NoFavoritesView(
-                        onAddStops: {
-                            onAddStops()
-                        }
-                    )
-                    .frame(maxWidth: .infinity)
-                },
-                global: globalData,
-                now: now,
-                isFavorite: { rsd in favoritesVMState.favorites?.contains(where: { rsd == $0.key }) ?? false },
-                pushNavEntry: { nearbyVM.pushNavEntry($0) },
-                showStopHeader: true
-            )
+            if groupByStop {
+                StopCardList(
+                    stopCardData: favoritesVMState.stopCardData,
+                    emptyView: { emptyView() },
+                    global: globalData,
+                    now: now,
+                    isFavorite: { isFavorite($0) },
+                    pushNavEntry: { navManager.pushNavEntry($0) }
+                )
+            } else {
+                RouteCardList(
+                    routeCardData: favoritesVMState.routeCardData,
+                    emptyView: { emptyView() },
+                    global: globalData,
+                    now: now,
+                    isFavorite: { isFavorite($0) },
+                    pushNavEntry: { navManager.pushNavEntry($0) },
+                    showStopHeader: true
+                )
+            }
         }
         .global($globalData, errorKey: .companion.fromSheetTypes(sheetTypes: [.favorites], id: "FavoritesView"))
         .onAppear {
             favoritesVM.setActive(active: true, wasSentToBackground: false)
-            favoritesVM.setAlerts(alerts: nearbyVM.alerts)
+            favoritesVM.setAlerts(alerts: alerts)
             favoritesVM.setContext(context: FavoritesViewModel.ContextFavorites())
             favoritesVM.setLocation(location: location?.positionKt)
             favoritesVM.setNow(now: now.toEasternInstant())
@@ -108,9 +117,11 @@ struct FavoritesView: View {
         .onChange(of: favoritesVMState.awaitingPredictionsAfterBackground) {
             errorBannerVM.setIsLoadingWhenPredictionsStale(isLoading: $0)
         }
-        .onChange(of: favoritesVMState.loadedLocation) {
-            nearbyVM.lastLoadedLocation = $0?.coordinate
-            nearbyVM.isTargeting = false
+        .onChange(of: favoritesVMState.loadedLocation) { loadedLocation in
+            if let loadedLocation {
+                viewportProvider.lastLoadedLocation = loadedLocation.coordinate
+                viewportProvider.isTargeting = false
+            }
         }
         .onChange(of: favoritesVMState.favorites) { _ in emptyFavoritesNotificationsHintCheck() }
         .onChange(of: notificationsEnabled) { _ in emptyFavoritesNotificationsHintCheck() }
@@ -128,7 +139,7 @@ struct FavoritesView: View {
                 showFirstTimeToast()
             }
         }
-        .onChange(of: nearbyVM.alerts) { favoritesVM.setAlerts(alerts: $0) }
+        .onChange(of: alerts) { favoritesVM.setAlerts(alerts: $0) }
         .onChange(of: location?.positionKt) { favoritesVM.setLocation(location: $0) }
         .onChange(of: now) { favoritesVM.setNow(now: $0.toEasternInstant()) }
         .withScenePhaseHandlers(
@@ -139,6 +150,19 @@ struct FavoritesView: View {
             onBackground: { favoritesVM.setActive(active: false, wasSentToBackground: true) }
         )
         .enableInjection()
+    }
+
+    @ViewBuilder private func emptyView() -> some View {
+        NoFavoritesView(
+            onAddStops: {
+                onAddStops()
+            }
+        )
+        .frame(maxWidth: .infinity)
+    }
+
+    private func isFavorite(_ rsd: RouteStopDirection) -> Bool {
+        favoritesVMState.favorites?.contains(where: { rsd == $0.key }) ?? false
     }
 
     func showFirstTimeToast() {
@@ -157,7 +181,7 @@ struct FavoritesView: View {
     private func onAddStops() {
         favoritesVM.setIsFirstExposureToNewFavorites(isFirst: false)
         toastVM.hideToast()
-        nearbyVM.pushNavEntry(
+        navManager.pushNavEntry(
             SheetNavigationStackEntry.routePicker(
                 SheetRoutes.RoutePicker(
                     path: RoutePickerPath.Root(),

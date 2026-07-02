@@ -28,7 +28,6 @@ final class SaveFavoritePageTests: XCTestCase {
             context: .favorites,
             updateFavorites: { _ in },
             navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
-            nearbyVM: .init(),
         )
 
         ViewHosting.host(view: sut)
@@ -53,7 +52,6 @@ final class SaveFavoritePageTests: XCTestCase {
             context: .favorites,
             updateFavorites: { _ in },
             navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
-            nearbyVM: .init(),
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -90,7 +88,6 @@ final class SaveFavoritePageTests: XCTestCase {
             context: .favorites,
             updateFavorites: { _ in },
             navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
-            nearbyVM: .init(),
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -128,16 +125,15 @@ final class SaveFavoritePageTests: XCTestCase {
             context: .stopDetails,
             updateFavorites: { updatedFavorites = $0 },
             navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
-            nearbyVM: .init(),
         )
 
         let exp1 = sut.inspection.inspect(after: 1) { view in
             XCTAssertNotNil(try view.find(text: "Add Favorite"))
             try view.find(text: "Get disruption notifications").find(ViewType.Toggle.self, relation: .parent).tap()
+            try view.find(button: "Save").tap()
         }
 
-        let exp2 = sut.inspection.inspect(after: 2) { view in
-            try view.find(button: "Save").tap()
+        let exp2 = sut.inspection.inspect(after: 2) { _ in
             XCTAssertEqual(updatedFavorites, [
                 .init(route: route.id, stop: stop.id, direction: 0): .init(notifications: .init(
                     enabled: true,

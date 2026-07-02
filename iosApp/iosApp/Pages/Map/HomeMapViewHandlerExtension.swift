@@ -104,14 +104,14 @@ extension HomeMapView {
             return false
         }
         analytics.tappedOnStop(stopId: stop.id)
-        nearbyVM.popToEntrypoint()
-        nearbyVM.pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil))
+        navManager.popToEntrypoint()
+        navManager.pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil))
         return true
     }
 
     func handleTapVehicle(_ vehicle: Vehicle) {
         guard let tripId = vehicle.tripId else { return }
-        let currentNavEntry = nearbyVM.navigationStack.lastSafe()
+        let currentNavEntry = navManager.navigationStack.lastSafe()
         let (stopId, stopFilter, tripFilter): (String?, StopDetailsFilter?,
                                                TripDetailsFilter?) = switch currentNavEntry {
         case let .stopDetails(stopId: stopId, stopFilter: stopFilter, tripFilter: tripFilter): (
@@ -141,7 +141,7 @@ extension HomeMapView {
             stopSequence: stopSequence,
             selectionLock: true
         )
-        nearbyVM.pushNavEntry(.tripDetails(filter: .init(
+        navManager.pushNavEntry(.tripDetails(filter: .init(
             tripId: tripId,
             vehicleId: vehicle.id,
             routeId: routeId,

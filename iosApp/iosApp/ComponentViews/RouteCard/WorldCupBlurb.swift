@@ -20,7 +20,7 @@ struct WorldCupBlurb: View {
             HStack(spacing: 12) {
                 Image(.soccerBallIcon)
                 VStack(alignment: .leading, spacing: 6) {
-                    if leaf.directionId == 0 {
+                    if leaf.direction.id == 0 {
                         Text(AttributedString.tryMarkdown(NSLocalizedString(
                             "Service from **South Station** to today’s **World Cup match**",
                             comment: ""
@@ -69,7 +69,7 @@ struct WorldCupBlurb: View {
         .init(
             lineOrRoute: .route(route),
             stop: stop,
-            directionId: 0,
+            direction: .init(directionId: 0, route: route),
             routePatterns: [],
             stopIds: [],
             upcomingTrips: [],
@@ -80,7 +80,7 @@ struct WorldCupBlurb: View {
             alertsDownstream: [],
             context: .nearbyTransit
         ),
-    ], globalData: global)], at: .now())
+    ])], at: .now())
     return RouteCard(
         cardData: data,
         global: global,
@@ -102,7 +102,7 @@ struct WorldCupBlurb: View {
         .init(
             lineOrRoute: .route(route),
             stop: stop,
-            directionId: 0,
+            direction: .init(directionId: 0, route: route),
             routePatterns: [],
             stopIds: [],
             upcomingTrips: [],
@@ -113,24 +113,25 @@ struct WorldCupBlurb: View {
             alertsDownstream: [],
             context: .nearbyTransit
         ),
-    ], globalData: global)], at: .now())
+    ])], at: .now())
     startKoinIOSTestApp()
+    let leaf = data.stopData.first!.data.first!
     return StopDetailsFilteredDepartureDetails(
         stopId: stop.id,
         stopFilter: .init(routeId: route.id, directionId: 0),
         tripFilter: nil,
         setStopFilter: { _ in },
         setTripFilter: { _ in },
-        leaf: data.stopData.first!.data.first!,
+        leaf: leaf,
         alertSummaries: [:],
-        selectedDirection: data.stopData.first!.directions.first!,
+        selectedDirection: leaf.direction,
         favorite: false,
         now: .now(),
         errorBannerVM: MockErrorBannerViewModel(),
-        nearbyVM: .init(),
         mapVM: MockMapViewModel(),
         stopDetailsVM: MockStopDetailsViewModel(),
-        viewportProvider: .init()
+        schedulesRepository: MockScheduleRepository(),
+        navManager: NavigationManager()
     )
     .padding(16)
     .withFixedSettings([:])
