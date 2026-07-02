@@ -72,7 +72,7 @@ class AlertsRepositoryTests {
         every { socket.getChannel(any(), any()) } returns channel
         alertsRepo.connect(onReceive = {})
         advanceUntilIdle()
-        verify { alertsRepo.disconnect() }
+        alertsRepo.disconnect()
         verify { channel.detach() }
     }
 

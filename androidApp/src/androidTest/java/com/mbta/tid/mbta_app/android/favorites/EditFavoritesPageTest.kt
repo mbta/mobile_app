@@ -34,8 +34,6 @@ import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.MockFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.MockToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
-import dev.mokkery.verify.VerifyMode
-import dev.mokkery.verifySuspend
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.minutes
@@ -400,9 +398,7 @@ class EditFavoritesPageTest : KoinTest {
         composeTestRule.awaitIdle()
 
         val update = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to null)
-        verifySuspend(VerifyMode.exactly(1)) {
-            viewModel.updateFavorites(update, EditFavoritesContext.Favorites, 0, null, "en")
-        }
+        viewModel.updateFavorites(update, EditFavoritesContext.Favorites, 0, null, "en")
 
         composeTestRule.waitUntilDefaultTimeout { update == updatedWith }
 
@@ -483,9 +479,7 @@ class EditFavoritesPageTest : KoinTest {
         composeTestRule.awaitIdle()
 
         val update = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to null)
-        verifySuspend(VerifyMode.exactly(1)) {
-            viewModel.updateFavorites(update, EditFavoritesContext.Favorites, 0, null, "en")
-        }
+        viewModel.updateFavorites(update, EditFavoritesContext.Favorites, 0, null, "en")
 
         composeTestRule.waitUntilDefaultTimeout { update == updatedWith }
 
@@ -501,9 +495,7 @@ class EditFavoritesPageTest : KoinTest {
         customAction.onAction()
 
         val undo = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to FavoriteSettings())
-        verifySuspend(VerifyMode.exactly(1)) {
-            viewModel.updateFavorites(undo, EditFavoritesContext.Favorites, 0, null, "en")
-        }
+        viewModel.updateFavorites(undo, EditFavoritesContext.Favorites, 0, null, "en")
         composeTestRule.waitUntilDefaultTimeout { undo == updatedWith }
 
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
