@@ -33,26 +33,28 @@ struct PredictionRowView: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            if case let .onRow(route) = pillDecoration {
-                RoutePill(route: route, type: .flexCompact).padding(.trailing, predictions.warningAlert == nil ? 8 : 0)
-                if let warningAlert = predictions.warningAlert {
-                    warningIcon(warningAlert)
-                        .padding(.leading, -8)
-                        .padding(.trailing, 8)
+            HStack(spacing: 0) {
+                if case let .onRow(route) = pillDecoration {
+                    RoutePill(route: route, type: .fixed)
+                    if let warningAlert = predictions.warningAlert {
+                        warningIcon(warningAlert)
+                            .padding(.leading, -6)
+                            .padding(.trailing, 8)
+                    }
+                } else {
+                    if let warningAlert = predictions.warningAlert {
+                        warningIcon(warningAlert)
+                            .padding(.trailing, 8)
+                    }
                 }
-            } else {
-                if let warningAlert = predictions.warningAlert {
-                    warningIcon(warningAlert)
-                        .padding(.trailing, 8)
-                }
-            }
+            }.padding(.trailing, 8)
             AnyView(destination())
             Spacer(minLength: 8)
             statuses.foregroundStyle(Color.text)
-        }
-        .background(Color.fill3)
-        .frame(maxWidth: .infinity, minHeight: 24)
-        .enableInjection()
+        }.padding(.trailing, 8)
+            .background(Color.fill3)
+            .frame(maxWidth: .infinity, minHeight: 24)
+            .enableInjection()
     }
 
     @ViewBuilder

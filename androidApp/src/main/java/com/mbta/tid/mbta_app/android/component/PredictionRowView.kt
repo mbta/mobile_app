@@ -58,7 +58,7 @@ fun PredictionRowView(
         Row(modifier = Modifier.padding(end = 8.dp)) {
             if (pillDecoration is PillDecoration.OnRow) {
                 Row(horizontalArrangement = Arrangement.spacedBy(-8.dp)) {
-                    RoutePill(pillDecoration.route, line = null, RoutePillType.FlexCompact)
+                    RoutePill(pillDecoration.route, line = null, RoutePillType.Fixed)
 
                     predictions.warningAlert?.let { warningAlert ->
                         Image(
