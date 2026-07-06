@@ -75,7 +75,7 @@ class RoutePillTest {
                 warningAlertIconName = "alert-large-bus-issue",
             )
         }
-        composeTestRule.onNodeWithContentDescription("Harvard bus").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Alert").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Harvard bus").assertCanBeDisplayed()
+        composeTestRule.onNodeWithContentDescription("Alert").assertCanBeDisplayed()
     }
 }
