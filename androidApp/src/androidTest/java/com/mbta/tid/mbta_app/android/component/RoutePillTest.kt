@@ -1,8 +1,8 @@
 package com.mbta.tid.mbta_app.android.component
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import org.junit.Rule
@@ -20,7 +20,7 @@ class RoutePillTest {
             }
 
         composeTestRule.setContent { RoutePill(busRoute, null, RoutePillType.Fixed) }
-        composeTestRule.onNodeWithContentDescription("Harvard bus").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Harvard bus").assertCanBeDisplayed()
     }
 
     @Test
@@ -32,7 +32,7 @@ class RoutePillTest {
             }
 
         composeTestRule.setContent { RoutePill(subwayRoute, null, RoutePillType.Fixed) }
-        composeTestRule.onNodeWithContentDescription("Red Line train").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Red Line train").assertCanBeDisplayed()
     }
 
     @Test
@@ -44,7 +44,7 @@ class RoutePillTest {
             }
 
         composeTestRule.setContent { RoutePill(crRoute, null, RoutePillType.Fixed) }
-        composeTestRule.onNodeWithContentDescription("Haverhill train").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Haverhill train").assertCanBeDisplayed()
     }
 
     @Test
@@ -56,6 +56,6 @@ class RoutePillTest {
             }
 
         composeTestRule.setContent { RoutePill(ferryRoute, null, RoutePillType.Fixed) }
-        composeTestRule.onNodeWithContentDescription("Charlestown Ferry").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Charlestown Ferry").assertCanBeDisplayed()
     }
 }

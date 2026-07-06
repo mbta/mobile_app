@@ -7,7 +7,6 @@ import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertContentDescriptionEquals
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasText
@@ -18,6 +17,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import com.mbta.tid.mbta_app.android.stopDetails.PillFilter
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsFilterPills
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -75,14 +75,14 @@ class StopDetailsFilterPillsTest {
 
         composeTestRule
             .onNodeWithText("RL", ignoreCase = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionEquals("Red Line train")
             .assertIsSelected()
             .assert(onClickLabelContains("Remove"))
 
         composeTestRule
             .onNodeWithText("M", ignoreCase = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertIsNotSelected()
         composeTestRule
             .onNodeWithText(route3.shortName)
@@ -93,7 +93,7 @@ class StopDetailsFilterPillsTest {
 
         composeTestRule
             .onNodeWithText(route3.shortName)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionEquals("55 bus")
             .assertIsNotSelected()
             .assert(onClickLabelContains("Apply"))

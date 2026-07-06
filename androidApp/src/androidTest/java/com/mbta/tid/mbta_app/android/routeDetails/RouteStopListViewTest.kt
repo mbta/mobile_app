@@ -4,7 +4,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -12,6 +11,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilNodeCountDefaultTimeout
@@ -127,24 +127,24 @@ class RouteStopListViewTest {
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
 
-        composeTestRule.onNodeWithText(mainRoute.longName).assertIsDisplayed()
+        composeTestRule.onNodeWithText(mainRoute.longName).assertCanBeDisplayed()
 
-        composeTestRule.onNodeWithText("Westbound to").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Here").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Eastbound to").assertIsDisplayed()
-        composeTestRule.onNodeWithText("There").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Westbound to").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Here").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Eastbound to").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("There").assertCanBeDisplayed()
 
-        composeTestRule.onNodeWithText(stop1.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText(stop2.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText(stop3.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop1.name).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(stop2.name).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(stop3.name).assertCanBeDisplayed()
 
-        composeTestRule.onNodeWithText("rightSideContent for ${stop1.name}").assertIsDisplayed()
-        composeTestRule.onNodeWithText("rightSideContent for ${stop2.name}").assertIsDisplayed()
-        composeTestRule.onNodeWithText("rightSideContent for ${stop3.name}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("rightSideContent for ${stop1.name}").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("rightSideContent for ${stop2.name}").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("rightSideContent for ${stop3.name}").assertCanBeDisplayed()
 
         composeTestRule
             .onNodeWithText(connectingRoute.shortName, useUnmergedTree = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
 
         composeTestRule.onNodeWithText(stop2.name).performClick()
         assertEquals<List<RouteDetailsRowContext>>(
@@ -307,12 +307,12 @@ class RouteStopListViewTest {
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
 
-        composeTestRule.onNodeWithText(stop1.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText(stop2.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop1.name).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(stop2.name).assertCanBeDisplayed()
         composeTestRule.onNodeWithText(stop3NonTypical.name).assertIsNotDisplayed()
-        composeTestRule.onNodeWithText("2 less common stops").assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithText("2 less common stops").assertCanBeDisplayed().performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop3NonTypical.name))
-        composeTestRule.onNodeWithText(stop4NonTypical.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop4NonTypical.name).assertCanBeDisplayed()
     }
 
     @OptIn(ExperimentalTestApi::class)
@@ -361,8 +361,8 @@ class RouteStopListViewTest {
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
 
-        composeTestRule.onNodeWithText(stop1.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText(stop2.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop1.name).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(stop2.name).assertCanBeDisplayed()
         composeTestRule.onNodeWithText("2 less common stops").assertIsNotDisplayed()
     }
 

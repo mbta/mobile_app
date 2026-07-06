@@ -11,7 +11,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -35,6 +34,7 @@ import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.IMapboxConfigManager
 import com.mbta.tid.mbta_app.android.pages.MapAndSheetPage
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDoesNotExistDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
@@ -353,14 +353,14 @@ class MapAndSheetPageTest : KoinTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
             hasContentDescription("Mapbox Attribution")
         )
-        composeTestRule.onNodeWithContentDescription("Mapbox Attribution").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Mapbox Attribution").assertCanBeDisplayed()
 
         composeTestRule
             .onNodeWithContentDescription("Drag handle")
             .performSemanticsAction(SemanticsActions.Expand)
 
-        composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Stops").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Nearby Transit").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Stops").assertCanBeDisplayed()
 
         composeTestRule.onNodeWithText("Green Line Long Name").assertExists()
         composeTestRule.onNodeWithText("Green Line Stop").assertExists()

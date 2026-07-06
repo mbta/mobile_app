@@ -1,12 +1,12 @@
 package com.mbta.tid.mbta_app.android.component.routeCard
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LineOrRoute
@@ -96,14 +96,14 @@ class DeparturesTest {
             Departures(stopData, GlobalResponse(objects), now, { false }) { _ -> }
         }
 
-        composeTestRule.onNodeWithText("5 min").assertIsDisplayed()
-        composeTestRule.onNodeWithText(aTrip.headsign).assertIsDisplayed()
+        composeTestRule.onNodeWithText("5 min").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(aTrip.headsign).assertCanBeDisplayed()
 
-        composeTestRule.onNodeWithText("20 min").assertIsDisplayed()
-        composeTestRule.onNodeWithText(bTrip.headsign).assertIsDisplayed()
-        composeTestRule.onNodeWithText(bTrip.headsign).assertIsDisplayed()
+        composeTestRule.onNodeWithText("20 min").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(bTrip.headsign).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(bTrip.headsign).assertCanBeDisplayed()
 
-        composeTestRule.onNodeWithContentDescription("Alert").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Alert").assertCanBeDisplayed()
     }
 
     @Test
@@ -176,8 +176,8 @@ class DeparturesTest {
         }
 
         composeTestRule.onNodeWithText(aTrip.headsign).assertDoesNotExist()
-        composeTestRule.onNodeWithText(aSchedule.stopHeadsign!!).assertIsDisplayed()
-        composeTestRule.onNodeWithText(bTrip.headsign).assertIsDisplayed()
+        composeTestRule.onNodeWithText(aSchedule.stopHeadsign!!).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(bTrip.headsign).assertCanBeDisplayed()
     }
 
     @Test
@@ -226,7 +226,7 @@ class DeparturesTest {
             Departures(stopData, GlobalResponse(objects), now, { false }) { _ -> }
         }
 
-        composeTestRule.onNodeWithText("D").assertIsDisplayed()
+        composeTestRule.onNodeWithText("D").assertCanBeDisplayed()
     }
 
     @Test
@@ -303,7 +303,7 @@ class DeparturesTest {
             Departures(stopData, GlobalResponse(objects), now, { true }) { onClickCalled = true }
         }
 
-        composeTestRule.onNodeWithText(aTrip.headsign).assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithText(aTrip.headsign).assertCanBeDisplayed().performClick()
 
         assertTrue(onClickCalled)
         assertEquals(
@@ -361,8 +361,10 @@ class DeparturesTest {
         }
         composeTestRule
             .onNodeWithText("Service from South Station to today’s World Cup match")
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithText("Boston Stadium Train ticket required").assertIsDisplayed()
+            .assertCanBeDisplayed()
+        composeTestRule
+            .onNodeWithText("Boston Stadium Train ticket required")
+            .assertCanBeDisplayed()
         composeTestRule.onNodeWithText("View details").assertDoesNotExist()
     }
 }

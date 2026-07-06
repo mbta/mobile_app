@@ -1,9 +1,9 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -140,9 +140,11 @@ class TripStopsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("2 stops away", useUnmergedTree = true).assertIsDisplayed()
-        composeTestRule.onNodeWithText(stop3Target.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText(stop5.name).assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("2 stops away", useUnmergedTree = true)
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(stop3Target.name).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(stop5.name).assertCanBeDisplayed()
     }
 
     @Test
@@ -239,9 +241,9 @@ class TripStopsTest {
             )
         }
 
-        composeTestRule.onNodeWithText(stop1.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText(stop2.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText(stop3.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop1.name).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(stop2.name).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(stop3.name).assertCanBeDisplayed()
     }
 
     @Test
@@ -427,8 +429,8 @@ class TripStopsTest {
             )
         }
 
-        composeTestRule.onNodeWithText(stop1.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText("1 stop away", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop1.name).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("1 stop away", useUnmergedTree = true).assertCanBeDisplayed()
     }
 
     @Test
@@ -536,7 +538,7 @@ class TripStopsTest {
 
         composeTestRule
             .onNodeWithText("Shuttle buses at Stop C through end of service")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test

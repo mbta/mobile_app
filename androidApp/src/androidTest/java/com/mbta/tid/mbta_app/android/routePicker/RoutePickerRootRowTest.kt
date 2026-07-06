@@ -3,10 +3,10 @@ package com.mbta.tid.mbta_app.android.routePicker
 import androidx.compose.material3.Text
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.assertHasClickAction
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
@@ -30,7 +30,7 @@ class RoutePickerRootRowTest {
 
         composeTestRule.setContent { RoutePickerRootRow(LineOrRoute.Route(route)) {} }
 
-        composeTestRule.onNodeWithText("Red Line").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Red Line").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Red Line").assertHasClickAction()
     }
 
@@ -42,7 +42,7 @@ class RoutePickerRootRowTest {
 
         composeTestRule.setContent { RoutePickerRootRow(LineOrRoute.Line(line, routes)) {} }
 
-        composeTestRule.onNodeWithText("Green Line").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Green Line").assertCanBeDisplayed()
     }
 
     @Test

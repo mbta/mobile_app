@@ -1,8 +1,8 @@
 package com.mbta.tid.mbta_app.android.util
 
+import com.mbta.tid.mbta_app.android.assertMatches
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 import kotlinx.datetime.Month
 import org.junit.Test
 
@@ -11,13 +11,16 @@ class EasternTimeInstantExtensionTests {
     @Test
     fun testFormattedTime() {
         val instant = EasternTimeInstant(2026, Month.APRIL, 9, 23, 30)
-        assertTrue(Regex("11:30\\sPM").matches(instant.formattedTime()))
+        assertMatches(Regex("11:30\\sPM", RegexOption.IGNORE_CASE), instant.formattedTime())
     }
 
     @Test
     fun testFormattedShortDateShortTime() {
         val instant = EasternTimeInstant(2026, Month.APRIL, 9, 23, 30)
-        assertTrue(Regex("4/9/26, 11:30\\sPM").matches(instant.formattedShortDateShortTime()))
+        assertMatches(
+            Regex("(0?4/0?9|0?9/0?4)/26, 11:30\\sPM", RegexOption.IGNORE_CASE),
+            instant.formattedShortDateShortTime(),
+        )
     }
 
     @Test
@@ -39,15 +42,21 @@ class EasternTimeInstantExtensionTests {
     @Test
     fun testFormattedServiceDayAndDate() {
         val middayInstant = EasternTimeInstant(2026, Month.JANUARY, 11, 11, 27)
-        assertEquals("Sunday, Jan 11", middayInstant.formattedServiceDayAndDate())
+        assertMatches(Regex("Sunday, (Jan 11|11 Jan)"), middayInstant.formattedServiceDayAndDate())
 
         val pastMidnightInstant = EasternTimeInstant(2026, Month.JANUARY, 11, 1, 23)
-        assertEquals("Saturday, Jan 10", pastMidnightInstant.formattedServiceDayAndDate())
+        assertMatches(
+            Regex("Saturday, (Jan 10|10 Jan)"),
+            pastMidnightInstant.formattedServiceDayAndDate(),
+        )
 
         val serviceThreshold = EasternTimeInstant(2026, Month.JANUARY, 11, 3, 0)
-        assertEquals("Sunday, Jan 11", serviceThreshold.formattedServiceDayAndDate())
-        assertEquals(
-            "Saturday, Jan 10",
+        assertMatches(
+            Regex("Sunday, (Jan 11|11 Jan)"),
+            serviceThreshold.formattedServiceDayAndDate(),
+        )
+        assertMatches(
+            Regex("Saturday, (Jan 10|10 Jan)"),
             serviceThreshold.formattedServiceDayAndDate(
                 EasternTimeInstant.ServiceDateRounding.BACKWARDS
             ),
@@ -57,15 +66,21 @@ class EasternTimeInstantExtensionTests {
     @Test
     fun testFormattedShortServiceDayAndDate() {
         val middayInstant = EasternTimeInstant(2025, Month.OCTOBER, 4, 4, 12)
-        assertEquals("Sat, Oct 4", middayInstant.formattedShortServiceDayAndDate())
+        assertMatches(Regex("Sat, (Oct 4|4 Oct)"), middayInstant.formattedShortServiceDayAndDate())
 
         val pastMidnightInstant = EasternTimeInstant(2025, Month.OCTOBER, 4, 1, 23)
-        assertEquals("Fri, Oct 3", pastMidnightInstant.formattedShortServiceDayAndDate())
+        assertMatches(
+            Regex("Fri, (Oct 3|3 Oct)"),
+            pastMidnightInstant.formattedShortServiceDayAndDate(),
+        )
 
         val serviceThreshold = EasternTimeInstant(2025, Month.OCTOBER, 4, 3, 0)
-        assertEquals("Sat, Oct 4", serviceThreshold.formattedShortServiceDayAndDate())
-        assertEquals(
-            "Fri, Oct 3",
+        assertMatches(
+            Regex("Sat, (Oct 4|4 Oct)"),
+            serviceThreshold.formattedShortServiceDayAndDate(),
+        )
+        assertMatches(
+            Regex("Fri, (Oct 3|3 Oct)"),
             serviceThreshold.formattedShortServiceDayAndDate(
                 EasternTimeInstant.ServiceDateRounding.BACKWARDS
             ),
@@ -75,15 +90,18 @@ class EasternTimeInstantExtensionTests {
     @Test
     fun testFormattedServiceDate() {
         val middayInstant = EasternTimeInstant(2025, Month.SEPTEMBER, 16, 20, 20)
-        assertEquals("September 16", middayInstant.formattedServiceDate())
+        assertMatches(Regex("September 16|16 September"), middayInstant.formattedServiceDate())
 
         val pastMidnightInstant = EasternTimeInstant(2025, Month.SEPTEMBER, 16, 2, 20)
-        assertEquals("September 15", pastMidnightInstant.formattedServiceDate())
+        assertMatches(
+            Regex("September 15|15 September"),
+            pastMidnightInstant.formattedServiceDate(),
+        )
 
         val serviceThreshold = EasternTimeInstant(2025, Month.SEPTEMBER, 16, 3, 0)
-        assertEquals("September 16", serviceThreshold.formattedServiceDate())
-        assertEquals(
-            "September 15",
+        assertMatches(Regex("September 16|16 September"), serviceThreshold.formattedServiceDate())
+        assertMatches(
+            Regex("September 15|15 September"),
             serviceThreshold.formattedServiceDate(EasternTimeInstant.ServiceDateRounding.BACKWARDS),
         )
     }

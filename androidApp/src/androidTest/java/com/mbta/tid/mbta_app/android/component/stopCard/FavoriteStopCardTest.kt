@@ -1,10 +1,10 @@
 package com.mbta.tid.mbta_app.android.component.stopCard
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.utils.TestData
@@ -29,13 +29,13 @@ class FavoriteStopCardTest {
             )
         }
 
-        composeTestRule.onNodeWithText(wellington.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText("OL").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Southbound to").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Forest Hills").assertIsDisplayed()
+        composeTestRule.onNodeWithText(wellington.name).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("OL").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Southbound to").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Forest Hills").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithContentDescription("toggle direction")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .performClick()
         composeTestRule.waitForIdle()
         assert(toggled)
@@ -73,7 +73,7 @@ class FavoriteStopCardTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Only Southbound to").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Only Southbound to").assertCanBeDisplayed()
     }
 
     @Test
@@ -91,6 +91,6 @@ class FavoriteStopCardTest {
         }
 
         composeTestRule.onNodeWithText("Providence/Stoughton").assertDoesNotExist()
-        composeTestRule.onNodeWithText("CR").assertIsDisplayed()
+        composeTestRule.onNodeWithText("CR").assertCanBeDisplayed()
     }
 }

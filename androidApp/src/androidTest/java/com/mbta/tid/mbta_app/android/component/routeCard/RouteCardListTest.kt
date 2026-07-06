@@ -3,12 +3,12 @@ package com.mbta.tid.mbta_app.android.component.routeCard
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -193,14 +193,14 @@ class RouteCardListTest : KoinTest {
         }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
-        composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Sample Headsign").assertIsDisplayed()
-        composeTestRule.onNodeWithText("1 min").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Sample Route").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Sample Headsign").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("1 min").assertCanBeDisplayed()
 
-        composeTestRule.onNodeWithText("Green Line Long Name").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Green Line Stop").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Green Line Head Sign").assertIsDisplayed()
-        composeTestRule.onNodeWithText("5 min").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Green Line Long Name").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Green Line Stop").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Green Line Head Sign").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("5 min").assertCanBeDisplayed()
     }
 
     @OptIn(ExperimentalTestApi::class)
@@ -224,7 +224,7 @@ class RouteCardListTest : KoinTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
             hasText("This would be the empty view")
         )
-        composeTestRule.onNodeWithText("This would be the empty view").assertIsDisplayed()
+        composeTestRule.onNodeWithText("This would be the empty view").assertCanBeDisplayed()
     }
 
     @OptIn(ExperimentalTestApi::class)
@@ -257,9 +257,9 @@ class RouteCardListTest : KoinTest {
         }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
-        composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Sample Headsign").assertIsDisplayed().performClick()
-        composeTestRule.onNodeWithText("1 min").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Sample Route").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Sample Headsign").assertCanBeDisplayed().performClick()
+        composeTestRule.onNodeWithText("1 min").assertCanBeDisplayed()
         assertEquals(clickedStopId, sampleStop.id)
     }
 }

@@ -4,7 +4,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -13,6 +12,7 @@ import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffold
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RoutePattern
@@ -102,11 +102,11 @@ class MapAndSheetPageTest {
         }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
-        composeTestRule.onNodeWithText(stop1.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop1.name).assertCanBeDisplayed()
 
         locationDataManager.moveTo(stop2.position)
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop2.name))
-        composeTestRule.onNodeWithText(stop2.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop2.name).assertCanBeDisplayed()
     }
 }

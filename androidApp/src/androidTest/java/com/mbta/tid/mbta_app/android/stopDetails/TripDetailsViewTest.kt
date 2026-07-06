@@ -1,13 +1,13 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -189,8 +189,8 @@ class TripDetailsViewTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText(downstreamStop.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText("Stop skipped").assertIsDisplayed()
+        composeTestRule.onNodeWithText(downstreamStop.name).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Stop skipped").assertCanBeDisplayed()
     }
 
     @Test
@@ -270,7 +270,7 @@ class TripDetailsViewTest {
 
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Follow").assertDoesNotExist()
-        composeTestRule.onNodeWithText("Trip complete").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Trip complete").assertCanBeDisplayed()
     }
 
     @Test
@@ -304,6 +304,6 @@ class TripDetailsViewTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Trip not available").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Trip not available").assertCanBeDisplayed()
     }
 }

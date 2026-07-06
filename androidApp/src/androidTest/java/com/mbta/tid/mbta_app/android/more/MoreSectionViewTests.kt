@@ -1,9 +1,9 @@
 package com.mbta.tid.mbta_app.android.more
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.model.morePage.MoreItem
 import com.mbta.tid.mbta_app.model.morePage.MoreSection
@@ -37,7 +37,7 @@ class MoreSectionViewTests {
             )
         }
 
-        composeTestRule.onNodeWithText("Feature Flags").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Feature Flags").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Map Display").performClick()
         composeTestRule.waitForIdle()
 

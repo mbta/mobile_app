@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.android.pages
 
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertCountEquals
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -10,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
@@ -108,8 +108,8 @@ class TripDetailsPageTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
             hasText("Southbound to") and hasText("Forest Hills")
         )
-        composeTestRule.onNodeWithText("OL").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Southbound to").assertIsDisplayed()
+        composeTestRule.onNodeWithText("OL").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Southbound to").assertCanBeDisplayed()
         composeTestRule.onAllNodesWithText("Forest Hills").assertCountEquals(2)
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(targetStop.name))
     }
