@@ -20,8 +20,29 @@ struct StopPlacement {
 }
 
 enum StopListContext {
-    case trip
-    case routeDetails
+    case trip(Matcher<Route.Id>, Int32, String)
+    case routeDetails(Matcher<Route.Id>, Int32)
+
+    func routeIdMatcher() -> Matcher<Route.Id> {
+        switch self {
+        case let .trip(routeIdMatcher, _, _): routeIdMatcher
+        case let .routeDetails(routeIdMatcher, _): routeIdMatcher
+        }
+    }
+
+    func directionId() -> Int32 {
+        switch self {
+        case let .trip(_, directionId, _): directionId
+        case let .routeDetails(_, directionId): directionId
+        }
+    }
+
+    func tripIdMatcher() -> Matcher<NSString> {
+        switch self {
+        case let .trip(_, _, tripId): MatcherData(value: tripId as NSString)
+        case .routeDetails: MatcherWildcard()
+        }
+    }
 }
 
 struct StopListRow<Descriptor: View, RightSideContent: View>: View {
@@ -89,6 +110,10 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
     }
 
     var body: some View {
+        let padding: CGFloat = switch stopListContext {
+        case .trip: 7
+        case .routeDetails: 0
+        }
         VStack(spacing: 0) {
             stopRow
                 .background(background?.padding(1).clipShape(RoundedRectangle(cornerRadius: 12)))
@@ -106,6 +131,12 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
                     AlertCard(
                         alert: disruption.alert,
                         alertSummary: alertSummaries[disruption.alert.id] ?? nil,
+                        alertSummaryEntity: disruption.alert.summary(
+                            routeId: stopListContext.routeIdMatcher(),
+                            stopId: MatcherData(value: stop.id as NSString),
+                            directionId: MatcherData(value: KotlinInt(value: stopListContext.directionId())),
+                            tripId: stopListContext.tripIdMatcher()
+                        ),
                         spec: .downstream,
                         routeAccents: routeAccents,
                         onViewDetails: { onOpenAlertDetails(disruption.alert) },
@@ -118,7 +149,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
                 }
             }
         }
-        .fixedSize(horizontal: false, vertical: true).padding(.horizontal, stopListContext == .trip ? 7 : 0)
+        .fixedSize(horizontal: false, vertical: true).padding(.horizontal, padding)
         .enableInjection()
     }
 
