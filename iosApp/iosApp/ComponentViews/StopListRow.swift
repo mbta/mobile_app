@@ -54,7 +54,6 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
     var routeAccents: TripRouteAccents
     var stopListContext: StopListContext
     var activeElevatorAlerts: Int
-    var alertSummaries: [String: AlertSummary?]
     var background: Color?
     var connectingRoutes: [Route]?
     var disruption: UpcomingFormat.Disruption?
@@ -77,7 +76,6 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
         routeAccents: TripRouteAccents,
         stopListContext: StopListContext,
         activeElevatorAlerts: Int = 0,
-        alertSummaries: [String: AlertSummary?] = [:],
         background: Color? = nil,
         connectingRoutes: [Route]? = nil,
         disruption: UpcomingFormat.Disruption? = nil,
@@ -96,7 +94,6 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
         self.routeAccents = routeAccents
         self.stopListContext = stopListContext
         self.activeElevatorAlerts = activeElevatorAlerts
-        self.alertSummaries = alertSummaries
         self.background = background
         self.connectingRoutes = connectingRoutes
         self.disruption = disruption
@@ -130,7 +127,6 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
                 ZStack(alignment: .leading) {
                     AlertCard(
                         alert: disruption.alert,
-                        alertSummary: alertSummaries[disruption.alert.id] ?? nil,
                         alertSummaryEntity: disruption.alert.summary(
                             routeId: stopListContext.routeIdMatcher(),
                             stopId: MatcherData(value: stop.id as NSString),

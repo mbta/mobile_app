@@ -13,7 +13,6 @@ struct AlertListContainer: View {
     @ObserveInjection var inject
     let displayAlerts: DisplayAlerts
     let showNotAccessibleCard: Bool
-    let alertSummaries: [String: AlertSummary?]
     let now: EasternTimeInstant
     let isAllServiceDisrupted: Bool
     let routeIdMatcher: Matcher<Route.Id>
@@ -79,7 +78,6 @@ struct AlertListContainer: View {
 
         AlertCard(
             alert: alert,
-            alertSummary: alertSummaries[alert.id] ?? nil,
             alertSummaryEntity: summaryEntity,
             spec: spec,
             routeAccents: routeAccents,
@@ -109,7 +107,6 @@ struct AlertListContainer: View {
                                          isDownstream: false
                                      )]),
                 showNotAccessibleCard: true,
-                alertSummaries: [serviceChange.id: nil, elevator.id: nil],
                 now: now,
                 isAllServiceDisrupted: false,
                 routeIdMatcher: MatcherWildcard(),
@@ -123,7 +120,6 @@ struct AlertListContainer: View {
             AlertListContainer(
                 displayAlerts: .init(highPriority: [.init(alert: elevator, isDownstream: false)], lowPriority: []),
                 showNotAccessibleCard: false,
-                alertSummaries: [serviceChange.id: nil, elevator.id: nil],
                 now: now,
                 isAllServiceDisrupted: false,
                 routeIdMatcher: MatcherWildcard(),
@@ -137,7 +133,6 @@ struct AlertListContainer: View {
             AlertListContainer(
                 displayAlerts: .init(highPriority: [], lowPriority: [.init(alert: elevator, isDownstream: false)]),
                 showNotAccessibleCard: false,
-                alertSummaries: [serviceChange.id: nil, elevator.id: nil],
                 now: now,
                 isAllServiceDisrupted: false,
                 routeIdMatcher: MatcherWildcard(),

@@ -99,7 +99,6 @@ final class TripStopsTests: XCTestCase {
             stopSequence: 1,
             headerSpec: .vehicle(vehicle, stop1, nil, false),
             now: now,
-            alertSummaries: [:],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
             route: route,
@@ -180,7 +179,6 @@ final class TripStopsTests: XCTestCase {
             stopSequence: 0,
             headerSpec: TripHeaderSpec.vehicle(vehicle, stop1, nil, false),
             now: now,
-            alertSummaries: [:],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
             route: route,
@@ -257,7 +255,6 @@ final class TripStopsTests: XCTestCase {
             stopSequence: 1,
             headerSpec: .scheduled(stop1, firstStop),
             now: now,
-            alertSummaries: [:],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
             route: route,
@@ -340,7 +337,6 @@ final class TripStopsTests: XCTestCase {
             stopSequence: 3,
             headerSpec: .finishingAnotherTrip,
             now: now,
-            alertSummaries: [:],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
             route: route,
@@ -365,8 +361,7 @@ final class TripStopsTests: XCTestCase {
         let stop2Target = objects.stop { $0.name = "Stop B" }
         let stop3 = objects.stop { $0.name = "Stop C" }
 
-        let alert = objects.alert {
-            $0.effect = .shuttle
+        let alert = objects.alert { $0.effect = .shuttle
             $0.summaries = [.init(summary: "**Shuttle buses** at **Stop C** through end of service")]
         }
 
@@ -438,13 +433,6 @@ final class TripStopsTests: XCTestCase {
             stopSequence: 1,
             headerSpec: .vehicle(vehicle, stop1, nil, false),
             now: now,
-            alertSummaries: [alert.id: .Standard(
-                effect: alert.effect,
-                location: AlertSummary.LocationSingleStop(stopName: stop3.name),
-                timeframe: AlertSummary.TimeframeEndOfService.shared,
-                recurrence: nil,
-                isUpdate: false
-            )],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
             route: route,
@@ -466,8 +454,7 @@ final class TripStopsTests: XCTestCase {
         let stop2Target = objects.stop { $0.name = "Stop B" }
         let stop3 = objects.stop { $0.name = "Stop C" }
 
-        let alert = objects.alert {
-            $0.effect = .stopClosure
+        let alert = objects.alert { $0.effect = .stopClosure
             $0.summaries = [.init(summary: "Stop closed at Stop C through end of service")]
         }
 
@@ -539,13 +526,6 @@ final class TripStopsTests: XCTestCase {
             stopSequence: 1,
             headerSpec: .vehicle(vehicle, stop1, nil, false),
             now: now,
-            alertSummaries: [alert.id: .Standard(
-                effect: alert.effect,
-                location: AlertSummary.LocationSingleStop(stopName: stop3.name),
-                timeframe: AlertSummary.TimeframeEndOfService.shared,
-                recurrence: nil,
-                isUpdate: false
-            )],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
             route: route,
@@ -567,8 +547,7 @@ final class TripStopsTests: XCTestCase {
         let stop2Target = objects.stop { $0.name = "Stop B" }
         let stop3 = objects.stop { $0.name = "Stop C" }
 
-        let alert = objects.alert {
-            $0.effect = .stopClosure
+        let alert = objects.alert { $0.effect = .stopClosure
             $0.summaries = [.init(summary: "Stop closed at Stop B")]
         }
 
@@ -640,13 +619,6 @@ final class TripStopsTests: XCTestCase {
             stopSequence: 1,
             headerSpec: .vehicle(vehicle, stop1, nil, false),
             now: now,
-            alertSummaries: [alert.id: .Standard(
-                effect: alert.effect,
-                location: AlertSummary.LocationSingleStop(stopName: stop1.name),
-                timeframe: AlertSummary.TimeframeEndOfService.shared,
-                recurrence: nil,
-                isUpdate: false
-            )],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
             route: route,

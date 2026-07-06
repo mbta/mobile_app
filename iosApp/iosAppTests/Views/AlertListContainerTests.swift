@@ -27,15 +27,6 @@ final class AlertListContainerTests: XCTestCase {
             alert.summaries = [.init(summary: "**Shuttle buses** from **Start Stop** to **End Stop** through tomorrow")]
         }
 
-        let highAlertSummary = AlertSummary.Standard(effect: .shuttle,
-                                                     location: .some(AlertSummary.LocationSuccessiveStops(
-                                                         startStopName: "Start Stop",
-                                                         endStopName: "End Stop"
-                                                     )),
-                                                     timeframe: .some(AlertSummary.TimeframeTomorrow()),
-                                                     recurrence: nil,
-                                                     isUpdate: false)
-
         let downstreamAlert = objects.alert { alert in
             alert.effect = .serviceChange
         }
@@ -46,7 +37,6 @@ final class AlertListContainerTests: XCTestCase {
                                                               isDownstream: true
                                                           )]),
                                      showNotAccessibleCard: true,
-                                     alertSummaries: [highAlert.id: highAlertSummary, downstreamAlert.id: nil],
                                      now: now,
                                      isAllServiceDisrupted: false,
                                      routeIdMatcher: MatcherWildcard(),
@@ -68,7 +58,6 @@ final class AlertListContainerTests: XCTestCase {
         let sut = AlertListContainer(displayAlerts: .init(highPriority: [],
                                                           lowPriority: []),
                                      showNotAccessibleCard: false,
-                                     alertSummaries: [:],
                                      now: now,
                                      isAllServiceDisrupted: false,
                                      routeIdMatcher: MatcherWildcard(),
