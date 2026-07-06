@@ -19,7 +19,6 @@ struct StopDetailsFilteredDepartureDetails: View {
     var setTripFilter: (TripDetailsFilter?) -> Void
 
     var leaf: RouteCardData.Leaf
-    var alertSummaries: [String: AlertSummary?]
     var selectedDirection: Direction
 
     var favorite: Bool
@@ -75,26 +74,6 @@ struct StopDetailsFilteredDepartureDetails: View {
     @AccessibilityFocusState private var selectedDepartureFocus: String?
     private let cardFocusId = "_card"
 
-    struct AlertSummaryParams: Equatable {
-        let global: GlobalResponse?
-        let displayAlerts: Shared.DisplayAlerts
-        let stopId: String
-        let directionId: Int32
-        let patternsHere: [RoutePattern]?
-        let now: EasternTimeInstant
-    }
-
-    var alertSummaryParams: AlertSummaryParams {
-        AlertSummaryParams(
-            global: global,
-            displayAlerts: displayAlerts,
-            stopId: stopId,
-            directionId: stopFilter.directionId,
-            patternsHere: patternsHere,
-            now: now
-        )
-    }
-
     init(
         stopId: String,
         stopFilter: StopDetailsFilter,
@@ -102,7 +81,6 @@ struct StopDetailsFilteredDepartureDetails: View {
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
         leaf: RouteCardData.Leaf,
-        alertSummaries: [String: AlertSummary?],
         selectedDirection: Direction,
         favorite: Bool,
         now: EasternTimeInstant,
@@ -118,7 +96,6 @@ struct StopDetailsFilteredDepartureDetails: View {
         self.setStopFilter = setStopFilter
         self.setTripFilter = setTripFilter
         self.leaf = leaf
-        self.alertSummaries = alertSummaries
         self.selectedDirection = selectedDirection
         self.favorite = favorite
         self.now = now
@@ -187,7 +164,6 @@ struct StopDetailsFilteredDepartureDetails: View {
                 } else { nil }
                 TripDetailsView(
                     tripFilter: tripPageFilter,
-                    alertSummaries: alertSummaries,
                     context: .stopDetails,
                     now: now,
                     routeAccents: routeAccents,
@@ -205,7 +181,6 @@ struct StopDetailsFilteredDepartureDetails: View {
         .onAppear {
             handleViewportForStatus(noPredictionsStatus)
             loadNextScheduleForStatus(noPredictionsStatus)
-            setAlertSummaries(alertSummaryParams)
         }
         .onChange(of: noPredictionsStatus) { status in
             handleViewportForStatus(status)
@@ -214,9 +189,6 @@ struct StopDetailsFilteredDepartureDetails: View {
         .onChange(of: selectedTripIsCancelled) { if $0 { setViewportToStop() } }
         .onChange(of: tripFilter) { tripFilter in
             selectedDepartureFocus = tiles.first { $0.isSelected(tripFilter: tripFilter) }?.id ?? cardFocusId
-        }
-        .onChange(of: alertSummaryParams) { newParams in
-            setAlertSummaries(newParams)
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .ignoresSafeArea(.all)
@@ -295,33 +267,6 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
     }
 
-    private func setAlertSummaries(_ alertSummaryParams: AlertSummaryParams) {
-        Task {
-            let summaries = await alertSummaries(alertSummaryParams)
-            stopDetailsVM.setAlertSummaries(alertSummaries: summaries as? [String: Any] ?? [:])
-        }
-    }
-
-    private func alertSummaries(_ alertSummaryParams: AlertSummaryParams) async -> [String: AlertSummary?] {
-        let allAlerts = alertSummaryParams.displayAlerts.allAlerts
-        var alertMap: [String: AlertSummary?] = [:]
-
-        if let global = alertSummaryParams.global, let patternsHere = alertSummaryParams.patternsHere {
-            for alert in allAlerts {
-                let summary = try? await alert.summary(
-                    stopId: alertSummaryParams.stopId,
-                    directionId: alertSummaryParams.directionId,
-                    patterns: patternsHere,
-                    atTime: alertSummaryParams.now,
-                    upcomingTrips: leaf.upcomingTrips,
-                    global: global
-                )
-                alertMap[alert.id] = summary
-            }
-        }
-        return alertMap
-    }
-
     private func pillDecoration(tileData: TileData) -> DepartureTile.PillDecoration {
         if case .line = onEnum(of: leaf.lineOrRoute), let route = tileData.route {
             .onPrediction(route: route)
@@ -359,7 +304,6 @@ struct StopDetailsFilteredDepartureDetails: View {
         if !displayAlerts.allAlerts.isEmpty || showNotAccessibleCard {
             AlertListContainer(displayAlerts: displayAlerts,
                                showNotAccessibleCard: showNotAccessibleCard,
-                               alertSummaries: alertSummaries,
                                now: now,
                                isAllServiceDisrupted: isAllServiceDisrupted,
                                routeIdMatcher: MatcherAnyOf(values: leaf.lineOrRoute.allRoutes.map(\.id)),

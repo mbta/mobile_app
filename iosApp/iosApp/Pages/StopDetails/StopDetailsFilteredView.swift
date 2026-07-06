@@ -35,7 +35,6 @@ struct StopDetailsFilteredView: View {
     @ObservedObject var navManager: NavigationManager
 
     @State var inSaveFavoritesFlow = false
-    @State var alertSummaries: [String: AlertSummary?] = [:]
 
     @ObservedObject var fcmTokenContainer = FcmTokenContainer.shared
 
@@ -133,9 +132,6 @@ struct StopDetailsFilteredView: View {
             // There's no good way to know if favorites have been updated through the edit favorites flow,
             // so reload them any time this page is opened
             onUpdateFavorites()
-            for await model in stopDetailsVM.models {
-                alertSummaries = model.alertSummaries as? [String: AlertSummary?] ?? [:]
-            }
         }
         .manageVM(
             tripDetailsVM,
@@ -216,7 +212,6 @@ struct StopDetailsFilteredView: View {
                 setStopFilter: setStopFilter,
                 setTripFilter: setTripFilter,
                 leaf: leaf,
-                alertSummaries: alertSummaries,
                 selectedDirection: directions[Int(stopFilter.directionId)],
                 favorite: isFavorite,
                 now: now.toEasternInstant(),
@@ -262,7 +257,6 @@ struct StopDetailsFilteredView: View {
             setStopFilter: setStopFilter,
             setTripFilter: setTripFilter,
             leaf: leaf,
-            alertSummaries: alertSummaries,
             selectedDirection: leaf.direction,
             favorite: isFavorite,
             now: now.toEasternInstant(),

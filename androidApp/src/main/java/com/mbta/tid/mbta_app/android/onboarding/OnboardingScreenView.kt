@@ -74,8 +74,6 @@ import com.mbta.tid.mbta_app.android.util.FormattedAlert
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.formattedServiceDay
-import com.mbta.tid.mbta_app.model.Alert
-import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.AlertSummaryEntity
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single
 import com.mbta.tid.mbta_app.model.OnboardingScreen
@@ -379,18 +377,6 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
                             Single.alert {
                                 effect = Alert.Effect.Suspension
                             },
-                            AlertSummary.Standard(
-                                effect = Alert.Effect.Suspension,
-                                location =
-                                    AlertSummary.Location.SuccessiveStops(
-                                        startStopName = "Back Bay",
-                                        endStopName = "Wellington",
-                                    ),
-                                timeframe =
-                                    AlertSummary.Timeframe.ThisWeek(
-                                        EasternTimeInstant(2026, Month.JANUARY, 25, 12, 0)
-                                    ),
-                            ),
                             AlertSummaryEntity(
                                 routeId = null,
                                 stopId = null,

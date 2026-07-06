@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.android.util
 
 import android.content.res.Resources
-import android.icu.text.ListFormatter
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalResources
@@ -9,21 +8,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.component.directionNameFormatted
 import com.mbta.tid.mbta_app.model.Alert
-import com.mbta.tid.mbta_app.model.Alert.Effect
 import com.mbta.tid.mbta_app.model.AlertCardSpec
-import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.AlertSummaryEntity
 import com.mbta.tid.mbta_app.model.Facility
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.TripShuttleAlertSummary
-import com.mbta.tid.mbta_app.model.TripSpecificAlertSummary
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
 data class FormattedAlert(
     val alert: Alert,
-    val alertSummary: AlertSummary?,
     val alertSummaryEntity: AlertSummaryEntity?,
     @StringRes val effectRes: Int,
     @StringRes val sentenceEffectRes: Int,
@@ -37,11 +30,9 @@ data class FormattedAlert(
 ) {
     constructor(
         alert: Alert,
-        alertSummary: AlertSummary? = null,
         alertSummaryEntity: AlertSummaryEntity? = null,
     ) : this(
         alert,
-        alertSummary,
         alertSummaryEntity,
         effectRes(alert.effect),
         sentenceEffectRes(alert.effect),
@@ -69,26 +60,7 @@ data class FormattedAlert(
             resources.getString(R.string.delays_due_to_cause, resources.getString(it))
         } ?: resources.getString(R.string.delays_unknown_reason)
 
-    private fun delayHeaderFromSummary(resources: Resources): AnnotatedString {
-        if (
-            (alertSummary as? AlertSummary.Standard)?.timeframe
-                is AlertSummary.Timeframe.StartingLaterToday
-        ) {
-            summary(resources)?.let {
-                return it
-            }
-        }
-
-        // Show "Single Tracking" if there is an informational delay alert with that cause
-        // (Any other information severity delay alerts are never shown)
-        return cause(resources)?.let {
-            if (alert.cause == Alert.Cause.SingleTracking && alert.severity < 3) {
-                AnnotatedString.fromHtml(resources.getString(R.string.effect, it))
-            } else null
-        } ?: AnnotatedString.fromHtml(delaysDueToCause(resources))
-    }
-
-    private fun delayHeaderFromSummaryEntity(now: EasternTimeInstant, resources: Resources): AnnotatedString {
+    private fun delayHeader(now: EasternTimeInstant, resources: Resources): AnnotatedString {
         if (
             alert.currentPeriod(now) == null &&
                 alert.nextPeriod(now)?.startServiceDate == now.serviceDate
@@ -108,15 +80,6 @@ data class FormattedAlert(
         } ?: AnnotatedString.fromHtml(delaysDueToCause(resources))
     }
 
-    private fun delayHeader(now: EasternTimeInstant, resources: Resources): AnnotatedString {
-        val fromSummary = delayHeaderFromSummary(resources)
-        val fromSummaryEntity = delayHeaderFromSummaryEntity(now, resources)
-        check(fromSummary == fromSummaryEntity) {
-            "delayHeader mismatch: ${fromSummary.toHtml()} vs ${fromSummaryEntity.toHtml()}"
-        }
-        return fromSummaryEntity
-    }
-
     private fun elevatorHeader(resources: Resources) =
         AnnotatedString(
             alert.informedEntity
@@ -130,111 +93,10 @@ data class FormattedAlert(
                 } ?: alert.header ?: effect(resources)
         )
 
-    private fun summaryCalculated(resources: Resources) = summaryCalculated(alertSummary, resources)
-
-    private fun summaryCalculated(
-        alertSummary: AlertSummary?,
-        resources: Resources,
-    ): AnnotatedString? =
-        when (alertSummary) {
-            is AlertSummary.AllClear ->
-                AnnotatedString.fromHtml(
-                    resources.getString(
-                        R.string.alert_summary_all_clear,
-                        summaryLocation(alertSummary.effect, alertSummary.location, resources),
-                    )
-                )
-            is AlertSummary.Standard -> {
-                val location =
-                    summaryLocation(alertSummary.effect, alertSummary.location, resources)
-                val timeframe = summaryTimeframe(alertSummary.timeframe, resources)
-                if (alertSummary.effect.stopSkipped) {
-                    AnnotatedString.fromHtml(
-                        resources.getString(
-                            R.string.alert_summary_skipped,
-                            summaryAffectedMode(alertSummary.effect, resources),
-                            summarySkippedEffect(location, timeframe.trimStart(), resources),
-                        )
-                    )
-                } else if (alertSummary.isUpdate) {
-                    AnnotatedString.fromHtml(
-                        resources.getString(
-                            R.string.alert_summary_with_update,
-                            resources.getString(sentenceEffectRes),
-                            location,
-                            timeframe,
-                            summaryRecurrence(alertSummary.recurrence, resources),
-                        )
-                    )
-                } else {
-                    AnnotatedString.fromHtml(
-                        resources.getString(
-                            R.string.alert_summary,
-                            resources.getString(sentenceEffectRes),
-                            location,
-                            timeframe,
-                            summaryRecurrence(alertSummary.recurrence, resources),
-                        )
-                    )
-                }
-            }
-            is TripSpecificAlertSummary ->
-                AnnotatedString.fromHtml(
-                    resources.getString(
-                        R.string.alert_summary_trip_specific,
-                        summaryTripIdentity(alertSummary.tripIdentity, resources),
-                        summaryTripEffect(
-                            alertSummary.tripIdentity,
-                            alertSummary.effect,
-                            alertSummary.effectStops,
-                            alertSummary.isToday,
-                            resources,
-                        ),
-                        summaryDueToCause(dueToCauseRes, resources),
-                        summaryRecurrence(alertSummary.recurrence, resources),
-                    )
-                )
-            is TripShuttleAlertSummary -> {
-                val identity = alertSummary.tripIdentity
-                val identityString = summaryTripShuttleIdentity(identity, resources)
-                if (identity is TripShuttleAlertSummary.SingleTrip && identity.fromStopName != null)
-                    AnnotatedString.fromHtml(
-                        resources.getString(
-                            R.string.alert_summary_trip_shuttle_downstream,
-                            identityString,
-                            alertSummary.startStopName,
-                            alertSummary.endStopName,
-                            summaryRecurrence(alertSummary.recurrence, resources),
-                        )
-                    )
-                else
-                    AnnotatedString.fromHtml(
-                        resources.getString(
-                            R.string.alert_summary_trip_shuttle,
-                            identityString,
-                            alertSummary.startStopName,
-                            alertSummary.endStopName,
-                            summaryRecurrence(alertSummary.recurrence, resources),
-                        )
-                    )
-            }
-            is AlertSummary.Unknown -> AnnotatedString(alertSummary.fallback)
-            null -> null
-        }
-
-    private fun summaryProvided(): AnnotatedString? =
+    private fun summary(): AnnotatedString? =
         alertSummaryEntity?.summary?.let { AnnotatedString.fromMarkdown(it) }
 
-    private fun summary(resources: Resources): AnnotatedString? {
-        val calculated = summaryCalculated(resources)
-        val provided = summaryProvided()
-        check(calculated == provided) {
-            "summary mismatch: ${calculated?.toHtml()} vs ${provided?.toHtml()}"
-        }
-        return provided
-    }
-
-    fun alertCardHeaderFromSummary(
+    fun alertCardHeader(
         spec: AlertCardSpec,
         type: RouteType,
         now: EasternTimeInstant,
@@ -242,56 +104,7 @@ data class FormattedAlert(
     ): AnnotatedString {
         return when (spec) {
             AlertCardSpec.Downstream ->
-                summary(resources) ?: AnnotatedString.fromHtml(downstreamEffect(resources))
-            AlertCardSpec.Elevator -> elevatorHeader(resources)
-            AlertCardSpec.Delay -> delayHeader(now, resources)
-            AlertCardSpec.Basic -> summary(resources) ?: AnnotatedString.fromHtml(effect(resources))
-            else -> {
-                val effect = alert.effect
-                val isTripSpecificAlertSummary =
-                    alertSummary is TripSpecificAlertSummary ||
-                        alertSummary is TripShuttleAlertSummary
-                if (isTripSpecificAlertSummary) {
-                    when (effect) {
-                        Alert.Effect.Cancellation if type == RouteType.BUS -> R.string.bus_cancelled
-
-                        Alert.Effect.Cancellation if type == RouteType.FERRY ->
-                            R.string.ferry_cancelled
-
-                        Alert.Effect.Cancellation -> R.string.train_cancelled
-
-                        Alert.Effect.Shuttle -> R.string.shuttle_bus_sentence_case
-
-                        Alert.Effect.Suspension if type == RouteType.BUS -> R.string.bus_suspended
-
-                        Alert.Effect.Suspension if type == RouteType.FERRY ->
-                            R.string.ferry_suspended
-
-                        Alert.Effect.Suspension -> R.string.train_suspended
-
-                        Alert.Effect.StationClosure,
-                        Alert.Effect.StopClosure,
-                        Alert.Effect.DockClosure -> R.string.stop_skipped_sentence_case
-
-                        else -> null
-                    }?.let {
-                        return AnnotatedString(resources.getString(it))
-                    }
-                }
-                AnnotatedString.fromHtml(effect(resources))
-            }
-        }
-    }
-
-    fun alertCardHeaderFromSummaryEntity(
-        spec: AlertCardSpec,
-        type: RouteType,
-        now: EasternTimeInstant,
-        resources: Resources,
-    ): AnnotatedString {
-        return when (spec) {
-            AlertCardSpec.Downstream ->
-                summary(resources) ?: AnnotatedString.fromHtml(downstreamEffect(resources))
+                summary() ?: AnnotatedString.fromHtml(downstreamEffect(resources))
             AlertCardSpec.Elevator -> elevatorHeader(resources)
             AlertCardSpec.Delay -> delayHeader(now, resources)
             AlertCardSpec.Basic -> summary(resources) ?: AnnotatedString.fromHtml(effect(resources))
@@ -329,29 +142,14 @@ data class FormattedAlert(
         }
     }
 
-    fun alertCardHeader(
-        spec: AlertCardSpec,
-        type: RouteType,
-        now: EasternTimeInstant,
-        resources: Resources,
-    ): AnnotatedString {
-        val fromSummary = alertCardHeaderFromSummary(spec, type, now, resources)
-        val fromSummaryEntity = alertCardHeaderFromSummaryEntity(spec, type, now, resources)
-        check(fromSummary == fromSummaryEntity) {
-            "alertCardHeader mismatch: ${fromSummary.toHtml()} vs ${fromSummaryEntity.toHtml()}"
-        }
-        return fromSummaryEntity
-    }
-
     @Composable
     fun alertCardHeader(spec: AlertCardSpec, type: RouteType, now: EasternTimeInstant) =
         alertCardHeader(spec, type, now, LocalResources.current)
 
-    fun alertCardMajorBody(resources: Resources) =
-        summary(resources) ?: AnnotatedString(alert.header ?: "")
+    fun alertCardMajorBody() = summary() ?: AnnotatedString(alert.header ?: "")
 
     val alertCardMajorBody
-        @Composable get() = alertCardMajorBody(LocalResources.current)
+        @Composable get() = alertCardMajorBody()
 
     data class PredictionReplacement(
         @StringRes val textRes: Int,
@@ -585,282 +383,6 @@ data class FormattedAlert(
                 Alert.Effect.Suspension ->
                     PredictionReplacement(R.string.suspension, R.string.service_suspended)
                 else -> PredictionReplacement(effectRes(effect))
-            }
-
-        private fun summaryLocation(
-            effect: Alert.Effect?,
-            location: AlertSummary.Location?,
-            resources: Resources,
-        ) =
-            when (location) {
-                is AlertSummary.Location.SingleStop ->
-                    resources.getString(R.string.alert_summary_location_single, location.stopName)
-
-                is AlertSummary.Location.SuccessiveStops ->
-                    resources.getString(
-                        R.string.alert_summary_location_successive,
-                        location.startStopName,
-                        location.endStopName,
-                    )
-
-                is AlertSummary.Location.StopToDirection ->
-                    resources.getString(
-                        R.string.alert_summary_location_stop_to_direction,
-                        location.startStopName,
-                        resources.getString(directionNameFormatted(location.direction)),
-                    )
-
-                is AlertSummary.Location.DirectionToStop ->
-                    resources.getString(
-                        R.string.alert_summary_location_direction_to_stop,
-                        resources.getString(directionNameFormatted(location.direction)),
-                        location.endStopName,
-                    )
-
-                is AlertSummary.Location.WholeRoute ->
-                    resources.getString(
-                        if (effect == Alert.Effect.Shuttle)
-                            R.string.alert_summary_location_whole_route_shuttle
-                        else R.string.alert_summary_location_whole_route,
-                        if (location.routeType == RouteType.BUS)
-                            resources.getString(R.string.bus_label, location.routeLabel)
-                        else location.routeLabel,
-                    )
-                is AlertSummary.Location.AffectedStops ->
-                    summaryAffectedStops(location.stops, resources)
-
-                AlertSummary.Location.Unknown,
-                null -> ""
-            }
-
-        private fun summaryTimeframe(timeframe: AlertSummary.Timeframe?, resources: Resources) =
-            when (timeframe) {
-                AlertSummary.Timeframe.UntilFurtherNotice ->
-                    resources.getString(R.string.alert_summary_timeframe_until_further_notice)
-                AlertSummary.Timeframe.EndOfService ->
-                    resources.getString(R.string.alert_summary_timeframe_end_of_service)
-                AlertSummary.Timeframe.Tomorrow ->
-                    resources.getString(R.string.alert_summary_timeframe_tomorrow)
-                is AlertSummary.Timeframe.LaterDate ->
-                    resources.getString(
-                        R.string.alert_summary_timeframe_later_date,
-                        timeframe.time.formattedServiceDate(
-                            EasternTimeInstant.ServiceDateRounding.BACKWARDS
-                        ),
-                    )
-                is AlertSummary.Timeframe.ThisWeek ->
-                    resources.getString(
-                        R.string.alert_summary_timeframe_this_week,
-                        timeframe.time.formattedServiceDay(
-                            EasternTimeInstant.ServiceDateRounding.BACKWARDS
-                        ),
-                    )
-                is AlertSummary.Timeframe.Time ->
-                    resources.getString(
-                        R.string.alert_summary_timeframe_time,
-                        timeframe.time.formattedTime(),
-                    )
-                AlertSummary.Timeframe.StartingTomorrow ->
-                    resources.getString(R.string.starting_tomorrow)
-                is AlertSummary.Timeframe.StartingLaterToday ->
-                    resources.getString(
-                        R.string.starting_later_today,
-                        timeframe.time.formattedTime(),
-                    )
-                is AlertSummary.Timeframe.TimeRange ->
-                    resources.getString(
-                        R.string.from_to_time,
-                        timeRangeBoundary(resources, timeframe.startTime),
-                        timeRangeBoundary(resources, timeframe.endTime),
-                    )
-                AlertSummary.Timeframe.Unknown,
-                null -> ""
-            }
-
-        private fun summaryRecurrence(recurrence: AlertSummary.Recurrence?, resources: Resources) =
-            when (recurrence) {
-                is AlertSummary.Recurrence.Daily ->
-                    " daily${recurrenceEndDay(resources, recurrence.ending)}"
-                is AlertSummary.Recurrence.SomeDays ->
-                    " some days${recurrenceEndDay(resources, recurrence.ending)}"
-                AlertSummary.Recurrence.Unknown,
-                null -> ""
-            }
-
-        private fun summaryTripIdentity(
-            tripIdentity: TripSpecificAlertSummary.TripIdentity,
-            resources: Resources,
-        ) =
-            when (tripIdentity) {
-                is TripSpecificAlertSummary.ThisTrip ->
-                    resources.getString(
-                        R.string.this_vehicle,
-                        tripIdentity.routeType.typeText(resources, isOnly = true),
-                    )
-                is TripSpecificAlertSummary.TripFrom ->
-                    resources.getString(
-                        R.string.trip_from,
-                        tripIdentity.tripTime.formattedTime(),
-                        tripIdentity.routeType.typeText(resources, true),
-                        tripIdentity.stopName,
-                    )
-                is TripSpecificAlertSummary.TripTo ->
-                    resources.getString(
-                        R.string.trip_to,
-                        tripIdentity.tripTime.formattedTime(),
-                        tripIdentity.routeType.typeText(resources, true),
-                        tripIdentity.headsign,
-                    )
-                is TripSpecificAlertSummary.MultipleTrips ->
-                    resources.getString(R.string.multiple_trips)
-            }
-
-        private fun summaryAffectedStops(stops: List<String>, resources: Resources): String {
-            return if (stops.count() > 3) {
-                resources.getString(R.string.multiple_stops)
-            } else {
-                val stopNames = stops.map { "<b>${it}</b>" }
-                ListFormatter.getInstance().format(stopNames)
-            }
-        }
-
-        private fun summaryAffectedMode(effect: Alert.Effect, resources: Resources): String =
-            when (effect) {
-                Effect.StationClosure -> resources.getString(R.string.trains_sentence_case)
-                Effect.StopClosure -> resources.getString(R.string.buses_sentence_case)
-                else -> ""
-            }
-
-        private fun summarySkippedEffect(
-            stops: String,
-            timeframe: String,
-            resources: Resources,
-        ): String = resources.getString(R.string.will_not_stop_at, stops, timeframe)
-
-        private fun summaryTripEffect(
-            tripIdentity: TripSpecificAlertSummary.TripIdentity,
-            effect: Alert.Effect,
-            effectStops: List<String>?,
-            isToday: Boolean,
-            resources: Resources,
-        ): String {
-            val day =
-                if (isToday) resources.getString(R.string.today)
-                else resources.getString(R.string.tomorrow)
-            return when (effect) {
-                Alert.Effect.Cancellation ->
-                    if (tripIdentity == TripSpecificAlertSummary.MultipleTrips)
-                        resources.getString(R.string.are_cancelled, day)
-                    else resources.getString(R.string.is_cancelled, day)
-
-                Alert.Effect.StationClosure if effectStops != null ->
-                    summarySkippedEffect(
-                        summaryAffectedStops(effectStops, resources),
-                        day,
-                        resources,
-                    )
-
-                Alert.Effect.DockClosure if effectStops != null ->
-                    summaryTripWillNotStopAt(effectStops, day, resources)
-
-                Alert.Effect.StopClosure if effectStops != null ->
-                    summaryTripWillNotStopAt(effectStops, day, resources)
-
-                Alert.Effect.Suspension ->
-                    effectStops?.singleOrNull()?.let {
-                        resources.getString(R.string.will_terminate_at, it, day)
-                    }
-                        ?: if (tripIdentity == TripSpecificAlertSummary.MultipleTrips)
-                            resources.getString(R.string.are_suspended, day)
-                        else resources.getString(R.string.is_suspended, day)
-                else ->
-                    resources.getString(
-                        R.string.affected_by,
-                        resources.getString(sentenceEffectRes(effect)),
-                        day,
-                    )
-            }
-        }
-
-        private fun summaryTripWillNotStopAt(
-            effectStops: List<String>,
-            day: String,
-            resources: Resources,
-        ): String =
-            resources.getString(
-                R.string.will_not_stop_at,
-                effectStops
-                    .map { "<b>${it}</b>" }
-                    .reduce { l, r -> resources.getString(R.string.x_and_y, l, r) },
-                day,
-            )
-
-        private fun summaryDueToCause(@StringRes dueToCauseRes: Int?, resources: Resources) =
-            dueToCauseRes?.let {
-                resources.getString(R.string.due_to_cause, resources.getString(it))
-            } ?: ""
-
-        private fun summaryTripShuttleIdentity(
-            tripIdentity: TripShuttleAlertSummary.TripIdentity,
-            resources: Resources,
-        ) =
-            when (tripIdentity) {
-                is TripShuttleAlertSummary.SingleTrip ->
-                    tripIdentity.fromStopName?.let {
-                        resources.getString(
-                            R.string.trip_from,
-                            tripIdentity.tripTime.formattedTime(),
-                            tripIdentity.routeType.typeText(resources, isOnly = true),
-                            it,
-                        )
-                    }
-                        ?: resources.getString(
-                            R.string.the_time_mode,
-                            tripIdentity.tripTime.formattedTime(),
-                            tripIdentity.routeType.typeText(resources, isOnly = true),
-                        )
-                is TripShuttleAlertSummary.ThisTrip ->
-                    resources.getString(
-                        R.string.this_vehicle_shuttle,
-                        tripIdentity.routeType.typeText(resources, isOnly = true),
-                    )
-                TripShuttleAlertSummary.MultipleTrips ->
-                    resources.getString(R.string.multiple_trips_lowercase)
-            }
-
-        private fun timeRangeBoundary(
-            resources: Resources,
-            boundary: AlertSummary.Timeframe.TimeRange.Boundary,
-        ) =
-            when (boundary) {
-                AlertSummary.Timeframe.TimeRange.StartOfService ->
-                    resources.getString(R.string.start_of_service)
-                AlertSummary.Timeframe.TimeRange.EndOfService ->
-                    resources.getString(R.string.end_of_service)
-                is AlertSummary.Timeframe.TimeRange.Time -> boundary.time.formattedTime()
-                AlertSummary.Timeframe.TimeRange.Unknown -> ""
-            }
-
-        private fun recurrenceEndDay(resources: Resources, endDay: AlertSummary.Recurrence.EndDay) =
-            when (endDay) {
-                AlertSummary.Timeframe.UntilFurtherNotice ->
-                    resources.getString(R.string.alert_summary_timeframe_until_further_notice)
-                AlertSummary.Timeframe.Tomorrow -> resources.getString(R.string.until_tomorrow)
-                is AlertSummary.Timeframe.ThisWeek ->
-                    resources.getString(
-                        R.string.alert_summary_recurrence_end_day_this_week,
-                        endDay.time.formattedServiceDay(
-                            EasternTimeInstant.ServiceDateRounding.BACKWARDS
-                        ),
-                    )
-                is AlertSummary.Timeframe.LaterDate ->
-                    resources.getString(
-                        R.string.alert_summary_recurrence_end_day_later_date,
-                        endDay.time.formattedServiceDate(
-                            EasternTimeInstant.ServiceDateRounding.BACKWARDS
-                        ),
-                    )
-                AlertSummary.Timeframe.Unknown -> ""
             }
     }
 }

@@ -30,10 +30,6 @@ struct TripDetailsPage: View {
     @State var tripDetailsPageState: TripDetailsPageViewModel.State?
     @State var tripDetailsState: TripDetailsViewModel.State?
 
-    var alertSummaries: [String: AlertSummary?] {
-        tripDetailsPageState?.alertSummaries as? [String: AlertSummary?] ?? [:]
-    }
-
     var direction: Direction? { tripDetailsPageState?.direction }
     var route: Route? { global?.getRoute(routeId: tripDetailsPageState?.trip?.routeId ?? filter.routeId as? Route.Id) }
     var routeAccents: TripRouteAccents { if let route { .init(route: route) } else { .init() } }
@@ -70,7 +66,6 @@ struct TripDetailsPage: View {
                 HaloScrollView {
                     TripDetailsView(
                         tripFilter: filter,
-                        alertSummaries: alertSummaries,
                         context: .tripDetails,
                         now: now,
                         routeAccents: routeAccents,

@@ -1,38 +1,11 @@
 package com.mbta.tid.mbta_app
 
-import com.mbta.tid.mbta_app.model.AlertSummary
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
 import org.maplibre.spatialk.geojson.Feature
 
 public val json: Json = Json {
     ignoreUnknownKeys = true
     coerceInputValues = true
-    serializersModule = SerializersModule {
-        polymorphic(AlertSummary::class) {
-            defaultDeserializer { AlertSummary.Unknown.serializer() }
-        }
-        polymorphic(AlertSummary.Location::class) {
-            defaultDeserializer { AlertSummary.Location.Unknown.serializer() }
-        }
-        polymorphic(AlertSummary.Timeframe::class) {
-            defaultDeserializer { AlertSummary.Timeframe.Unknown.serializer() }
-        }
-        polymorphic(AlertSummary.Timeframe.TimeRange.StartTime::class) {
-            defaultDeserializer { AlertSummary.Timeframe.TimeRange.Unknown.serializer() }
-        }
-        polymorphic(AlertSummary.Timeframe.TimeRange.EndTime::class) {
-            defaultDeserializer { AlertSummary.Timeframe.TimeRange.Unknown.serializer() }
-        }
-        polymorphic(AlertSummary.Recurrence::class) {
-            defaultDeserializer { AlertSummary.Recurrence.Unknown.serializer() }
-        }
-        polymorphic(AlertSummary.Recurrence.EndDay::class) {
-            defaultDeserializer { AlertSummary.Timeframe.Unknown.serializer() }
-        }
-    }
 }
 
 internal fun Feature<*, *>.propertiesToString() = json.encodeToString(properties)

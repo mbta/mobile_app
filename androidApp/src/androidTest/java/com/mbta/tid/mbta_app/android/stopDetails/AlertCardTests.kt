@@ -10,17 +10,13 @@ import com.mbta.tid.mbta_app.android.testUtils.hasTextMatching
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertCardSpec
-import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.AlertSummaryEntity
 import com.mbta.tid.mbta_app.model.Facility
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.TripShuttleAlertSummary
-import com.mbta.tid.mbta_app.model.TripSpecificAlertSummary
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.datetime.Month
 import org.junit.Rule
 import org.junit.Test
 
@@ -192,11 +188,6 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                AlertSummary.Standard(
-                    Alert.Effect.Delay,
-                    AlertSummary.Location.WholeRoute("Red Line", RouteType.HEAVY_RAIL),
-                    timeframe = AlertSummary.Timeframe.StartingLaterToday(time),
-                ),
                 AlertSummaryEntity(
                     null,
                     null,
@@ -259,12 +250,9 @@ class AlertCardTests {
                 effect = Alert.Effect.Suspension
             }
 
-        // Fixed time so we can have a specific day of the week (sat)
-        val endTime = EasternTimeInstant(2025, Month.APRIL, 6, 3, 0)
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.ThisWeek(endTime)),
                 AlertSummaryEntity(
                     null,
                     null,
@@ -291,11 +279,9 @@ class AlertCardTests {
                 header = "Alert header"
                 effect = Alert.Effect.Detour
             }
-        val endTime = EasternTimeInstant(2025, Month.APRIL, 2, 9, 0)
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.Time(endTime)),
                 AlertSummaryEntity(null, null, null, null, "**Detour** through 9:00\u202FAM"),
                 AlertCardSpec.Basic,
                 routeAccents,
@@ -319,13 +305,6 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                AlertSummary.AllClear(
-                    location =
-                        AlertSummary.Location.SuccessiveStops(
-                            startStopName = "Start Stop",
-                            endStopName = "End Stop",
-                        )
-                ),
                 AlertSummaryEntity(
                     null,
                     null,
@@ -353,17 +332,6 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                AlertSummary.Standard(
-                    effect = Alert.Effect.Shuttle,
-                    location =
-                        AlertSummary.Location.SuccessiveStops(
-                            startStopName = "Start Stop",
-                            endStopName = "End Stop",
-                        ),
-                    timeframe = AlertSummary.Timeframe.Tomorrow,
-                    recurrence = null,
-                    isUpdate = true,
-                ),
                 AlertSummaryEntity(
                     null,
                     null,
@@ -393,15 +361,6 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                TripSpecificAlertSummary(
-                    TripSpecificAlertSummary.TripFrom(
-                        EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
-                        RouteType.COMMUTER_RAIL,
-                        "Ruggles",
-                    ),
-                    Alert.Effect.Cancellation,
-                    cause = Alert.Cause.MechanicalIssue,
-                ),
                 AlertSummaryEntity(
                     null,
                     null,
@@ -439,11 +398,6 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                TripSpecificAlertSummary(
-                    TripSpecificAlertSummary.MultipleTrips,
-                    Alert.Effect.Suspension,
-                    cause = Alert.Cause.Holiday,
-                ),
                 AlertSummaryEntity(
                     null,
                     null,
@@ -471,15 +425,6 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                TripShuttleAlertSummary(
-                    TripShuttleAlertSummary.SingleTrip(
-                        EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
-                        RouteType.COMMUTER_RAIL,
-                        "Oak Grove",
-                    ),
-                    "Ruggles",
-                    "Forest Hills",
-                ),
                 AlertSummaryEntity(
                     null,
                     null,
@@ -516,15 +461,6 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                TripShuttleAlertSummary(
-                    TripShuttleAlertSummary.SingleTrip(
-                        EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
-                        RouteType.COMMUTER_RAIL,
-                        null,
-                    ),
-                    "Ruggles",
-                    "Forest Hills",
-                ),
                 AlertSummaryEntity(
                     null,
                     null,
@@ -561,16 +497,6 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                TripSpecificAlertSummary(
-                    TripSpecificAlertSummary.TripTo(
-                        EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
-                        RouteType.COMMUTER_RAIL,
-                        "Stoughton",
-                    ),
-                    Alert.Effect.StationClosure,
-                    listOf("Back Bay", "Ruggles"),
-                    cause = null,
-                ),
                 AlertSummaryEntity(
                     null,
                     null,
@@ -604,11 +530,6 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                AlertSummary.Standard(
-                    Alert.Effect.StationClosure,
-                    AlertSummary.Location.AffectedStops(listOf("Back Bay", "Ruggles")),
-                    AlertSummary.Timeframe.UntilFurtherNotice,
-                ),
                 AlertSummaryEntity(
                     null,
                     null,
@@ -635,11 +556,6 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                AlertSummary.Standard(
-                    Alert.Effect.StopClosure,
-                    AlertSummary.Location.AffectedStops(listOf("Back Bay", "Ruggles")),
-                    AlertSummary.Timeframe.UntilFurtherNotice,
-                ),
                 AlertSummaryEntity(
                     null,
                     null,
@@ -670,16 +586,6 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                TripSpecificAlertSummary(
-                    TripSpecificAlertSummary.TripFrom(
-                        EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
-                        RouteType.COMMUTER_RAIL,
-                        "Ruggles",
-                    ),
-                    Alert.Effect.Cancellation,
-                    isToday = false,
-                    cause = Alert.Cause.MechanicalIssue,
-                ),
                 AlertSummaryEntity(
                     null,
                     null,
@@ -716,22 +622,6 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                TripShuttleAlertSummary(
-                    TripShuttleAlertSummary.SingleTrip(
-                        EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
-                        RouteType.COMMUTER_RAIL,
-                        "Oak Grove",
-                    ),
-                    "Ruggles",
-                    "Forest Hills",
-                    recurrence =
-                        AlertSummary.Recurrence.Daily(
-                            ending =
-                                AlertSummary.Timeframe.ThisWeek(
-                                    EasternTimeInstant(2026, Month.MARCH, 12, 9, 18)
-                                )
-                        ),
-                ),
                 AlertSummaryEntity(
                     null,
                     null,
@@ -768,18 +658,6 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                TripShuttleAlertSummary(
-                    TripShuttleAlertSummary.ThisTrip(RouteType.COMMUTER_RAIL),
-                    "Ruggles",
-                    "Forest Hills",
-                    recurrence =
-                        AlertSummary.Recurrence.Daily(
-                            ending =
-                                AlertSummary.Timeframe.ThisWeek(
-                                    EasternTimeInstant(2026, Month.MARCH, 12, 9, 18)
-                                )
-                        ),
-                ),
                 AlertSummaryEntity(
                     null,
                     null,

@@ -42,7 +42,6 @@ final class TripStopRowTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             route: route,
             routeAccents: TripRouteAccents(route: route),
-            alertSummaries: [:],
             stopListContext: .trip(MatcherData(value: route.id), trip.directionId, trip.id)
         ).withFixedSettings([:])
 
@@ -74,7 +73,6 @@ final class TripStopRowTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             route: route,
             routeAccents: TripRouteAccents(route: route),
-            alertSummaries: [:],
             stopListContext: .trip(MatcherData(value: route.id), trip.directionId, trip.id)
         ).withFixedSettings([:])
 
@@ -112,7 +110,6 @@ final class TripStopRowTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             route: route,
             routeAccents: .init(route: route),
-            alertSummaries: [:],
             stopListContext: .trip(MatcherData(value: route.id), trip.directionId, trip.id)
         ).withFixedSettings([:])
 
@@ -145,7 +142,6 @@ final class TripStopRowTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             route: route,
             routeAccents: TripRouteAccents(route: route),
-            alertSummaries: [:],
             stopListContext: .trip(MatcherData(value: route.id), trip.directionId, trip.id),
             targeted: true
         ).withFixedSettings([:])
@@ -164,7 +160,6 @@ final class TripStopRowTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             route: route,
             routeAccents: TripRouteAccents(route: route),
-            alertSummaries: [:],
             stopListContext: .trip(MatcherData(value: route.id), trip.directionId, trip.id),
         ).withFixedSettings([:])
 
@@ -198,7 +193,6 @@ final class TripStopRowTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             route: route,
             routeAccents: TripRouteAccents(route: route),
-            alertSummaries: [:],
             stopListContext: .trip(MatcherData(value: route.id), trip.directionId, trip.id),
         ).withFixedSettings([:])
         XCTAssertNotNil(try basicRow.inspect().find(viewWithAccessibilityLabel: "stop"))
@@ -211,7 +205,6 @@ final class TripStopRowTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             route: route,
             routeAccents: TripRouteAccents(route: route),
-            alertSummaries: [:],
             stopListContext: .trip(MatcherData(value: route.id), trip.directionId, trip.id),
             targeted: true
         ).withFixedSettings([:])
@@ -225,7 +218,6 @@ final class TripStopRowTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             route: route,
             routeAccents: TripRouteAccents(route: route),
-            alertSummaries: [:],
             stopListContext: .trip(MatcherData(value: route.id), trip.directionId, trip.id),
             firstStop: true
         ).withFixedSettings([:])
@@ -239,7 +231,6 @@ final class TripStopRowTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             route: route,
             routeAccents: TripRouteAccents(route: route),
-            alertSummaries: [:],
             stopListContext: .trip(MatcherData(value: route.id), trip.directionId, trip.id),
             targeted: true,
             firstStop: true
@@ -279,7 +270,6 @@ final class TripStopRowTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             route: route,
             routeAccents: TripRouteAccents(route: route),
-            alertSummaries: [:],
             stopListContext: .trip(MatcherData(value: route.id), trip.directionId, trip.id)
         ).withFixedSettings([.stationAccessibility: true])
         XCTAssertNotNil(try row.inspect().find(viewWithTag: "wheelchair_not_accessible"))
@@ -316,7 +306,6 @@ final class TripStopRowTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             route: route,
             routeAccents: TripRouteAccents(route: route),
-            alertSummaries: [:],
             stopListContext: .trip(MatcherData(value: route.id), trip.directionId, trip.id)
         ).withFixedSettings([.stationAccessibility: true])
         XCTAssertNotNil(try row.inspect().find(viewWithTag: "elevator_alert"))
@@ -329,8 +318,7 @@ final class TripStopRowTests: XCTestCase {
         let stop = objects.stop { _ in }
         let trip = objects.trip { _ in }
         let route = objects.route { _ in }
-        let alert = objects.alert {
-            $0.effect = .shuttle
+        let alert = objects.alert { $0.effect = .shuttle
             $0.summaries = [.init(
                 routeId: nil,
                 stopId: nil,
@@ -339,14 +327,6 @@ final class TripStopRowTests: XCTestCase {
                 summary: "Shuttle buses from Roxbury Crossing to Green Street through tomorrow"
             )]
         }
-        let summary = AlertSummary.Standard(
-            effect: alert.effect,
-            location: AlertSummary
-                .LocationSuccessiveStops(startStopName: "Roxbury Crossing", endStopName: "Green Street"),
-            timeframe: AlertSummary.TimeframeTomorrow.shared,
-            recurrence: nil,
-            isUpdate: false
-        )
 
         let entry = TripDetailsStopList.Entry(
             stop: stop,
@@ -366,7 +346,6 @@ final class TripStopRowTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             route: route,
             routeAccents: .init(route: route),
-            alertSummaries: [alert.id: summary],
             stopListContext: .trip(MatcherData(value: route.id), trip.directionId, trip.id),
             showDownstreamAlert: true
         ).withFixedSettings([:])

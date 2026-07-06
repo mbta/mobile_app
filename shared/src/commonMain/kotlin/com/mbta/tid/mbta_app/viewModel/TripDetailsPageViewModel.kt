@@ -7,16 +7,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.mbta.tid.mbta_app.model.Alert
-import com.mbta.tid.mbta_app.model.AlertSignificance
-import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.Direction
-import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
-import com.mbta.tid.mbta_app.model.discardTrackChangesAtCRCore
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.routes.SheetRoutes
@@ -46,11 +41,7 @@ public class TripDetailsPageViewModel(private val tripDetailsVM: ITripDetailsVie
     ITripDetailsPageViewModel {
     public sealed class Event
 
-    public data class State(
-        val direction: Direction?,
-        val alertSummaries: Map<String, AlertSummary?>,
-        val trip: Trip?,
-    )
+    public data class State(val direction: Direction?, val trip: Trip?)
 
     @set:JvmName("setAlertsState")
     private var alerts by mutableStateOf<AlertsStreamDataResponse?>(null)
@@ -64,7 +55,6 @@ public class TripDetailsPageViewModel(private val tripDetailsVM: ITripDetailsVie
     override fun runLogic(): State {
         val global =
             getGlobalData(ErrorKey(setOf(SheetRoutes.TripDetails::class), "TripDetailsPage"))
-        val stop = global?.getStop(filter?.stopId)
 
         val tripDetailsState by tripDetailsVM.models.collectAsState()
         val trip = tripDetailsState.tripData?.trip
@@ -74,16 +64,6 @@ public class TripDetailsPageViewModel(private val tripDetailsVM: ITripDetailsVie
         LaunchedEffect(alerts) { tripDetailsVM.setAlerts(alerts) }
         LaunchedEffect(filter) { tripDetailsVM.setFilters(filter) }
 
-        val patterns =
-            remember(global, filter, route) {
-                val filter = filter
-                val allPatterns =
-                    if (filter != null && global != null && route != null)
-                        global.getPatternsFor(filter.stopId, LineOrRoute.Route(route))
-                    else emptyList()
-                if (filter != null) allPatterns.filter { it.directionId == filter.directionId }
-                else allPatterns
-            }
         val direction =
             remember(route, filter, trip) {
                 val filter = filter
@@ -99,56 +79,7 @@ public class TripDetailsPageViewModel(private val tripDetailsVM: ITripDetailsVie
                 }
             }
 
-        val alertsToSummarize =
-            remember(alerts, filter, patterns, now, global, route) {
-                val alerts = alerts
-                val filter = filter
-                if (alerts != null && filter != null && route != null) {
-                    val activeRelevantAlerts =
-                        alerts.alerts.values.filter {
-                            (it.isActive(time = now) || it.willBeActiveSoon(time = now)) &&
-                                it.significance(now) >= AlertSignificance.Minor
-                        }
-                    val isCRCore = stop?.isCRCore ?: false
-                    Alert.applicableAlerts(
-                            activeRelevantAlerts,
-                            filter.directionId,
-                            listOf(route.id),
-                            route.type,
-                            null,
-                            filter.tripId,
-                        )
-                        .discardTrackChangesAtCRCore(isCRCore)
-                } else emptyList()
-            }
-        var alertSummaries: Map<String, AlertSummary?> by remember { mutableStateOf(emptyMap()) }
-
-        suspend fun updateAlertSummaries(clearExisting: Boolean = false) {
-            val filter = filter
-            if (global == null || filter == null) return
-            if (clearExisting) alertSummaries = emptyMap()
-
-            alertSummaries = alertsToSummarize.associate {
-                it.id to
-                    it.summary(
-                        filter.stopId,
-                        filter.directionId,
-                        patterns,
-                        now,
-                        listOfNotNull(contextualTrip),
-                        global,
-                    )
-            }
-        }
-
-        LaunchedEffect(filter?.stopId, filter?.directionId) {
-            updateAlertSummaries(clearExisting = true)
-        }
-        LaunchedEffect(global, alertsToSummarize, patterns, now, contextualTrip) {
-            updateAlertSummaries()
-        }
-
-        return State(direction, alertSummaries, trip)
+        return State(direction, trip)
     }
 
     override val models: StateFlow<State>
@@ -174,8 +105,7 @@ public class TripDetailsPageViewModel(private val tripDetailsVM: ITripDetailsVie
 }
 
 public class MockTripDetailsPageViewModel(
-    initialState: TripDetailsPageViewModel.State =
-        TripDetailsPageViewModel.State(null, emptyMap(), null)
+    initialState: TripDetailsPageViewModel.State = TripDetailsPageViewModel.State(null, null)
 ) : ITripDetailsPageViewModel {
     public var onSetAlerts: (AlertsStreamDataResponse?) -> Unit = {}
     public var onSetContextualTrip: (UpcomingTrip?) -> Unit = {}

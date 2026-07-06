@@ -12,7 +12,6 @@ import SwiftUI
 private struct TakeoverAlertCard: View {
     @ObserveInjection var inject
     let alert: Shared.Alert
-    let alertSummary: AlertSummary?
     let alertSummaryEntity: AlertSummaryEntity?
     let now: EasternTimeInstant
     let routeAccents: TripRouteAccents
@@ -22,7 +21,7 @@ private struct TakeoverAlertCard: View {
     @ScaledMetric var iconSize = 48
 
     var formattedAlert: FormattedAlert {
-        FormattedAlert(alert: alert, alertSummary: alertSummary, alertSummaryEntity: alertSummaryEntity)
+        FormattedAlert(alert: alert, alertSummaryEntity: alertSummaryEntity)
     }
 
     var body: some View {
@@ -31,17 +30,7 @@ private struct TakeoverAlertCard: View {
                 HStack(alignment: .center, spacing: 16) {
                     // Override alert state and icon size in the case of all clear
                     // TODO: prop drill now
-                    let alertStateFromSummary = alertSummary is AlertSummary.AllClear ? .allClear : alert.alertState
-                    let alertStateFromSummaryEntity = alert.allClear(atTime: .now()) ? .allClear : alert.alertState
-                    if alertStateFromSummary != alertStateFromSummaryEntity {
-                        let _ = debugPrint(
-                            "AAAAA alertState mismatch",
-                            alertStateFromSummary,
-                            alertStateFromSummaryEntity
-                        )
-                        abort()
-                    }
-                    let alertState = alertStateFromSummaryEntity
+                    let alertState = alert.allClear(atTime: .now()) ? .allClear : alert.alertState
                     AlertIcon(
                         alertState: alertState,
                         color: routeAccents.color,
@@ -86,7 +75,6 @@ private struct TakeoverAlertCard: View {
 struct AlertCard: View {
     @ObserveInjection var inject
     let alert: Shared.Alert
-    let alertSummary: AlertSummary?
     let alertSummaryEntity: AlertSummaryEntity?
     let spec: AlertCardSpec
     let now: EasternTimeInstant
@@ -101,7 +89,6 @@ struct AlertCard: View {
 
     init(
         alert: Shared.Alert,
-        alertSummary: AlertSummary?,
         alertSummaryEntity: AlertSummaryEntity?,
         spec: AlertCardSpec,
         now: EasternTimeInstant = .now(),
@@ -110,7 +97,6 @@ struct AlertCard: View {
         internalPadding: EdgeInsets = .init()
     ) {
         self.alert = alert
-        self.alertSummary = alertSummary
         self.alertSummaryEntity = alertSummaryEntity
         self.spec = spec
         self.now = now
@@ -120,7 +106,7 @@ struct AlertCard: View {
     }
 
     var formattedAlert: FormattedAlert {
-        FormattedAlert(alert: alert, alertSummary: alertSummary, alertSummaryEntity: alertSummaryEntity)
+        FormattedAlert(alert: alert, alertSummaryEntity: alertSummaryEntity)
     }
 
     var iconSize: Double {
@@ -137,17 +123,7 @@ struct AlertCard: View {
                 HStack(alignment: .center, spacing: 16) {
                     // Override alert state and icon size in the case of all clear
                     // TODO: prop drill now
-                    let alertStateFromSummary = alertSummary is AlertSummary.AllClear ? .allClear : alert.alertState
-                    let alertStateFromSummaryEntity = alert.allClear(atTime: .now()) ? .allClear : alert.alertState
-                    if alertStateFromSummary != alertStateFromSummaryEntity {
-                        let _ = debugPrint(
-                            "AAAAA alertState mismatch",
-                            alertStateFromSummary,
-                            alertStateFromSummaryEntity
-                        )
-                        abort()
-                    }
-                    let alertState = alertStateFromSummaryEntity
+                    let alertState = alert.allClear(atTime: .now()) ? .allClear : alert.alertState
                     let iconSize = alertState == .allClear ? elevatorIconSize : iconSize
                     AlertIcon(
                         alertState: alertState,
@@ -175,7 +151,6 @@ struct AlertCard: View {
     var body: some View {
         if spec == .takeover {
             TakeoverAlertCard(alert: alert,
-                              alertSummary: alertSummary,
                               alertSummaryEntity: alertSummaryEntity,
                               now: now,
                               routeAccents: routeAccents,
@@ -202,7 +177,6 @@ struct AlertCard: View {
                     alert.header = "Orange Line suspended from point A to point B"
                     alert.effect = .suspension
                 },
-                alertSummary: nil,
                 alertSummaryEntity: nil,
                 spec: .takeover,
                 routeAccents: .init(color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), type: .heavyRail),
@@ -214,7 +188,6 @@ struct AlertCard: View {
                 alert: ObjectCollectionBuilder.Single.shared.alert { alert in
                     alert.effect = .serviceChange
                 },
-                alertSummary: nil,
                 alertSummaryEntity: nil,
                 spec: .basic,
                 routeAccents: .init(color: Color(hex: "80276C"), textColor: Color(hex: "FFFFFF"), type: .commuterRail),
@@ -227,7 +200,6 @@ struct AlertCard: View {
                     alert.effect = .elevatorClosure
                     alert.header = "Ruggles elevator 321 (Orange Line Platform to lobby) unavailable due to maintenance"
                 },
-                alertSummary: nil,
                 alertSummaryEntity: nil,
                 spec: .elevator,
                 routeAccents: .init(color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), type: .heavyRail),
@@ -243,18 +215,6 @@ struct AlertCard: View {
 
             AlertCard(
                 alert: alert,
-                alertSummary: AlertSummary.Standard(
-                    effect: .shuttle,
-                    location: .some(AlertSummary.LocationSuccessiveStops(
-                        startStopName: "Start",
-                        endStopName: "End"
-                    )),
-                    timeframe: .some(AlertSummary.TimeframeTime(
-                        time: .init(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
-                    )),
-                    recurrence: nil,
-                    isUpdate: false
-                ),
                 alertSummaryEntity: .init(
                     routeId: nil,
                     stopId: nil,
@@ -270,15 +230,6 @@ struct AlertCard: View {
 
             AlertCard(
                 alert: alert,
-                alertSummary: AlertSummary.Standard(
-                    effect: .shuttle,
-                    location: .some(AlertSummary.LocationSuccessiveStops(startStopName: "Start", endStopName: "End")),
-                    timeframe: .some(AlertSummary.TimeframeTime(
-                        time: .init(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
-                    )),
-                    recurrence: nil,
-                    isUpdate: true
-                ),
                 alertSummaryEntity: .init(
                     routeId: nil,
                     stopId: nil,
@@ -294,9 +245,6 @@ struct AlertCard: View {
 
             AlertCard(
                 alert: alert,
-                alertSummary: AlertSummary.AllClear(
-                    location: .some(AlertSummary.LocationSuccessiveStops(startStopName: "Start", endStopName: "End")),
-                ),
                 alertSummaryEntity: .init(
                     routeId: nil,
                     stopId: nil,
@@ -315,13 +263,6 @@ struct AlertCard: View {
                     $0.cause = .mechanicalIssue
                     $0.effect = .cancellation
                 },
-                alertSummary: TripSpecificAlertSummary(
-                    tripIdentity: TripSpecificAlertSummary.TripFrom(
-                        tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
-                        routeType: .commuterRail,
-                        stopName: "Ruggles"
-                    ), effect: .cancellation, cause: .mechanicalIssue
-                ),
                 alertSummaryEntity: .init(
                     routeId: nil,
                     stopId: nil,

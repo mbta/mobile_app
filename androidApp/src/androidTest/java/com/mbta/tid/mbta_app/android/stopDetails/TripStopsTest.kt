@@ -5,7 +5,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.Alert
-import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.AlertSummaryEntity
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Prediction
@@ -134,7 +133,6 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 route = route,
                 routeAccents = TripRouteAccents(route),
-                alertSummaries = emptyMap(),
                 global = GlobalResponse(objects),
             )
         }
@@ -233,7 +231,6 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 route = route,
                 routeAccents = TripRouteAccents(route),
-                alertSummaries = emptyMap(),
                 global = GlobalResponse(objects),
             )
         }
@@ -320,7 +317,6 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 route = route,
                 routeAccents = TripRouteAccents(route),
-                alertSummaries = emptyMap(),
                 global = GlobalResponse(objects),
             )
         }
@@ -417,7 +413,6 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 route = route,
                 routeAccents = TripRouteAccents(route),
-                alertSummaries = emptyMap(),
                 global = GlobalResponse(objects),
             )
         }
@@ -526,15 +521,6 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 route = route,
                 routeAccents = TripRouteAccents(route),
-                alertSummaries =
-                    mapOf(
-                        alert.id to
-                            AlertSummary.Standard(
-                                alert.effect,
-                                AlertSummary.Location.SingleStop(stop3.name),
-                                AlertSummary.Timeframe.EndOfService,
-                            )
-                    ),
                 global = GlobalResponse(objects),
             )
         }
@@ -632,15 +618,6 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 route = route,
                 routeAccents = TripRouteAccents(route),
-                alertSummaries =
-                    mapOf(
-                        alert.id to
-                            AlertSummary.Standard(
-                                alert.effect,
-                                AlertSummary.Location.SingleStop(stop3.name),
-                                AlertSummary.Timeframe.EndOfService,
-                            )
-                    ),
                 global = GlobalResponse(objects),
             )
         }
@@ -738,15 +715,6 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 route = route,
                 routeAccents = TripRouteAccents(route),
-                alertSummaries =
-                    mapOf(
-                        alert.id to
-                            AlertSummary.Standard(
-                                alert.effect,
-                                AlertSummary.Location.SingleStop(stop1.name),
-                                AlertSummary.Timeframe.EndOfService,
-                            )
-                    ),
                 global = GlobalResponse(objects),
             )
         }

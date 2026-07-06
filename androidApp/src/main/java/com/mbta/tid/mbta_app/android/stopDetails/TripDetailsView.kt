@@ -20,7 +20,6 @@ import com.mbta.tid.mbta_app.android.tripDetails.MissingTripCardType
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.modifiers.loading
 import com.mbta.tid.mbta_app.model.Alert
-import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
@@ -46,7 +45,6 @@ import org.koin.compose.koinInject
 fun TripDetailsView(
     tripFilter: TripDetailsPageFilter?,
     allAlerts: AlertsStreamDataResponse?,
-    alertSummaries: Map<String, AlertSummary?>,
     onOpenAlertDetails: (Alert) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
     openModal: (ModalRoutes) -> Unit,
@@ -165,7 +163,6 @@ fun TripDetailsView(
             tripFilter,
             stopList,
             now,
-            alertSummaries,
             globalResponse,
             isTripDetailsPage,
             modifier,
@@ -204,7 +201,6 @@ fun TripDetailsView(
                     TripDetailsPageFilter("", "", Route.Id(""), 0, "", null),
                     placeholderTripStops,
                     now,
-                    emptyMap(),
                     globalResponse
                         ?: GlobalResponse(ObjectCollectionBuilder("TripDetailsView.loading")),
                     isTripDetailsPage,
@@ -227,7 +223,6 @@ fun TripDetails(
     tripFilter: TripDetailsPageFilter,
     stopList: TripDetailsStopList,
     now: EasternTimeInstant,
-    alertSummaries: Map<String, AlertSummary?>,
     globalResponse: GlobalResponse,
     isTripDetailsPage: Boolean,
     modifier: Modifier = Modifier,
@@ -259,7 +254,6 @@ fun TripDetails(
                     tripFilter.stopSequence,
                     headerSpec,
                     now,
-                    alertSummaries,
                     globalResponse,
                     onTapStop,
                     onOpenAlertDetails,

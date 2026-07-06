@@ -13,7 +13,6 @@ import Shared
 // swiftlint:disable:next type_body_length
 struct FormattedAlert: Equatable {
     let alert: Alert
-    let alertSummary: AlertSummary?
     let alertSummaryEntity: AlertSummaryEntity?
     let effect: String
     let sentenceCaseEffect: String
@@ -22,7 +21,7 @@ struct FormattedAlert: Equatable {
     /// guarantee that the alert should replace predictions.
     let predictionReplacement: PredictionReplacement
 
-    init(alert: Alert, alertSummary: AlertSummary? = nil, alertSummaryEntity: AlertSummaryEntity? = nil) {
+    init(alert: Alert, alertSummaryEntity: AlertSummaryEntity? = nil) {
         self.alert = alert
         let effect = alert.effect
         self.effect = "**\(effect.effectString)**"
@@ -46,7 +45,6 @@ struct FormattedAlert: Equatable {
             )
         default: .init(text: effect.effectString, accessibilityLabel: nil)
         }
-        self.alertSummary = alertSummary
         self.alertSummaryEntity = alertSummaryEntity
     }
 
@@ -69,424 +67,17 @@ struct FormattedAlert: Equatable {
         }
     }
 
-    static func summaryLocation(effect: Alert.Effect?, location: AlertSummary.Location?) -> String {
-        switch onEnum(of: location) {
-        case let .directionToStop(location):
-            String(format:
-                NSLocalizedString(
-                    " from **%1$@** stops to **%2$@**",
-                    comment: """
-                    Alert summary location for branching routes in the format of " from [direction] \
-                    stops to [Stop name]" ex. " from [Westbound] stops to [Kenmore]" or " from \
-                    [Eastbound] stops to [Government Center]". The leading space should be retained, \
-                    because this will be added in the %2 position of the "**%1$@**%2$@%3$@" alert \
-                    summary template which may or may not include a location fragment.
-                    """
-                ),
-                DirectionLabel.directionNameFormatted(location.direction),
-                location.endStopName)
-
-        case let .singleStop(location):
-            String(format:
-                NSLocalizedString(
-                    " at **%1$@**",
-                    comment: """
-                    Alert summary location for a single stop in the format of \
-                    " at [Stop name]" ex. " at [Haymarket]" or " at [Green St @ Magazine St]". \
-                    The leading space should be \
-                    retained, because this will be added in the %2 position of the \
-                    "**%1$@**%2$@%3$@" alert summary template which may or may not include a \
-                    location fragment.
-                    """
-                ), location.stopName)
-
-        case let .stopToDirection(location):
-            String(format:
-                NSLocalizedString(
-                    " from **%1$@** to **%2$@** stops",
-                    comment: """
-                    Alert summary location for branching routes in the format of " from [Stop name] \
-                    to [direction] stops" ex. " from [Kenmore] to [Westbound] stops" or " from \
-                    [JFK/UMass] to [Southbound] stops". The leading space should be retained, \
-                    because this will be added in the %2 position of the "**%1$@**%2$@%3$@" alert \
-                    summary template which may or may not include a location fragment.
-                    """
-                ),
-                location.startStopName,
-                DirectionLabel.directionNameFormatted(location.direction))
-
-        case let .successiveStops(location):
-            String(format:
-                NSLocalizedString(
-                    " from **%1$@** to **%2$@**",
-                    comment: """
-                    Alert summary location for consecutive stops in the format of " from [Stop name] \
-                    to [Other stop name]" ex. " from [Alewife] to [Harvard]" or " from [Lechmere] \
-                    to [Park Street]". The leading space should be retained, because this will be \
-                    added in the %2 position of the "**%1$@**%2$@%3$@" alert summary template which \
-                    may or may not include a location fragment.
-                    """
-                ),
-                location.startStopName,
-                location.endStopName)
-
-        case let .wholeRoute(location):
-            effect == .shuttle ?
-                String(format:
-                    NSLocalizedString(
-                        " replacing **%1$@**",
-                        comment: """
-                        Alert summary location for an entire route with shuttle service in the format of \
-                        " replacing [RouteLabel]" ex. " replacing [Green Line C]" or " replacing \
-                        [Orangle Line]". The leading space should be retained, because this will be added \
-                        in the %2 position of the "**%1$@**%2$@%3$@" alert summary template which may or \
-                        may not include a location fragment.
-                        """
-                    ), location.modeLabel) :
-                String(format:
-                    NSLocalizedString(
-                        " on **%1$@**",
-                        comment: """
-                        Alert summary location for an entire route in the format of " on [RouteLabel]" \
-                        ex. " on [Green Line C]" or " on [1 bus]". The leading space should be retained, \
-                        because this will be added in the %2 position of the "**%1$@**%2$@%3$@" alert \
-                        summary template which may or may not include a location fragment.
-                        """
-                    ), location.modeLabel)
-
-        case let .affectedStops(location):
-            summaryAffectedStops(stops: location.stops)
-
-        case .unknown: ""
-
-        case nil: ""
-        }
-    }
-
-    static func summaryTimeframe(timeframe: AlertSummary.Timeframe?) -> String {
-        switch onEnum(of: timeframe) {
-        case .untilFurtherNotice:
-            NSLocalizedString(
-                " until further notice",
-                comment: """
-                Alert summary timeframe with no known end. The leading space should be retained.
-                """
-            )
-        case .endOfService:
-            NSLocalizedString(
-                " through end of service",
-                comment: """
-                Alert summary timeframe ending at the end of service on the current day. \
-                The leading space should be retained, because this will be added in the %3 position \
-                of the "**%1$@**%2$@%3$@" alert summary template which may or may not include a \
-                timeframe fragment.
-                """
-            )
-        case .tomorrow:
-            NSLocalizedString(
-                " through tomorrow",
-                comment: """
-                Alert summary timeframe ending tomorrow. The leading space should be retained, \
-                because this will be added in the %3 position of the "**%1$@**%2$@%3$@" alert \
-                summary template which may or may not include a timeframe fragment.
-                """
-            )
-        case let .laterDate(timeframe):
-            String(format: NSLocalizedString(
-                "key/alert_summary_timeframe_later_date",
-                comment: """
-                Alert summary timeframe ending on a specific date in the future. \
-                ex. " through May 11". The date component is localized by the OS. \
-                The leading space should be retained, because this will be added in \
-                the %3 position of the "**%1$@**%2$@%3$@" alert summary template \
-                which may or may not include a timeframe fragment.
-                """
-            ),
-            timeframe.time.coerceInServiceDay(rounding: .backwards)
-                .formatted(.init().month(.abbreviated).day()))
-        case let .thisWeek(timeframe):
-            String(format: NSLocalizedString(
-                "key/alert_summary_timeframe_this_week",
-                comment: """
-                Alert summary timeframe ending on a specific day later this week. \
-                ex. " through Thursday". The weekday component is localized by the \
-                OS. The leading space should be retained, because this will be added \
-                in the %3 position of the "**%1$@**%2$@%3$@" alert summary template \
-                which may or may not include a timeframe fragment.
-                """
-            ), timeframe.time.coerceInServiceDay(rounding: .backwards).formatted(
-                .init().weekday(.wide)
-            ))
-        case let .time(timeframe):
-            String(format:
-                NSLocalizedString(
-                    "key/alert_summary_timeframe_time",
-                    comment: """
-                    Alert summary timeframe ending on a specific time later today. \
-                    ex. " through 10:00 PM". The time component is localized by the OS. The leading \
-                    space should be retained, because this will be added in the %3 position of the \
-                    "**%1$@**%2$@%3$@" alert summary template which may or may not include a \
-                    timeframe fragment.
-                    """
-                ), timeframe.time.formatted(date: .omitted, time: .shortened))
-        case .startingTomorrow:
-            NSLocalizedString(
-                " starting tomorrow",
-                comment: """
-                Alert summary timeframe starting tomorrow. The leading space should be retained, \
-                because this will be added in the %3 position of the "**%1$@**%2$@%3$@" alert \
-                summary template which may or may not include a timeframe fragment.
-                """
-            )
-        case let .startingLaterToday(timeframe):
-            String(format:
-                NSLocalizedString(
-                    " starting **%@** today",
-                    comment: """
-                    Alert summary timeframe starting on a specific time later today. \
-                    ex. " starting 10:00 PM today". The time component is localized by the OS. \
-                    The leading space should be retained, because this will be added in the %3 \
-                    position of the "**%1$@**%2$@%3$@" alert summary template which may or may not \
-                    include a timeframe fragment.
-                    """
-                ), timeframe.time.formatted(date: .omitted, time: .shortened))
-        case let .timeRange(timeframe):
-            String(format:
-                NSLocalizedString(
-                    " from %@ to %@",
-                    comment: """
-                    Alert summary timeframe with a range today that will recur in the future, \
-                    e.g. “from 9:00 PM to end of service”. The leading space should be retained.
-                    """
-                ), Self.timeRangeBoundary(timeframe.startTime),
-                Self.timeRangeBoundary(timeframe.endTime))
-        case .unknown: ""
-        case nil: ""
-        }
-    }
-
-    private static func timeRangeBoundary(_ boundary: AlertSummaryTimeframeTimeRangeStartTime) -> String {
-        switch onEnum(of: boundary) {
-        case .startOfService: NSLocalizedString("start of service", comment: "")
-        case let .time(boundary): boundary.time.formatted(date: .omitted, time: .shortened)
-        case .unknown: ""
-        }
-    }
-
-    private static func timeRangeBoundary(_ boundary: AlertSummaryTimeframeTimeRangeEndTime) -> String {
-        switch onEnum(of: boundary) {
-        case .endOfService: NSLocalizedString("end of service", comment: "")
-        case let .time(boundary): boundary.time.formatted(date: .omitted, time: .shortened)
-        case .unknown: ""
-        }
-    }
-
-    private static func summaryRecurrenceEndDay(_ endDay: AlertSummaryRecurrenceEndDay) -> String? {
-        switch onEnum(of: endDay) {
-        case .untilFurtherNotice:
-            NSLocalizedString(
-                " until further notice",
-                comment: """
-                Alert summary timeframe with no known end. The leading space should be retained.
-                """
-            )
-        case .tomorrow:
-            NSLocalizedString(
-                " until tomorrow",
-                comment: """
-                Alert summary recurrence ending tomorrow. The leading space should be retained.
-                """
-            )
-        case let .laterDate(timeframe):
-            String(format: NSLocalizedString(
-                "key/alert_summary_recurrence_end_day_later_date",
-                comment: """
-                Alert summary recurrence ending on a specific date in the future. \
-                ex. " until May 11". The date component is localized by the OS. \
-                The leading space should be retained.
-                """
-            ),
-            timeframe.time.coerceInServiceDay(rounding: .backwards).formatted(.init().month(.abbreviated).day()))
-        case let .thisWeek(timeframe):
-            String(format: NSLocalizedString(
-                "key/alert_summary_recurrence_end_day_this_week",
-                comment: """
-                Alert summary recurrence ending on a specific day later this week. \
-                ex. " until Thursday". The weekday component is localized by the \
-                OS. The leading space should be retained.
-                """
-            ), timeframe.time.coerceInServiceDay(rounding: .backwards).formatted(
-                .init().weekday(.wide)
-            ))
-        case .unknown: nil
-        }
-    }
-
-    static func summaryRecurrence(recurrence: AlertSummary.Recurrence?) -> String {
-        switch onEnum(of: recurrence) {
-        case let .daily(recurrence):
-            if let end = Self.summaryRecurrenceEndDay(recurrence.ending) {
-                String(format:
-                    NSLocalizedString(
-                        " daily%@",
-                        comment: """
-                        Alert summary recurrence every day until the indicated date, e.g. “ daily until Friday”. The \
-                        leading space must be retained.
-                        """
-                    ), end)
-            } else { "" }
-        case let .someDays(recurrence):
-            if let end = Self.summaryRecurrenceEndDay(recurrence.ending) {
-                String(format:
-                    NSLocalizedString(
-                        " some days%@", comment: """
-                        Alert summary recurrence on only certain days until the indicated date, e.g. \
-                        “some days until Jan 16”. The leading space must be retained.
-                        """
-                    ), end)
-            } else { "" }
-        case .unknown, nil: ""
-        }
-    }
-
-    static func summarySkippedEffect(stops: String, timeframe: String) -> String {
-        String(
-            format: NSLocalizedString(
-                "will not stop at %@ %@",
-                comment: "Alert effect denoting station bypass, ex “will not stop at [Back Bay and Ruggles] [today]”"
-            ),
-            stops,
-            timeframe
-        )
-    }
-
-    static func summaryAffectedStops(stops: [String]) -> String {
-        if stops.count > 3 {
-            NSLocalizedString(
-                "**multiple stops**",
-                comment: "Used when more than 3 stops are affected"
-            )
-        } else {
-            ListFormatter.localizedString(byJoining: stops.map { "**\($0)**" })
-        }
-    }
-
-    static func summaryAffectedMode(effect: Alert.Effect) -> String {
-        if effect == .stationClosure {
-            NSLocalizedString(
-                "Trains",
-                comment: """
-                Mode of travel prefixing alert summary e.g.: "Trains will not stop at..."
-                """
-            )
-        } else if effect == .stopClosure {
-            NSLocalizedString(
-                "Buses",
-                comment: """
-                Mode of travel prefixing alert summary e.g.: "Buses will not stop at..."
-                """
-            )
-        } else {
-            ""
-        }
-    }
-
     var summary: AttributedString? {
-        let summaryCalculated = summary(alertSummary: alertSummary)
-        let summaryProvided = alertSummaryEntity?.summary
-        if summaryCalculated != summaryProvided {
-            debugPrint("AAAAA summary mismatch", summaryCalculated, summaryProvided)
-        }
-        if let summary = summaryProvided ?? summaryCalculated {
+        if let summary = alertSummaryEntity?.summary {
             AttributedString.tryMarkdown(summary)
         } else {
             nil
         }
     }
 
-    func summary(alertSummary: AlertSummary?) -> AttributedString? {
-        switch onEnum(of: alertSummary) {
-        case let .allClear(alertSummary): return AttributedString.tryMarkdown(String(
-                format: NSLocalizedString(
-                    "**All clear:** Regular service%1$@",
-                    comment: """
-                    Alert summary in the format of "All clear: Regular service[at location]", \
-                    ex "[All clear][Regular service][ from Alewife to Harvard]"
-                    """
-                ), Self.summaryLocation(effect: nil, location: alertSummary.location)
-            ))
-        case let .standard(alertSummary):
-            let location = Self.summaryLocation(effect: alertSummary.effect, location: alertSummary.location)
-            let timeframe = Self.summaryTimeframe(timeframe: alertSummary.timeframe)
-            if alertSummary.effect.stopSkipped {
-                let affectedMode = Self.summaryAffectedMode(effect: alertSummary.effect)
-                let skippedEffect = Self.summarySkippedEffect(
-                    stops: location,
-                    timeframe: String(timeframe.trimmingPrefix(.horizontalWhitespace))
-                )
-                return AttributedString.tryMarkdown(String(format:
-                    NSLocalizedString(
-                        "%1$@ %2$@",
-                        comment: """
-                        Alert summary in the format of "[trains/buses] will not stop at [affected stop(s)] [timeframe]" \
-                        ex "[Trains ][will not stop at Back Bay and Ruggles until further notice]"
-                        """
-                    ), affectedMode, skippedEffect))
-            }
-            let args = [
-                sentenceCaseEffect,
-                location,
-                timeframe,
-                Self.summaryRecurrence(recurrence: alertSummary.recurrence),
-            ]
-            if alertSummary.isUpdate {
-                return AttributedString.tryMarkdown(String(format:
-                    NSLocalizedString(
-                        "**Update:** %1$@%2$@%3$@%4$@",
-                        comment: """
-                        Alert summary in the format of "Update: [Alert effect][at location][through timeframe][until recurrence]", \
-                        ex "[Update][Stop closed][ at Haymarket][ through this Friday][]" or \
-                        "[Update][Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday]"
-                        """
-                    ), args.map { $0 as CVarArg }))
-            } else {
-                return AttributedString.tryMarkdown(String(format:
-                    NSLocalizedString(
-                        "**%1$@**%2$@%3$@%4$@",
-                        comment: """
-                        Alert summary in the format of "[Alert effect][at location][through timeframe][until recurrence]", \
-                        ex "[Stop closed][ at Haymarket][ through this Friday][]" or \
-                        "[Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday]"
-                        """
-                    ), args.map { $0 as CVarArg }))
-            }
-        case let .tripSpecificAlertSummary(alertSummary): return tripSpecificAlertSummary(alertSummary: alertSummary)
-        case let .tripShuttleAlertSummary(alertSummary): return tripShuttleAlertSummary(alertSummary: alertSummary)
-        case let .unknown(alertSummary): return AttributedString(alertSummary.fallback)
-        case nil: return nil
-        }
-    }
-
-    var delayHeaderFromSummary: AttributedString {
-        if case let .standard(alertSummary) = onEnum(of: alertSummary),
-           case .startingLaterToday = onEnum(of: alertSummary.timeframe), let summary {
-            return summary
-        }
-        // Show "Single Tracking" if there is an informational delay alert with that cause
-        // (Any other information severity delay alerts are never shown)
-        guard let cause = alert.cause?.causeString,
-              alert.cause == .singleTracking,
-              alert.severity < 3
-        else {
-            return AttributedString.tryMarkdown(delaysDueToCause)
-        }
-        return AttributedString.tryMarkdown("**\(cause)**")
-    }
-
-    func delayHeaderFromSummaryEntity(now: EasternTimeInstant) -> AttributedString {
+    func delayHeader(now: EasternTimeInstant) -> AttributedString {
         let startingLaterToday = alert.currentPeriod(time: now) == nil &&
         alert.nextPeriod(time: now, within: .init(days: 1))?.startServiceDate == now.serviceDate
-        debugPrint("AAAAA delayHeaderFromSummaryEntity", alert, now, alert.currentPeriod(time: now), alert.nextPeriod(time: now, within: .init(days: 1)), startingLaterToday)
         if startingLaterToday, let summary {
             return summary
         }
@@ -499,15 +90,6 @@ struct FormattedAlert: Equatable {
             return AttributedString.tryMarkdown(delaysDueToCause)
         }
         return AttributedString.tryMarkdown("**\(cause)**")
-    }
-
-    func delayHeader(now: EasternTimeInstant) -> AttributedString {
-        let fromSummaryEntity = delayHeaderFromSummaryEntity(now: now)
-        if delayHeaderFromSummary != fromSummaryEntity {
-            debugPrint("AAAAA delayHeader mismatch", delayHeaderFromSummary, fromSummaryEntity)
-            abort()
-        }
-        return fromSummaryEntity
     }
 
     var elevatorHeader: AttributedString {
@@ -534,37 +116,7 @@ struct FormattedAlert: Equatable {
         return AttributedString.tryMarkdown(headerString)
     }
 
-    func alertCardHeaderFromSummary(spec: AlertCardSpec, type: RouteType, now: EasternTimeInstant) -> AttributedString {
-        switch spec {
-        case .delay: delayHeader(now: now)
-        case .downstream: summary ?? AttributedString.tryMarkdown(downstreamLabel)
-        case .elevator: elevatorHeader
-        case .basic: summary ?? AttributedString.tryMarkdown(effect)
-        default: switch (type, alert.effect) {
-            case (.bus, .cancellation) where alertSummary is TripSpecificAlertSummary:
-                AttributedString(NSLocalizedString("Bus cancelled", comment: ""))
-            case (.ferry, .cancellation) where alertSummary is TripSpecificAlertSummary:
-                AttributedString(NSLocalizedString("Ferry cancelled", comment: ""))
-            case (_, .cancellation) where alertSummary is TripSpecificAlertSummary:
-                AttributedString(NSLocalizedString("Train cancelled", comment: ""))
-            case (_, .shuttle) where alertSummary is TripShuttleAlertSummary:
-                AttributedString(NSLocalizedString("Shuttle bus", comment: ""))
-            case (.bus, .suspension) where alertSummary is TripSpecificAlertSummary:
-                AttributedString(NSLocalizedString("Bus suspended", comment: ""))
-            case (.ferry, .suspension) where alertSummary is TripSpecificAlertSummary:
-                AttributedString(NSLocalizedString("Ferry suspended", comment: ""))
-            case (_, .suspension) where alertSummary is TripSpecificAlertSummary:
-                AttributedString(NSLocalizedString("Train suspended", comment: ""))
-            case (_, .stationClosure) where alertSummary is TripSpecificAlertSummary,
-                 (_, .stopClosure) where alertSummary is TripSpecificAlertSummary,
-                 (_, .dockClosure) where alertSummary is TripSpecificAlertSummary:
-                AttributedString(NSLocalizedString("Stop skipped", comment: ""))
-            default: AttributedString.tryMarkdown(effect)
-            }
-        }
-    }
-
-    func alertCardHeaderFromSummaryEntity(spec: AlertCardSpec, type: RouteType, now: EasternTimeInstant) -> AttributedString {
+    func alertCardHeader(spec: AlertCardSpec, type: RouteType, now: EasternTimeInstant) -> AttributedString {
         let isTripSpecific = alert.informedEntity.contains(where: { $0.trip != nil })
         return switch spec {
         case .delay: delayHeader(now: now)
@@ -595,16 +147,6 @@ struct FormattedAlert: Equatable {
         }
     }
 
-    func alertCardHeader(spec: AlertCardSpec, type: RouteType, now: EasternTimeInstant) -> AttributedString {
-        let fromSummary = alertCardHeaderFromSummary(spec: spec, type: type, now: now)
-        let fromSummaryEntity = alertCardHeaderFromSummaryEntity(spec: spec, type: type, now: now)
-        if fromSummary != fromSummaryEntity {
-            debugPrint("AAAAA alertCardHeader mismatch", fromSummary, fromSummaryEntity)
-            abort()
-        }
-        return fromSummaryEntity
-    }
-
     var alertCardMajorBody: AttributedString {
         summary ?? AttributedString(alert.header ?? "")
     }
@@ -617,11 +159,5 @@ struct FormattedAlert: Equatable {
             self.text = text
             self.accessibilityLabel = accessibilityLabel
         }
-    }
-}
-
-extension AlertSummary.LocationWholeRoute {
-    var modeLabel: String {
-        routeType == .bus ? String("\(routeLabel) bus") : routeLabel
     }
 }

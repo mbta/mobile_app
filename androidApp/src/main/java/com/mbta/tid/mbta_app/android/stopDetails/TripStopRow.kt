@@ -25,7 +25,6 @@ import com.mbta.tid.mbta_app.android.util.containsWrappableText
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.DestinationPredictionBalance
 import com.mbta.tid.mbta_app.model.Alert
-import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.Matcher
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -53,7 +52,6 @@ fun TripStopRow(
     onOpenAlertDetails: (Alert) -> Unit,
     route: Route,
     routeAccents: TripRouteAccents,
-    alertSummaries: Map<String, AlertSummary?>,
     modifier: Modifier = Modifier,
     showDownstreamAlert: Boolean = false,
     targeted: Boolean = false,
@@ -80,7 +78,6 @@ fun TripStopRow(
         stopListContext = StopListContext.Trip(Matcher.Data(route.id), trip.directionId, trip.id),
         modifier = modifier,
         activeElevatorAlerts = activeElevatorAlerts.size,
-        alertSummaries = alertSummaries,
         connectingRoutes = entry.routes,
         disruption = disruption,
         getAlertState = { fromStop, toStop ->
@@ -181,7 +178,6 @@ private fun TripStopRowPreview() {
                     onOpenAlertDetails = {},
                     red,
                     redAccents,
-                    alertSummaries = emptyMap(),
                 )
                 TripStopRow(
                     entry =
@@ -208,7 +204,6 @@ private fun TripStopRowPreview() {
                     onOpenAlertDetails = {},
                     red,
                     redAccents,
-                    alertSummaries = emptyMap(),
                 )
                 TripStopRow(
                     entry =
@@ -232,7 +227,6 @@ private fun TripStopRowPreview() {
                         type = RouteType.COMMUTER_RAIL,
                         color = Color.fromHex("DA291C"),
                     ),
-                    alertSummaries = emptyMap(),
                 )
             }
         }
@@ -293,7 +287,6 @@ private fun TripStopRowDisruptionsPreview() {
                         onOpenAlertDetails = {},
                         red,
                         redAccents,
-                        alertSummaries = emptyMap(),
                         showDownstreamAlert = true,
                     )
                     TripStopRow(
@@ -322,7 +315,6 @@ private fun TripStopRowDisruptionsPreview() {
                         onOpenAlertDetails = {},
                         red,
                         redAccents,
-                        alertSummaries = emptyMap(),
                         showDownstreamAlert = true,
                     )
                     TripStopRow(
@@ -352,7 +344,6 @@ private fun TripStopRowDisruptionsPreview() {
                             type = RouteType.COMMUTER_RAIL,
                             color = Color.fromHex("DA291C"),
                         ),
-                        alertSummaries = emptyMap(),
                         showDownstreamAlert = true,
                     )
                 }

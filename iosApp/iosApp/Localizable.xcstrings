@@ -3,6 +3,7 @@
   "strings" : {
     " at **%1$@**" : {
       "comment" : "Alert summary location for a single stop in the format of \" at [Stop name]\" ex. \" at [Haymarket]\" or \" at [Green St @ Magazine St]\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -56,6 +57,7 @@
     },
     " daily%@" : {
       "comment" : "Alert summary recurrence every day until the indicated date, e.g. “ daily until Friday”. The leading space must be retained.",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -102,6 +104,7 @@
       }
     },
     " due to %@" : {
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -149,6 +152,7 @@
     },
     " from **%1$@** stops to **%2$@**" : {
       "comment" : "Alert summary location for branching routes in the format of \" from [direction] stops to [Stop name]\" ex. \" from [Westbound] stops to [Kenmore]\" or \" from [Eastbound] stops to [Government Center]\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -249,6 +253,7 @@
     },
     " from **%1$@** to **%2$@** stops" : {
       "comment" : "Alert summary location for branching routes in the format of \" from [Stop name] to [direction] stops\" ex. \" from [Kenmore] to [Westbound] stops\" or \" from [JFK/UMass] to [Southbound] stops\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -302,6 +307,7 @@
     },
     " from %@ to %@" : {
       "comment" : "Alert summary timeframe with a range today that will recur in the future, e.g. “from 9:00 PM to end of service”. The leading space should be retained.",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -355,6 +361,7 @@
     },
     " on **%1$@**" : {
       "comment" : "Alert summary location for an entire route in the format of \" on [RouteLabel]\" ex. \" on [Green Line C]\" or \" on [1 bus]\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -402,6 +409,7 @@
     },
     " replacing **%1$@**" : {
       "comment" : "Alert summary location for an entire route with shuttle service in the format of \" replacing [RouteLabel]\" ex. \" replacing [Green Line C]\" or \" replacing [Orangle Line]\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -449,6 +457,7 @@
     },
     " some days%@" : {
       "comment" : "Alert summary recurrence on only certain days until the indicated date, e.g. “some days until Jan 16”. The leading space must be retained.",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -496,6 +505,7 @@
     },
     " starting **%@** today" : {
       "comment" : "Alert summary timeframe starting on a specific time later today. ex. \" starting 10:00 PM today\". The time component is localized by the OS. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -543,6 +553,7 @@
     },
     " starting tomorrow" : {
       "comment" : "Alert summary timeframe starting tomorrow. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -590,6 +601,7 @@
     },
     " through end of service" : {
       "comment" : "Alert summary timeframe ending at the end of service on the current day. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -637,6 +649,7 @@
     },
     " through tomorrow" : {
       "comment" : "Alert summary timeframe ending tomorrow. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -684,6 +697,7 @@
     },
     " until further notice" : {
       "comment" : "Alert summary timeframe with no known end. The leading space should be retained.",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -731,6 +745,7 @@
     },
     " until tomorrow" : {
       "comment" : "Alert summary recurrence ending tomorrow. The leading space should be retained.",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -966,6 +981,7 @@
     },
     "**%1$@** %2$@ from **%3$@**" : {
       "comment" : "Trip identity in the format of “[time] [vehicle] from [stop]”, ex “[12:13 PM] [train] from [South Station]“",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1013,6 +1029,7 @@
     },
     "**%1$@** %2$@ to **%3$@**" : {
       "comment" : "Trip identity in the form of ”[time] [vehicle type] to [headsign]”, ex “[12:13 PM] [train] to [Stoughton]”",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1509,6 +1526,7 @@
     },
     "**All clear:** Regular service%1$@" : {
       "comment" : "Alert summary in the format of \"All clear: Regular service[at location]\", ex \"[All clear][Regular service][ from Alewife to Harvard]\"",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1650,6 +1668,7 @@
     },
     "**multiple stops**" : {
       "comment" : "Used when more than 3 stops are affected",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1697,6 +1716,7 @@
     },
     "**Update:** %1$@%2$@%3$@%4$@" : {
       "comment" : "Alert summary in the format of \"Update: [Alert effect][at location][through timeframe][until recurrence]\", ex \"[Update][Stop closed][ at Haymarket][ through this Friday][]\" or \"[Update][Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday]\"",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2914,6 +2934,7 @@
     },
     "%1$@ %2$@" : {
       "comment" : "Alert summary in the format of \"[trains/buses] will not stop at [affected stop(s)] [timeframe]\" ex \"[Trains ][will not stop at Back Bay and Ruggles until further notice]\"",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3055,6 +3076,7 @@
     },
     "%1$@ %2$@%3$@%4$@" : {
       "comment" : "Alert summary in the format of “[trip identity] [is affected][due to cause][until recurrence]”, ex “[12:13 PM from Ruggles] [is cancelled today][ due to a mechanical issue][ some days until Wednesday]” or “[Multiple trips] [are suspended today][][]”",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3291,6 +3313,7 @@
     },
     "%1$@ is replaced by shuttle buses from **%2$@** to **%3$@**%4$@" : {
       "comment" : "Alert summary in the format of “[trip identity] is replaced by shuttle buses from [stop] to [stop][until recurrence]”, ex “Shuttle buses replace [the 12:13 PM train] from [Ruggles] to [Forest Hills][ some days until Friday]”",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4905,6 +4928,7 @@
     },
     "affected by %@ %@" : {
       "comment" : "Trip specific alert effect fallback, ex “affected by [snow route] [today]”",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -6568,6 +6592,7 @@
     },
     "are cancelled %@" : {
       "comment" : "Multiple trip specific alert effect denoting cancellation, will specify “today” or “tomorrow”",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -6615,6 +6640,7 @@
     },
     "are suspended %@" : {
       "comment" : "Multiple trip specific alert effect denoting suspension, will specify “today” or “tomorrow”",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -7507,6 +7533,7 @@
     },
     "Buses" : {
       "comment" : "Mode of travel prefixing alert summary e.g.: \"Buses will not stop at...\"",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -13741,6 +13768,7 @@
     },
     "is cancelled %@" : {
       "comment" : "Trip specific alert effect denoting cancellation, will specify “today” or “tomorrow”",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -13788,6 +13816,7 @@
     },
     "is suspended %@" : {
       "comment" : "Trip specific alert effect denoting suspension, will specify “today” or “tomorrow”",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -13882,6 +13911,7 @@
     },
     "key/alert_summary_recurrence_end_day_later_date" : {
       "comment" : "Alert summary recurrence ending on a specific date in the future. ex. \" until May 11\". The date component is localized by the OS. The leading space should be retained.",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -13935,6 +13965,7 @@
     },
     "key/alert_summary_recurrence_end_day_this_week" : {
       "comment" : "Alert summary recurrence ending on a specific day later this week. ex. \" until Thursday\". The weekday component is localized by the OS. The leading space should be retained.",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -13988,6 +14019,7 @@
     },
     "key/alert_summary_timeframe_later_date" : {
       "comment" : "Alert summary timeframe ending on a specific date in the future. ex. \" through May 11\". The date component is localized by the OS. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -14094,6 +14126,7 @@
     },
     "key/alert_summary_timeframe_time" : {
       "comment" : "Alert summary timeframe ending on a specific time later today. ex. \" through 10:00 PM\". The time component is localized by the OS. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -15757,6 +15790,7 @@
     },
     "multiple trips" : {
       "comment" : "Trip identity referring to more than one specific trip",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -15804,6 +15838,7 @@
     },
     "Multiple trips" : {
       "comment" : "Trip identity referring to more than one specific trip",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -20861,6 +20896,7 @@
     },
     "Shuttle buses replace %1$@ from **%2$@** to **%3$@**%4$@" : {
       "comment" : "Alert summary in the format of “Shuttle buses replace [trip identity] from [stop] to [stop][until recurrence]”, ex “Shuttle buses replace [this train] from [Ruggles] to [Forest Hills][ some days until Friday]”",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -23639,6 +23675,7 @@
     },
     "the **%@** %@" : {
       "comment" : "Trip identity in the format of “the [time] [vehicle]”, ex “the [12:13 PM] [train]",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -23927,6 +23964,7 @@
     },
     "this %1$@" : {
       "comment" : "Trip identity in the form of ”this [vehicle type]”, ex ”this [train]”",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -23974,6 +24012,7 @@
     },
     "This %1$@" : {
       "comment" : "Trip identity in the form of ”This [vehicle type]”, ex ”This [train]”",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -24599,6 +24638,7 @@
       }
     },
     "today" : {
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -24693,6 +24733,7 @@
       }
     },
     "tomorrow" : {
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -25490,6 +25531,7 @@
     },
     "Trains" : {
       "comment" : "Mode of travel prefixing alert summary e.g.: \"Trains will not stop at...\"",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -27243,6 +27285,7 @@
     },
     "will not stop at %@ %@" : {
       "comment" : "Alert effect denoting station bypass, ex “will not stop at [Back Bay and Ruggles] [today]”",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -27296,6 +27339,7 @@
     },
     "will terminate at %1$@ %2$@" : {
       "comment" : "Trip specific alert effect denoting suspension downstream, with interpolated stop name, ex: “will terminate at [Porter]“",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {

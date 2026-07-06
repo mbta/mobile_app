@@ -77,7 +77,6 @@ fun TripDetailsPage(
     }
 
     val direction = tripDetailsPageState.direction
-    val alertSummaries = tripDetailsPageState.alertSummaries
 
     fun openAlertDetails(alert: Alert, spec: AlertCardSpec) {
         openModal(
@@ -119,7 +118,6 @@ fun TripDetailsPage(
             TripDetailsView(
                 filter,
                 allAlerts = allAlerts,
-                alertSummaries = alertSummaries,
                 onOpenAlertDetails = { openAlertDetails(it, AlertCardSpec.Downstream) },
                 openSheetRoute = openSheetRoute,
                 openModal = openModal,

@@ -122,14 +122,8 @@ struct StopDetailsUnfilteredView: View {
                                         DisplayAlert(alert: alert, isDownstream: false)
                                     },
                                     lowPriority: [])
-                                    let summaries: [String: AlertSummary?] =
-                                        Dictionary(uniqueKeysWithValues: elevatorAlerts.map { (
-                                            $0.id,
-                                            nil
-                                        ) })
                                     AlertListContainer(displayAlerts: displayAlerts,
                                                        showNotAccessibleCard: false,
-                                                       alertSummaries: summaries,
                                                        now: now,
                                                        isAllServiceDisrupted: false,
                                                        routeIdMatcher: MatcherWildcard(),

@@ -308,23 +308,6 @@ struct OnboardingScreenView: View {
                     }
                     let alert = FormattedAlert(
                         alert: ObjectCollectionBuilder.Single.shared.alert { _ in },
-                        alertSummary: .Standard(
-                            effect: .suspension,
-                            location: AlertSummary.LocationSuccessiveStops(
-                                startStopName: "Back Bay",
-                                endStopName: "Wellington"
-                            ),
-                            timeframe: AlertSummary.TimeframeThisWeek(time: .init(
-                                year: 2026,
-                                month: .january,
-                                day: 25,
-                                hour: 12,
-                                minute: 0,
-                                second: 0
-                            )),
-                            recurrence: nil,
-                            isUpdate: false
-                        ),
                         alertSummaryEntity: .init(
                             routeId: nil,
                             stopId: nil,

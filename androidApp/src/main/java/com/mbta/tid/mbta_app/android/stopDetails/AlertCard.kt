@@ -35,19 +35,15 @@ import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertCardSpec
-import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.AlertSummaryEntity
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopAlertState
-import com.mbta.tid.mbta_app.model.TripSpecificAlertSummary
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import kotlinx.datetime.Month
 
 @Composable
 private fun TakeoverAlertCard(
     alert: Alert,
-    alertSummary: AlertSummary?,
     alertSummaryEntity: AlertSummaryEntity?,
     now: EasternTimeInstant,
     routeAccents: TripRouteAccents,
@@ -58,7 +54,7 @@ private fun TakeoverAlertCard(
 
     val alertState = alert.alertState
     val iconSize = 48.dp
-    val formattedAlert = FormattedAlert(alert, alertSummary, alertSummaryEntity)
+    val formattedAlert = FormattedAlert(alert, alertSummaryEntity)
 
     Column(
         modifier =
@@ -119,7 +115,6 @@ private fun TakeoverAlertCard(
 @Composable
 fun AlertCard(
     alert: Alert,
-    alertSummary: AlertSummary?,
     alertSummaryEntity: AlertSummaryEntity?,
     cardSpec: AlertCardSpec,
     routeAccents: TripRouteAccents,
@@ -132,7 +127,6 @@ fun AlertCard(
     if (cardSpec == AlertCardSpec.Takeover) {
         TakeoverAlertCard(
             alert,
-            alertSummary,
             alertSummaryEntity,
             now,
             routeAccents,
@@ -141,7 +135,7 @@ fun AlertCard(
             interiorPadding,
         )
     } else {
-        val formattedAlert = FormattedAlert(alert, alertSummary, alertSummaryEntity)
+        val formattedAlert = FormattedAlert(alert, alertSummaryEntity)
 
         val iconSize =
             when (cardSpec) {
@@ -165,9 +159,6 @@ fun AlertCard(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                val alertStateFromSummary =
-                    if (alertSummary is AlertSummary.AllClear) StopAlertState.AllClear
-                    else alert.alertState
                 val alertState =
                     if (alert.allClear(now)) StopAlertState.AllClear
                     else alert.alertState
@@ -233,15 +224,6 @@ fun AlertCardPreview() {
                 effect = Alert.Effect.Cancellation
                 informedEntity(trip = "trip")
             },
-            TripSpecificAlertSummary(
-                TripSpecificAlertSummary.TripFrom(
-                    EasternTimeInstant(2026, Month.MARCH, 10, 22, 17),
-                    RouteType.COMMUTER_RAIL,
-                    "Mansfield",
-                ),
-                Alert.Effect.Cancellation,
-                cause = Alert.Cause.Holiday,
-            ),
             AlertSummaryEntity(
                 null,
                 null,
@@ -261,7 +243,6 @@ fun AlertCardPreview() {
 
         AlertCard(
             ObjectCollectionBuilder.Single.alert({ effect = Alert.Effect.ServiceChange }),
-            null,
             AlertSummaryEntity(null, null, null, null, "**Service Change**"),
             AlertCardSpec.Basic,
             routeAccents =
@@ -299,7 +280,6 @@ fun AlertCardPreview() {
                             effect = Alert.Effect.Delay
                             cause = Alert.Cause.DrawbridgeIssue
                         }),
-                        AlertSummary.Standard(effect = Alert.Effect.Delay),
                         AlertSummaryEntity(
                             null,
                             null,

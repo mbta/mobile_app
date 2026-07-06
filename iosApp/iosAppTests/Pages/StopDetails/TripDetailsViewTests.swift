@@ -77,7 +77,6 @@ final class TripDetailsViewTests: XCTestCase {
 
         var sut = TripDetailsView(
             tripFilter: tripFilter,
-            alertSummaries: [:],
             context: .stopDetails,
             now: now,
             routeAccents: .init(route: route),
@@ -162,7 +161,6 @@ final class TripDetailsViewTests: XCTestCase {
 
         var sut = TripDetailsView(
             tripFilter: tripFilter,
-            alertSummaries: [:],
             context: .stopDetails,
             now: now,
             routeAccents: .init(route: route),
@@ -243,7 +241,6 @@ final class TripDetailsViewTests: XCTestCase {
 
         var sut = TripDetailsView(
             tripFilter: tripFilter,
-            alertSummaries: [:],
             context: .stopDetails,
             now: now,
             routeAccents: .init(route: route),
@@ -324,7 +321,6 @@ final class TripDetailsViewTests: XCTestCase {
 
         let sut = TripDetailsView(
             tripFilter: tripFilter,
-            alertSummaries: [:],
             context: .stopDetails,
             now: now,
             routeAccents: .init(route: route),
@@ -412,7 +408,6 @@ final class TripDetailsViewTests: XCTestCase {
 
         var sut = TripDetailsView(
             tripFilter: tripFilter,
-            alertSummaries: [:],
             context: .stopDetails,
             now: now,
             routeAccents: .init(route: route),
@@ -495,7 +490,6 @@ final class TripDetailsViewTests: XCTestCase {
 
         var sut = TripDetailsView(
             tripFilter: tripFilter,
-            alertSummaries: [:],
             context: .tripDetails,
             now: now,
             routeAccents: .init(route: route),
@@ -573,7 +567,6 @@ final class TripDetailsViewTests: XCTestCase {
 
         var sut = TripDetailsView(
             tripFilter: tripFilter,
-            alertSummaries: [:],
             context: .tripDetails,
             now: now,
             routeAccents: .init(route: route),
@@ -651,7 +644,6 @@ final class TripDetailsViewTests: XCTestCase {
 
         var sut = TripDetailsView(
             tripFilter: tripFilter,
-            alertSummaries: [:],
             context: .tripDetails,
             now: now,
             routeAccents: .init(route: route),

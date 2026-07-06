@@ -44,7 +44,6 @@ import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.routeModeLabel
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertCardSpec
-import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.Matcher
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
@@ -88,7 +87,6 @@ fun StopListRow(
     stopListContext: StopListContext,
     modifier: Modifier = Modifier,
     activeElevatorAlerts: Int = 0,
-    alertSummaries: Map<String, AlertSummary?> = emptyMap(),
     connectingRoutes: List<Route>? = null,
     disruption: UpcomingFormat.Disruption? = null,
     getAlertState: (fromStop: String, toStop: String) -> SegmentAlertState = { _, _ ->
@@ -248,7 +246,6 @@ fun StopListRow(
             Box(Modifier.height(IntrinsicSize.Min)) {
                 AlertCard(
                     disruption.alert,
-                    alertSummaries[disruption.alert.id],
                     disruption.alert.summary(
                         routeId = stopListContext.routeIdMatcher,
                         stopId = Matcher.Data(stop.id),

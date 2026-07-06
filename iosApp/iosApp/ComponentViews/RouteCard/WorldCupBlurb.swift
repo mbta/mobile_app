@@ -123,7 +123,6 @@ struct WorldCupBlurb: View {
         setStopFilter: { _ in },
         setTripFilter: { _ in },
         leaf: leaf,
-        alertSummaries: [:],
         selectedDirection: leaf.direction,
         favorite: false,
         now: .now(),

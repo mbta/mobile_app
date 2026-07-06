@@ -20,7 +20,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -42,7 +41,6 @@ import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertCardSpec
-import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.DisplayAlert
 import com.mbta.tid.mbta_app.model.DisplayAlerts
@@ -66,7 +64,6 @@ import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -84,7 +81,6 @@ fun StopDetailsFilteredDeparturesView(
     isFavorite: Boolean,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
-    viewModel: IStopDetailsViewModel = koinInject(),
     analytics: Analytics = koinInject(),
 ) {
     val global =
@@ -98,9 +94,6 @@ fun StopDetailsFilteredDeparturesView(
 
     val lineOrRoute = leaf.lineOrRoute
     val stop = leaf.stop
-
-    val state by viewModel.models.collectAsState()
-    val alertSummaries = state.alertSummaries
 
     val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
 
@@ -123,9 +116,6 @@ fun StopDetailsFilteredDeparturesView(
 
     // keys are trip IDs
     val bringIntoViewRequesters = remember { mutableStateMapOf<String, BringIntoViewRequester>() }
-
-    val patternsHere =
-        remember(leaf) { leaf.routePatterns.filter { it.directionId == stopFilter.directionId } }
 
     fun openAlertDetails(alert: Alert, spec: AlertCardSpec) {
         val lineId: Line.Id?
@@ -152,28 +142,6 @@ fun StopDetailsFilteredDeparturesView(
         )
     }
 
-    suspend fun updateAlertSummaries(clearExisting: Boolean = false) {
-        if (global == null) return
-        if (clearExisting) viewModel.setAlertSummaries(emptyMap())
-
-        viewModel.setAlertSummaries(
-            displayAlerts.allAlerts.associate {
-                it.id to
-                    it.summary(
-                        stopId,
-                        stopFilter.directionId,
-                        patternsHere,
-                        now,
-                        leaf.upcomingTrips,
-                        global,
-                    )
-            }
-        )
-    }
-
-    LaunchedEffect(stopId, stopFilter.directionId) { updateAlertSummaries(clearExisting = true) }
-    LaunchedEffect(global, displayAlerts.allAlerts, patternsHere, now) { updateAlertSummaries() }
-
     LaunchedEffect(tripFilter) {
         val selectedTileId = tileData.firstOrNull { it.isSelected(tripFilter) }?.id
         if (selectedTileId != null) {
@@ -182,7 +150,7 @@ fun StopDetailsFilteredDeparturesView(
     }
 
     @Composable
-    fun AlertCard(displayAlert: DisplayAlert, summary: AlertSummary?, modifier: Modifier) {
+    fun AlertCard(displayAlert: DisplayAlert, modifier: Modifier) {
         val spec = displayAlert.cardSpec(now, isAllServiceDisrupted, tripFilter?.tripId)
         val summaryEntity =
             displayAlert.alert.summary(
@@ -195,7 +163,6 @@ fun StopDetailsFilteredDeparturesView(
 
         AlertCard(
             displayAlert.alert,
-            summary,
             summaryEntity,
             spec,
             routeAccents,
@@ -234,15 +201,7 @@ fun StopDetailsFilteredDeparturesView(
                 AlertListContainer(
                     highPriority =
                         displayAlerts.highPriority.map {
-                            { modifier ->
-                                AlertCard(
-                                    it,
-                                    if (alertSummaries.containsKey(it.alert.id))
-                                        alertSummaries[it.alert.id]
-                                    else return@map,
-                                    modifier = modifier,
-                                )
-                            }
+                            { modifier -> AlertCard(it, modifier = modifier) }
                         },
                     if (showStationAccessibility && !stop.isWheelchairAccessible) {
                         { modifier: Modifier -> NotAccessibleCard(modifier) }
@@ -250,15 +209,7 @@ fun StopDetailsFilteredDeparturesView(
                         null
                     },
                     displayAlerts.lowPriority.map {
-                        { modifier ->
-                            AlertCard(
-                                it,
-                                if (alertSummaries.containsKey(it.alert.id))
-                                    alertSummaries[it.alert.id]
-                                else return@map,
-                                modifier = modifier,
-                            )
-                        }
+                        { modifier -> AlertCard(it, modifier = modifier) }
                     },
                 )
             }
@@ -336,7 +287,6 @@ fun StopDetailsFilteredDeparturesView(
             TripDetailsView(
                 tripFilter = tripDetailsPageFilter,
                 allAlerts = allAlerts,
-                alertSummaries = alertSummaries,
                 onOpenAlertDetails = { openAlertDetails(it, AlertCardSpec.Downstream) },
                 openSheetRoute = openSheetRoute,
                 openModal = openModal,

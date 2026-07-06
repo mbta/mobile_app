@@ -15,7 +15,6 @@ struct TripDetailsView: View {
     @ObserveInjection var inject
     var tripFilter: TripDetailsPageFilter?
 
-    var alertSummaries: [String: AlertSummary?]
     var context: TripDetailsViewModel.Context
     var now: EasternTimeInstant
     var routeAccents: TripRouteAccents
@@ -38,7 +37,6 @@ struct TripDetailsView: View {
 
     init(
         tripFilter: TripDetailsPageFilter?,
-        alertSummaries: [String: AlertSummary?],
         context: TripDetailsViewModel.Context,
         now: EasternTimeInstant,
         routeAccents: TripRouteAccents,
@@ -50,7 +48,6 @@ struct TripDetailsView: View {
         analytics: Analytics = AnalyticsProvider.shared,
     ) {
         self.tripFilter = tripFilter
-        self.alertSummaries = alertSummaries
         self.context = context
         self.now = now
         self.routeAccents = routeAccents
@@ -199,7 +196,6 @@ struct TripDetailsView: View {
                     stopSequence: filter.stopSequence?.intValue,
                     headerSpec: headerSpec,
                     now: now,
-                    alertSummaries: alertSummaries,
                     onTapLink: onTapStop,
                     onOpenAlertDetails: onOpenAlertDetails,
                     route: route,
