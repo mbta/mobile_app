@@ -14,6 +14,7 @@ struct RoutePill: View {
     let route: Route?
     let line: Line?
     let isActive: Bool
+    let warningAlertIconName: String?
     let textColor: Color
     let routeColor: Color
     let spec: RoutePillSpec
@@ -42,12 +43,14 @@ struct RoutePill: View {
         type: RoutePillSpec.Type_,
         height: RoutePillSpec.Height = .medium,
         isActive: Bool = true,
+        warningAlertIconName: String? = nil,
         borderWidth: CGFloat = 0,
         borderColor: Color = .halo,
     ) {
         self.route = route
         self.line = line
         self.isActive = isActive
+        self.warningAlertIconName = warningAlertIconName
         spec = .init(route: route, line: line, type: type, height: height)
         textColor = .init(hex: spec.textColor)
         routeColor = .init(hex: spec.routeColor)
@@ -60,6 +63,7 @@ struct RoutePill: View {
         type: RoutePillSpec.Type_,
         height: RoutePillSpec.Height = .medium,
         isActive: Bool = true,
+        warningAlertIconName: String? = nil,
         borderWidth: CGFloat = 0,
         borderColor: Color = .halo,
     ) {
@@ -70,6 +74,7 @@ struct RoutePill: View {
                 type: type,
                 height: height,
                 isActive: isActive,
+                warningAlertIconName: warningAlertIconName,
                 borderWidth: borderWidth,
                 borderColor: borderColor
             )
@@ -78,6 +83,7 @@ struct RoutePill: View {
                 type: type,
                 height: height,
                 isActive: isActive,
+                warningAlertIconName: warningAlertIconName,
                 borderWidth: borderWidth,
                 borderColor: borderColor
             )
@@ -87,12 +93,14 @@ struct RoutePill: View {
     init(
         spec: RoutePillSpec,
         isActive: Bool = true,
+        warningAlertIconName: String? = nil,
         borderWidth: CGFloat = 0,
         borderColor: Color = .halo,
     ) {
         route = nil
         line = nil
         self.isActive = isActive
+        self.warningAlertIconName = warningAlertIconName
         self.spec = spec
         textColor = .init(hex: spec.textColor)
         routeColor = .init(hex: spec.routeColor)
@@ -173,19 +181,26 @@ struct RoutePill: View {
     }
 
     var body: some View {
-        getPillBase()
-            .textCase(route?.type == .commuterRail ? .none : .uppercase)
-            .font(.custom("Helvetica Neue", size: fontSize).bold())
-            .tracking(spec.width != .circle ? 0.5 : 0)
-            .modifier(FramePaddingModifier(spec: spec, pillHeight: pillHeight))
-            .minimumScaleFactor(0.4)
-            .lineLimit(1)
-            .modifier(ColorModifier(pill: self))
-            .modifier(ClipShapeModifier(spec: spec))
-            .modifier(BorderModifier(spec: spec, borderWidth: borderWidth, borderColor: borderColor))
-            .accessibilityElement()
-            .accessibilityLabel(routeModeLabel(line: line, route: route))
-            .enableInjection()
+        HStack(spacing: 0) {
+            getPillBase()
+                .textCase(route?.type == .commuterRail ? .none : .uppercase)
+                .font(.custom("Helvetica Neue", size: fontSize).bold())
+                .tracking(spec.width != .circle ? 0.5 : 0)
+                .modifier(FramePaddingModifier(spec: spec, pillHeight: pillHeight))
+                .minimumScaleFactor(0.4)
+                .lineLimit(1)
+                .modifier(ColorModifier(pill: self))
+                .modifier(ClipShapeModifier(spec: spec))
+                .modifier(BorderModifier(spec: spec, borderWidth: borderWidth, borderColor: borderColor))
+                .accessibilityElement()
+                .accessibilityLabel(routeModeLabel(line: line, route: route))
+
+            if let warningAlertIconName {
+                WarningIcon(warningAlertIconName)
+                    .padding(.leading, -6)
+            }
+        }
+        .enableInjection()
     }
 }
 

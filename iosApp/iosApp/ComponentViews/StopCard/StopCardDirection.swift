@@ -21,12 +21,10 @@ struct StopCardDirection: View {
         case let .branched(branched):
             VStack(alignment: .leading, spacing: 6) {
                 HStack(alignment: .center) {
-                    if let warningAlert = branched.warningAlert {
-                        Image(warningAlert.iconName)
-                            .accessibilityLabel("Alert")
-                            .frame(width: 18, height: 18)
-                    }
                     let noRoutePills = branched.branchRows.allSatisfy { $0.route == nil }
+                    if let warningAlert = branched.warningAlert, !noRoutePills {
+                        WarningIcon(warningAlert.iconName)
+                    }
                     DirectionLabel(
                         direction: direction,
                         showDestination: false,
