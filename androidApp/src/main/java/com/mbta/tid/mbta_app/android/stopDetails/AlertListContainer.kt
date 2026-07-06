@@ -115,6 +115,7 @@ fun AlertListContainerPreview() {
                             effect = Alert.Effect.ServiceChange
                         }),
                         null,
+                        null,
                         AlertCardSpec.Basic,
                         routeAccents =
                             TripRouteAccents(
@@ -135,6 +136,7 @@ fun AlertListContainerPreview() {
                             header =
                                 "Ruggles Elevator 848 (Lobby to lower busway side platform) unavailable due to maintenance"
                         }),
+                        null,
                         null,
                         AlertCardSpec.Elevator,
                         routeAccents =
@@ -157,6 +159,7 @@ fun AlertListContainerPreview() {
                             effect = Alert.Effect.ServiceChange
                         }),
                         null,
+                        null,
                         AlertCardSpec.Basic,
                         routeAccents =
                             TripRouteAccents(
@@ -177,6 +180,7 @@ fun AlertListContainerPreview() {
                         ObjectCollectionBuilder.Single.alert({
                             effect = Alert.Effect.ServiceChange
                         }),
+                        null,
                         null,
                         AlertCardSpec.Basic,
                         routeAccents =

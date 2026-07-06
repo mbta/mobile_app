@@ -27,6 +27,7 @@ import com.mbta.tid.mbta_app.android.util.modifiers.DestinationPredictionBalance
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.MapStopRoute
+import com.mbta.tid.mbta_app.model.Matcher
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
@@ -76,7 +77,7 @@ fun TripStopRow(
             ),
         onClick = { onTapLink(entry) },
         routeAccents = routeAccents,
-        stopListContext = StopListContext.Trip,
+        stopListContext = StopListContext.Trip(Matcher.Data(route.id), trip.directionId, trip.id),
         modifier = modifier,
         activeElevatorAlerts = activeElevatorAlerts.size,
         alertSummaries = alertSummaries,

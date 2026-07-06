@@ -73,8 +73,10 @@ import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.formattedServiceDay
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.AlertSummaryEntity
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single
 import com.mbta.tid.mbta_app.model.OnboardingScreen
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
@@ -374,20 +376,53 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
                     }
                     val alert =
                         FormattedAlert(
-                            alert = Single.alert { effect = Alert.Effect.Suspension },
-                            alertSummary =
-                                AlertSummary.Standard(
-                                    effect = Alert.Effect.Suspension,
-                                    location =
-                                        AlertSummary.Location.SuccessiveStops(
-                                            startStopName = "Back Bay",
-                                            endStopName = "Wellington",
-                                        ),
-                                    timeframe =
-                                        AlertSummary.Timeframe.ThisWeek(
-                                            EasternTimeInstant(2026, Month.JANUARY, 25, 12, 0)
-                                        ),
-                                ),
+                            Single.alert {
+                                effect = Alert.Effect.Suspension
+                            },
+                            AlertSummary.Standard(
+                                effect = Alert.Effect.Suspension,
+                                location =
+                                    AlertSummary.Location.SuccessiveStops(
+                                        startStopName = "Back Bay",
+                                        endStopName = "Wellington",
+                                    ),
+                                timeframe =
+                                    AlertSummary.Timeframe.ThisWeek(
+                                        EasternTimeInstant(2026, Month.JANUARY, 25, 12, 0)
+                                    ),
+                            ),
+                            AlertSummaryEntity(
+                                routeId = null,
+                                stopId = null,
+                                directionId = null,
+                                tripId = null,
+                                summary =
+                                    stringResource(
+                                            R.string.alert_summary,
+                                            stringResource(R.string.service_suspended),
+                                            stringResource(
+                                                R.string.alert_summary_location_successive,
+                                                "Back Bay",
+                                                "Wellington",
+                                            ),
+                                            stringResource(
+                                                R.string.alert_summary_timeframe_this_week,
+                                                EasternTimeInstant(
+                                                        2026,
+                                                        Month.JANUARY,
+                                                        25,
+                                                        12,
+                                                        0,
+                                                    )
+                                                    .formattedServiceDay(
+                                                        EasternTimeInstant.ServiceDateRounding
+                                                            .BACKWARDS
+                                                    ),
+                                            ),
+                                            "",
+                                        )
+                                        .replace(Regex("</?b>"), "**"),
+                            ),
                         )
                     Text(
                         alert.alertCardMajorBody.toString(),

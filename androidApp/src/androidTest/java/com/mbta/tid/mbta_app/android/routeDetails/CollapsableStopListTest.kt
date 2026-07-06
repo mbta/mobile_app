@@ -6,12 +6,14 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.component.StopListContext
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.hasClickActionLabel
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDoesNotExistDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LocationType
+import com.mbta.tid.mbta_app.model.Matcher
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
@@ -42,6 +44,7 @@ class CollapsableStopListTest {
         composeTestRule.setContent {
             CollapsableStopList(
                 LineOrRoute.Route(mainRoute),
+                stopListContext = StopListContext.RouteDetails(Matcher.Wildcard(), 0),
                 segment =
                     RouteDetailsStopList.Segment(
                         listOf(
@@ -88,6 +91,7 @@ class CollapsableStopListTest {
         composeTestRule.setContent {
             CollapsableStopList(
                 LineOrRoute.Route(mainRoute),
+                stopListContext = StopListContext.RouteDetails(Matcher.Wildcard(), 0),
                 segment =
                     RouteDetailsStopList.Segment(
                         listOf(

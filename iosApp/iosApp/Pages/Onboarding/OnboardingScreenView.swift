@@ -11,6 +11,7 @@ import Lottie
 import Shared
 import SwiftUI
 
+// swiftlint:disable:next type_body_length
 struct OnboardingScreenView: View {
     @ObserveInjection var inject
     let screen: OnboardingScreen
@@ -243,6 +244,56 @@ struct OnboardingScreenView: View {
     }
 
     @ViewBuilder private var notificationsBeta: some View {
+        let alertSummaryLocation = String(
+            format: NSLocalizedString(
+                " from **%1$@** to **%2$@**",
+                comment: """
+                Alert summary location for consecutive stops in the format of " from [Stop name] \
+                to [Other stop name]" ex. " from [Alewife] to [Harvard]" or " from [Lechmere] \
+                to [Park Street]". The leading space should be retained, because this will be \
+                added in the %2 position of the "**%1$@**%2$@%3$@" alert summary template which \
+                may or may not include a location fragment.
+                """
+            ),
+            "Back Bay",
+            "Wellington"
+        )
+        let alertSummaryTimeframe = String(
+            format: NSLocalizedString(
+                "key/alert_summary_timeframe_this_week",
+                comment: """
+                Alert summary timeframe ending on a specific day later this week. \
+                ex. " through Thursday". The weekday component is localized by the \
+                OS. The leading space should be retained, because this will be added \
+                in the %3 position of the "**%1$@**%2$@%3$@" alert summary template \
+                which may or may not include a timeframe fragment.
+                """
+            ), EasternTimeInstant(
+                year: 2026,
+                month: .january,
+                day: 25,
+                hour: 12,
+                minute: 0,
+                second: 0
+            ).coerceInServiceDay(rounding: .backwards).formatted(
+                .init().weekday(.wide)
+            )
+        )
+        let alertSummary = AttributedString.tryMarkdown(
+            String(format:
+                NSLocalizedString(
+                    "**%1$@**%2$@%3$@%4$@",
+                    comment: """
+                    Alert summary in the format of "[Alert effect][at location][through timeframe][until recurrence]", \
+                    ex "[Stop closed][ at Haymarket][ through this Friday][]" or \
+                    "[Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday]"
+                    """
+                ),
+                Shared.Alert.Effect.suspension.effectSentenceCaseString,
+                alertSummaryLocation,
+                alertSummaryTimeframe,
+                "")
+        )
         VStack {
             HStack(spacing: 10) {
                 Image(.appIcon).resizable().scaledToFit().frame(width: 38, height: 38)
@@ -273,6 +324,13 @@ struct OnboardingScreenView: View {
                             )),
                             recurrence: nil,
                             isUpdate: false
+                        ),
+                        alertSummaryEntity: .init(
+                            routeId: nil,
+                            stopId: nil,
+                            tripId: nil,
+                            directionId: nil,
+                            summary: String(alertSummary.characters[...])
                         )
                     )
                     Text(String(alert.alertCardMajorBody.characters[...]))

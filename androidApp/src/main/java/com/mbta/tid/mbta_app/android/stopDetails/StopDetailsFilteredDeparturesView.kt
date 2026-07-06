@@ -48,6 +48,7 @@ import com.mbta.tid.mbta_app.model.DisplayAlert
 import com.mbta.tid.mbta_app.model.DisplayAlerts
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LineOrRoute
+import com.mbta.tid.mbta_app.model.Matcher
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.Stop
@@ -183,10 +184,19 @@ fun StopDetailsFilteredDeparturesView(
     @Composable
     fun AlertCard(displayAlert: DisplayAlert, summary: AlertSummary?, modifier: Modifier) {
         val spec = displayAlert.cardSpec(now, isAllServiceDisrupted, tripFilter?.tripId)
+        val summaryEntity =
+            displayAlert.alert.summary(
+                Matcher.AnyOf(lineOrRoute.allRoutes.map { it.id }),
+                Matcher.Data(stopId),
+                Matcher.Data(selectedDirection.id),
+                if (tripFilter?.tripId != null) Matcher.Data(tripFilter.tripId)
+                else Matcher.Wildcard(),
+            )
 
         AlertCard(
             displayAlert.alert,
             summary,
+            summaryEntity,
             spec,
             routeAccents,
             onViewDetails = { openAlertDetails(displayAlert.alert, spec) },

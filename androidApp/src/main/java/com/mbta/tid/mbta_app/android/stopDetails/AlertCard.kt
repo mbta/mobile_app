@@ -36,6 +36,7 @@ import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertCardSpec
 import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.AlertSummaryEntity
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopAlertState
@@ -47,6 +48,7 @@ import kotlinx.datetime.Month
 private fun TakeoverAlertCard(
     alert: Alert,
     alertSummary: AlertSummary?,
+    alertSummaryEntity: AlertSummaryEntity?,
     now: EasternTimeInstant,
     routeAccents: TripRouteAccents,
     onViewDetails: (() -> Unit)?,
@@ -56,7 +58,7 @@ private fun TakeoverAlertCard(
 
     val alertState = alert.alertState
     val iconSize = 48.dp
-    val formattedAlert = FormattedAlert(alert, alertSummary)
+    val formattedAlert = FormattedAlert(alert, alertSummary, alertSummaryEntity)
 
     Column(
         modifier =
@@ -118,6 +120,7 @@ private fun TakeoverAlertCard(
 fun AlertCard(
     alert: Alert,
     alertSummary: AlertSummary?,
+    alertSummaryEntity: AlertSummaryEntity?,
     cardSpec: AlertCardSpec,
     routeAccents: TripRouteAccents,
     onViewDetails: (() -> Unit)?,
@@ -130,6 +133,7 @@ fun AlertCard(
         TakeoverAlertCard(
             alert,
             alertSummary,
+            alertSummaryEntity,
             now,
             routeAccents,
             onViewDetails,
@@ -137,7 +141,7 @@ fun AlertCard(
             interiorPadding,
         )
     } else {
-        val formattedAlert = FormattedAlert(alert, alertSummary)
+        val formattedAlert = FormattedAlert(alert, alertSummary, alertSummaryEntity)
 
         val iconSize =
             when (cardSpec) {
@@ -212,6 +216,7 @@ fun AlertCardPreview() {
                 effect = Alert.Effect.Suspension
             }),
             null,
+            null,
             AlertCardSpec.Takeover,
             routeAccents =
                 TripRouteAccents(
@@ -237,6 +242,13 @@ fun AlertCardPreview() {
                 Alert.Effect.Cancellation,
                 cause = Alert.Cause.Holiday,
             ),
+            AlertSummaryEntity(
+                null,
+                null,
+                null,
+                null,
+                "**10:17\u202FPM** train from **Mansfield** is cancelled today due to holiday",
+            ),
             AlertCardSpec.Takeover,
             routeAccents =
                 TripRouteAccents(
@@ -250,6 +262,7 @@ fun AlertCardPreview() {
         AlertCard(
             ObjectCollectionBuilder.Single.alert({ effect = Alert.Effect.ServiceChange }),
             null,
+            AlertSummaryEntity(null, null, null, null, "**Service Change**"),
             AlertCardSpec.Basic,
             routeAccents =
                 TripRouteAccents(
@@ -266,6 +279,7 @@ fun AlertCardPreview() {
                 header =
                     "Ruggles Elevator 848 (Lobby to lower busway side platform) unavailable due to maintenance"
             }),
+            null,
             null,
             AlertCardSpec.Elevator,
             routeAccents =
@@ -286,6 +300,13 @@ fun AlertCardPreview() {
                             cause = Alert.Cause.DrawbridgeIssue
                         }),
                         AlertSummary.Standard(effect = Alert.Effect.Delay),
+                        AlertSummaryEntity(
+                            null,
+                            null,
+                            null,
+                            null,
+                            "Delays due to drawbridge issue",
+                        ),
                         AlertCardSpec.Delay,
                         routeAccents =
                             TripRouteAccents(

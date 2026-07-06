@@ -362,6 +362,9 @@ struct StopDetailsFilteredDepartureDetails: View {
                                alertSummaries: alertSummaries,
                                now: now,
                                isAllServiceDisrupted: isAllServiceDisrupted,
+                               routeIdMatcher: MatcherAnyOf(values: leaf.lineOrRoute.allRoutes.map(\.id)),
+                               stopIdMatcher: MatcherData(value: stopId as NSString),
+                               directionIdMatcher: MatcherData(value: .init(int: selectedDirection.id)),
                                tripId: tripFilter?.tripId,
                                routeAccents: routeAccents,
                                onRowTap: { id, spec in getAlertDetailsHandler(id, spec: spec) })

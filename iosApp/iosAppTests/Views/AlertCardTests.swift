@@ -29,6 +29,7 @@ final class AlertCardTests: XCTestCase {
         let sut = AlertCard(
             alert: alert,
             alertSummary: nil,
+            alertSummaryEntity: nil,
             spec: .takeover,
             routeAccents: .init(),
             onViewDetails: {
@@ -67,6 +68,13 @@ final class AlertCardTests: XCTestCase {
                 recurrence: nil,
                 isUpdate: false
             ),
+            alertSummaryEntity: .init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "Shuttle buses from Start Stop to End Stop through tomorrow"
+            ),
             spec: .takeover,
             routeAccents: .init(),
             onViewDetails: {}
@@ -97,6 +105,13 @@ final class AlertCardTests: XCTestCase {
                 timeframe: .some(AlertSummary.TimeframeEndOfService()),
                 recurrence: nil,
                 isUpdate: false
+            ),
+            alertSummaryEntity: .init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "No service at Single Stop through end of service"
             ),
             spec: .takeover,
             routeAccents: .init(),
@@ -145,6 +160,13 @@ final class AlertCardTests: XCTestCase {
                 ),
                 recurrence: nil,
                 isUpdate: false
+            ),
+            alertSummaryEntity: .init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "Shuttle buses from Start Stop to Westbound stops through Apr 16"
             ),
             spec: .takeover,
             routeAccents: .init(),
@@ -195,6 +217,13 @@ final class AlertCardTests: XCTestCase {
                 recurrence: nil,
                 isUpdate: false
             ),
+            alertSummaryEntity: .init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "Shuttle buses from Westbound stops to End Stop through Wednesday"
+            ),
             spec: .takeover,
             routeAccents: .init(),
             onViewDetails: {}
@@ -238,6 +267,13 @@ final class AlertCardTests: XCTestCase {
                 recurrence: nil,
                 isUpdate: false
             ),
+            alertSummaryEntity: .init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "Shuttle buses from Start Stop to End Stop through 4:00\u{202F}PM"
+            ),
             spec: .takeover,
             routeAccents: .init(),
             onViewDetails: {}
@@ -263,6 +299,7 @@ final class AlertCardTests: XCTestCase {
         let sut = AlertCard(
             alert: alert,
             alertSummary: nil,
+            alertSummaryEntity: nil,
             spec: .basic,
             routeAccents: .init(),
             onViewDetails: {
@@ -293,6 +330,13 @@ final class AlertCardTests: XCTestCase {
                 recurrence: nil,
                 isUpdate: false
             ),
+            alertSummaryEntity: .init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "Detour through tomorrow"
+            ),
             spec: .basic,
             routeAccents: .init(),
             onViewDetails: {}
@@ -311,6 +355,7 @@ final class AlertCardTests: XCTestCase {
         let sut = AlertCard(
             alert: alert,
             alertSummary: nil,
+            alertSummaryEntity: nil,
             spec: .downstream,
             routeAccents: .init(),
             onViewDetails: {
@@ -338,6 +383,7 @@ final class AlertCardTests: XCTestCase {
         let sut = AlertCard(
             alert: alert,
             alertSummary: nil,
+            alertSummaryEntity: nil,
             spec: .elevator,
             routeAccents: .init(),
             onViewDetails: {
@@ -374,6 +420,7 @@ final class AlertCardTests: XCTestCase {
         let sut = AlertCard(
             alert: alert,
             alertSummary: nil,
+            alertSummaryEntity: nil,
             spec: .elevator,
             routeAccents: .init(),
             onViewDetails: {
@@ -402,6 +449,7 @@ final class AlertCardTests: XCTestCase {
         let sut = AlertCard(
             alert: alert,
             alertSummary: nil,
+            alertSummaryEntity: nil,
             spec: .delay,
             routeAccents: .init(),
             onViewDetails: {}
@@ -444,6 +492,13 @@ final class AlertCardTests: XCTestCase {
                 recurrence: nil,
                 isUpdate: false
             ),
+            alertSummaryEntity: .init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "Delay on Red Line starting 9:00\u{202F}PM today"
+            ),
             spec: .delay,
             now: time.minus(minutes: 15),
             routeAccents: .init(),
@@ -467,6 +522,7 @@ final class AlertCardTests: XCTestCase {
         let sut = AlertCard(
             alert: alert,
             alertSummary: nil,
+            alertSummaryEntity: nil,
             spec: .delay,
             routeAccents: .init(),
             onViewDetails: {}
@@ -488,6 +544,7 @@ final class AlertCardTests: XCTestCase {
         let sut = AlertCard(
             alert: alert,
             alertSummary: nil,
+            alertSummaryEntity: nil,
             spec: .delay,
             routeAccents: .init(),
             onViewDetails: {}
@@ -514,6 +571,13 @@ final class AlertCardTests: XCTestCase {
                         endStopName: "End Stop"
                     )
                 )
+            ),
+            alertSummaryEntity: .init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "All clear: Regular service from Start Stop to End Stop"
             ),
             spec: .takeover,
             routeAccents: .init(),
@@ -554,6 +618,13 @@ final class AlertCardTests: XCTestCase {
                 timeframe: AlertSummary.TimeframeTomorrow(),
                 recurrence: nil,
                 isUpdate: true
+            ),
+            alertSummaryEntity: .init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "Update: Shuttle buses from Start Stop to End Stop through tomorrow"
             ),
             spec: .takeover,
             routeAccents: .init(),
@@ -600,6 +671,13 @@ final class AlertCardTests: XCTestCase {
                 effect: .cancellation,
                 cause: .mechanicalIssue
             ),
+            alertSummaryEntity: .init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "12:13\u{202F}PM train from Ruggles is cancelled today due to mechanical issue"
+            ),
             spec: .takeover,
             routeAccents: .init(type: .commuterRail),
             onViewDetails: {}
@@ -630,6 +708,13 @@ final class AlertCardTests: XCTestCase {
                 tripIdentity: TripSpecificAlertSummary.MultipleTrips.shared,
                 effect: .suspension,
                 cause: .holiday
+            ),
+            alertSummaryEntity: .init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "Multiple trips are suspended today due to holiday"
             ),
             spec: .takeover,
             routeAccents: .init(type: .commuterRail),
@@ -670,6 +755,13 @@ final class AlertCardTests: XCTestCase {
                 ),
                 startStopName: "Ruggles",
                 endStopName: "Forest Hills"
+            ),
+            alertSummaryEntity: .init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "12:13\u{202F}PM train from Oak Grove is replaced by shuttle buses from Ruggles to Forest Hills"
             ),
             spec: .takeover,
             routeAccents: .init(type: .commuterRail),
@@ -719,6 +811,13 @@ final class AlertCardTests: XCTestCase {
                 effect: .stationClosure,
                 effectStops: ["Back Bay", "Ruggles"]
             ),
+            alertSummaryEntity: .init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "12:13\u{202F}PM train to Stoughton will not stop at Back Bay and Ruggles today"
+            ),
             spec: .takeover,
             routeAccents: .init(type: .commuterRail),
             onViewDetails: {}
@@ -763,6 +862,13 @@ final class AlertCardTests: XCTestCase {
                 effect: .cancellation,
                 isToday: false,
                 cause: .mechanicalIssue
+            ),
+            alertSummaryEntity: .init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "12:13\u{202F}PM train from Ruggles is cancelled tomorrow due to mechanical issue"
             ),
             spec: .takeover,
             routeAccents: .init(type: .commuterRail),
@@ -817,7 +923,13 @@ final class AlertCardTests: XCTestCase {
                     )
                 )
             ),
-
+            alertSummaryEntity: .init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "12:13\u{202F}PM train from Oak Grove is replaced by shuttle buses from Ruggles to Forest Hills daily until Thursday"
+            ),
             spec: .takeover,
             routeAccents: .init(type: .commuterRail),
             onViewDetails: {}
@@ -856,6 +968,13 @@ final class AlertCardTests: XCTestCase {
                 recurrence: nil,
                 isUpdate: false
             ),
+            alertSummaryEntity: .init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "Trains will not stop at Stop 1 until further notice"
+            ),
             spec: .takeover,
             routeAccents: .init(),
             onViewDetails: {}
@@ -885,6 +1004,13 @@ final class AlertCardTests: XCTestCase {
                 timeframe: .some(AlertSummary.TimeframeUntilFurtherNotice()),
                 recurrence: nil,
                 isUpdate: false
+            ),
+            alertSummaryEntity: .init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "Buses will not stop at Stop 1 and Stop 2 until further notice"
             ),
             spec: .takeover,
             routeAccents: .init(),

@@ -15,6 +15,7 @@ import com.mbta.tid.mbta_app.android.testUtils.hasTextMatching
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.AlertSummaryEntity
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LocationType
@@ -51,7 +52,7 @@ import org.junit.Test
 @OptIn(ExperimentalTestApi::class)
 class StopDetailsFilteredDeparturesViewTest {
     val builder = ObjectCollectionBuilder()
-    val now = EasternTimeInstant.now()
+    val now = EasternTimeInstant(2026, Month.JULY, 10, 9, 0)
     val route = builder.route {
         id = "route_1"
         type = RouteType.LIGHT_RAIL
@@ -529,11 +530,20 @@ class StopDetailsFilteredDeparturesViewTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testShowsSuspension(): Unit = runBlocking {
-        val now = EasternTimeInstant.now()
         val alert = builder.alert {
             effect = Alert.Effect.Suspension
             header = "Fuchsia Line suspended from Here to There"
             informedEntity(directionId = 0, route = route.id.idText, stop = stop.id)
+            summaries =
+                listOf(
+                    AlertSummaryEntity(
+                        null,
+                        null,
+                        null,
+                        null,
+                        "**Service suspended** at **${stop.name}** through 6:45\u202FPM",
+                    )
+                )
         }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
         val alertSummaries =
@@ -604,8 +614,6 @@ class StopDetailsFilteredDeparturesViewTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testShowsPredictionsAndAlertOnBranchingTrunk(): Unit = runBlocking {
-        val now = EasternTimeInstant.now()
-
         val objects = TestData.clone()
         val stop = objects.getStop("place-kencl")
         val line = objects.getLine("line-Green")
@@ -620,6 +628,16 @@ class StopDetailsFilteredDeparturesViewTest {
             header = "Green line shuttle on B and C branches"
             informedEntity(directionId = 0, route = routeB.id.idText, stop = "71151")
             informedEntity(directionId = 0, route = routeC.id.idText, stop = "70151")
+            summaries =
+                listOf(
+                    AlertSummaryEntity(
+                        null,
+                        null,
+                        null,
+                        null,
+                        "**Shuttle buses** at **${stop.name}** through 6:45\u202FPM",
+                    )
+                )
         }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
 
@@ -696,6 +714,16 @@ class StopDetailsFilteredDeparturesViewTest {
         val alert = builder.alert {
             effect = Alert.Effect.Suspension
             informedEntity(directionId = 0, route = route.id.idText, stop = downstreamStop.id)
+            summaries =
+                listOf(
+                    AlertSummaryEntity(
+                        null,
+                        null,
+                        null,
+                        null,
+                        "**Service suspended** at **Sample Stop 2** through 6:25\u202FPM",
+                    )
+                )
         }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
 

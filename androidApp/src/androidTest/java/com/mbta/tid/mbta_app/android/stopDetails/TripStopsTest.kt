@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.AlertSummaryEntity
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Prediction
 import com.mbta.tid.mbta_app.model.Schedule
@@ -437,7 +438,19 @@ class TripStopsTest {
         val stop2Target = objects.stop { name = "Stop B" }
         val stop3 = objects.stop { name = "Stop C" }
 
-        val alert = objects.alert { effect = Alert.Effect.Shuttle }
+        val alert = objects.alert {
+            effect = Alert.Effect.Shuttle
+            summaries =
+                listOf(
+                    AlertSummaryEntity(
+                        null,
+                        null,
+                        null,
+                        null,
+                        "**Shuttle buses** at **Stop C** through end of service",
+                    )
+                )
+        }
 
         val vehicle = objects.vehicle {
             tripId = trip.id

@@ -14,6 +14,7 @@ import Shared
 struct FormattedAlert: Equatable {
     let alert: Alert
     let alertSummary: AlertSummary?
+    let alertSummaryEntity: AlertSummaryEntity?
     let effect: String
     let sentenceCaseEffect: String
     let dueToCause: String?
@@ -21,7 +22,7 @@ struct FormattedAlert: Equatable {
     /// guarantee that the alert should replace predictions.
     let predictionReplacement: PredictionReplacement
 
-    init(alert: Alert, alertSummary: AlertSummary? = nil) {
+    init(alert: Alert, alertSummary: AlertSummary? = nil, alertSummaryEntity: AlertSummaryEntity? = nil) {
         self.alert = alert
         let effect = alert.effect
         self.effect = "**\(effect.effectString)**"
@@ -46,6 +47,7 @@ struct FormattedAlert: Equatable {
         default: .init(text: effect.effectString, accessibilityLabel: nil)
         }
         self.alertSummary = alertSummary
+        self.alertSummaryEntity = alertSummaryEntity
     }
 
     var downstreamLabel: String {
@@ -390,7 +392,16 @@ struct FormattedAlert: Equatable {
     }
 
     var summary: AttributedString? {
-        summary(alertSummary: alertSummary)
+        let summaryCalculated = summary(alertSummary: alertSummary)
+        let summaryProvided = alertSummaryEntity?.summary
+        if summaryCalculated != summaryProvided {
+            debugPrint("AAAAA summary mismatch", summaryCalculated, summaryProvided)
+        }
+        if let summary = summaryProvided ?? summaryCalculated {
+            AttributedString.tryMarkdown(summary)
+        } else {
+            nil
+        }
     }
 
     func summary(alertSummary: AlertSummary?) -> AttributedString? {

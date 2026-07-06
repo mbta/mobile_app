@@ -258,6 +258,7 @@ final class TripStopsTests: XCTestCase {
             headerSpec: .scheduled(stop1, firstStop),
             now: now,
             alertSummaries: [:],
+            alertSummaries: [:],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
             route: route,
@@ -365,7 +366,16 @@ final class TripStopsTests: XCTestCase {
         let stop2Target = objects.stop { $0.name = "Stop B" }
         let stop3 = objects.stop { $0.name = "Stop C" }
 
-        let alert = objects.alert { $0.effect = .shuttle }
+        let alert = objects.alert {
+            $0.effect = .shuttle
+            $0.summaries = [.init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "Shuttle buses at Stop C through end of service"
+            )]
+        }
 
         let vehicle = objects.vehicle { vehicle in
             vehicle.tripId = trip.id
@@ -463,7 +473,16 @@ final class TripStopsTests: XCTestCase {
         let stop2Target = objects.stop { $0.name = "Stop B" }
         let stop3 = objects.stop { $0.name = "Stop C" }
 
-        let alert = objects.alert { $0.effect = .stopClosure }
+        let alert = objects.alert {
+            $0.effect = .stopClosure
+            $0.summaries = [.init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "Stop closed at Stop C through end of service"
+            )]
+        }
 
         let vehicle = objects.vehicle { vehicle in
             vehicle.tripId = trip.id
@@ -561,7 +580,16 @@ final class TripStopsTests: XCTestCase {
         let stop2Target = objects.stop { $0.name = "Stop B" }
         let stop3 = objects.stop { $0.name = "Stop C" }
 
-        let alert = objects.alert { $0.effect = .stopClosure }
+        let alert = objects.alert {
+            $0.effect = .stopClosure
+            $0.summaries = [.init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "Stop closed at Stop B"
+            )]
+        }
 
         let vehicle = objects.vehicle { vehicle in
             vehicle.tripId = trip.id

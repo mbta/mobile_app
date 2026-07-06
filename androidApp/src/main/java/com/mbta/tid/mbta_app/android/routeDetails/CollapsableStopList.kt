@@ -37,6 +37,7 @@ import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 @Composable
 fun CollapsableStopList(
     lineOrRoute: LineOrRoute,
+    stopListContext: StopListContext,
     segment: RouteDetailsStopList.Segment,
     onClick: (RouteDetailsStopList.Entry) -> Unit,
     onClickLabel: @Composable (RouteDetailsStopList.Entry) -> String? = { null },
@@ -56,7 +57,7 @@ fun CollapsableStopList(
             stop.stickConnections,
             onClick = { onClick(stop) },
             routeAccents = routeAccents,
-            stopListContext = StopListContext.RouteDetails,
+            stopListContext = stopListContext,
             modifier =
                 Modifier.minimumInteractiveComponentSize().background(colorResource(R.color.fill1)),
             connectingRoutes = stop.connectingRoutes,
@@ -119,7 +120,7 @@ fun CollapsableStopList(
                         stop.stickConnections,
                         onClick = { onClick(stop) },
                         routeAccents = routeAccents,
-                        stopListContext = StopListContext.RouteDetails,
+                        stopListContext = stopListContext,
                         modifier =
                             Modifier.minimumInteractiveComponentSize()
                                 .background(colorResource(R.color.fill1)),

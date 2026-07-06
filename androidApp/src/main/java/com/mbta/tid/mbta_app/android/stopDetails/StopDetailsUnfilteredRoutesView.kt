@@ -129,6 +129,7 @@ fun StopDetailsUnfilteredRoutesView(
                                                 AlertCard(
                                                     it,
                                                     null,
+                                                    null,
                                                     AlertCardSpec.Elevator,
                                                     TripRouteAccents(
                                                         color = Color.Unspecified,

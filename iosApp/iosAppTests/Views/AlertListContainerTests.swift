@@ -24,6 +24,13 @@ final class AlertListContainerTests: XCTestCase {
         let highAlert = objects.alert { alert in
             alert.effect = .shuttle
             alert.header = "Test header"
+            alert.summaries = [.init(
+                routeId: nil,
+                stopId: nil,
+                tripId: nil,
+                directionId: nil,
+                summary: "Shuttle buses from Start Stop to End Stop through tomorrow"
+            )]
         }
 
         let highAlertSummary = AlertSummary.Standard(effect: .shuttle,
@@ -48,6 +55,9 @@ final class AlertListContainerTests: XCTestCase {
                                      alertSummaries: [highAlert.id: highAlertSummary, downstreamAlert.id: nil],
                                      now: now,
                                      isAllServiceDisrupted: false,
+                                     routeIdMatcher: MatcherWildcard(),
+                                     stopIdMatcher: MatcherWildcard(),
+                                     directionIdMatcher: MatcherWildcard(),
                                      tripId: nil,
                                      routeAccents: .init(),
                                      onRowTap: { _, _ in })
@@ -67,6 +77,9 @@ final class AlertListContainerTests: XCTestCase {
                                      alertSummaries: [:],
                                      now: now,
                                      isAllServiceDisrupted: false,
+                                     routeIdMatcher: MatcherWildcard(),
+                                     stopIdMatcher: MatcherWildcard(),
+                                     directionIdMatcher: MatcherWildcard(),
                                      tripId: nil,
                                      routeAccents: .init(),
                                      onRowTap: { _, _ in })

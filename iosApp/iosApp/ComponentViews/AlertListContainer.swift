@@ -16,6 +16,9 @@ struct AlertListContainer: View {
     let alertSummaries: [String: AlertSummary?]
     let now: EasternTimeInstant
     let isAllServiceDisrupted: Bool
+    let routeIdMatcher: Matcher<Route.Id>
+    let stopIdMatcher: Matcher<NSString>
+    let directionIdMatcher: Matcher<KotlinInt>
     let tripId: String?
     let routeAccents: TripRouteAccents
     let onRowTap: (String, AlertCardSpec) -> Void
@@ -64,17 +67,24 @@ struct AlertListContainer: View {
     @ViewBuilder
     func alertCard(_ displayAlert: DisplayAlert) -> some View {
         let alert = displayAlert.alert
+        let tripIdMatcher: Matcher<NSString> = if let tripId { MatcherData(value: tripId as NSString) }
+        else { MatcherWildcard() }
+        let summaryEntity = alert.summary(
+            routeId: routeIdMatcher,
+            stopId: stopIdMatcher,
+            directionId: directionIdMatcher,
+            tripId: tripIdMatcher,
+        )
         let spec = displayAlert.cardSpec(now: now, isAllServiceDisrupted: isAllServiceDisrupted, tripId: tripId)
 
-        if alertSummaries.keys.contains(displayAlert.id) {
-            AlertCard(
-                alert: alert,
-                alertSummary: alertSummaries[alert.id] ?? nil,
-                spec: spec,
-                routeAccents: routeAccents,
-                onViewDetails: { onRowTap(alert.id, spec) }
-            )
-        }
+        AlertCard(
+            alert: alert,
+            alertSummary: alertSummaries[alert.id] ?? nil,
+            alertSummaryEntity: summaryEntity,
+            spec: spec,
+            routeAccents: routeAccents,
+            onViewDetails: { onRowTap(alert.id, spec) }
+        )
     }
 }
 
@@ -102,6 +112,9 @@ struct AlertListContainer: View {
                 alertSummaries: [serviceChange.id: nil, elevator.id: nil],
                 now: now,
                 isAllServiceDisrupted: false,
+                routeIdMatcher: MatcherWildcard(),
+                stopIdMatcher: MatcherWildcard(),
+                directionIdMatcher: MatcherWildcard(),
                 tripId: nil,
                 routeAccents: .init(),
                 onRowTap: { _, _ in }
@@ -113,6 +126,9 @@ struct AlertListContainer: View {
                 alertSummaries: [serviceChange.id: nil, elevator.id: nil],
                 now: now,
                 isAllServiceDisrupted: false,
+                routeIdMatcher: MatcherWildcard(),
+                stopIdMatcher: MatcherWildcard(),
+                directionIdMatcher: MatcherWildcard(),
                 tripId: nil,
                 routeAccents: .init(),
                 onRowTap: { _, _ in }
@@ -124,6 +140,9 @@ struct AlertListContainer: View {
                 alertSummaries: [serviceChange.id: nil, elevator.id: nil],
                 now: now,
                 isAllServiceDisrupted: false,
+                routeIdMatcher: MatcherWildcard(),
+                stopIdMatcher: MatcherWildcard(),
+                directionIdMatcher: MatcherWildcard(),
                 tripId: nil,
                 routeAccents: .init(),
                 onRowTap: { _, _ in }

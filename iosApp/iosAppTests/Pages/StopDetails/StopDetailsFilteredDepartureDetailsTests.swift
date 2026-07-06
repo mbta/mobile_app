@@ -785,6 +785,13 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
                     route: routeC.id.idText, routeType: nil,
                     stop: "70151", trip: nil
                 )
+                alert.summaries = [.init(
+                    routeId: nil,
+                    stopId: nil,
+                    tripId: nil,
+                    directionId: nil,
+                    summary: "Shuttle buses at \(stop.name)"
+                )]
             }
         let alertResponse = AlertsStreamDataResponse(alerts: [alert.id: alert])
 

@@ -13,6 +13,7 @@ import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.hasTextMatching
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.AlertSummaryEntity
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
@@ -321,7 +322,19 @@ class TripStopRowTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route = objects.route()
-        val alert = objects.alert { effect = Alert.Effect.Shuttle }
+        val alert = objects.alert {
+            effect = Alert.Effect.Shuttle
+            summaries =
+                listOf(
+                    AlertSummaryEntity(
+                        null,
+                        null,
+                        null,
+                        null,
+                        "**Shuttle buses** from **Roxbury Crossing** to **Green Street** through tomorrow",
+                    )
+                )
+        }
         val summary =
             AlertSummary.Standard(
                 alert.effect,

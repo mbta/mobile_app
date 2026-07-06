@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Alert.Effect
 import com.mbta.tid.mbta_app.model.AlertCardSpec
 import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.AlertSummaryEntity
 import com.mbta.tid.mbta_app.model.Facility
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripShuttleAlertSummary
@@ -23,6 +24,7 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 data class FormattedAlert(
     val alert: Alert,
     val alertSummary: AlertSummary?,
+    val alertSummaryEntity: AlertSummaryEntity?,
     @StringRes val effectRes: Int,
     @StringRes val sentenceEffectRes: Int,
     @StringRes val causeRes: Int?,
@@ -36,9 +38,11 @@ data class FormattedAlert(
     constructor(
         alert: Alert,
         alertSummary: AlertSummary? = null,
+        alertSummaryEntity: AlertSummaryEntity? = null,
     ) : this(
         alert,
         alertSummary,
+        alertSummaryEntity,
         effectRes(alert.effect),
         sentenceEffectRes(alert.effect),
         causeRes(alert.cause),
@@ -126,9 +130,12 @@ data class FormattedAlert(
                 } ?: alert.header ?: effect(resources)
         )
 
-    private fun summary(resources: Resources) = summary(alertSummary, resources)
+    private fun summaryCalculated(resources: Resources) = summaryCalculated(alertSummary, resources)
 
-    private fun summary(alertSummary: AlertSummary?, resources: Resources): AnnotatedString? =
+    private fun summaryCalculated(
+        alertSummary: AlertSummary?,
+        resources: Resources,
+    ): AnnotatedString? =
         when (alertSummary) {
             is AlertSummary.AllClear ->
                 AnnotatedString.fromHtml(
@@ -214,6 +221,18 @@ data class FormattedAlert(
             is AlertSummary.Unknown -> AnnotatedString(alertSummary.fallback)
             null -> null
         }
+
+    private fun summaryProvided(): AnnotatedString? =
+        alertSummaryEntity?.summary?.let { AnnotatedString.fromMarkdown(it) }
+
+    private fun summary(resources: Resources): AnnotatedString? {
+        val calculated = summaryCalculated(resources)
+        val provided = summaryProvided()
+        check(calculated == provided) {
+            "summary mismatch: ${calculated?.toHtml()} vs ${provided?.toHtml()}"
+        }
+        return provided
+    }
 
     fun alertCardHeaderFromSummary(
         spec: AlertCardSpec,
