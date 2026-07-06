@@ -415,11 +415,6 @@ final class AlertCardTests: XCTestCase {
 
     func testUpcomingDelayAlertCard() throws {
         let objects = ObjectCollectionBuilder()
-        let alert = objects.alert { alert in
-            alert.effect = .delay
-            alert.cause = .accident
-            alert.header = "Test header"
-        }
 
         let time = EasternTimeInstant(
             year: 2025,
@@ -429,6 +424,13 @@ final class AlertCardTests: XCTestCase {
             minute: 0,
             second: 0
         )
+
+        let alert = objects.alert { alert in
+            alert.activePeriod(start: time, end: nil)
+            alert.effect = .delay
+            alert.cause = .accident
+            alert.header = "Test header"
+        }
 
         let sut = AlertCard(
             alert: alert,
@@ -443,6 +445,7 @@ final class AlertCardTests: XCTestCase {
                 isUpdate: false
             ),
             spec: .delay,
+            now: time.minus(minutes: 15),
             routeAccents: .init(),
             onViewDetails: {}
         )
@@ -576,6 +579,7 @@ final class AlertCardTests: XCTestCase {
         let alert = objects.alert { alert in
             alert.cause = .mechanicalIssue
             alert.effect = .cancellation
+            alert.informedEntity(trip: "trip")
         }
 
         let sut = AlertCard(
@@ -617,6 +621,7 @@ final class AlertCardTests: XCTestCase {
         let alert = objects.alert { alert in
             alert.cause = .holiday
             alert.effect = .suspension
+            alert.informedEntity(trip: "trip")
         }
 
         let sut = AlertCard(
@@ -645,6 +650,7 @@ final class AlertCardTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
             alert.effect = .shuttle
+            alert.informedEntity(trip: "trip")
         }
 
         let sut = AlertCard(
@@ -692,6 +698,7 @@ final class AlertCardTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
             alert.effect = .stationClosure
+            alert.informedEntity(trip: "trip")
         }
 
         let sut = AlertCard(
@@ -735,6 +742,7 @@ final class AlertCardTests: XCTestCase {
         let alert = objects.alert { alert in
             alert.cause = .mechanicalIssue
             alert.effect = .cancellation
+            alert.informedEntity(trip: "trip")
         }
 
         let sut = AlertCard(
@@ -776,6 +784,7 @@ final class AlertCardTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
             alert.effect = .shuttle
+            alert.informedEntity(trip: "trip")
         }
 
         let sut = AlertCard(

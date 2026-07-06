@@ -73,7 +73,7 @@ struct AlertDetails: View {
     }
 
     private var currentPeriod: Shared.Alert.ActivePeriod? { alert.currentPeriod(time: now) }
-    private var nextPeriod: Shared.Alert.ActivePeriod? { alert.nextPeriod(time: now, within: .max) }
+    private var nextPeriod: Shared.Alert.ActivePeriod? { alert.nextPeriod(time: now, within: .companion.INFINITE) }
     private var relevantPeriod: Shared.Alert.ActivePeriod? { currentPeriod ?? nextPeriod }
 
     static var calendar: Calendar {

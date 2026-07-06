@@ -18,7 +18,7 @@ struct BackgroundTimerModifier: ViewModifier {
     func body(content: Content) -> some View {
         content.withScenePhaseHandlers(onActive: {
             let now = EasternTimeInstant.now()
-            if let backgroundTime, now.minus(backgroundTime).inWholeSeconds >= backgroundSeconds {
+            if let backgroundTime, now.minus(other: backgroundTime).inWholeSeconds >= backgroundSeconds {
                 action()
             }
             backgroundTime = nil

@@ -65,11 +65,12 @@ data class FormattedAlert(
             resources.getString(R.string.delays_due_to_cause, resources.getString(it))
         } ?: resources.getString(R.string.delays_unknown_reason)
 
-    private fun delayHeader(resources: Resources): AnnotatedString {
+    private fun delayHeader(now: EasternTimeInstant, resources: Resources): AnnotatedString {
         if (
-            (alertSummary as? AlertSummary.Standard)?.timeframe
-                is AlertSummary.Timeframe.StartingLaterToday
+            alert.currentPeriod(now) == null &&
+                alert.nextPeriod(now)?.startServiceDate == now.serviceDate
         ) {
+            // starting later today
             summary(resources)?.let {
                 return it
             }
@@ -189,21 +190,19 @@ data class FormattedAlert(
     fun alertCardHeader(
         spec: AlertCardSpec,
         type: RouteType,
+        now: EasternTimeInstant,
         resources: Resources,
     ): AnnotatedString {
         return when (spec) {
             AlertCardSpec.Downstream ->
                 summary(resources) ?: AnnotatedString.fromHtml(downstreamEffect(resources))
             AlertCardSpec.Elevator -> elevatorHeader(resources)
-            AlertCardSpec.Delay -> delayHeader(resources)
+            AlertCardSpec.Delay -> delayHeader(now, resources)
             AlertCardSpec.Basic -> summary(resources) ?: AnnotatedString.fromHtml(effect(resources))
             else -> {
-                val effect = alert.effect
-                val isTripSpecificAlertSummary =
-                    alertSummary is TripSpecificAlertSummary ||
-                        alertSummary is TripShuttleAlertSummary
-                if (isTripSpecificAlertSummary) {
-                    when (effect) {
+                val isTripSpecific = alert.informedEntity.any { it.trip != null }
+                if (isTripSpecific) {
+                    when (alert.effect) {
                         Alert.Effect.Cancellation if type == RouteType.BUS -> R.string.bus_cancelled
 
                         Alert.Effect.Cancellation if type == RouteType.FERRY ->
@@ -235,8 +234,8 @@ data class FormattedAlert(
     }
 
     @Composable
-    fun alertCardHeader(spec: AlertCardSpec, type: RouteType) =
-        alertCardHeader(spec, type, LocalResources.current)
+    fun alertCardHeader(spec: AlertCardSpec, type: RouteType, now: EasternTimeInstant) =
+        alertCardHeader(spec, type, now, LocalResources.current)
 
     fun alertCardMajorBody(resources: Resources) =
         summary(resources) ?: AnnotatedString(alert.header ?: "")

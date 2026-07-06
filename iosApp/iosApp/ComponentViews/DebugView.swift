@@ -38,7 +38,7 @@ struct DebugView<Content: View>: View {
                                 let trimmedKey = if key.count > 25 { "\(key.prefix(25))..." } else { key }
                                 let updateDuration = if let updateTime = channelUpdates[key] {
                                     Duration(
-                                        secondsComponent: abs(now.minus(updateTime).inWholeSeconds),
+                                        secondsComponent: abs(now.minus(other: updateTime).inWholeSeconds),
                                         attosecondsComponent: 0
                                     )
                                     .formatted(.units(allowed: [.seconds], width: .narrow))

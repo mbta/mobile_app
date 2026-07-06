@@ -376,12 +376,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
-            alertSummaries: [alert.id: AlertSummary.Standard(
+            alertSummaries: [alert.id: TripSpecificAlertSummary(
+                tripIdentity: TripSpecificAlertSummary.ThisTrip(routeType: route.type),
                 effect: .cancellation,
-                location: AlertSummary.LocationSingleStop(stopName: stop.name),
-                timeframe: nil,
-                recurrence: nil,
-                isUpdate: false
             )],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
@@ -392,7 +389,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             navManager: .init(),
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
 
-        XCTAssertNotNil(try sut.inspect().find(text: "Cancellation"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Bus cancelled"))
         XCTAssertThrowsError(try sut.inspect().find(text: "Trip cancelled"))
         XCTAssertThrowsError(try sut.inspect()
             .find(text: "This trip has been cancelled. We’re sorry for the inconvenience."))
