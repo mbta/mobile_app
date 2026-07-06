@@ -52,14 +52,17 @@ fun RoutePill(
     height: RoutePillHeight = RoutePillHeight.Medium,
     isActive: Boolean = true,
     contentDescription: RoutePillSpec.ContentDescription? = null,
+    warningAlertIconName: String? = null,
     modifier: Modifier = Modifier,
     border: BorderStroke? = null,
 ) {
+
     RoutePill(
         route,
         line,
         isActive,
         RoutePillSpec(route, line, type, height, contentDescription = contentDescription),
+        warningAlertIconName,
         modifier,
         border,
     )
@@ -71,6 +74,7 @@ fun RoutePill(
     line: Line? = null,
     isActive: Boolean = true,
     spec: RoutePillSpec,
+    warningAlertIconName: String? = null,
     modifier: Modifier = Modifier,
     border: BorderStroke? = null,
 ) {
@@ -136,34 +140,37 @@ fun RoutePill(
             .wrapContentHeight(Alignment.CenterVertically)
             .semantics { this.contentDescription = contentDescription }
 
-    when (pillContent) {
-        RoutePillSpec.Content.Empty -> {}
-        is RoutePillSpec.Content.Text ->
-            BasicText(
-                if (route?.type == RouteType.COMMUTER_RAIL) pillContent.text
-                else pillContent.text.uppercase(),
-                modifier = finalModifier,
-                maxLines = 1,
-                autoSize = TextAutoSize.StepBased(8.sp, fontSize, 0.25.sp),
-                style =
-                    TextStyle(
-                        color = if (isActive) textColor else Color.Unspecified,
-                        fontSize = fontSize,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 0.5.sp,
-                        textAlign = TextAlign.Center,
-                    ),
-            )
+    Row(horizontalArrangement = Arrangement.spacedBy(-8.dp)) {
+        when (pillContent) {
+            RoutePillSpec.Content.Empty -> {}
+            is RoutePillSpec.Content.Text ->
+                BasicText(
+                    if (route?.type == RouteType.COMMUTER_RAIL) pillContent.text
+                    else pillContent.text.uppercase(),
+                    modifier = finalModifier,
+                    maxLines = 1,
+                    autoSize = TextAutoSize.StepBased(8.sp, fontSize, 0.25.sp),
+                    style =
+                        TextStyle(
+                            color = if (isActive) textColor else Color.Unspecified,
+                            fontSize = fontSize,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 0.5.sp,
+                            textAlign = TextAlign.Center,
+                        ),
+                )
 
-        is RoutePillSpec.Content.ModeImage -> {
-            val painter = routeIcon(routeType = pillContent.mode)
-            Icon(
-                painter = painter,
-                contentDescription = null,
-                modifier = finalModifier.size(pillHeight),
-                tint = if (isActive) textColor else LocalContentColor.current,
-            )
+            is RoutePillSpec.Content.ModeImage -> {
+                val painter = routeIcon(routeType = pillContent.mode)
+                Icon(
+                    painter = painter,
+                    contentDescription = null,
+                    modifier = finalModifier.size(pillHeight),
+                    tint = if (isActive) textColor else LocalContentColor.current,
+                )
+            }
         }
+        warningAlertIconName?.let { iconName -> warningIcon(iconName) }
     }
 }
 

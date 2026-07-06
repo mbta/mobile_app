@@ -58,4 +58,24 @@ class RoutePillTest {
         composeTestRule.setContent { RoutePill(ferryRoute, null, RoutePillType.Fixed) }
         composeTestRule.onNodeWithContentDescription("Charlestown Ferry").assertIsDisplayed()
     }
+
+    @Test
+    fun testWarningIconIncluded() {
+        val route =
+            ObjectCollectionBuilder().route {
+                type = RouteType.BUS
+                shortName = "Harvard"
+            }
+
+        composeTestRule.setContent {
+            RoutePill(
+                route,
+                null,
+                RoutePillType.Fixed,
+                warningAlertIconName = "alert-large-bus-issue",
+            )
+        }
+        composeTestRule.onNodeWithContentDescription("Harvard bus").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Alert").assertIsDisplayed()
+    }
 }
