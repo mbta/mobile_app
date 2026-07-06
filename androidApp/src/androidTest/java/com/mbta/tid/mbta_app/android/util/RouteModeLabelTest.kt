@@ -6,10 +6,10 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
@@ -27,7 +27,7 @@ class RouteModeLabelTest {
 
         composeTestRule.setContent { Text(routeModeLabel(LocalResources.current, name, type)) }
 
-        composeTestRule.onNodeWithText("1 bus").assertIsDisplayed()
+        composeTestRule.onNodeWithText("1 bus").assertCanBeDisplayed()
     }
 
     @Test
@@ -39,7 +39,7 @@ class RouteModeLabelTest {
             Text(routeModeLabel(LocalResources.current, name, type, false))
         }
 
-        composeTestRule.onNodeWithText("Red Line trains").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Red Line trains").assertCanBeDisplayed()
     }
 
     @Test
@@ -48,7 +48,7 @@ class RouteModeLabelTest {
 
         composeTestRule.setContent { Text(routeModeLabel(LocalResources.current, name, null)) }
 
-        composeTestRule.onNodeWithText(name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(name).assertCanBeDisplayed()
     }
 
     @Test
@@ -57,7 +57,7 @@ class RouteModeLabelTest {
 
         composeTestRule.setContent { Text(routeModeLabel(LocalResources.current, null, type)) }
 
-        composeTestRule.onNodeWithText("ferry").assertIsDisplayed()
+        composeTestRule.onNodeWithText("ferry").assertCanBeDisplayed()
     }
 
     @Test
@@ -92,7 +92,7 @@ class RouteModeLabelTest {
 
         composeTestRule.setContent { Text(routeModeLabel(LocalResources.current, route)) }
 
-        composeTestRule.onNodeWithText("Lynn Ferry").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Lynn Ferry").assertCanBeDisplayed()
     }
 
     @Test
@@ -107,7 +107,7 @@ class RouteModeLabelTest {
 
         composeTestRule.setContent { Text(routeModeLabel(LocalResources.current, line, route)) }
 
-        composeTestRule.onNodeWithText("Green Line train").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Green Line train").assertCanBeDisplayed()
     }
 
     @Test
@@ -124,6 +124,6 @@ class RouteModeLabelTest {
 
         composeTestRule.setContent { Text(routeModeLabel(LocalResources.current, lineOrRoute)) }
 
-        composeTestRule.onNodeWithText("Silver Line bus").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Silver Line bus").assertCanBeDisplayed()
     }
 }

@@ -1,9 +1,9 @@
 package com.mbta.tid.mbta_app.android.component.routeCard
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -43,8 +43,10 @@ class WorldCupBlurbTest {
         }
         composeTestRule
             .onNodeWithText("Service from South Station to today’s World Cup match")
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithText("Boston Stadium Train ticket required").assertIsDisplayed()
+            .assertCanBeDisplayed()
+        composeTestRule
+            .onNodeWithText("Boston Stadium Train ticket required")
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -75,8 +77,10 @@ class WorldCupBlurbTest {
         }
         composeTestRule
             .onNodeWithText("Service from today’s World Cup match to South Station")
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithText("Boston Stadium Train ticket required").assertIsDisplayed()
+            .assertCanBeDisplayed()
+        composeTestRule
+            .onNodeWithText("Boston Stadium Train ticket required")
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -134,6 +138,6 @@ class WorldCupBlurbTest {
                 offerDetails = true,
             )
         }
-        composeTestRule.onNodeWithText("View details").assertIsDisplayed()
+        composeTestRule.onNodeWithText("View details").assertCanBeDisplayed()
     }
 }

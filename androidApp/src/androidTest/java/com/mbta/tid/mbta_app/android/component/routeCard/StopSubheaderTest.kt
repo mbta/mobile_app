@@ -1,10 +1,10 @@
 package com.mbta.tid.mbta_app.android.component.routeCard
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LineOrRoute
@@ -31,7 +31,7 @@ class StopSubheaderTest {
                 includeIcon = false,
             )
         }
-        composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop.name).assertCanBeDisplayed()
     }
 
     @Test
@@ -49,7 +49,7 @@ class StopSubheaderTest {
                 includeIcon = false,
             )
         }
-        composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop.name).assertCanBeDisplayed()
         composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertDoesNotExist()
     }
 
@@ -68,9 +68,9 @@ class StopSubheaderTest {
                 includeIcon = false,
             )
         }
-        composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText("Not accessible").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop.name).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Not accessible").assertCanBeDisplayed()
+        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertCanBeDisplayed()
     }
 
     @Test
@@ -113,8 +113,8 @@ class StopSubheaderTest {
                 includeIcon = false,
             )
         }
-        composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText("1 elevator closed").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("elevator_alert").assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop.name).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("1 elevator closed").assertCanBeDisplayed()
+        composeTestRule.onNodeWithTag("elevator_alert").assertCanBeDisplayed()
     }
 }

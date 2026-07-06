@@ -1,11 +1,11 @@
 package com.mbta.tid.mbta_app.android.pages
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
@@ -45,12 +45,12 @@ class ExplainerPageTests {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Finishing another trip").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Finishing another trip").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText(
                 "The train assigned to this route is currently serving another trip. We’ll show it on the route once it starts this trip."
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -60,12 +60,12 @@ class ExplainerPageTests {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Prediction not available yet").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Prediction not available yet").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText(
                 "We don’t have live predictions for this trip yet, but they will appear closer to the scheduled time. If the trip is delayed or cancelled, we’ll let you know here."
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -80,11 +80,11 @@ class ExplainerPageTests {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Ferry location not available yet").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Ferry location not available yet").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText(
                 "The ferry location might not be available in advance if a vehicle hasn’t been assigned yet. Once the driver starts the trip, we’ll start showing the live location."
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 }

@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.android.component
 
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -9,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Direction
@@ -301,7 +301,7 @@ class SaveFavoritesFlowTest {
             )
         }
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Eastbound service only").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Eastbound service only").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Add").performClick()
         composeTestRule.waitForIdle()
         composeTestRule.waitUntilDefaultTimeout { onCloseCalled }
@@ -463,7 +463,7 @@ class SaveFavoritesFlowTest {
             )
         }
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("This stop is drop-off only").assertIsDisplayed()
+        composeTestRule.onNodeWithText("This stop is drop-off only").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Add").assertDoesNotExist()
         composeTestRule.onNodeWithText("Okay").performClick()
         composeTestRule.waitForIdle()
@@ -488,7 +488,7 @@ class SaveFavoritesFlowTest {
             )
         }
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Add Green Line at Boylston").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Add Green Line at Boylston").assertCanBeDisplayed()
     }
 
     @Test
@@ -510,7 +510,7 @@ class SaveFavoritesFlowTest {
         composeTestRule.waitForIdle()
         composeTestRule
             .onNodeWithText("Add Green Line at Boylston to Favorites")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test

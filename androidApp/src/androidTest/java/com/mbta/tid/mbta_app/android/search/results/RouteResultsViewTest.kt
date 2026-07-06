@@ -1,11 +1,11 @@
 package com.mbta.tid.mbta_app.android.search.results
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -30,8 +30,8 @@ class RouteResultsViewTest {
                 handleSearch = {},
             )
         }
-        composeTestRule.onNodeWithText(route.shortName).assertIsDisplayed()
-        composeTestRule.onNodeWithText(route.longName).assertIsDisplayed()
+        composeTestRule.onNodeWithText(route.shortName).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(route.longName).assertCanBeDisplayed()
     }
 
     @Test

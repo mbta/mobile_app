@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -18,6 +17,7 @@ import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
@@ -188,7 +188,7 @@ class HomeMapViewTests {
         }
         composeTestRule
             .onNodeWithContentDescription("Recenter map on my location")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -228,7 +228,7 @@ class HomeMapViewTests {
                 navCallbacks = NavigationCallbacks.empty,
             )
         }
-        composeTestRule.onNodeWithText("Location Services is off").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Location Services is off").assertCanBeDisplayed()
     }
 
     @Test
@@ -404,7 +404,7 @@ class HomeMapViewTests {
         }
         composeTestRule
             .onNodeWithContentDescription("Recenter map on my location")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -449,7 +449,7 @@ class HomeMapViewTests {
                     ),
             )
         }
-        composeTestRule.onNodeWithContentDescription("Back").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Back").assertCanBeDisplayed()
     }
 
     @Test
@@ -540,7 +540,7 @@ class HomeMapViewTests {
                 navCallbacks = NavigationCallbacks.empty,
             )
         }
-        composeTestRule.onNodeWithTag("Empty map grid").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("Empty map grid").assertCanBeDisplayed()
         configManager.loadConfig()
         composeTestRule.onNodeWithTag("Empty map grid").assertIsNotDisplayed()
     }

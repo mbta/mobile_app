@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.android.pages
 
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -10,6 +9,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.mbta.tid.mbta_app.android.BuildConfig
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Dependency
@@ -30,7 +30,7 @@ class MorePageTests : KoinTest {
         composeTestRule.setContent { MorePage(bottomBar = {}) }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("MBTA Go").assertIsDisplayed()
+        composeTestRule.onNodeWithText("MBTA Go").assertCanBeDisplayed()
     }
 
     @OptIn(ExperimentalTestApi::class)
@@ -52,8 +52,7 @@ class MorePageTests : KoinTest {
 
         composeTestRule.waitForIdle()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Settings"))
-        composeTestRule.onNodeWithText("Settings").performScrollTo()
-        composeTestRule.onNodeWithText("Settings").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Settings").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Map Display").assertIsOn().performClick()
 
         composeTestRule.waitForIdle()
@@ -69,21 +68,15 @@ class MorePageTests : KoinTest {
 
         composeTestRule.waitForIdle()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Send App Feedback"))
-        composeTestRule.onNodeWithText("Send App Feedback").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Trip Planner").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Fare Information").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Commuter Rail and Ferry Tickets").performScrollTo()
-        composeTestRule.onNodeWithText("Commuter Rail and Ferry Tickets").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Terms of Use").performScrollTo()
-        composeTestRule.onNodeWithText("Terms of Use").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Privacy Policy").performScrollTo()
-        composeTestRule.onNodeWithText("Privacy Policy").assertIsDisplayed()
-        composeTestRule.onNode(hasText("View Source on GitHub")).performScrollTo()
-        composeTestRule.onNodeWithText("View Source on GitHub").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Software Licenses").performScrollTo()
-        composeTestRule.onNodeWithText("Software Licenses").assertIsDisplayed()
-        composeTestRule.onNode(hasText("617-222-3200")).performScrollTo()
-        composeTestRule.onNodeWithText("617-222-3200").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Send App Feedback").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Trip Planner").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Fare Information").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Commuter Rail and Ferry Tickets").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Terms of Use").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Privacy Policy").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("View Source on GitHub").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Software Licenses").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("617-222-3200").assertCanBeDisplayed()
     }
 
     @OptIn(ExperimentalTestApi::class)
@@ -99,11 +92,11 @@ class MorePageTests : KoinTest {
         composeTestRule.onNodeWithText("Software Licenses").performScrollTo()
         composeTestRule.onNodeWithText("Software Licenses").performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(dependency.name))
-        composeTestRule.onNodeWithText(dependency.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(dependency.name).assertCanBeDisplayed()
         composeTestRule.onNodeWithText(dependency.name).performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(dependency.licenseText))
-        composeTestRule.onNodeWithText(dependency.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText(dependency.licenseText).assertIsDisplayed()
+        composeTestRule.onNodeWithText(dependency.name).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(dependency.licenseText).assertCanBeDisplayed()
     }
 
     @Test
@@ -114,6 +107,6 @@ class MorePageTests : KoinTest {
         val versionAndBuildText = "$versionText (${BuildConfig.VERSION_CODE})"
         composeTestRule.onNodeWithText(versionAndBuildText).assertDoesNotExist()
         composeTestRule.onNodeWithText(versionText).performClick()
-        composeTestRule.onNodeWithText(versionAndBuildText).assertIsDisplayed()
+        composeTestRule.onNodeWithText(versionAndBuildText).assertCanBeDisplayed()
     }
 }

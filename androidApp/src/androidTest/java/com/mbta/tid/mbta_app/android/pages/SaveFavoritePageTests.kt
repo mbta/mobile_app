@@ -1,13 +1,14 @@
 package com.mbta.tid.mbta_app.android.pages
 
-import androidx.compose.ui.test.assertIsDisplayed
+import android.os.Build
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
+import androidx.test.rule.GrantPermissionRule
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.RouteStopDirection
@@ -23,6 +24,11 @@ import org.junit.Test
 
 class SaveFavoritePageTests {
     @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule
+    val runtimePermissionRule =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            GrantPermissionRule.grant(android.Manifest.permission.POST_NOTIFICATIONS)
+        else GrantPermissionRule.grant()
 
     @Test
     fun testCloses() {
@@ -70,7 +76,7 @@ class SaveFavoritePageTests {
             )
         }
 
-        composeTestRule.onNodeWithText("Add Favorite").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Add Favorite").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Save").performClick()
         composeTestRule.waitForIdle()
         assertEquals(
@@ -94,14 +100,14 @@ class SaveFavoritePageTests {
             SaveFavoritePage(route.id, stop.id, 0, EditFavoritesContext.StopDetails, {})
         }
 
-        composeTestRule.onNodeWithText("Southbound to").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Forest Hills").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Southbound to").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Forest Hills").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithContentDescription("toggle direction")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .performClick()
-        composeTestRule.onNodeWithText("Northbound to").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Oak Grove").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Northbound to").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Oak Grove").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Save").performClick()
         composeTestRule.waitForIdle()
         assertEquals(
@@ -129,20 +135,20 @@ class SaveFavoritePageTests {
             SaveFavoritePage(route.id, stop.id, 0, EditFavoritesContext.StopDetails, {})
         }
 
-        composeTestRule.onNodeWithText("Southbound to").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Forest Hills").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Southbound to").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Forest Hills").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithContentDescription("toggle direction")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .performClick()
-        composeTestRule.onNodeWithText("Northbound to").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Oak Grove").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Northbound to").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Oak Grove").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithContentDescription("toggle direction")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .performClick()
-        composeTestRule.onNodeWithText("Southbound to").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Forest Hills").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Southbound to").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Forest Hills").assertCanBeDisplayed()
     }
 
     @Test
@@ -159,7 +165,7 @@ class SaveFavoritePageTests {
             SaveFavoritePage(route.id, stop.id, 0, EditFavoritesContext.StopDetails, {})
         }
 
-        composeTestRule.onNodeWithText("Add Favorite").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Add Favorite").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Get disruption notifications").performClick()
         composeTestRule.onNodeWithText("Save").performClick()
         composeTestRule.waitForIdle()
@@ -224,16 +230,15 @@ class SaveFavoritePageTests {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Edit Favorite").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Edit Favorite").assertCanBeDisplayed()
         composeTestRule.onNodeWithContentDescription("toggle direction").assertDoesNotExist()
         composeTestRule
             .onNodeWithText("Get disruption notifications")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertIsOn()
         composeTestRule
             .onNodeWithText("Remove from Favorites")
-            .performScrollTo()
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .performClick()
         composeTestRule.waitForIdle()
         assertEquals(Favorites(), favoritesSet)
@@ -251,8 +256,8 @@ class SaveFavoritePageTests {
             SaveFavoritePage(route.id, stop.id, 0, EditFavoritesContext.StopDetails, {})
         }
 
-        composeTestRule.onNodeWithText("Only Northbound to").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Oak Grove").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Only Northbound to").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Oak Grove").assertCanBeDisplayed()
         composeTestRule.onNodeWithContentDescription("toggle direction").assertDoesNotExist()
     }
 }

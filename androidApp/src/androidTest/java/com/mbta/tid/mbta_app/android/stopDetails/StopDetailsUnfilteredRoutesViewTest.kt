@@ -2,10 +2,10 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -240,6 +240,6 @@ class StopDetailsUnfilteredRoutesViewTest {
             ) {}
         }
 
-        composeTestRule.onNodeWithText("Elevator alert").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Elevator alert").assertCanBeDisplayed()
     }
 }

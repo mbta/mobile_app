@@ -3,11 +3,11 @@ package com.mbta.tid.mbta_app.android.component
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performScrollTo
+import com.mbta.tid.mbta_app.android.testUtils.assertIsAlreadyOnScreen
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -26,7 +26,7 @@ class ScrollSeparatorColumnTest {
         composeTestRule.onNodeWithTag("99").performScrollTo()
         composeTestRule.awaitIdle()
 
-        composeTestRule.onNodeWithTag("separator").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("99").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("separator").assertIsAlreadyOnScreen()
+        composeTestRule.onNodeWithTag("99").assertIsAlreadyOnScreen()
     }
 }

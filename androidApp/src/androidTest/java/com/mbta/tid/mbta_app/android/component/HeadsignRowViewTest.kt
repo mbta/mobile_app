@@ -1,10 +1,10 @@
 package com.mbta.tid.mbta_app.android.component
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.trip
@@ -45,9 +45,9 @@ class HeadsignRowViewTest {
             ),
         )
 
-        composeTestRule.onNodeWithText("Headsign").assertIsDisplayed()
-        composeTestRule.onNodeWithText("2 min").assertIsDisplayed()
-        composeTestRule.onNodeWithText("10 min").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Headsign").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("2 min").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("10 min").assertCanBeDisplayed()
     }
 
     @Test
@@ -67,8 +67,8 @@ class HeadsignRowViewTest {
             ),
         )
 
-        composeTestRule.onNodeWithText("A Place").assertIsDisplayed()
-        composeTestRule.onNodeWithText("BRD").assertIsDisplayed()
+        composeTestRule.onNodeWithText("A Place").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("BRD").assertCanBeDisplayed()
     }
 
     @Test
@@ -88,9 +88,9 @@ class HeadsignRowViewTest {
             ),
         )
 
-        composeTestRule.onNodeWithText("A Place").assertIsDisplayed()
-        composeTestRule.onNodeWithText("BRD").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Alert").assertIsDisplayed()
+        composeTestRule.onNodeWithText("A Place").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("BRD").assertCanBeDisplayed()
+        composeTestRule.onNodeWithContentDescription("Alert").assertCanBeDisplayed()
     }
 
     @Test
@@ -100,8 +100,8 @@ class HeadsignRowViewTest {
             UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable),
         )
 
-        composeTestRule.onNodeWithText("Somewhere").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Predictions unavailable").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Somewhere").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Predictions unavailable").assertCanBeDisplayed()
     }
 
     @Test
@@ -114,9 +114,9 @@ class HeadsignRowViewTest {
             ),
         )
 
-        composeTestRule.onNodeWithText("Somewhere").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Predictions unavailable").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Alert").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Somewhere").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Predictions unavailable").assertCanBeDisplayed()
+        composeTestRule.onNodeWithContentDescription("Alert").assertCanBeDisplayed()
     }
 
     @Test
@@ -126,13 +126,13 @@ class HeadsignRowViewTest {
             UpcomingFormat.Disruption(alert { effect = Alert.Effect.Shuttle }, mapStopRoute = null),
         )
 
-        composeTestRule.onNodeWithText("Shuttle Bus").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Shuttle Bus").assertCanBeDisplayed()
     }
 
     @Test
     fun showsLoading() {
         init("Headsign", UpcomingFormat.Loading)
 
-        composeTestRule.onNodeWithContentDescription("Loading...").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Loading...").assertCanBeDisplayed()
     }
 }

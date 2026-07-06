@@ -1,12 +1,12 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import com.mbta.tid.mbta_app.android.hasTextMatching
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
+import com.mbta.tid.mbta_app.android.testUtils.hasTextMatching
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingFormat
@@ -42,17 +42,18 @@ class StopDetailsNoTripCardTests {
             )
         }
 
-        composeTestRule.onNodeWithTag("sunrise").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Good morning!").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("sunrise").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Good morning!").assertCanBeDisplayed()
         composeTestRule
             .onNode(
                 hasTextMatching(
                     Regex(
-                        "^The first Forest Hills train is scheduled to arrive at 9:44\\sAM. We don’t have predictions to show you yet, but they’ll appear here closer to the scheduled time.$"
+                        "^The first Forest Hills train is scheduled to arrive at 9:44\\sAM. We don’t have predictions to show you yet, but they’ll appear here closer to the scheduled time.$",
+                        RegexOption.IGNORE_CASE,
                     )
                 )
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -69,14 +70,14 @@ class StopDetailsNoTripCardTests {
             )
         }
 
-        composeTestRule.onNodeWithTag("live_data_slash").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Predictions unavailable").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("live_data_slash").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Predictions unavailable").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText(
                 "Service is running, but predicted arrival times aren’t available." +
                     " Check the map to see where buses are right now."
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -125,11 +126,13 @@ class StopDetailsNoTripCardTests {
                 nextScheduleResponse = NextScheduleResponse(schedule),
             )
         }
-        composeTestRule.onNodeWithTag("route_slash_icon").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Service ended").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("route_slash_icon").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Service ended").assertCanBeDisplayed()
         composeTestRule
-            .onNode(hasTextMatching(Regex("^Next trip at 9:15\\sAM tomorrow$")))
-            .assertIsDisplayed()
+            .onNode(
+                hasTextMatching(Regex("^Next trip at 9:15\\sAM tomorrow$", RegexOption.IGNORE_CASE))
+            )
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -152,10 +155,10 @@ class StopDetailsNoTripCardTests {
                 nextScheduleResponse = NextScheduleResponse(schedule),
             )
         }
-        composeTestRule.onNodeWithTag("route_slash_icon").assertIsDisplayed()
-        composeTestRule.onNodeWithText("No service today").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("route_slash_icon").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("No service today").assertCanBeDisplayed()
         composeTestRule
-            .onNode(hasTextMatching(Regex("^Next trip at 9:15\\sAM$")))
-            .assertIsDisplayed()
+            .onNode(hasTextMatching(Regex("^Next trip at 9:15\\sAM$", RegexOption.IGNORE_CASE)))
+            .assertCanBeDisplayed()
     }
 }

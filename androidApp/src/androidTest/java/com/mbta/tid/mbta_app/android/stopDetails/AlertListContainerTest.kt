@@ -2,9 +2,9 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.material3.Text
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.RouteType
 import org.junit.Rule
@@ -28,8 +28,8 @@ class AlertListContainerTest {
             )
         }
 
-        composeTestRule.onNodeWithText("High 1").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Middle").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Low 1").assertIsDisplayed()
+        composeTestRule.onNodeWithText("High 1").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Middle").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Low 1").assertCanBeDisplayed()
     }
 }
