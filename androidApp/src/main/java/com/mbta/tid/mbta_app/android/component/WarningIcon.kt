@@ -10,9 +10,9 @@ import com.mbta.tid.mbta_app.android.generated.drawableByName
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 
 @Composable
-fun warningIcon(iconName: String) =
+fun warningIcon(iconName: String, modifier: Modifier = Modifier) =
     Image(
         painterResource(drawableByName(iconName)),
         stringResource(R.string.alert),
-        modifier = Modifier.placeholderIfLoading(),
+        modifier = modifier.placeholderIfLoading(),
     )

@@ -49,16 +49,18 @@ fun PredictionRowView(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(modifier = Modifier.padding(end = 8.dp)) {
-            if (pillDecoration is PillDecoration.OnRow) {
+        if (pillDecoration is PillDecoration.OnRow) {
+            Row(Modifier.padding(end = 8.dp)) {
                 RoutePill(
                     pillDecoration.route,
                     line = null,
                     RoutePillType.Fixed,
                     warningAlertIconName = predictions.warningAlert?.iconName,
                 )
-            } else {
-                predictions.warningAlert?.let { warningAlert -> warningIcon(warningAlert.iconName) }
+            }
+        } else {
+            predictions.warningAlert?.let { warningAlert ->
+                warningIcon(warningAlert.iconName, modifier = Modifier.padding(end = 8.dp))
             }
         }
 

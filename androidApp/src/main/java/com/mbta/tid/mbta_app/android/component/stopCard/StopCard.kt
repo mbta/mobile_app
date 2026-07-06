@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.component.stopCard
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
@@ -25,7 +23,7 @@ import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.routeCard.StopSubheader
 import com.mbta.tid.mbta_app.android.component.routeCard.WorldCupBlurb
-import com.mbta.tid.mbta_app.android.generated.drawableByName
+import com.mbta.tid.mbta_app.android.component.warningIcon
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
@@ -119,11 +117,14 @@ fun Departures(
                     formatted is LeafFormat.Branched &&
                         formatted.branchRows.all { it.route == null }
                 if (branchedNoRoutePills) {
-                    RoutePill(
-                        (leaf.lineOrRoute as? LineOrRoute.Route)?.route,
-                        (leaf.lineOrRoute as? LineOrRoute.Line)?.line,
-                        RoutePillType.FlexCompact,
-                    )
+                    Row(Modifier.padding(end = 8.dp)) {
+                        RoutePill(
+                            (leaf.lineOrRoute as? LineOrRoute.Route)?.route,
+                            (leaf.lineOrRoute as? LineOrRoute.Line)?.line,
+                            RoutePillType.Fixed,
+                            warningAlertIconName = formatted.warningAlert?.iconName,
+                        )
+                    }
                 }
                 Column(
                     modifier = modifier,
@@ -153,12 +154,13 @@ fun Departures(
                         formatted is LeafFormat.Branched -> {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 formatted.warningAlert?.let { warningAlert ->
-                                    Image(
-                                        painterResource(drawableByName(warningAlert.iconName)),
-                                        stringResource(R.string.alert),
-                                        modifier =
-                                            Modifier.placeholderIfLoading().padding(end = 8.dp),
-                                    )
+                                    if (!branchedNoRoutePills) {
+                                        warningIcon(
+                                            warningAlert.iconName,
+                                            modifier =
+                                                Modifier.placeholderIfLoading().padding(end = 8.dp),
+                                        )
+                                    }
                                 }
                                 DirectionLabel(
                                     direction,
