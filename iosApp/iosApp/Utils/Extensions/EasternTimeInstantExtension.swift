@@ -22,10 +22,6 @@ extension EasternTimeInstant {
         toNSDateLosingTimeZone().formatted(style.inner)
     }
 
-    func minus(_ other: EasternTimeInstant) -> KotlinDuration {
-        minusToKotlinDuration(other: other)
-    }
-
     struct FormatStyle {
         let inner: Date.FormatStyle
 

@@ -441,7 +441,7 @@ class StopDetailsFilteredDeparturesViewTest {
                         0,
                         listOf(routePatternOne, routePatternTwo),
                         now,
-                        null,
+                        listOf(UpcomingTrip(trip, schedule, prediction)),
                         globalResponse,
                     )
             )
@@ -471,7 +471,7 @@ class StopDetailsFilteredDeparturesViewTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Cancellation"))
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Bus cancelled"))
 
         composeTestRule.onNodeWithText("Trip cancelled").assertIsNotDisplayed()
         composeTestRule

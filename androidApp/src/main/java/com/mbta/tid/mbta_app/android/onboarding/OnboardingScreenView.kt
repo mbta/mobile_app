@@ -374,7 +374,7 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
                     }
                     val alert =
                         FormattedAlert(
-                            alert = Single.alert(),
+                            alert = Single.alert { effect = Alert.Effect.Suspension },
                             alertSummary =
                                 AlertSummary.Standard(
                                     effect = Alert.Effect.Suspension,

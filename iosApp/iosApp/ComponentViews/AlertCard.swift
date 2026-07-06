@@ -13,6 +13,7 @@ private struct TakeoverAlertCard: View {
     @ObserveInjection var inject
     let alert: Shared.Alert
     let alertSummary: AlertSummary?
+    let now: EasternTimeInstant
     let routeAccents: TripRouteAccents
     let onViewDetails: (() -> Void)?
     let internalPadding: EdgeInsets
@@ -28,7 +29,18 @@ private struct TakeoverAlertCard: View {
             HStack {
                 HStack(alignment: .center, spacing: 16) {
                     // Override alert state and icon size in the case of all clear
-                    let alertState = alertSummary is AlertSummary.AllClear ? .allClear : alert.alertState
+                    // TODO: prop drill now
+                    let alertStateFromSummary = alertSummary is AlertSummary.AllClear ? .allClear : alert.alertState
+                    let alertStateFromSummaryEntity = alert.allClear(atTime: .now()) ? .allClear : alert.alertState
+                    if alertStateFromSummary != alertStateFromSummaryEntity {
+                        let _ = debugPrint(
+                            "AAAAA alertState mismatch",
+                            alertStateFromSummary,
+                            alertStateFromSummaryEntity
+                        )
+                        abort()
+                    }
+                    let alertState = alertStateFromSummaryEntity
                     AlertIcon(
                         alertState: alertState,
                         color: routeAccents.color,
@@ -36,7 +48,7 @@ private struct TakeoverAlertCard: View {
                     )
                     .scaledToFit()
                     .frame(width: iconSize, height: iconSize, alignment: .center)
-                    Text(formattedAlert.alertCardHeader(spec: .takeover, type: routeAccents.type))
+                    Text(formattedAlert.alertCardHeader(spec: .takeover, type: routeAccents.type, now: now))
                         .font(Typography.title2Bold)
                         .multilineTextAlignment(.leading)
                 }
@@ -75,6 +87,7 @@ struct AlertCard: View {
     let alert: Shared.Alert
     let alertSummary: AlertSummary?
     let spec: AlertCardSpec
+    let now: EasternTimeInstant
     let routeAccents: TripRouteAccents
     let onViewDetails: (() -> Void)?
     let internalPadding: EdgeInsets
@@ -88,6 +101,7 @@ struct AlertCard: View {
         alert: Shared.Alert,
         alertSummary: AlertSummary?,
         spec: AlertCardSpec,
+        now: EasternTimeInstant = .now(),
         routeAccents: TripRouteAccents,
         onViewDetails: (() -> Void)?,
         internalPadding: EdgeInsets = .init()
@@ -95,6 +109,7 @@ struct AlertCard: View {
         self.alert = alert
         self.alertSummary = alertSummary
         self.spec = spec
+        self.now = now
         self.routeAccents = routeAccents
         self.onViewDetails = onViewDetails
         self.internalPadding = internalPadding
@@ -117,7 +132,18 @@ struct AlertCard: View {
             HStack {
                 HStack(alignment: .center, spacing: 16) {
                     // Override alert state and icon size in the case of all clear
-                    let alertState = alertSummary is AlertSummary.AllClear ? .allClear : alert.alertState
+                    // TODO: prop drill now
+                    let alertStateFromSummary = alertSummary is AlertSummary.AllClear ? .allClear : alert.alertState
+                    let alertStateFromSummaryEntity = alert.allClear(atTime: .now()) ? .allClear : alert.alertState
+                    if alertStateFromSummary != alertStateFromSummaryEntity {
+                        let _ = debugPrint(
+                            "AAAAA alertState mismatch",
+                            alertStateFromSummary,
+                            alertStateFromSummaryEntity
+                        )
+                        abort()
+                    }
+                    let alertState = alertStateFromSummaryEntity
                     let iconSize = alertState == .allClear ? elevatorIconSize : iconSize
                     AlertIcon(
                         alertState: alertState,
@@ -126,7 +152,7 @@ struct AlertCard: View {
                     )
                     .scaledToFit()
                     .frame(width: iconSize, height: iconSize, alignment: .center)
-                    Text(formattedAlert.alertCardHeader(spec: spec, type: routeAccents.type))
+                    Text(formattedAlert.alertCardHeader(spec: spec, type: routeAccents.type, now: now))
                         .font(Typography.callout)
                         .multilineTextAlignment(.leading)
                 }
@@ -146,6 +172,7 @@ struct AlertCard: View {
         if spec == .takeover {
             TakeoverAlertCard(alert: alert,
                               alertSummary: alertSummary,
+                              now: now,
                               routeAccents: routeAccents,
                               onViewDetails: onViewDetails,
                               internalPadding: internalPadding)

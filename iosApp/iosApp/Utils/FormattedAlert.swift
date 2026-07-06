@@ -456,7 +456,7 @@ struct FormattedAlert: Equatable {
         }
     }
 
-    var delayHeader: AttributedString {
+    var delayHeaderFromSummary: AttributedString {
         if case let .standard(alertSummary) = onEnum(of: alertSummary),
            case .startingLaterToday = onEnum(of: alertSummary.timeframe), let summary {
             return summary
@@ -470,6 +470,33 @@ struct FormattedAlert: Equatable {
             return AttributedString.tryMarkdown(delaysDueToCause)
         }
         return AttributedString.tryMarkdown("**\(cause)**")
+    }
+
+    func delayHeaderFromSummaryEntity(now: EasternTimeInstant) -> AttributedString {
+        let startingLaterToday = alert.currentPeriod(time: now) == nil &&
+        alert.nextPeriod(time: now, within: .init(days: 1))?.startServiceDate == now.serviceDate
+        debugPrint("AAAAA delayHeaderFromSummaryEntity", alert, now, alert.currentPeriod(time: now), alert.nextPeriod(time: now, within: .init(days: 1)), startingLaterToday)
+        if startingLaterToday, let summary {
+            return summary
+        }
+        // Show "Single Tracking" if there is an informational delay alert with that cause
+        // (Any other information severity delay alerts are never shown)
+        guard let cause = alert.cause?.causeString,
+              alert.cause == .singleTracking,
+              alert.severity < 3
+        else {
+            return AttributedString.tryMarkdown(delaysDueToCause)
+        }
+        return AttributedString.tryMarkdown("**\(cause)**")
+    }
+
+    func delayHeader(now: EasternTimeInstant) -> AttributedString {
+        let fromSummaryEntity = delayHeaderFromSummaryEntity(now: now)
+        if delayHeaderFromSummary != fromSummaryEntity {
+            debugPrint("AAAAA delayHeader mismatch", delayHeaderFromSummary, fromSummaryEntity)
+            abort()
+        }
+        return fromSummaryEntity
     }
 
     var elevatorHeader: AttributedString {
@@ -496,9 +523,9 @@ struct FormattedAlert: Equatable {
         return AttributedString.tryMarkdown(headerString)
     }
 
-    func alertCardHeader(spec: AlertCardSpec, type: RouteType) -> AttributedString {
+    func alertCardHeaderFromSummary(spec: AlertCardSpec, type: RouteType, now: EasternTimeInstant) -> AttributedString {
         switch spec {
-        case .delay: delayHeader
+        case .delay: delayHeader(now: now)
         case .downstream: summary ?? AttributedString.tryMarkdown(downstreamLabel)
         case .elevator: elevatorHeader
         case .basic: summary ?? AttributedString.tryMarkdown(effect)
@@ -524,6 +551,47 @@ struct FormattedAlert: Equatable {
             default: AttributedString.tryMarkdown(effect)
             }
         }
+    }
+
+    func alertCardHeaderFromSummaryEntity(spec: AlertCardSpec, type: RouteType, now: EasternTimeInstant) -> AttributedString {
+        let isTripSpecific = alert.informedEntity.contains(where: { $0.trip != nil })
+        return switch spec {
+        case .delay: delayHeader(now: now)
+        case .downstream: summary ?? AttributedString.tryMarkdown(downstreamLabel)
+        case .elevator: elevatorHeader
+        case .basic: summary ?? AttributedString.tryMarkdown(effect)
+        default: switch (type, alert.effect) {
+            case (.bus, .cancellation) where isTripSpecific:
+                AttributedString(NSLocalizedString("Bus cancelled", comment: ""))
+            case (.ferry, .cancellation) where isTripSpecific:
+                AttributedString(NSLocalizedString("Ferry cancelled", comment: ""))
+            case (_, .cancellation) where isTripSpecific:
+                AttributedString(NSLocalizedString("Train cancelled", comment: ""))
+            case (_, .shuttle) where isTripSpecific:
+                AttributedString(NSLocalizedString("Shuttle bus", comment: ""))
+            case (.bus, .suspension) where isTripSpecific:
+                AttributedString(NSLocalizedString("Bus suspended", comment: ""))
+            case (.ferry, .suspension) where isTripSpecific:
+                AttributedString(NSLocalizedString("Ferry suspended", comment: ""))
+            case (_, .suspension) where isTripSpecific:
+                AttributedString(NSLocalizedString("Train suspended", comment: ""))
+            case (_, .stationClosure) where isTripSpecific,
+                 (_, .stopClosure) where isTripSpecific,
+                 (_, .dockClosure) where isTripSpecific:
+                AttributedString(NSLocalizedString("Stop skipped", comment: ""))
+            default: AttributedString.tryMarkdown(effect)
+            }
+        }
+    }
+
+    func alertCardHeader(spec: AlertCardSpec, type: RouteType, now: EasternTimeInstant) -> AttributedString {
+        let fromSummary = alertCardHeaderFromSummary(spec: spec, type: type, now: now)
+        let fromSummaryEntity = alertCardHeaderFromSummaryEntity(spec: spec, type: type, now: now)
+        if fromSummary != fromSummaryEntity {
+            debugPrint("AAAAA alertCardHeader mismatch", fromSummary, fromSummaryEntity)
+            abort()
+        }
+        return fromSummaryEntity
     }
 
     var alertCardMajorBody: AttributedString {

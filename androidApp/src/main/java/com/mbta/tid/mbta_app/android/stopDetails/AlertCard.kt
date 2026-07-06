@@ -47,6 +47,7 @@ import kotlinx.datetime.Month
 private fun TakeoverAlertCard(
     alert: Alert,
     alertSummary: AlertSummary?,
+    now: EasternTimeInstant,
     routeAccents: TripRouteAccents,
     onViewDetails: (() -> Unit)?,
     modifier: Modifier = Modifier,
@@ -82,7 +83,7 @@ private fun TakeoverAlertCard(
                     else null,
             )
             Text(
-                formattedAlert.alertCardHeader(AlertCardSpec.Takeover, routeAccents.type),
+                formattedAlert.alertCardHeader(AlertCardSpec.Takeover, routeAccents.type, now),
                 Modifier.weight(1f),
                 style = Typography.title2Bold,
             )
@@ -121,6 +122,7 @@ fun AlertCard(
     routeAccents: TripRouteAccents,
     onViewDetails: (() -> Unit)?,
     modifier: Modifier = Modifier,
+    now: EasternTimeInstant = EasternTimeInstant.now(),
     interiorPadding: PaddingValues = PaddingValues(0.dp),
 ) {
 
@@ -128,6 +130,7 @@ fun AlertCard(
         TakeoverAlertCard(
             alert,
             alertSummary,
+            now,
             routeAccents,
             onViewDetails,
             modifier,
@@ -158,9 +161,15 @@ fun AlertCard(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                val alertState =
+                val alertStateFromSummary =
                     if (alertSummary is AlertSummary.AllClear) StopAlertState.AllClear
                     else alert.alertState
+                val alertState =
+                    if (alert.allClear(now)) StopAlertState.AllClear
+                    else alert.alertState
+                check(alertStateFromSummary == alertState) {
+                    "alertState mismatch: $alertStateFromSummary vs $alertState"
+                }
                 val iconSize = if (alertState == StopAlertState.AllClear) 36.dp else iconSize
                 AlertIcon(
                     alertState = alertState,
@@ -175,7 +184,7 @@ fun AlertCard(
                         else null,
                 )
                 Text(
-                    formattedAlert.alertCardHeader(cardSpec, routeAccents.type),
+                    formattedAlert.alertCardHeader(cardSpec, routeAccents.type, now),
                     Modifier.weight(1f),
                     style = Typography.callout,
                 )
@@ -217,6 +226,7 @@ fun AlertCardPreview() {
             ObjectCollectionBuilder.Single.alert {
                 cause = Alert.Cause.Holiday
                 effect = Alert.Effect.Cancellation
+                informedEntity(trip = "trip")
             },
             TripSpecificAlertSummary(
                 TripSpecificAlertSummary.TripFrom(

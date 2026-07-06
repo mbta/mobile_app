@@ -1,6 +1,8 @@
 package com.mbta.tid.mbta_app.utils
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import kotlin.experimental.ExperimentalObjCRefinement
+import kotlin.native.HiddenFromObjC
 import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
@@ -79,12 +81,9 @@ private constructor(internal val instant: Instant, public val local: LocalDateTi
     public operator fun minus(duration: Duration): EasternTimeInstant =
         EasternTimeInstant(instant - duration)
 
+    @OptIn(ExperimentalObjCRefinement::class)
+    @HiddenFromObjC
     public operator fun minus(other: EasternTimeInstant): Duration = instant - other.instant
-
-    // Durations become Int64s of half nanoseconds in Swift,
-    // so we need this awkward wrapper to easily get specific units
-    public fun minusToKotlinDuration(other: EasternTimeInstant): KotlinDuration =
-        KotlinDuration(instant - other.instant)
 
     override fun compareTo(other: EasternTimeInstant): Int {
         return this.instant.compareTo(other.instant)
@@ -134,14 +133,4 @@ private constructor(internal val instant: Instant, public val local: LocalDateTi
         public fun now(clock: Clock = Clock.System): EasternTimeInstant =
             EasternTimeInstant(clock.now())
     }
-}
-
-public class KotlinDuration(public val duration: Duration) {
-    public val inWholeDays: Long = duration.inWholeDays
-    public val inWholeHours: Long = duration.inWholeHours
-    public val inWholeMicroseconds: Long = duration.inWholeMicroseconds
-    public val inWholeMilliseconds: Long = duration.inWholeMilliseconds
-    public val inWholeMinutes: Long = duration.inWholeMinutes
-    public val inWholeNanoseconds: Long = duration.inWholeNanoseconds
-    public val inWholeSeconds: Long = duration.inWholeSeconds
 }

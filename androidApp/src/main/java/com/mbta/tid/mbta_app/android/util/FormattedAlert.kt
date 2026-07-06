@@ -65,7 +65,7 @@ data class FormattedAlert(
             resources.getString(R.string.delays_due_to_cause, resources.getString(it))
         } ?: resources.getString(R.string.delays_unknown_reason)
 
-    private fun delayHeader(resources: Resources): AnnotatedString {
+    private fun delayHeaderFromSummary(resources: Resources): AnnotatedString {
         if (
             (alertSummary as? AlertSummary.Standard)?.timeframe
                 is AlertSummary.Timeframe.StartingLaterToday
@@ -82,6 +82,35 @@ data class FormattedAlert(
                 AnnotatedString.fromHtml(resources.getString(R.string.effect, it))
             } else null
         } ?: AnnotatedString.fromHtml(delaysDueToCause(resources))
+    }
+
+    private fun delayHeaderFromSummaryEntity(now: EasternTimeInstant, resources: Resources): AnnotatedString {
+        if (
+            alert.currentPeriod(now) == null &&
+                alert.nextPeriod(now)?.startServiceDate == now.serviceDate
+        ) {
+            // starting later today
+            summary(resources)?.let {
+                return it
+            }
+        }
+
+        // Show "Single Tracking" if there is an informational delay alert with that cause
+        // (Any other information severity delay alerts are never shown)
+        return cause(resources)?.let {
+            if (alert.cause == Alert.Cause.SingleTracking && alert.severity < 3) {
+                AnnotatedString.fromHtml(resources.getString(R.string.effect, it))
+            } else null
+        } ?: AnnotatedString.fromHtml(delaysDueToCause(resources))
+    }
+
+    private fun delayHeader(now: EasternTimeInstant, resources: Resources): AnnotatedString {
+        val fromSummary = delayHeaderFromSummary(resources)
+        val fromSummaryEntity = delayHeaderFromSummaryEntity(now, resources)
+        check(fromSummary == fromSummaryEntity) {
+            "delayHeader mismatch: ${fromSummary.toHtml()} vs ${fromSummaryEntity.toHtml()}"
+        }
+        return fromSummaryEntity
     }
 
     private fun elevatorHeader(resources: Resources) =
@@ -186,16 +215,17 @@ data class FormattedAlert(
             null -> null
         }
 
-    fun alertCardHeader(
+    fun alertCardHeaderFromSummary(
         spec: AlertCardSpec,
         type: RouteType,
+        now: EasternTimeInstant,
         resources: Resources,
     ): AnnotatedString {
         return when (spec) {
             AlertCardSpec.Downstream ->
                 summary(resources) ?: AnnotatedString.fromHtml(downstreamEffect(resources))
             AlertCardSpec.Elevator -> elevatorHeader(resources)
-            AlertCardSpec.Delay -> delayHeader(resources)
+            AlertCardSpec.Delay -> delayHeader(now, resources)
             AlertCardSpec.Basic -> summary(resources) ?: AnnotatedString.fromHtml(effect(resources))
             else -> {
                 val effect = alert.effect
@@ -234,9 +264,69 @@ data class FormattedAlert(
         }
     }
 
+    fun alertCardHeaderFromSummaryEntity(
+        spec: AlertCardSpec,
+        type: RouteType,
+        now: EasternTimeInstant,
+        resources: Resources,
+    ): AnnotatedString {
+        return when (spec) {
+            AlertCardSpec.Downstream ->
+                summary(resources) ?: AnnotatedString.fromHtml(downstreamEffect(resources))
+            AlertCardSpec.Elevator -> elevatorHeader(resources)
+            AlertCardSpec.Delay -> delayHeader(now, resources)
+            AlertCardSpec.Basic -> summary(resources) ?: AnnotatedString.fromHtml(effect(resources))
+            else -> {
+                val isTripSpecific = alert.informedEntity.any { it.trip != null }
+                if (isTripSpecific) {
+                    when (alert.effect) {
+                        Alert.Effect.Cancellation if type == RouteType.BUS -> R.string.bus_cancelled
+
+                        Alert.Effect.Cancellation if type == RouteType.FERRY ->
+                            R.string.ferry_cancelled
+
+                        Alert.Effect.Cancellation -> R.string.train_cancelled
+
+                        Alert.Effect.Shuttle -> R.string.shuttle_bus_sentence_case
+
+                        Alert.Effect.Suspension if type == RouteType.BUS -> R.string.bus_suspended
+
+                        Alert.Effect.Suspension if type == RouteType.FERRY ->
+                            R.string.ferry_suspended
+
+                        Alert.Effect.Suspension -> R.string.train_suspended
+
+                        Alert.Effect.StationClosure,
+                        Alert.Effect.StopClosure,
+                        Alert.Effect.DockClosure -> R.string.stop_skipped_sentence_case
+
+                        else -> null
+                    }?.let {
+                        return AnnotatedString(resources.getString(it))
+                    }
+                }
+                AnnotatedString.fromHtml(effect(resources))
+            }
+        }
+    }
+
+    fun alertCardHeader(
+        spec: AlertCardSpec,
+        type: RouteType,
+        now: EasternTimeInstant,
+        resources: Resources,
+    ): AnnotatedString {
+        val fromSummary = alertCardHeaderFromSummary(spec, type, now, resources)
+        val fromSummaryEntity = alertCardHeaderFromSummaryEntity(spec, type, now, resources)
+        check(fromSummary == fromSummaryEntity) {
+            "alertCardHeader mismatch: ${fromSummary.toHtml()} vs ${fromSummaryEntity.toHtml()}"
+        }
+        return fromSummaryEntity
+    }
+
     @Composable
-    fun alertCardHeader(spec: AlertCardSpec, type: RouteType) =
-        alertCardHeader(spec, type, LocalResources.current)
+    fun alertCardHeader(spec: AlertCardSpec, type: RouteType, now: EasternTimeInstant) =
+        alertCardHeader(spec, type, now, LocalResources.current)
 
     fun alertCardMajorBody(resources: Resources) =
         summary(resources) ?: AnnotatedString(alert.header ?: "")
