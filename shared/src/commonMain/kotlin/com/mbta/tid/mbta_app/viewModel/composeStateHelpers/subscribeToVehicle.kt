@@ -14,6 +14,8 @@ import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
 import org.koin.compose.koinInject
 
+public data class VehicleSubscriptionResponse(val vehicle: Vehicle?, val lastResponseStale: Boolean)
+
 @Composable
 internal fun subscribeToVehicle(
     vehicleId: String?,
@@ -21,8 +23,9 @@ internal fun subscribeToVehicle(
     active: Boolean,
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
     vehicleRepository: IVehicleRepository = koinInject(),
-): Vehicle? {
+): VehicleSubscriptionResponse {
     var vehicle: Vehicle? by remember { mutableStateOf(null) }
+    var lastResponseStale: Boolean by remember { mutableStateOf(false) }
     val errorKey = errorKey.withSuffix("subscribeToVehicle")
 
     fun connect(vehicleId: String?, onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit) {
@@ -32,19 +35,28 @@ internal fun subscribeToVehicle(
 
     fun onReceive(message: ApiResult<VehicleStreamDataResponse>) {
         when (message) {
-            is ApiResult.Ok -> vehicle = message.data.vehicle
+            is ApiResult.Ok ->
+                message.data.vehicle?.let {
+                    if (it.isStale()) lastResponseStale = true
+                    else {
+                        vehicle = it
+                        lastResponseStale = false
+                    }
+                }
             is ApiResult.Error -> {
                 println("Vehicle stream failed to join: ${message.message}")
                 vehicle = null
+                lastResponseStale = false
             }
         }
     }
 
     DisposableEffect(vehicleId, active) {
         vehicle = null
+        lastResponseStale = false
         connect(vehicleId, ::onReceive)
         onDispose { vehicleRepository.disconnect() }
     }
 
-    return vehicle
+    return VehicleSubscriptionResponse(vehicle, lastResponseStale)
 }
