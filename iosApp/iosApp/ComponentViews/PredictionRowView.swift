@@ -39,7 +39,7 @@ struct PredictionRowView: View {
                         .padding(.trailing, 8)
                 } else {
                     if let warningAlert = predictions.warningAlert {
-                        WarningIcon(warningAlert.iconName)
+                        warningIcon(warningAlert.iconName)
                             .padding(.trailing, 8)
                     }
                 }

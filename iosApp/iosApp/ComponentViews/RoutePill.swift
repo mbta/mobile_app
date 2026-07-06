@@ -196,7 +196,7 @@ struct RoutePill: View {
                 .accessibilityLabel(routeModeLabel(line: line, route: route))
 
             if let warningAlertIconName {
-                WarningIcon(warningAlertIconName)
+                warningIcon(warningAlertIconName)
                     .padding(.leading, -6)
             }
         }

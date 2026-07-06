@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-func WarningIcon(_ iconName: String) -> some View {
+func warningIcon(_ iconName: String) -> some View {
     Image(iconName)
         .accessibilityLabel("Alert")
         .frame(width: 18, height: 18)

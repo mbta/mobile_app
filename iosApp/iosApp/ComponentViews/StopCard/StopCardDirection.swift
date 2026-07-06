@@ -23,7 +23,7 @@ struct StopCardDirection: View {
                 HStack(alignment: .center) {
                     let noRoutePills = branched.branchRows.allSatisfy { $0.route == nil }
                     if let warningAlert = branched.warningAlert, !noRoutePills {
-                        WarningIcon(warningAlert.iconName)
+                        warningIcon(warningAlert.iconName)
                     }
                     DirectionLabel(
                         direction: direction,
