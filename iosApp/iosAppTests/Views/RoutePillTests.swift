@@ -173,7 +173,7 @@ final class RoutePillTests: XCTestCase {
 
         XCTAssertEqual(
             try greenLineCFixed.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
-            "GL C"
+            "C"
         )
         XCTAssertEqual(
             try greenLineCFlex.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
