@@ -26,7 +26,7 @@ import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.MockRouteCardDataViewModel
 import com.mbta.tid.mbta_app.viewModel.RouteCardDataViewModel
-import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -227,7 +227,7 @@ class SubscribeToVehiclesTest {
             objects.vehicle {
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
                 routeId = route.id.idText
-                updatedAt = now.minus(10.minutes)
+                updatedAt = now.minus(2.hours)
             }
 
         var connectProps: Pair<LineOrRoute.Id, Int>? = null

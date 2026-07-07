@@ -27,7 +27,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Clock
-import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.filterIsInstance
@@ -160,7 +160,7 @@ class TripDetailsViewModelTest : KoinTest {
             objects.vehicle {
                 this.tripId = trip.id
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
-                updatedAt = now.minus(10.minutes)
+                updatedAt = now.minus(2.hours)
             }
 
         var vehicleLoaded = false
