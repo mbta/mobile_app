@@ -9,7 +9,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.etag
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.TimeSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -46,7 +46,7 @@ internal class ResponseCache<T : Any>(
 
         inline fun <reified T : Any> create(
             cacheKey: String,
-            maxAge: Duration = 10.minutes,
+            maxAge: Duration = 1.hours,
             invalidationKey: String? = null,
         ) = ResponseCache<T>(cacheKey, maxAge, json.serializersModule.serializer(), invalidationKey)
     }
