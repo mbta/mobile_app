@@ -46,9 +46,9 @@ updates:
     groups:
       firebase:
         patterns:
-          - "firebase/*"
-          - "google/*"
-          - "googleads/*"
+          - "github.com/firebase/*"
+          - "github.com/google/*"
+          - "github.com/googleads/*"
       mapbox:
         patterns:
-          - "mapbox/*"
+          - "github.com/mapbox/*"
