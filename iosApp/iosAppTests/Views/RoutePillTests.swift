@@ -18,6 +18,36 @@ final class RoutePillTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
+    @MainActor func testWarningIcon() throws {
+        let busRoute = Route(
+            id: .init("627"),
+            type: .bus,
+            color: "FFC72C",
+            directionNames: ["Outbound", "Inbound"],
+            directionDestinations: ["Bedford VA Hospital", "Alewife Station"],
+            isListedRoute: true,
+            longName: "Bedford VA Hospital - Alewife Station via Hanscom Airport",
+            shortName: "62/76",
+            sortOrder: 50621,
+            textColor: "000000",
+            lineId: .init("line-6276"),
+            routePatternIds: nil
+        )
+        let fixedPill = RoutePill(route: busRoute, type: .fixed, warningAlertIconName: "alert-large-bus-issue")
+        XCTAssertEqual(
+            try fixedPill.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
+            "62/76"
+        )
+        XCTAssertNotNil(
+            try fixedPill.inspect().view(RoutePill.self).find(viewWithAccessibilityLabel: "Alert")
+        )
+        let flexPill = RoutePill(route: busRoute, type: .flex)
+        XCTAssertEqual(
+            try flexPill.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
+            "62/76"
+        )
+    }
+
     @MainActor func testBus() throws {
         let busRoute = Route(
             id: .init("627"),
@@ -143,7 +173,7 @@ final class RoutePillTests: XCTestCase {
 
         XCTAssertEqual(
             try greenLineCFixed.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
-            "GL C"
+            "C"
         )
         XCTAssertEqual(
             try greenLineCFlex.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
