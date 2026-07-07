@@ -42,7 +42,7 @@ lottieCompose = "6.7.1"
 # changelog: https://github.com/mapbox/mapbox-maps-android/blob/main/CHANGELOG.md
 mapbox = "11.23.0"
 mapboxTurf = "7.10.0"
-mokkery = "3.3.0"
+mokkery = "3.4.2"
 molecule = "2.2.0"
 okhttp = "5.4.0"
 okio = "3.17.0"
