@@ -12,6 +12,8 @@ import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
+import io.sentry.kotlin.multiplatform.Sentry
+import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
 import org.koin.compose.koinInject
 
 public data class VehicleSubscriptionResponse(val vehicle: Vehicle?, val lastResponseStale: Boolean)
@@ -37,8 +39,25 @@ internal fun subscribeToVehicle(
         when (message) {
             is ApiResult.Ok ->
                 message.data.vehicle?.let {
-                    if (it.isStale()) lastResponseStale = true
-                    else {
+                    if (it.isStale()) {
+                        lastResponseStale = true
+                        Sentry.captureMessage("Stale vehicle received") { scope ->
+                            scope.addBreadcrumb(
+                                Breadcrumb(
+                                    message = "Vehicle significantly out of date",
+                                    data =
+                                        mutableMapOf(
+                                            "id" to it.id,
+                                            "updatedAt" to it.updatedAt,
+                                            "routeId" to (it.routeId?.idText ?: "nil"),
+                                            "tripId" to (it.tripId ?: "nil"),
+                                            "stopId" to (it.stopId ?: "nil"),
+                                            "currentStatus" to it.currentStatus,
+                                        ),
+                                )
+                            )
+                        }
+                    } else {
                         vehicle = it
                         lastResponseStale = false
                     }

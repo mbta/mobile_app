@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.hours
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.maplibre.spatialk.geojson.Position
@@ -82,7 +82,7 @@ public data class Vehicle(
     public val hasCarLevelCrowding: Boolean =
         carriages.orEmpty().any { it.occupancyStatus != Vehicle.OccupancyStatus.NoDataAvailable }
 
-    private val staleThreshold = 5.minutes
+    private val staleThreshold = 1.hours
 
     public fun isStale(): Boolean = EasternTimeInstant.now().minus(updatedAt) > staleThreshold
 
