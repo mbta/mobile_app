@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.viewModel.composeStateHelpers
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,13 +40,13 @@ internal fun subscribeToTripPredictions(
     val tripId = tripFilter?.tripId
 
     var predictions: PredictionsStreamDataResponse? by remember { mutableStateOf(null) }
+    var loadedTripId: String? by remember { mutableStateOf(null) }
 
     fun connect(
         tripId: String?,
         active: Boolean,
         onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
     ) {
-        tripPredictionsRepository.disconnect()
         if (tripId != null && active) {
             tripPredictionsRepository.connect(tripId, errorKey, onReceive)
         }
@@ -58,6 +57,7 @@ internal fun subscribeToTripPredictions(
         when (message) {
             is ApiResult.Ok -> {
                 predictions = message.data
+                loadedTripId = tripId
             }
             is ApiResult.Error ->
                 println("Trip predictions stream failed to join: ${message.message}")
@@ -79,11 +79,11 @@ internal fun subscribeToTripPredictions(
         }
     }
 
-    DisposableEffect(tripId, active) {
-        predictions = null
-
-        connect(tripId, active, ::onReceive)
-        onDispose { tripPredictionsRepository.disconnect() }
+    LaunchedEffect(tripId, active) {
+        if (active) {
+            if (loadedTripId != tripId) predictions = null
+            connect(tripId, active, ::onReceive)
+        } else tripPredictionsRepository.disconnect()
     }
 
     LaunchedEffect(predictions) { checkStale() }
