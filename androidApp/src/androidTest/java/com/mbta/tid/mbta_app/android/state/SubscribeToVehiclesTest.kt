@@ -26,6 +26,8 @@ import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.MockRouteCardDataViewModel
 import com.mbta.tid.mbta_app.viewModel.RouteCardDataViewModel
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -206,5 +208,90 @@ class SubscribeToVehiclesTest {
 
         composeTestRule.waitUntilDefaultTimeout { connectProps == Pair(line.id, 0) }
         composeTestRule.waitUntilDefaultTimeout { listOf(vehicle2) == vehicles }
+    }
+
+    @Test
+    fun testFiltersStaleVehicles() = runTest {
+        val objects = ObjectCollectionBuilder()
+
+        val route = objects.route {}
+
+        val now = EasternTimeInstant.now()
+        val vehicle1 =
+            objects.vehicle {
+                currentStatus = Vehicle.CurrentStatus.StoppedAt
+                routeId = route.id.idText
+                updatedAt = now.minus(10.seconds)
+            }
+        val vehicle2 =
+            objects.vehicle {
+                currentStatus = Vehicle.CurrentStatus.StoppedAt
+                routeId = route.id.idText
+                updatedAt = now.minus(2.hours)
+            }
+
+        var connectProps: Pair<LineOrRoute.Id, Int>? = null
+
+        val vehiclesRepo =
+            MockVehiclesRepository(
+                VehiclesStreamDataResponse(mapOf(vehicle1.id to vehicle1, vehicle2.id to vehicle2)),
+                onConnect = { routeId, directionId -> connectProps = Pair(routeId, directionId) },
+            )
+
+        val dataRoute = LineOrRoute.Route(route)
+        val stop = objects.stop()
+        val routeCardData =
+            listOf(
+                RouteCardData(
+                    lineOrRoute = dataRoute,
+                    stopData =
+                        listOf(
+                            RouteCardData.RouteStopData(
+                                dataRoute,
+                                stop,
+                                listOf(
+                                    RouteCardData.Leaf(
+                                        dataRoute,
+                                        stop,
+                                        Direction(0, route),
+                                        listOf(),
+                                        setOf(stop.id),
+                                        listOf(
+                                            UpcomingTrip(objects.trip { routeId = route.id.idText })
+                                        ),
+                                        emptyList(),
+                                        true,
+                                        true,
+                                        null,
+                                        emptyList(),
+                                        RouteCardData.Context.StopDetailsFiltered,
+                                    )
+                                ),
+                            )
+                        ),
+                    at = EasternTimeInstant.now(),
+                )
+            )
+
+        var vehicles: List<Vehicle> = emptyList()
+
+        val stateFilter = mutableStateOf(StopDetailsFilter(route.id, 0))
+
+        val routeCardDataVM =
+            MockRouteCardDataViewModel(RouteCardDataViewModel.State(routeCardData))
+
+        composeTestRule.setContent {
+            val filter by remember { stateFilter }
+            vehicles =
+                subscribeToVehicles(
+                    filter,
+                    ErrorKey(setOf(), "error"),
+                    routeCardDataVM,
+                    vehiclesRepo,
+                )
+        }
+
+        composeTestRule.waitUntilDefaultTimeout { connectProps == Pair(route.id, 0) }
+        composeTestRule.waitUntilDefaultTimeout { listOf(vehicle1) == vehicles }
     }
 }

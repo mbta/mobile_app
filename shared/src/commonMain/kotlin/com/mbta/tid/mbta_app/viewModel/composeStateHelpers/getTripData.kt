@@ -8,7 +8,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
-import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
@@ -90,7 +89,7 @@ internal fun getTripData(
     var trip: Trip? by remember { mutableStateOf(null) }
     var tripSchedules: TripSchedulesResponse? by remember { mutableStateOf(null) }
     var tripPredictions: PredictionsStreamDataResponse? by remember { mutableStateOf(null) }
-    var vehicle: Vehicle? by remember { mutableStateOf(null) }
+    var vehicleResponse: VehicleSubscriptionResponse? by remember { mutableStateOf(null) }
     var tripLoading: Boolean by remember { mutableStateOf(true) }
 
     var result: TripData? by remember { mutableStateOf(null) }
@@ -104,7 +103,7 @@ internal fun getTripData(
         trip = null
         tripSchedules = null
         tripPredictions = null
-        vehicle = null
+        vehicleResponse = null
         tripLoading = true
     }
 
@@ -116,7 +115,7 @@ internal fun getTripData(
             params,
             {
                 tripLoading = false
-                if (trip == null && vehicle != null) {
+                if (trip == null && vehicleResponse?.vehicle != null) {
                     CoroutineScope(coroutineDispatcher).launch {
                         errorBannerRepository.clearDataError(fetchTripErrorKey(errorKey))
                     }
@@ -130,7 +129,7 @@ internal fun getTripData(
             tripId,
             params,
             {
-                if (trip == null && vehicle != null) {
+                if (trip == null && vehicleResponse?.vehicle != null) {
                     CoroutineScope(coroutineDispatcher).launch {
                         errorBannerRepository.clearDataError(fetchTripSchedulesErrorKey(errorKey))
                     }
@@ -157,7 +156,7 @@ internal fun getTripData(
             )
         else null
 
-    vehicle =
+    vehicleResponse =
         subscribeToVehicle(
             tripFilter?.vehicleId,
             errorKey,
@@ -181,25 +180,33 @@ internal fun getTripData(
         }
     }
 
-    LaunchedEffect(vehicle) {
+    LaunchedEffect(vehicleResponse) {
         // If a trip is not loaded but the vehicle has updated, try loading the trip again
         if (!shouldTryLoadingTrip && active) {
             tripFilter?.tripId?.let { tripId -> fetchStaticData(tripId) }
         }
     }
 
-    LaunchedEffect(tripFilter, trip, tripSchedules, tripPredictions, vehicle, context) {
+    LaunchedEffect(tripFilter, trip, tripSchedules, tripPredictions, vehicleResponse, context) {
         val resolvedTrip = trip
         result =
             if (
                 tripFilter != null &&
                     resolvedTrip != null &&
                     resolvedTrip.id == tripFilter.tripId &&
-                    (tripFilter.vehicleId == null || tripFilter.vehicleId == vehicle?.id)
+                    (tripFilter.vehicleId == null ||
+                        tripFilter.vehicleId == vehicleResponse?.vehicle?.id ||
+                        vehicleResponse?.lastResponseStale == true)
             ) {
-                TripData(tripFilter, resolvedTrip, tripSchedules, tripPredictions, vehicle)
-            } else if (tripFilter != null && vehicle != null && !tripLoading) {
-                TripData(tripFilter, null, null, null, vehicle)
+                TripData(
+                    tripFilter,
+                    resolvedTrip,
+                    tripSchedules,
+                    tripPredictions,
+                    vehicleResponse?.vehicle,
+                )
+            } else if (tripFilter != null && vehicleResponse?.vehicle != null && !tripLoading) {
+                TripData(tripFilter, null, null, null, vehicleResponse?.vehicle)
             } else {
                 null
             }
