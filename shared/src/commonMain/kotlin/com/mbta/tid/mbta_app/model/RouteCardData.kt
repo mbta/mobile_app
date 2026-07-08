@@ -1211,8 +1211,11 @@ public data class RouteCardData(
             // If we don’t have any upcoming trips to tell us whether or not service is
             // arrival-only, trust the typical-last-stop-on-route-pattern state.
             val shouldBeFilteredAsArrivalOnly =
-                this.isTypicalLastStopOnRoutePattern(stop, globalData) &&
-                    (this.upcomingTrips?.isArrivalOnly() ?: true)
+                this.isLastStopOnRoutePattern(
+                    stop,
+                    globalData,
+                    listOf(RoutePattern.Typicality.Typical, RoutePattern.Typicality.Atypical),
+                ) && (this.upcomingTrips?.isArrivalOnly() ?: true)
 
             val hasUnseenTypicalPattern =
                 routePatterns?.any {
@@ -1228,12 +1231,13 @@ public data class RouteCardData(
                 !(shuttleWithNoServiceToday)
         }
 
-        private fun isTypicalLastStopOnRoutePattern(
+        private fun isLastStopOnRoutePattern(
             stop: Stop,
             globalData: GlobalResponse,
+            typicalityList: List<RoutePattern.Typicality>,
         ): Boolean {
             return this.routePatterns
-                ?.filter { it.typicality == RoutePattern.Typicality.Typical }
+                ?.filter { typicalityList.contains(it.typicality) }
                 ?.map { it.representativeTripId }
                 ?.takeUnless { it.isEmpty() }
                 ?.all { representativeTripId ->
