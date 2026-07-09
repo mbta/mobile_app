@@ -68,6 +68,7 @@ struct AlertListContainer: View {
         let alert = displayAlert.alert
         let tripIdMatcher: Matcher<NSString> = if let tripId { MatcherData(value: tripId as NSString) }
         else { MatcherWildcard() }
+        let _ = debugPrint("AAAAA", alert, routeIdMatcher, stopIdMatcher, directionIdMatcher, tripIdMatcher)
         let summaryEntity = alert.summary(
             routeId: routeIdMatcher,
             stopId: stopIdMatcher,
