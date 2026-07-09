@@ -137,8 +137,10 @@ class PredictionsRepositoryTests : KoinTest {
         assertNotNull(predictionsRepo.channel)
 
         predictionsRepo.disconnect()
+        advanceUntilIdle()
 
         verify { channel.detach() }
+        assertNull(predictionsRepo.channel)
     }
 
     @Test

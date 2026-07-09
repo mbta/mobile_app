@@ -183,11 +183,11 @@ class StopDetailsViewModelTest : KoinTest {
         testViewModelFlow(viewModel).test {
             awaitItemSatisfying { it.routeData is StopDetailsViewModel.RouteData.Unfiltered }
             assertEquals(1, predictionLoadCount)
-            assertEquals(1, predictionDisconnectCount)
+            assertEquals(0, predictionDisconnectCount)
             viewModel.setActive(active = false, wasSentToBackground = false)
             advanceUntilIdle()
             assertEquals(1, predictionLoadCount)
-            assertEquals(3, predictionDisconnectCount)
+            assertEquals(1, predictionDisconnectCount)
         }
     }
 

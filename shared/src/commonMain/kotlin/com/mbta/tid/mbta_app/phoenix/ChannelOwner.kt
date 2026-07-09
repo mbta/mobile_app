@@ -11,6 +11,7 @@ import com.mbta.tid.mbta_app.repositories.IDebugRepository
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -114,8 +115,9 @@ internal class AsymmetricChannelOwner<JoinData : Any, MessageData : Any>(
             handleJoinResult(result)
         }
 
-        disconnect()
         CoroutineScope(dispatcher).launch {
+            // Wait for the disconnect to finish before attempting to connect
+            disconnect().join()
             connectLock.withLock {
                 val channel = socket.getChannel(spec.topic, spec.params)
 
@@ -166,8 +168,11 @@ internal class AsymmetricChannelOwner<JoinData : Any, MessageData : Any>(
         }
     }
 
-    fun disconnect() {
-        channel?.detach()
-        channel = null
-    }
+    fun disconnect(): Job =
+        CoroutineScope(dispatcher).launch {
+            connectLock.withLock {
+                channel?.detach()
+                channel = null
+            }
+        }
 }

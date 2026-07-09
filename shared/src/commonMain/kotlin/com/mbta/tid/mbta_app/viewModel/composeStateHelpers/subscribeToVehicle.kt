@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.viewModel.composeStateHelpers
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,7 +31,6 @@ internal fun subscribeToVehicle(
     val errorKey = errorKey.withSuffix("subscribeToVehicle")
 
     fun connect(vehicleId: String?, onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit) {
-        vehicleRepository.disconnect()
         if (active) vehicleId?.let { vehicleRepository.connect(it, errorKey, onReceive) }
     }
 
@@ -70,11 +69,17 @@ internal fun subscribeToVehicle(
         }
     }
 
-    DisposableEffect(vehicleId, active) {
-        vehicle = null
-        lastResponseStale = false
-        connect(vehicleId, ::onReceive)
-        onDispose { vehicleRepository.disconnect() }
+    LaunchedEffect(vehicleId, active) {
+        if (active) {
+            if (vehicle?.id != vehicleId) {
+                vehicle = null
+                lastResponseStale = false
+            }
+            connect(vehicleId, ::onReceive)
+        } else {
+            lastResponseStale = false
+            vehicleRepository.disconnect()
+        }
     }
 
     return VehicleSubscriptionResponse(vehicle, lastResponseStale)

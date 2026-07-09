@@ -73,20 +73,32 @@ class AlertsRepositoryTests {
         alertsRepo.connect(onReceive = {})
         advanceUntilIdle()
         verify { alertsRepo.disconnect() }
+        advanceUntilIdle()
         verify { channel.detach() }
     }
 
     @Test
-    fun testChannelClearedOnLeave() {
+    fun testChannelClearedOnLeave() = runTest {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val debugRepo = MockDebugRepository()
         val errorBannerRepo = MockErrorBannerStateRepository()
-        val alertsRepo = AlertsRepository(socket, debugRepo, errorBannerRepo, Dispatchers.IO)
-        every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
-        alertsRepo.channel = socket.getChannel(topic = AlertsChannel.topic, params = emptyMap())
+        val alertsRepo =
+            AlertsRepository(
+                socket,
+                debugRepo,
+                errorBannerRepo,
+                StandardTestDispatcher(testScheduler),
+            )
+        every { socket.getChannel(any(), any()) } returns mock(MockMode.autofill)
+        val channel = socket.getChannel(topic = AlertsChannel.topic, params = emptyMap())
+        every { channel.detach() } returns mock(MockMode.autofill)
+
+        alertsRepo.channel = channel
         assertNotNull(alertsRepo.channel)
 
         alertsRepo.disconnect()
+        advanceUntilIdle()
+        verify { channel.detach() }
         assertNull(alertsRepo.channel)
     }
 
