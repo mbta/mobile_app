@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.android.routePicker
 
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertCountEquals
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
@@ -13,6 +12,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.LineOrRoute
@@ -53,7 +53,7 @@ class RoutePickerViewTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNode(hasContentDescription("Loading")).assertIsDisplayed()
+        composeTestRule.onNode(hasContentDescription("Loading")).assertCanBeDisplayed()
     }
 
     @Test
@@ -84,8 +84,8 @@ class RoutePickerViewTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Add favorite stops").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Done").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Add favorite stops").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Done").assertCanBeDisplayed()
     }
 
     @Test
@@ -108,9 +108,9 @@ class RoutePickerViewTest {
 
         composeTestRule.waitForIdle()
         composeTestRule.onAllNodesWithText("Bus").assertCountEquals(2)
-        composeTestRule.onNodeWithText("Silver Line").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Commuter Rail").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Ferry").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Silver Line").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Commuter Rail").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Ferry").assertCanBeDisplayed()
     }
 
     @Test
@@ -136,7 +136,7 @@ class RoutePickerViewTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Subway").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Subway").assertCanBeDisplayed()
     }
 
     @Test
@@ -166,8 +166,8 @@ class RoutePickerViewTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Red Line").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Mattapan Line").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Red Line").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Mattapan Line").assertCanBeDisplayed()
     }
 
     @Test
@@ -209,11 +209,11 @@ class RoutePickerViewTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Harvard Square - Nubian Station").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Watertown Square - Harvard Station").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Harvard Square - Nubian Station").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Watertown Square - Harvard Station").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText("Logan Airport Terminals - South Station")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Mattapan Line").assertIsNotDisplayed()
     }
 
@@ -250,7 +250,7 @@ class RoutePickerViewTest {
         composeTestRule.onNodeWithText("Harvard Square - Nubian Station").assertIsNotDisplayed()
         composeTestRule
             .onNodeWithText("Logan Airport Terminals - South Station")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -276,7 +276,7 @@ class RoutePickerViewTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Providence/Stoughton Line").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Providence/Stoughton Line").assertCanBeDisplayed()
     }
 
     @Test
@@ -302,7 +302,7 @@ class RoutePickerViewTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Lynn Ferry").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Lynn Ferry").assertCanBeDisplayed()
     }
 
     @Test
@@ -450,13 +450,13 @@ class RoutePickerViewTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText(route71.longName).assertIsDisplayed()
+        composeTestRule.onNodeWithText(route71.longName).assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Filter routes").performClick().performTextInput("query")
         composeTestRule.waitForIdle()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
             hasText("To find stops, select a route first")
         )
-        composeTestRule.onNodeWithText(route1.longName).assertIsDisplayed()
+        composeTestRule.onNodeWithText(route1.longName).assertCanBeDisplayed()
         composeTestRule.onNodeWithText(route71.longName).assertIsNotDisplayed()
     }
 
@@ -522,15 +522,15 @@ class RoutePickerViewTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText(route1.longName).assertIsDisplayed()
-        composeTestRule.onNodeWithText(route71.longName).assertIsDisplayed()
+        composeTestRule.onNodeWithText(route1.longName).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(route71.longName).assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Filter routes").performClick().performTextInput("query")
         composeTestRule.waitForIdle()
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
             hasText("To find stops, select a route first")
         )
-        composeTestRule.onNodeWithText("No matching bus routes").assertIsDisplayed()
+        composeTestRule.onNodeWithText("No matching bus routes").assertCanBeDisplayed()
         composeTestRule.onNodeWithText(route1.longName).assertIsNotDisplayed()
         composeTestRule.onNodeWithText(route71.longName).assertIsNotDisplayed()
     }

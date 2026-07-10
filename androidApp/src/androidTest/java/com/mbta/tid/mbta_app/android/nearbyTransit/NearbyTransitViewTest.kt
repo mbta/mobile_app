@@ -5,13 +5,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Direction
@@ -181,13 +181,12 @@ class NearbyTransitViewTest : KoinTest {
                 RouteCardData.RouteStopData(
                     LineOrRoute.Route(route),
                     stop,
-                    directions = listOf(Direction(0, route), Direction(1, route)),
                     data =
                         listOf(
                             RouteCardData.Leaf(
                                 LineOrRoute.Route(route),
                                 stop,
-                                0,
+                                Direction(0, route),
                                 listOf(routePatternOne),
                                 setOf(stop.id),
                                 listOf(UpcomingTrip(trip, prediction = prediction)),
@@ -201,7 +200,7 @@ class NearbyTransitViewTest : KoinTest {
                             RouteCardData.Leaf(
                                 LineOrRoute.Route(route),
                                 stop,
-                                1,
+                                Direction(null, null, 1),
                                 listOf(routePatternTwo),
                                 setOf(sampleStop.id),
                                 emptyList(),
@@ -225,13 +224,12 @@ class NearbyTransitViewTest : KoinTest {
                 RouteCardData.RouteStopData(
                     LineOrRoute.Line(greenLine, setOf(greenLineRoute)),
                     greenLineStop,
-                    directions = listOf(Direction(0, greenLineRoute)),
                     data =
                         listOf(
                             RouteCardData.Leaf(
                                 LineOrRoute.Line(greenLine, setOf(greenLineRoute)),
                                 greenLineStop,
-                                0,
+                                Direction(0, greenLineRoute),
                                 listOf(greenLineRoutePatternOne),
                                 setOf(greenLineStop.id),
                                 listOf(
@@ -269,7 +267,8 @@ class NearbyTransitViewTest : KoinTest {
                 NearbyViewModel.State(
                     false,
                     listOf(routeCardData(), glRouteCardData()),
-                    loadedLocation = Position(0.0, 0.0),
+                    Position(0.0, 0.0),
+                    listOf(sampleStop.id, greenLineStop.id),
                 )
             )
 
@@ -287,16 +286,16 @@ class NearbyTransitViewTest : KoinTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Nearby Transit").assertCanBeDisplayed()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
-        composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Sample Headsign").assertIsDisplayed()
-        composeTestRule.onNodeWithText("1 min").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Sample Route").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Sample Headsign").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("1 min").assertCanBeDisplayed()
 
-        composeTestRule.onNodeWithText("Green Line Long Name").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Green Line Stop").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Green Line Head Sign").assertIsDisplayed()
-        composeTestRule.onNodeWithText("5 min").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Green Line Long Name").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Green Line Stop").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Green Line Head Sign").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("5 min").assertCanBeDisplayed()
     }
 
     @OptIn(ExperimentalTestApi::class)
@@ -327,7 +326,8 @@ class NearbyTransitViewTest : KoinTest {
                 NearbyViewModel.State(
                     false,
                     listOf(routeCardData()),
-                    loadedLocation = Position(0.0, 0.0),
+                    Position(0.0, 0.0),
+                    listOf(sampleStop.id, greenLineStop.id),
                 )
             )
 
@@ -345,7 +345,7 @@ class NearbyTransitViewTest : KoinTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Nearby Transit").assertCanBeDisplayed()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Sample Headsign").performClick()
 
@@ -374,7 +374,9 @@ class NearbyTransitViewTest : KoinTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
             hasText("This would be the no nearby stops view")
         )
-        composeTestRule.onNodeWithText("This would be the no nearby stops view").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("This would be the no nearby stops view")
+            .assertCanBeDisplayed()
     }
 
     @OptIn(ExperimentalTestApi::class)
@@ -414,7 +416,8 @@ class NearbyTransitViewTest : KoinTest {
                 NearbyViewModel.State(
                     false,
                     listOf(routeCardData(harvardNorthbound)),
-                    loadedLocation = Position(0.0, 0.0),
+                    Position(0.0, 0.0),
+                    listOf(harvardNorthbound.id, centralNorthbound.id),
                 )
             )
 
@@ -444,7 +447,7 @@ class NearbyTransitViewTest : KoinTest {
         }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Harvard"))
-        composeTestRule.onNodeWithText("Harvard").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Harvard").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Central").assertDoesNotExist()
 
         alerts = AlertsStreamDataResponse(mapOf(alert.id to alert))

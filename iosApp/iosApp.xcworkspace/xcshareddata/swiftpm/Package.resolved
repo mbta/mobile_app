@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/app-check.git",
       "state" : {
-        "revision" : "61b85103a1aeed8218f17c794687781505fbbef5",
-        "version" : "11.2.0"
+        "revision" : "bb4002485ff867768dec13bf904a2ddb050bd1b1",
+        "version" : "11.3.0"
       }
     },
     {
@@ -69,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleUtilities.git",
       "state" : {
-        "revision" : "60da361632d0de02786f709bdc0c4df340f7613e",
-        "version" : "8.1.0"
+        "revision" : "c46e5f8b7c23265f17c24ca7f9fa1b13ded7a822",
+        "version" : "8.1.1"
       }
     },
     {
@@ -123,8 +123,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/airbnb/lottie-spm.git",
       "state" : {
-        "revision" : "69faaefa7721fba9e434a52c16adf4329c9084db",
-        "version" : "4.6.0"
+        "revision" : "0aff16288f8dc1e3dab35cbf5cf45979673fd3df",
+        "version" : "4.6.1"
       }
     },
     {
@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mapbox/mapbox-common-ios.git",
       "state" : {
-        "revision" : "0903177afad61e293d420de4f0032a0d09a73f26",
-        "version" : "24.24.3"
+        "revision" : "6deb996e5ea100a7692b832c89b211b03918d413",
+        "version" : "24.25.0"
       }
     },
     {
@@ -141,8 +141,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mapbox/mapbox-core-maps-ios.git",
       "state" : {
-        "revision" : "62e6c66055e66f34e0e80b75e9b8cd18a6bba7ec",
-        "version" : "11.24.3"
+        "revision" : "f482e7d5211edbf9b4373177a76869dd6256e7a7",
+        "version" : "11.25.0"
       }
     },
     {
@@ -150,8 +150,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mapbox/mapbox-maps-ios.git",
       "state" : {
-        "revision" : "90c6b2e36a8e8118c67236974d57d96cfbdc44c0",
-        "version" : "11.24.3"
+        "revision" : "8f8eec8cdc91a629404f04d2dd30eb5109fca8e8",
+        "version" : "11.25.0"
       }
     },
     {

@@ -112,7 +112,6 @@ final class RouteCardTests: XCTestCase {
                 stopData: [.init(
                     lineOrRoute: .route(route),
                     stop: stop,
-                    directions: [],
                     data: []
                 )],
                 at: EasternTimeInstant.now()
@@ -131,7 +130,6 @@ final class RouteCardTests: XCTestCase {
                 stopData: [.init(
                     lineOrRoute: .route(route),
                     stop: stop,
-                    directions: [],
                     data: []
                 )],
                 at: EasternTimeInstant.now()
@@ -163,10 +161,10 @@ final class RouteCardTests: XCTestCase {
                 stopData: [.init(
                     lineOrRoute: .route(route),
                     stop: stop,
-                    directions: [.init(name: "Inbound", destination: "", id: 0)],
                     data: [.init(
                         lineOrRoute: .route(route), stop: stop,
-                        directionId: 0, routePatterns: [pattern], stopIds: [stop.id],
+                        direction: .init(name: "Inbound", destination: "", id: 0), routePatterns: [pattern],
+                        stopIds: [stop.id],
                         upcomingTrips: [], alertsHere: [], allDataLoaded: true,
                         hasSchedulesToday: true, subwayServiceStartTime: nil, alertsDownstream: [],
                         context: .nearbyTransit

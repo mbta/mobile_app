@@ -93,7 +93,7 @@ fun StopDetailsFilteredView(
         realtimeStopData?.data?.firstOrNull {
             it.stop.id == stopId &&
                 it.lineOrRoute.id == stopFilter.routeId &&
-                it.directionId == stopFilter.directionId
+                it.direction.id == stopFilter.directionId
         }
 
     var inSaveFavoritesFlow by rememberSaveable { mutableStateOf(false) }
@@ -159,7 +159,7 @@ fun StopDetailsFilteredView(
                     stopFilter = stopFilter,
                     tripFilter = tripFilter,
                     leaf = placeholderLeaf,
-                    selectedDirection = stopData.directions.first(),
+                    selectedDirection = stopData.data.first().direction,
                     allAlerts = AlertsStreamDataResponse(emptyMap()),
                     now = now,
                     updateTripFilter = {},

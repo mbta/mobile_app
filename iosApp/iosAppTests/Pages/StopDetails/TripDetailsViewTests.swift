@@ -45,9 +45,6 @@ final class TripDetailsViewTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let nearbyVM = NearbyViewModel()
-        nearbyVM.alerts = .init(objects: objects)
-
         let tripFilter = TripDetailsPageFilter(
             tripId: trip.id,
             vehicleId: vehicle.id,
@@ -86,14 +83,14 @@ final class TripDetailsViewTests: XCTestCase {
             routeAccents: .init(route: route),
             onOpenAlertDetails: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
             tripDetailsVM: tripDetailsVM,
+            navManager: .init(),
         )
 
         let exp = sut.on(\.didLoadData) { view in
-            XCTAssertNotNil(try view.find(TripHeaderCard.self).find(text: "Next stop"))
             XCTAssertNotNil(try view.find(TripHeaderCard.self).find(text: vehicleStop.name))
+            XCTAssertNotNil(try view.find(TripHeaderCard.self).find(text: "Next stop"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 1)
@@ -120,9 +117,6 @@ final class TripDetailsViewTests: XCTestCase {
         }
 
         loadKoinMocks(objects: objects)
-
-        let nearbyVM = NearbyViewModel()
-        nearbyVM.alerts = .init(objects: objects)
 
         let tripFilter = TripDetailsPageFilter(
             tripId: trip.id,
@@ -174,9 +168,9 @@ final class TripDetailsViewTests: XCTestCase {
             routeAccents: .init(route: route),
             onOpenAlertDetails: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
             tripDetailsVM: tripDetailsVM,
+            navManager: .init(),
         )
 
         let exp = sut.on(\.didLoadData) { view in
@@ -217,9 +211,6 @@ final class TripDetailsViewTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let nearbyVM = NearbyViewModel()
-        nearbyVM.alerts = .init(objects: objects)
-
         let tripFilter = TripDetailsPageFilter(
             tripId: trip.id,
             vehicleId: vehicle.id,
@@ -258,9 +249,9 @@ final class TripDetailsViewTests: XCTestCase {
             routeAccents: .init(route: route),
             onOpenAlertDetails: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
             tripDetailsVM: tripDetailsVM,
+            navManager: .init(),
         )
 
         let exp = sut.on(\.didLoadData) { view in
@@ -299,8 +290,7 @@ final class TripDetailsViewTests: XCTestCase {
         loadKoinMocks(objects: objects)
 
         let oldNavEntry: SheetNavigationStackEntry = .stopDetails(stopId: "oldStop", stopFilter: nil, tripFilter: nil)
-        let nearbyVM = NearbyViewModel(navigationStack: [oldNavEntry])
-        nearbyVM.alerts = .init(objects: objects)
+        let navManager = NavigationManager(navigationStack: [oldNavEntry])
 
         let tripFilter = TripDetailsPageFilter(
             tripId: trip.id,
@@ -340,9 +330,9 @@ final class TripDetailsViewTests: XCTestCase {
             routeAccents: .init(route: route),
             onOpenAlertDetails: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
             tripDetailsVM: tripDetailsVM,
+            navManager: navManager,
         )
 
         let newNavEntry: SheetNavigationStackEntry = .stopDetails(
@@ -351,12 +341,13 @@ final class TripDetailsViewTests: XCTestCase {
             tripFilter: nil
         )
 
-        sut.onTapStop(stop: TripDetailsStopList.Entry(
-            stop: targetStop, stopSequence: 0,
-            disruption: nil, schedule: nil, prediction: nil,
-            vehicle: nil, routes: [], elevatorAlerts: []
-        ))
-        XCTAssertEqual(nearbyVM.navigationStack, [oldNavEntry, newNavEntry])
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+        let exp = sut.inspection.inspect(after: 0.1) { view in
+            try view.find(button: targetStop.name).tap()
+            XCTAssertEqual(navManager.navigationStack, [oldNavEntry, newNavEntry])
+        }
+
+        wait(for: [exp], timeout: 1)
     }
 
     @MainActor
@@ -387,8 +378,7 @@ final class TripDetailsViewTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let nearbyVM = NearbyViewModel()
-        nearbyVM.alerts = .init(objects: objects)
+        let navManager = NavigationManager()
 
         let tripFilter = TripDetailsPageFilter(
             tripId: trip.id,
@@ -428,14 +418,14 @@ final class TripDetailsViewTests: XCTestCase {
             routeAccents: .init(route: route),
             onOpenAlertDetails: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
             tripDetailsVM: tripDetailsVM,
+            navManager: navManager,
         )
 
         let exp = sut.on(\.didLoadData) { view in
             try view.find(TripHeaderCard.self).find(button: "Follow").tap()
-            if case let .tripDetails(filter) = nearbyVM.navigationStack.last {
+            if case let .tripDetails(filter) = navManager.navigationStack.last {
                 XCTAssertEqual(tripFilter, filter)
             } else {
                 XCTFail("Nav was not updated to trip details")
@@ -473,9 +463,6 @@ final class TripDetailsViewTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let nearbyVM = NearbyViewModel()
-        nearbyVM.alerts = .init(objects: objects)
-
         let tripFilter = TripDetailsPageFilter(
             tripId: trip.id,
             vehicleId: vehicle.id,
@@ -514,9 +501,9 @@ final class TripDetailsViewTests: XCTestCase {
             routeAccents: .init(route: route),
             onOpenAlertDetails: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
             tripDetailsVM: tripDetailsVM,
+            navManager: .init(),
         )
 
         let exp = sut.on(\.didLoadData) { view in
@@ -554,9 +541,6 @@ final class TripDetailsViewTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let nearbyVM = NearbyViewModel()
-        nearbyVM.alerts = .init(objects: objects)
-
         let tripFilter = TripDetailsPageFilter(
             tripId: trip.id,
             vehicleId: vehicle.id,
@@ -595,9 +579,9 @@ final class TripDetailsViewTests: XCTestCase {
             routeAccents: .init(route: route),
             onOpenAlertDetails: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
             tripDetailsVM: tripDetailsVM,
+            navManager: .init(),
         )
 
         let exp = sut.on(\.didLoadData) { view in
@@ -634,9 +618,6 @@ final class TripDetailsViewTests: XCTestCase {
         }
 
         loadKoinMocks(objects: objects)
-
-        let nearbyVM = NearbyViewModel()
-        nearbyVM.alerts = .init(objects: objects)
 
         let tripFilter = TripDetailsPageFilter(
             tripId: trip.id,
@@ -676,9 +657,9 @@ final class TripDetailsViewTests: XCTestCase {
             routeAccents: .init(route: route),
             onOpenAlertDetails: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
             tripDetailsVM: tripDetailsVM,
+            navManager: .init(),
         )
 
         let exp = sut.on(\.didLoadData) { view in

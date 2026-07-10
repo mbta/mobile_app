@@ -42,9 +42,6 @@ final class TripDetailsPageTests: XCTestCase {
             prediction.vehicleId = vehicle.id
         }
 
-        let nearbyVM = iosApp.NearbyViewModel()
-        nearbyVM.alerts = .init(objects: objects)
-
         let filter = TripDetailsPageFilter(
             tripId: trip.id,
             vehicleId: vehicle.id,
@@ -85,10 +82,11 @@ final class TripDetailsPageTests: XCTestCase {
 
         let sut = TripDetailsPage(
             filter: filter,
+            alerts: .init(alerts: [:]),
             navCallbacks: .companion.empty,
-            nearbyVM: nearbyVM,
             tripDetailsPageVM: tripDetailsPageVM,
-            tripDetailsVM: tripDetailsVM
+            tripDetailsVM: tripDetailsVM,
+            navManager: .init(),
         )
 
         let exp = expectation(description: "page loaded")
@@ -105,7 +103,6 @@ final class TripDetailsPageTests: XCTestCase {
 
     @MainActor
     func testClose() throws {
-        let nearbyVM = iosApp.NearbyViewModel()
         let closeExp = expectation(description: "Page closed")
         let sut = TripDetailsPage(
             filter: .init(
@@ -116,8 +113,9 @@ final class TripDetailsPageTests: XCTestCase {
                 stopId: "",
                 stopSequence: nil
             ),
+            alerts: .init(alerts: [:]),
             navCallbacks: .init(onBack: nil, onClose: { closeExp.fulfill() }, backButtonPresentation: .floating),
-            nearbyVM: nearbyVM,
+            navManager: .init(),
         )
         try sut.inspect().find(ActionButton.self).find(ViewType.Button.self).tap()
         wait(for: [closeExp], timeout: 1)

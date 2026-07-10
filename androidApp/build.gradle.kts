@@ -2,11 +2,10 @@ import com.diffplug.spotless.FormatterFunc
 import com.mbta.tid.mbta_app.gradle.CheckMapboxBridgeTask
 import com.mbta.tid.mbta_app.gradle.ConvertIosLocalizationTask
 import com.mbta.tid.mbta_app.gradle.ConvertIosMapIconsTask
-import java.io.BufferedReader
+import com.mbta.tid.mbta_app.gradle.EnvReader
 import java.io.Serializable
-import java.io.StringReader
+import java.net.URL
 import java.util.Locale
-import java.util.Properties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 // To use debug signing keys and skip Sentry uploads for an easier time debugging
@@ -80,6 +79,11 @@ android {
     }
     flavorDimensions += "environment"
     productFlavors {
+        create("local") {
+            dimension = "environment"
+            applicationIdSuffix = ".local"
+        }
+
         create("devOrange") {
             dimension = "environment"
             applicationIdSuffix = ".devOrange"
@@ -154,33 +158,23 @@ spotless {
         custom(
             "use custom default wait timeout in android UI tests",
             object : Serializable, FormatterFunc.NeedsFile {
-                override fun applyWithFile(text: String, file: File): String {
-                    if (
-                        !file.path.contains("androidTest") ||
-                            file.name == "ComposeTestRuleExtension.kt" ||
-                            file.name == "RetryableComposeTestRule.kt"
+                val replacements =
+                    mapOf(
+                        "waitUntil(" to "waitUntilDefaultTimeout(",
+                        "waitUntil {" to "waitUntilDefaultTimeout {",
+                        "waitUntilAtLeastOneExists(" to "waitUntilAtLeastOneExistsDefaultTimeout(",
+                        "waitUntilDoesNotExist(" to "waitUntilDoesNotExistDefaultTimeout(",
+                        "waitUntilExactlyOneExists(" to "waitUntilExactlyOneExistsDefaultTimeout(",
+                        "waitUntilNodeCount(" to "waitUntilNodeCountDefaultTimeout(",
+                        ".assertIsDisplayed()" to ".assertCanBeDisplayed()",
                     )
+
+                override fun applyWithFile(text: String, file: File): String {
+                    if (!file.path.contains("androidTest") || file.path.contains("testUtils"))
                         return text
-                    val lines = text.lines()
-                    for (line in lines.withIndex()) {
-                        for (fnText in
-                            arrayOf(
-                                "waitUntil(",
-                                "waitUntil {",
-                                "waitUntilAtLeastOneExists(",
-                                "waitUntilDoesNotExist(",
-                                "waitUntilExactlyOneExists(",
-                                "waitUntilNodeCount(",
-                            )) {
-                            val column = line.value.indexOf(fnText, 0, false)
-                            if (column != -1) {
-                                throw IllegalStateException(
-                                    "${file.path}:${line.index + 1}:${column + 1} calls $fnText. Replace with ${fnText.dropLast(1)}DefaultTimeout to prevent CI flakiness."
-                                )
-                            }
-                        }
-                    }
-                    return text
+                    return replacements
+                        .toList()
+                        .fold(text, { text, (bad, good) -> text.replace(bad, good) })
                 }
             },
         )
@@ -226,29 +220,12 @@ tasks.register("mapboxTempToken") {
 
 // we want to load environment variables while first declaring settings
 run {
-    val envFile = File(".envrc")
-    val props = Properties()
-
-    if (envFile.exists()) {
-        val bufferedReader: BufferedReader = envFile.bufferedReader()
-        bufferedReader.use {
-            it.readLines()
-                .filter { line -> line.startsWith("export") }
-                .map { line ->
-                    val cleanLine = line.replace("export", "")
-                    props.load(StringReader(cleanLine))
-                }
-        }
-    } else {
-        println(".envrc file not configured, reading from system env instead")
-    }
-
-    fun getPropsOrEnv(key: String): String? = props.getProperty(key) ?: System.getenv(key)
+    val env = EnvReader()
 
     android.defaultConfig.buildConfigField(
         "String",
         "SENTRY_DSN",
-        "\"${getPropsOrEnv("SENTRY_DSN_ANDROID") ?: ""}\"",
+        "\"${env["SENTRY_DSN_ANDROID"] ?: ""}\"",
     )
 
     // https://stackoverflow.com/a/53261807
@@ -259,7 +236,7 @@ run {
             }
         } ?: "debug"
 
-    val sentryEnvOverride: String = getPropsOrEnv("SENTRY_ENVIRONMENT") ?: sentryEnv
+    val sentryEnvOverride: String = env["SENTRY_ENVIRONMENT"] ?: sentryEnv
 
     android.defaultConfig.buildConfigField(
         "String",
@@ -267,8 +244,8 @@ run {
         "\"${sentryEnvOverride}\"",
     )
 
-    val firebaseKey = getPropsOrEnv("FIREBASE_KEY")
-    val googleAppId = getPropsOrEnv("GOOGLE_APP_ID_ANDROID")
+    val firebaseKey = env["FIREBASE_KEY"]
+    val googleAppId = env["GOOGLE_APP_ID_ANDROID"]
     if (firebaseKey != null && googleAppId != null) {
         val googleSecretsFile = File("${projectDir}/src/main/res/values/secrets-google.xml")
         val lines =
@@ -283,6 +260,29 @@ run {
         googleSecretsFile.writeText(lines.joinToString(separator = "\n"))
     } else {
         logger.warn("FIREBASE_KEY or GOOGLE_APP_ID_ANDROID not provided, skipping Firebase setup")
+    }
+
+    val localBackendOrigin = env["LOCAL_BACKEND_ORIGIN_ANDROID"] ?: "http://10.0.2.2:4000"
+    val localBackendOriginUrl = URL(localBackendOrigin)
+    val networkSecurityConfigContent =
+        """
+        <?xml version="1.0" encoding="utf-8"?>
+        <network-security-config xmlns:android="http://schemas.android.com/apk/res/android">
+            <domain-config cleartextTrafficPermitted="true">
+                <domain includeSubdomains="true">${localBackendOriginUrl.host}</domain>
+            </domain-config>
+        </network-security-config>
+    """
+            .trimIndent()
+    val networkSecurityConfigDir =
+        layout.buildDirectory.dir("generated/networkSecurityConfig").get()
+    networkSecurityConfigDir.dir("xml").asFile.mkdirs()
+    networkSecurityConfigDir
+        .file("xml/network_security_config.xml")
+        .asFile
+        .writeText(networkSecurityConfigContent)
+    android.sourceSets.getByName("local") {
+        res.directories.add(networkSecurityConfigDir.toString())
     }
 }
 

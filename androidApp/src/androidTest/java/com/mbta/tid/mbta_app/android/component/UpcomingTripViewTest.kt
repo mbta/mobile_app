@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.android.component
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertContentDescriptionContains
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -11,10 +10,11 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.onRoot
-import com.mbta.tid.mbta_app.android.assertContentDescriptionMatches
-import com.mbta.tid.mbta_app.android.assertHasColor
-import com.mbta.tid.mbta_app.android.hasContentDescriptionMatching
-import com.mbta.tid.mbta_app.android.hasTextMatching
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
+import com.mbta.tid.mbta_app.android.testUtils.assertContentDescriptionMatches
+import com.mbta.tid.mbta_app.android.testUtils.assertHasColor
+import com.mbta.tid.mbta_app.android.testUtils.hasContentDescriptionMatching
+import com.mbta.tid.mbta_app.android.testUtils.hasTextMatching
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
@@ -40,9 +40,9 @@ class UpcomingTripViewTest {
         }
         composeTestRule
             .onNodeWithText("Test")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains("Test", substring = true)
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertCanBeDisplayed()
     }
 
     @Test
@@ -52,12 +52,12 @@ class UpcomingTripViewTest {
                 UpcomingTripViewState.Some(TripInstantDisplay.Overridden("Test", true))
             )
         }
-        composeTestRule.onNodeWithText("Last").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Last").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText("Test")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains("Test, Last trip", substring = true)
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertCanBeDisplayed()
     }
 
     @Test
@@ -90,7 +90,9 @@ class UpcomingTripViewTest {
             .onNodeWithText("Cancelled", substring = true)
             .onParent()
             .assertExists()
-            .assertContentDescriptionMatches(Regex(" arriving at 2:03\\sPM cancelled"))
+            .assertContentDescriptionMatches(
+                Regex(" arriving at 2:03\\sPM cancelled", RegexOption.IGNORE_CASE)
+            )
     }
 
     @Test
@@ -100,9 +102,9 @@ class UpcomingTripViewTest {
         }
         composeTestRule
             .onNodeWithText("Now")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains("arriving now", substring = true)
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertCanBeDisplayed()
     }
 
     @Test
@@ -110,12 +112,12 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Now(true)))
         }
-        composeTestRule.onNodeWithText("Last").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Last").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText("Now")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains("arriving now, Last trip", substring = true)
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertCanBeDisplayed()
     }
 
     @Test
@@ -125,10 +127,10 @@ class UpcomingTripViewTest {
         }
         composeTestRule
             .onNodeWithText("BRD")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains("boarding now", substring = true)
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertCanBeDisplayed()
     }
 
     @Test
@@ -136,12 +138,12 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Boarding(true)))
         }
-        composeTestRule.onNodeWithText("Last").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Last").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText("BRD")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains("boarding now, Last trip", substring = true)
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertCanBeDisplayed()
     }
 
     @Test
@@ -151,10 +153,10 @@ class UpcomingTripViewTest {
         }
         composeTestRule
             .onNodeWithText("1 min")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains("arriving in 1 min", substring = true)
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertCanBeDisplayed()
     }
 
     @Test
@@ -162,12 +164,12 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Approaching(true)))
         }
-        composeTestRule.onNodeWithText("Last").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Last").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText("1 min")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains("arriving in 1 min, Last trip", substring = true)
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertCanBeDisplayed()
     }
 
     @Test
@@ -177,10 +179,10 @@ class UpcomingTripViewTest {
         }
         composeTestRule
             .onNodeWithText("ARR")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains("arriving now", substring = true)
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertCanBeDisplayed()
     }
 
     @Test
@@ -188,12 +190,12 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Arriving(true)))
         }
-        composeTestRule.onNodeWithText("Last").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Last").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText("ARR")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains("arriving now, Last trip", substring = true)
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertCanBeDisplayed()
     }
 
     @Test
@@ -203,11 +205,13 @@ class UpcomingTripViewTest {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Time(instant, false)))
         }
         composeTestRule
-            .onNode(hasTextMatching(Regex("2:03\\sPM")))
-            .assertIsDisplayed()
-            .assertContentDescriptionMatches(Regex(" arriving at 2:03\\sPM"))
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+            .onNode(hasTextMatching(Regex("2:03\\sPM", RegexOption.IGNORE_CASE)))
+            .assertCanBeDisplayed()
+            .assertContentDescriptionMatches(
+                Regex(" arriving at 2:03\\sPM", RegexOption.IGNORE_CASE)
+            )
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertCanBeDisplayed()
     }
 
     @Test
@@ -216,12 +220,14 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Time(instant, true)))
         }
-        composeTestRule.onNodeWithText("Last").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Last").assertCanBeDisplayed()
         composeTestRule
-            .onNode(hasTextMatching(Regex("2:03\\sPM")))
-            .assertIsDisplayed()
-            .assertContentDescriptionMatches(Regex(" arriving at 2:03\\sPM, Last trip"))
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+            .onNode(hasTextMatching(Regex("2:03\\sPM", RegexOption.IGNORE_CASE)))
+            .assertCanBeDisplayed()
+            .assertContentDescriptionMatches(
+                Regex(" arriving at 2:03\\sPM, Last trip", RegexOption.IGNORE_CASE)
+            )
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertCanBeDisplayed()
     }
 
     @Test
@@ -237,15 +243,22 @@ class UpcomingTripViewTest {
         }
 
         composeTestRule
-            .onNode(hasTextMatching(Regex("2:03\\sPM")), useUnmergedTree = true)
-            .assertIsDisplayed()
+            .onNode(
+                hasTextMatching(Regex("2:03\\sPM", RegexOption.IGNORE_CASE)),
+                useUnmergedTree = true,
+            )
+            .assertCanBeDisplayed()
         composeTestRule
-            .onNode(hasContentDescriptionMatching(Regex("train arriving at 2:03\\sPM, All aboard")))
-            .assertIsDisplayed()
+            .onNode(
+                hasContentDescriptionMatching(
+                    Regex("train arriving at 2:03\\sPM, All aboard", RegexOption.IGNORE_CASE)
+                )
+            )
+            .assertCanBeDisplayed()
         composeTestRule
             .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithText("All aboard", useUnmergedTree = true).assertIsDisplayed()
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("All aboard", useUnmergedTree = true).assertCanBeDisplayed()
     }
 
     @Test
@@ -259,20 +272,26 @@ class UpcomingTripViewTest {
                 routeType = RouteType.COMMUTER_RAIL,
             )
         }
-        composeTestRule.onNodeWithText("Last", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Last", useUnmergedTree = true).assertCanBeDisplayed()
         composeTestRule
-            .onNode(hasTextMatching(Regex("2:03\\sPM")), useUnmergedTree = true)
-            .assertIsDisplayed()
+            .onNode(
+                hasTextMatching(Regex("2:03\\sPM", RegexOption.IGNORE_CASE)),
+                useUnmergedTree = true,
+            )
+            .assertCanBeDisplayed()
         composeTestRule
             .onNode(
                 hasContentDescriptionMatching(
-                    Regex("train arriving at 2:03\\sPM, All aboard, Last trip")
+                    Regex(
+                        "train arriving at 2:03\\sPM, All aboard, Last trip",
+                        RegexOption.IGNORE_CASE,
+                    )
                 )
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule
             .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -287,14 +306,21 @@ class UpcomingTripViewTest {
             )
         }
         composeTestRule
-            .onNode(hasTextMatching(Regex("2:03\\sPM")), useUnmergedTree = true)
-            .assertIsDisplayed()
+            .onNode(
+                hasTextMatching(Regex("2:03\\sPM", RegexOption.IGNORE_CASE)),
+                useUnmergedTree = true,
+            )
+            .assertCanBeDisplayed()
         composeTestRule
-            .onNode(hasContentDescriptionMatching(Regex("2:03\\sPM train delayed")))
-            .assertIsDisplayed()
+            .onNode(
+                hasContentDescriptionMatching(
+                    Regex("2:03\\sPM train delayed", RegexOption.IGNORE_CASE)
+                )
+            )
+            .assertCanBeDisplayed()
         composeTestRule
             .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -309,14 +335,21 @@ class UpcomingTripViewTest {
             )
         }
         composeTestRule
-            .onNode(hasTextMatching(Regex("2:03\\sPM")), useUnmergedTree = true)
-            .assertIsDisplayed()
+            .onNode(
+                hasTextMatching(Regex("2:03\\sPM", RegexOption.IGNORE_CASE)),
+                useUnmergedTree = true,
+            )
+            .assertCanBeDisplayed()
         composeTestRule
-            .onNode(hasContentDescriptionMatching(Regex("2:03\\sPM train delayed")))
-            .assertIsDisplayed()
+            .onNode(
+                hasContentDescriptionMatching(
+                    Regex("2:03\\sPM train delayed", RegexOption.IGNORE_CASE)
+                )
+            )
+            .assertCanBeDisplayed()
         composeTestRule
             .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -332,21 +365,27 @@ class UpcomingTripViewTest {
             )
         }
         composeTestRule
-            .onNode(hasTextMatching(Regex("2:09\\sPM")), useUnmergedTree = true)
-            .assertIsDisplayed()
+            .onNode(
+                hasTextMatching(Regex("2:09\\sPM", RegexOption.IGNORE_CASE)),
+                useUnmergedTree = true,
+            )
+            .assertCanBeDisplayed()
         composeTestRule
             .onNode(
                 hasContentDescriptionMatching(
-                    Regex("2:03\\sPM train delayed, arriving at 2:09\\sPM")
+                    Regex("2:03\\sPM train delayed, arriving at 2:09\\sPM", RegexOption.IGNORE_CASE)
                 )
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule
             .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule
-            .onNode(hasTextMatching(Regex("2:03\\sPM")), useUnmergedTree = true)
-            .assertIsDisplayed()
+            .onNode(
+                hasTextMatching(Regex("2:03\\sPM", RegexOption.IGNORE_CASE)),
+                useUnmergedTree = true,
+            )
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -362,19 +401,27 @@ class UpcomingTripViewTest {
             )
         }
         composeTestRule
-            .onNode(hasTextMatching(Regex("2:03\\sPM")), useUnmergedTree = true)
-            .assertIsDisplayed()
+            .onNode(
+                hasTextMatching(Regex("2:03\\sPM", RegexOption.IGNORE_CASE)),
+                useUnmergedTree = true,
+            )
+            .assertCanBeDisplayed()
         composeTestRule
             .onNode(
-                hasContentDescriptionMatching(Regex("2:09\\sPM train early, arriving at 2:03\\sPM"))
+                hasContentDescriptionMatching(
+                    Regex("2:09\\sPM train early, arriving at 2:03\\sPM", RegexOption.IGNORE_CASE)
+                )
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule
             .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule
-            .onNode(hasTextMatching(Regex("2:09\\sPM")), useUnmergedTree = true)
-            .assertIsDisplayed()
+            .onNode(
+                hasTextMatching(Regex("2:09\\sPM", RegexOption.IGNORE_CASE)),
+                useUnmergedTree = true,
+            )
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -394,19 +441,28 @@ class UpcomingTripViewTest {
         composeTestRule
             .onNode(
                 hasContentDescriptionMatching(
-                    Regex("and 2:03\\sPM train delayed, arriving at 2:09\\sPM")
+                    Regex(
+                        "and 2:03\\sPM train delayed, arriving at 2:09\\sPM",
+                        RegexOption.IGNORE_CASE,
+                    )
                 )
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule
             .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule
-            .onNode(hasTextMatching(Regex("2:09\\sPM")), useUnmergedTree = true)
-            .assertIsDisplayed()
+            .onNode(
+                hasTextMatching(Regex("2:09\\sPM", RegexOption.IGNORE_CASE)),
+                useUnmergedTree = true,
+            )
+            .assertCanBeDisplayed()
         composeTestRule
-            .onNode(hasTextMatching(Regex("2:03\\sPM")), useUnmergedTree = true)
-            .assertIsDisplayed()
+            .onNode(
+                hasTextMatching(Regex("2:03\\sPM", RegexOption.IGNORE_CASE)),
+                useUnmergedTree = true,
+            )
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -423,21 +479,30 @@ class UpcomingTripViewTest {
             )
         }
         composeTestRule
-            .onNode(hasTextMatching(Regex("2:03\\sPM")), useUnmergedTree = true)
-            .assertIsDisplayed()
+            .onNode(
+                hasTextMatching(Regex("2:03\\sPM", RegexOption.IGNORE_CASE)),
+                useUnmergedTree = true,
+            )
+            .assertCanBeDisplayed()
         composeTestRule
             .onNode(
                 hasContentDescriptionMatching(
-                    Regex("and 2:09\\sPM train early, arriving at 2:03\\sPM")
+                    Regex(
+                        "and 2:09\\sPM train early, arriving at 2:03\\sPM",
+                        RegexOption.IGNORE_CASE,
+                    )
                 )
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule
             .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule
-            .onNode(hasTextMatching(Regex("2:09\\sPM")), useUnmergedTree = true)
-            .assertIsDisplayed()
+            .onNode(
+                hasTextMatching(Regex("2:09\\sPM", RegexOption.IGNORE_CASE)),
+                useUnmergedTree = true,
+            )
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -450,10 +515,12 @@ class UpcomingTripViewTest {
             )
         }
         composeTestRule
-            .onNode(hasTextMatching(Regex("2:03\\sPM")))
-            .assertIsDisplayed()
-            .assertContentDescriptionMatches(Regex(" arriving at 2:03\\sPM scheduled"))
-            .assertIsDisplayed()
+            .onNode(hasTextMatching(Regex("2:03\\sPM", RegexOption.IGNORE_CASE)))
+            .assertCanBeDisplayed()
+            .assertContentDescriptionMatches(
+                Regex(" arriving at 2:03\\sPM scheduled", RegexOption.IGNORE_CASE)
+            )
+            .assertCanBeDisplayed()
         composeTestRule.onNodeWithTag("realtimeIndicator").assertDoesNotExist()
     }
 
@@ -465,12 +532,14 @@ class UpcomingTripViewTest {
                 UpcomingTripViewState.Some(TripInstantDisplay.ScheduleTime(instant, true))
             )
         }
-        composeTestRule.onNodeWithText("Last").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Last").assertCanBeDisplayed()
         composeTestRule
-            .onNode(hasTextMatching(Regex("2:03\\sPM")))
-            .assertIsDisplayed()
-            .assertContentDescriptionMatches(Regex(" arriving at 2:03\\sPM scheduled, Last trip"))
-        composeTestRule.onNodeWithTag("lastScheduleIndicator").assertIsDisplayed()
+            .onNode(hasTextMatching(Regex("2:03\\sPM", RegexOption.IGNORE_CASE)))
+            .assertCanBeDisplayed()
+            .assertContentDescriptionMatches(
+                Regex(" arriving at 2:03\\sPM scheduled, Last trip", RegexOption.IGNORE_CASE)
+            )
+        composeTestRule.onNodeWithTag("lastScheduleIndicator").assertCanBeDisplayed()
     }
 
     @Test
@@ -487,12 +556,19 @@ class UpcomingTripViewTest {
             )
         }
         composeTestRule
-            .onNode(hasTextMatching(Regex("2:14\\sPM")), useUnmergedTree = true)
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithText("Delayed", useUnmergedTree = true).assertIsDisplayed()
+            .onNode(
+                hasTextMatching(Regex("2:14\\sPM", RegexOption.IGNORE_CASE)),
+                useUnmergedTree = true,
+            )
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Delayed", useUnmergedTree = true).assertCanBeDisplayed()
         composeTestRule
-            .onNode(hasContentDescriptionMatching(Regex("2:14\\sPM train delayed")))
-            .assertIsDisplayed()
+            .onNode(
+                hasContentDescriptionMatching(
+                    Regex("2:14\\sPM train delayed", RegexOption.IGNORE_CASE)
+                )
+            )
+            .assertCanBeDisplayed()
         composeTestRule
             .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
             .assertDoesNotExist()
@@ -510,16 +586,23 @@ class UpcomingTripViewTest {
                 routeType = RouteType.COMMUTER_RAIL,
             )
         }
-        composeTestRule.onNodeWithText("Last", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Last", useUnmergedTree = true).assertCanBeDisplayed()
         composeTestRule
-            .onNode(hasTextMatching(Regex("2:14\\sPM")), useUnmergedTree = true)
-            .assertIsDisplayed()
+            .onNode(
+                hasTextMatching(Regex("2:14\\sPM", RegexOption.IGNORE_CASE)),
+                useUnmergedTree = true,
+            )
+            .assertCanBeDisplayed()
         composeTestRule
-            .onNode(hasContentDescriptionMatching(Regex("2:14\\sPM train delayed, Last trip")))
-            .assertIsDisplayed()
+            .onNode(
+                hasContentDescriptionMatching(
+                    Regex("2:14\\sPM train delayed, Last trip", RegexOption.IGNORE_CASE)
+                )
+            )
+            .assertCanBeDisplayed()
         composeTestRule
             .onNodeWithTag("lastScheduleIndicator", useUnmergedTree = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -536,16 +619,22 @@ class UpcomingTripViewTest {
             )
         }
         composeTestRule
-            .onNode(hasTextMatching(Regex("2:14\\sPM")), useUnmergedTree = true)
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithText("Anomalous", useUnmergedTree = true).assertIsDisplayed()
+            .onNode(
+                hasTextMatching(Regex("2:14\\sPM", RegexOption.IGNORE_CASE)),
+                useUnmergedTree = true,
+            )
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Anomalous", useUnmergedTree = true).assertCanBeDisplayed()
         composeTestRule
             .onNode(
                 hasContentDescriptionMatching(
-                    Regex("train arriving at 2:14\\sPM scheduled, Anomalous")
+                    Regex(
+                        "train arriving at 2:14\\sPM scheduled, Anomalous",
+                        RegexOption.IGNORE_CASE,
+                    )
                 )
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule
             .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
             .assertDoesNotExist()
@@ -558,10 +647,10 @@ class UpcomingTripViewTest {
         }
         composeTestRule
             .onNodeWithText("5 min")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains("arriving in 5 min", substring = true)
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertCanBeDisplayed()
     }
 
     @Test
@@ -569,12 +658,12 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5, true)))
         }
-        composeTestRule.onNodeWithText("Last").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Last").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText("5 min")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains("arriving in 5 min, Last trip", substring = true)
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertCanBeDisplayed()
     }
 
     @Test
@@ -584,9 +673,9 @@ class UpcomingTripViewTest {
         }
         composeTestRule
             .onNodeWithText("1 hr 5 min")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains("arriving in 1 hr 5 min", substring = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -596,9 +685,9 @@ class UpcomingTripViewTest {
         }
         composeTestRule
             .onNodeWithText("1 hr")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains("arriving in 1 hr", substring = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -610,9 +699,9 @@ class UpcomingTripViewTest {
         }
         composeTestRule
             .onNodeWithText("5 min")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains("arriving in 5 min scheduled", substring = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule.onNodeWithTag("realtimeIndicator").assertDoesNotExist()
     }
 
@@ -623,15 +712,15 @@ class UpcomingTripViewTest {
                 UpcomingTripViewState.Some(TripInstantDisplay.ScheduleMinutes(5, true))
             )
         }
-        composeTestRule.onNodeWithText("Last").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Last").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText("5 min")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains(
                 "arriving in 5 min scheduled, Last trip",
                 substring = true,
             )
-        composeTestRule.onNodeWithTag("lastScheduleIndicator").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("lastScheduleIndicator").assertCanBeDisplayed()
     }
 
     @Test
@@ -643,9 +732,9 @@ class UpcomingTripViewTest {
         }
         composeTestRule
             .onNodeWithText("1 hr 15 min")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains("arriving in 1 hr 15 min scheduled", substring = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule.onNodeWithTag("realtimeIndicator").assertDoesNotExist()
     }
 
@@ -660,10 +749,10 @@ class UpcomingTripViewTest {
         }
         composeTestRule
             .onNodeWithText("5 min")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains("and in 5 min", substring = true)
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertCanBeDisplayed()
     }
 
     @Test
@@ -677,10 +766,10 @@ class UpcomingTripViewTest {
         }
         composeTestRule
             .onNodeWithText("1 hr 5 min")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains("and in 1 hr 5 min", substring = true)
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertCanBeDisplayed()
     }
 
     @Test
@@ -694,10 +783,10 @@ class UpcomingTripViewTest {
         }
         composeTestRule
             .onNodeWithText("1 hr")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains("and in 1 hr", substring = true)
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertCanBeDisplayed()
     }
 
     @Test
@@ -712,9 +801,9 @@ class UpcomingTripViewTest {
         }
         composeTestRule
             .onNodeWithText("5 min")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .assertContentDescriptionContains("buses arriving in 5 min", substring = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -728,13 +817,15 @@ class UpcomingTripViewTest {
                 )
             )
         }
-        composeTestRule.onNode(hasTextMatching(Regex("^First 9:41\\sAM"))).assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("^First 9:41\\sAM", RegexOption.IGNORE_CASE)))
+            .assertCanBeDisplayed()
     }
 
     @Test
     fun testUpcomingTripViewWithLoading() {
         composeTestRule.setContent { UpcomingTripView(UpcomingTripViewState.Loading) }
-        composeTestRule.onNodeWithContentDescription("Loading...").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Loading...").assertCanBeDisplayed()
     }
 
     @Test

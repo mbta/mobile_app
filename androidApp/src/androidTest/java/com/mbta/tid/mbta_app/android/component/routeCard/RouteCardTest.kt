@@ -1,9 +1,9 @@
 package com.mbta.tid.mbta_app.android.component.routeCard
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -32,12 +32,7 @@ class RouteCardTest {
                 RouteCardData(
                     LineOrRoute.Route(route),
                     listOf(
-                        RouteCardData.RouteStopData(
-                            LineOrRoute.Route(route),
-                            stop,
-                            emptyList(),
-                            emptyList(),
-                        )
+                        RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList())
                     ),
                     now,
                 ),
@@ -49,8 +44,8 @@ class RouteCardTest {
             }
         }
 
-        composeTestRule.onNodeWithText(route.label).assertIsDisplayed()
-        composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(route.label).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(stop.name).assertCanBeDisplayed()
     }
 
     @Test
@@ -69,12 +64,7 @@ class RouteCardTest {
                 RouteCardData(
                     LineOrRoute.Route(route),
                     listOf(
-                        RouteCardData.RouteStopData(
-                            LineOrRoute.Route(route),
-                            stop,
-                            emptyList(),
-                            emptyList(),
-                        )
+                        RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList())
                     ),
                     now,
                 ),
@@ -86,8 +76,8 @@ class RouteCardTest {
             }
         }
 
-        composeTestRule.onNodeWithText(route.label).assertIsDisplayed()
-        composeTestRule.onNodeWithText(stop.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(route.label).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(stop.name).assertCanBeDisplayed()
 
         composeTestRule.onNodeWithContentDescription("Star route").assertDoesNotExist()
     }
@@ -108,12 +98,7 @@ class RouteCardTest {
                 RouteCardData(
                     LineOrRoute.Route(route),
                     listOf(
-                        RouteCardData.RouteStopData(
-                            LineOrRoute.Route(route),
-                            stop,
-                            emptyList(),
-                            emptyList(),
-                        )
+                        RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList())
                     ),
                     now,
                 ),
@@ -125,7 +110,7 @@ class RouteCardTest {
             }
         }
 
-        composeTestRule.onNodeWithText(route.label).assertIsDisplayed()
+        composeTestRule.onNodeWithText(route.label).assertCanBeDisplayed()
         composeTestRule.onNodeWithText(stop.name).assertDoesNotExist()
     }
 }

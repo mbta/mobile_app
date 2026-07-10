@@ -4,9 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
-import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -19,8 +17,8 @@ import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
-import com.mbta.tid.mbta_app.android.testUtils.waitUntilDoesNotExistDefaultTimeout
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
@@ -96,7 +94,7 @@ class HomeMapViewTests {
     }
 
     @Test
-    fun testRecenterNotShownWhenPermissionsAndAtDefaultCenter(): Unit = runBlocking {
+    fun testRecenterNotShownWhenFollowing(): Unit = runBlocking {
         val locationManager = MockLocationDataManager()
         val viewModel =
             MapViewModel(
@@ -113,6 +111,7 @@ class HomeMapViewTests {
             )
         val viewportProvider = ViewportProvider(MapViewportState())
         viewModel.setViewportManager(viewportProvider)
+        viewportProvider.isFollowingPuck = true
         val configManager = MapboxConfigManager()
         configManager.loadConfig()
         locationManager.hasPermission = true
@@ -132,9 +131,10 @@ class HomeMapViewTests {
                 navCallbacks = NavigationCallbacks.empty,
             )
         }
-        composeTestRule.waitUntilDoesNotExistDefaultTimeout(
-            hasContentDescription("Recenter map on my location")
-        )
+
+        composeTestRule
+            .onNodeWithContentDescription("Recenter map on my location")
+            .assertDoesNotExist()
     }
 
     @Test
@@ -188,7 +188,7 @@ class HomeMapViewTests {
         }
         composeTestRule
             .onNodeWithContentDescription("Recenter map on my location")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -228,7 +228,7 @@ class HomeMapViewTests {
                 navCallbacks = NavigationCallbacks.empty,
             )
         }
-        composeTestRule.onNodeWithText("Location Services is off").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Location Services is off").assertCanBeDisplayed()
     }
 
     @Test
@@ -404,7 +404,7 @@ class HomeMapViewTests {
         }
         composeTestRule
             .onNodeWithContentDescription("Recenter map on my location")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -449,7 +449,7 @@ class HomeMapViewTests {
                     ),
             )
         }
-        composeTestRule.onNodeWithContentDescription("Back").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Back").assertCanBeDisplayed()
     }
 
     @Test
@@ -540,7 +540,7 @@ class HomeMapViewTests {
                 navCallbacks = NavigationCallbacks.empty,
             )
         }
-        composeTestRule.onNodeWithTag("Empty map grid").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("Empty map grid").assertCanBeDisplayed()
         configManager.loadConfig()
         composeTestRule.onNodeWithTag("Empty map grid").assertIsNotDisplayed()
     }

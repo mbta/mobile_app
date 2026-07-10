@@ -4,15 +4,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -139,7 +140,7 @@ class StopDetailsViewTest {
                                             RouteCardData.Leaf(
                                                 lineOrRoute,
                                                 stop,
-                                                directionId = 0,
+                                                Direction(0, route),
                                                 listOf(routePatternOne),
                                                 setOf(stop.id),
                                                 listOf(UpcomingTrip(trip, prediction)),
@@ -152,7 +153,6 @@ class StopDetailsViewTest {
                                                     RouteCardData.Context.StopDetailsUnfiltered,
                                             )
                                         ),
-                                        global,
                                     )
                                 ),
                                 now,
@@ -186,7 +186,7 @@ class StopDetailsViewTest {
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Stop"))
 
-        composeTestRule.onNode(hasText("Sample Stop") and isHeading()).assertIsDisplayed()
+        composeTestRule.onNode(hasText("Sample Stop") and isHeading()).assertCanBeDisplayed()
 
         composeTestRule.onNodeWithText("Sample Route").assertExists()
         composeTestRule.onNodeWithText("Sample Headsign").assertExists()
@@ -208,7 +208,7 @@ class StopDetailsViewTest {
                                 RouteCardData.Leaf(
                                     lineOrRoute,
                                     stop,
-                                    directionId = 0,
+                                    Direction(0, route),
                                     listOf(routePatternOne),
                                     setOf(stop.id),
                                     listOf(UpcomingTrip(trip, prediction)),
@@ -220,7 +220,6 @@ class StopDetailsViewTest {
                                     context = RouteCardData.Context.StopDetailsFiltered,
                                 )
                             ),
-                            global,
                         ),
                     )
                 )
@@ -259,7 +258,7 @@ class StopDetailsViewTest {
 
         composeTestRule.onNodeWithContentDescription("Star route").assertExists()
         composeTestRule.onNodeWithContentDescription("Close").assertExists()
-        composeTestRule.onNode(hasText("at Sample Stop") and isHeading()).assertIsDisplayed()
+        composeTestRule.onNode(hasText("at Sample Stop") and isHeading()).assertCanBeDisplayed()
 
         composeTestRule.onNodeWithText("1 min").assertExists()
     }
@@ -291,7 +290,7 @@ class StopDetailsViewTest {
                                             RouteCardData.Leaf(
                                                 lineOrRoute,
                                                 stop,
-                                                directionId = 0,
+                                                Direction(0, route),
                                                 listOf(routePatternOne),
                                                 setOf(stop.id),
                                                 listOf(UpcomingTrip(trip, prediction)),
@@ -304,7 +303,6 @@ class StopDetailsViewTest {
                                                     RouteCardData.Context.StopDetailsUnfiltered,
                                             )
                                         ),
-                                        global,
                                     )
                                 ),
                                 now,
@@ -374,7 +372,7 @@ class StopDetailsViewTest {
                                 RouteCardData.Leaf(
                                     lineOrRoute,
                                     stop,
-                                    directionId = 0,
+                                    Direction(0, route),
                                     listOf(routePatternOne),
                                     setOf(stop.id),
                                     listOf(UpcomingTrip(trip, prediction)),
@@ -386,7 +384,6 @@ class StopDetailsViewTest {
                                     context = RouteCardData.Context.StopDetailsFiltered,
                                 )
                             ),
-                            global,
                         ),
                     ),
                     mapOf(

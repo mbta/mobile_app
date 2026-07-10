@@ -38,6 +38,7 @@ import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.contrastTranslucent
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.AlertCardSpec
+import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Prediction
@@ -243,7 +244,7 @@ private fun StopDetailsRoutesViewPreview() {
                             RouteCardData.Leaf(
                                 lineOrRoute1,
                                 stop,
-                                0,
+                                Direction(0, route1),
                                 routePatterns = emptyList(),
                                 stopIds = emptySet(),
                                 listOf(UpcomingTrip(trip1, prediction1)),
@@ -255,7 +256,6 @@ private fun StopDetailsRoutesViewPreview() {
                                 context = context,
                             )
                         ),
-                        globalData,
                     )
                 ),
                 now,
@@ -270,7 +270,7 @@ private fun StopDetailsRoutesViewPreview() {
                             RouteCardData.Leaf(
                                 lineOrRoute2,
                                 stop,
-                                0,
+                                Direction(0, route2),
                                 routePatterns = emptyList(),
                                 stopIds = emptySet(),
                                 listOf(
@@ -287,7 +287,7 @@ private fun StopDetailsRoutesViewPreview() {
                             RouteCardData.Leaf(
                                 lineOrRoute2,
                                 stop,
-                                1,
+                                Direction(null, null, 1),
                                 routePatterns = emptyList(),
                                 stopIds = emptySet(),
                                 listOf(UpcomingTrip(trip4, schedule3, prediction3)),
@@ -299,7 +299,6 @@ private fun StopDetailsRoutesViewPreview() {
                                 context = context,
                             ),
                         ),
-                        globalData,
                     )
                 ),
                 now,

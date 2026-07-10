@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.android
 
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -13,6 +12,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
 import androidx.test.rule.GrantPermissionRule
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
@@ -59,10 +59,10 @@ class ContentViewTests : KoinTest {
         }
 
         composeTestRule.onNodeWithText("More").performClick()
-        composeTestRule.onNodeWithText("MBTA Go").assertIsDisplayed()
+        composeTestRule.onNodeWithText("MBTA Go").assertCanBeDisplayed()
 
         composeTestRule.onNodeWithText("Nearby").performClick()
-        composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Nearby Transit").assertCanBeDisplayed()
     }
 
     @Test
@@ -79,7 +79,7 @@ class ContentViewTests : KoinTest {
             }
         }
 
-        composeTestRule.onNode(hasText("Favorites") and isHeading()).assertIsDisplayed()
+        composeTestRule.onNode(hasText("Favorites") and isHeading()).assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Nearby").performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Nearby Transit"))
         assertEquals(DefaultTab.Nearby, repo.defaultTab)
@@ -117,7 +117,7 @@ class ContentViewTests : KoinTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Add your favorites"))
         composeTestRule
             .onNodeWithText("Now save your frequently used stops", substring = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test

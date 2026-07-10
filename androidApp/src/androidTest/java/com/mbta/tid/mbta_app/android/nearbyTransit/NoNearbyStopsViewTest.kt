@@ -1,9 +1,9 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import kotlin.test.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -17,10 +17,12 @@ class NoNearbyStopsViewTest {
             NoNearbyStopsView(onOpenSearch = {}, onPanToDefaultCenter = {})
         }
 
-        composeTestRule.onNodeWithText("No nearby stops").assertIsDisplayed()
-        composeTestRule.onNodeWithText("You’re outside the MBTA service area.").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Search by stop").assertIsDisplayed()
-        composeTestRule.onNodeWithText("View transit near Boston").assertIsDisplayed()
+        composeTestRule.onNodeWithText("No nearby stops").assertCanBeDisplayed()
+        composeTestRule
+            .onNodeWithText("You’re outside the MBTA service area.")
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Search by stop").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("View transit near Boston").assertCanBeDisplayed()
     }
 
     @Test

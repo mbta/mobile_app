@@ -35,13 +35,16 @@ fun directionNameFormatted(direction: Direction) =
 fun DirectionTo(
     direction: Direction,
     textColor: Color,
+    routeNamePrefix: String? = null,
     onlyServingOppositeDirection: Boolean = false,
 ) {
     Text(
-        stringResource(
-            if (onlyServingOppositeDirection) R.string.only_direction_to else R.string.directionTo,
-            stringResource(directionNameFormatted(direction)),
-        ),
+        routeNamePrefix?.let { "$it " }.orEmpty() +
+            stringResource(
+                if (onlyServingOppositeDirection) R.string.only_direction_to
+                else R.string.directionTo,
+                stringResource(directionNameFormatted(direction)),
+            ),
         color = textColor,
         modifier = Modifier.placeholderIfLoading(),
         style = if (onlyServingOppositeDirection) Typography.footnoteItalic else Typography.footnote,
@@ -78,14 +81,15 @@ fun DirectionLabel(
     textColor: Color = LocalContentColor.current,
     showDestination: Boolean = true,
     pillDecoration: PillDecoration? = null,
+    routeNamePrefix: String? = null,
     onlyServingOppositeDirection: Boolean = false,
 ) {
     val destination = direction.destination
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
         if (!showDestination) {
-            DirectionTo(direction, textColor, onlyServingOppositeDirection)
+            DirectionTo(direction, textColor, routeNamePrefix, onlyServingOppositeDirection)
         } else if (destination != null) {
-            DirectionTo(direction, textColor, onlyServingOppositeDirection)
+            DirectionTo(direction, textColor, routeNamePrefix, onlyServingOppositeDirection)
             DestinationLabel(destination, textColor, pillDecoration)
         } else {
             DestinationLabel(direction, textColor, pillDecoration)

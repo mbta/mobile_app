@@ -2,13 +2,13 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
@@ -313,7 +313,7 @@ class StopDetailsFilteredViewTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Elevator Alert Header").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Elevator Alert Header").assertCanBeDisplayed()
     }
 
     @Test
@@ -364,7 +364,7 @@ class StopDetailsFilteredViewTest {
             )
         }
 
-        composeTestRule.onNodeWithText("This stop is not accessible").assertIsDisplayed()
+        composeTestRule.onNodeWithText("This stop is not accessible").assertCanBeDisplayed()
     }
 
     @OptIn(ExperimentalTestApi::class)
@@ -421,7 +421,7 @@ class StopDetailsFilteredViewTest {
 
         composeTestRule
             .onNodeWithContentDescription("Star route")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .performClick()
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Add"))
@@ -493,7 +493,7 @@ class StopDetailsFilteredViewTest {
 
         composeTestRule
             .onNodeWithContentDescription("Star route")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
             .performClick()
 
         composeTestRule.waitForIdle()

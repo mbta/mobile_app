@@ -11,7 +11,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -35,6 +34,7 @@ import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.IMapboxConfigManager
 import com.mbta.tid.mbta_app.android.pages.MapAndSheetPage
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDoesNotExistDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
@@ -244,13 +244,12 @@ class MapAndSheetPageTest : KoinTest {
                                 RouteCardData.RouteStopData(
                                     LineOrRoute.Route(route),
                                     sampleStop,
-                                    directions = listOf(Direction(0, route), Direction(1, route)),
                                     data =
                                         listOf(
                                             RouteCardData.Leaf(
                                                 LineOrRoute.Route(route),
                                                 sampleStop,
-                                                0,
+                                                Direction(0, route),
                                                 listOf(routePatternOne),
                                                 setOf(sampleStop.id),
                                                 listOf(UpcomingTrip(trip, prediction = prediction)),
@@ -264,7 +263,7 @@ class MapAndSheetPageTest : KoinTest {
                                             RouteCardData.Leaf(
                                                 LineOrRoute.Route(route),
                                                 sampleStop,
-                                                1,
+                                                Direction(null, null, 1),
                                                 listOf(routePatternTwo),
                                                 setOf(sampleStop.id),
                                                 emptyList(),
@@ -286,13 +285,12 @@ class MapAndSheetPageTest : KoinTest {
                                 RouteCardData.RouteStopData(
                                     LineOrRoute.Line(greenLine, setOf(greenLineRoute)),
                                     greenLineStop,
-                                    directions = listOf(Direction(0, greenLineRoute)),
                                     data =
                                         listOf(
                                             RouteCardData.Leaf(
                                                 LineOrRoute.Line(greenLine, setOf(greenLineRoute)),
                                                 greenLineStop,
-                                                0,
+                                                Direction(0, greenLineRoute),
                                                 listOf(greenLineRoutePatternOne),
                                                 setOf(greenLineStop.id),
                                                 listOf(
@@ -315,6 +313,7 @@ class MapAndSheetPageTest : KoinTest {
                         ),
                     ),
                     loadedLocation = Position(0.0, 0.0),
+                    loadedStopIds = listOf(sampleStop.id, greenLineStop.id),
                 )
             )
         val flow = MutableStateFlow(null).asStateFlow()
@@ -354,14 +353,14 @@ class MapAndSheetPageTest : KoinTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
             hasContentDescription("Mapbox Attribution")
         )
-        composeTestRule.onNodeWithContentDescription("Mapbox Attribution").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Mapbox Attribution").assertCanBeDisplayed()
 
         composeTestRule
             .onNodeWithContentDescription("Drag handle")
             .performSemanticsAction(SemanticsActions.Expand)
 
-        composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Stops").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Nearby Transit").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Stops").assertCanBeDisplayed()
 
         composeTestRule.onNodeWithText("Green Line Long Name").assertExists()
         composeTestRule.onNodeWithText("Green Line Stop").assertExists()

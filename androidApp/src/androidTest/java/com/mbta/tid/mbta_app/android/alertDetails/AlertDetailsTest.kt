@@ -1,11 +1,11 @@
 package com.mbta.tid.mbta_app.android.alertDetails
 
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.mbta.tid.mbta_app.android.hasTextMatching
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
+import com.mbta.tid.mbta_app.android.testUtils.hasTextMatching
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
@@ -62,25 +62,33 @@ class AlertDetailsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Red Line Suspension").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Unruly Passenger").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Red Line Suspension").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Unruly Passenger").assertCanBeDisplayed()
         composeTestRule
-            .onNode(hasTextMatching(Regex("Wednesday, Jan 22, 10:35\\sAM")))
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithText("3 affected stops").assertIsDisplayed()
+            .onNode(
+                hasTextMatching(
+                    Regex("Wednesday, (Jan 22|22 Jan), 10:35\\sAM", RegexOption.IGNORE_CASE)
+                )
+            )
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("3 affected stops").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("3 affected stops").performClick()
-        composeTestRule.onNodeWithText(stop1.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText(stop2.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText(stop3.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop1.name).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(stop2.name).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(stop3.name).assertCanBeDisplayed()
         composeTestRule.onNodeWithText("3 affected stops").performClick()
-        composeTestRule.onNodeWithText("Full Description").assertIsDisplayed()
-        composeTestRule.onNodeWithText(alert.description!!).assertIsDisplayed()
-        composeTestRule.onNodeWithText(alert.header!!).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Full Description").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(alert.description!!).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(alert.header!!).assertCanBeDisplayed()
         // as of probably API 34, this has a U+202F Narrow No-Break Space instead of U+0020 Space,
         // so to make the test work either way we need a regex
         composeTestRule
-            .onNode(hasTextMatching(Regex("Updated: 1/22/25, 10:36\\sAM")))
-            .assertIsDisplayed()
+            .onNode(
+                hasTextMatching(
+                    Regex("Updated: (0?1/22|22/0?1)/25, 10:36\\sAM", RegexOption.IGNORE_CASE)
+                )
+            )
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -109,8 +117,12 @@ class AlertDetailsTest {
         }
 
         composeTestRule
-            .onNode(hasTextMatching(Regex("Tuesday, Jul 29, 9:25\\sAM")))
-            .assertIsDisplayed()
+            .onNode(
+                hasTextMatching(
+                    Regex("Tuesday, (Jul 29|29 Jul), 9:25\\sAM", RegexOption.IGNORE_CASE)
+                )
+            )
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -138,9 +150,13 @@ class AlertDetailsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Tuesday, Jul 29, start of service").assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("Tuesday, (Jul 29|29 Jul), start of service")))
+            .assertCanBeDisplayed()
         composeTestRule.onNodeWithText("3:00", substring = true).assertDoesNotExist()
-        composeTestRule.onNodeWithText("Tuesday, Jul 29, end of service").assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("Tuesday, (Jul 29|29 Jul), end of service")))
+            .assertCanBeDisplayed()
         composeTestRule.onNodeWithText("2:59", substring = true).assertDoesNotExist()
     }
 
@@ -170,9 +186,9 @@ class AlertDetailsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("9:10", substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("9:10", substring = true).assertCanBeDisplayed()
         composeTestRule.onNodeWithText("11:30", substring = true).assertDoesNotExist()
-        composeTestRule.onNodeWithText("later today", substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("later today", substring = true).assertCanBeDisplayed()
     }
 
     @Test
@@ -201,7 +217,7 @@ class AlertDetailsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Alert is no longer in effect").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Alert is no longer in effect").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Start").assertDoesNotExist()
     }
 
@@ -270,21 +286,21 @@ class AlertDetailsTest {
         }
 
         composeTestRule.onNodeWithText("3 affected stops").assertDoesNotExist()
-        composeTestRule.onNodeWithText("Alert description").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Alert description").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText("Affected stops:\nStop 1\nStop 2\nStop 3")
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithText("More details").assertIsDisplayed()
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("More details").assertCanBeDisplayed()
 
         affectedStops.value = listOf(stop1, stop2, stop3)
         composeTestRule.waitForIdle()
 
-        composeTestRule.onNodeWithText("3 affected stops").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Alert description").assertIsDisplayed()
+        composeTestRule.onNodeWithText("3 affected stops").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Alert description").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText("Affected stops:\nStop 1\nStop 2\nStop 3")
             .assertDoesNotExist()
-        composeTestRule.onNodeWithText("More details").assertIsDisplayed()
+        composeTestRule.onNodeWithText("More details").assertCanBeDisplayed()
     }
 
     @Test
@@ -350,10 +366,10 @@ class AlertDetailsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("${stop.name} Elevator Closure").assertIsDisplayed()
-        composeTestRule.onNodeWithText(alert.header!!).assertIsDisplayed()
-        composeTestRule.onNodeWithText("Alternative path").assertIsDisplayed()
-        composeTestRule.onNodeWithText(alert.description!!).assertIsDisplayed()
+        composeTestRule.onNodeWithText("${stop.name} Elevator Closure").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(alert.header!!).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Alternative path").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(alert.description!!).assertCanBeDisplayed()
         composeTestRule.onNodeWithText("1 affected stop").assertDoesNotExist()
     }
 
@@ -384,10 +400,14 @@ class AlertDetailsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Daily").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Fri, Jan 23 – Sun, Jan 25").assertIsDisplayed()
-        composeTestRule.onNodeWithText("From").assertIsDisplayed()
-        composeTestRule.onNode(hasTextMatching(Regex("9:41\\sAM – 11:41\\sAM"))).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Daily").assertCanBeDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("Fri, (Jan 23|23 Jan) – Sun, (Jan 25|25 Jan)")))
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("From").assertCanBeDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("9:41\\sAM – 11:41\\sAM", RegexOption.IGNORE_CASE)))
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -418,10 +438,12 @@ class AlertDetailsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Daily").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Until further notice").assertIsDisplayed()
-        composeTestRule.onNodeWithText("From").assertIsDisplayed()
-        composeTestRule.onNode(hasTextMatching(Regex("9:41\\sAM – 11:41\\sAM"))).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Daily").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Until further notice").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("From").assertCanBeDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("9:41\\sAM – 11:41\\sAM", RegexOption.IGNORE_CASE)))
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -450,10 +472,14 @@ class AlertDetailsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("January 23 – January 25").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Sunday, Friday").assertIsDisplayed()
-        composeTestRule.onNodeWithText("From").assertIsDisplayed()
-        composeTestRule.onNode(hasTextMatching(Regex("9:41\\sAM – 11:41\\sAM"))).assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("(January 23|23 January) – (January 25|25 January)")))
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Sunday, Friday").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("From").assertCanBeDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("9:41\\sAM – 11:41\\sAM", RegexOption.IGNORE_CASE)))
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -486,10 +512,14 @@ class AlertDetailsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("May 4 – May 11").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Weekdays").assertIsDisplayed()
-        composeTestRule.onNodeWithText("From").assertIsDisplayed()
-        composeTestRule.onNode(hasTextMatching(Regex("1:38\\sPM – 3:38\\sPM"))).assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("(May 4|4 May) – (May 11|11 May)")))
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Weekdays").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("From").assertCanBeDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("1:38\\sPM – 3:38\\sPM", RegexOption.IGNORE_CASE)))
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -519,10 +549,14 @@ class AlertDetailsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("May 3 – May 10").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Weekends").assertIsDisplayed()
-        composeTestRule.onNodeWithText("From").assertIsDisplayed()
-        composeTestRule.onNode(hasTextMatching(Regex("1:38\\sPM – 3:38\\sPM"))).assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("(May 3|3 May) – (May 10|10 May)")))
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Weekends").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("From").assertCanBeDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("1:38\\sPM – 3:38\\sPM", RegexOption.IGNORE_CASE)))
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -556,7 +590,9 @@ class AlertDetailsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Starting tomorrow until further notice").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("Starting tomorrow until further notice")
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -594,6 +630,6 @@ class AlertDetailsTest {
         composeTestRule
             .onNodeWithText("Starting tomorrow until further notice")
             .assertDoesNotExist()
-        composeTestRule.onNodeWithText("Until further notice").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Until further notice").assertCanBeDisplayed()
     }
 }

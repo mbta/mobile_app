@@ -76,8 +76,8 @@ public data class RoutePillSpec(
         },
         height,
         when {
-            type == Type.Fixed -> Width.Fixed
             route?.id?.idText?.startsWith("Green-") ?: false -> Width.Circle
+            type == Type.Fixed -> Width.Fixed
             else -> Width.Flex
         },
         when {
@@ -99,7 +99,7 @@ public data class RoutePillSpec(
         private fun lightRailPillContent(route: Route, type: Type): Content =
             if (route.id.idText.startsWith("Green-")) {
                 when (type) {
-                    Type.Fixed -> Content.Text(route.longName.replace("Green Line ", "GL "))
+                    Type.Fixed,
                     Type.Flex,
                     Type.FlexCompact -> Content.Text(route.shortName)
                 }

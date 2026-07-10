@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.util
 
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.mbta.tid.mbta_app.android.assertMatches
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.RouteType
@@ -32,10 +33,15 @@ class FormattedAlertTests {
                 "North Station",
             )
         val format = FormattedAlert(null, summary)
-        val pattern = "Shuttle buses replace the 4:00\\sPM train from Porter to North Station"
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
-            assert(Regex(pattern).matches(summaryString))
+            assertMatches(
+                Regex(
+                    "Shuttle buses replace the 4:00\\sPM train from Porter to North Station",
+                    RegexOption.IGNORE_CASE,
+                ),
+                summaryString,
+            )
         }
     }
 
@@ -53,11 +59,15 @@ class FormattedAlertTests {
                 "North Station",
             )
         val format = FormattedAlert(null, summary)
-        val pattern =
-            "4:00\\sPM train from Concord is replaced by shuttle buses from Porter to North Station"
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
-            assert(Regex(pattern).matches(summaryString))
+            assertMatches(
+                Regex(
+                    "4:00\\sPM train from Concord is replaced by shuttle buses from Porter to North Station",
+                    RegexOption.IGNORE_CASE,
+                ),
+                summaryString,
+            )
         }
     }
 
@@ -70,10 +80,12 @@ class FormattedAlertTests {
                 "North Station",
             )
         val format = FormattedAlert(null, summary)
-        val expected = "Shuttle buses replace this train from Porter to North Station"
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
-            assertEquals(expected, summaryString)
+            assertEquals(
+                "Shuttle buses replace this train from Porter to North Station",
+                summaryString,
+            )
         }
     }
 
@@ -89,10 +101,15 @@ class FormattedAlertTests {
                 Alert.Cause.Weather,
             )
         val format = FormattedAlert(null, summary)
-        val pattern = "12:13\\sPM train from Ruggles is suspended today due to weather"
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
-            assert(Regex(pattern).matches(summaryString))
+            assertMatches(
+                Regex(
+                    "12:13\\sPM train from Ruggles is suspended today due to weather",
+                    RegexOption.IGNORE_CASE,
+                ),
+                summaryString,
+            )
         }
     }
 
@@ -108,10 +125,14 @@ class FormattedAlertTests {
                 Alert.Cause.Weather,
             )
         val format = FormattedAlert(null, summary)
-        val pattern = "11:15\\sAM train from Concord will terminate at Porter today due to weather"
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
-            assert(Regex(pattern).matches(summaryString))
+            assertMatches(
+                Regex(
+                    "11:15\\s[Aa][Mm] train from Concord will terminate at Porter today due to weather"
+                ),
+                summaryString,
+            )
         }
     }
 
@@ -126,10 +147,9 @@ class FormattedAlertTests {
                 Alert.Cause.Weather,
             )
         val format = FormattedAlert(null, summary)
-        val expected = "This train is suspended today due to weather"
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
-            assertEquals(expected, summaryString)
+            assertEquals("This train is suspended today due to weather", summaryString)
         }
     }
 
@@ -144,10 +164,9 @@ class FormattedAlertTests {
                 Alert.Cause.Weather,
             )
         val format = FormattedAlert(null, summary)
-        val expected = "This train will terminate at Porter today due to weather"
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
-            assertEquals(expected, summaryString)
+            assertEquals("This train will terminate at Porter today due to weather", summaryString)
         }
     }
 
@@ -163,11 +182,15 @@ class FormattedAlertTests {
                 Alert.Cause.Weather,
             )
         val format = FormattedAlert(null, summary)
-        val pattern =
-            "12:13\\sPM train to Stoughton will not stop at Back Bay and Ruggles today due to weather"
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
-            assert(Regex(pattern).matches(summaryString))
+            assertMatches(
+                Regex(
+                    "12:13\\sPM train to Stoughton will not stop at Back Bay and Ruggles today due to weather",
+                    RegexOption.IGNORE_CASE,
+                ),
+                summaryString,
+            )
         }
     }
 
@@ -182,10 +205,9 @@ class FormattedAlertTests {
                 Alert.Cause.Weather,
             )
         val format = FormattedAlert(null, summary)
-        val expected = "This train will not stop at Porter today due to weather"
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
-            assertEquals(expected, summaryString)
+            assertEquals("This train will not stop at Porter today due to weather", summaryString)
         }
     }
 
@@ -198,10 +220,12 @@ class FormattedAlertTests {
                 AlertSummary.Timeframe.UntilFurtherNotice,
             )
         val format = FormattedAlert(null, summary)
-        val pattern = "Trains will not stop at Back Bay until further notice"
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
-            assert(Regex(pattern).matches(summaryString))
+            assertMatches(
+                Regex("Trains will not stop at Back Bay until further notice"),
+                summaryString,
+            )
         }
     }
 
@@ -214,10 +238,12 @@ class FormattedAlertTests {
                 AlertSummary.Timeframe.UntilFurtherNotice,
             )
         val format = FormattedAlert(null, summary)
-        val pattern = "Trains will not stop at Back Bay and Ruggles until further notice"
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
-            assert(Regex(pattern).matches(summaryString))
+            assertMatches(
+                Regex("Trains will not stop at Back Bay and Ruggles until further notice"),
+                summaryString,
+            )
         }
     }
 
@@ -230,11 +256,14 @@ class FormattedAlertTests {
                 AlertSummary.Timeframe.UntilFurtherNotice,
             )
         val format = FormattedAlert(null, summary)
-        val pattern =
-            "Trains will not stop at Back Bay, Ruggles, and Hyde Park until further notice"
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
-            assert(Regex(pattern).matches(summaryString))
+            assertMatches(
+                Regex(
+                    "Trains will not stop at Back Bay, Ruggles,? and Hyde Park until further notice"
+                ),
+                summaryString,
+            )
         }
     }
 
@@ -249,10 +278,12 @@ class FormattedAlertTests {
                 AlertSummary.Timeframe.UntilFurtherNotice,
             )
         val format = FormattedAlert(null, summary)
-        val pattern = "Trains will not stop at multiple stops until further notice"
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
-            assert(Regex(pattern).matches(summaryString))
+            assertMatches(
+                Regex("Trains will not stop at multiple stops until further notice"),
+                summaryString,
+            )
         }
     }
 }

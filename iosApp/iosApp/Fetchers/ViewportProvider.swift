@@ -22,6 +22,8 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
     @Published private(set) var isManuallyCentering: Bool
     @Published private(set) var isFollowingPuck: Bool = false
     @Published private(set) var isVehicleOverview: Bool = false
+    @Published var isTargeting: Bool = false
+    @Published var lastLoadedLocation: CLLocationCoordinate2D? = nil
 
     @Published var viewport: Viewport
     private var savedNearbyTransitViewport: Viewport?

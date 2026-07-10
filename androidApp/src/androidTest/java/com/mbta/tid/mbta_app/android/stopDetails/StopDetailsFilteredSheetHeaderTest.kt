@@ -1,12 +1,12 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -68,7 +68,7 @@ class StopDetailsFilteredSheetHeaderTest {
         composeTestRule.onNode(hasText(route.shortName)).assertExists()
         composeTestRule.onNodeWithContentDescription("Star route").assertExists()
         composeTestRule.onNodeWithContentDescription("Close").assertExists()
-        composeTestRule.onNode(hasText("at Sample Stop") and isHeading()).assertIsDisplayed()
+        composeTestRule.onNode(hasText("at Sample Stop") and isHeading()).assertCanBeDisplayed()
     }
 
     @Test

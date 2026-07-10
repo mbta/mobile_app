@@ -15,33 +15,34 @@ struct SearchResultsContainer: View {
     @ObserveInjection var inject
     let query: String
 
-    @ObservedObject var nearbyVM: NearbyViewModel
     @State var searchVM: ISearchViewModel
     @State var searchVMState: SearchViewModel.State = SearchViewModel.StateLoading.shared
+
+    @ObservedObject var navManager: NavigationManager
 
     var didAppear: ((Self) -> Void)?
     var didChange: ((Self) -> Void)?
 
     init(
         query: String,
-        nearbyVM: NearbyViewModel,
         searchVM: ISearchViewModel,
+        navManager: NavigationManager,
         didAppear: ((Self) -> Void)? = nil,
         didChange: ((Self) -> Void)? = nil
     ) {
         self.query = query
-        self.nearbyVM = nearbyVM
         self.searchVM = searchVM
+        self.navManager = navManager
         self.didAppear = didAppear
         self.didChange = didChange
     }
 
     func handleStopTap(stopId: String) {
-        nearbyVM.pushNavEntry(.stopDetails(stopId: stopId, stopFilter: nil, tripFilter: nil))
+        navManager.pushNavEntry(.stopDetails(stopId: stopId, stopFilter: nil, tripFilter: nil))
     }
 
     func handleRouteTap(routeId: LineOrRoute.Id) {
-        nearbyVM.pushNavEntry(.routeDetails(.init(routeId: routeId, context: .Details.shared)))
+        navManager.pushNavEntry(.routeDetails(.init(routeId: routeId, context: .Details.shared)))
     }
 
     var body: some View {

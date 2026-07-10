@@ -1,12 +1,12 @@
 package com.mbta.tid.mbta_app.android.search.results
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RoutePillSpec
@@ -125,13 +125,13 @@ class StopResultsViewTest {
             )
         }
 
-        composeTestRule.onNodeWithText("South Station").assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithText("South Station").assertCanBeDisplayed().performClick()
         assertTrue(handleSearchCalled)
         composeTestRule
             .onNodeWithContentDescription(
                 "serves Red Line train,Commuter Rail trains,Silver Line buses,buses"
             )
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -196,7 +196,7 @@ class StopResultsViewTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Platform Stop").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("serves 4 bus,5 bus").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Platform Stop").assertCanBeDisplayed()
+        composeTestRule.onNodeWithContentDescription("serves 4 bus,5 bus").assertCanBeDisplayed()
     }
 }

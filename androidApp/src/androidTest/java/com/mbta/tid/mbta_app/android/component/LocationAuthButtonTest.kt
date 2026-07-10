@@ -1,9 +1,9 @@
 package com.mbta.tid.mbta_app.android.component
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
@@ -22,7 +22,7 @@ class LocationAuthButtonTest {
 
         composeTestRule.setContent { LocationAuthButton(locationDataManager = locationManager) }
 
-        composeTestRule.onNodeWithText("Location Services is off").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Location Services is off").assertCanBeDisplayed()
     }
 
     @Test

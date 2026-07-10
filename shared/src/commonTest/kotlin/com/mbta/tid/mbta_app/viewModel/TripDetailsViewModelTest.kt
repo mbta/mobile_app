@@ -19,6 +19,7 @@ import com.mbta.tid.mbta_app.repositories.MockPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -26,6 +27,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.filterIsInstance
@@ -150,6 +152,54 @@ class TripDetailsViewModelTest : KoinTest {
     }
 
     @Test
+    fun testLoadsStaleVehicle() = runTest {
+        val now = EasternTimeInstant.now()
+        val objects = TestData.clone()
+        val trip = objects.trip {}
+        val vehicle =
+            objects.vehicle {
+                this.tripId = trip.id
+                currentStatus = Vehicle.CurrentStatus.StoppedAt
+                updatedAt = now.minus(2.hours)
+            }
+
+        var vehicleLoaded = false
+
+        val tripRepo =
+            MockTripRepository(
+                tripSchedulesResponse =
+                    TripSchedulesResponse.Schedules(listOf(objects.schedule { this.trip = trip })),
+                tripResponse = TripResponse(trip),
+            )
+        val vehicleRepo =
+            MockVehicleRepository(
+                { vehicleLoaded = true },
+                outcome = ApiResult.Ok(VehicleStreamDataResponse(vehicle)),
+            )
+
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(objects, dispatcher) {
+            this.trip = tripRepo
+            this.vehicle = vehicleRepo
+        }
+
+        val viewModel: TripDetailsViewModel = get()
+        val filters = TripDetailsPageFilter(trip.id, vehicle.id, Route.Id(""), 0, "", 0)
+        viewModel.setFilters(filters)
+        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+
+        testViewModelFlow(viewModel).test {
+            awaitItemSatisfying {
+                it.tripData?.tripFilter == filters &&
+                    it.tripData.vehicle == null &&
+                    it.tripData.trip == trip
+            }
+            assertTrue(vehicleLoaded)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun testLoadsPredictions() = runTest {
         val objects = TestData.clone()
         val trip = objects.trip {}
@@ -223,11 +273,11 @@ class TripDetailsViewModelTest : KoinTest {
         testViewModelFlow(viewModel).test {
             awaitItemSatisfying { it.tripData?.trip?.id == trip.id }
             assertEquals(1, predictionLoadCount)
-            assertEquals(1, predictionDisconnectCount)
+            assertEquals(0, predictionDisconnectCount)
             viewModel.setActive(active = false, wasSentToBackground = false)
             advanceUntilIdle()
             assertEquals(1, predictionLoadCount)
-            assertEquals(3, predictionDisconnectCount)
+            assertEquals(1, predictionDisconnectCount)
             cancelAndIgnoreRemainingEvents()
         }
     }

@@ -19,8 +19,8 @@ final class GlobalModifierTests: XCTestCase {
     }
 
     func testLoadsFromRepo() {
-        let repoExp = expectation(description: "favorites loaded from repo")
-        let setExp = expectation(description: "favorites binding was set")
+        let repoExp = expectation(description: "global loaded from repo")
+        let setExp = expectation(description: "global binding was set")
 
         let updatedGlobal = GlobalResponse(objects: .init())
 

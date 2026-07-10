@@ -1,9 +1,9 @@
 //
-//  NearbyViewModel.swift
+//  NavigationManager.swift
 //  iosApp
 //
-//  Created by Brady, Kayla on 5/6/24.
-//  Copyright © 2024 MBTA. All rights reserved.
+//  Created by esimon on 6/16/26.
+//  Copyright © 2026 MBTA. All rights reserved.
 //
 
 import CoreLocation
@@ -11,14 +11,8 @@ import os
 import Shared
 import SwiftUI
 
-class NearbyViewModel: ObservableObject {
+class NavigationManager: ObservableObject {
     private static let logger = Logger()
-    struct NearbyTransitState: Equatable {
-        var loadedLocation: CLLocationCoordinate2D?
-        var loading: Bool = false
-        var nearbyResponse: NearbyResponse?
-        var stopIds: [String]?
-    }
 
     @Published var navigationStack: [SheetNavigationStackEntry] = [] {
         didSet { Task {
@@ -36,53 +30,14 @@ class NearbyViewModel: ObservableObject {
         }}
     }
 
-    @Published var alerts: AlertsStreamDataResponse?
-    @Published var nearbyState = NearbyTransitState()
-    @Published var routeCardData: [RouteCardData]?
-
-    @Published var isTargeting = false
-    /// Distinct from nearbyState.loadedLocation because it's also set when nearby favorites load
-    @Published var lastLoadedLocation: CLLocationCoordinate2D?
-
-    private let alertsUsecase: AlertsUsecase
-    private let errorBannerRepository: IErrorBannerStateRepository
-    private let nearbyRepository: INearbyRepository
     private let visitHistoryUsecase: VisitHistoryUsecase
-    private var fetchNearbyTask: Task<Void, Never>?
-    private var loadRouteCardDataTask: Task<Void, Error>?
-    private var analytics: Analytics
 
     init(
-        routeCardData: [RouteCardData]? = nil,
         navigationStack: [SheetNavigationStackEntry] = [],
-        alertsUsecase: AlertsUsecase = UsecaseDI().alertsUsecase,
-        errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
-        nearbyRepository: INearbyRepository = RepositoryDI().nearby,
         visitHistoryUsecase: VisitHistoryUsecase = UsecaseDI().visitHistoryUsecase,
-        analytics: Analytics = AnalyticsProvider.shared
     ) {
-        self.routeCardData = routeCardData
         self.navigationStack = navigationStack
-
-        self.alertsUsecase = alertsUsecase
-        self.errorBannerRepository = errorBannerRepository
-        self.nearbyRepository = nearbyRepository
         self.visitHistoryUsecase = visitHistoryUsecase
-        self.analytics = analytics
-    }
-
-    func clearNearbyData() {
-        nearbyState = .init()
-        routeCardData = nil
-    }
-
-    /**
-     Set the route card data from the given stop if it is the last stop in the stack.
-     */
-    func setRouteCardData(_ stopId: String, _ newRouteCardData: [RouteCardData]?) {
-        if stopId == navigationStack.lastStopId {
-            routeCardData = newRouteCardData
-        }
     }
 
     func isNearbyVisible() -> Bool {
@@ -194,84 +149,6 @@ class NearbyViewModel: ObservableObject {
         _ = navigationStack.popLast()
     }
 
-    func getNearbyStops(
-        global: GlobalResponse,
-        location: CLLocationCoordinate2D,
-        alerts: AlertsStreamDataResponse?,
-        atTime: EasternTimeInstant
-    ) {
-        guard !location.isRoughlyEqualTo(nearbyState.loadedLocation) else {
-            return
-        }
-        if nearbyState.loading, let fetchNearbyTask, !fetchNearbyTask.isCancelled {
-            fetchNearbyTask.cancel()
-        }
-        fetchNearbyTask = Task { @MainActor [weak self] in
-            guard let self else { return }
-            if nearbyState.loadedLocation != nil {
-                analytics.refetchedNearbyTransit()
-            }
-            nearbyState.loading = true
-
-            nearbyState.stopIds = nil
-            let nearbyResponse = nearbyRepository.getStopIdsNearby(
-                global: global,
-                location: location.positionKt
-            )
-            nearbyState.nearbyResponse = nearbyResponse
-            lastLoadedLocation = location
-            nearbyState.stopIds = nearbyResponse.filter(globalData: global, alerts: alerts, atTime: atTime)
-            nearbyState.loadedLocation = location
-            nearbyState.loading = false
-            isTargeting = false
-        }
-    }
-
-    func filterNearbyStops(global: GlobalResponse, alerts: AlertsStreamDataResponse?, atTime: EasternTimeInstant) {
-        Task { @MainActor [weak self] in
-            // wait for any getNearbyStops calls to have finished
-            let _ = await self?.fetchNearbyTask?.result
-            self?.nearbyState.stopIds = self?.nearbyState.nearbyResponse?.filter(
-                globalData: global,
-                alerts: alerts,
-                atTime: atTime
-            )
-        }
-    }
-
-    func loadRouteCardData(
-        state: NearbyTransitState,
-        global: GlobalResponse?,
-        schedules: ScheduleResponse?,
-        predictions: PredictionsByStopJoinResponse?,
-        alerts: AlertsStreamDataResponse?,
-        now: Date,
-    ) {
-        if let loadRouteCardDataTask, !loadRouteCardDataTask.isCancelled {
-            loadRouteCardDataTask.cancel()
-        }
-
-        loadRouteCardDataTask = Task { [weak self] in
-            guard let global, let stopIds = state.stopIds, let location = state.loadedLocation else {
-                Task { @MainActor in self?.routeCardData = nil }
-                return
-            }
-            let cardData = try await RouteCardData.companion.routeCardsForStopList(
-                stopIds: stopIds,
-                globalData: global,
-                sortByDistanceFrom: location.positionKt,
-                schedules: schedules,
-                predictions: predictions?.toPredictionsStreamDataResponse(),
-                alerts: alerts,
-                now: now.toEasternInstant(),
-                context: .nearbyTransit
-            )
-            Task { @MainActor in
-                self?.routeCardData = cardData
-            }
-        }
-    }
-
     func getTargetStop(global: GlobalResponse) -> Stop? {
         switch navigationStack.last {
         case .nearby: nil
@@ -279,20 +156,4 @@ class NearbyViewModel: ObservableObject {
         default: nil
         }
     }
-
-    func joinAlertsChannel() {
-        alertsUsecase.connect { outcome in
-            DispatchQueue.main.async { [weak self] in
-                if case let .ok(result) = onEnum(of: outcome) {
-                    self?.alerts = result.data
-                }
-            }
-        }
-    }
-
-    func leaveAlertsChannel() {
-        alertsUsecase.disconnect()
-    }
 }
-
-class NearbyNavigationStack: ObservableObject {}

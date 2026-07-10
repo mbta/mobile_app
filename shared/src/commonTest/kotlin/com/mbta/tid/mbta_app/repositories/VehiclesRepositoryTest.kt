@@ -63,20 +63,33 @@ class VehiclesRepositoryTest : KoinTest {
     }
 
     @Test
-    fun testChannelClearedOnLeave() {
+    fun testChannelClearedOnLeave() = runTest {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val debugRepo = MockDebugRepository()
         val errorBannerRepo = MockErrorBannerStateRepository()
-        val vehiclesRepo = VehiclesRepository(socket, debugRepo, errorBannerRepo, Dispatchers.IO)
-        every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
-        vehiclesRepo.channel =
+        val vehiclesRepo =
+            VehiclesRepository(
+                socket,
+                debugRepo,
+                errorBannerRepo,
+                StandardTestDispatcher(testScheduler),
+            )
+        every { socket.getChannel(any(), any()) } returns mock(MockMode.autofill)
+
+        val channel =
             socket.getChannel(
                 topic = VehiclesOnRouteChannel(emptyList(), 0).topic,
                 params = emptyMap(),
             )
+        every { channel.detach() } returns mock(MockMode.autofill)
+
+        vehiclesRepo.channel = channel
+
         assertNotNull(vehiclesRepo.channel)
 
         vehiclesRepo.disconnect()
+        advanceUntilIdle()
+        verify { channel.detach() }
         assertNull(vehiclesRepo.channel)
     }
 

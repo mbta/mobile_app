@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,15 +27,18 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
+import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.repositories.Settings
 
 @Composable
-fun StopSubheader(data: RouteCardData.RouteStopData) {
+fun StopSubheader(stop: Stop, elevatorAlerts: List<Alert>, includeIcon: Boolean) {
     val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
-    val isWheelchairAccessible = data.stop.isWheelchairAccessible
+    val isWheelchairAccessible = stop.isWheelchairAccessible
     val showInaccessible = showStationAccessibility && !isWheelchairAccessible
-    val showElevatorAlerts = showStationAccessibility && data.hasElevatorAlerts
+    val showElevatorAlerts = showStationAccessibility && elevatorAlerts.isNotEmpty()
 
     Row(
         Modifier.background(colorResource(id = R.color.fill2))
@@ -43,13 +47,23 @@ fun StopSubheader(data: RouteCardData.RouteStopData) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
+        if (includeIcon) {
+            Image(
+                painterResource(
+                    if (stop.locationType == LocationType.STATION) R.drawable.mbta_logo
+                    else R.drawable.stop_bus
+                ),
+                null,
+                Modifier.placeholderIfLoading().width(24.dp),
+            )
+        }
         Column(
-            modifier = Modifier.height(IntrinsicSize.Min).padding(start = 8.dp),
+            modifier = Modifier.height(IntrinsicSize.Min).padding(start = 12.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalAlignment = Alignment.Start,
         ) {
             Text(
-                text = data.stop.name,
+                text = stop.name,
                 modifier = Modifier.placeholderIfLoading().fillMaxWidth(),
                 overflow = TextOverflow.Visible,
                 style = Typography.callout,
@@ -87,8 +101,8 @@ fun StopSubheader(data: RouteCardData.RouteStopData) {
                             else
                                 pluralStringResource(
                                     R.plurals.elevator_closure_count,
-                                    data.elevatorAlerts.size,
-                                    data.elevatorAlerts.size,
+                                    elevatorAlerts.size,
+                                    elevatorAlerts.size,
                                 ),
                         modifier = Modifier.placeholderIfLoading().fillMaxWidth(),
                         textAlign = TextAlign.Start,
@@ -100,4 +114,9 @@ fun StopSubheader(data: RouteCardData.RouteStopData) {
             }
         }
     }
+}
+
+@Composable
+fun StopSubheader(data: RouteCardData.RouteStopData, includeIcon: Boolean) {
+    StopSubheader(data.stop, data.elevatorAlerts, includeIcon)
 }

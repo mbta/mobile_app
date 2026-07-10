@@ -95,5 +95,6 @@ fun subscribeToVehicles(
                 ?: response.vehicles
         }
         ?.values
+        ?.filter { !it.isStale() }
         ?.toList() ?: emptyList()
 }

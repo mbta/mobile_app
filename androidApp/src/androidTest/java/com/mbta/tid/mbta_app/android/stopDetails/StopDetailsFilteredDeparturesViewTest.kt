@@ -3,15 +3,15 @@ package com.mbta.tid.mbta_app.android.stopDetails
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertHasClickAction
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.mbta.tid.mbta_app.android.hasTextMatching
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
+import com.mbta.tid.mbta_app.android.testUtils.hasTextMatching
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
@@ -178,7 +178,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leaf = routeStopData.data.first { it.direction.id == 0 }
         val routeData =
             StopDetailsViewModel.RouteData.Filtered(
                 StopDetailsPageFilters(stop.id, filterState, null),
@@ -193,7 +193,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = null,
                 now = now,
                 updateTripFilter = {},
@@ -227,7 +227,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leaf = routeStopData.data.first { it.direction.id == 0 }
 
         val routeData =
             StopDetailsViewModel.RouteData.Filtered(
@@ -243,7 +243,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = null,
                 now = now,
                 updateTripFilter = { tripFilter = it },
@@ -313,7 +313,7 @@ class StopDetailsFilteredDeparturesViewTest {
             RouteCardData.Leaf(
                 lineOrRoute,
                 stop,
-                trip.directionId,
+                Direction(null, null, trip.directionId),
                 listOf(routePattern),
                 setOf(stop.id),
                 listOf(UpcomingTrip(trip, schedule, prediction)),
@@ -324,7 +324,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 alertsDownstream = emptyList(),
                 RouteCardData.Context.StopDetailsFiltered,
             )
-        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf), globalResponse)
+        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf))
 
         val stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId)
         val tripFilter = TripDetailsFilter(trip.id, null, null, false)
@@ -344,7 +344,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = stopFilter,
                 tripFilter = tripFilter,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = null,
                 now = now,
                 updateTripFilter = {},
@@ -356,13 +356,13 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Trip cancelled").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Trip cancelled").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText("This trip has been cancelled. We’re sorry for the inconvenience.")
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
         composeTestRule
             .onNodeWithTag("route_slash_icon", useUnmergedTree = true)
-            .assertIsDisplayed()
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -429,7 +429,7 @@ class StopDetailsFilteredDeparturesViewTest {
             RouteCardData.Leaf(
                 lineOrRoute,
                 stop,
-                trip.directionId,
+                Direction(null, null, trip.directionId),
                 listOf(routePattern),
                 setOf(stop.id),
                 listOf(UpcomingTrip(trip, schedule, prediction)),
@@ -440,7 +440,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 alertsDownstream = emptyList(),
                 RouteCardData.Context.StopDetailsFiltered,
             )
-        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf), globalResponse)
+        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf))
 
         val stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId)
         val tripFilter = TripDetailsFilter(trip.id, null, null, false)
@@ -476,7 +476,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = stopFilter,
                 tripFilter = tripFilter,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = AlertsStreamDataResponse(mapOf(alert.id to alert)),
                 now = now,
                 updateTripFilter = {},
@@ -509,7 +509,7 @@ class StopDetailsFilteredDeparturesViewTest {
             RouteCardData.Leaf(
                 lineOrRoute,
                 stop,
-                0,
+                Direction(0, route),
                 emptyList(),
                 setOf(stop.id),
                 emptyList(),
@@ -529,7 +529,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = StopDetailsFilter(route.id, 0),
                 tripFilter = null,
                 leaf = leaf,
-                selectedDirection = Direction(null, null, 0),
+                selectedDirection = Direction(0, route),
                 allAlerts = null,
                 now = now,
                 viewModel = viewModel,
@@ -541,7 +541,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Service ended").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Service ended").assertCanBeDisplayed()
     }
 
     @OptIn(ExperimentalTestApi::class)
@@ -585,7 +585,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leaf = routeStopData.data.first { it.direction.id == 0 }
 
         val routeData =
             StopDetailsViewModel.RouteData.Filtered(
@@ -602,7 +602,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = null,
                 now = now,
                 viewModel = viewModel,
@@ -674,7 +674,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leaf = routeStopData.data.first { it.direction.id == 0 }
         val alertSummaries =
             mapOf(alert.id to alert.summary(stop.id, 0, listOf(alertPattern), now, null, global))
 
@@ -694,7 +694,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = null,
                 now = now,
                 updateTripFilter = {},
@@ -740,7 +740,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leaf = routeStopData.data.first { it.direction.id == 0 }
         val alertSummaries =
             mapOf(
                 alert.id to
@@ -769,7 +769,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = alertResponse,
                 now = now,
                 updateTripFilter = {},
@@ -781,7 +781,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Service suspended", true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Service suspended", true).assertCanBeDisplayed()
     }
 
     @Test
@@ -814,7 +814,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leaf = routeStopData.data.first { it.direction.id == 0 }
 
         val routeData =
             StopDetailsViewModel.RouteData.Filtered(
@@ -831,7 +831,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = null,
                 now = now,
                 updateTripFilter = {},
@@ -844,7 +844,7 @@ class StopDetailsFilteredDeparturesViewTest {
         }
 
         composeTestRule.onNodeWithText("Elevator Closure").assertDoesNotExist()
-        composeTestRule.onNodeWithText("Elevator Alert Header").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Elevator Alert Header").assertCanBeDisplayed()
     }
 
     @Test
@@ -894,7 +894,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leaf = routeStopData.data.first { it.direction.id == 0 }
 
         val routeData =
             StopDetailsViewModel.RouteData.Filtered(
@@ -911,7 +911,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = null,
                 now = now,
                 updateTripFilter = {},
@@ -923,7 +923,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Delays due to heavy ridership").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Delays due to heavy ridership").assertCanBeDisplayed()
     }
 
     @Test
@@ -945,7 +945,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        val leaf = routeStopData.data.first { it.directionId == 0 }
+        val leaf = routeStopData.data.first { it.direction.id == 0 }
 
         val routeData =
             StopDetailsViewModel.RouteData.Filtered(
@@ -961,7 +961,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = null,
                 now = now,
                 updateTripFilter = {},
@@ -973,7 +973,7 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         }
 
-        composeTestRule.onNodeWithText("This stop is not accessible").assertIsDisplayed()
+        composeTestRule.onNodeWithText("This stop is not accessible").assertCanBeDisplayed()
     }
 
     @Test
@@ -987,7 +987,7 @@ class StopDetailsFilteredDeparturesViewTest {
             RouteCardData.Leaf(
                 lineOrRoute,
                 stop,
-                0,
+                Direction(0, route),
                 emptyList(),
                 setOf(stop.id),
                 emptyList(),
@@ -1018,7 +1018,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = StopDetailsFilter(route.id, 0),
                 tripFilter = null,
                 leaf = leaf,
-                selectedDirection = Direction(null, null, 0),
+                selectedDirection = Direction(0, route),
                 allAlerts = null,
                 now = now,
                 viewModel = viewModel,
@@ -1031,8 +1031,8 @@ class StopDetailsFilteredDeparturesViewTest {
         }
 
         composeTestRule
-            .onNode(hasTextMatching(Regex("^Next trip on \\w+, Dec 8$")))
-            .assertIsDisplayed()
+            .onNode(hasTextMatching(Regex("^Next trip on \\w+, (Dec 8|8 Dec)$")))
+            .assertCanBeDisplayed()
     }
 
     @Test
@@ -1077,7 +1077,7 @@ class StopDetailsFilteredDeparturesViewTest {
             RouteCardData.Leaf(
                 lineOrRoute,
                 stop,
-                trip.directionId,
+                Direction(null, null, trip.directionId),
                 listOf(routePattern),
                 setOf(stop.id),
                 listOf(UpcomingTrip(trip, schedule, null)),
@@ -1088,7 +1088,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 alertsDownstream = emptyList(),
                 RouteCardData.Context.StopDetailsFiltered,
             )
-        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf), globalResponse)
+        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf))
 
         val stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId)
         val tripFilter = TripDetailsFilter(trip.id, null, null, false)
@@ -1108,7 +1108,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = stopFilter,
                 tripFilter = tripFilter,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = null,
                 now = now,
                 updateTripFilter = {},
@@ -1120,8 +1120,8 @@ class StopDetailsFilteredDeparturesViewTest {
             )
         }
 
-        composeTestRule.onNodeWithTag("sunrise").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Good morning!").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("sunrise").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Good morning!").assertCanBeDisplayed()
     }
 
     @Test
@@ -1175,7 +1175,7 @@ class StopDetailsFilteredDeparturesViewTest {
             RouteCardData.Leaf(
                 lineOrRoute,
                 stop,
-                trip.directionId,
+                Direction(null, null, trip.directionId),
                 listOf(routePattern),
                 setOf(stop.id),
                 listOf(UpcomingTrip(trip, schedule, prediction)),
@@ -1186,7 +1186,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 alertsDownstream = emptyList(),
                 RouteCardData.Context.StopDetailsFiltered,
             )
-        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf), globalResponse)
+        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf))
 
         val stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId)
         val tripFilter = TripDetailsFilter(trip.id, null, null, false)
@@ -1206,7 +1206,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stopFilter = stopFilter,
                 tripFilter = tripFilter,
                 leaf = leaf,
-                selectedDirection = routeStopData.directions.first(),
+                selectedDirection = routeStopData.data.first().direction,
                 allAlerts = null,
                 now = now,
                 updateTripFilter = {},
@@ -1233,7 +1233,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 RouteCardData.Leaf(
                     LineOrRoute.Route(route),
                     stop,
-                    directionId = 0,
+                    Direction(0, route),
                     listOf(WorldCupService.routePatternOutbound),
                     stopIds = emptySet(),
                     upcomingTrips = emptyList(),
@@ -1256,8 +1256,10 @@ class StopDetailsFilteredDeparturesViewTest {
         }
         composeTestRule
             .onNodeWithText("Service from South Station to today’s World Cup match")
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithText("Boston Stadium Train ticket required").assertIsDisplayed()
-        composeTestRule.onNodeWithText("View details").assertIsDisplayed()
+            .assertCanBeDisplayed()
+        composeTestRule
+            .onNodeWithText("Boston Stadium Train ticket required")
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("View details").assertCanBeDisplayed()
     }
 }

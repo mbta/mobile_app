@@ -1,12 +1,12 @@
 package com.mbta.tid.mbta_app.android.component.routeCard
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LineOrRoute
@@ -38,6 +38,7 @@ class DeparturesTest {
             objects.route {
                 longName = "Route"
                 type = RouteType.LIGHT_RAIL
+                directionDestinations = listOf("A", "B")
             }
 
         val aTrip = objects.trip { headsign = "A" }
@@ -49,12 +50,11 @@ class DeparturesTest {
             RouteCardData.RouteStopData(
                 lineOrRoute,
                 stop,
-                listOf(Direction("A Headsign", null, 0), Direction("B Headsign", null, 1)),
                 listOf(
                     RouteCardData.Leaf(
                         lineOrRoute,
                         stop,
-                        0,
+                        Direction(0, route),
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
                         listOf(
@@ -73,7 +73,7 @@ class DeparturesTest {
                     RouteCardData.Leaf(
                         lineOrRoute,
                         stop,
-                        1,
+                        Direction(1, route),
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
                         listOf(
@@ -96,14 +96,14 @@ class DeparturesTest {
             Departures(stopData, GlobalResponse(objects), now, { false }) { _ -> }
         }
 
-        composeTestRule.onNodeWithText("5 min").assertIsDisplayed()
-        composeTestRule.onNodeWithText(aTrip.headsign).assertIsDisplayed()
+        composeTestRule.onNodeWithText("5 min").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(aTrip.headsign).assertCanBeDisplayed()
 
-        composeTestRule.onNodeWithText("20 min").assertIsDisplayed()
-        composeTestRule.onNodeWithText(bTrip.headsign).assertIsDisplayed()
-        composeTestRule.onNodeWithText(bTrip.headsign).assertIsDisplayed()
+        composeTestRule.onNodeWithText("20 min").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(bTrip.headsign).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(bTrip.headsign).assertCanBeDisplayed()
 
-        composeTestRule.onNodeWithContentDescription("Alert").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Alert").assertCanBeDisplayed()
     }
 
     @Test
@@ -115,6 +115,7 @@ class DeparturesTest {
             objects.route {
                 longName = "Route"
                 type = RouteType.LIGHT_RAIL
+                directionDestinations = listOf("A", "B")
             }
 
         val aTrip = objects.trip { headsign = "A" }
@@ -127,12 +128,11 @@ class DeparturesTest {
             RouteCardData.RouteStopData(
                 lineOrRoute,
                 stop,
-                listOf(Direction("A Headsign", null, 0), Direction("B Headsign", null, 1)),
                 listOf(
                     RouteCardData.Leaf(
                         lineOrRoute,
                         stop,
-                        0,
+                        Direction(0, route),
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
                         listOf(
@@ -152,7 +152,7 @@ class DeparturesTest {
                     RouteCardData.Leaf(
                         lineOrRoute,
                         stop,
-                        1,
+                        Direction(1, route),
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
                         listOf(
@@ -176,8 +176,8 @@ class DeparturesTest {
         }
 
         composeTestRule.onNodeWithText(aTrip.headsign).assertDoesNotExist()
-        composeTestRule.onNodeWithText(aSchedule.stopHeadsign!!).assertIsDisplayed()
-        composeTestRule.onNodeWithText(bTrip.headsign).assertIsDisplayed()
+        composeTestRule.onNodeWithText(aSchedule.stopHeadsign!!).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(bTrip.headsign).assertCanBeDisplayed()
     }
 
     @Test
@@ -204,12 +204,11 @@ class DeparturesTest {
             RouteCardData.RouteStopData(
                 lineOrRoute,
                 stop,
-                listOf(Direction("West", "Riverside", 0), Direction("East", "Park St & North", 1)),
                 listOf(
                     RouteCardData.Leaf(
                         lineOrRoute,
                         stop,
-                        0,
+                        Direction("West", "Riverside", 0),
                         listOf(routePattern),
                         setOf(stop.id),
                         listOf(trip),
@@ -227,7 +226,7 @@ class DeparturesTest {
             Departures(stopData, GlobalResponse(objects), now, { false }) { _ -> }
         }
 
-        composeTestRule.onNodeWithText("D").assertIsDisplayed()
+        composeTestRule.onNodeWithText("D").assertCanBeDisplayed()
     }
 
     @Test
@@ -239,6 +238,7 @@ class DeparturesTest {
             objects.route {
                 longName = "Route"
                 type = RouteType.LIGHT_RAIL
+                directionDestinations = listOf("A", "B")
             }
 
         val aTrip = objects.trip { headsign = "A" }
@@ -250,12 +250,11 @@ class DeparturesTest {
             RouteCardData.RouteStopData(
                 lineOrRoute,
                 stop,
-                listOf(Direction("A Headsign", null, 0), Direction("B Headsign", null, 1)),
                 listOf(
                     RouteCardData.Leaf(
                         lineOrRoute,
                         stop,
-                        0,
+                        Direction(0, route),
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
                         listOf(
@@ -274,7 +273,7 @@ class DeparturesTest {
                     RouteCardData.Leaf(
                         lineOrRoute,
                         stop,
-                        1,
+                        Direction(1, route),
                         listOf(objects.routePattern(route) {}),
                         setOf(stop.id),
                         listOf(
@@ -304,7 +303,7 @@ class DeparturesTest {
             Departures(stopData, GlobalResponse(objects), now, { true }) { onClickCalled = true }
         }
 
-        composeTestRule.onNodeWithText(aTrip.headsign).assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithText(aTrip.headsign).assertCanBeDisplayed().performClick()
 
         assertTrue(onClickCalled)
         assertEquals(
@@ -340,7 +339,7 @@ class DeparturesTest {
                             RouteCardData.Leaf(
                                 LineOrRoute.Route(route),
                                 stop,
-                                directionId = 0,
+                                Direction(0, route),
                                 routePatterns = listOf(WorldCupService.routePatternOutbound),
                                 stopIds = emptySet(),
                                 upcomingTrips = emptyList(),
@@ -352,7 +351,6 @@ class DeparturesTest {
                                 context = RouteCardData.Context.NearbyTransit,
                             )
                         ),
-                        GlobalResponse(objects),
                     ),
                 globalData = GlobalResponse(objects),
                 now = EasternTimeInstant.now(),
@@ -363,8 +361,10 @@ class DeparturesTest {
         }
         composeTestRule
             .onNodeWithText("Service from South Station to today’s World Cup match")
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithText("Boston Stadium Train ticket required").assertIsDisplayed()
+            .assertCanBeDisplayed()
+        composeTestRule
+            .onNodeWithText("Boston Stadium Train ticket required")
+            .assertCanBeDisplayed()
         composeTestRule.onNodeWithText("View details").assertDoesNotExist()
     }
 }

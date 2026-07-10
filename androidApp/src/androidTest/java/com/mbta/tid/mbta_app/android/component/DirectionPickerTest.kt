@@ -1,11 +1,11 @@
 package com.mbta.tid.mbta_app.android.component
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.stopDetails.DirectionPicker
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import junit.framework.TestCase.assertTrue
@@ -34,7 +34,7 @@ class DirectionPickerTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Northbound").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Northbound").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Southbound").performClick()
         assertTrue(directionId == 1)
     }
@@ -60,7 +60,7 @@ class DirectionPickerTest {
         }
 
         composeTestRule.onNodeWithText("Northbound").assertIsNotDisplayed()
-        composeTestRule.onNodeWithText("Southbound to").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Destination").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Southbound to").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Destination").assertCanBeDisplayed()
     }
 }
