@@ -128,13 +128,13 @@ class RoutePillSpecTest {
 
         val expectedContent =
             when (type) {
-                RoutePillSpec.Type.Fixed -> RoutePillSpec.Content.Text("GL C")
+                RoutePillSpec.Type.Fixed -> RoutePillSpec.Content.Text("C")
                 RoutePillSpec.Type.Flex,
                 RoutePillSpec.Type.FlexCompact -> RoutePillSpec.Content.Text("C")
             }
         val expectedGLWidth =
             when (type) {
-                RoutePillSpec.Type.Fixed -> RoutePillSpec.Width.Fixed
+                RoutePillSpec.Type.Fixed -> RoutePillSpec.Width.Circle
                 RoutePillSpec.Type.Flex,
                 RoutePillSpec.Type.FlexCompact -> RoutePillSpec.Width.Circle
             }

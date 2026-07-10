@@ -80,14 +80,15 @@ struct StopCardDepartures: View {
                     },
                     showChevron: true
                 ) {
-                    let branchedNoRoutePills = (formatted as? LeafFormat.Branched)?.branchRows
-                        .allSatisfy { $0.route == nil } ?? false
-                    if branchedNoRoutePills {
+                    let branched = (formatted as? LeafFormat.Branched)
+                    if let branched, branched.branchRows
+                        .allSatisfy { $0.route == nil } {
                         RoutePill(
                             route: (leaf.lineOrRoute as? LineOrRoute.Route)?.route,
                             line: (leaf.lineOrRoute as? LineOrRoute.Line)?.line,
-                            type: .fixed
-                        )
+                            type: .fixed,
+                            warningAlertIconName: branched.warningAlert?.iconName
+                        ).padding(.trailing, 8)
                     }
                     if leaf.lineOrRoute.id == WorldCupService.shared.route.id {
                         WorldCupBlurb(
@@ -104,8 +105,7 @@ struct StopCardDepartures: View {
                     }
                 }
                 .tint(.fill3)
-                .padding(.leading, 16)
-                .padding(.trailing, 8)
+                .padding(.horizontal, 8)
                 .padding(.vertical, 10)
                 .accessibilityHint(Text("Open for more arrivals"))
                 if index < stopData.data.count - 1 {

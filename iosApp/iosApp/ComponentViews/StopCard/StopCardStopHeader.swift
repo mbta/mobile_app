@@ -21,12 +21,13 @@ struct StopCardStopHeader: View {
     var showElevatorAlerts: Bool { showStationAccessibility && !data.elevatorAlerts.isEmpty }
 
     var body: some View {
-        HStack {
+        HStack(spacing: 4) {
             (data.stop.locationType == .stop ? Image(.mapStopCloseBUS) : Image(.mbtaLogo))
                 .resizable()
                 .scaledToFit()
                 .frame(width: 24, height: 24)
                 .accessibilityHidden(true)
+                .padding(.horizontal, 8)
             VStack(alignment: .leading, spacing: 4) {
                 Text(data.stop.name)
                     .font(Typography.callout)
@@ -62,7 +63,7 @@ struct StopCardStopHeader: View {
                     }
                 }
             }
-            .padding(.horizontal, 16)
+            .padding(.trailing, 16)
             .padding(.vertical, 12)
         }
         .frame(maxWidth: .infinity, alignment: .leading)

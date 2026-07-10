@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.viewModel.composeStateHelpers
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,7 +43,6 @@ internal fun subscribeToPredictions(
         onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
         onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit,
     ) {
-        predictionsRepository.disconnect()
         if (stopIds != null && active) {
             predictionsRepository.connect(stopIds, errorKey, onJoin, onMessage)
         }
@@ -82,15 +80,14 @@ internal fun subscribeToPredictions(
         }
     }
 
-    DisposableEffect(stopIds, active) {
-        connect(stopIds, active, ::onJoin, ::onMessage)
-        onDispose {
-            predictionsRepository.disconnect()
+    LaunchedEffect(stopIds, active) {
+        if (active) {
             if (loadedStopIds != stopIds) {
                 predictions = null
                 loadedStopIds = null
             }
-        }
+            connect(stopIds, active, ::onJoin, ::onMessage)
+        } else predictionsRepository.disconnect()
     }
 
     LaunchedEffect(predictions) { if (active) checkStale() }
