@@ -42,15 +42,12 @@ public class AlertAssociatedStop internal constructor(internal val stop: Stop) {
                 if (greenRoutes.contains(pattern.routeId) && !pattern.isTypical()) continue
                 relevantAlerts =
                     nullStopAlerts.filter { alert ->
-                        alert.anyInformedEntity {
-                            it.appliesTo(
-                                stopId = Alert.InformedEntity.Matcher.Data(stop.id),
-                                routeId = Alert.InformedEntity.Matcher.Data(pattern.routeId),
-                                routeType = Alert.InformedEntity.Matcher.Data(route.type),
-                                directionId =
-                                    Alert.InformedEntity.Matcher.Data(pattern.directionId),
-                            )
-                        }
+                        alert.anyInformedEntityMatches(
+                            stopId = Matcher.Data(stop.id),
+                            routeId = Matcher.Data(pattern.routeId),
+                            routeType = Matcher.Data(route.type),
+                            directionId = Matcher.Data(pattern.directionId),
+                        )
                     } + relevantAlerts
             }
 
@@ -186,14 +183,12 @@ private fun statesForPattern(
 
     val matchingAlert =
         serviceAlerts.find { alert ->
-            alert.anyInformedEntity {
-                it.appliesTo(
-                    stopId = Alert.InformedEntity.Matcher.Data(stop.id),
-                    routeId = Alert.InformedEntity.Matcher.Data(pattern.routeId),
-                    routeType = Alert.InformedEntity.Matcher.Data(route.type),
-                    directionId = Alert.InformedEntity.Matcher.Data(pattern.directionId),
-                )
-            }
+            alert.anyInformedEntityMatches(
+                stopId = Matcher.Data(stop.id),
+                routeId = Matcher.Data(pattern.routeId),
+                routeType = Matcher.Data(route.type),
+                directionId = Matcher.Data(pattern.directionId),
+            )
         } ?: return StopAlertState.Normal
     if (matchingAlert.effect == Alert.Effect.Shuttle) {
         return StopAlertState.Shuttle

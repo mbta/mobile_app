@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.model.Alert.InformedEntity.Matcher
 import com.mbta.tid.mbta_app.model.RoutePattern.Typicality
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -66,7 +65,7 @@ internal constructor(
      */
     public fun tripSpecificSignificance(trip: String): AlertSignificance? {
 
-        if (this.anyInformedEntitySatisfies { checkTripStrict(trip) }) {
+        if (this.anyInformedEntity { it.trip == trip }) {
             if (effect == Effect.Cancellation) {
                 return AlertSignificance.Major
             } else {
@@ -301,158 +300,25 @@ internal constructor(
             @SerialName("using_wheelchair") UsingWheelchair,
         }
 
-        internal sealed class Matcher<out T> {
-            data class Data<T>(val value: T) : Matcher<T>()
-
-            data object Wildcard : Matcher<Nothing>()
-        }
-
-        internal fun appliesTo(
-            directionId: Matcher<Int> = Matcher.Wildcard,
-            facilityId: Matcher<String> = Matcher.Wildcard,
-            routeId: Matcher<Route.Id> = Matcher.Wildcard,
-            routeType: Matcher<RouteType> = Matcher.Wildcard,
-            stopId: Matcher<String> = Matcher.Wildcard,
-            tripId: Matcher<String> = Matcher.Wildcard,
+        internal fun matches(
+            activity: Matcher<Activity> = Matcher.Wildcard(),
+            directionId: Matcher<Int> = Matcher.Wildcard(),
+            facilityId: Matcher<String> = Matcher.Wildcard(),
+            routeId: Matcher<Route.Id> = Matcher.Wildcard(),
+            routeType: Matcher<RouteType> = Matcher.Wildcard(),
+            stopId: Matcher<String> = Matcher.Wildcard(),
+            tripId: Matcher<String> = Matcher.Wildcard(),
         ): Boolean {
-            fun <T> matches(expected: Matcher<T>, actual: T?): Boolean =
-                when (expected) {
-                    is Matcher.Data -> actual == null || expected.value == actual
-                    Matcher.Wildcard -> true
-                }
+            fun <T : Any> matches(expected: Matcher<T>, actual: T?): Boolean =
+                actual == null || expected.matches(actual)
 
-            return matches(directionId, this.directionId) &&
+            return activities.any { matches(activity, it) } &&
+                matches(directionId, this.directionId) &&
                 matches(facilityId, this.facility) &&
                 matches(routeId, this.route) &&
                 matches(routeType, this.routeType) &&
                 matches(stopId, this.stop) &&
                 matches(tripId, this.trip)
-        }
-
-        /** A more expressive way to represent a set of constraints than [appliesTo]. */
-        internal inner class PredicateBuilder {
-            var isSatisfied = true
-
-            fun checkActivity(activity: Activity) {
-                if (!isSatisfied) return
-                if (activity !in this@InformedEntity.activities) {
-                    isSatisfied = false
-                }
-            }
-
-            fun checkActivityIn(vararg activities: Activity) = checkActivityIn(activities.toList())
-
-            fun checkActivityIn(activities: Collection<Activity>) {
-                if (!isSatisfied) return
-                if (!this@InformedEntity.activities.any { it in activities }) {
-                    isSatisfied = false
-                }
-            }
-
-            fun checkDirection(directionId: Matcher<Int>) {
-                if (!isSatisfied) return
-                if (this@InformedEntity.directionId == null) return
-                when (directionId) {
-                    Matcher.Wildcard -> return
-                    is Matcher.Data<Int> -> {
-                        if (this@InformedEntity.directionId != directionId.value) {
-                            isSatisfied = false
-                        }
-                    }
-                }
-            }
-
-            fun checkRoute(route: Route) {
-                checkRoute(route.id, route.type)
-            }
-
-            fun checkRoute(routeId: Route.Id, routeType: RouteType) {
-                if (!isSatisfied) return
-                checkRouteType(Matcher.Data(routeType))
-                checkRouteIdIn(listOf(routeId))
-            }
-
-            fun checkRouteIdIn(routeIds: Collection<Route.Id>) {
-                if (!isSatisfied) return
-                if (this@InformedEntity.route == null) return
-                if (this@InformedEntity.route !in routeIds) {
-                    isSatisfied = false
-                }
-            }
-
-            fun checkRouteType(routeType: Matcher<RouteType>) {
-                if (!isSatisfied) return
-                when (routeType) {
-                    Matcher.Wildcard -> return
-
-                    is Matcher.Data -> {
-                        if (this@InformedEntity.routeType == null) return
-                        if (this@InformedEntity.routeType != routeType.value) {
-                            isSatisfied = false
-                        }
-                    }
-                }
-            }
-
-            fun checkStop(stopId: Matcher<String>) {
-                if (!isSatisfied) return
-                when (stopId) {
-                    Matcher.Wildcard -> return
-
-                    is Matcher.Data -> {
-                        if (this@InformedEntity.stop == null) return
-                        if (this@InformedEntity.stop != stopId.value) {
-                            isSatisfied = false
-                        }
-                    }
-                }
-            }
-
-            fun checkStopIn(stopIds: Matcher<Collection<String>>) {
-                if (!isSatisfied) return
-                if (this@InformedEntity.stop == null) return
-                when (stopIds) {
-                    Matcher.Wildcard -> return
-                    is Matcher.Data -> {
-                        if (this@InformedEntity.stop !in stopIds.value) {
-                            isSatisfied = false
-                        }
-                    }
-                }
-            }
-
-            fun checkTrip(tripId: Matcher<String>) {
-                if (!isSatisfied) return
-                when (tripId) {
-                    Matcher.Wildcard -> return
-                    is Matcher.Data<*> -> {
-                        if (this@InformedEntity.trip == null) return
-                        if (this@InformedEntity.trip != tripId.value) {
-                            isSatisfied = false
-                        }
-                    }
-                }
-            }
-
-            fun checkTripStrict(tripId: String) {
-                if (!isSatisfied) return
-                if (this@InformedEntity.trip != tripId) {
-                    isSatisfied = false
-                }
-            }
-
-            fun checkNullTrip() {
-                if (!isSatisfied) return
-                if (this@InformedEntity.trip != null) {
-                    isSatisfied = false
-                }
-            }
-        }
-
-        internal fun satisfies(block: PredicateBuilder.() -> Unit): Boolean {
-            val builder = PredicateBuilder()
-            builder.block()
-            return builder.isSatisfied
         }
     }
 
@@ -489,9 +355,17 @@ internal constructor(
     internal fun anyInformedEntity(predicate: (InformedEntity) -> Boolean) =
         informedEntity.any(predicate)
 
-    internal fun anyInformedEntitySatisfies(
-        predicateBuilder: InformedEntity.PredicateBuilder.() -> Unit
-    ) = informedEntity.any { it.satisfies(predicateBuilder) }
+    internal fun anyInformedEntityMatches(
+        activity: Matcher<InformedEntity.Activity> = Matcher.Wildcard(),
+        directionId: Matcher<Int> = Matcher.Wildcard(),
+        facilityId: Matcher<String> = Matcher.Wildcard(),
+        routeId: Matcher<Route.Id> = Matcher.Wildcard(),
+        routeType: Matcher<RouteType> = Matcher.Wildcard(),
+        stopId: Matcher<String> = Matcher.Wildcard(),
+        tripId: Matcher<String> = Matcher.Wildcard(),
+    ) = informedEntity.any {
+        it.matches(activity, directionId, facilityId, routeId, routeType, stopId, tripId)
+    }
 
     internal fun matchingEntities(predicate: (InformedEntity) -> Boolean) =
         informedEntity.filter(predicate)
@@ -577,14 +451,14 @@ internal constructor(
         ): List<Alert> {
             return alerts
                 .filter { alert ->
-                    alert.anyInformedEntitySatisfies {
-                        checkActivity(InformedEntity.Activity.Board)
-                        checkDirection(Matcher.Data(directionId))
-                        checkRouteIdIn(routeIds)
-                        checkRouteType(Matcher.Data(routeType))
-                        checkStopIn(stopIds?.let { Matcher.Data(it) } ?: Matcher.Wildcard)
-                        checkTrip(tripId?.let { Matcher.Data(it) } ?: Matcher.Wildcard)
-                    }
+                    alert.anyInformedEntityMatches(
+                        activity = Matcher.Data(InformedEntity.Activity.Board),
+                        directionId = Matcher.Data(directionId),
+                        routeId = Matcher.AnyOf(routeIds),
+                        routeType = Matcher.Data(routeType),
+                        stopId = stopIds?.let { Matcher.AnyOf(it) } ?: Matcher.Wildcard(),
+                        tripId = tripId?.let { Matcher.Data(it) } ?: Matcher.Wildcard(),
+                    )
                 }
                 .distinct()
         }
@@ -602,12 +476,10 @@ internal constructor(
             return alerts
                 .filter {
                     it.effect == Effect.ElevatorClosure &&
-                        it.anyInformedEntity { entity ->
-                            entity.activities.contains(InformedEntity.Activity.UsingWheelchair) &&
-                                stopIds.any { stopId ->
-                                    entity.appliesTo(stopId = InformedEntity.Matcher.Data(stopId))
-                                }
-                        }
+                        it.anyInformedEntityMatches(
+                            activity = Matcher.Data(InformedEntity.Activity.UsingWheelchair),
+                            stopId = Matcher.AnyOf(stopIds),
+                        )
                 }
                 .distinct()
         }
@@ -645,14 +517,16 @@ internal constructor(
             val relevantAlerts =
                 alerts
                     .filter {
-                        it.anyInformedEntitySatisfies {
-                            checkActivityIn(
-                                InformedEntity.Activity.Exit,
-                                InformedEntity.Activity.Ride,
-                            )
-                            checkDirection(Matcher.Data(trip.directionId))
-                            checkRoute(trip.routeId, routeType)
-                        }
+                        it.anyInformedEntityMatches(
+                            activity =
+                                Matcher.AnyOf(
+                                    InformedEntity.Activity.Exit,
+                                    InformedEntity.Activity.Ride,
+                                ),
+                            directionId = Matcher.Data(trip.directionId),
+                            routeId = Matcher.Data(trip.routeId),
+                            routeType = Matcher.Data(routeType),
+                        )
                     }
                     .toList()
 
@@ -660,9 +534,7 @@ internal constructor(
             val targetStopAlertIds =
                 relevantAlerts
                     .filter {
-                        it.anyInformedEntitySatisfies {
-                            checkStopIn(Matcher.Data(targetStopWithChildren))
-                        }
+                        it.anyInformedEntityMatches(stopId = Matcher.AnyOf(targetStopWithChildren))
                     }
                     .map { it.id }
                     .toSet()
@@ -670,7 +542,7 @@ internal constructor(
             val downstreamStops = stopIds.subList(indexOfTargetStopInPattern + 1, stopIds.size)
             val tripAlerts = downstreamStops.flatMap { stop ->
                 relevantAlerts.filter {
-                    it.anyInformedEntitySatisfies { checkStop(Matcher.Data(stop)) } &&
+                    it.anyInformedEntityMatches(stopId = Matcher.Data(stop)) &&
                         !targetStopAlertIds.contains(it.id)
                 }
             }
