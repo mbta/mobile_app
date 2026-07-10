@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.RoutePattern.Typicality
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -111,37 +112,42 @@ public data class GlobalMapData(
                             }
                         }
 
+                fun typical(pattern: RoutePattern) =
+                    pattern.isTypical() || pattern.typicality == Typicality.CanonicalOnly
+
                 val isTerminal =
-                    patterns.any { pattern ->
-                        val route = globalData.routes[pattern.routeId]
-                        if (route == null || route.type == RouteType.BUS) {
-                            // Don't mark bus terminals, only rail and ferry
-                            return@any false
+                    patterns
+                        .filter(::typical)
+                        .ifEmpty { patterns }
+                        .any { pattern ->
+                            val route = globalData.routes[pattern.routeId]
+                            if (route == null || route.type == RouteType.BUS) {
+                                // Don't mark bus terminals, only rail and ferry
+                                return@any false
+                            }
+                            val trip =
+                                globalData.trips[pattern.representativeTripId] ?: return@any false
+                            val tripIds = trip.stopIds ?: listOf()
+                            if (tripIds.size < 2) {
+                                return@any false
+                            }
+                            return@any setOf(tripIds.first(), tripIds.last())
+                                .intersect(stopIdSet)
+                                .isNotEmpty()
                         }
-                        val trip =
-                            globalData.trips[pattern.representativeTripId] ?: return@any false
-                        val tripIds = trip.stopIds ?: listOf()
-                        if (tripIds.size < 2) {
-                            return@any false
-                        }
-                        return@any setOf(tripIds.first(), tripIds.last())
-                            .intersect(stopIdSet)
-                            .isNotEmpty()
-                    }
 
                 val allRoutes = mutableSetOf<Route>()
                 val typicalRouteDirections = mutableMapOf<Route.Id, MutableSet<Int>>()
 
                 for (pattern in patterns.sorted()) {
-                    if (
-                        pattern.isTypical() ||
-                            pattern.typicality == RoutePattern.Typicality.CanonicalOnly
-                    ) {
+                    if (typical(pattern)) {
                         typicalRouteDirections
                             .getOrPut(pattern.routeId, ::mutableSetOf)
                             .add(pattern.directionId)
                     }
                     val route = globalData.routes[pattern.routeId] ?: continue
+                    // Only include non-typical patterns for bus routes
+                    if (route.type != RouteType.BUS && !typical(pattern)) continue
                     allRoutes.add(route)
                 }
 
