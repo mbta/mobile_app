@@ -312,7 +312,7 @@ struct FavoriteDepartures: View {
                         }
                     }
                 }
-                .padding(.leading, 8)
+                .padding(.leading, groupByStop ? 8 : 16)
                 .padding(.trailing, 16)
                 .padding(.vertical, 10)
 
