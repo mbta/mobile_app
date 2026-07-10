@@ -37,20 +37,18 @@ class TripStopsTest {
         val stop4 = objects.stop { name = "Stop D" }
         val stop5 = objects.stop { name = "Stop E" }
 
-        val vehicle =
-            objects.vehicle {
-                tripId = trip.id
-                routeId = route.id.idText
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                stopId = stop1.id
-            }
+        val vehicle = objects.vehicle {
+            tripId = trip.id
+            routeId = route.id.idText
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+            stopId = stop1.id
+        }
 
-        fun makeSchedule(stop: Stop) =
-            objects.schedule {
-                routeId = route.id.idText
-                stopId = stop.id
-                this.trip = trip
-            }
+        fun makeSchedule(stop: Stop) = objects.schedule {
+            routeId = route.id.idText
+            stopId = stop.id
+            this.trip = trip
+        }
 
         var predictionTime = now
         fun makePrediction(schedule: Schedule): Prediction {
@@ -160,20 +158,18 @@ class TripStopsTest {
         val stop2 = objects.stop { name = "Stop B" }
         val stop3 = objects.stop { name = "Stop C" }
 
-        val vehicle =
-            objects.vehicle {
-                tripId = trip.id
-                routeId = route.id.idText
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                stopId = stop1.id
-            }
+        val vehicle = objects.vehicle {
+            tripId = trip.id
+            routeId = route.id.idText
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+            stopId = stop1.id
+        }
 
-        fun makeSchedule(stop: Stop) =
-            objects.schedule {
-                routeId = route.id.idText
-                stopId = stop.id
-                this.trip = trip
-            }
+        fun makeSchedule(stop: Stop) = objects.schedule {
+            routeId = route.id.idText
+            stopId = stop.id
+            this.trip = trip
+        }
 
         var predictionTime = now
         fun makePrediction(schedule: Schedule): Prediction {
@@ -257,20 +253,18 @@ class TripStopsTest {
         val stop1 = objects.stop { name = "Stop A" }
         val stop2 = objects.stop { name = "Stop B" }
 
-        val vehicle =
-            objects.vehicle {
-                tripId = trip.id
-                routeId = route.id.idText
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                stopId = stop1.id
-            }
+        val vehicle = objects.vehicle {
+            tripId = trip.id
+            routeId = route.id.idText
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+            stopId = stop1.id
+        }
 
-        fun makeSchedule(stop: Stop) =
-            objects.schedule {
-                routeId = route.id.idText
-                stopId = stop.id
-                this.trip = trip
-            }
+        fun makeSchedule(stop: Stop) = objects.schedule {
+            routeId = route.id.idText
+            stopId = stop.id
+            this.trip = trip
+        }
 
         var predictionTime = now
         fun makePrediction(schedule: Schedule): Prediction {
@@ -345,20 +339,18 @@ class TripStopsTest {
         val stop2 = objects.stop { name = "Stop B" }
         val stop3 = objects.stop { name = "Stop C" }
 
-        val vehicle =
-            objects.vehicle {
-                tripId = "different"
-                routeId = route.id.idText
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                stopId = stop1.id
-            }
+        val vehicle = objects.vehicle {
+            tripId = "different"
+            routeId = route.id.idText
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+            stopId = stop1.id
+        }
 
-        fun makeSchedule(stop: Stop) =
-            objects.schedule {
-                routeId = route.id.idText
-                stopId = stop.id
-                this.trip = trip
-            }
+        fun makeSchedule(stop: Stop) = objects.schedule {
+            routeId = route.id.idText
+            stopId = stop.id
+            this.trip = trip
+        }
 
         var predictionTime = now
         fun makePrediction(schedule: Schedule): Prediction {
@@ -447,20 +439,18 @@ class TripStopsTest {
 
         val alert = objects.alert { effect = Alert.Effect.Shuttle }
 
-        val vehicle =
-            objects.vehicle {
-                tripId = trip.id
-                routeId = route.id.idText
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                stopId = stop1.id
-            }
+        val vehicle = objects.vehicle {
+            tripId = trip.id
+            routeId = route.id.idText
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+            stopId = stop1.id
+        }
 
-        fun makeSchedule(stop: Stop) =
-            objects.schedule {
-                routeId = route.id.idText
-                stopId = stop.id
-                this.trip = trip
-            }
+        fun makeSchedule(stop: Stop) = objects.schedule {
+            routeId = route.id.idText
+            stopId = stop.id
+            this.trip = trip
+        }
 
         var predictionTime = now
         fun makePrediction(schedule: Schedule): Prediction {
@@ -555,20 +545,18 @@ class TripStopsTest {
 
         val alert = objects.alert { effect = Alert.Effect.StopClosure }
 
-        val vehicle =
-            objects.vehicle {
-                tripId = trip.id
-                routeId = route.id.idText
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                stopId = stop1.id
-            }
+        val vehicle = objects.vehicle {
+            tripId = trip.id
+            routeId = route.id.idText
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+            stopId = stop1.id
+        }
 
-        fun makeSchedule(stop: Stop) =
-            objects.schedule {
-                routeId = route.id.idText
-                stopId = stop.id
-                this.trip = trip
-            }
+        fun makeSchedule(stop: Stop) = objects.schedule {
+            routeId = route.id.idText
+            stopId = stop.id
+            this.trip = trip
+        }
 
         var predictionTime = now
         fun makePrediction(schedule: Schedule): Prediction {
@@ -663,20 +651,18 @@ class TripStopsTest {
 
         val alert = objects.alert { effect = Alert.Effect.StopClosure }
 
-        val vehicle =
-            objects.vehicle {
-                tripId = trip.id
-                routeId = route.id.idText
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                stopId = stop1.id
-            }
+        val vehicle = objects.vehicle {
+            tripId = trip.id
+            routeId = route.id.idText
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+            stopId = stop1.id
+        }
 
-        fun makeSchedule(stop: Stop) =
-            objects.schedule {
-                routeId = route.id.idText
-                stopId = stop.id
-                this.trip = trip
-            }
+        fun makeSchedule(stop: Stop) = objects.schedule {
+            routeId = route.id.idText
+            stopId = stop.id
+            this.trip = trip
+        }
 
         var predictionTime = now
         fun makePrediction(schedule: Schedule): Prediction {

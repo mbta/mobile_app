@@ -145,16 +145,15 @@ fun Departures(
 private fun DeparturesPreview() {
     val now = EasternTimeInstant.now()
     val objects = ObjectCollectionBuilder("DeparturesPreview")
-    val redLine =
-        objects.route {
-            id = "Red"
-            color = "DA291C"
-            directionDestinations = listOf("Ashmont/Braintree", "Alewife")
-            directionNames = listOf("South", "North")
-            longName = "Red Line"
-            textColor = "FFFFFF"
-            type = RouteType.HEAVY_RAIL
-        }
+    val redLine = objects.route {
+        id = "Red"
+        color = "DA291C"
+        directionDestinations = listOf("Ashmont/Braintree", "Alewife")
+        directionNames = listOf("South", "North")
+        longName = "Red Line"
+        textColor = "FFFFFF"
+        type = RouteType.HEAVY_RAIL
+    }
     val redLineAshmontSouthbound =
         objects.routePattern(redLine) {
             directionId = 0
@@ -179,11 +178,10 @@ private fun DeparturesPreview() {
             typicality = RoutePattern.Typicality.Typical
             representativeTrip { headsign = "Alewife" }
         }
-    val jfkUmass =
-        objects.stop {
-            name = "JFK/UMass"
-            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
-        }
+    val jfkUmass = objects.stop {
+        name = "JFK/UMass"
+        wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+    }
     val global = GlobalResponse(objects)
     val context = RouteCardData.Context.NearbyTransit
 

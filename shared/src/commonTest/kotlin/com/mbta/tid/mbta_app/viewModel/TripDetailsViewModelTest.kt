@@ -111,11 +111,10 @@ class TripDetailsViewModelTest : KoinTest {
     fun testLoadsVehicle() = runTest {
         val objects = TestData.clone()
         val trip = objects.trip {}
-        val vehicle =
-            objects.vehicle {
-                this.tripId = trip.id
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-            }
+        val vehicle = objects.vehicle {
+            this.tripId = trip.id
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+        }
 
         var vehicleLoaded = false
 
@@ -156,12 +155,11 @@ class TripDetailsViewModelTest : KoinTest {
         val now = EasternTimeInstant.now()
         val objects = TestData.clone()
         val trip = objects.trip {}
-        val vehicle =
-            objects.vehicle {
-                this.tripId = trip.id
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                updatedAt = now.minus(2.hours)
-            }
+        val vehicle = objects.vehicle {
+            this.tripId = trip.id
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+            updatedAt = now.minus(2.hours)
+        }
 
         var vehicleLoaded = false
 
@@ -288,11 +286,10 @@ class TripDetailsViewModelTest : KoinTest {
         val stopIds = (1..5).map { objects.stop().id }
         val route = objects.route {}
         val trip = objects.trip { routeId = route.id.idText }
-        val vehicle =
-            objects.vehicle {
-                this.tripId = trip.id
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-            }
+        val vehicle = objects.vehicle {
+            this.tripId = trip.id
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+        }
 
         val tripRepo =
             MockTripRepository(

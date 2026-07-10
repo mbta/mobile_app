@@ -111,14 +111,13 @@ fun DepartureTile(
 private fun DepartureTilePreview() {
     val objects = ObjectCollectionBuilder("DepartureTilePreview")
     val route1 = objects.route()
-    val routeB =
-        objects.route {
-            color = "00843D"
-            longName = "Green Line B"
-            shortName = "B"
-            textColor = "FFFFFF"
-            type = RouteType.LIGHT_RAIL
-        }
+    val routeB = objects.route {
+        color = "00843D"
+        longName = "Green Line B"
+        shortName = "B"
+        textColor = "FFFFFF"
+        type = RouteType.LIGHT_RAIL
+    }
 
     val trip1 = objects.trip()
     val schedule1 = objects.schedule { trip = trip1 }

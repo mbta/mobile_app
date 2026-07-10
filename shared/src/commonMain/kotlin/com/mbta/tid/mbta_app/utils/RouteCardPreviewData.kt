@@ -64,16 +64,14 @@ public open class RouteCardPreviewData {
     private val kenmore = objects.getStop("place-kencl")
     private val somervilleAtCarlton = objects.getStop("2595")
     private val bowAtWarren = objects.getStop("26131")
-    private val shuttleAlert =
-        objects.alert {
-            effect = Alert.Effect.Shuttle
-            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-        }
-    private val suspensionAlert =
-        objects.alert {
-            effect = Alert.Effect.Suspension
-            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-        }
+    private val shuttleAlert = objects.alert {
+        effect = Alert.Effect.Shuttle
+        activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+    }
+    private val suspensionAlert = objects.alert {
+        effect = Alert.Effect.Suspension
+        activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+    }
     private val context = RouteCardData.Context.NearbyTransit
 
     public val now: EasternTimeInstant = EasternTimeInstant(today.atTime(11, 30))
@@ -722,27 +720,26 @@ public open class RouteCardPreviewData {
                     departureTime = EasternTimeInstant(today.atTime(16, 1))
                 }
             )
-        val wickfordShuttle =
-            objects.alert {
-                effect = Alert.Effect.Shuttle
-                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-                informedEntity =
-                    mutableListOf(
-                        Alert.InformedEntity(
-                            activities =
-                                listOf(
-                                    Alert.InformedEntity.Activity.Board,
-                                    Alert.InformedEntity.Activity.Exit,
-                                    Alert.InformedEntity.Activity.Ride,
-                                ),
-                            directionId = 0,
-                            route = providenceLine.id,
-                            routeType = RouteType.COMMUTER_RAIL,
-                            stop = ruggles.id,
-                            trip = wickfordTrip.id,
-                        )
+        val wickfordShuttle = objects.alert {
+            effect = Alert.Effect.Shuttle
+            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+            informedEntity =
+                mutableListOf(
+                    Alert.InformedEntity(
+                        activities =
+                            listOf(
+                                Alert.InformedEntity.Activity.Board,
+                                Alert.InformedEntity.Activity.Exit,
+                                Alert.InformedEntity.Activity.Ride,
+                            ),
+                        directionId = 0,
+                        route = providenceLine.id,
+                        routeType = RouteType.COMMUTER_RAIL,
+                        stop = ruggles.id,
+                        trip = wickfordTrip.id,
                     )
-            }
+                )
+        }
         return card(
             providenceLine,
             ruggles,
@@ -1075,22 +1072,21 @@ public open class RouteCardPreviewData {
 
     // "Disruption on a branch" group = "A. Disruption"
     public fun GL5(): RouteCardData {
-        val kenmoreShuttleToRiverside =
-            objects.alert {
-                effect = Alert.Effect.Shuttle
-                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-                informedEntity =
-                    mutableListOf(
-                        Alert.InformedEntity(
-                            activities = listOf(Alert.InformedEntity.Activity.Board),
-                            directionId = 0,
-                            route = greenLineD.id,
-                            routeType = RouteType.LIGHT_RAIL,
-                            stop = kenmore.id,
-                            trip = null,
-                        )
+        val kenmoreShuttleToRiverside = objects.alert {
+            effect = Alert.Effect.Shuttle
+            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+            informedEntity =
+                mutableListOf(
+                    Alert.InformedEntity(
+                        activities = listOf(Alert.InformedEntity.Activity.Board),
+                        directionId = 0,
+                        route = greenLineD.id,
+                        routeType = RouteType.LIGHT_RAIL,
+                        stop = kenmore.id,
+                        trip = null,
                     )
-            }
+                )
+        }
 
         return card(
             greenLine,
@@ -1127,22 +1123,21 @@ public open class RouteCardPreviewData {
 
     // "Disruption on a branch, predictions unavailable for other branches" group = "A. Disruption"
     public fun GL6(): RouteCardData {
-        val boylstonShuttleToRiverside =
-            objects.alert {
-                effect = Alert.Effect.Shuttle
-                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-                informedEntity =
-                    mutableListOf(
-                        Alert.InformedEntity(
-                            activities = listOf(Alert.InformedEntity.Activity.Board),
-                            directionId = 0,
-                            route = greenLineD.id,
-                            routeType = RouteType.LIGHT_RAIL,
-                            stop = boylston.id,
-                            trip = null,
-                        )
+        val boylstonShuttleToRiverside = objects.alert {
+            effect = Alert.Effect.Shuttle
+            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+            informedEntity =
+                mutableListOf(
+                    Alert.InformedEntity(
+                        activities = listOf(Alert.InformedEntity.Activity.Board),
+                        directionId = 0,
+                        route = greenLineD.id,
+                        routeType = RouteType.LIGHT_RAIL,
+                        stop = boylston.id,
+                        trip = null,
                     )
-            }
+                )
+        }
         return card(
             greenLine,
             boylston,
@@ -1179,38 +1174,37 @@ public open class RouteCardPreviewData {
     // "Disruption on all branches" group = "A. Disruption"
     public fun GL7(): RouteCardData {
 
-        val shuttleAllBranches =
-            objects.alert {
-                effect = Alert.Effect.Shuttle
-                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-                informedEntity =
-                    mutableListOf(
-                        Alert.InformedEntity(
-                            activities = listOf(Alert.InformedEntity.Activity.Board),
-                            directionId = 0,
-                            route = greenLineB.id,
-                            routeType = RouteType.LIGHT_RAIL,
-                            stop = boylston.id,
-                            trip = null,
-                        ),
-                        Alert.InformedEntity(
-                            activities = listOf(Alert.InformedEntity.Activity.Board),
-                            directionId = 0,
-                            route = greenLineC.id,
-                            routeType = RouteType.LIGHT_RAIL,
-                            stop = boylston.id,
-                            trip = null,
-                        ),
-                        Alert.InformedEntity(
-                            activities = listOf(Alert.InformedEntity.Activity.Board),
-                            directionId = 0,
-                            route = greenLineD.id,
-                            routeType = RouteType.LIGHT_RAIL,
-                            stop = boylston.id,
-                            trip = null,
-                        ),
-                    )
-            }
+        val shuttleAllBranches = objects.alert {
+            effect = Alert.Effect.Shuttle
+            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+            informedEntity =
+                mutableListOf(
+                    Alert.InformedEntity(
+                        activities = listOf(Alert.InformedEntity.Activity.Board),
+                        directionId = 0,
+                        route = greenLineB.id,
+                        routeType = RouteType.LIGHT_RAIL,
+                        stop = boylston.id,
+                        trip = null,
+                    ),
+                    Alert.InformedEntity(
+                        activities = listOf(Alert.InformedEntity.Activity.Board),
+                        directionId = 0,
+                        route = greenLineC.id,
+                        routeType = RouteType.LIGHT_RAIL,
+                        stop = boylston.id,
+                        trip = null,
+                    ),
+                    Alert.InformedEntity(
+                        activities = listOf(Alert.InformedEntity.Activity.Board),
+                        directionId = 0,
+                        route = greenLineD.id,
+                        routeType = RouteType.LIGHT_RAIL,
+                        stop = boylston.id,
+                        trip = null,
+                    ),
+                )
+        }
 
         return card(
             greenLine,

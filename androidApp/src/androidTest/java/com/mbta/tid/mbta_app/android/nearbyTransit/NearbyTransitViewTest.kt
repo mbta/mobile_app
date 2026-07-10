@@ -46,19 +46,18 @@ import org.maplibre.spatialk.geojson.Position
 class NearbyTransitViewTest : KoinTest {
     val builder = ObjectCollectionBuilder()
     val now = EasternTimeInstant.now()
-    val route =
-        builder.route {
-            id = "route_1"
-            type = RouteType.BUS
-            color = "FF0000"
-            directionNames = listOf("North", "South")
-            directionDestinations = listOf("Downtown", "Uptown")
-            longName = "Sample Route Long Name"
-            shortName = "Sample Route"
-            textColor = "000000"
-            lineId = "line_1"
-            routePatternIds = mutableListOf("pattern_1", "pattern_2")
-        }
+    val route = builder.route {
+        id = "route_1"
+        type = RouteType.BUS
+        color = "FF0000"
+        directionNames = listOf("North", "South")
+        directionDestinations = listOf("Downtown", "Uptown")
+        longName = "Sample Route Long Name"
+        shortName = "Sample Route"
+        textColor = "000000"
+        lineId = "line_1"
+        routePatternIds = mutableListOf("pattern_1", "pattern_2")
+    }
     val routePatternOne =
         builder.routePattern(route) {
             id = "pattern_1"
@@ -76,55 +75,50 @@ class NearbyTransitViewTest : KoinTest {
             routeId = "route_1"
             representativeTripId = "trip_1"
         }
-    val sampleStop =
-        builder.stop {
-            id = "stop_1"
-            name = "Sample Stop"
-            locationType = LocationType.STOP
-            latitude = 0.0
-            longitude = 0.0
-        }
-    val line =
-        builder.line {
-            id = "line_1"
-            color = "FF0000"
-            textColor = "FFFFFF"
-        }
-    val trip =
-        builder.trip {
-            id = "trip_1"
-            routeId = "route_1"
-            directionId = 0
-            headsign = "Sample Headsign"
-            routePatternId = "pattern_1"
-            stopIds = listOf(sampleStop.id)
-        }
-    val prediction =
-        builder.prediction {
-            id = "prediction_1"
-            revenue = true
-            stopId = "stop_1"
-            tripId = "trip_1"
-            routeId = "route_1"
-            stopSequence = 1
-            directionId = 0
-            arrivalTime = now.plus(1.minutes)
-            departureTime = now.plus(1.5.minutes)
-        }
+    val sampleStop = builder.stop {
+        id = "stop_1"
+        name = "Sample Stop"
+        locationType = LocationType.STOP
+        latitude = 0.0
+        longitude = 0.0
+    }
+    val line = builder.line {
+        id = "line_1"
+        color = "FF0000"
+        textColor = "FFFFFF"
+    }
+    val trip = builder.trip {
+        id = "trip_1"
+        routeId = "route_1"
+        directionId = 0
+        headsign = "Sample Headsign"
+        routePatternId = "pattern_1"
+        stopIds = listOf(sampleStop.id)
+    }
+    val prediction = builder.prediction {
+        id = "prediction_1"
+        revenue = true
+        stopId = "stop_1"
+        tripId = "trip_1"
+        routeId = "route_1"
+        stopSequence = 1
+        directionId = 0
+        arrivalTime = now.plus(1.minutes)
+        departureTime = now.plus(1.5.minutes)
+    }
 
-    val greenLineRoute =
-        builder.route {
-            id = "Green-E"
-            type = RouteType.LIGHT_RAIL
-            color = "008000"
-            directionNames = listOf("Inbound", "Outbound")
-            directionDestinations = listOf("Park Street", "Lechmere")
-            longName = "Green Line Long Name"
-            shortName = "Green Line"
-            textColor = "FFFFFF"
-            lineId = "line-Green"
-            routePatternIds = mutableListOf("pattern_3", "pattern_4")
-        }
+    val greenLineRoute = builder.route {
+        id = "Green-E"
+        type = RouteType.LIGHT_RAIL
+        color = "008000"
+        directionNames = listOf("Inbound", "Outbound")
+        directionDestinations = listOf("Park Street", "Lechmere")
+        longName = "Green Line Long Name"
+        shortName = "Green Line"
+        textColor = "FFFFFF"
+        lineId = "line-Green"
+        routePatternIds = mutableListOf("pattern_3", "pattern_4")
+    }
     val greenLineRoutePatternOne =
         builder.routePattern(greenLineRoute) {
             id = "pattern_3"
@@ -134,43 +128,39 @@ class NearbyTransitViewTest : KoinTest {
             representativeTripId = "trip_2"
             sortOrder = 0
         }
-    val greenLine =
-        builder.line {
-            id = "line-Green"
-            shortName = "Green Line"
-            longName = "Green Line Long Name"
-            color = "008000"
-            textColor = "FFFFFF"
-        }
-    val greenLineStop =
-        builder.stop {
-            id = "stop_2"
-            name = "Green Line Stop"
-            locationType = LocationType.STOP
-            latitude = 0.0
-            longitude = 0.0
-        }
-    val greenLineTrip =
-        builder.trip {
-            id = "trip_2"
-            routeId = "Green-E"
-            directionId = 0
-            headsign = "Green Line Head Sign"
-            routePatternId = "pattern_3"
-            stopIds = listOf(greenLineStop.id)
-        }
-    val greenLinePrediction =
-        builder.prediction {
-            id = "prediction_2"
-            revenue = true
-            stopId = "stop_2"
-            tripId = "trip_2"
-            routeId = "Green-E"
-            stopSequence = 1
-            directionId = 0
-            arrivalTime = now.plus(5.minutes)
-            departureTime = now.plus(5.5.minutes)
-        }
+    val greenLine = builder.line {
+        id = "line-Green"
+        shortName = "Green Line"
+        longName = "Green Line Long Name"
+        color = "008000"
+        textColor = "FFFFFF"
+    }
+    val greenLineStop = builder.stop {
+        id = "stop_2"
+        name = "Green Line Stop"
+        locationType = LocationType.STOP
+        latitude = 0.0
+        longitude = 0.0
+    }
+    val greenLineTrip = builder.trip {
+        id = "trip_2"
+        routeId = "Green-E"
+        directionId = 0
+        headsign = "Green Line Head Sign"
+        routePatternId = "pattern_3"
+        stopIds = listOf(greenLineStop.id)
+    }
+    val greenLinePrediction = builder.prediction {
+        id = "prediction_2"
+        revenue = true
+        stopId = "stop_2"
+        tripId = "trip_2"
+        routeId = "Green-E"
+        stopSequence = 1
+        directionId = 0
+        arrivalTime = now.plus(5.minutes)
+        departureTime = now.plus(5.5.minutes)
+    }
 
     val globalResponse = GlobalResponse(builder)
 
@@ -385,20 +375,19 @@ class NearbyTransitViewTest : KoinTest {
         val objects = TestData.clone()
         val harvardNorthbound = objects.getStop("70068")
         val centralNorthbound = objects.getStop("70070")
-        val alert =
-            objects.alert {
-                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-                effect = Alert.Effect.Suspension
-                informedEntity(
-                    activities =
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                    stop = harvardNorthbound.id,
-                )
-            }
+        val alert = objects.alert {
+            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+            effect = Alert.Effect.Suspension
+            informedEntity(
+                activities =
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride,
+                    ),
+                stop = harvardNorthbound.id,
+            )
+        }
         loadKoinMocks(
             objects,
             repositoryOverrides = {

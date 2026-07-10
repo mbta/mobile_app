@@ -6,19 +6,18 @@ import kotlinx.datetime.Month
 
 public object WorldCupService {
     private val objects = ObjectCollectionBuilder("WorldCupService")
-    public val route: Route =
-        objects.route {
-            id = "⚽️WorldCup"
-            type = RouteType.COMMUTER_RAIL
-            color = "80276C"
-            directionNames = listOf("Outbound", "Inbound")
-            directionDestinations = listOf("Boston Stadium", "South Station")
-            isListedRoute = false
-            longName = "Boston Stadium Trains"
-            shortName = ""
-            sortOrder = 19999
-            textColor = "FFFFFF"
-        }
+    public val route: Route = objects.route {
+        id = "⚽️WorldCup"
+        type = RouteType.COMMUTER_RAIL
+        color = "80276C"
+        directionNames = listOf("Outbound", "Inbound")
+        directionDestinations = listOf("Boston Stadium", "South Station")
+        isListedRoute = false
+        longName = "Boston Stadium Trains"
+        shortName = ""
+        sortOrder = 19999
+        textColor = "FFFFFF"
+    }
     public val routePatternOutbound: RoutePattern =
         objects.routePattern(route) {
             directionId = 0

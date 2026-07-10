@@ -323,11 +323,10 @@ class AlertTest {
         val objects = ObjectCollectionBuilder()
         val alertStart = EasternTimeInstant.now()
         val alertEnd = alertStart + 2.hours
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                activePeriod(alertStart, alertEnd)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            activePeriod(alertStart, alertEnd)
+        }
 
         assertEquals(AlertSignificance.Major, alert.intrinsicSignificance)
         assertEquals(AlertSignificance.None, alert.significance(atTime = alertStart - 25.hours))
@@ -345,51 +344,46 @@ class AlertTest {
         val route = objects.route()
         val stop = objects.stop()
 
-        val alertMatch =
-            objects.alert {
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
-                    route = route.id.idText,
-                    stop = stop.id,
-                    directionId = 0,
-                )
-            }
-        val alertMatchNoDirection =
-            objects.alert {
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
-                    route = route.id.idText,
-                    stop = stop.id,
-                    directionId = null,
-                )
-            }
-        val alertDifferentRoute =
-            objects.alert {
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
-                    route = "other_route",
-                    stop = stop.id,
-                    directionId = 0,
-                )
-            }
-        val alertDifferentStop =
-            objects.alert {
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
-                    route = route.id.idText,
-                    stop = "other_stop",
-                    directionId = 0,
-                )
-            }
-        val alertDifferentDirection =
-            objects.alert {
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
-                    route = route.id.idText,
-                    stop = stop.id,
-                    directionId = 1,
-                )
-            }
+        val alertMatch = objects.alert {
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board),
+                route = route.id.idText,
+                stop = stop.id,
+                directionId = 0,
+            )
+        }
+        val alertMatchNoDirection = objects.alert {
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board),
+                route = route.id.idText,
+                stop = stop.id,
+                directionId = null,
+            )
+        }
+        val alertDifferentRoute = objects.alert {
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board),
+                route = "other_route",
+                stop = stop.id,
+                directionId = 0,
+            )
+        }
+        val alertDifferentStop = objects.alert {
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board),
+                route = route.id.idText,
+                stop = "other_stop",
+                directionId = 0,
+            )
+        }
+        val alertDifferentDirection = objects.alert {
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board),
+                route = route.id.idText,
+                stop = stop.id,
+                directionId = 1,
+            )
+        }
         val filteredList =
             Alert.applicableAlerts(
                 listOf(
@@ -415,21 +409,19 @@ class AlertTest {
         val stop = objects.stop()
         val route = objects.route { sortOrder = 1 }
 
-        val validAlert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(route = route.id.idText, routeType = route.type, stop = stop.id)
-            }
-        val invalidAlert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
-                    route = "wrong",
-                    routeType = route.type,
-                    stop = "wrong",
-                )
-            }
+        val validAlert = objects.alert {
+            effect = Alert.Effect.Suspension
+            informedEntity(route = route.id.idText, routeType = route.type, stop = stop.id)
+        }
+        val invalidAlert = objects.alert {
+            effect = Alert.Effect.Suspension
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
+                route = "wrong",
+                routeType = route.type,
+                stop = "wrong",
+            )
+        }
         assertEquals(
             Alert.applicableAlerts(
                 listOf(validAlert, invalidAlert),
@@ -449,16 +441,15 @@ class AlertTest {
         val stop = objects.stop()
         val route = objects.route { sortOrder = 1 }
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = stop.id,
-                )
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
+                route = route.id.idText,
+                routeType = route.type,
+                stop = stop.id,
+            )
+        }
         assertEquals(
             Alert.applicableAlerts(
                 listOf(alert),
@@ -478,11 +469,10 @@ class AlertTest {
         val stop = objects.stop()
         val route = objects.route { sortOrder = 1 }
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(route = "not matching", routeType = route.type, stop = stop.id)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            informedEntity(route = "not matching", routeType = route.type, stop = stop.id)
+        }
         assertEquals(
             Alert.applicableAlerts(
                 listOf(alert),
@@ -502,15 +492,14 @@ class AlertTest {
         val stop = objects.stop()
         val route = objects.route { sortOrder = 1 }
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = "not matching",
-                )
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            informedEntity(
+                route = route.id.idText,
+                routeType = route.type,
+                stop = "not matching",
+            )
+        }
         assertEquals(
             Alert.applicableAlerts(
                 listOf(alert),
@@ -528,22 +517,19 @@ class AlertTest {
     fun `filters out alerts with non-matching route type`() {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
-        val route =
-            objects.route {
-                sortOrder = 1
-                type = RouteType.COMMUTER_RAIL
-            }
+        val route = objects.route {
+            sortOrder = 1
+            type = RouteType.COMMUTER_RAIL
+        }
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(route = null, routeType = route.type, stop = stop.id)
-            }
-        val otherModeAlert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(route = null, routeType = RouteType.BUS, stop = stop.id)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            informedEntity(route = null, routeType = route.type, stop = stop.id)
+        }
+        val otherModeAlert = objects.alert {
+            effect = Alert.Effect.Suspension
+            informedEntity(route = null, routeType = RouteType.BUS, stop = stop.id)
+        }
         assertEquals(
             Alert.applicableAlerts(
                 listOf(alert, otherModeAlert),
@@ -563,27 +549,25 @@ class AlertTest {
         val route = objects.route { sortOrder = 1 }
         val otherRoute = objects.route { sortOrder = 1 }
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = "not matching",
-                )
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board),
+                route = route.id.idText,
+                routeType = route.type,
+                stop = "not matching",
+            )
+        }
 
-        val otherAlert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
-                    route = otherRoute.id.idText,
-                    routeType = otherRoute.type,
-                    stop = "not matching",
-                )
-            }
+        val otherAlert = objects.alert {
+            effect = Alert.Effect.Suspension
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board),
+                route = otherRoute.id.idText,
+                routeType = otherRoute.type,
+                stop = "not matching",
+            )
+        }
         assertEquals(
             listOf(alert),
             Alert.applicableAlerts(
@@ -606,61 +590,56 @@ class AlertTest {
         val firstStopWithRideAlert = objects.stop()
         val secondStopWithRideAlert = objects.stop()
 
-        val alertRideTargetStop =
-            objects.alert {
-                effect = Alert.Effect.ServiceChange
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Ride),
-                    route = route.id.idText,
-                    stop = targetStop.id,
-                    directionId = 0,
-                )
-            }
+        val alertRideTargetStop = objects.alert {
+            effect = Alert.Effect.ServiceChange
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Ride),
+                route = route.id.idText,
+                stop = targetStop.id,
+                directionId = 0,
+            )
+        }
 
-        val alertBoard =
-            objects.alert {
-                effect = Alert.Effect.ServiceChange
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
-                    route = route.id.idText,
-                    stop = stopWithBoardAlert.id,
-                    directionId = 0,
-                )
-            }
-        val firstRideAlert =
-            objects.alert {
-                effect = Alert.Effect.ServiceChange
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Ride),
-                    route = route.id.idText,
-                    stop = firstStopWithRideAlert.id,
-                    directionId = null,
-                )
-            }
+        val alertBoard = objects.alert {
+            effect = Alert.Effect.ServiceChange
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board),
+                route = route.id.idText,
+                stop = stopWithBoardAlert.id,
+                directionId = 0,
+            )
+        }
+        val firstRideAlert = objects.alert {
+            effect = Alert.Effect.ServiceChange
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Ride),
+                route = route.id.idText,
+                stop = firstStopWithRideAlert.id,
+                directionId = null,
+            )
+        }
 
-        val secondRideAlert =
-            objects.alert {
-                effect = Alert.Effect.ServiceChange
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Ride),
-                    route = route.id.idText,
-                    stop = secondStopWithRideAlert.id,
-                    directionId = null,
-                )
-            }
+        val secondRideAlert = objects.alert {
+            effect = Alert.Effect.ServiceChange
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Ride),
+                route = route.id.idText,
+                stop = secondStopWithRideAlert.id,
+                directionId = null,
+            )
+        }
 
-        val trip =
-            objects.trip {
-                routeId = route.id.idText
-                directionId = 0
-                stopIds =
-                    listOf(
-                        targetStop.id,
-                        stopWithBoardAlert.id,
-                        firstStopWithRideAlert.id,
-                        secondStopWithRideAlert.id,
-                    )
-            }
+        val trip = objects.trip {
+            routeId = route.id.idText
+            directionId = 0
+            stopIds =
+                listOf(
+                    targetStop.id,
+                    stopWithBoardAlert.id,
+                    firstStopWithRideAlert.id,
+                    secondStopWithRideAlert.id,
+                )
+        }
 
         val downstreamAlerts =
             Alert.downstreamAlerts(
@@ -683,73 +662,67 @@ class AlertTest {
         val secondStopWithRideAlert = objects.stop()
         val thirdStopWithRideAlert = objects.stop()
 
-        val alertRideTargetStop =
-            objects.alert {
-                effect = Alert.Effect.ServiceChange
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Ride),
-                    route = route.id.idText,
-                    stop = targetStop.id,
-                    directionId = 0,
-                )
-            }
+        val alertRideTargetStop = objects.alert {
+            effect = Alert.Effect.ServiceChange
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Ride),
+                route = route.id.idText,
+                stop = targetStop.id,
+                directionId = 0,
+            )
+        }
 
-        val alertBoard =
-            objects.alert {
-                effect = Alert.Effect.ServiceChange
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
-                    route = route.id.idText,
-                    stop = stopWithBoardAlert.id,
-                    directionId = 0,
-                )
-            }
-        val firstRideAlert =
-            objects.alert {
-                effect = Alert.Effect.ServiceChange
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Ride),
-                    route = route.id.idText,
-                    stop = firstStopWithRideAlert.id,
-                    directionId = null,
-                )
-            }
+        val alertBoard = objects.alert {
+            effect = Alert.Effect.ServiceChange
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board),
+                route = route.id.idText,
+                stop = stopWithBoardAlert.id,
+                directionId = 0,
+            )
+        }
+        val firstRideAlert = objects.alert {
+            effect = Alert.Effect.ServiceChange
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Ride),
+                route = route.id.idText,
+                stop = firstStopWithRideAlert.id,
+                directionId = null,
+            )
+        }
 
-        val secondRideAlert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Ride),
-                    route = route.id.idText,
-                    stop = secondStopWithRideAlert.id,
-                    directionId = null,
-                )
-            }
+        val secondRideAlert = objects.alert {
+            effect = Alert.Effect.Suspension
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Ride),
+                route = route.id.idText,
+                stop = secondStopWithRideAlert.id,
+                directionId = null,
+            )
+        }
 
-        val thirdRideAlert =
-            objects.alert {
-                effect = Alert.Effect.ServiceChange
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Ride),
-                    route = route.id.idText,
-                    stop = thirdStopWithRideAlert.id,
-                    directionId = null,
-                )
-            }
+        val thirdRideAlert = objects.alert {
+            effect = Alert.Effect.ServiceChange
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Ride),
+                route = route.id.idText,
+                stop = thirdStopWithRideAlert.id,
+                directionId = null,
+            )
+        }
 
-        val trip =
-            objects.trip {
-                routeId = route.id.idText
-                directionId = 0
-                stopIds =
-                    listOf(
-                        targetStop.id,
-                        stopWithBoardAlert.id,
-                        firstStopWithRideAlert.id,
-                        secondStopWithRideAlert.id,
-                        thirdRideAlert.id,
-                    )
-            }
+        val trip = objects.trip {
+            routeId = route.id.idText
+            directionId = 0
+            stopIds =
+                listOf(
+                    targetStop.id,
+                    stopWithBoardAlert.id,
+                    firstStopWithRideAlert.id,
+                    secondStopWithRideAlert.id,
+                    thirdRideAlert.id,
+                )
+        }
 
         val downstreamAlerts =
             Alert.downstreamAlerts(
@@ -777,29 +750,27 @@ class AlertTest {
         val firstStopWithRideAlert = objects.stop()
         val secondStopWithRideAlert = objects.stop()
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.ServiceChange
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Ride),
-                    routeType = route.type,
-                    stop = firstStopWithRideAlert.id,
-                    directionId = null,
-                )
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.ServiceChange
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Ride),
+                routeType = route.type,
+                stop = firstStopWithRideAlert.id,
+                directionId = null,
+            )
+        }
 
-        val trip =
-            objects.trip {
-                routeId = route.id.idText
-                directionId = 0
-                stopIds =
-                    listOf(
-                        targetStop.id,
-                        stopWithBoardAlert.id,
-                        firstStopWithRideAlert.id,
-                        secondStopWithRideAlert.id,
-                    )
-            }
+        val trip = objects.trip {
+            routeId = route.id.idText
+            directionId = 0
+            stopIds =
+                listOf(
+                    targetStop.id,
+                    stopWithBoardAlert.id,
+                    firstStopWithRideAlert.id,
+                    secondStopWithRideAlert.id,
+                )
+        }
 
         val downstreamAlerts =
             Alert.downstreamAlerts(listOf(alert), trip, route.type, setOf(targetStop.id))
@@ -815,46 +786,43 @@ class AlertTest {
         val downstreamStop1 = objects.stop()
         val downstreamStop2 = objects.stop()
 
-        val alertAllStops =
-            objects.alert {
-                effect = Alert.Effect.ServiceChange
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id.idText,
-                    stop = targetStop.id,
-                    directionId = 0,
-                )
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id.idText,
-                    stop = downstreamStop1.id,
-                    directionId = 0,
-                )
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id.idText,
-                    stop = downstreamStop2.id,
-                    directionId = 0,
-                )
-            }
+        val alertAllStops = objects.alert {
+            effect = Alert.Effect.ServiceChange
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
+                route = route.id.idText,
+                stop = targetStop.id,
+                directionId = 0,
+            )
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
+                route = route.id.idText,
+                stop = downstreamStop1.id,
+                directionId = 0,
+            )
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
+                route = route.id.idText,
+                stop = downstreamStop2.id,
+                directionId = 0,
+            )
+        }
 
-        val alertDownstream2Only =
-            objects.alert {
-                effect = Alert.Effect.ServiceChange
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Ride),
-                    route = route.id.idText,
-                    stop = downstreamStop2.id,
-                    directionId = 0,
-                )
-            }
+        val alertDownstream2Only = objects.alert {
+            effect = Alert.Effect.ServiceChange
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Ride),
+                route = route.id.idText,
+                stop = downstreamStop2.id,
+                directionId = 0,
+            )
+        }
 
-        val trip =
-            objects.trip {
-                routeId = route.id.idText
-                directionId = 0
-                stopIds = listOf(targetStop.id, downstreamStop1.id, downstreamStop2.id)
-            }
+        val trip = objects.trip {
+            routeId = route.id.idText
+            directionId = 0
+            stopIds = listOf(targetStop.id, downstreamStop1.id, downstreamStop2.id)
+        }
 
         val downstreamAlerts =
             Alert.downstreamAlerts(
@@ -874,22 +842,20 @@ class AlertTest {
         val targetStop = objects.stop()
         val nextStop = objects.stop()
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.ServiceChange
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
-                    route = route.id.idText,
-                    directionId = null,
-                )
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.ServiceChange
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board),
+                route = route.id.idText,
+                directionId = null,
+            )
+        }
 
-        val trip =
-            objects.trip {
-                routeId = route.id.idText
-                directionId = 0
-                stopIds = listOf(targetStop.id, nextStop.id)
-            }
+        val trip = objects.trip {
+            routeId = route.id.idText
+            directionId = 0
+            stopIds = listOf(targetStop.id, nextStop.id)
+        }
 
         val downstreamAlerts =
             Alert.downstreamAlerts(listOf(alert), trip, route.type, setOf(targetStop.id))
@@ -902,19 +868,17 @@ class AlertTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
 
-        val elevatorAlert =
-            objects.alert {
-                effect = Alert.Effect.ElevatorClosure
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.UsingWheelchair),
-                    stop = stop.id,
-                )
-            }
-        val serviceAlert =
-            objects.alert {
-                effect = Alert.Effect.NoService
-                informedEntity(listOf(Alert.InformedEntity.Activity.Board), stop = stop.id)
-            }
+        val elevatorAlert = objects.alert {
+            effect = Alert.Effect.ElevatorClosure
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.UsingWheelchair),
+                stop = stop.id,
+            )
+        }
+        val serviceAlert = objects.alert {
+            effect = Alert.Effect.NoService
+            informedEntity(listOf(Alert.InformedEntity.Activity.Board), stop = stop.id)
+        }
 
         val alerts = Alert.elevatorAlerts(listOf(serviceAlert, elevatorAlert), setOf(stop.id))
 
@@ -964,73 +928,66 @@ class AlertTest {
         val time = EasternTimeInstant.now()
 
         val tripBraintree = objects.trip(routePatternBraintree)
-        val scheduleBraintree =
-            objects.schedule {
-                trip = tripBraintree
-                departureTime = time + 2.minutes
-            }
+        val scheduleBraintree = objects.schedule {
+            trip = tripBraintree
+            departureTime = time + 2.minutes
+        }
         val upcomingTripBraintree = objects.upcomingTrip(scheduleBraintree)
 
         val tripAshmont = objects.trip(routePatternAshmont)
-        val scheduleAshmont =
-            objects.schedule {
-                trip = tripAshmont
-                departureTime = time + 10.minutes
-            }
+        val scheduleAshmont = objects.schedule {
+            trip = tripAshmont
+            departureTime = time + 10.minutes
+        }
         val upcomingTripAshmont = objects.upcomingTrip(scheduleAshmont)
 
         val tripAlewife = objects.trip(routePatternAlewife)
-        val scheduleAlewife =
-            objects.schedule {
-                trip = tripAlewife
-                departureTime = time + 10.minutes
-            }
+        val scheduleAlewife = objects.schedule {
+            trip = tripAlewife
+            departureTime = time + 10.minutes
+        }
         val upcomingTripAlewife = objects.upcomingTrip(scheduleAlewife)
 
-        val shawmutClosureAlert =
-            objects.alert {
-                effect = Alert.Effect.StationClosure
-                activePeriod(time - 1.seconds, null)
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id.idText,
-                    stop = shawmut.id,
-                )
-            }
+        val shawmutClosureAlert = objects.alert {
+            effect = Alert.Effect.StationClosure
+            activePeriod(time - 1.seconds, null)
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
+                route = route.id.idText,
+                stop = shawmut.id,
+            )
+        }
 
-        val ashmontShuttleAlert =
-            objects.alert {
-                effect = Alert.Effect.Shuttle
-                activePeriod(time - 1.seconds, null)
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id.idText,
-                    stop = ashmont.id,
-                )
-            }
-        val alewifeShuttleAlert =
-            objects.alert {
-                id = "alewife_alert_id"
-                effect = Alert.Effect.Shuttle
-                activePeriod(time - 1.seconds, null)
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id.idText,
-                    stop = alewife.id,
-                )
-            }
+        val ashmontShuttleAlert = objects.alert {
+            effect = Alert.Effect.Shuttle
+            activePeriod(time - 1.seconds, null)
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
+                route = route.id.idText,
+                stop = ashmont.id,
+            )
+        }
+        val alewifeShuttleAlert = objects.alert {
+            id = "alewife_alert_id"
+            effect = Alert.Effect.Shuttle
+            activePeriod(time - 1.seconds, null)
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
+                route = route.id.idText,
+                stop = alewife.id,
+            )
+        }
 
-        val parkShuttleAlert =
-            objects.alert {
-                id = "park_alert_id"
-                effect = Alert.Effect.Shuttle
-                activePeriod(time - 1.seconds, null)
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id.idText,
-                    stop = park.id,
-                )
-            }
+        val parkShuttleAlert = objects.alert {
+            id = "park_alert_id"
+            effect = Alert.Effect.Shuttle
+            activePeriod(time - 1.seconds, null)
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
+                route = route.id.idText,
+                stop = park.id,
+            )
+        }
 
         val global =
             GlobalResponse(
@@ -1102,17 +1059,16 @@ class AlertTest {
 
         val time = EasternTimeInstant.now()
 
-        val canonicalOnlyStopAlert =
-            objects.alert {
-                id = "alert_id"
-                effect = Alert.Effect.StopClosure
-                activePeriod(time - 10.seconds, null)
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Exit),
-                    route = route.id.idText,
-                    stop = canonicalOnlyDownstream.id,
-                )
-            }
+        val canonicalOnlyStopAlert = objects.alert {
+            id = "alert_id"
+            effect = Alert.Effect.StopClosure
+            activePeriod(time - 10.seconds, null)
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Exit),
+                route = route.id.idText,
+                stop = canonicalOnlyDownstream.id,
+            )
+        }
 
         val global =
             GlobalResponse(
@@ -1142,14 +1098,12 @@ class AlertTest {
     fun `allClear correct for active period`() {
         val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
-        val active =
-            objects.alert {
-                activePeriod = mutableListOf(Alert.ActivePeriod(now - 5.minutes, now + 5.minutes))
-            }
-        val allClear =
-            objects.alert {
-                activePeriod = mutableListOf(Alert.ActivePeriod(now - 10.minutes, now - 5.minutes))
-            }
+        val active = objects.alert {
+            activePeriod = mutableListOf(Alert.ActivePeriod(now - 5.minutes, now + 5.minutes))
+        }
+        val allClear = objects.alert {
+            activePeriod = mutableListOf(Alert.ActivePeriod(now - 10.minutes, now - 5.minutes))
+        }
         assertFalse { active.allClear(now) }
         assertTrue { allClear.allClear(now) }
     }
@@ -1158,13 +1112,12 @@ class AlertTest {
     fun `anyInformedEntitySatisfies checkRoute`() {
         val objects = ObjectCollectionBuilder()
 
-        val alert =
-            objects.alert {
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
-                    routeType = RouteType.BUS,
-                )
-            }
+        val alert = objects.alert {
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board),
+                routeType = RouteType.BUS,
+            )
+        }
 
         assertTrue(alert.anyInformedEntitySatisfies { checkRoute(Route.Id("1"), RouteType.BUS) })
         assertFalse(

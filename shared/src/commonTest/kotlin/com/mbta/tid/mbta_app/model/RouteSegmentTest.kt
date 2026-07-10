@@ -157,7 +157,8 @@ class RouteSegmentTest {
                     RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true),
                 "place-suspension" to
                     RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false),
-                "place-both" to RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = true),
+                "place-both" to
+                    RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = true),
             ),
             segment.alertStateByStopId(alerts),
         )

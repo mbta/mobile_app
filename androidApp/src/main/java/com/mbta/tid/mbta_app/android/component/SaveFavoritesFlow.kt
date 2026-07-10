@@ -180,10 +180,9 @@ fun FavoriteConfirmation(
     }
 
     fun saveAndClose() {
-        val newFavorites =
-            favoritesToSave.mapKeys { (directionId, _isFavorite) ->
-                RouteStopDirection(lineOrRoute.id, stop.id, directionId)
-            }
+        val newFavorites = favoritesToSave.mapKeys { (directionId, _isFavorite) ->
+            RouteStopDirection(lineOrRoute.id, stop.id, directionId)
+        }
         updateFavorites(newFavorites)
         onClose()
     }

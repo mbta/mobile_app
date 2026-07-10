@@ -22,11 +22,10 @@ class RoutePickerRootRowTest {
     @Test
     fun testBasic() {
         val objects = ObjectCollectionBuilder()
-        val route =
-            objects.route {
-                longName = "Red Line"
-                type = RouteType.HEAVY_RAIL
-            }
+        val route = objects.route {
+            longName = "Red Line"
+            type = RouteType.HEAVY_RAIL
+        }
 
         composeTestRule.setContent { RoutePickerRootRow(LineOrRoute.Route(route)) {} }
 
@@ -48,12 +47,11 @@ class RoutePickerRootRowTest {
     @Test
     fun testTap() {
         val objects = ObjectCollectionBuilder()
-        val route =
-            objects.route {
-                longName = "Blue Line"
-                shortName = "Blue"
-                type = RouteType.HEAVY_RAIL
-            }
+        val route = objects.route {
+            longName = "Blue Line"
+            shortName = "Blue"
+            type = RouteType.HEAVY_RAIL
+        }
 
         var tapped = false
         composeTestRule.setContent {

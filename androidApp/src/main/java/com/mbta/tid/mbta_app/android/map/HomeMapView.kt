@@ -349,7 +349,9 @@ fun HomeMapView(
                 LocationAuthButton(
                     locationDataManager,
                     modifier =
-                        Modifier.align(Alignment.TopCenter).padding(top = 85.dp).statusBarsPadding(),
+                        Modifier.align(Alignment.TopCenter)
+                            .padding(top = 85.dp)
+                            .statusBarsPadding(),
                 )
             }
 

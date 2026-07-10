@@ -229,14 +229,12 @@ constructor(
                         }
                     }
                     .toSet()
-            val schedulesMap =
-                schedules.associateBy {
-                    UpcomingTripKey(it).dropStopSequenceIfCancelled(cancelledTrips)
-                }
-            val predictionsMap =
-                predictions.associateBy {
-                    UpcomingTripKey(it).dropStopSequenceIfCancelled(cancelledTrips)
-                }
+            val schedulesMap = schedules.associateBy {
+                UpcomingTripKey(it).dropStopSequenceIfCancelled(cancelledTrips)
+            }
+            val predictionsMap = predictions.associateBy {
+                UpcomingTripKey(it).dropStopSequenceIfCancelled(cancelledTrips)
+            }
 
             val keys = schedulesMap.keys + predictionsMap.keys
 
@@ -348,8 +346,9 @@ internal fun List<UpcomingTrip>.withFormat(
             UpcomingTrip.WithFormat(it, formatted)
         }
 
-    val lastNonCancelledTrip =
-        formattedTrips.lastOrNull { it.format?.format !is TripInstantDisplay.Cancelled }
+    val lastNonCancelledTrip = formattedTrips.lastOrNull {
+        it.format?.format !is TripInstantDisplay.Cancelled
+    }
     // If no trips are tagged as the last trip, this is subway and we shouldn't change anything
     if (
         formattedTrips.none { it.format?.lastTrip == true } ||

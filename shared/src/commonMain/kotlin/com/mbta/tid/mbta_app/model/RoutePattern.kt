@@ -73,20 +73,19 @@ internal constructor(
                         if (skipNonFavorite(lineOrRoute, parentStop)) continue
 
                         val directions = routePatterns.map { it.directionId }.distinct()
-                        val hasMajorAlert =
-                            directions.associateWith { directionId ->
-                                if (alerts != null)
-                                    Alert.applicableAlerts(
-                                            alerts.alerts.values,
-                                            directionId,
-                                            lineOrRoute.allRoutes.map { it.id },
-                                            routeType = lineOrRoute.type,
-                                            stopIds = allStopsForParent,
-                                            tripId = null,
-                                        )
-                                        .any { it.significance(atTime) == AlertSignificance.Major }
-                                else false
-                            }
+                        val hasMajorAlert = directions.associateWith { directionId ->
+                            if (alerts != null)
+                                Alert.applicableAlerts(
+                                        alerts.alerts.values,
+                                        directionId,
+                                        lineOrRoute.allRoutes.map { it.id },
+                                        routeType = lineOrRoute.type,
+                                        stopIds = allStopsForParent,
+                                        tripId = null,
+                                    )
+                                    .any { it.significance(atTime) == AlertSignificance.Major }
+                            else false
+                        }
 
                         val routeStops = patternsGrouped.getOrPut(lineOrRoute) { mutableMapOf() }
                         val patternsNotSeenAtEarlierStops =

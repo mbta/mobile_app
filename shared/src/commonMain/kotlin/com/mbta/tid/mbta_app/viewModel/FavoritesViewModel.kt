@@ -312,10 +312,9 @@ public class FavoritesViewModel(
                     )
                 loadedLocation = location
             }
-            stopCardData =
-                routeCardData?.let {
-                    StopCardData.fromRouteCardData(it, sortByDistanceFrom = location)
-                }
+            stopCardData = routeCardData?.let {
+                StopCardData.fromRouteCardData(it, sortByDistanceFrom = location)
+            }
         }
 
         LaunchedEffect(stopIds, globalData, favorites, location) {
@@ -337,10 +336,9 @@ public class FavoritesViewModel(
                         sentryRepository,
                     )
             }
-            staticStopCardData =
-                staticRouteCardData?.let {
-                    StopCardData.fromRouteCardData(it, sortByDistanceFrom = location)
-                }
+            staticStopCardData = staticRouteCardData?.let {
+                StopCardData.fromRouteCardData(it, sortByDistanceFrom = location)
+            }
         }
 
         LaunchedEffect(hadOldPinnedRoutes, isFirstExposureToNewFavorites) {

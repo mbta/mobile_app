@@ -53,19 +53,18 @@ import org.junit.Test
 class StopDetailsFilteredDeparturesViewTest {
     val builder = ObjectCollectionBuilder()
     val now = EasternTimeInstant.now()
-    val route =
-        builder.route {
-            id = "route_1"
-            type = RouteType.LIGHT_RAIL
-            color = "FF0000"
-            directionNames = listOf("North", "South")
-            directionDestinations = listOf("Downtown", "Uptown")
-            longName = "Sample Route Long Name"
-            shortName = "Sample Route"
-            textColor = "000000"
-            lineId = "line_1"
-            routePatternIds = mutableListOf("pattern_1", "pattern_2")
-        }
+    val route = builder.route {
+        id = "route_1"
+        type = RouteType.LIGHT_RAIL
+        color = "FF0000"
+        directionNames = listOf("North", "South")
+        directionDestinations = listOf("Downtown", "Uptown")
+        longName = "Sample Route Long Name"
+        shortName = "Sample Route"
+        textColor = "000000"
+        lineId = "line_1"
+        routePatternIds = mutableListOf("pattern_1", "pattern_2")
+    }
     val routePatternOne =
         builder.routePattern(route) {
             id = "pattern_1"
@@ -82,58 +81,52 @@ class StopDetailsFilteredDeparturesViewTest {
             routeId = "route_1"
             representativeTripId = "trip_1"
         }
-    val downstreamStop =
-        builder.stop {
-            id = "stop_2"
-            name = "Sample Stop 2"
-            locationType = LocationType.STOP
-            latitude = 0.0
-            longitude = 0.0
-        }
-    val stop =
-        builder.stop {
-            id = "stop_1"
-            name = "Sample Stop"
-            locationType = LocationType.STOP
-            latitude = 0.0
-            longitude = 0.0
-        }
-    val inaccessibleStop =
-        builder.stop {
-            id = "stop_3"
-            name = "Sample Stop 3"
-            locationType = LocationType.STOP
-            latitude = 0.0
-            longitude = 0.0
-            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
-        }
-    val line =
-        builder.line {
-            id = "line_1"
-            color = "FF0000"
-            textColor = "FFFFFF"
-        }
-    val trip =
-        builder.trip {
-            id = "trip_1"
-            routeId = "route_1"
-            directionId = 0
-            headsign = "Sample Headsign"
-            routePatternId = "pattern_1"
-            stopIds = listOf(stop.id, downstreamStop.id, inaccessibleStop.id)
-        }
-    val prediction =
-        builder.prediction {
-            id = "prediction_1"
-            revenue = true
-            stopId = "stop_1"
-            tripId = "trip_1"
-            routeId = "route_1"
-            stopSequence = 1
-            directionId = 0
-            arrivalTime = now.plus(1.minutes)
-            departureTime = now.plus(1.5.minutes)
-        }
+    val downstreamStop = builder.stop {
+        id = "stop_2"
+        name = "Sample Stop 2"
+        locationType = LocationType.STOP
+        latitude = 0.0
+        longitude = 0.0
+    }
+    val stop = builder.stop {
+        id = "stop_1"
+        name = "Sample Stop"
+        locationType = LocationType.STOP
+        latitude = 0.0
+        longitude = 0.0
+    }
+    val inaccessibleStop = builder.stop {
+        id = "stop_3"
+        name = "Sample Stop 3"
+        locationType = LocationType.STOP
+        latitude = 0.0
+        longitude = 0.0
+        wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
+    }
+    val line = builder.line {
+        id = "line_1"
+        color = "FF0000"
+        textColor = "FFFFFF"
+    }
+    val trip = builder.trip {
+        id = "trip_1"
+        routeId = "route_1"
+        directionId = 0
+        headsign = "Sample Headsign"
+        routePatternId = "pattern_1"
+        stopIds = listOf(stop.id, downstreamStop.id, inaccessibleStop.id)
+    }
+    val prediction = builder.prediction {
+        id = "prediction_1"
+        revenue = true
+        stopId = "stop_1"
+        tripId = "trip_1"
+        routeId = "route_1"
+        stopSequence = 1
+        directionId = 0
+        arrivalTime = now.plus(1.minutes)
+        departureTime = now.plus(1.5.minutes)
+    }
 
     private val globalResponse =
         GlobalResponse(
@@ -265,13 +258,12 @@ class StopDetailsFilteredDeparturesViewTest {
     fun testShowsCancelledTripCardWhenNoAlert() {
         val objects = ObjectCollectionBuilder()
         val now = EasternTimeInstant.now()
-        val route =
-            objects.route {
-                id = "route_1"
-                type = RouteType.BUS
-                color = "DA291C"
-                routePatternIds = mutableListOf("pattern_1")
-            }
+        val route = objects.route {
+            id = "route_1"
+            type = RouteType.BUS
+            color = "DA291C"
+            routePatternIds = mutableListOf("pattern_1")
+        }
         val routePattern =
             objects.routePattern(route) {
                 id = "pattern_1"
@@ -280,30 +272,27 @@ class StopDetailsFilteredDeparturesViewTest {
             }
 
         val stop = objects.stop { id = "stop_1" }
-        val trip =
-            objects.trip {
-                id = "trip_1"
-                routeId = "route_1"
-                directionId = 0
-                routePatternId = "pattern_1"
-            }
+        val trip = objects.trip {
+            id = "trip_1"
+            routeId = "route_1"
+            directionId = 0
+            routePatternId = "pattern_1"
+        }
 
-        val schedule =
-            objects.schedule {
-                tripId = "trip_1"
-                stopId = "stop_1"
-                departureTime = now.plus(10.minutes)
-            }
-        val prediction =
-            objects.prediction {
-                id = "prediction_1"
-                stopId = "stop_1"
-                tripId = "trip_1"
-                routeId = "route_1"
-                directionId = 0
-                departureTime = now.plus(10.minutes)
-                scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
-            }
+        val schedule = objects.schedule {
+            tripId = "trip_1"
+            stopId = "stop_1"
+            departureTime = now.plus(10.minutes)
+        }
+        val prediction = objects.prediction {
+            id = "prediction_1"
+            stopId = "stop_1"
+            tripId = "trip_1"
+            routeId = "route_1"
+            directionId = 0
+            departureTime = now.plus(10.minutes)
+            scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+        }
 
         val globalResponse =
             GlobalResponse(objects, mutableMapOf(stop.id to listOf(routePattern.id)))
@@ -369,13 +358,12 @@ class StopDetailsFilteredDeparturesViewTest {
     fun testShowsCancelledTripCardOnlyOnceWhenAlert(): Unit = runBlocking {
         val objects = ObjectCollectionBuilder()
         val now = EasternTimeInstant.now()
-        val route =
-            objects.route {
-                id = "route_1"
-                type = RouteType.BUS
-                color = "DA291C"
-                routePatternIds = mutableListOf("pattern_1")
-            }
+        val route = objects.route {
+            id = "route_1"
+            type = RouteType.BUS
+            color = "DA291C"
+            routePatternIds = mutableListOf("pattern_1")
+        }
         val routePattern =
             objects.routePattern(route) {
                 id = "pattern_1"
@@ -384,42 +372,38 @@ class StopDetailsFilteredDeparturesViewTest {
             }
 
         val stop = objects.stop { id = "stop_1" }
-        val trip =
-            objects.trip {
-                id = "trip_1"
-                routeId = "route_1"
-                directionId = 0
-                routePatternId = "pattern_1"
-            }
+        val trip = objects.trip {
+            id = "trip_1"
+            routeId = "route_1"
+            directionId = 0
+            routePatternId = "pattern_1"
+        }
 
-        val schedule =
-            objects.schedule {
-                tripId = "trip_1"
-                stopId = "stop_1"
-                departureTime = now.plus(10.minutes)
-            }
-        val prediction =
-            objects.prediction {
-                id = "prediction_1"
-                stopId = "stop_1"
-                tripId = "trip_1"
-                routeId = "route_1"
-                directionId = 0
-                departureTime = now.plus(10.minutes)
-                scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
-            }
+        val schedule = objects.schedule {
+            tripId = "trip_1"
+            stopId = "stop_1"
+            departureTime = now.plus(10.minutes)
+        }
+        val prediction = objects.prediction {
+            id = "prediction_1"
+            stopId = "stop_1"
+            tripId = "trip_1"
+            routeId = "route_1"
+            directionId = 0
+            departureTime = now.plus(10.minutes)
+            scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+        }
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Cancellation
-                activePeriod(now - 5.seconds, now + 5.seconds)
-                informedEntity(
-                    directionId = 0,
-                    route = route.id.idText,
-                    stop = stop.id,
-                    trip = trip.id,
-                )
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Cancellation
+            activePeriod(now - 5.seconds, now + 5.seconds)
+            informedEntity(
+                directionId = 0,
+                route = route.id.idText,
+                stop = stop.id,
+                trip = trip.id,
+            )
+        }
 
         val globalResponse =
             GlobalResponse(objects, mutableMapOf(stop.id to listOf(routePattern.id)))
@@ -548,13 +532,12 @@ class StopDetailsFilteredDeparturesViewTest {
     @Test
     fun testShowsSuspension(): Unit = runBlocking {
         val now = EasternTimeInstant.now()
-        val alert =
-            builder.alert {
-                activePeriod(now - 5.seconds, now + 5.seconds)
-                effect = Alert.Effect.Suspension
-                header = "Fuchsia Line suspended from Here to There"
-                informedEntity(directionId = 0, route = route.id.idText, stop = stop.id)
-            }
+        val alert = builder.alert {
+            activePeriod(now - 5.seconds, now + 5.seconds)
+            effect = Alert.Effect.Suspension
+            header = "Fuchsia Line suspended from Here to There"
+            informedEntity(directionId = 0, route = route.id.idText, stop = stop.id)
+        }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
         val alertSummaries =
             mapOf(
@@ -635,14 +618,13 @@ class StopDetailsFilteredDeparturesViewTest {
         val alertPattern = objects.routePatterns["Green-B-812-0"]!!
         val tripPattern = objects.routePatterns["Green-D-855-0"]!!
 
-        val alert =
-            objects.alert {
-                activePeriod(now - 5.seconds, now + 20.minutes)
-                effect = Alert.Effect.Shuttle
-                header = "Green line shuttle on B and C branches"
-                informedEntity(directionId = 0, route = routeB.id.idText, stop = "71151")
-                informedEntity(directionId = 0, route = routeC.id.idText, stop = "70151")
-            }
+        val alert = objects.alert {
+            activePeriod(now - 5.seconds, now + 20.minutes)
+            effect = Alert.Effect.Shuttle
+            header = "Green line shuttle on B and C branches"
+            informedEntity(directionId = 0, route = routeB.id.idText, stop = "71151")
+            informedEntity(directionId = 0, route = routeC.id.idText, stop = "70151")
+        }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
 
         objects.upcomingTrip(
@@ -650,11 +632,10 @@ class StopDetailsFilteredDeparturesViewTest {
                 departureTime = now.plus(5.minutes)
                 routeId = routeD.id.idText
                 stopId = stop.id
-                trip =
-                    objects.trip {
-                        routeId = routeD.id.idText
-                        routePatternId = tripPattern.id
-                    }
+                trip = objects.trip {
+                    routeId = routeD.id.idText
+                    routePatternId = tripPattern.id
+                }
             }
         )
 
@@ -716,12 +697,11 @@ class StopDetailsFilteredDeparturesViewTest {
 
     @Test
     fun testShowsDownstreamAlert(): Unit = runBlocking {
-        val alert =
-            builder.alert {
-                activePeriod(now - 5.seconds, now + 5.seconds)
-                effect = Alert.Effect.Suspension
-                informedEntity(directionId = 0, route = route.id.idText, stop = downstreamStop.id)
-            }
+        val alert = builder.alert {
+            activePeriod(now - 5.seconds, now + 5.seconds)
+            effect = Alert.Effect.Suspension
+            informedEntity(directionId = 0, route = route.id.idText, stop = downstreamStop.id)
+        }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
@@ -787,16 +767,15 @@ class StopDetailsFilteredDeparturesViewTest {
     @Test
     fun testShowsElevatorAlertOnlyOnce(): Unit = runBlocking {
         settings[Settings.StationAccessibility] = true
-        val alert =
-            builder.alert {
-                effect = Alert.Effect.ElevatorClosure
-                header = "Elevator Alert Header"
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.UsingWheelchair),
-                    stop = stop.id,
-                )
-                activePeriod(now - 30.minutes, null)
-            }
+        val alert = builder.alert {
+            effect = Alert.Effect.ElevatorClosure
+            header = "Elevator Alert Header"
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.UsingWheelchair),
+                stop = stop.id,
+            )
+            activePeriod(now - 30.minutes, null)
+        }
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
 
@@ -850,20 +829,19 @@ class StopDetailsFilteredDeparturesViewTest {
     @Test
     fun testShowsSubwayDelayAlert(): Unit = runBlocking {
         val now = EasternTimeInstant.now()
-        val alert =
-            builder.alert {
-                activePeriod(now - 5.seconds, now + 5.seconds)
-                effect = Alert.Effect.Delay
-                header = "Delays alert header"
-                cause = Alert.Cause.HeavyRidership
-                severity = 10
-                informedEntity(
-                    directionId = 0,
-                    route = route.id.idText,
-                    routeType = RouteType.LIGHT_RAIL,
-                    stop = stop.id,
-                )
-            }
+        val alert = builder.alert {
+            activePeriod(now - 5.seconds, now + 5.seconds)
+            effect = Alert.Effect.Delay
+            header = "Delays alert header"
+            cause = Alert.Cause.HeavyRidership
+            severity = 10
+            informedEntity(
+                directionId = 0,
+                route = route.id.idText,
+                routeType = RouteType.LIGHT_RAIL,
+                stop = stop.id,
+            )
+        }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
         val alertSummaries =
             mapOf(
@@ -1000,10 +978,9 @@ class StopDetailsFilteredDeparturesViewTest {
             )
 
         val now = EasternTimeInstant.now()
-        val nextSchedule =
-            objects.schedule {
-                departureTime = EasternTimeInstant(now.local.year + 1, Month.DECEMBER, 8, 8, 0)
-            }
+        val nextSchedule = objects.schedule {
+            departureTime = EasternTimeInstant(now.local.year + 1, Month.DECEMBER, 8, 8, 0)
+        }
 
         val viewModel = MockStopDetailsViewModel()
 
@@ -1038,13 +1015,12 @@ class StopDetailsFilteredDeparturesViewTest {
     @Test
     fun testShowsEarlyMorningCard() {
         val objects = ObjectCollectionBuilder()
-        val route =
-            objects.route {
-                id = "route_1"
-                type = RouteType.LIGHT_RAIL
-                color = "DA291C"
-                routePatternIds = mutableListOf("pattern_1")
-            }
+        val route = objects.route {
+            id = "route_1"
+            type = RouteType.LIGHT_RAIL
+            color = "DA291C"
+            routePatternIds = mutableListOf("pattern_1")
+        }
         val routePattern =
             objects.routePattern(route) {
                 id = "pattern_1"
@@ -1053,20 +1029,18 @@ class StopDetailsFilteredDeparturesViewTest {
             }
 
         val stop = objects.stop { id = "stop_1" }
-        val trip =
-            objects.trip {
-                id = "trip_1"
-                routeId = "route_1"
-                directionId = 0
-                routePatternId = "pattern_1"
-            }
+        val trip = objects.trip {
+            id = "trip_1"
+            routeId = "route_1"
+            directionId = 0
+            routePatternId = "pattern_1"
+        }
 
-        val schedule =
-            objects.schedule {
-                tripId = "trip_1"
-                stopId = "stop_1"
-                departureTime = now.plus(10.minutes)
-            }
+        val schedule = objects.schedule {
+            tripId = "trip_1"
+            stopId = "stop_1"
+            departureTime = now.plus(10.minutes)
+        }
         val now = EasternTimeInstant(2025, Month.NOVEMBER, 17, 3, 30)
         val subwayStartTime = EasternTimeInstant(2025, Month.NOVEMBER, 17, 9, 44)
         val globalResponse =
@@ -1127,13 +1101,12 @@ class StopDetailsFilteredDeparturesViewTest {
     @Test
     fun testHidesEarlyMorningCardWhenPredictionsExist() {
         val objects = ObjectCollectionBuilder()
-        val route =
-            objects.route {
-                id = "route_1"
-                type = RouteType.LIGHT_RAIL
-                color = "DA291C"
-                routePatternIds = mutableListOf("pattern_1")
-            }
+        val route = objects.route {
+            id = "route_1"
+            type = RouteType.LIGHT_RAIL
+            color = "DA291C"
+            routePatternIds = mutableListOf("pattern_1")
+        }
         val routePattern =
             objects.routePattern(route) {
                 id = "pattern_1"
@@ -1142,29 +1115,26 @@ class StopDetailsFilteredDeparturesViewTest {
             }
 
         val stop = objects.stop { id = "stop_1" }
-        val trip =
-            objects.trip {
-                id = "trip_1"
-                routeId = "route_1"
-                directionId = 0
-                routePatternId = "pattern_1"
-            }
+        val trip = objects.trip {
+            id = "trip_1"
+            routeId = "route_1"
+            directionId = 0
+            routePatternId = "pattern_1"
+        }
 
-        val schedule =
-            objects.schedule {
-                tripId = "trip_1"
-                stopId = "stop_1"
-                departureTime = now.plus(10.minutes)
-            }
-        val prediction =
-            objects.prediction {
-                id = "prediction_1"
-                stopId = "stop_1"
-                tripId = "trip_1"
-                routeId = "route_1"
-                directionId = 0
-                departureTime = now.plus(10.minutes)
-            }
+        val schedule = objects.schedule {
+            tripId = "trip_1"
+            stopId = "stop_1"
+            departureTime = now.plus(10.minutes)
+        }
+        val prediction = objects.prediction {
+            id = "prediction_1"
+            stopId = "stop_1"
+            tripId = "trip_1"
+            routeId = "route_1"
+            directionId = 0
+            departureTime = now.plus(10.minutes)
+        }
         val now = EasternTimeInstant(2025, Month.NOVEMBER, 17, 3, 30)
         val subwayStartTime = EasternTimeInstant(2025, Month.NOVEMBER, 17, 9, 44)
         val globalResponse =

@@ -648,54 +648,48 @@ private fun upcomingTripViewState(
 @Composable
 private fun TripHeaderCardPreview() {
     val objects = ObjectCollectionBuilder("TripHeaderCardPreview")
-    val red =
-        objects.route {
-            id = "Red"
-            longName = "Red Line"
-            color = "DA291C"
-            type = RouteType.HEAVY_RAIL
-            textColor = "FFFFFF"
-        }
-    val bus =
-        objects.route {
-            id = "66"
-            shortName = "66"
-            color = "FFC72C"
-            type = RouteType.BUS
-            textColor = "000000"
-        }
-    val ferry =
-        objects.route {
-            id = "ferry"
-            longName = "Charlestown Ferry"
-            color = "008EAA"
-            type = RouteType.FERRY
-            textColor = "FFFFFF"
-        }
-    val commuter =
-        objects.route {
-            id = "commuter"
-            longName = "Framingham/Worcester Line"
-            color = "80276C"
-            type = RouteType.COMMUTER_RAIL
-            textColor = "FFFFFF"
-        }
-    val trip =
-        objects.trip {
-            id = "1234"
-            headsign = "Alewife"
-        }
-    val vehicle =
-        objects.vehicle {
-            id = "y1234"
-            currentStatus = Vehicle.CurrentStatus.StoppedAt
-            currentStopSequence = 30
-            directionId = 1
-            routeId = "66"
-            stopId = "place-davis"
-            tripId = trip.id
-            decoration = Vehicle.Decoration.Pride
-        }
+    val red = objects.route {
+        id = "Red"
+        longName = "Red Line"
+        color = "DA291C"
+        type = RouteType.HEAVY_RAIL
+        textColor = "FFFFFF"
+    }
+    val bus = objects.route {
+        id = "66"
+        shortName = "66"
+        color = "FFC72C"
+        type = RouteType.BUS
+        textColor = "000000"
+    }
+    val ferry = objects.route {
+        id = "ferry"
+        longName = "Charlestown Ferry"
+        color = "008EAA"
+        type = RouteType.FERRY
+        textColor = "FFFFFF"
+    }
+    val commuter = objects.route {
+        id = "commuter"
+        longName = "Framingham/Worcester Line"
+        color = "80276C"
+        type = RouteType.COMMUTER_RAIL
+        textColor = "FFFFFF"
+    }
+    val trip = objects.trip {
+        id = "1234"
+        headsign = "Alewife"
+    }
+    val vehicle = objects.vehicle {
+        id = "y1234"
+        currentStatus = Vehicle.CurrentStatus.StoppedAt
+        currentStopSequence = 30
+        directionId = 1
+        routeId = "66"
+        stopId = "place-davis"
+        tripId = trip.id
+        decoration = Vehicle.Decoration.Pride
+    }
     val davis = objects.stop { name = "Davis" }
     val cityPoint = objects.stop { name = "City Point Bus Terminal" }
 
@@ -797,29 +791,27 @@ private fun CarLevelCrowdingPreview() {
     val rlTrip = objects.trip { routeId = rl.id.idText }
     val backBay = objects.getStop("place-bbsta")
     val kendallMIT = objects.getStop("place-knncl")
-    val olVehicle =
-        objects.vehicle {
-            carriage { occupancyStatus = Vehicle.OccupancyStatus.ManySeatsAvailable }
-            carriage { occupancyStatus = Vehicle.OccupancyStatus.FewSeatsAvailable }
-            carriage { occupancyStatus = Vehicle.OccupancyStatus.StandingRoomOnly }
-            carriage { occupancyStatus = Vehicle.OccupancyStatus.FewSeatsAvailable }
-            carriage { occupancyStatus = Vehicle.OccupancyStatus.FewSeatsAvailable }
-            carriage { occupancyStatus = Vehicle.OccupancyStatus.ManySeatsAvailable }
-            currentStatus = Vehicle.CurrentStatus.IncomingAt
-            stopId = backBay.id
-            tripId = olTrip.id
-        }
-    val rlVehicle =
-        objects.vehicle {
-            carriage { occupancyStatus = Vehicle.OccupancyStatus.ManySeatsAvailable }
-            carriage { occupancyStatus = Vehicle.OccupancyStatus.FewSeatsAvailable }
-            carriage { occupancyStatus = Vehicle.OccupancyStatus.StandingRoomOnly }
-            carriage { occupancyStatus = Vehicle.OccupancyStatus.NoDataAvailable }
-            carriage { occupancyStatus = Vehicle.OccupancyStatus.ManySeatsAvailable }
-            currentStatus = Vehicle.CurrentStatus.IncomingAt
-            stopId = kendallMIT.id
-            tripId = rlTrip.id
-        }
+    val olVehicle = objects.vehicle {
+        carriage { occupancyStatus = Vehicle.OccupancyStatus.ManySeatsAvailable }
+        carriage { occupancyStatus = Vehicle.OccupancyStatus.FewSeatsAvailable }
+        carriage { occupancyStatus = Vehicle.OccupancyStatus.StandingRoomOnly }
+        carriage { occupancyStatus = Vehicle.OccupancyStatus.FewSeatsAvailable }
+        carriage { occupancyStatus = Vehicle.OccupancyStatus.FewSeatsAvailable }
+        carriage { occupancyStatus = Vehicle.OccupancyStatus.ManySeatsAvailable }
+        currentStatus = Vehicle.CurrentStatus.IncomingAt
+        stopId = backBay.id
+        tripId = olTrip.id
+    }
+    val rlVehicle = objects.vehicle {
+        carriage { occupancyStatus = Vehicle.OccupancyStatus.ManySeatsAvailable }
+        carriage { occupancyStatus = Vehicle.OccupancyStatus.FewSeatsAvailable }
+        carriage { occupancyStatus = Vehicle.OccupancyStatus.StandingRoomOnly }
+        carriage { occupancyStatus = Vehicle.OccupancyStatus.NoDataAvailable }
+        carriage { occupancyStatus = Vehicle.OccupancyStatus.ManySeatsAvailable }
+        currentStatus = Vehicle.CurrentStatus.IncomingAt
+        stopId = kendallMIT.id
+        tripId = rlTrip.id
+    }
 
     val olEntry =
         TripDetailsStopList.Entry(

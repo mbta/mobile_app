@@ -52,8 +52,9 @@ internal constructor(
 
     val hasStopsSpecified: Boolean = informedEntity.all { it.stop != null }
 
-    public fun allClear(atTime: EasternTimeInstant): Boolean =
-        activePeriod.all { it.end != null && it.end < atTime }
+    public fun allClear(atTime: EasternTimeInstant): Boolean = activePeriod.all {
+        it.end != null && it.end < atTime
+    }
 
     val stopSkipped: Boolean = effect.stopSkipped
 
@@ -463,11 +464,14 @@ internal constructor(
         @SerialName("upcoming") Upcoming,
     }
 
-    public fun currentPeriod(time: EasternTimeInstant): ActivePeriod? =
-        activePeriod.firstOrNull { it.activeAt(time) }
+    public fun currentPeriod(time: EasternTimeInstant): ActivePeriod? = activePeriod.firstOrNull {
+        it.activeAt(time)
+    }
 
     public fun currentOrNextPeriod(now: EasternTimeInstant): ActivePeriod? =
-        activePeriod.firstOrNull { it.end?.instant?.let { end -> end < now.instant } ?: true }
+        activePeriod.firstOrNull {
+            it.end?.instant?.let { end -> end < now.instant } ?: true
+        }
 
     /**
      * Gets an active period which is not currently active but which will start in the next 24
@@ -625,19 +629,18 @@ internal constructor(
         ): List<Alert> {
             val stopIds = trip.stopIds ?: emptyList()
             // find the index of the first stop id in target stop with children
-            val indexOfTargetStopInPattern =
-                stopIds.indexOfFirst { targetStopWithChildren.contains(it) }
+            val indexOfTargetStopInPattern = stopIds.indexOfFirst {
+                targetStopWithChildren.contains(it)
+            }
             // Return empty if target stop with children is not on stopIds
             if (indexOfTargetStopInPattern < 0) return listOf()
             // Return empty if target stop with children is the last stop id
             if (indexOfTargetStopInPattern == stopIds.size - 1) return listOf()
 
             // Filter out alerts without stop specified and lower than accessibility significance
-            val alerts =
-                alerts.filter {
-                    it.hasStopsSpecified &&
-                        it.intrinsicSignificance >= AlertSignificance.Accessibility
-                }
+            val alerts = alerts.filter {
+                it.hasStopsSpecified && it.intrinsicSignificance >= AlertSignificance.Accessibility
+            }
 
             val relevantAlerts =
                 alerts
@@ -665,18 +668,16 @@ internal constructor(
                     .toSet()
 
             val downstreamStops = stopIds.subList(indexOfTargetStopInPattern + 1, stopIds.size)
-            val tripAlerts =
-                downstreamStops.flatMap { stop ->
-                    relevantAlerts.filter {
-                        it.anyInformedEntitySatisfies { checkStop(Matcher.Data(stop)) } &&
-                            !targetStopAlertIds.contains(it.id)
-                    }
+            val tripAlerts = downstreamStops.flatMap { stop ->
+                relevantAlerts.filter {
+                    it.anyInformedEntitySatisfies { checkStop(Matcher.Data(stop)) } &&
+                        !targetStopAlertIds.contains(it.id)
                 }
+            }
             if (tripAlerts.isEmpty()) return emptyList()
-            val lastIndex =
-                tripAlerts.indexOfFirst {
-                    setOf(Effect.Suspension, Effect.Shuttle).contains(it.effect)
-                }
+            val lastIndex = tripAlerts.indexOfFirst {
+                setOf(Effect.Suspension, Effect.Shuttle).contains(it.effect)
+            }
             // If there is an alert with suspension or shuttle, only return alerts up to that point
             if (lastIndex >= 0) {
                 return tripAlerts.subList(0, lastIndex + 1)

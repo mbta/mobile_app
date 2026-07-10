@@ -47,7 +47,8 @@ fun DirectionTo(
             ),
         color = textColor,
         modifier = Modifier.placeholderIfLoading(),
-        style = if (onlyServingOppositeDirection) Typography.footnoteItalic else Typography.footnote,
+        style =
+            if (onlyServingOppositeDirection) Typography.footnoteItalic else Typography.footnote,
     )
 }
 

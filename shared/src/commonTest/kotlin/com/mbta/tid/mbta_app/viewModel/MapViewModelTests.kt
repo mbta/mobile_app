@@ -380,13 +380,12 @@ internal class MapViewModelTests : KoinTest {
                     )
                 )
             }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                activePeriod =
-                    mutableListOf(Alert.ActivePeriod(EasternTimeInstant.now().minus(5.hours), null))
-                informedEntity = informedEntities.toMutableList()
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            activePeriod =
+                mutableListOf(Alert.ActivePeriod(EasternTimeInstant.now().minus(5.hours), null))
+            informedEntity = informedEntities.toMutableList()
+        }
 
         viewModel.setViewportManager(viewportProvider)
         viewModel.layerManagerInitialized(layerManger)
@@ -434,13 +433,12 @@ internal class MapViewModelTests : KoinTest {
                     )
                 )
             }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                activePeriod =
-                    mutableListOf(Alert.ActivePeriod(EasternTimeInstant.now().minus(5.hours), null))
-                informedEntity = informedEntities.toMutableList()
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            activePeriod =
+                mutableListOf(Alert.ActivePeriod(EasternTimeInstant.now().minus(5.hours), null))
+            informedEntity = informedEntities.toMutableList()
+        }
 
         viewModel.layerManagerInitialized(layerManger)
         viewModel.setViewportManager(viewportProvider)

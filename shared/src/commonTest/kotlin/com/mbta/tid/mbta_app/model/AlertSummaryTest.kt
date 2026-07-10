@@ -391,12 +391,11 @@ class AlertSummaryTest {
     fun `summary is null when there is no timeframe or location`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val now = EasternTimeInstant.now()
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.StopClosure
-                activePeriod(now.minus(1.hours), now.plus(1.hours))
-                durationCertainty = Alert.DurationCertainty.Estimated
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.StopClosure
+            activePeriod(now.minus(1.hours), now.plus(1.hours))
+            durationCertainty = Alert.DurationCertainty.Estimated
+        }
 
         val alertSummary =
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
@@ -408,11 +407,10 @@ class AlertSummaryTest {
     fun `summary with until further notice timeframe`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val now = EasternTimeInstant.now()
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.StopClosure
-                activePeriod(now.minus(1.hours), null)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.StopClosure
+            activePeriod(now.minus(1.hours), null)
+        }
 
         val alertSummary =
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
@@ -428,11 +426,10 @@ class AlertSummaryTest {
         val objects = ObjectCollectionBuilder()
         val now = EasternTimeInstant.now()
         val endTime = now.plus(1.hours)
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.StopClosure
-                activePeriod(now.minus(1.hours), endTime)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.StopClosure
+            activePeriod(now.minus(1.hours), endTime)
+        }
 
         val alertSummary =
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
@@ -452,11 +449,10 @@ class AlertSummaryTest {
         val serviceEndTime = LocalTime(hour = 2, minute = 59)
         val endTime = EasternTimeInstant(tomorrow.atTime(serviceEndTime))
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.StopClosure
-                activePeriod(now.minus(1.hours), endTime)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.StopClosure
+            activePeriod(now.minus(1.hours), endTime)
+        }
 
         val alertSummary =
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
@@ -476,11 +472,10 @@ class AlertSummaryTest {
         val serviceEndTime = LocalTime(hour = 3, minute = 0)
         val endTime = EasternTimeInstant(tomorrow.atTime(serviceEndTime))
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.StopClosure
-                activePeriod(now.minus(1.hours), endTime)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.StopClosure
+            activePeriod(now.minus(1.hours), endTime)
+        }
 
         val alertSummary =
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
@@ -501,11 +496,10 @@ class AlertSummaryTest {
         val serviceEndTime = LocalTime(hour = 3, minute = 0)
         val endTime = EasternTimeInstant(tomorrow.atTime(serviceEndTime))
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.StopClosure
-                activePeriod(now.minus(1.hours), endTime)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.StopClosure
+            activePeriod(now.minus(1.hours), endTime)
+        }
 
         val alertSummary =
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
@@ -526,11 +520,10 @@ class AlertSummaryTest {
         val serviceEndTime = LocalTime(hour = 5, minute = 0)
         val endTime = EasternTimeInstant(saturday.atTime(serviceEndTime))
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.StopClosure
-                activePeriod(now.minus(1.hours), endTime)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.StopClosure
+            activePeriod(now.minus(1.hours), endTime)
+        }
 
         val alertSummary =
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
@@ -551,11 +544,10 @@ class AlertSummaryTest {
         val serviceEndTime = LocalTime(hour = 5, minute = 0)
         val endTime = EasternTimeInstant(monday.atTime(serviceEndTime))
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.StopClosure
-                activePeriod(now.minus(1.hours), endTime)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.StopClosure
+            activePeriod(now.minus(1.hours), endTime)
+        }
 
         val alertSummary =
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
@@ -571,11 +563,10 @@ class AlertSummaryTest {
         val objects = ObjectCollectionBuilder()
         val now = EasternTimeInstant.now()
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.StopClosure
-                activePeriod(now + 1.days, null)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.StopClosure
+            activePeriod(now + 1.days, null)
+        }
 
         val alertSummary =
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
@@ -592,11 +583,10 @@ class AlertSummaryTest {
         val now = EasternTimeInstant.now()
         val laterToday = now + 1.hours
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.StopClosure
-                activePeriod(laterToday, null)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.StopClosure
+            activePeriod(laterToday, null)
+        }
 
         val alertSummary =
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
@@ -617,22 +607,20 @@ class AlertSummaryTest {
 
         val now = EasternTimeInstant.now()
 
-        val stop =
-            objects.stop {
-                name = "Parent Name"
-                childStop {}
-            }
+        val stop = objects.stop {
+            name = "Parent Name"
+            childStop {}
+        }
         val childStop = objects.stops[stop.childStopIds.first()]
 
         val route = objects.route {}
         val pattern = objects.routePattern(route) { directionId = 0 }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                durationCertainty = Alert.DurationCertainty.Estimated
-                activePeriod(now.minus(1.hours), now.plus(1.hours))
-                informedEntity(route = route.id.idText, stop = childStop?.id)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            durationCertainty = Alert.DurationCertainty.Estimated
+            activePeriod(now.minus(1.hours), now.plus(1.hours))
+            informedEntity(route = route.id.idText, stop = childStop?.id)
+        }
 
         val alertSummary =
             AlertSummary.summarizing(
@@ -669,15 +657,14 @@ class AlertSummaryTest {
                 directionId = 0
                 representativeTrip { stopIds = stops.map { it.id } }
             }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                durationCertainty = Alert.DurationCertainty.Estimated
-                activePeriod(now.minus(1.hours), now.plus(1.hours))
-                for (stop in successiveStops) {
-                    informedEntity(route = route.id.idText, stop = stop.id)
-                }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            durationCertainty = Alert.DurationCertainty.Estimated
+            activePeriod(now.minus(1.hours), now.plus(1.hours))
+            for (stop in successiveStops) {
+                informedEntity(route = route.id.idText, stop = stop.id)
             }
+        }
 
         val alertSummary =
             AlertSummary.summarizing(
@@ -722,15 +709,14 @@ class AlertSummaryTest {
                 directionId = 0
                 representativeTrip { stopIds = stops.map { it.id } }
             }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                durationCertainty = Alert.DurationCertainty.Estimated
-                activePeriod(now.minus(1.hours), now.plus(1.hours))
-                for (stop in successiveStops) {
-                    informedEntity(route = route.id.idText, stop = stop.id)
-                }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            durationCertainty = Alert.DurationCertainty.Estimated
+            activePeriod(now.minus(1.hours), now.plus(1.hours))
+            for (stop in successiveStops) {
+                informedEntity(route = route.id.idText, stop = stop.id)
             }
+        }
 
         val alertSummary =
             AlertSummary.summarizing(
@@ -758,11 +744,10 @@ class AlertSummaryTest {
         val branch1Stops = (1..4).map { objects.stop { name = "Branch 1 Stop $it" } }
         val branch2Stops = (1..4).map { objects.stop { name = "Branch 2 Stop $it" } }
 
-        val route =
-            objects.route {
-                directionNames = listOf("Inbound", "Outbound")
-                directionDestinations = listOf("A", "Z")
-            }
+        val route = objects.route {
+            directionNames = listOf("Inbound", "Outbound")
+            directionDestinations = listOf("A", "Z")
+        }
 
         val branch1 =
             objects.routePattern(route) {
@@ -784,15 +769,14 @@ class AlertSummaryTest {
                         }
                 }
             }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                durationCertainty = Alert.DurationCertainty.Estimated
-                activePeriod(now.minus(1.hours), now.plus(1.hours))
-                for (stop in (listOf(firstStop) + trunkStops + branch1Stops + branch2Stops)) {
-                    informedEntity(route = route.id.idText, stop = stop.id)
-                }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            durationCertainty = Alert.DurationCertainty.Estimated
+            activePeriod(now.minus(1.hours), now.plus(1.hours))
+            for (stop in (listOf(firstStop) + trunkStops + branch1Stops + branch2Stops)) {
+                informedEntity(route = route.id.idText, stop = stop.id)
             }
+        }
 
         val alertSummary =
             AlertSummary.summarizing(
@@ -831,11 +815,10 @@ class AlertSummaryTest {
         val branch1Stops = (1..4).map { objects.stop { name = "Branch 1 Stop $it" } }
         val branch2Stops = (1..4).map { objects.stop { name = "Branch 2 Stop $it" } }
 
-        val route =
-            objects.route {
-                directionNames = listOf("Inbound", "Outbound")
-                directionDestinations = listOf("A", "Z")
-            }
+        val route = objects.route {
+            directionNames = listOf("Inbound", "Outbound")
+            directionDestinations = listOf("A", "Z")
+        }
 
         val branch1 =
             objects.routePattern(route) {
@@ -857,15 +840,14 @@ class AlertSummaryTest {
                         }
                 }
             }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                durationCertainty = Alert.DurationCertainty.Estimated
-                activePeriod(now.minus(1.hours), now.plus(1.hours))
-                for (stop in (listOf(lastStop) + trunkStops + branch1Stops + branch2Stops)) {
-                    informedEntity(route = route.id.idText, stop = stop.id)
-                }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            durationCertainty = Alert.DurationCertainty.Estimated
+            activePeriod(now.minus(1.hours), now.plus(1.hours))
+            for (stop in (listOf(lastStop) + trunkStops + branch1Stops + branch2Stops)) {
+                informedEntity(route = route.id.idText, stop = stop.id)
             }
+        }
 
         val alertSummary =
             AlertSummary.summarizing(
@@ -898,12 +880,11 @@ class AlertSummaryTest {
 
         val now = EasternTimeInstant.now()
 
-        val firstStop =
-            objects.stop {
-                name = "Kenmore"
-                childStop { id = "70151" }
-                childStop { id = "71151" }
-            }
+        val firstStop = objects.stop {
+            name = "Kenmore"
+            childStop { id = "70151" }
+            childStop { id = "71151" }
+        }
         objects.stop {
             name = "Blandford Street"
             childStop { id = "70149" }
@@ -913,12 +894,11 @@ class AlertSummaryTest {
             childStop { id = "70211" }
         }
 
-        val route =
-            objects.route {
-                lineId = "line-Green"
-                directionNames = listOf("Westbound", "Eastbound")
-                directionDestinations = listOf("", "Park St & North")
-            }
+        val route = objects.route {
+            lineId = "line-Green"
+            directionNames = listOf("Westbound", "Eastbound")
+            directionDestinations = listOf("", "Park St & North")
+        }
 
         val bBranch =
             objects.routePattern(route) {
@@ -930,15 +910,14 @@ class AlertSummaryTest {
                 directionId = 0
                 representativeTrip { stopIds = listOf("70151", "70211") }
             }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                durationCertainty = Alert.DurationCertainty.Estimated
-                activePeriod(now.minus(1.hours), now.plus(1.hours))
-                for (stop in objects.stops.values) {
-                    informedEntity(route = route.id.idText, stop = stop.id)
-                }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            durationCertainty = Alert.DurationCertainty.Estimated
+            activePeriod(now.minus(1.hours), now.plus(1.hours))
+            for (stop in objects.stops.values) {
+                informedEntity(route = route.id.idText, stop = stop.id)
             }
+        }
 
         val alertSummary =
             AlertSummary.summarizing(
@@ -971,49 +950,43 @@ class AlertSummaryTest {
 
         val now = EasternTimeInstant.now()
 
-        val trunkStop =
-            objects.stop {
-                name = "Kenmore"
-                childStop { id = "70150" }
-            }
-        val bBranchStop =
-            objects.stop {
-                name = "Blandford Street"
-                childStop { id = "70148" }
-            }
-        val cBranchStop =
-            objects.stop {
-                name = "Saint Mary's Street"
-                childStop { id = "70212" }
-            }
-        val cBranchTerminal =
-            objects.stop {
-                name = "Cleveland Circle"
-                childStop { id = "70237" }
-            }
+        val trunkStop = objects.stop {
+            name = "Kenmore"
+            childStop { id = "70150" }
+        }
+        val bBranchStop = objects.stop {
+            name = "Blandford Street"
+            childStop { id = "70148" }
+        }
+        val cBranchStop = objects.stop {
+            name = "Saint Mary's Street"
+            childStop { id = "70212" }
+        }
+        val cBranchTerminal = objects.stop {
+            name = "Cleveland Circle"
+            childStop { id = "70237" }
+        }
 
-        val route =
-            objects.route {
-                id = "Green-C"
-                lineId = "line-Green"
-                directionNames = listOf("Westbound", "Eastbound")
-                directionDestinations = listOf("", "Park St & North")
-            }
+        val route = objects.route {
+            id = "Green-C"
+            lineId = "line-Green"
+            directionNames = listOf("Westbound", "Eastbound")
+            directionDestinations = listOf("", "Park St & North")
+        }
 
         val cBranch =
             objects.routePattern(route) {
                 directionId = 1
                 representativeTrip { stopIds = listOf("70237", "70212", "70150") }
             }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                durationCertainty = Alert.DurationCertainty.Estimated
-                activePeriod(now.minus(1.hours), now.plus(1.hours))
-                for (stopId in listOf("70150", "70148", "70212")) {
-                    informedEntity(route = route.id.idText, stop = stopId)
-                }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            durationCertainty = Alert.DurationCertainty.Estimated
+            activePeriod(now.minus(1.hours), now.plus(1.hours))
+            for (stopId in listOf("70150", "70148", "70212")) {
+                informedEntity(route = route.id.idText, stop = stopId)
             }
+        }
 
         val alertSummary =
             AlertSummary.summarizing(
@@ -1042,40 +1015,34 @@ class AlertSummaryTest {
 
         val now = EasternTimeInstant.now()
 
-        val eBranchStart =
-            objects.stop {
-                name = "Medford/Tufts"
-                childStop { id = "70511" }
-            }
-        val eBranchEnd =
-            objects.stop {
-                name = "Heath Street"
-                childStop { id = "70260" }
-            }
+        val eBranchStart = objects.stop {
+            name = "Medford/Tufts"
+            childStop { id = "70511" }
+        }
+        val eBranchEnd = objects.stop {
+            name = "Heath Street"
+            childStop { id = "70260" }
+        }
 
-        val trunkAlertingStop =
-            objects.stop {
-                name = "Kenmore"
-                childStop { id = "70151" }
-                childStop { id = "71151" }
-            }
-        val bStop =
-            objects.stop {
-                name = "Blandford Street"
-                childStop { id = "70149" }
-            }
-        val cStop =
-            objects.stop {
-                name = "Saint Mary's Street"
-                childStop { id = "70211" }
-            }
+        val trunkAlertingStop = objects.stop {
+            name = "Kenmore"
+            childStop { id = "70151" }
+            childStop { id = "71151" }
+        }
+        val bStop = objects.stop {
+            name = "Blandford Street"
+            childStop { id = "70149" }
+        }
+        val cStop = objects.stop {
+            name = "Saint Mary's Street"
+            childStop { id = "70211" }
+        }
 
-        val route =
-            objects.route {
-                lineId = "line-Green"
-                directionNames = listOf("Westbound", "Eastbound")
-                directionDestinations = listOf("Copley & West", "Medford/Tufts")
-            }
+        val route = objects.route {
+            lineId = "line-Green"
+            directionNames = listOf("Westbound", "Eastbound")
+            directionDestinations = listOf("Copley & West", "Medford/Tufts")
+        }
 
         val bBranch =
             objects.routePattern(route) {
@@ -1093,18 +1060,17 @@ class AlertSummaryTest {
                 directionId = 0
                 representativeTrip { stopIds = listOf("70511", "70260") }
             }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                durationCertainty = Alert.DurationCertainty.Estimated
-                activePeriod(now.minus(1.hours), now.plus(1.hours))
-                for (stopId in
-                    listOf(trunkAlertingStop, bStop, cStop).flatMap {
-                        listOf(it.id) + it.childStopIds
-                    }) {
-                    informedEntity(route = route.id.idText, stop = stopId)
-                }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            durationCertainty = Alert.DurationCertainty.Estimated
+            activePeriod(now.minus(1.hours), now.plus(1.hours))
+            for (stopId in
+                listOf(trunkAlertingStop, bStop, cStop).flatMap {
+                    listOf(it.id) + it.childStopIds
+                }) {
+                informedEntity(route = route.id.idText, stop = stopId)
             }
+        }
 
         val alertSummary =
             AlertSummary.summarizing(
@@ -1138,17 +1104,16 @@ class AlertSummaryTest {
         val today = now.local.date
         val timeStart = now.local.time
         val timeEnd = (now + 1.seconds).local.time
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                for (daysForward in 0..30) {
-                    val thisDay = today.plus(DatePeriod(days = daysForward))
-                    activePeriod(
-                        EasternTimeInstant(thisDay, timeStart),
-                        EasternTimeInstant(thisDay, timeEnd),
-                    )
-                }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            for (daysForward in 0..30) {
+                val thisDay = today.plus(DatePeriod(days = daysForward))
+                activePeriod(
+                    EasternTimeInstant(thisDay, timeStart),
+                    EasternTimeInstant(thisDay, timeEnd),
+                )
             }
+        }
 
         val alertSummary =
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
@@ -1181,18 +1146,17 @@ class AlertSummaryTest {
         val today = now.local.date
         val timeStart = now.local.time
         val timeEnd = (now + 1.seconds).local.time
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                durationCertainty = Alert.DurationCertainty.Unknown
-                for (daysForward in 0..30) {
-                    val thisDay = today.plus(DatePeriod(days = daysForward))
-                    activePeriod(
-                        EasternTimeInstant(thisDay, timeStart),
-                        EasternTimeInstant(thisDay, timeEnd),
-                    )
-                }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            durationCertainty = Alert.DurationCertainty.Unknown
+            for (daysForward in 0..30) {
+                val thisDay = today.plus(DatePeriod(days = daysForward))
+                activePeriod(
+                    EasternTimeInstant(thisDay, timeStart),
+                    EasternTimeInstant(thisDay, timeEnd),
+                )
             }
+        }
 
         val alertSummary =
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
@@ -1226,22 +1190,21 @@ class AlertSummaryTest {
         val saturday = LocalDate(2026, Month.JANUARY, 17)
         val serviceBoundary = LocalTime(3, 0)
         val noon = LocalTime(12, 0)
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                activePeriod(
-                    EasternTimeInstant(monday, serviceBoundary),
-                    EasternTimeInstant(tuesday, serviceBoundary),
-                )
-                activePeriod(
-                    EasternTimeInstant(wednesday, serviceBoundary),
-                    EasternTimeInstant(thursday, serviceBoundary),
-                )
-                activePeriod(
-                    EasternTimeInstant(friday, serviceBoundary),
-                    EasternTimeInstant(saturday, serviceBoundary),
-                )
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            activePeriod(
+                EasternTimeInstant(monday, serviceBoundary),
+                EasternTimeInstant(tuesday, serviceBoundary),
+            )
+            activePeriod(
+                EasternTimeInstant(wednesday, serviceBoundary),
+                EasternTimeInstant(thursday, serviceBoundary),
+            )
+            activePeriod(
+                EasternTimeInstant(friday, serviceBoundary),
+                EasternTimeInstant(saturday, serviceBoundary),
+            )
+        }
 
         val expectedRecurrence =
             AlertSummary.Recurrence.SomeDays(
@@ -1307,16 +1270,15 @@ class AlertSummaryTest {
                 directionId = 0
                 representativeTrip { stopIds = stops.map { it.id } }
             }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                durationCertainty = Alert.DurationCertainty.Estimated
-                activePeriod(now.minus(1.hours), now.plus(1.hours))
-                updatedAt = now.minus(1.minutes)
-                for (stop in successiveStops) {
-                    informedEntity(route = route.id.idText, stop = stop.id)
-                }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            durationCertainty = Alert.DurationCertainty.Estimated
+            activePeriod(now.minus(1.hours), now.plus(1.hours))
+            updatedAt = now.minus(1.minutes)
+            for (stop in successiveStops) {
+                informedEntity(route = route.id.idText, stop = stop.id)
             }
+        }
 
         val alertSummary =
             AlertSummary.summarizing(
@@ -1362,14 +1324,13 @@ class AlertSummaryTest {
                 directionId = 0
                 representativeTrip { stopIds = stops.map { it.id } }
             }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                activePeriod(now.minus(1.hours), now.minus(5.minutes))
-                for (stop in successiveStops) {
-                    informedEntity(route = route.id.idText, stop = stop.id)
-                }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            activePeriod(now.minus(1.hours), now.minus(5.minutes))
+            for (stop in successiveStops) {
+                informedEntity(route = route.id.idText, stop = stop.id)
             }
+        }
 
         val alertSummary =
             AlertSummary.summarizing(
@@ -1403,13 +1364,12 @@ class AlertSummaryTest {
         val route = objects.route { longName = "Route Label" }
         val pattern = objects.routePattern(route) {}
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                durationCertainty = Alert.DurationCertainty.Unknown
-                activePeriod(now.minus(1.hours), null)
-                informedEntity(route = route.id.idText, routeType = route.type)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            durationCertainty = Alert.DurationCertainty.Unknown
+            activePeriod(now.minus(1.hours), null)
+            informedEntity(route = route.id.idText, routeType = route.type)
+        }
 
         val alertSummary =
             AlertSummary.summarizing(
@@ -1447,15 +1407,14 @@ class AlertSummaryTest {
                 representativeTripId = trip.id
             }
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                durationCertainty = Alert.DurationCertainty.Unknown
-                activePeriod(now.minus(1.hours), null)
-                stopIds.forEach {
-                    informedEntity(route = route.id.idText, routeType = route.type, stop = it)
-                }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            durationCertainty = Alert.DurationCertainty.Unknown
+            activePeriod(now.minus(1.hours), null)
+            stopIds.forEach {
+                informedEntity(route = route.id.idText, routeType = route.type, stop = it)
             }
+        }
 
         val alertSummary =
             AlertSummary.summarizing(
@@ -1484,24 +1443,23 @@ class AlertSummaryTest {
 
         val now = EasternTimeInstant.now()
 
-        val routes =
-            greenRoutes.map {
-                objects.route {
-                    id = it.toString()
-                    type = RouteType.LIGHT_RAIL
-                    lineId = "line-Green"
-                }
+        val routes = greenRoutes.map {
+            objects.route {
+                id = it.toString()
+                type = RouteType.LIGHT_RAIL
+                lineId = "line-Green"
             }
-        val patterns =
-            routes.map { objects.routePattern(it) { typicality = RoutePattern.Typicality.Typical } }
+        }
+        val patterns = routes.map {
+            objects.routePattern(it) { typicality = RoutePattern.Typicality.Typical }
+        }
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.StopClosure
-                durationCertainty = Alert.DurationCertainty.Estimated
-                activePeriod(now.minus(1.hours), null)
-                routes.forEach { informedEntity(route = it.id.idText, routeType = it.type) }
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.StopClosure
+            durationCertainty = Alert.DurationCertainty.Estimated
+            activePeriod(now.minus(1.hours), null)
+            routes.forEach { informedEntity(route = it.id.idText, routeType = it.type) }
+        }
 
         val alertSummary =
             AlertSummary.summarizing(
@@ -1530,45 +1488,42 @@ class AlertSummaryTest {
 
         val now = EasternTimeInstant.now()
 
-        val routes =
-            greenRoutes.map {
-                objects.route {
-                    id = it.toString()
-                    type = RouteType.LIGHT_RAIL
-                    lineId = "line-Green"
-                }
+        val routes = greenRoutes.map {
+            objects.route {
+                id = it.toString()
+                type = RouteType.LIGHT_RAIL
+                lineId = "line-Green"
             }
+        }
         val stops: Map<String, List<Stop>> =
             (greenRoutes.map { it.idText } + "trunk").associateWith { route ->
                 listOf("1", "2", "3", "4").map { objects.stop { id = "$route$it" } }
             }
-        val patterns =
-            routes.map {
-                val stopList: List<Stop> =
-                    (stops[it.id.idText] ?: emptyList()) + (stops["trunk"] ?: emptyList())
-                objects.routePattern(it) {
-                    typicality = RoutePattern.Typicality.Typical
-                    representativeTrip { stopIds = stopList.map { stop -> stop.id } }
-                }
+        val patterns = routes.map {
+            val stopList: List<Stop> =
+                (stops[it.id.idText] ?: emptyList()) + (stops["trunk"] ?: emptyList())
+            objects.routePattern(it) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { stopIds = stopList.map { stop -> stop.id } }
             }
+        }
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.StopClosure
-                durationCertainty = Alert.DurationCertainty.Estimated
-                activePeriod(now.minus(1.hours), null)
-                stops.forEach { (id, stops) ->
-                    if (id == "trunk") {
-                        routes.forEach { route ->
-                            stops.forEach { stop ->
-                                informedEntity(route = route.id.idText, stop = stop.id)
-                            }
+        val alert = objects.alert {
+            effect = Alert.Effect.StopClosure
+            durationCertainty = Alert.DurationCertainty.Estimated
+            activePeriod(now.minus(1.hours), null)
+            stops.forEach { (id, stops) ->
+                if (id == "trunk") {
+                    routes.forEach { route ->
+                        stops.forEach { stop ->
+                            informedEntity(route = route.id.idText, stop = stop.id)
                         }
-                    } else {
-                        stops.forEach { stop -> informedEntity(route = id, stop = stop.id) }
                     }
+                } else {
+                    stops.forEach { stop -> informedEntity(route = id, stop = stop.id) }
                 }
             }
+        }
 
         val alertSummary =
             AlertSummary.summarizing(
@@ -1597,27 +1552,26 @@ class AlertSummaryTest {
 
         val now = EasternTimeInstant.now()
 
-        val routes =
-            greenRoutes.map {
-                objects.route {
-                    id = it.toString()
-                    longName = it.toString()
-                    type = RouteType.LIGHT_RAIL
-                    lineId = "line-Green"
-                }
+        val routes = greenRoutes.map {
+            objects.route {
+                id = it.toString()
+                longName = it.toString()
+                type = RouteType.LIGHT_RAIL
+                lineId = "line-Green"
             }
+        }
 
-        val patterns =
-            routes.map { objects.routePattern(it) { typicality = RoutePattern.Typicality.Typical } }
+        val patterns = routes.map {
+            objects.routePattern(it) { typicality = RoutePattern.Typicality.Typical }
+        }
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.StopClosure
-                durationCertainty = Alert.DurationCertainty.Estimated
-                activePeriod(now.minus(1.hours), null)
+        val alert = objects.alert {
+            effect = Alert.Effect.StopClosure
+            durationCertainty = Alert.DurationCertainty.Estimated
+            activePeriod(now.minus(1.hours), null)
 
-                informedEntity(route = "Green-C", routeType = RouteType.LIGHT_RAIL)
-            }
+            informedEntity(route = "Green-C", routeType = RouteType.LIGHT_RAIL)
+        }
 
         val alertSummary =
             AlertSummary.summarizing(
@@ -1649,18 +1603,16 @@ class AlertSummaryTest {
         val route = objects.route { type = RouteType.COMMUTER_RAIL }
         val pattern = objects.routePattern(route) {}
         val trip = objects.trip(pattern) {}
-        val alert =
-            objects.alert {
-                activePeriod(now - 2.hours, now + 2.hours)
-                cause = Alert.Cause.Weather
-                effect = Alert.Effect.Suspension
-                informedEntity(trip = trip.id)
-            }
-        val schedule =
-            objects.schedule {
-                this.trip = trip
-                departureTime = EasternTimeInstant(today, LocalTime(12, 13))
-            }
+        val alert = objects.alert {
+            activePeriod(now - 2.hours, now + 2.hours)
+            cause = Alert.Cause.Weather
+            effect = Alert.Effect.Suspension
+            informedEntity(trip = trip.id)
+        }
+        val schedule = objects.schedule {
+            this.trip = trip
+            departureTime = EasternTimeInstant(today, LocalTime(12, 13))
+        }
         val alertSummary =
             AlertSummary.summarizing(
                 alert,
@@ -1692,24 +1644,21 @@ class AlertSummaryTest {
         val pattern = objects.routePattern(route) {}
         val trip1 = objects.trip(pattern) {}
         val trip2 = objects.trip(pattern) {}
-        val alert =
-            objects.alert {
-                activePeriod(now - 2.hours, now + 2.hours)
-                cause = Alert.Cause.IceInHarbor
-                effect = Alert.Effect.Cancellation
-                informedEntity(trip = trip1.id)
-                informedEntity(trip = trip2.id)
-            }
-        val schedule1 =
-            objects.schedule {
-                this.trip = trip1
-                departureTime = EasternTimeInstant(today, LocalTime(18, 0))
-            }
-        val schedule2 =
-            objects.schedule {
-                this.trip = trip2
-                departureTime = EasternTimeInstant(today, LocalTime(18, 30))
-            }
+        val alert = objects.alert {
+            activePeriod(now - 2.hours, now + 2.hours)
+            cause = Alert.Cause.IceInHarbor
+            effect = Alert.Effect.Cancellation
+            informedEntity(trip = trip1.id)
+            informedEntity(trip = trip2.id)
+        }
+        val schedule1 = objects.schedule {
+            this.trip = trip1
+            departureTime = EasternTimeInstant(today, LocalTime(18, 0))
+        }
+        val schedule2 = objects.schedule {
+            this.trip = trip2
+            departureTime = EasternTimeInstant(today, LocalTime(18, 30))
+        }
         val alertSummary =
             AlertSummary.summarizing(
                 alert,
@@ -1744,18 +1693,16 @@ class AlertSummaryTest {
                 representativeTrip { stopIds = listOf(objects.stop().id, stop1.id, stop2.id) }
             }
         val trip = objects.trip(pattern) {}
-        val alert =
-            objects.alert {
-                activePeriod(now - 2.hours, now + 2.hours)
-                effect = Alert.Effect.Shuttle
-                informedEntity(stop = stop1.id, trip = trip.id)
-                informedEntity(stop = stop2.id, trip = trip.id)
-            }
-        val schedule =
-            objects.schedule {
-                this.trip = trip
-                departureTime = EasternTimeInstant(today, LocalTime(12, 13))
-            }
+        val alert = objects.alert {
+            activePeriod(now - 2.hours, now + 2.hours)
+            effect = Alert.Effect.Shuttle
+            informedEntity(stop = stop1.id, trip = trip.id)
+            informedEntity(stop = stop2.id, trip = trip.id)
+        }
+        val schedule = objects.schedule {
+            this.trip = trip
+            departureTime = EasternTimeInstant(today, LocalTime(12, 13))
+        }
         val alertSummary =
             AlertSummary.summarizing(
                 alert,
@@ -1787,19 +1734,17 @@ class AlertSummaryTest {
         val route = objects.route { type = RouteType.COMMUTER_RAIL }
         val pattern = objects.routePattern(route) {}
         val trip = objects.trip(pattern) { headsign = "Stoughton" }
-        val alert =
-            objects.alert {
-                activePeriod(now - 2.hours, now + 2.hours)
-                cause = Alert.Cause.UnknownCause
-                effect = Alert.Effect.StationClosure
-                informedEntity(stop = stop2.id, trip = trip.id)
-                informedEntity(stop = stop1.id, trip = trip.id)
-            }
-        val schedule =
-            objects.schedule {
-                this.trip = trip
-                departureTime = EasternTimeInstant(today, LocalTime(12, 13))
-            }
+        val alert = objects.alert {
+            activePeriod(now - 2.hours, now + 2.hours)
+            cause = Alert.Cause.UnknownCause
+            effect = Alert.Effect.StationClosure
+            informedEntity(stop = stop2.id, trip = trip.id)
+            informedEntity(stop = stop1.id, trip = trip.id)
+        }
+        val schedule = objects.schedule {
+            this.trip = trip
+            departureTime = EasternTimeInstant(today, LocalTime(12, 13))
+        }
         val alertSummary =
             AlertSummary.summarizing(
                 alert,
@@ -1831,18 +1776,15 @@ class AlertSummaryTest {
         val route = objects.route { type = RouteType.COMMUTER_RAIL }
         val pattern = objects.routePattern(route) {}
         val trip = objects.trip(pattern) {}
-        val alert =
-            objects.alert {
-                activePeriod(now + 1.days - 2.hours, now + 1.days + 2.hours)
-                effect = Alert.Effect.Suspension
-                informedEntity(trip = trip.id)
-            }
-        val schedule =
-            objects.schedule {
-                this.trip = trip
-                departureTime =
-                    EasternTimeInstant(today.plus(DatePeriod(days = 1)), LocalTime(12, 13))
-            }
+        val alert = objects.alert {
+            activePeriod(now + 1.days - 2.hours, now + 1.days + 2.hours)
+            effect = Alert.Effect.Suspension
+            informedEntity(trip = trip.id)
+        }
+        val schedule = objects.schedule {
+            this.trip = trip
+            departureTime = EasternTimeInstant(today.plus(DatePeriod(days = 1)), LocalTime(12, 13))
+        }
         val alertSummary =
             AlertSummary.summarizing(
                 alert,
@@ -1883,28 +1825,26 @@ class AlertSummaryTest {
                 representativeTrip { stopIds = listOf(objects.stop().id, stop1.id, stop2.id) }
             }
         val trip = objects.trip(pattern) {}
-        val alert =
-            objects.alert {
-                activePeriod(EasternTimeInstant(monday, noon), EasternTimeInstant(monday, twoPM))
-                activePeriod(EasternTimeInstant(tuesday, noon), EasternTimeInstant(tuesday, twoPM))
-                activePeriod(
-                    EasternTimeInstant(wednesday, noon),
-                    EasternTimeInstant(wednesday, twoPM),
-                )
-                activePeriod(
-                    EasternTimeInstant(thursday, noon),
-                    EasternTimeInstant(thursday, twoPM),
-                )
-                activePeriod(EasternTimeInstant(friday, noon), EasternTimeInstant(friday, twoPM))
-                effect = Alert.Effect.Shuttle
-                informedEntity(stop = stop1.id, trip = trip.id)
-                informedEntity(stop = stop2.id, trip = trip.id)
-            }
-        val schedule =
-            objects.schedule {
-                this.trip = trip
-                departureTime = EasternTimeInstant(monday, onePM)
-            }
+        val alert = objects.alert {
+            activePeriod(EasternTimeInstant(monday, noon), EasternTimeInstant(monday, twoPM))
+            activePeriod(EasternTimeInstant(tuesday, noon), EasternTimeInstant(tuesday, twoPM))
+            activePeriod(
+                EasternTimeInstant(wednesday, noon),
+                EasternTimeInstant(wednesday, twoPM),
+            )
+            activePeriod(
+                EasternTimeInstant(thursday, noon),
+                EasternTimeInstant(thursday, twoPM),
+            )
+            activePeriod(EasternTimeInstant(friday, noon), EasternTimeInstant(friday, twoPM))
+            effect = Alert.Effect.Shuttle
+            informedEntity(stop = stop1.id, trip = trip.id)
+            informedEntity(stop = stop2.id, trip = trip.id)
+        }
+        val schedule = objects.schedule {
+            this.trip = trip
+            departureTime = EasternTimeInstant(monday, onePM)
+        }
         val alertSummary =
             AlertSummary.summarizing(
                 alert,
@@ -1936,22 +1876,20 @@ class AlertSummaryTest {
 
         val now = EasternTimeInstant.now()
 
-        val stop =
-            objects.stop {
-                name = "Parent Name"
-                childStop {}
-            }
+        val stop = objects.stop {
+            name = "Parent Name"
+            childStop {}
+        }
         val childStop = objects.stops[stop.childStopIds.first()]
 
         val route = objects.route {}
         val pattern = objects.routePattern(route) { directionId = 0 }
-        val stopClosureAlert =
-            objects.alert {
-                effect = Alert.Effect.StopClosure
-                durationCertainty = Alert.DurationCertainty.Estimated
-                activePeriod(now.minus(1.hours), now.plus(1.hours))
-                informedEntity(route = route.id.idText, stop = childStop?.id)
-            }
+        val stopClosureAlert = objects.alert {
+            effect = Alert.Effect.StopClosure
+            durationCertainty = Alert.DurationCertainty.Estimated
+            activePeriod(now.minus(1.hours), now.plus(1.hours))
+            informedEntity(route = route.id.idText, stop = childStop?.id)
+        }
 
         val stopClosureSummary =
             AlertSummary.summarizing(
@@ -1964,13 +1902,12 @@ class AlertSummaryTest {
                 GlobalResponse(objects),
             )
 
-        val stationClosureAlert =
-            objects.alert {
-                effect = Alert.Effect.StationClosure
-                durationCertainty = Alert.DurationCertainty.Estimated
-                activePeriod(now.minus(1.hours), now.plus(1.hours))
-                informedEntity(route = route.id.idText, stop = childStop?.id)
-            }
+        val stationClosureAlert = objects.alert {
+            effect = Alert.Effect.StationClosure
+            durationCertainty = Alert.DurationCertainty.Estimated
+            activePeriod(now.minus(1.hours), now.plus(1.hours))
+            informedEntity(route = route.id.idText, stop = childStop?.id)
+        }
 
         val stationClosureSummary =
             AlertSummary.summarizing(
@@ -2007,22 +1944,20 @@ class AlertSummaryTest {
 
         val now = EasternTimeInstant.now()
 
-        val stop =
-            objects.stop {
-                name = "Parent Name"
-                childStop {}
-            }
+        val stop = objects.stop {
+            name = "Parent Name"
+            childStop {}
+        }
         val childStop = objects.stops[stop.childStopIds.first()]
 
         val route = objects.route {}
         val pattern = objects.routePattern(route) { directionId = 0 }
-        val stopClosureAlert =
-            objects.alert {
-                effect = Alert.Effect.StopClosure
-                durationCertainty = Alert.DurationCertainty.Estimated
-                activePeriod(now.minus(1.hours), now.minus(5.minutes))
-                informedEntity(route = route.id.idText, stop = childStop?.id)
-            }
+        val stopClosureAlert = objects.alert {
+            effect = Alert.Effect.StopClosure
+            durationCertainty = Alert.DurationCertainty.Estimated
+            activePeriod(now.minus(1.hours), now.minus(5.minutes))
+            informedEntity(route = route.id.idText, stop = childStop?.id)
+        }
 
         val stopClosureSummary =
             AlertSummary.summarizing(

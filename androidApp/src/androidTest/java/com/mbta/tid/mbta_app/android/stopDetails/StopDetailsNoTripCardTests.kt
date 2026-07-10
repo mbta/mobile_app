@@ -107,14 +107,13 @@ class StopDetailsNoTripCardTests {
     fun testServiceEnded() {
         val objects = ObjectCollectionBuilder()
         val now = EasternTimeInstant.now()
-        val schedule =
-            objects.schedule {
-                departureTime =
-                    EasternTimeInstant(
-                        now.local.date.plus(DatePeriod(days = 1)),
-                        time = LocalTime(hour = 9, minute = 15),
-                    )
-            }
+        val schedule = objects.schedule {
+            departureTime =
+                EasternTimeInstant(
+                    now.local.date.plus(DatePeriod(days = 1)),
+                    time = LocalTime(hour = 9, minute = 15),
+                )
+        }
         loadKoinMocks()
         composeTestRule.setContent {
             StopDetailsNoTripCard(
@@ -139,11 +138,10 @@ class StopDetailsNoTripCardTests {
     fun testNoSchedulesToday() {
         val objects = ObjectCollectionBuilder()
         val now = EasternTimeInstant.now()
-        val schedule =
-            objects.schedule {
-                departureTime =
-                    EasternTimeInstant(now.local.date, time = LocalTime(hour = 9, minute = 15))
-            }
+        val schedule = objects.schedule {
+            departureTime =
+                EasternTimeInstant(now.local.date, time = LocalTime(hour = 9, minute = 15))
+        }
         loadKoinMocks()
         composeTestRule.setContent {
             StopDetailsNoTripCard(

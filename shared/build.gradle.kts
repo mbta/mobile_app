@@ -270,8 +270,9 @@ tasks.register<CycloneDxBomTransformTask>("bomAndroid") {
             .file("reports/cyclonedx-direct/bom.json")
     outputPath = layout.buildDirectory.file("boms/bom-android.json")
     transform = {
-        components =
-            components.filter { it.purl != "pkg:maven/MBTA_App/shared@unspecified?type=jar" }
+        components = components.filter {
+            it.purl != "pkg:maven/MBTA_App/shared@unspecified?type=jar"
+        }
     }
 }
 
@@ -280,15 +281,14 @@ tasks.register<CycloneDxBomTransformTask>("bomIos") {
     inputPath = layout.buildDirectory.file("boms/bom-ios-merged.xml")
     outputPath = layout.buildDirectory.file("boms/bom-ios.xml")
     transform = {
-        components =
-            components.filterNot {
-                setOf(
-                        "pkg:maven/MBTA_App/shared@unspecified?type=jar",
-                        "pkg:swift/iosApp.xcworkspace@latest",
-                        "pkg:swift/iosApp@latest",
-                    )
-                    .contains(it.purl)
-            }
+        components = components.filterNot {
+            setOf(
+                    "pkg:maven/MBTA_App/shared@unspecified?type=jar",
+                    "pkg:swift/iosApp.xcworkspace@latest",
+                    "pkg:swift/iosApp@latest",
+                )
+                .contains(it.purl)
+        }
         // the hardcoded stdlib bom doesn't handle this
         components
             .single { it.group == "org.jetbrains.kotlin" && it.name == "kotlin-stdlib" }
@@ -395,8 +395,9 @@ tasks.register<CycloneDxBomTransformTask>("bomIosCocoapods") {
     inputPath = layout.buildDirectory.file("boms/bom-ios-cocoapods-raw.xml")
     outputPath = layout.buildDirectory.file("boms/bom-ios-cocoapods.xml")
     transform = {
-        components =
-            components.filter { it.purl != "pkg:cocoapods/shared@1.0?file_name=..%2Fshared%2F" }
+        components = components.filter {
+            it.purl != "pkg:cocoapods/shared@1.0?file_name=..%2Fshared%2F"
+        }
         // cyclonedx-cocoapods doesn't embed licenses
         for (component in components) {
             // this is all very manual, so make sure it doesn't start silently failing
@@ -456,11 +457,10 @@ tasks.register<CycloneDxBomTransformTask>("bomIosSwiftPM") {
                         else "/license?ref=",
                     )
             val apiResponse = run {
-                val gh =
-                    providers.exec {
-                        commandLine("gh", "api", licenseApiPath)
-                        isIgnoreExitValue = true
-                    }
+                val gh = providers.exec {
+                    commandLine("gh", "api", licenseApiPath)
+                    isIgnoreExitValue = true
+                }
                 val result = gh.result.get()
                 if (result.exitValue != 0) {
                     throw IllegalStateException(

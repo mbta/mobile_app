@@ -14,28 +14,26 @@ class AlertAssociatedStopTest {
         val routePattern = objects.routePattern(route)
         var platform1: Stop? = null
         var platform2: Stop? = null
-        val stop =
-            objects.stop {
-                platform1 = childStop()
-                platform2 = childStop()
-            }
-        val alert =
-            objects.alert {
-                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-                effect = Alert.Effect.Shuttle
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = platform1!!.id,
-                )
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = stop.id,
-                )
-            }
+        val stop = objects.stop {
+            platform1 = childStop()
+            platform2 = childStop()
+        }
+        val alert = objects.alert {
+            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+            effect = Alert.Effect.Shuttle
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
+                route = route.id.idText,
+                routeType = route.type,
+                stop = platform1!!.id,
+            )
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
+                route = route.id.idText,
+                routeType = route.type,
+                stop = stop.id,
+            )
+        }
 
         val result =
             AlertAssociatedStop(
@@ -59,16 +57,14 @@ class AlertAssociatedStopTest {
         val objects = ObjectCollectionBuilder()
         lateinit var child1: Stop
         lateinit var child2: Stop
-        val stop =
-            objects.stop {
-                child1 = childStop()
-                child2 = childStop()
-            }
-        val route =
-            objects.route {
-                id = "Mattapan"
-                type = RouteType.LIGHT_RAIL
-            }
+        val stop = objects.stop {
+            child1 = childStop()
+            child2 = childStop()
+        }
+        val route = objects.route {
+            id = "Mattapan"
+            type = RouteType.LIGHT_RAIL
+        }
         objects.routePattern(route) {
             directionId = 0
             representativeTrip { stopIds = listOf(child1.id) }
@@ -78,12 +74,11 @@ class AlertAssociatedStopTest {
             representativeTrip { stopIds = listOf(child2.id) }
         }
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Shuttle
-                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-                informedEntity(route = route.id.idText, routeType = route.type)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Shuttle
+            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+            informedEntity(route = route.id.idText, routeType = route.type)
+        }
 
         val result =
             AlertAssociatedStop(
@@ -104,16 +99,14 @@ class AlertAssociatedStopTest {
         val objects = ObjectCollectionBuilder()
         lateinit var child1: Stop
         lateinit var child2: Stop
-        val stop =
-            objects.stop {
-                child1 = childStop()
-                child2 = childStop()
-            }
-        val route =
-            objects.route {
-                id = "Mattapan"
-                type = RouteType.LIGHT_RAIL
-            }
+        val stop = objects.stop {
+            child1 = childStop()
+            child2 = childStop()
+        }
+        val route = objects.route {
+            id = "Mattapan"
+            type = RouteType.LIGHT_RAIL
+        }
         objects.routePattern(route) {
             directionId = 0
             representativeTrip { stopIds = listOf(child1.id) }
@@ -123,12 +116,11 @@ class AlertAssociatedStopTest {
             representativeTrip { stopIds = listOf(child2.id) }
         }
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Shuttle
-                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-                informedEntity(route = null, routeType = RouteType.FERRY)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Shuttle
+            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+            informedEntity(route = null, routeType = RouteType.FERRY)
+        }
 
         val result =
             AlertAssociatedStop(
@@ -151,21 +143,20 @@ class AlertAssociatedStopTest {
         val routePattern = objects.routePattern(route)
         val stop = objects.stop()
         val trip = objects.trip()
-        val alert =
-            objects.alert {
-                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-                effect = Alert.Effect.Cancellation
-                informedEntity(
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride,
-                    ),
-                    route = route.id.idText,
-                    routeType = route.type,
-                    trip = trip.id,
-                )
-            }
+        val alert = objects.alert {
+            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+            effect = Alert.Effect.Cancellation
+            informedEntity(
+                listOf(
+                    Alert.InformedEntity.Activity.Board,
+                    Alert.InformedEntity.Activity.Exit,
+                    Alert.InformedEntity.Activity.Ride,
+                ),
+                route = route.id.idText,
+                routeType = route.type,
+                trip = trip.id,
+            )
+        }
 
         val result =
             AlertAssociatedStop(

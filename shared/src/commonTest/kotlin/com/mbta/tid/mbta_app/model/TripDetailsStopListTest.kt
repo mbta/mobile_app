@@ -61,14 +61,13 @@ class TripDetailsStopListTest {
             stopSequence: Int,
             routeId: Route.Id = Route.Id(""),
             time: EasternTimeInstant? = null,
-        ) =
-            objects.prediction {
-                this.stopId = stop(stopId).id
-                this.stopSequence = stopSequence
-                _trip?.let { this.trip = it }
-                this.routeId = routeId.idText
-                this.departureTime = time
-            }
+        ) = objects.prediction {
+            this.stopId = stop(stopId).id
+            this.stopSequence = stopSequence
+            _trip?.let { this.trip = it }
+            this.routeId = routeId.idText
+            this.departureTime = time
+        }
 
         fun pattern(
             patternId: String,
@@ -83,12 +82,11 @@ class TripDetailsStopListTest {
         fun alert(
             effect: Alert.Effect,
             block: ObjectCollectionBuilder.AlertBuilder.() -> Unit = {},
-        ) =
-            objects.alert {
-                this.effect = effect
-                this.activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-                block()
-            }
+        ) = objects.alert {
+            this.effect = effect
+            this.activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+            block()
+        }
 
         private fun defaultTrip() = Trip("trip", 0, "", Route.Id(""))
 
@@ -398,58 +396,51 @@ class TripDetailsStopListTest {
         val objects = ObjectCollectionBuilder()
         val route = objects.route {}
 
-        val p1 =
-            objects.prediction {
-                arrivalTime = EasternTimeInstant(2024, Month.MAY, 10, 15, 31, 5)
-                departureTime = EasternTimeInstant(2024, Month.MAY, 10, 15, 32, 12)
-                stopSequence = 600
-                stopId = "70200"
-                routeId = route.id.idText
-            }
-        val p2 =
-            objects.prediction {
-                arrivalTime = EasternTimeInstant(2024, Month.MAY, 10, 15, 31, 8)
-                departureTime = null
-                stopSequence = 600
-                stopId = "71199"
-                routeId = route.id.idText
-            }
-        val p3 =
-            objects.prediction {
-                arrivalTime = EasternTimeInstant(2024, Month.MAY, 10, 15, 33, 7)
-                departureTime = null
-                stopSequence = 610
-                stopId = "70201"
-                routeId = route.id.idText
-            }
+        val p1 = objects.prediction {
+            arrivalTime = EasternTimeInstant(2024, Month.MAY, 10, 15, 31, 5)
+            departureTime = EasternTimeInstant(2024, Month.MAY, 10, 15, 32, 12)
+            stopSequence = 600
+            stopId = "70200"
+            routeId = route.id.idText
+        }
+        val p2 = objects.prediction {
+            arrivalTime = EasternTimeInstant(2024, Month.MAY, 10, 15, 31, 8)
+            departureTime = null
+            stopSequence = 600
+            stopId = "71199"
+            routeId = route.id.idText
+        }
+        val p3 = objects.prediction {
+            arrivalTime = EasternTimeInstant(2024, Month.MAY, 10, 15, 33, 7)
+            departureTime = null
+            stopSequence = 610
+            stopId = "70201"
+            routeId = route.id.idText
+        }
 
         val predictions = PredictionsStreamDataResponse(objects)
 
         val schedules = TripSchedulesResponse.StopIds(listOf("70158", "70200", "70201"))
 
-        val boylston =
-            objects.stop {
-                id = "70158"
-                parentStationId = "place-boyls"
-            }
-        val parkStreet =
-            objects.stop {
-                id = "70200"
-                parentStationId = "place-pktrm"
-            }
-        val governmentCenter =
-            objects.stop {
-                id = "70201"
-                name = "Government Center"
-                parentStationId = "place-gover"
-            }
-        val notQuiteParkStreet =
-            objects.stop {
-                id = "71199"
-                description = "Park Street - Green Line - Drop-off Only"
-                name = "Park Street"
-                parentStationId = "place-pktrm"
-            }
+        val boylston = objects.stop {
+            id = "70158"
+            parentStationId = "place-boyls"
+        }
+        val parkStreet = objects.stop {
+            id = "70200"
+            parentStationId = "place-pktrm"
+        }
+        val governmentCenter = objects.stop {
+            id = "70201"
+            name = "Government Center"
+            parentStationId = "place-gover"
+        }
+        val notQuiteParkStreet = objects.stop {
+            id = "71199"
+            description = "Park Street - Green Line - Drop-off Only"
+            name = "Park Street"
+            parentStationId = "place-pktrm"
+        }
 
         val trip = objects.trip { routeId = route.id.idText }
 
@@ -521,30 +512,27 @@ class TripDetailsStopListTest {
         val outOfDateVehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.StoppedAt }
 
         val stop1 = objects.stop()
-        val schedule1 =
-            objects.schedule {
-                stopId = stop1.id
-                stopSequence = 1
-                routeId = route.id.idText
-            }
+        val schedule1 = objects.schedule {
+            stopId = stop1.id
+            stopSequence = 1
+            routeId = route.id.idText
+        }
         val prediction1 = objects.prediction(schedule1) { vehicleId = outOfDateVehicle.id }
 
         val stop2 = objects.stop()
-        val schedule2 =
-            objects.schedule {
-                stopId = stop2.id
-                stopSequence = 2
-                routeId = route.id.idText
-            }
+        val schedule2 = objects.schedule {
+            stopId = stop2.id
+            stopSequence = 2
+            routeId = route.id.idText
+        }
         val prediction2 = objects.prediction(schedule2) { vehicleId = outOfDateVehicle.id }
 
         val stop3 = objects.stop()
-        val schedule3 =
-            objects.schedule {
-                stopId = stop3.id
-                stopSequence = 3
-                routeId = route.id.idText
-            }
+        val schedule3 = objects.schedule {
+            stopId = stop3.id
+            stopSequence = 3
+            routeId = route.id.idText
+        }
         val prediction3 = objects.prediction(schedule3) { vehicleId = outOfDateVehicle.id }
 
         val trip = objects.trip { routeId = route.id.idText }
@@ -623,31 +611,26 @@ class TripDetailsStopListTest {
 
         val routeCurrent = objects.route { id = "V" }
         val trip = trip { routeId = routeCurrent.id.idText }
-        val routeW =
-            objects.route {
-                id = "W"
-                sortOrder = 1
-            }
-        val routeX =
-            objects.route {
-                id = "X"
-                sortOrder = 2
-            }
-        val routeY =
-            objects.route {
-                id = "Y"
-                sortOrder = 3
-            }
-        val routeZ =
-            objects.route {
-                id = "Z"
-                sortOrder = 4
-            }
-        val routeExcluded =
-            objects.route {
-                sortOrder = 0
-                isListedRoute = false
-            }
+        val routeW = objects.route {
+            id = "W"
+            sortOrder = 1
+        }
+        val routeX = objects.route {
+            id = "X"
+            sortOrder = 2
+        }
+        val routeY = objects.route {
+            id = "Y"
+            sortOrder = 3
+        }
+        val routeZ = objects.route {
+            id = "Z"
+            sortOrder = 4
+        }
+        val routeExcluded = objects.route {
+            sortOrder = 0
+            isListedRoute = false
+        }
 
         val patternCurrent1 = pattern("V1", routeCurrent, RoutePattern.Typicality.Atypical)
         val patternCurrent2 = pattern("V2", routeCurrent)
@@ -666,12 +649,11 @@ class TripDetailsStopListTest {
         val pred2 = prediction("B1", 20, routeCurrent.id)
         val pred3 = prediction("C1", 30, routeCurrent.id)
 
-        val vehicle =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.InTransitTo
-                routeId = routeCurrent.id.idText
-                tripId = trip.id
-            }
+        val vehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+            routeId = routeCurrent.id.idText
+            tripId = trip.id
+        }
 
         assertEquals(
             stopListOf(
@@ -763,12 +745,11 @@ class TripDetailsStopListTest {
         val pred2 = prediction("B", 20, routeId = route.id)
         val pred3 = prediction("C", 30, routeId = route.id)
         val trip = objects.trip { routeId = route.id.idText }
-        val vehicle =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.InTransitTo
-                currentStopSequence = 20
-                tripId = trip.id
-            }
+        val vehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+            currentStopSequence = 20
+            tripId = trip.id
+        }
         assertEquals(
             stopListOf(
                 entry("B", 20, prediction = pred2, vehicle = vehicle),
@@ -788,12 +769,11 @@ class TripDetailsStopListTest {
         prediction("B", 20, routeId = route.id)
         val pred3 = prediction("C", 30, routeId = route.id)
 
-        val vehicle =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                currentStopSequence = 20
-                tripId = trip.id
-            }
+        val vehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+            currentStopSequence = 20
+            tripId = trip.id
+        }
         assertEquals(
             stopListOf(
                 entry("C", 30, prediction = pred3, vehicle = vehicle),
@@ -811,12 +791,11 @@ class TripDetailsStopListTest {
         val pred2 = prediction("B", 20, routeId = route.id)
         val pred3 = prediction("C", 30, routeId = route.id)
 
-        val vehicle =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.InTransitTo
-                currentStopSequence = 20
-                tripId = "differentTrip"
-            }
+        val vehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+            currentStopSequence = 20
+            tripId = "differentTrip"
+        }
         assertEquals(
             stopListOf(
                 entry("A", 10, prediction = pred1, vehicle = vehicle),
@@ -942,12 +921,11 @@ class TripDetailsStopListTest {
     @Test
     fun `splitForTarget removes first stop from collapsed when vehicle trip is different`() = test {
         trip {}
-        val vehicle =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                currentStopSequence = 20
-                tripId = "different"
-            }
+        val vehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+            currentStopSequence = 20
+            tripId = "different"
+        }
         val list =
             stopListOf(
                 entry("A", 10, vehicle = vehicle),

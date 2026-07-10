@@ -42,11 +42,10 @@ class TileDataTest {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val trip = objects.trip { headsign = "Headsign" }
-        val prediction =
-            objects.prediction {
-                this.trip = trip
-                departureTime = now + 30.seconds
-            }
+        val prediction = objects.prediction {
+            this.trip = trip
+            departureTime = now + 30.seconds
+        }
         val upcomingTrip = objects.upcomingTrip(prediction)
 
         assertEquals(
@@ -74,11 +73,10 @@ class TileDataTest {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val trip = objects.trip()
-        val prediction =
-            objects.prediction {
-                this.trip = trip
-                departureTime = now - 3.minutes
-            }
+        val prediction = objects.prediction {
+            this.trip = trip
+            departureTime = now - 3.minutes
+        }
         val upcomingTrip = objects.upcomingTrip(prediction)
 
         assertNull(TileData.fromUpcoming(upcomingTrip, route, now))
@@ -90,12 +88,11 @@ class TileDataTest {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val trip = objects.trip()
-        val prediction =
-            objects.prediction {
-                this.trip = trip
-                departureTime = now + 5.minutes
-                stopSequence = 2
-            }
+        val prediction = objects.prediction {
+            this.trip = trip
+            departureTime = now + 5.minutes
+            stopSequence = 2
+        }
         val upcomingTrip = objects.upcomingTrip(prediction)
         val tileData = TileData.fromUpcoming(upcomingTrip, route, now)!!
 

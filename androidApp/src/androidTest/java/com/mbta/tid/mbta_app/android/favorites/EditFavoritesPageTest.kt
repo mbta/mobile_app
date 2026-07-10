@@ -50,25 +50,23 @@ import org.koin.test.KoinTest
 class EditFavoritesPageTest : KoinTest {
     val builder = ObjectCollectionBuilder()
     val now = EasternTimeInstant.now()
-    val line =
-        builder.line {
-            id = "line_1"
-            color = "FF0000"
-            textColor = "FFFFFF"
-        }
-    val route =
-        builder.route {
-            id = "route_1"
-            type = RouteType.BUS
-            color = "FF0000"
-            directionNames = listOf("North", "South")
-            directionDestinations = listOf("Downtown", "Uptown")
-            longName = "Sample Route Long Name"
-            shortName = "Sample Route"
-            textColor = "000000"
-            lineId = line.id.idText
-            routePatternIds = mutableListOf("pattern_1", "pattern_2")
-        }
+    val line = builder.line {
+        id = "line_1"
+        color = "FF0000"
+        textColor = "FFFFFF"
+    }
+    val route = builder.route {
+        id = "route_1"
+        type = RouteType.BUS
+        color = "FF0000"
+        directionNames = listOf("North", "South")
+        directionDestinations = listOf("Downtown", "Uptown")
+        longName = "Sample Route Long Name"
+        shortName = "Sample Route"
+        textColor = "000000"
+        lineId = line.id.idText
+        routePatternIds = mutableListOf("pattern_1", "pattern_2")
+    }
     val lineOrRoute = LineOrRoute.Route(route)
     val routePatternOne =
         builder.routePattern(route) {
@@ -86,74 +84,67 @@ class EditFavoritesPageTest : KoinTest {
             routeId = route.id.idText
             representativeTripId = "trip_2"
         }
-    val sampleStop =
-        builder.stop {
-            id = "stop_1"
-            name = "Sample Stop 1"
-            locationType = LocationType.STOP
-            latitude = 0.0
-            longitude = 0.0
-        }
-    val farStop =
-        builder.stop {
-            id = "stop_2"
-            name = "Sample Stop 2"
-            locationType = LocationType.STOP
-            latitude = 1.0
-            longitude = 1.0
-        }
-    val trip1 =
-        builder.trip {
-            id = "trip_1"
-            routeId = route.id.idText
-            directionId = 0
-            headsign = "Sample Headsign"
-            routePatternId = routePatternOne.id
-            stopIds = listOf(sampleStop.id)
-        }
-    val trip2 =
-        builder.trip {
-            id = "trip_2"
-            routeId = route.id.idText
-            directionId = 1
-            headsign = "Other Headsign"
-            routePatternId = routePatternTwo.id
-            stopIds = listOf(farStop.id)
-        }
-    val prediction =
-        builder.prediction {
-            id = "prediction_1"
-            revenue = true
-            stopId = sampleStop.id
-            tripId = trip1.id
-            routeId = route.id.idText
-            stopSequence = 1
-            directionId = 0
-            arrivalTime = now.plus(1.minutes)
-            departureTime = now.plus(1.5.minutes)
-        }
+    val sampleStop = builder.stop {
+        id = "stop_1"
+        name = "Sample Stop 1"
+        locationType = LocationType.STOP
+        latitude = 0.0
+        longitude = 0.0
+    }
+    val farStop = builder.stop {
+        id = "stop_2"
+        name = "Sample Stop 2"
+        locationType = LocationType.STOP
+        latitude = 1.0
+        longitude = 1.0
+    }
+    val trip1 = builder.trip {
+        id = "trip_1"
+        routeId = route.id.idText
+        directionId = 0
+        headsign = "Sample Headsign"
+        routePatternId = routePatternOne.id
+        stopIds = listOf(sampleStop.id)
+    }
+    val trip2 = builder.trip {
+        id = "trip_2"
+        routeId = route.id.idText
+        directionId = 1
+        headsign = "Other Headsign"
+        routePatternId = routePatternTwo.id
+        stopIds = listOf(farStop.id)
+    }
+    val prediction = builder.prediction {
+        id = "prediction_1"
+        revenue = true
+        stopId = sampleStop.id
+        tripId = trip1.id
+        routeId = route.id.idText
+        stopSequence = 1
+        directionId = 0
+        arrivalTime = now.plus(1.minutes)
+        departureTime = now.plus(1.5.minutes)
+    }
 
-    val greenLine =
-        builder.line {
-            id = "line-Green"
-            shortName = "Green Line"
-            longName = "Green Line Long Name"
-            color = "008000"
-            textColor = "FFFFFF"
-        }
-    val greenLineRoute =
-        builder.route {
-            id = "route_gl"
-            type = RouteType.LIGHT_RAIL
-            color = "008000"
-            directionNames = listOf("Inbound", "Outbound")
-            directionDestinations = listOf("Park Street", "Lechmere")
-            longName = "Green Line Long Name"
-            shortName = "Green Line"
-            textColor = "FFFFFF"
-            lineId = greenLine.id.idText
-            routePatternIds = mutableListOf("pattern_gl")
-        }
+    val greenLine = builder.line {
+        id = "line-Green"
+        shortName = "Green Line"
+        longName = "Green Line Long Name"
+        color = "008000"
+        textColor = "FFFFFF"
+    }
+    val greenLineRoute = builder.route {
+        id = "route_gl"
+        type = RouteType.LIGHT_RAIL
+        color = "008000"
+        directionNames = listOf("Inbound", "Outbound")
+        directionDestinations = listOf("Park Street", "Lechmere")
+        longName = "Green Line Long Name"
+        shortName = "Green Line"
+        textColor = "FFFFFF"
+        lineId = greenLine.id.idText
+        routePatternIds = mutableListOf("pattern_gl")
+    }
     val greenLineOrRoute = LineOrRoute.Line(greenLine, setOf(greenLineRoute))
     val greenLineRoutePatternOne =
         builder.routePattern(greenLineRoute) {
@@ -163,35 +154,32 @@ class EditFavoritesPageTest : KoinTest {
             routeId = greenLineRoute.id.idText
             representativeTripId = "trip_gl"
         }
-    val greenLineStop =
-        builder.stop {
-            id = "stop_gl"
-            name = "Green Line Stop"
-            locationType = LocationType.STOP
-            latitude = 2.0
-            longitude = 2.0
-        }
-    val greenLineTrip =
-        builder.trip {
-            id = "trip_gl"
-            routeId = greenLineRoute.id.idText
-            directionId = 0
-            headsign = "Green Line Head Sign"
-            routePatternId = greenLineRoutePatternOne.id
-            stopIds = listOf(greenLineStop.id)
-        }
-    val greenLinePrediction =
-        builder.prediction {
-            id = "prediction_gl"
-            revenue = true
-            stopId = greenLineStop.id
-            tripId = greenLineTrip.id
-            routeId = greenLineRoute.id.idText
-            stopSequence = 1
-            directionId = 0
-            arrivalTime = now.plus(5.minutes)
-            departureTime = now.plus(5.5.minutes)
-        }
+    val greenLineStop = builder.stop {
+        id = "stop_gl"
+        name = "Green Line Stop"
+        locationType = LocationType.STOP
+        latitude = 2.0
+        longitude = 2.0
+    }
+    val greenLineTrip = builder.trip {
+        id = "trip_gl"
+        routeId = greenLineRoute.id.idText
+        directionId = 0
+        headsign = "Green Line Head Sign"
+        routePatternId = greenLineRoutePatternOne.id
+        stopIds = listOf(greenLineStop.id)
+    }
+    val greenLinePrediction = builder.prediction {
+        id = "prediction_gl"
+        revenue = true
+        stopId = greenLineStop.id
+        tripId = greenLineTrip.id
+        routeId = greenLineRoute.id.idText
+        stopSequence = 1
+        directionId = 0
+        arrivalTime = now.plus(5.minutes)
+        departureTime = now.plus(5.5.minutes)
+    }
 
     val routeCard =
         RouteCardData(
@@ -441,8 +429,9 @@ class EditFavoritesPageTest : KoinTest {
             )
 
         viewModel.onUpdateFavorites = { update ->
-            val updatedFavorites =
-                favorites.filterNot { update.containsKey(it.key) && update[it.key] == null }
+            val updatedFavorites = favorites.filterNot {
+                update.containsKey(it.key) && update[it.key] == null
+            }
             viewModel.models.update {
                 FavoritesViewModel.State(
                     false,

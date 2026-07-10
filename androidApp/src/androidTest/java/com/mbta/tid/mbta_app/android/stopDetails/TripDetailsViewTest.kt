@@ -43,24 +43,23 @@ class TripDetailsViewTest {
     val routePattern = objects.routePattern(route)
     val stop = objects.stop()
     val trip = objects.trip(routePattern)
-    val vehicle =
-        objects.vehicle {
-            currentStatus = Vehicle.CurrentStatus.InTransitTo
-            tripId = trip.id
-        }
+    val vehicle = objects.vehicle {
+        currentStatus = Vehicle.CurrentStatus.InTransitTo
+        tripId = trip.id
+    }
     val stopSequence = 10
 
     val downstreamStopSequence = 20
     lateinit var downstreamStop: Stop
-    val downstreamStopParent =
-        objects.stop { downstreamStop = childStop { name = "North Station" } }
-    val schedule =
-        objects.schedule {
-            this.trip = this@TripDetailsViewTest.trip
-            stopId = downstreamStop.id
-            stopSequence = downstreamStopSequence
-            departureTime = now + 5.minutes
-        }
+    val downstreamStopParent = objects.stop {
+        downstreamStop = childStop { name = "North Station" }
+    }
+    val schedule = objects.schedule {
+        this.trip = this@TripDetailsViewTest.trip
+        stopId = downstreamStop.id
+        stopSequence = downstreamStopSequence
+        departureTime = now + 5.minutes
+    }
     val prediction = objects.prediction(schedule) { departureTime = now + 5.minutes }
 
     val globalResponse = GlobalResponse(objects)

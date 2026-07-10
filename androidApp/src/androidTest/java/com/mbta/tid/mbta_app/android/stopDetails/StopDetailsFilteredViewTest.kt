@@ -44,19 +44,18 @@ import org.koin.compose.koinInject
 class StopDetailsFilteredViewTest {
     val builder = ObjectCollectionBuilder()
     val now = EasternTimeInstant.now()
-    val route =
-        builder.route {
-            id = "route_1"
-            type = RouteType.LIGHT_RAIL
-            color = "FF0000"
-            directionNames = listOf("North", "South")
-            directionDestinations = listOf("Downtown", "Uptown")
-            longName = "Sample Route Long Name"
-            shortName = "Sample Route"
-            textColor = "000000"
-            lineId = "line_1"
-            routePatternIds = mutableListOf("pattern_1", "pattern_2")
-        }
+    val route = builder.route {
+        id = "route_1"
+        type = RouteType.LIGHT_RAIL
+        color = "FF0000"
+        directionNames = listOf("North", "South")
+        directionDestinations = listOf("Downtown", "Uptown")
+        longName = "Sample Route Long Name"
+        shortName = "Sample Route"
+        textColor = "000000"
+        lineId = "line_1"
+        routePatternIds = mutableListOf("pattern_1", "pattern_2")
+    }
     val routePatternOne =
         builder.routePattern(route) {
             id = "pattern_1"
@@ -73,58 +72,52 @@ class StopDetailsFilteredViewTest {
             routeId = "route_1"
             representativeTripId = "trip_1"
         }
-    val downstreamStop =
-        builder.stop {
-            id = "stop_2"
-            name = "Sample Stop 2"
-            locationType = LocationType.STOP
-            latitude = 0.0
-            longitude = 0.0
-        }
-    val stop =
-        builder.stop {
-            id = "stop_1"
-            name = "Sample Stop"
-            locationType = LocationType.STOP
-            latitude = 0.0
-            longitude = 0.0
-        }
-    val inaccessibleStop =
-        builder.stop {
-            id = "stop_3"
-            name = "Sample Stop 3"
-            locationType = LocationType.STOP
-            latitude = 0.0
-            longitude = 0.0
-            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
-        }
-    val line =
-        builder.line {
-            id = "line_1"
-            color = "FF0000"
-            textColor = "FFFFFF"
-        }
-    val trip =
-        builder.trip {
-            id = "trip_1"
-            routeId = "route_1"
-            directionId = 0
-            headsign = "Sample Headsign"
-            routePatternId = "pattern_1"
-            stopIds = listOf(stop.id, downstreamStop.id, inaccessibleStop.id)
-        }
-    val prediction =
-        builder.prediction {
-            id = "prediction_1"
-            revenue = true
-            stopId = "stop_1"
-            tripId = "trip_1"
-            routeId = "route_1"
-            stopSequence = 1
-            directionId = 0
-            arrivalTime = now.plus(1.minutes)
-            departureTime = now.plus(1.5.minutes)
-        }
+    val downstreamStop = builder.stop {
+        id = "stop_2"
+        name = "Sample Stop 2"
+        locationType = LocationType.STOP
+        latitude = 0.0
+        longitude = 0.0
+    }
+    val stop = builder.stop {
+        id = "stop_1"
+        name = "Sample Stop"
+        locationType = LocationType.STOP
+        latitude = 0.0
+        longitude = 0.0
+    }
+    val inaccessibleStop = builder.stop {
+        id = "stop_3"
+        name = "Sample Stop 3"
+        locationType = LocationType.STOP
+        latitude = 0.0
+        longitude = 0.0
+        wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
+    }
+    val line = builder.line {
+        id = "line_1"
+        color = "FF0000"
+        textColor = "FFFFFF"
+    }
+    val trip = builder.trip {
+        id = "trip_1"
+        routeId = "route_1"
+        directionId = 0
+        headsign = "Sample Headsign"
+        routePatternId = "pattern_1"
+        stopIds = listOf(stop.id, downstreamStop.id, inaccessibleStop.id)
+    }
+    val prediction = builder.prediction {
+        id = "prediction_1"
+        revenue = true
+        stopId = "stop_1"
+        tripId = "trip_1"
+        routeId = "route_1"
+        stopSequence = 1
+        directionId = 0
+        arrivalTime = now.plus(1.minutes)
+        departureTime = now.plus(1.5.minutes)
+    }
 
     private val globalResponse =
         GlobalResponse(

@@ -34,7 +34,9 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
         internal val isTruncating = disruption?.alert?.hasNoThroughService == true
 
         public fun activeElevatorAlerts(now: EasternTimeInstant): List<Alert> =
-            elevatorAlerts.filter { it.isActive(now) }
+            elevatorAlerts.filter {
+                it.isActive(now)
+            }
 
         /**
          * Gets the time to display for this entry, or an alert to be displayed instead.
@@ -313,8 +315,9 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
                         // included in the schedule
                         val scheduledStopIds =
                             tripSchedules?.stops(globalData).orEmpty().map { it.id }.toSet()
-                        val scheduledPredictions =
-                            predictions.filter { it.stopId in scheduledStopIds }
+                        val scheduledPredictions = predictions.filter {
+                            it.stopId in scheduledStopIds
+                        }
                         check(scheduledPredictions.size == 1) {
                             "Trip ${predictions.first().tripId} has duplicate predictions $predictions at stop sequence $stopSequence"
                         }

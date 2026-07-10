@@ -40,17 +40,15 @@ private fun DirectionRowViewPreview() {
             val now = EasternTimeInstant.now()
             val objects = ObjectCollectionBuilder("DirectionRowViewPreview")
             val trip1 = objects.trip()
-            val prediction1 =
-                objects.prediction {
-                    trip = trip1
-                    departureTime = now + 5.minutes
-                }
+            val prediction1 = objects.prediction {
+                trip = trip1
+                departureTime = now + 5.minutes
+            }
             val trip2 = objects.trip()
-            val prediction2 =
-                objects.prediction {
-                    trip = trip2
-                    departureTime = now + 12.minutes
-                }
+            val prediction2 = objects.prediction {
+                trip = trip2
+                departureTime = now + 12.minutes
+            }
             DirectionRowView(
                 Direction("West", "Some", 0),
                 predictions =

@@ -42,20 +42,18 @@ class MapAndSheetPageTest {
     fun testHideMapsLocationUpdates() {
         val objects = ObjectCollectionBuilder()
 
-        val stop1 =
-            objects.stop {
-                latitude = 1.0
-                longitude = 1.0
-                name = "Stop A"
-                vehicleType = RouteType.BUS
-            }
-        val stop2 =
-            objects.stop {
-                latitude = 2.0
-                longitude = 2.0
-                name = "Stop B"
-                vehicleType = RouteType.BUS
-            }
+        val stop1 = objects.stop {
+            latitude = 1.0
+            longitude = 1.0
+            name = "Stop A"
+            vehicleType = RouteType.BUS
+        }
+        val stop2 = objects.stop {
+            latitude = 2.0
+            longitude = 2.0
+            name = "Stop B"
+            vehicleType = RouteType.BUS
+        }
         val route = objects.route { type = RouteType.BUS }
         objects.routePattern(route) {
             typicality = RoutePattern.Typicality.Typical

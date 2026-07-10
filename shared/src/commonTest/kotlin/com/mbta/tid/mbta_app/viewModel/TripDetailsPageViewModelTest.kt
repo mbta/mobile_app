@@ -149,12 +149,11 @@ class TripDetailsPageViewModelTest : KoinTest {
         val targetStop = objects.getStop("place-knncl")
         val alertStop = objects.getStop("place-fldcr")
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                activePeriod(EasternTimeInstant.now() - 1.hours, null)
-                informedEntity(route = route.id.idText, stop = alertStop.id)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            activePeriod(EasternTimeInstant.now() - 1.hours, null)
+            informedEntity(route = route.id.idText, stop = alertStop.id)
+        }
 
         setUpKoin(objects)
 
@@ -228,92 +227,91 @@ class TripDetailsPageViewModelTest : KoinTest {
         val trip = objects.trip(truncatedRoutePattern)
         val targetStop = objects.getStop("place-pktrm")
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Shuttle
-                activePeriod(
-                    EasternTimeInstant.now() - 1.hours,
-                    EasternTimeInstant(
-                        (EasternTimeInstant.now().serviceDate + DatePeriod(days = 1)).atTime(3, 0)
-                    ),
-                )
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    directionId = 0,
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = "70097",
-                )
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
-                    directionId = 1,
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = "70098",
-                )
-                informedEntity(
-                    directionId = 0,
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = "70099",
-                )
-                informedEntity(
-                    directionId = 1,
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = "70100",
-                )
-                informedEntity(
-                    directionId = 0,
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = "70101",
-                )
-                informedEntity(
-                    directionId = 1,
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = "70102",
-                )
-                informedEntity(
-                    directionId = 0,
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = "70103",
-                )
-                informedEntity(
-                    directionId = 1,
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = "70104",
-                )
-                informedEntity(route = route.id.idText, routeType = route.type, stop = "70105")
-                informedEntity(
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = "place-brntn",
-                )
-                informedEntity(
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = "place-nqncy",
-                )
-                informedEntity(
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = "place-qamnl",
-                )
-                informedEntity(
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = "place-qnctr",
-                )
-                informedEntity(
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = "place-wlsta",
-                )
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Shuttle
+            activePeriod(
+                EasternTimeInstant.now() - 1.hours,
+                EasternTimeInstant(
+                    (EasternTimeInstant.now().serviceDate + DatePeriod(days = 1)).atTime(3, 0)
+                ),
+            )
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
+                directionId = 0,
+                route = route.id.idText,
+                routeType = route.type,
+                stop = "70097",
+            )
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
+                directionId = 1,
+                route = route.id.idText,
+                routeType = route.type,
+                stop = "70098",
+            )
+            informedEntity(
+                directionId = 0,
+                route = route.id.idText,
+                routeType = route.type,
+                stop = "70099",
+            )
+            informedEntity(
+                directionId = 1,
+                route = route.id.idText,
+                routeType = route.type,
+                stop = "70100",
+            )
+            informedEntity(
+                directionId = 0,
+                route = route.id.idText,
+                routeType = route.type,
+                stop = "70101",
+            )
+            informedEntity(
+                directionId = 1,
+                route = route.id.idText,
+                routeType = route.type,
+                stop = "70102",
+            )
+            informedEntity(
+                directionId = 0,
+                route = route.id.idText,
+                routeType = route.type,
+                stop = "70103",
+            )
+            informedEntity(
+                directionId = 1,
+                route = route.id.idText,
+                routeType = route.type,
+                stop = "70104",
+            )
+            informedEntity(route = route.id.idText, routeType = route.type, stop = "70105")
+            informedEntity(
+                route = route.id.idText,
+                routeType = route.type,
+                stop = "place-brntn",
+            )
+            informedEntity(
+                route = route.id.idText,
+                routeType = route.type,
+                stop = "place-nqncy",
+            )
+            informedEntity(
+                route = route.id.idText,
+                routeType = route.type,
+                stop = "place-qamnl",
+            )
+            informedEntity(
+                route = route.id.idText,
+                routeType = route.type,
+                stop = "place-qnctr",
+            )
+            informedEntity(
+                route = route.id.idText,
+                routeType = route.type,
+                stop = "place-wlsta",
+            )
+        }
 
         setUpKoin(objects)
 

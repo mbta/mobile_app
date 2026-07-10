@@ -71,14 +71,13 @@ fun StopDetailsUnfilteredView(
     fun getFilterPillRoutes(
         routeCardData: List<RouteCardData>,
         global: GlobalResponse,
-    ): List<PillFilter> =
-        routeCardData.map {
-            when (val lineOrRoute = it.lineOrRoute) {
-                is LineOrRoute.Line -> PillFilter.ByLine(lineOrRoute.line)
-                is LineOrRoute.Route ->
-                    PillFilter.ByRoute(lineOrRoute.route, global.getLine(lineOrRoute.route.lineId))
-            }
+    ): List<PillFilter> = routeCardData.map {
+        when (val lineOrRoute = it.lineOrRoute) {
+            is LineOrRoute.Line -> PillFilter.ByLine(lineOrRoute.line)
+            is LineOrRoute.Route ->
+                PillFilter.ByRoute(lineOrRoute.route, global.getLine(lineOrRoute.route.lineId))
         }
+    }
 
     if (routeCardData != null) {
         stop?.let {

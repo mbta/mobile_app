@@ -31,28 +31,25 @@ class StopDetailsFilterPillsTest {
     @Test
     fun testFiltering() {
         val objects = ObjectCollectionBuilder()
-        val route1 =
-            objects.route {
-                color = "000000"
-                textColor = "ffffff"
-                type = RouteType.HEAVY_RAIL
-                longName = "Red Line"
-            }
-        val route2 =
-            objects.route {
-                id = "Mattapan"
-                color = "000000"
-                textColor = "ffffff"
-                type = RouteType.LIGHT_RAIL
-                longName = "Mattapan Line"
-            }
-        val route3 =
-            objects.route {
-                color = "000000"
-                textColor = "ffffff"
-                type = RouteType.BUS
-                shortName = "55"
-            }
+        val route1 = objects.route {
+            color = "000000"
+            textColor = "ffffff"
+            type = RouteType.HEAVY_RAIL
+            longName = "Red Line"
+        }
+        val route2 = objects.route {
+            id = "Mattapan"
+            color = "000000"
+            textColor = "ffffff"
+            type = RouteType.LIGHT_RAIL
+            longName = "Mattapan Line"
+        }
+        val route3 = objects.route {
+            color = "000000"
+            textColor = "ffffff"
+            type = RouteType.BUS
+            shortName = "55"
+        }
 
         val filter: MutableState<StopDetailsFilter?> =
             mutableStateOf(StopDetailsFilter(routeId = route1.id, directionId = 0))

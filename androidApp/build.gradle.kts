@@ -42,8 +42,9 @@ sentry {
             val resolvedDependencies = bareKMPConfig.incoming.resolutionResult
             val resolvedModuleVersions =
                 resolvedDependencies.allComponents.mapNotNull { it.moduleVersion }
-            val transitiveSentryCore =
-                resolvedModuleVersions.find { it.module.toString() == "io.sentry:sentry" }
+            val transitiveSentryCore = resolvedModuleVersions.find {
+                it.module.toString() == "io.sentry:sentry"
+            }
             checkNotNull(transitiveSentryCore) {
                     "Could not find io.sentry:sentry among ${resolvedModuleVersions.joinToString(prefix = "[", postfix = "]")}"
                 }

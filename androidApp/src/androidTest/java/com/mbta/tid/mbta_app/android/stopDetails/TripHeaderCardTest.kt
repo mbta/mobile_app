@@ -32,11 +32,10 @@ class TripHeaderCardTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "Stop Name" }
         val trip = objects.trip()
-        val vehicle =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.InTransitTo
-                tripId = trip.id
-            }
+        val vehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+            tripId = trip.id
+        }
         val route = objects.route {}
 
         composeTestRule.setContent {
@@ -59,11 +58,10 @@ class TripHeaderCardTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "Stop Name" }
         val trip = objects.trip()
-        val vehicle =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.InTransitTo
-                tripId = trip.id
-            }
+        val vehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+            tripId = trip.id
+        }
         val route = objects.route {}
         var followTripClicked = false
 
@@ -113,21 +111,19 @@ class TripHeaderCardTest {
 
         composeTestRule.onNodeWithText("Next stop", useUnmergedTree = true).assertCanBeDisplayed()
 
-        val incomingVehicle =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.IncomingAt
-                tripId = trip.id
-            }
+        val incomingVehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.IncomingAt
+            tripId = trip.id
+        }
 
         vehicleState.value = incomingVehicle
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Approaching", useUnmergedTree = true).assertCanBeDisplayed()
 
-        val stoppedVehicle =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                tripId = trip.id
-            }
+        val stoppedVehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+            tripId = trip.id
+        }
 
         vehicleState.value = stoppedVehicle
 
@@ -166,23 +162,21 @@ class TripHeaderCardTest {
 
         composeTestRule.onNodeWithText("Not crowded", useUnmergedTree = true).assertCanBeDisplayed()
 
-        vehicleState.value =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.InTransitTo
-                tripId = trip.id
-                occupancyStatus = Vehicle.OccupancyStatus.FewSeatsAvailable
-            }
+        vehicleState.value = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+            tripId = trip.id
+            occupancyStatus = Vehicle.OccupancyStatus.FewSeatsAvailable
+        }
         composeTestRule.waitForIdle()
         composeTestRule
             .onNodeWithText("Some crowding", useUnmergedTree = true)
             .assertCanBeDisplayed()
 
-        vehicleState.value =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.InTransitTo
-                tripId = trip.id
-                occupancyStatus = Vehicle.OccupancyStatus.CrushedStandingRoomOnly
-            }
+        vehicleState.value = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+            tripId = trip.id
+            occupancyStatus = Vehicle.OccupancyStatus.CrushedStandingRoomOnly
+        }
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Crowded", useUnmergedTree = true).assertCanBeDisplayed()
     }
@@ -234,12 +228,11 @@ class TripHeaderCardTest {
         val stop = objects.stop {}
         val trip = objects.trip()
 
-        val vehicle =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                tripId = trip.id
-                stopId = stop.id
-            }
+        val vehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+            tripId = trip.id
+            stopId = stop.id
+        }
 
         val route = objects.route {}
 
@@ -269,14 +262,13 @@ class TripHeaderCardTest {
 
         val predictionDeparture = now.plus(5.minutes)
 
-        val vehicle =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
+        val vehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
 
-                tripId = trip.id
-                stopId = stop.id
-                currentStopSequence = 0
-            }
+            tripId = trip.id
+            stopId = stop.id
+            currentStopSequence = 0
+        }
         val prediction = objects.prediction { departureTime = predictionDeparture }
 
         composeTestRule.setContent {
@@ -323,30 +315,27 @@ class TripHeaderCardTest {
         val now = EasternTimeInstant(2024, Month.AUGUST, 19, 16, 44, 8)
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { id = "place-north" }
-        val platformStop =
-            objects.stop {
-                platformCode = "5"
-                vehicleType = RouteType.COMMUTER_RAIL
-                parentStationId = stop.id
-            }
+        val platformStop = objects.stop {
+            platformCode = "5"
+            vehicleType = RouteType.COMMUTER_RAIL
+            parentStationId = stop.id
+        }
         val route = objects.route { type = RouteType.COMMUTER_RAIL }
         val trip = objects.trip()
 
         val predictionDeparture = now.plus(5.minutes)
 
-        val vehicle =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
+        val vehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
 
-                tripId = trip.id
-                stopId = stop.id
-                currentStopSequence = 0
-            }
-        val prediction =
-            objects.prediction {
-                departureTime = predictionDeparture
-                stopId = platformStop.id
-            }
+            tripId = trip.id
+            stopId = stop.id
+            currentStopSequence = 0
+        }
+        val prediction = objects.prediction {
+            departureTime = predictionDeparture
+            stopId = platformStop.id
+        }
 
         composeTestRule.setContent {
             TripHeaderCard(
@@ -386,11 +375,10 @@ class TripHeaderCardTest {
         val scheduledTime = now.plus(5.minutes)
         val route = objects.route { type = RouteType.COMMUTER_RAIL }
 
-        val schedule =
-            objects.schedule {
-                this.trip = trip
-                departureTime = scheduledTime
-            }
+        val schedule = objects.schedule {
+            this.trip = trip
+            departureTime = scheduledTime
+        }
 
         composeTestRule.setContent {
             TripHeaderCard(
@@ -470,11 +458,10 @@ class TripHeaderCardTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "stop" }
         val trip = objects.trip()
-        val vehicle =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.IncomingAt
-                tripId = trip.id
-            }
+        val vehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.IncomingAt
+            tripId = trip.id
+        }
         val route = objects.route { type = RouteType.BUS }
 
         composeTestRule.setContent {
@@ -500,29 +487,25 @@ class TripHeaderCardTest {
     fun testAccessibilityVehicleDescriptionTrackNumber() {
         val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
-        val stop =
-            objects.stop {
-                id = "place-rugg"
-                name = "Ruggles"
-            }
-        val platformStop =
-            objects.stop {
-                platformCode = "3"
-                vehicleType = RouteType.COMMUTER_RAIL
-                parentStationId = stop.id
-            }
+        val stop = objects.stop {
+            id = "place-rugg"
+            name = "Ruggles"
+        }
+        val platformStop = objects.stop {
+            platformCode = "3"
+            vehicleType = RouteType.COMMUTER_RAIL
+            parentStationId = stop.id
+        }
         val trip = objects.trip()
-        val vehicle =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                tripId = trip.id
-            }
+        val vehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+            tripId = trip.id
+        }
         val route = objects.route { type = RouteType.COMMUTER_RAIL }
-        val prediction =
-            objects.prediction {
-                departureTime = now.plus(5.minutes)
-                stopId = platformStop.id
-            }
+        val prediction = objects.prediction {
+            departureTime = now.plus(5.minutes)
+            stopId = platformStop.id
+        }
 
         composeTestRule.setContent {
             TripHeaderCard(
@@ -566,11 +549,10 @@ class TripHeaderCardTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "stop" }
         val trip = objects.trip()
-        val vehicle =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.IncomingAt
-                tripId = trip.id
-            }
+        val vehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.IncomingAt
+            tripId = trip.id
+        }
         val route = objects.route { type = RouteType.BUS }
 
         val otherStop = objects.stop { name = "other stop" }
@@ -600,11 +582,10 @@ class TripHeaderCardTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "stop" }
         val trip = objects.trip()
-        val vehicle =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.IncomingAt
-                tripId = trip.id
-            }
+        val vehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.IncomingAt
+            tripId = trip.id
+        }
         val route = objects.route { type = RouteType.BUS }
         val schedule = objects.schedule { departureTime = now.plus(5.minutes) }
 
@@ -646,11 +627,10 @@ class TripHeaderCardTest {
         val other = objects.stop { name = "other stop" }
 
         val trip = objects.trip()
-        val vehicle =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.IncomingAt
-                tripId = trip.id
-            }
+        val vehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.IncomingAt
+            tripId = trip.id
+        }
         val route = objects.route { type = RouteType.BUS }
         val schedule = objects.schedule { departureTime = now.plus(5.minutes) }
 
@@ -690,17 +670,16 @@ class TripHeaderCardTest {
         val rl = objects.getRoute("Red")
         val rlTrip = objects.trip { routeId = rl.id.idText }
         val kendallMIT = objects.getStop("place-knncl")
-        val rlVehicle =
-            objects.vehicle {
-                carriage { occupancyStatus = Vehicle.OccupancyStatus.ManySeatsAvailable }
-                carriage { occupancyStatus = Vehicle.OccupancyStatus.FewSeatsAvailable }
-                carriage { occupancyStatus = Vehicle.OccupancyStatus.StandingRoomOnly }
-                carriage { occupancyStatus = Vehicle.OccupancyStatus.NoDataAvailable }
-                carriage { occupancyStatus = Vehicle.OccupancyStatus.ManySeatsAvailable }
-                currentStatus = Vehicle.CurrentStatus.IncomingAt
-                stopId = kendallMIT.id
-                tripId = rlTrip.id
-            }
+        val rlVehicle = objects.vehicle {
+            carriage { occupancyStatus = Vehicle.OccupancyStatus.ManySeatsAvailable }
+            carriage { occupancyStatus = Vehicle.OccupancyStatus.FewSeatsAvailable }
+            carriage { occupancyStatus = Vehicle.OccupancyStatus.StandingRoomOnly }
+            carriage { occupancyStatus = Vehicle.OccupancyStatus.NoDataAvailable }
+            carriage { occupancyStatus = Vehicle.OccupancyStatus.ManySeatsAvailable }
+            currentStatus = Vehicle.CurrentStatus.IncomingAt
+            stopId = kendallMIT.id
+            tripId = rlTrip.id
+        }
 
         val rlEntry =
             TripDetailsStopList.Entry(

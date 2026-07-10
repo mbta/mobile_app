@@ -378,11 +378,10 @@ class ResponseCacheTest {
 
         cache.state.test {
             assertNull(awaitItem())
-            val result =
-                cache.getOrFetch {
-                    didFetch = true
-                    client.get { url { path("api/global") } }
-                }
+            val result = cache.getOrFetch {
+                didFetch = true
+                client.get { url { path("api/global") } }
+            }
 
             assertEquals(oldData, awaitItem())
             assertTrue(didFetch)

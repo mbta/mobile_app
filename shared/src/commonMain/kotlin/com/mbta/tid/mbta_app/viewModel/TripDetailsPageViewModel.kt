@@ -128,18 +128,17 @@ public class TripDetailsPageViewModel(private val tripDetailsVM: ITripDetailsVie
             if (global == null || filter == null) return
             if (clearExisting) alertSummaries = emptyMap()
 
-            alertSummaries =
-                alertsToSummarize.associate {
-                    it.id to
-                        it.summary(
-                            filter.stopId,
-                            filter.directionId,
-                            patterns,
-                            now,
-                            listOfNotNull(contextualTrip),
-                            global,
-                        )
-                }
+            alertSummaries = alertsToSummarize.associate {
+                it.id to
+                    it.summary(
+                        filter.stopId,
+                        filter.directionId,
+                        patterns,
+                        now,
+                        listOfNotNull(contextualTrip),
+                        global,
+                    )
+            }
         }
 
         LaunchedEffect(filter?.stopId, filter?.directionId) {

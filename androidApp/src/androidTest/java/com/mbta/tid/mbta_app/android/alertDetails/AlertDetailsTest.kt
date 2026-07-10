@@ -32,24 +32,22 @@ class AlertDetailsTest {
         val stop2 = objects.stop { name = "Stop 2" }
         val stop3 = objects.stop { name = "Stop 3" }
 
-        val route =
-            objects.route {
-                type = RouteType.HEAVY_RAIL
-                longName = "Red Line"
-            }
+        val route = objects.route {
+            type = RouteType.HEAVY_RAIL
+            longName = "Red Line"
+        }
 
         val now = EasternTimeInstant(2025, Month.JANUARY, 22, 10, 40)
 
-        val alert =
-            objects.alert {
-                activePeriod(now - 5.minutes, now + 5.minutes)
-                description = "Long description"
-                cause = Alert.Cause.UnrulyPassenger
-                effect = Alert.Effect.Suspension
-                effectName = "Suspension"
-                header = "Alert header"
-                updatedAt = EasternTimeInstant(2025, Month.JANUARY, 22, 10, 36, 13)
-            }
+        val alert = objects.alert {
+            activePeriod(now - 5.minutes, now + 5.minutes)
+            description = "Long description"
+            cause = Alert.Cause.UnrulyPassenger
+            effect = Alert.Effect.Suspension
+            effectName = "Suspension"
+            header = "Alert header"
+            updatedAt = EasternTimeInstant(2025, Month.JANUARY, 22, 10, 36, 13)
+        }
 
         composeTestRule.setContent {
             AlertDetails(
@@ -97,13 +95,12 @@ class AlertDetailsTest {
 
         val now = EasternTimeInstant(2025, Month.JULY, 29, 9, 30)
 
-        val alert =
-            objects.alert {
-                activePeriod(now - 20.minutes, now - 10.minutes)
-                activePeriod(now - 5.minutes, now + 5.minutes)
-                activePeriod(now + 10.minutes, now + 20.minutes)
-                updatedAt = now - 100.minutes
-            }
+        val alert = objects.alert {
+            activePeriod(now - 20.minutes, now - 10.minutes)
+            activePeriod(now - 5.minutes, now + 5.minutes)
+            activePeriod(now + 10.minutes, now + 20.minutes)
+            updatedAt = now - 100.minutes
+        }
 
         composeTestRule.setContent {
             AlertDetails(
@@ -133,11 +130,10 @@ class AlertDetailsTest {
 
         val start = EasternTimeInstant(2025, Month.JULY, 29, 3, 0)
         val end = EasternTimeInstant(2025, Month.JULY, 30, 2, 59)
-        val alert =
-            objects.alert {
-                activePeriod(start, end)
-                updatedAt = now - 100.minutes
-            }
+        val alert = objects.alert {
+            activePeriod(start, end)
+            updatedAt = now - 100.minutes
+        }
 
         composeTestRule.setContent {
             AlertDetails(
@@ -168,12 +164,11 @@ class AlertDetailsTest {
         val start = now - 20.minutes
         val end = now + 2.hours
 
-        val alert =
-            objects.alert {
-                durationCertainty = Alert.DurationCertainty.Estimated
-                activePeriod(start, end)
-                updatedAt = now - 100.minutes
-            }
+        val alert = objects.alert {
+            durationCertainty = Alert.DurationCertainty.Estimated
+            activePeriod(start, end)
+            updatedAt = now - 100.minutes
+        }
 
         composeTestRule.setContent {
             AlertDetails(
@@ -197,14 +192,13 @@ class AlertDetailsTest {
 
         val now = EasternTimeInstant.now()
 
-        val alert =
-            objects.alert {
-                activePeriod(now - 10.minutes, now - 5.minutes)
-                cause = Alert.Cause.UnrulyPassenger
-                effect = Alert.Effect.StopClosure
-                effectName = "Closure"
-                updatedAt = now - 100.minutes
-            }
+        val alert = objects.alert {
+            activePeriod(now - 10.minutes, now - 5.minutes)
+            cause = Alert.Cause.UnrulyPassenger
+            effect = Alert.Effect.StopClosure
+            effectName = "Closure"
+            updatedAt = now - 100.minutes
+        }
 
         composeTestRule.setContent {
             AlertDetails(
@@ -227,14 +221,13 @@ class AlertDetailsTest {
 
         val now = EasternTimeInstant.now()
 
-        val alert =
-            objects.alert {
-                activePeriod(now - 5.minutes, now + 5.minutes)
-                cause = Alert.Cause.UnrulyPassenger
-                effect = Alert.Effect.StopClosure
-                effectName = "Closure"
-                updatedAt = now - 100.minutes
-            }
+        val alert = objects.alert {
+            activePeriod(now - 5.minutes, now + 5.minutes)
+            cause = Alert.Cause.UnrulyPassenger
+            effect = Alert.Effect.StopClosure
+            effectName = "Closure"
+            updatedAt = now - 100.minutes
+        }
 
         composeTestRule.setContent {
             AlertDetails(
@@ -260,17 +253,16 @@ class AlertDetailsTest {
         val stop2 = objects.stop { name = "Stop 2" }
         val stop3 = objects.stop { name = "Stop 3" }
 
-        val alert =
-            objects.alert {
-                activePeriod(now - 5.minutes, now + 5.minutes)
-                cause = Alert.Cause.UnrulyPassenger
-                effect = Alert.Effect.StopClosure
-                effectName = "Closure"
-                updatedAt = now - 100.minutes
-                header = "Alert header"
-                description =
-                    "Alert description\n\nAffected stops:\nStop 1\nStop 2\nStop 3\n\nMore details"
-            }
+        val alert = objects.alert {
+            activePeriod(now - 5.minutes, now + 5.minutes)
+            cause = Alert.Cause.UnrulyPassenger
+            effect = Alert.Effect.StopClosure
+            effectName = "Closure"
+            updatedAt = now - 100.minutes
+            header = "Alert header"
+            description =
+                "Alert description\n\nAffected stops:\nStop 1\nStop 2\nStop 3\n\nMore details"
+        }
 
         val affectedStops = mutableStateOf(emptyList<Stop>())
 
@@ -311,16 +303,15 @@ class AlertDetailsTest {
 
         val stop = objects.stop { name = "Stop" }
 
-        val alert =
-            objects.alert {
-                activePeriod(now - 5.minutes, now + 5.minutes)
-                cause = Alert.Cause.UnrulyPassenger
-                effect = Alert.Effect.Suspension
-                effectName = "Suspension"
-                updatedAt = now - 100.minutes
-                header = "Alert header"
-                description = "Alert description"
-            }
+        val alert = objects.alert {
+            activePeriod(now - 5.minutes, now + 5.minutes)
+            cause = Alert.Cause.UnrulyPassenger
+            effect = Alert.Effect.Suspension
+            effectName = "Suspension"
+            updatedAt = now - 100.minutes
+            header = "Alert header"
+            description = "Alert description"
+        }
 
         composeTestRule.setContent {
             AlertDetails(
@@ -344,16 +335,15 @@ class AlertDetailsTest {
 
         val stop = objects.stop { name = "Stop" }
 
-        val alert =
-            objects.alert {
-                activePeriod(now - 5.minutes, now + 5.minutes)
-                cause = Alert.Cause.Maintenance
-                effect = Alert.Effect.ElevatorClosure
-                effectName = "Elevator Closure"
-                updatedAt = now - 100.minutes
-                header = "Alert header"
-                description = "Alert description"
-            }
+        val alert = objects.alert {
+            activePeriod(now - 5.minutes, now + 5.minutes)
+            cause = Alert.Cause.Maintenance
+            effect = Alert.Effect.ElevatorClosure
+            effectName = "Elevator Closure"
+            updatedAt = now - 100.minutes
+            header = "Alert header"
+            description = "Alert description"
+        }
 
         composeTestRule.setContent {
             AlertDetails(
@@ -381,13 +371,12 @@ class AlertDetailsTest {
 
         val route = objects.route()
         val stop = objects.stop { name = "Park Street" }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                activePeriod(now - 1.hours, now + 1.hours)
-                activePeriod(now + 23.hours, now + 25.hours)
-                activePeriod(now + 47.hours, now + 49.hours)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            activePeriod(now - 1.hours, now + 1.hours)
+            activePeriod(now + 23.hours, now + 25.hours)
+            activePeriod(now + 47.hours, now + 49.hours)
+        }
 
         composeTestRule.setContent {
             AlertDetails(
@@ -418,14 +407,13 @@ class AlertDetailsTest {
 
         val route = objects.route()
         val stop = objects.stop { name = "Park Street" }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                durationCertainty = Alert.DurationCertainty.Unknown
-                activePeriod(now - 1.hours, now + 1.hours)
-                activePeriod(now + 23.hours, now + 25.hours)
-                activePeriod(now + 47.hours, now + 49.hours)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            durationCertainty = Alert.DurationCertainty.Unknown
+            activePeriod(now - 1.hours, now + 1.hours)
+            activePeriod(now + 23.hours, now + 25.hours)
+            activePeriod(now + 47.hours, now + 49.hours)
+        }
 
         composeTestRule.setContent {
             AlertDetails(
@@ -454,12 +442,11 @@ class AlertDetailsTest {
 
         val route = objects.route()
         val stop = objects.stop { name = "Park Street" }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                activePeriod(now - 1.hours, now + 1.hours)
-                activePeriod(now + 47.hours, now + 49.hours)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            activePeriod(now - 1.hours, now + 1.hours)
+            activePeriod(now + 47.hours, now + 49.hours)
+        }
 
         composeTestRule.setContent {
             AlertDetails(
@@ -490,16 +477,15 @@ class AlertDetailsTest {
 
         val route = objects.route()
         val stop = objects.stop { name = "Park Street" }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                activePeriod(now - 1.hours, now + 1.hours)
-                activePeriod(now + 1.days - 1.hours, now + 1.days + 1.hours)
-                activePeriod(now + 2.days - 1.hours, now + 2.days + 1.hours)
-                activePeriod(now + 3.days - 1.hours, now + 3.days + 1.hours)
-                activePeriod(now + 4.days - 1.hours, now + 4.days + 1.hours)
-                activePeriod(now + 7.days - 1.hours, now + 7.days + 1.hours)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            activePeriod(now - 1.hours, now + 1.hours)
+            activePeriod(now + 1.days - 1.hours, now + 1.days + 1.hours)
+            activePeriod(now + 2.days - 1.hours, now + 2.days + 1.hours)
+            activePeriod(now + 3.days - 1.hours, now + 3.days + 1.hours)
+            activePeriod(now + 4.days - 1.hours, now + 4.days + 1.hours)
+            activePeriod(now + 7.days - 1.hours, now + 7.days + 1.hours)
+        }
 
         composeTestRule.setContent {
             AlertDetails(
@@ -530,13 +516,12 @@ class AlertDetailsTest {
 
         val route = objects.route()
         val stop = objects.stop { name = "Park Street" }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                activePeriod(now - 1.hours, now + 1.hours)
-                activePeriod(now + 6.days - 1.hours, now + 6.days + 1.hours)
-                activePeriod(now + 7.days - 1.hours, now + 7.days + 1.hours)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            activePeriod(now - 1.hours, now + 1.hours)
+            activePeriod(now + 6.days - 1.hours, now + 6.days + 1.hours)
+            activePeriod(now + 7.days - 1.hours, now + 7.days + 1.hours)
+        }
 
         composeTestRule.setContent {
             AlertDetails(
@@ -565,19 +550,18 @@ class AlertDetailsTest {
         val now = EasternTimeInstant.now()
         val tomorrow = now.serviceDate.plus(DatePeriod(days = 1))
         val overmorrow = tomorrow.plus(DatePeriod(days = 1))
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.StationClosure
-                activePeriod(
-                    EasternTimeInstant(tomorrow, LocalTime(3, 0)),
-                    EasternTimeInstant(tomorrow, LocalTime(9, 0)),
-                )
-                activePeriod(
-                    EasternTimeInstant(overmorrow, LocalTime(3, 0)),
-                    EasternTimeInstant(overmorrow, LocalTime(9, 0)),
-                )
-                durationCertainty = Alert.DurationCertainty.Unknown
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.StationClosure
+            activePeriod(
+                EasternTimeInstant(tomorrow, LocalTime(3, 0)),
+                EasternTimeInstant(tomorrow, LocalTime(9, 0)),
+            )
+            activePeriod(
+                EasternTimeInstant(overmorrow, LocalTime(3, 0)),
+                EasternTimeInstant(overmorrow, LocalTime(9, 0)),
+            )
+            durationCertainty = Alert.DurationCertainty.Unknown
+        }
 
         composeTestRule.setContent {
             AlertDetails(
@@ -602,19 +586,18 @@ class AlertDetailsTest {
         val now = EasternTimeInstant(today, LocalTime(18, 0))
         val tomorrow = today.plus(DatePeriod(days = 1))
         val overmorrow = tomorrow.plus(DatePeriod(days = 1))
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.StationClosure
-                activePeriod(
-                    EasternTimeInstant(today, LocalTime(20, 0)),
-                    EasternTimeInstant(tomorrow, LocalTime(3, 0)),
-                )
-                activePeriod(
-                    EasternTimeInstant(tomorrow, LocalTime(20, 0)),
-                    EasternTimeInstant(overmorrow, LocalTime(3, 0)),
-                )
-                durationCertainty = Alert.DurationCertainty.Unknown
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.StationClosure
+            activePeriod(
+                EasternTimeInstant(today, LocalTime(20, 0)),
+                EasternTimeInstant(tomorrow, LocalTime(3, 0)),
+            )
+            activePeriod(
+                EasternTimeInstant(tomorrow, LocalTime(20, 0)),
+                EasternTimeInstant(overmorrow, LocalTime(3, 0)),
+            )
+            durationCertainty = Alert.DurationCertainty.Unknown
+        }
 
         composeTestRule.setContent {
             AlertDetails(

@@ -179,53 +179,46 @@ private fun StopDetailsRoutesViewPreview() {
     val now = EasternTimeInstant.now()
     val objects = ObjectCollectionBuilder("StopDetailsRoutesViewPreview")
 
-    val route1 =
-        objects.route {
-            color = "00843D"
-            longName = "Green Line B"
-            shortName = "B"
-            textColor = "FFFFFF"
-            type = RouteType.LIGHT_RAIL
-        }
-    val route2 =
-        objects.route {
-            color = "FFC72C"
-            shortName = "57"
-            textColor = "000000"
-            type = RouteType.BUS
-        }
+    val route1 = objects.route {
+        color = "00843D"
+        longName = "Green Line B"
+        shortName = "B"
+        textColor = "FFFFFF"
+        type = RouteType.LIGHT_RAIL
+    }
+    val route2 = objects.route {
+        color = "FFC72C"
+        shortName = "57"
+        textColor = "000000"
+        type = RouteType.BUS
+    }
     val stop = objects.stop { name = "Boylston" }
     val trip1 = objects.trip { headsign = "A" }
-    val prediction1 =
-        objects.prediction {
-            trip = trip1
-            departureTime = now + 5.minutes
-        }
+    val prediction1 = objects.prediction {
+        trip = trip1
+        departureTime = now + 5.minutes
+    }
     val trip2 = objects.trip { headsign = "C" }
-    val schedule2 =
-        objects.schedule {
-            trip = trip2
-            departureTime = now + 10.minutes
-        }
+    val schedule2 = objects.schedule {
+        trip = trip2
+        departureTime = now + 10.minutes
+    }
     val trip3 = objects.trip { headsign = "B" }
-    val prediction2 =
-        objects.prediction {
-            trip = trip3
-            departureTime = now + 8.minutes
-        }
+    val prediction2 = objects.prediction {
+        trip = trip3
+        departureTime = now + 8.minutes
+    }
     val trip4 = objects.trip { headsign = "D" }
-    val schedule3 =
-        objects.schedule {
-            trip = trip4
-            departureTime = now + 10.minutes
-        }
-    val prediction3 =
-        objects.prediction {
-            trip = trip4
-            departureTime = null
-            arrivalTime = null
-            scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
-        }
+    val schedule3 = objects.schedule {
+        trip = trip4
+        departureTime = now + 10.minutes
+    }
+    val prediction3 = objects.prediction {
+        trip = trip4
+        departureTime = null
+        arrivalTime = null
+        scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+    }
 
     val globalData = GlobalResponse(objects)
 
@@ -329,7 +322,8 @@ private fun StopDetailsRoutesViewPreview() {
                     NavigationCallbacks(
                         onBack = {},
                         onClose = {},
-                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
+                        backButtonPresentation =
+                            NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
                 onTapRoutePill = {},
                 updateStopFilter = {},

@@ -34,5 +34,7 @@ public class ScheduleCache(
     ): Unit = keyedCache.putEntry(stopId, Entry(schedules, serviceDate, stopId))
 
     public suspend fun deleteStaleSchedules(serviceDate: LocalDate): Unit =
-        keyedCache.deleteStaleEntries { it.serviceDate != serviceDate }
+        keyedCache.deleteStaleEntries {
+            it.serviceDate != serviceDate
+        }
 }

@@ -11,67 +11,56 @@ internal class GlobalMapDataTest {
 
     fun createData(): Pair<ObjectCollectionBuilder, GlobalResponse> {
         val objects = ObjectCollectionBuilder()
-        val stopA =
-            objects.stop {
-                id = "A"
-                childStopIds = listOf("A1")
-            }
-        val stopA1 =
-            objects.stop {
-                id = "A1"
-                parentStationId = "A"
-            }
+        val stopA = objects.stop {
+            id = "A"
+            childStopIds = listOf("A1")
+        }
+        val stopA1 = objects.stop {
+            id = "A1"
+            parentStationId = "A"
+        }
         val stopB = objects.stop { id = "B" }
         val stopC = objects.stop { id = "C" }
-        val stopD =
-            objects.stop {
-                id = "D"
-                locationType = LocationType.STOP
-            }
-        val stopE =
-            objects.stop {
-                id = "E"
-                locationType = LocationType.STATION
-            }
-        val stopF =
-            objects.stop {
-                id = "F"
-                locationType = LocationType.STOP
-            }
+        val stopD = objects.stop {
+            id = "D"
+            locationType = LocationType.STOP
+        }
+        val stopE = objects.stop {
+            id = "E"
+            locationType = LocationType.STATION
+        }
+        val stopF = objects.stop {
+            id = "F"
+            locationType = LocationType.STOP
+        }
 
-        val routeRed =
-            objects.route {
-                id = "Red"
-                sortOrder = 1
-            }
-        val routeBlue =
-            objects.route {
-                id = "Blue"
-                sortOrder = 2
-            }
-        val routeSilver =
-            objects.route {
-                id = "742"
-                sortOrder = 3
-            }
-        val routeCR =
-            objects.route {
-                id = "CR"
-                type = RouteType.COMMUTER_RAIL
-                sortOrder = 4
-            }
-        val routeBus =
-            objects.route {
-                id = "1"
-                type = RouteType.BUS
-                sortOrder = 5
-            }
-        val routeShuttle =
-            objects.route {
-                id = "Shuttle-BraintreeQuincyCenter"
-                type = RouteType.BUS
-                sortOrder = 5
-            }
+        val routeRed = objects.route {
+            id = "Red"
+            sortOrder = 1
+        }
+        val routeBlue = objects.route {
+            id = "Blue"
+            sortOrder = 2
+        }
+        val routeSilver = objects.route {
+            id = "742"
+            sortOrder = 3
+        }
+        val routeCR = objects.route {
+            id = "CR"
+            type = RouteType.COMMUTER_RAIL
+            sortOrder = 4
+        }
+        val routeBus = objects.route {
+            id = "1"
+            type = RouteType.BUS
+            sortOrder = 5
+        }
+        val routeShuttle = objects.route {
+            id = "Shuttle-BraintreeQuincyCenter"
+            type = RouteType.BUS
+            sortOrder = 5
+        }
 
         val patternRed =
             objects.routePattern(routeRed) {

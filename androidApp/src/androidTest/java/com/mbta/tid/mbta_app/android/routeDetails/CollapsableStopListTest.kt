@@ -28,19 +28,17 @@ class CollapsableStopListTest {
     @Test
     fun testWhenOneStopJustShowsThatStop() {
         val objects = ObjectCollectionBuilder()
-        val stop1 =
-            objects.stop {
-                name = "Stop 1"
-                locationType = LocationType.STATION
-            }
+        val stop1 = objects.stop {
+            name = "Stop 1"
+            locationType = LocationType.STATION
+        }
         var clicked = false
-        val mainRoute =
-            objects.route {
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Here", "There")
-                longName = "Mauve Line"
-                type = RouteType.HEAVY_RAIL
-            }
+        val mainRoute = objects.route {
+            directionNames = listOf("West", "East")
+            directionDestinations = listOf("Here", "There")
+            longName = "Mauve Line"
+            type = RouteType.HEAVY_RAIL
+        }
         composeTestRule.setContent {
             CollapsableStopList(
                 LineOrRoute.Route(mainRoute),
@@ -72,24 +70,21 @@ class CollapsableStopListTest {
     @Test
     fun testWhenMultipleStopsCanExpandAndCollapse() {
         val objects = ObjectCollectionBuilder()
-        val stop1 =
-            objects.stop {
-                name = "Stop 1"
-                locationType = LocationType.STATION
-            }
-        val stop2 =
-            objects.stop {
-                name = "Stop 2"
-                locationType = LocationType.STOP
-                vehicleType = RouteType.BUS
-            }
-        val mainRoute =
-            objects.route {
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Here", "There")
-                longName = "Mauve Line"
-                type = RouteType.BUS
-            }
+        val stop1 = objects.stop {
+            name = "Stop 1"
+            locationType = LocationType.STATION
+        }
+        val stop2 = objects.stop {
+            name = "Stop 2"
+            locationType = LocationType.STOP
+            vehicleType = RouteType.BUS
+        }
+        val mainRoute = objects.route {
+            directionNames = listOf("West", "East")
+            directionDestinations = listOf("Here", "There")
+            longName = "Mauve Line"
+            type = RouteType.BUS
+        }
         composeTestRule.setContent {
             CollapsableStopList(
                 LineOrRoute.Route(mainRoute),

@@ -106,11 +106,10 @@ class StopDetailsUtilsTest {
         val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
         val trip1 = objects.trip(routePattern1)
         val trip2 = objects.trip(routePattern2)
-        val vehicle =
-            objects.vehicle {
-                tripId = trip2.id
-                currentStatus = Vehicle.CurrentStatus.InTransitTo
-            }
+        val vehicle = objects.vehicle {
+            tripId = trip2.id
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+        }
         objects.schedule {
             stopId = stop.id
             stopSequence = 0
@@ -267,11 +266,10 @@ class StopDetailsUtilsTest {
         val trip1 = objects.trip(routePattern1)
         val trip2 = objects.trip(routePattern2)
         val trip3 = objects.trip(routePattern2)
-        val vehicle =
-            objects.vehicle {
-                tripId = trip2.id
-                currentStatus = Vehicle.CurrentStatus.InTransitTo
-            }
+        val vehicle = objects.vehicle {
+            tripId = trip2.id
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+        }
         objects.schedule {
             stopId = stop.id
             stopSequence = 0
@@ -352,11 +350,10 @@ class StopDetailsUtilsTest {
 
         val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
         val trip = objects.trip(routePattern)
-        val vehicle =
-            objects.vehicle {
-                tripId = trip.id
-                currentStatus = Vehicle.CurrentStatus.InTransitTo
-            }
+        val vehicle = objects.vehicle {
+            tripId = trip.id
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+        }
         objects.schedule {
             stopId = stop.id
             stopSequence = 0
@@ -422,16 +419,14 @@ class StopDetailsUtilsTest {
         val trip1 = objects.trip(routePattern1)
         val trip2 = objects.trip(routePattern2)
 
-        val vehicle0 =
-            objects.vehicle {
-                tripId = trip0.id
-                currentStatus = Vehicle.CurrentStatus.InTransitTo
-            }
-        val vehicle1 =
-            objects.vehicle {
-                tripId = trip2.id
-                currentStatus = Vehicle.CurrentStatus.InTransitTo
-            }
+        val vehicle0 = objects.vehicle {
+            tripId = trip0.id
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+        }
+        val vehicle1 = objects.vehicle {
+            tripId = trip2.id
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+        }
         objects.schedule {
             stopId = stop.id
             stopSequence = 0
@@ -524,16 +519,14 @@ class StopDetailsUtilsTest {
             val trip1 = objects.trip(routePattern1)
             val trip2 = objects.trip(routePattern2)
 
-            val vehicle0 =
-                objects.vehicle {
-                    tripId = trip0.id
-                    currentStatus = Vehicle.CurrentStatus.InTransitTo
-                }
-            val vehicle1 =
-                objects.vehicle {
-                    tripId = trip2.id
-                    currentStatus = Vehicle.CurrentStatus.InTransitTo
-                }
+            val vehicle0 = objects.vehicle {
+                tripId = trip0.id
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+            }
+            val vehicle1 = objects.vehicle {
+                tripId = trip2.id
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+            }
             objects.schedule {
                 stopId = stop.id
                 stopSequence = 0
@@ -623,11 +616,10 @@ class StopDetailsUtilsTest {
         val trip2 = objects.trip(routePattern)
         val trip3 = objects.trip(routePattern)
         val trip4 = objects.trip(routePattern)
-        val vehicle =
-            objects.vehicle {
-                tripId = trip3.id
-                currentStatus = Vehicle.CurrentStatus.InTransitTo
-            }
+        val vehicle = objects.vehicle {
+            tripId = trip3.id
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+        }
         objects.schedule {
             stopId = stop.id
             stopSequence = 0
@@ -774,14 +766,13 @@ class StopDetailsUtilsTest {
 
         val stop = objects.stop()
         objects.line { id = "line-Green" }
-        val routeB =
-            objects.route {
-                id = "B"
-                sortOrder = 1
-                lineId = "line-Green"
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Kenmore & West", "Park St & North")
-            }
+        val routeB = objects.route {
+            id = "B"
+            sortOrder = 1
+            lineId = "line-Green"
+            directionNames = listOf("West", "East")
+            directionDestinations = listOf("Kenmore & West", "Park St & North")
+        }
         val routePatternB =
             objects.routePattern(routeB) {
                 representativeTrip { headsign = "B" }
@@ -790,14 +781,13 @@ class StopDetailsUtilsTest {
             }
         val tripB = objects.trip(routePatternB)
 
-        val routeC =
-            objects.route {
-                id = "C"
-                sortOrder = 2
-                lineId = "line-Green"
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Kenmore & West", "Park St & North")
-            }
+        val routeC = objects.route {
+            id = "C"
+            sortOrder = 2
+            lineId = "line-Green"
+            directionNames = listOf("West", "East")
+            directionDestinations = listOf("Kenmore & West", "Park St & North")
+        }
         val routePatternC =
             objects.routePattern(routeC) {
                 representativeTrip { headsign = "C" }
@@ -806,23 +796,21 @@ class StopDetailsUtilsTest {
             }
         val tripC = objects.trip(routePatternC)
 
-        val routeD =
-            objects.route {
-                id = "D"
-                sortOrder = 3
-                lineId = "line-Green"
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Riverside", "Park St & North")
-            }
+        val routeD = objects.route {
+            id = "D"
+            sortOrder = 3
+            lineId = "line-Green"
+            directionNames = listOf("West", "East")
+            directionDestinations = listOf("Riverside", "Park St & North")
+        }
 
-        val routeE =
-            objects.route {
-                id = "E"
-                sortOrder = 3
-                lineId = "line-Green"
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Heath Street", "Park St & North")
-            }
+        val routeE = objects.route {
+            id = "E"
+            sortOrder = 3
+            lineId = "line-Green"
+            directionNames = listOf("West", "East")
+            directionDestinations = listOf("Heath Street", "Park St & North")
+        }
         val routePatternE =
             objects.routePattern(routeE) {
                 representativeTrip { headsign = "Heath Street" }
@@ -834,52 +822,45 @@ class StopDetailsUtilsTest {
 
         val time = EasternTimeInstant(2024, Month.MARCH, 18, 10, 41, 13)
 
-        val schedB =
-            objects.schedule {
-                trip = tripB
-                stopId = stop.id
-                stopSequence = 90
-                departureTime = time + 1.minutes
-            }
-        val schedC =
-            objects.schedule {
-                trip = tripC
-                stopId = stop.id
-                stopSequence = 90
-                departureTime = time + 2.minutes
-            }
-        val schedE =
-            objects.schedule {
-                trip = tripE
-                stopId = stop.id
-                stopSequence = 90
-                departureTime = time + 3.minutes
-            }
+        val schedB = objects.schedule {
+            trip = tripB
+            stopId = stop.id
+            stopSequence = 90
+            departureTime = time + 1.minutes
+        }
+        val schedC = objects.schedule {
+            trip = tripC
+            stopId = stop.id
+            stopSequence = 90
+            departureTime = time + 2.minutes
+        }
+        val schedE = objects.schedule {
+            trip = tripE
+            stopId = stop.id
+            stopSequence = 90
+            departureTime = time + 3.minutes
+        }
 
         objects.prediction(schedB) { departureTime = time + 1.5.minutes }
         objects.prediction(schedC) { departureTime = time + 2.3.minutes }
         objects.prediction(schedE) { departureTime = time + 2.3.minutes }
 
-        val vehicleB =
-            objects.vehicle {
-                routeId = routeB.id.idText
-                currentStatus = Vehicle.CurrentStatus.InTransitTo
-            }
-        val vehicleC =
-            objects.vehicle {
-                routeId = routeC.id.idText
-                currentStatus = Vehicle.CurrentStatus.InTransitTo
-            }
-        val vehicleD =
-            objects.vehicle {
-                routeId = routeD.id.idText
-                currentStatus = Vehicle.CurrentStatus.InTransitTo
-            }
-        val vehicleE =
-            objects.vehicle {
-                routeId = routeE.id.idText
-                currentStatus = Vehicle.CurrentStatus.InTransitTo
-            }
+        val vehicleB = objects.vehicle {
+            routeId = routeB.id.idText
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+        }
+        val vehicleC = objects.vehicle {
+            routeId = routeC.id.idText
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+        }
+        val vehicleD = objects.vehicle {
+            routeId = routeD.id.idText
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+        }
+        val vehicleE = objects.vehicle {
+            routeId = routeE.id.idText
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+        }
         val vehicleResponse =
             VehiclesStreamDataResponse(
                 mapOf(

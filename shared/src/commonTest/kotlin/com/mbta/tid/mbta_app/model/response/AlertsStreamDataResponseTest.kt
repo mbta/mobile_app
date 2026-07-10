@@ -14,13 +14,12 @@ class AlertsStreamDataResponseTest {
     fun `provided global facilities data is injected into alerts`() {
         val objects = ObjectCollectionBuilder()
         val facility = objects.facility { type = Facility.Type.Elevator }
-        val alert =
-            objects.alert {
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.UsingWheelchair),
-                    facility = facility.id,
-                )
-            }
+        val alert = objects.alert {
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.UsingWheelchair),
+                facility = facility.id,
+            )
+        }
 
         val alertData = AlertsStreamDataResponse(objects)
         assertEquals(alert, alertData.getAlert(alert.id))

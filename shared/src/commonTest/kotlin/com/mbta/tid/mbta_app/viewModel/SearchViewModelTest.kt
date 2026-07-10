@@ -40,11 +40,10 @@ class SearchViewModelTest {
         val objects = ObjectCollectionBuilder()
         val visitedStop = objects.stop { name = "visitedStopName" }
         val searchedStop = objects.stop { name = "stopName" }
-        val route =
-            objects.route {
-                shortName = "33"
-                type = RouteType.BUS
-            }
+        val route = objects.route {
+            shortName = "33"
+            type = RouteType.BUS
+        }
         objects.routePattern(route) {
             representativeTrip { stopIds = listOf(searchedStop.id, visitedStop.id) }
         }
@@ -154,16 +153,14 @@ class SearchViewModelTest {
     @Test
     fun testRoutePills() = runTest {
         val objects = TestData.clone()
-        val station =
-            objects.stop {
-                name = "Some Station"
-                locationType = LocationType.STATION
-            }
-        val stop =
-            objects.stop {
-                name = "Some Stop"
-                locationType = LocationType.STOP
-            }
+        val station = objects.stop {
+            name = "Some Station"
+            locationType = LocationType.STATION
+        }
+        val stop = objects.stop {
+            name = "Some Stop"
+            locationType = LocationType.STOP
+        }
 
         val sl1 = objects.getRoute("741")
         objects.routePattern(sl1) {
@@ -398,20 +395,18 @@ class SearchViewModelTest {
         val typicalStop = objects.stop { name = id }
         val atypicalStop = objects.stop { name = id }
         val noServiceStop = objects.stop { name = id }
-        val typicalRoute =
-            objects.route {
-                shortName = "1"
-                type = RouteType.BUS
-            }
+        val typicalRoute = objects.route {
+            shortName = "1"
+            type = RouteType.BUS
+        }
         objects.routePattern(typicalRoute) {
             typicality = RoutePattern.Typicality.Typical
             representativeTrip { stopIds = listOf(typicalStop.id) }
         }
-        val atypicalRoute =
-            objects.route {
-                shortName = "2"
-                type = RouteType.BUS
-            }
+        val atypicalRoute = objects.route {
+            shortName = "2"
+            type = RouteType.BUS
+        }
         objects.routePattern(atypicalRoute) {
             typicality = RoutePattern.Typicality.Atypical
             representativeTrip { stopIds = listOf(typicalStop.id, atypicalStop.id) }

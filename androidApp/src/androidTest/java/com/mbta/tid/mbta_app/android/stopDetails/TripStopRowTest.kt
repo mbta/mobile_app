@@ -108,12 +108,11 @@ class TripStopRowTest {
         val now = EasternTimeInstant(2025, Month.JANUARY, 24, 15, 37, 39)
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { id = "place-bbsta" }
-        val platformStop =
-            objects.stop {
-                platformCode = "2"
-                vehicleType = RouteType.COMMUTER_RAIL
-                parentStationId = stop.id
-            }
+        val platformStop = objects.stop {
+            platformCode = "2"
+            vehicleType = RouteType.COMMUTER_RAIL
+            parentStationId = stop.id
+        }
         val trip = objects.trip()
         val schedule = objects.schedule { departureTime = now + 5.seconds }
         val prediction = objects.prediction(schedule) { departureTime = now + 6.seconds }
@@ -243,16 +242,14 @@ class TripStopRowTest {
     fun testStationAccessibility() {
         val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
-        val accessibleStop =
-            objects.stop {
-                name = "Park Street"
-                wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
-            }
-        val inaccessibleStop =
-            objects.stop {
-                name = "Boylston"
-                wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
-            }
+        val accessibleStop = objects.stop {
+            name = "Park Street"
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+        }
+        val inaccessibleStop = objects.stop {
+            name = "Boylston"
+            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
+        }
         val trip = objects.trip()
         val schedule = objects.schedule { departureTime = now + 5.seconds }
         val prediction = objects.prediction(schedule) { departureTime = now + 6.seconds }

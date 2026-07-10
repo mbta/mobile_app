@@ -46,13 +46,12 @@ class RouteStopListViewTest {
         val stop1 = objects.stop { name = "Stop 1" }
         val stop2 = objects.stop { name = "Stop 2" }
         val stop3 = objects.stop { name = "Stop 3" }
-        val mainRoute =
-            objects.route {
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Here", "There")
-                longName = "Mauve Line"
-                type = RouteType.HEAVY_RAIL
-            }
+        val mainRoute = objects.route {
+            directionNames = listOf("West", "East")
+            directionDestinations = listOf("Here", "There")
+            longName = "Mauve Line"
+            type = RouteType.HEAVY_RAIL
+        }
         objects.routePattern(mainRoute) {
             directionId = 0
             typicality = RoutePattern.Typicality.Typical
@@ -62,11 +61,10 @@ class RouteStopListViewTest {
             directionId = 1
             typicality = RoutePattern.Typicality.Typical
         }
-        val connectingRoute =
-            objects.route {
-                shortName = "32"
-                type = RouteType.BUS
-            }
+        val connectingRoute = objects.route {
+            shortName = "32"
+            type = RouteType.BUS
+        }
         objects.routePattern(connectingRoute) {
             typicality = RoutePattern.Typicality.Typical
             representativeTrip { stopIds = listOf(stop2.id) }
@@ -157,27 +155,24 @@ class RouteStopListViewTest {
     fun selectsWithinLine() {
         val objects = ObjectCollectionBuilder()
         val line = objects.line()
-        val route1 =
-            objects.route {
-                lineId = line.id.idText
-                type = RouteType.BUS
-                shortName = "1"
-                directionDestinations = listOf("One", "")
-            }
-        val route2 =
-            objects.route {
-                lineId = line.id.idText
-                type = RouteType.BUS
-                shortName = "2"
-                directionDestinations = listOf("Two", "")
-            }
-        val route3 =
-            objects.route {
-                lineId = line.id.idText
-                type = RouteType.BUS
-                shortName = "3"
-                directionDestinations = listOf("Three", "")
-            }
+        val route1 = objects.route {
+            lineId = line.id.idText
+            type = RouteType.BUS
+            shortName = "1"
+            directionDestinations = listOf("One", "")
+        }
+        val route2 = objects.route {
+            lineId = line.id.idText
+            type = RouteType.BUS
+            shortName = "2"
+            directionDestinations = listOf("Two", "")
+        }
+        val route3 = objects.route {
+            lineId = line.id.idText
+            type = RouteType.BUS
+            shortName = "3"
+            directionDestinations = listOf("Three", "")
+        }
         objects.routePattern(route1) { directionId = 0 }
 
         var lastSelectedRoute: Route.Id? = null
@@ -226,13 +221,12 @@ class RouteStopListViewTest {
 
         val stop3NonTypical = objects.stop { name = "Stop 3" }
         val stop4NonTypical = objects.stop { name = "Stop 4" }
-        val mainRoute =
-            objects.route {
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Here", "There")
-                longName = "Mauve Line"
-                type = RouteType.HEAVY_RAIL
-            }
+        val mainRoute = objects.route {
+            directionNames = listOf("West", "East")
+            directionDestinations = listOf("Here", "There")
+            longName = "Mauve Line"
+            type = RouteType.HEAVY_RAIL
+        }
         val typicalPattern =
             objects.routePattern(mainRoute) {
                 directionId = 0
@@ -322,13 +316,12 @@ class RouteStopListViewTest {
         val stop1 = objects.stop { name = "Stop 1" }
         val stop2 = objects.stop { name = "Stop 2" }
 
-        val mainRoute =
-            objects.route {
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Here", "There")
-                longName = "Mauve Line"
-                type = RouteType.HEAVY_RAIL
-            }
+        val mainRoute = objects.route {
+            directionNames = listOf("West", "East")
+            directionDestinations = listOf("Here", "There")
+            longName = "Mauve Line"
+            type = RouteType.HEAVY_RAIL
+        }
 
         val deviationPattern =
             objects.routePattern(mainRoute) {
@@ -560,7 +553,8 @@ class RouteStopListViewTest {
                     NavigationCallbacks(
                         onBack = null,
                         onClose = { closeTapped = true },
-                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
+                        backButtonPresentation =
+                            NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
                 openModal = { _ -> },
                 errorBannerViewModel = koinInject(),

@@ -14,78 +14,67 @@ class DisplayAlertsTest {
     val stop = objects.stop()
     val now = EasternTimeInstant.now()
 
-    val hereMajorNow =
-        objects.alert {
-            id = "hereMajorNow"
-            effect = Effect.Shuttle
-            activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
-        }
-    val hereMinorNow =
-        objects.alert {
-            id = "hereMinorNow"
-            effect = Effect.TrackChange
-            activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
-        }
+    val hereMajorNow = objects.alert {
+        id = "hereMajorNow"
+        effect = Effect.Shuttle
+        activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
+    }
+    val hereMinorNow = objects.alert {
+        id = "hereMinorNow"
+        effect = Effect.TrackChange
+        activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
+    }
 
-    val hereElevatorNow =
-        objects.alert {
-            id = "hereElevatorNow"
-            effect = Effect.ElevatorClosure
-            activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
-        }
+    val hereElevatorNow = objects.alert {
+        id = "hereElevatorNow"
+        effect = Effect.ElevatorClosure
+        activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
+    }
 
-    val hereMajorLater =
-        objects.alert {
-            id = "hereMajorLater"
-            effect = Effect.Shuttle
-            activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(10.minutes), null))
-        }
-    val hereMinorLater =
-        objects.alert {
-            id = "hereMinorLater"
-            effect = Effect.TrackChange
-            activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(10.minutes), null))
-        }
+    val hereMajorLater = objects.alert {
+        id = "hereMajorLater"
+        effect = Effect.Shuttle
+        activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(10.minutes), null))
+    }
+    val hereMinorLater = objects.alert {
+        id = "hereMinorLater"
+        effect = Effect.TrackChange
+        activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(10.minutes), null))
+    }
 
-    val hereElevatorLater =
-        objects.alert {
-            id = "hereElevatorLater"
-            effect = Effect.ElevatorClosure
-            activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(10.minutes), null))
-        }
+    val hereElevatorLater = objects.alert {
+        id = "hereElevatorLater"
+        effect = Effect.ElevatorClosure
+        activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(10.minutes), null))
+    }
 
-    val downstreamMajorNow =
-        objects.alert {
-            id = "downstreamMajorNow"
-            effect = Effect.Shuttle
-            activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
-        }
-    val downstreamMinorNow =
-        objects.alert {
-            id = "downstreamMinorNow"
-            effect = Effect.TrackChange
-            activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
-        }
+    val downstreamMajorNow = objects.alert {
+        id = "downstreamMajorNow"
+        effect = Effect.Shuttle
+        activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
+    }
+    val downstreamMinorNow = objects.alert {
+        id = "downstreamMinorNow"
+        effect = Effect.TrackChange
+        activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
+    }
 
-    val downstreamMajorLater =
-        objects.alert {
-            id = "downstreamMajorLater"
-            effect = Effect.Shuttle
-            activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(10.minutes), null))
-        }
-    val downstreamMinorLater =
-        objects.alert {
-            id = "downstreamMinorLater"
-            effect = Effect.TrackChange
-            activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(10.minutes), null))
-        }
+    val downstreamMajorLater = objects.alert {
+        id = "downstreamMajorLater"
+        effect = Effect.Shuttle
+        activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(10.minutes), null))
+    }
+    val downstreamMinorLater = objects.alert {
+        id = "downstreamMinorLater"
+        effect = Effect.TrackChange
+        activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(10.minutes), null))
+    }
 
-    val downstreamMinorEvenLater =
-        objects.alert {
-            id = "downstreamMinorEvenLater"
-            effect = Effect.TrackChange
-            activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(20.minutes), null))
-        }
+    val downstreamMinorEvenLater = objects.alert {
+        id = "downstreamMinorEvenLater"
+        effect = Effect.TrackChange
+        activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(20.minutes), null))
+    }
 
     @Test
     fun `forAlertsAtStop sorts and splits alerts in expected order no elevator `() = runBlocking {

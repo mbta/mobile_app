@@ -192,17 +192,15 @@ private fun <T> haloPulseSpec() =
 @Composable
 private fun VehiclePuckPreview() {
     val objects = ObjectCollectionBuilder("VehiclePuckPreview")
-    val route =
-        objects.route {
-            color = "DA291C"
-            textColor = "FFFFFF"
-        }
-    val vehicle =
-        objects.vehicle {
-            currentStatus = Vehicle.CurrentStatus.InTransitTo
-            bearing = 225.0
-            decoration = Vehicle.Decoration.Pride
-        }
+    val route = objects.route {
+        color = "DA291C"
+        textColor = "FFFFFF"
+    }
+    val vehicle = objects.vehicle {
+        currentStatus = Vehicle.CurrentStatus.InTransitTo
+        bearing = 225.0
+        decoration = Vehicle.Decoration.Pride
+    }
     VehiclePuck(
         vehicle,
         TripRouteAccents(route),

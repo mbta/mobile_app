@@ -27,8 +27,9 @@ public sealed class UpcomingFormat {
                 now: EasternTimeInstant,
                 subwayServiceStartTime: EasternTimeInstant?,
             ): NoTripsFormat {
-                val hasUpcomingTrips =
-                    upcomingTrips.any { it.time != null && it.time > now && !it.isCancelled }
+                val hasUpcomingTrips = upcomingTrips.any {
+                    it.time != null && it.time > now && !it.isCancelled
+                }
 
                 if (
                     subwayServiceStartTime != null &&

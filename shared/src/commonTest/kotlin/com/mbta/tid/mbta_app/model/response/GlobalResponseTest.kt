@@ -35,15 +35,14 @@ class GlobalResponseTest {
 
         val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
 
-        val alert =
-            objects.alert {
-                activePeriod(
-                    EasternTimeInstant(2024, Month.MARCH, 18, 4, 30, 0),
-                    EasternTimeInstant(2024, Month.MARCH, 22, 2, 30, 0),
-                )
-                effect = Alert.Effect.Suspension
-                informedEntity(route = route.id.idText, routeType = route.type, stop = stop.id)
-            }
+        val alert = objects.alert {
+            activePeriod(
+                EasternTimeInstant(2024, Month.MARCH, 18, 4, 30, 0),
+                EasternTimeInstant(2024, Month.MARCH, 22, 2, 30, 0),
+            )
+            effect = Alert.Effect.Suspension
+            informedEntity(route = route.id.idText, routeType = route.type, stop = stop.id)
+        }
 
         val globalResponse =
             GlobalResponse(
@@ -91,31 +90,28 @@ class GlobalResponseTest {
     @Test
     fun `withRealtimeAlertsByStop properly maps child alerts`() {
         val objects = ObjectCollectionBuilder()
-        val parentStop =
-            objects.stop {
-                id = "parent"
-                childStopIds = listOf("child")
-            }
-        val childStop =
-            objects.stop {
-                id = "child"
-                parentStationId = parentStop.id
-            }
+        val parentStop = objects.stop {
+            id = "parent"
+            childStopIds = listOf("child")
+        }
+        val childStop = objects.stop {
+            id = "child"
+            parentStationId = parentStop.id
+        }
         val route = objects.route { id = "Red" }
         val routePattern = objects.routePattern(route) { id = "rp1" }
         val routeType = MapStopRoute.matching(route)
 
         val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
 
-        val alert =
-            objects.alert {
-                activePeriod(
-                    EasternTimeInstant(2024, Month.MARCH, 18, 4, 30, 0),
-                    EasternTimeInstant(2024, Month.MARCH, 22, 2, 30, 0),
-                )
-                effect = Alert.Effect.Suspension
-                informedEntity(route = route.id.idText, routeType = route.type, stop = childStop.id)
-            }
+        val alert = objects.alert {
+            activePeriod(
+                EasternTimeInstant(2024, Month.MARCH, 18, 4, 30, 0),
+                EasternTimeInstant(2024, Month.MARCH, 22, 2, 30, 0),
+            )
+            effect = Alert.Effect.Suspension
+            informedEntity(route = route.id.idText, routeType = route.type, stop = childStop.id)
+        }
 
         val globalResponse =
             GlobalResponse(
@@ -139,21 +135,18 @@ class GlobalResponseTest {
     @Test
     fun `withRealtimeAlertsByStop properly maps partially disrupted service`() {
         val objects = ObjectCollectionBuilder()
-        val parentStop =
-            objects.stop {
-                id = "parent"
-                childStopIds = listOf("child1", "child2")
-            }
-        val childStop1 =
-            objects.stop {
-                id = "child1"
-                parentStationId = parentStop.id
-            }
-        val childStop2 =
-            objects.stop {
-                id = "child2"
-                parentStationId = parentStop.id
-            }
+        val parentStop = objects.stop {
+            id = "parent"
+            childStopIds = listOf("child1", "child2")
+        }
+        val childStop1 = objects.stop {
+            id = "child1"
+            parentStationId = parentStop.id
+        }
+        val childStop2 = objects.stop {
+            id = "child2"
+            parentStationId = parentStop.id
+        }
         val route = objects.route { id = "Orange" }
         val routePattern1 = objects.routePattern(route) { id = "rp1" }
         val routePattern2 = objects.routePattern(route) { id = "rp2" }
@@ -161,33 +154,31 @@ class GlobalResponseTest {
 
         val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
 
-        val alert1 =
-            objects.alert {
-                activePeriod(
-                    EasternTimeInstant(2024, Month.MARCH, 18, 4, 30, 0),
-                    EasternTimeInstant(2024, Month.MARCH, 22, 2, 30, 0),
-                )
-                effect = Alert.Effect.Suspension
-                informedEntity(
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = childStop1.id,
-                )
-            }
-        val alert2 =
-            objects.alert {
-                activePeriod(
-                    EasternTimeInstant(2024, Month.MARCH, 18, 4, 30, 0),
-                    EasternTimeInstant(2024, Month.MARCH, 22, 2, 30, 0),
-                )
-                effect = Alert.Effect.ElevatorClosure
-                informedEntity(
-                    listOf(),
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = childStop2.id,
-                )
-            }
+        val alert1 = objects.alert {
+            activePeriod(
+                EasternTimeInstant(2024, Month.MARCH, 18, 4, 30, 0),
+                EasternTimeInstant(2024, Month.MARCH, 22, 2, 30, 0),
+            )
+            effect = Alert.Effect.Suspension
+            informedEntity(
+                route = route.id.idText,
+                routeType = route.type,
+                stop = childStop1.id,
+            )
+        }
+        val alert2 = objects.alert {
+            activePeriod(
+                EasternTimeInstant(2024, Month.MARCH, 18, 4, 30, 0),
+                EasternTimeInstant(2024, Month.MARCH, 22, 2, 30, 0),
+            )
+            effect = Alert.Effect.ElevatorClosure
+            informedEntity(
+                listOf(),
+                route = route.id.idText,
+                routeType = route.type,
+                stop = childStop2.id,
+            )
+        }
 
         val globalResponse =
             GlobalResponse(
@@ -221,36 +212,30 @@ class GlobalResponseTest {
     @Test
     fun `withRealtimeAlertsByStop properly maps boundary stops`() {
         val objects = ObjectCollectionBuilder()
-        val parent1Stop =
-            objects.stop {
-                id = "parent1"
-                childStopIds = listOf("child1")
-            }
-        val child1Stop =
-            objects.stop {
-                id = "child1"
-                parentStationId = parent1Stop.id
-            }
-        val parent2Stop =
-            objects.stop {
-                id = "parent2"
-                childStopIds = listOf("child2")
-            }
-        val child2Stop =
-            objects.stop {
-                id = "child2"
-                parentStationId = parent2Stop.id
-            }
-        val parent3Stop =
-            objects.stop {
-                id = "parent3"
-                childStopIds = listOf("child3")
-            }
-        val child3Stop =
-            objects.stop {
-                id = "child3"
-                parentStationId = parent3Stop.id
-            }
+        val parent1Stop = objects.stop {
+            id = "parent1"
+            childStopIds = listOf("child1")
+        }
+        val child1Stop = objects.stop {
+            id = "child1"
+            parentStationId = parent1Stop.id
+        }
+        val parent2Stop = objects.stop {
+            id = "parent2"
+            childStopIds = listOf("child2")
+        }
+        val child2Stop = objects.stop {
+            id = "child2"
+            parentStationId = parent2Stop.id
+        }
+        val parent3Stop = objects.stop {
+            id = "parent3"
+            childStopIds = listOf("child3")
+        }
+        val child3Stop = objects.stop {
+            id = "child3"
+            parentStationId = parent3Stop.id
+        }
         val route = objects.route { id = "Blue" }
         val routePattern =
             objects.routePattern(route) {
@@ -338,12 +323,11 @@ class GlobalResponseTest {
         val stop1 = objects.stop()
         val stop2 = objects.stop()
         val stop3 = objects.stop()
-        val alert =
-            objects.alert {
-                informedEntity(listOf(), stop = stop1.id)
-                informedEntity(listOf(), route = route1.id.idText, stop = stop2.id)
-                informedEntity(listOf(), route = route2.id.idText, stop = stop3.id)
-            }
+        val alert = objects.alert {
+            informedEntity(listOf(), stop = stop1.id)
+            informedEntity(listOf(), route = route1.id.idText, stop = stop2.id)
+            informedEntity(listOf(), route = route2.id.idText, stop = stop3.id)
+        }
 
         val affectedStops = GlobalResponse(objects).getAlertAffectedStops(alert, listOf(route1))
         assertEquals(affectedStops, listOf(stop1, stop2))
@@ -357,13 +341,12 @@ class GlobalResponseTest {
         val route2 = objects.route()
         val stop1 = objects.stop()
         val stop2 = objects.stop()
-        val alert =
-            objects.alert {
-                informedEntity(listOf(), route = route1.id.idText, stop = stop1.id)
-                informedEntity(listOf(), route = route1.id.idText, stop = stop2.id)
-                informedEntity(listOf(), route = route2.id.idText, stop = stop1.id)
-                informedEntity(listOf(), route = route2.id.idText, stop = stop2.id)
-            }
+        val alert = objects.alert {
+            informedEntity(listOf(), route = route1.id.idText, stop = stop1.id)
+            informedEntity(listOf(), route = route1.id.idText, stop = stop2.id)
+            informedEntity(listOf(), route = route2.id.idText, stop = stop1.id)
+            informedEntity(listOf(), route = route2.id.idText, stop = stop2.id)
+        }
 
         val affectedStops =
             GlobalResponse(objects).getAlertAffectedStops(alert, listOf(route1, route2))
@@ -378,11 +361,10 @@ class GlobalResponseTest {
 
         val route = objects.route { lineId = line.id.idText }
 
-        val shuttleRoute =
-            objects.route {
-                id = "Shuttle-1"
-                lineId = line.id.idText
-            }
+        val shuttleRoute = objects.route {
+            id = "Shuttle-1"
+            lineId = line.id.idText
+        }
 
         // not included b/c no line
         val otherRoute = objects.route()
@@ -533,11 +515,10 @@ class GlobalResponseTest {
         val line = objects.line { id = "line-Green" }
         val route1 = objects.route { lineId = line.id.idText }
         val route2 = objects.route { lineId = line.id.idText }
-        val shuttleRoute =
-            objects.route {
-                id = "Shuttle-$id"
-                lineId = line.id.idText
-            }
+        val shuttleRoute = objects.route {
+            id = "Shuttle-$id"
+            lineId = line.id.idText
+        }
         assertTrue(shuttleRoute.isShuttle)
 
         val globalData = GlobalResponse(objects)

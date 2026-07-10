@@ -25,17 +25,15 @@ class RouteCardDataLeafTest {
         val now = EasternTimeInstant.now()
 
         val objects = ObjectCollectionBuilder()
-        val route =
-            objects.route {
-                id = "Red"
-                type = anyNonScheduleBasedRouteType()
-            }
+        val route = objects.route {
+            id = "Red"
+            type = anyNonScheduleBasedRouteType()
+        }
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+        }
 
         assertEquals(
             LeafFormat.Single(
@@ -81,11 +79,10 @@ class RouteCardDataLeafTest {
                 objects.route { type = RouteType.HEAVY_RAIL } to "alert-borderless-issue",
             )
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.ServiceChange
-                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.ServiceChange
+            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+        }
 
         val context: RouteCardData.Context = anyEnumValue()
         for ((route, icon) in cases) {
@@ -122,25 +119,22 @@ class RouteCardDataLeafTest {
         val now = EasternTimeInstant.now()
 
         val objects = ObjectCollectionBuilder()
-        val route =
-            objects.route {
-                id = "741"
-                type = anyNonScheduleBasedRouteType()
-            }
+        val route = objects.route {
+            id = "741"
+            type = anyNonScheduleBasedRouteType()
+        }
 
         val trip = objects.trip()
-        val prediction =
-            objects.prediction {
-                this.trip = trip
-                departureTime = now + 1.minutes
-            }
+        val prediction = objects.prediction {
+            this.trip = trip
+            departureTime = now + 1.minutes
+        }
         val upcomingTrip = objects.upcomingTrip(prediction)
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+        }
 
         assertEquals(
             LeafFormat.Single(
@@ -171,34 +165,31 @@ class RouteCardDataLeafTest {
         val now = EasternTimeInstant.now()
 
         val objects = ObjectCollectionBuilder()
-        val route =
-            objects.route {
-                id = "CR-Worcester"
-                type = RouteType.COMMUTER_RAIL
-            }
+        val route = objects.route {
+            id = "CR-Worcester"
+            type = RouteType.COMMUTER_RAIL
+        }
 
         val trip = objects.trip()
-        val prediction =
-            objects.prediction {
-                this.trip = trip
-                departureTime = now + 5.minutes
-            }
+        val prediction = objects.prediction {
+            this.trip = trip
+            departureTime = now + 5.minutes
+        }
         val upcomingTrip = objects.upcomingTrip(prediction)
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-                informedEntity =
-                    mutableListOf(
-                        Alert.InformedEntity(
-                            activities = listOf(Alert.InformedEntity.Activity.Board),
-                            directionId = trip.directionId,
-                            route = route.id,
-                            trip = trip.id,
-                        )
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+            informedEntity =
+                mutableListOf(
+                    Alert.InformedEntity(
+                        activities = listOf(Alert.InformedEntity.Activity.Board),
+                        directionId = trip.directionId,
+                        route = route.id,
+                        trip = trip.id,
                     )
-            }
+                )
+        }
 
         assertEquals(
             LeafFormat.Single(
@@ -249,12 +240,11 @@ class RouteCardDataLeafTest {
         val objects = ObjectCollectionBuilder()
         val route = objects.route { type = RouteType.COMMUTER_RAIL }
 
-        val prediction =
-            objects.prediction {
-                trip = objects.trip()
-                departureTime = predictionTime
-                this.status = status
-            }
+        val prediction = objects.prediction {
+            trip = objects.trip()
+            departureTime = predictionTime
+            this.status = status
+        }
         val upcomingTrip = objects.upcomingTrip(prediction)
 
         assertEquals(
@@ -305,11 +295,10 @@ class RouteCardDataLeafTest {
         val objects = ObjectCollectionBuilder()
         val route = objects.route { type = RouteType.COMMUTER_RAIL }
 
-        val schedule =
-            objects.schedule {
-                trip = objects.trip()
-                departureTime = scheduleTime
-            }
+        val schedule = objects.schedule {
+            trip = objects.trip()
+            departureTime = scheduleTime
+        }
         val prediction =
             objects.prediction(schedule) {
                 departureTime = null
@@ -364,18 +353,16 @@ class RouteCardDataLeafTest {
         val route = objects.route { type = RouteType.BUS }
 
         val trip = objects.trip()
-        val prediction =
-            objects.prediction {
-                this.trip = trip
-                departureTime = now + 1.minutes
-            }
+        val prediction = objects.prediction {
+            this.trip = trip
+            departureTime = now + 1.minutes
+        }
         val upcomingTrip = objects.upcomingTrip(prediction)
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.ServiceChange
-                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.ServiceChange
+            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+        }
 
         assertEquals(
             LeafFormat.Single(
@@ -419,11 +406,10 @@ class RouteCardDataLeafTest {
         val route = objects.route { type = RouteType.BUS }
 
         val trip = objects.trip()
-        val prediction =
-            objects.prediction {
-                this.trip = trip
-                departureTime = now + 1.minutes
-            }
+        val prediction = objects.prediction {
+            this.trip = trip
+            departureTime = now + 1.minutes
+        }
         val upcomingTrip = objects.upcomingTrip(prediction)
 
         val alert = objects.alert { effect = Alert.Effect.Shuttle }
@@ -539,11 +525,10 @@ class RouteCardDataLeafTest {
                 representativeTrip { headsign = "headsign" }
                 typicality = RoutePattern.Typicality.Typical
             }
-        val schedule =
-            objects.schedule {
-                trip = objects.trip(pattern)
-                departureTime = now + 2.minutes
-            }
+        val schedule = objects.schedule {
+            trip = objects.trip(pattern)
+            departureTime = now + 2.minutes
+        }
         assertEquals(
             LeafFormat.Single(
                 route = null,
@@ -603,22 +588,20 @@ class RouteCardDataLeafTest {
                         stopIds = listOf("childPlatform1")
                     }
                 }
-            val schedule =
-                objects.schedule {
-                    trip = objects.trip(patternAtypicalA)
-                    departureTime = now + 2.minutes
-                }
-            val alert =
-                objects.alert {
-                    activePeriod(now.minus(1.hours), now.plus(1.hours))
-                    effect = Alert.Effect.Shuttle
-                    cause = Alert.Cause.Maintenance
-                    informedEntity(
-                        directionId = 0,
-                        route = route.id.toString(),
-                        stop = "childPlatform2",
-                    )
-                }
+            val schedule = objects.schedule {
+                trip = objects.trip(patternAtypicalA)
+                departureTime = now + 2.minutes
+            }
+            val alert = objects.alert {
+                activePeriod(now.minus(1.hours), now.plus(1.hours))
+                effect = Alert.Effect.Shuttle
+                cause = Alert.Cause.Maintenance
+                informedEntity(
+                    directionId = 0,
+                    route = route.id.toString(),
+                    stop = "childPlatform2",
+                )
+            }
             assertEquals(
                 LeafFormat.branched {
                     branchRow(
@@ -662,21 +645,19 @@ class RouteCardDataLeafTest {
             val now = EasternTimeInstant.now()
 
             val objects = ObjectCollectionBuilder()
-            val route =
-                objects.route {
-                    type = RouteType.BUS
-                    id = anyOfList(silverRoutes.toList()).idText
-                }
+            val route = objects.route {
+                type = RouteType.BUS
+                id = anyOfList(silverRoutes.toList()).idText
+            }
             val pattern =
                 objects.routePattern(route) {
                     representativeTrip { headsign = "headsign" }
                     typicality = RoutePattern.Typicality.Typical
                 }
-            val schedule =
-                objects.schedule {
-                    trip = objects.trip(pattern)
-                    departureTime = now + 2.minutes
-                }
+            val schedule = objects.schedule {
+                trip = objects.trip(pattern)
+                departureTime = now + 2.minutes
+            }
             assertEquals(
                 LeafFormat.Single(
                     route = null,
@@ -738,16 +719,14 @@ class RouteCardDataLeafTest {
         val trip1 = objects.trip()
         val trip2 = objects.trip()
 
-        val prediction1 =
-            objects.prediction {
-                trip = trip1
-                departureTime = null
-            }
-        val prediction2 =
-            objects.prediction {
-                trip = trip2
-                departureTime = now + 5.minutes
-            }
+        val prediction1 = objects.prediction {
+            trip = trip1
+            departureTime = null
+        }
+        val prediction2 = objects.prediction {
+            trip = trip2
+            departureTime = now + 5.minutes
+        }
 
         val upcomingTrip1 = objects.upcomingTrip(prediction1)
         val upcomingTrip2 = objects.upcomingTrip(prediction2)
@@ -796,16 +775,14 @@ class RouteCardDataLeafTest {
         val trip1 = objects.trip()
         val trip2 = objects.trip()
 
-        val schedule1 =
-            objects.schedule {
-                trip = trip1
-                departureTime = now + 5.minutes
-            }
-        val prediction2 =
-            objects.prediction {
-                trip = trip2
-                departureTime = now + 5.minutes
-            }
+        val schedule1 = objects.schedule {
+            trip = trip1
+            departureTime = now + 5.minutes
+        }
+        val prediction2 = objects.prediction {
+            trip = trip2
+            departureTime = now + 5.minutes
+        }
 
         val upcomingTrip1 = objects.upcomingTrip(schedule1)
         val upcomingTrip2 = objects.upcomingTrip(prediction2)
@@ -943,34 +920,30 @@ class RouteCardDataLeafTest {
     fun `formats Red Line southbound as branching showing next 3 trips`() = parametricTest {
         val objects = RedLine.objects()
         val now = EasternTimeInstant.now()
-        val prediction1 =
-            objects.prediction {
-                arrivalTime = now + 1.minutes
-                departureTime = arrivalTime
-                trip = objects.trip(RedLine.ashmontSouth)
-                stopId = RedLine.jfkUmass.south1.id
-            }
-        val prediction2 =
-            objects.prediction {
-                arrivalTime = now + 2.minutes
-                departureTime = arrivalTime
-                trip = objects.trip(RedLine.braintreeSouth)
-                stopId = RedLine.jfkUmass.south2.id
-            }
-        val prediction3 =
-            objects.prediction {
-                arrivalTime = now + 9.minutes
-                departureTime = arrivalTime
-                trip = objects.trip(RedLine.ashmontSouth)
-                stopId = RedLine.jfkUmass.south1.id
-            }
-        val prediction4 =
-            objects.prediction {
-                arrivalTime = now + 15.minutes
-                departureTime = arrivalTime
-                trip = objects.trip(RedLine.braintreeSouth)
-                stopId = RedLine.jfkUmass.south2.id
-            }
+        val prediction1 = objects.prediction {
+            arrivalTime = now + 1.minutes
+            departureTime = arrivalTime
+            trip = objects.trip(RedLine.ashmontSouth)
+            stopId = RedLine.jfkUmass.south1.id
+        }
+        val prediction2 = objects.prediction {
+            arrivalTime = now + 2.minutes
+            departureTime = arrivalTime
+            trip = objects.trip(RedLine.braintreeSouth)
+            stopId = RedLine.jfkUmass.south2.id
+        }
+        val prediction3 = objects.prediction {
+            arrivalTime = now + 9.minutes
+            departureTime = arrivalTime
+            trip = objects.trip(RedLine.ashmontSouth)
+            stopId = RedLine.jfkUmass.south1.id
+        }
+        val prediction4 = objects.prediction {
+            arrivalTime = now + 15.minutes
+            departureTime = arrivalTime
+            trip = objects.trip(RedLine.braintreeSouth)
+            stopId = RedLine.jfkUmass.south2.id
+        }
 
         assertEquals(
             LeafFormat.branched {
@@ -1041,34 +1014,30 @@ class RouteCardDataLeafTest {
             val now = EasternTimeInstant.now()
 
             val downstreamAlert = objects.alert { effect = Alert.Effect.Shuttle }
-            val prediction1 =
-                objects.prediction {
-                    arrivalTime = now + 1.minutes
-                    departureTime = arrivalTime
-                    trip = objects.trip(RedLine.ashmontSouth)
-                    stopId = RedLine.jfkUmass.south1.id
-                }
-            val prediction2 =
-                objects.prediction {
-                    arrivalTime = now + 2.minutes
-                    departureTime = arrivalTime
-                    trip = objects.trip(RedLine.braintreeSouth)
-                    stopId = RedLine.jfkUmass.south2.id
-                }
-            val prediction3 =
-                objects.prediction {
-                    arrivalTime = now + 9.minutes
-                    departureTime = arrivalTime
-                    trip = objects.trip(RedLine.ashmontSouth)
-                    stopId = RedLine.jfkUmass.south1.id
-                }
-            val prediction4 =
-                objects.prediction {
-                    arrivalTime = now + 15.minutes
-                    departureTime = arrivalTime
-                    trip = objects.trip(RedLine.braintreeSouth)
-                    stopId = RedLine.jfkUmass.south2.id
-                }
+            val prediction1 = objects.prediction {
+                arrivalTime = now + 1.minutes
+                departureTime = arrivalTime
+                trip = objects.trip(RedLine.ashmontSouth)
+                stopId = RedLine.jfkUmass.south1.id
+            }
+            val prediction2 = objects.prediction {
+                arrivalTime = now + 2.minutes
+                departureTime = arrivalTime
+                trip = objects.trip(RedLine.braintreeSouth)
+                stopId = RedLine.jfkUmass.south2.id
+            }
+            val prediction3 = objects.prediction {
+                arrivalTime = now + 9.minutes
+                departureTime = arrivalTime
+                trip = objects.trip(RedLine.ashmontSouth)
+                stopId = RedLine.jfkUmass.south1.id
+            }
+            val prediction4 = objects.prediction {
+                arrivalTime = now + 15.minutes
+                departureTime = arrivalTime
+                trip = objects.trip(RedLine.braintreeSouth)
+                stopId = RedLine.jfkUmass.south2.id
+            }
 
             assertEquals(
                 LeafFormat.branched {
@@ -1138,27 +1107,24 @@ class RouteCardDataLeafTest {
     fun `formats Red Line northbound as non-branching showing next 2 trips`() = parametricTest {
         val objects = RedLine.objects()
         val now = EasternTimeInstant.now()
-        val prediction1 =
-            objects.prediction {
-                arrivalTime = now + 3.minutes
-                departureTime = arrivalTime
-                trip = objects.trip(RedLine.ashmontNorth)
-                stopId = RedLine.jfkUmass.north1.id
-            }
-        val prediction2 =
-            objects.prediction {
-                arrivalTime = now + 12.minutes
-                departureTime = arrivalTime
-                trip = objects.trip(RedLine.braintreeNorth)
-                stopId = RedLine.jfkUmass.north2.id
-            }
-        val prediction3 =
-            objects.prediction {
-                arrivalTime = now + 18.minutes
-                departureTime = arrivalTime
-                trip = objects.trip(RedLine.ashmontNorth)
-                stopId = RedLine.jfkUmass.north1.id
-            }
+        val prediction1 = objects.prediction {
+            arrivalTime = now + 3.minutes
+            departureTime = arrivalTime
+            trip = objects.trip(RedLine.ashmontNorth)
+            stopId = RedLine.jfkUmass.north1.id
+        }
+        val prediction2 = objects.prediction {
+            arrivalTime = now + 12.minutes
+            departureTime = arrivalTime
+            trip = objects.trip(RedLine.braintreeNorth)
+            stopId = RedLine.jfkUmass.north2.id
+        }
+        val prediction3 = objects.prediction {
+            arrivalTime = now + 18.minutes
+            departureTime = arrivalTime
+            trip = objects.trip(RedLine.ashmontNorth)
+            stopId = RedLine.jfkUmass.north1.id
+        }
 
         assertEquals(
             LeafFormat.Single(
@@ -1208,27 +1174,24 @@ class RouteCardDataLeafTest {
     fun `formats Red Line southbound as branching even if next trips all match`() = parametricTest {
         val objects = RedLine.objects()
         val now = EasternTimeInstant.now()
-        val prediction1 =
-            objects.prediction {
-                arrivalTime = now + 2.minutes
-                departureTime = arrivalTime
-                trip = objects.trip(RedLine.ashmontSouth)
-                stopId = RedLine.jfkUmass.south1.id
-            }
-        val prediction2 =
-            objects.prediction {
-                arrivalTime = now + 5.minutes
-                departureTime = arrivalTime
-                trip = objects.trip(RedLine.ashmontSouth)
-                stopId = RedLine.jfkUmass.south1.id
-            }
-        val prediction3 =
-            objects.prediction {
-                arrivalTime = now + 9.minutes
-                departureTime = arrivalTime
-                trip = objects.trip(RedLine.ashmontSouth)
-                stopId = RedLine.jfkUmass.south1.id
-            }
+        val prediction1 = objects.prediction {
+            arrivalTime = now + 2.minutes
+            departureTime = arrivalTime
+            trip = objects.trip(RedLine.ashmontSouth)
+            stopId = RedLine.jfkUmass.south1.id
+        }
+        val prediction2 = objects.prediction {
+            arrivalTime = now + 5.minutes
+            departureTime = arrivalTime
+            trip = objects.trip(RedLine.ashmontSouth)
+            stopId = RedLine.jfkUmass.south1.id
+        }
+        val prediction3 = objects.prediction {
+            arrivalTime = now + 9.minutes
+            departureTime = arrivalTime
+            trip = objects.trip(RedLine.ashmontSouth)
+            stopId = RedLine.jfkUmass.south1.id
+        }
 
         assertEquals(
             LeafFormat.branched {
@@ -1298,40 +1261,37 @@ class RouteCardDataLeafTest {
             val objects = RedLine.objects()
             val now = EasternTimeInstant.now()
 
-            val prediction1 =
-                objects.prediction {
-                    arrivalTime = now + 3.minutes
-                    departureTime = arrivalTime
-                    trip = objects.trip(RedLine.ashmontSouth)
-                    stopId = RedLine.jfkUmass.south1.id
-                }
+            val prediction1 = objects.prediction {
+                arrivalTime = now + 3.minutes
+                departureTime = arrivalTime
+                trip = objects.trip(RedLine.ashmontSouth)
+                stopId = RedLine.jfkUmass.south1.id
+            }
 
-            val prediction2 =
-                objects.prediction {
-                    arrivalTime = now + 12.minutes
-                    departureTime = arrivalTime
-                    trip = objects.trip(RedLine.ashmontSouth)
-                    stopId = RedLine.jfkUmass.south1.id
-                }
+            val prediction2 = objects.prediction {
+                arrivalTime = now + 12.minutes
+                departureTime = arrivalTime
+                trip = objects.trip(RedLine.ashmontSouth)
+                stopId = RedLine.jfkUmass.south1.id
+            }
 
-            val alert =
-                objects.alert {
-                    effect = Alert.Effect.Suspension
-                    activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-                    informedEntity =
-                        RedLine.stopsBraintreeBranchSouth
-                            .map {
-                                Alert.InformedEntity(
-                                    activities = listOf(Alert.InformedEntity.Activity.Board),
-                                    directionId = 0,
-                                    route = RedLine.route.id,
-                                    routeType = RouteType.HEAVY_RAIL,
-                                    stop = it,
-                                    trip = null,
-                                )
-                            }
-                            .toMutableList()
-                }
+            val alert = objects.alert {
+                effect = Alert.Effect.Suspension
+                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+                informedEntity =
+                    RedLine.stopsBraintreeBranchSouth
+                        .map {
+                            Alert.InformedEntity(
+                                activities = listOf(Alert.InformedEntity.Activity.Board),
+                                directionId = 0,
+                                route = RedLine.route.id,
+                                routeType = RouteType.HEAVY_RAIL,
+                                stop = it,
+                                trip = null,
+                            )
+                        }
+                        .toMutableList()
+            }
 
             val mapStopRoute = MapStopRoute.matching(RedLine.route)
 
@@ -1400,48 +1360,44 @@ class RouteCardDataLeafTest {
             val objects = RedLine.objects()
             val now = EasternTimeInstant.now()
 
-            val prediction1 =
-                objects.prediction {
-                    arrivalTime = now + 3.minutes
-                    departureTime = arrivalTime
-                    trip = objects.trip(RedLine.ashmontSouth)
-                    stopId = RedLine.jfkUmass.south1.id
-                }
+            val prediction1 = objects.prediction {
+                arrivalTime = now + 3.minutes
+                departureTime = arrivalTime
+                trip = objects.trip(RedLine.ashmontSouth)
+                stopId = RedLine.jfkUmass.south1.id
+            }
 
-            val prediction2 =
-                objects.prediction {
-                    arrivalTime = now + 12.minutes
-                    departureTime = arrivalTime
-                    trip = objects.trip(RedLine.ashmontSouth)
-                    stopId = RedLine.jfkUmass.south1.id
-                }
+            val prediction2 = objects.prediction {
+                arrivalTime = now + 12.minutes
+                departureTime = arrivalTime
+                trip = objects.trip(RedLine.ashmontSouth)
+                stopId = RedLine.jfkUmass.south1.id
+            }
 
-            val prediction3 =
-                objects.prediction {
-                    arrivalTime = now + 15.minutes
-                    departureTime = arrivalTime
-                    trip = objects.trip(RedLine.ashmontSouth)
-                    stopId = RedLine.jfkUmass.south1.id
-                }
+            val prediction3 = objects.prediction {
+                arrivalTime = now + 15.minutes
+                departureTime = arrivalTime
+                trip = objects.trip(RedLine.ashmontSouth)
+                stopId = RedLine.jfkUmass.south1.id
+            }
 
-            val alert =
-                objects.alert {
-                    effect = Alert.Effect.Suspension
-                    activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-                    informedEntity =
-                        RedLine.stopsBraintreeBranchSouth
-                            .map {
-                                Alert.InformedEntity(
-                                    activities = listOf(Alert.InformedEntity.Activity.Board),
-                                    directionId = 0,
-                                    route = RedLine.route.id,
-                                    routeType = RouteType.HEAVY_RAIL,
-                                    stop = it,
-                                    trip = null,
-                                )
-                            }
-                            .toMutableList()
-                }
+            val alert = objects.alert {
+                effect = Alert.Effect.Suspension
+                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+                informedEntity =
+                    RedLine.stopsBraintreeBranchSouth
+                        .map {
+                            Alert.InformedEntity(
+                                activities = listOf(Alert.InformedEntity.Activity.Board),
+                                directionId = 0,
+                                route = RedLine.route.id,
+                                routeType = RouteType.HEAVY_RAIL,
+                                stop = it,
+                                trip = null,
+                            )
+                        }
+                        .toMutableList()
+            }
 
             val mapStopRoute = MapStopRoute.matching(RedLine.route)
 
@@ -1520,28 +1476,25 @@ class RouteCardDataLeafTest {
     fun `formats subway last trip based on prediction last trip field`() {
         val objects = RedLine.objects()
         val now = EasternTimeInstant.now()
-        val prediction1 =
-            objects.prediction {
-                arrivalTime = now + 3.minutes
-                departureTime = arrivalTime
-                trip = objects.trip(RedLine.ashmontNorth)
-                stopId = RedLine.jfkUmass.north1.id
-            }
-        val prediction2 =
-            objects.prediction {
-                arrivalTime = now + 12.minutes
-                departureTime = arrivalTime
-                trip = objects.trip(RedLine.braintreeNorth)
-                stopId = RedLine.jfkUmass.north2.id
-            }
-        val prediction3 =
-            objects.prediction {
-                arrivalTime = now + 18.minutes
-                departureTime = arrivalTime
-                trip = objects.trip(RedLine.ashmontNorth)
-                stopId = RedLine.jfkUmass.north1.id
-                lastTrip = true
-            }
+        val prediction1 = objects.prediction {
+            arrivalTime = now + 3.minutes
+            departureTime = arrivalTime
+            trip = objects.trip(RedLine.ashmontNorth)
+            stopId = RedLine.jfkUmass.north1.id
+        }
+        val prediction2 = objects.prediction {
+            arrivalTime = now + 12.minutes
+            departureTime = arrivalTime
+            trip = objects.trip(RedLine.braintreeNorth)
+            stopId = RedLine.jfkUmass.north2.id
+        }
+        val prediction3 = objects.prediction {
+            arrivalTime = now + 18.minutes
+            departureTime = arrivalTime
+            trip = objects.trip(RedLine.ashmontNorth)
+            stopId = RedLine.jfkUmass.north1.id
+            lastTrip = true
+        }
 
         assertEquals(
             LeafFormat.Single(
@@ -1604,21 +1557,18 @@ class RouteCardDataLeafTest {
         val trip2 = objects.trip()
         val trip3 = objects.trip()
 
-        val schedule1 =
-            objects.schedule {
-                trip = trip1
-                departureTime = now + 5.minutes
-            }
-        val prediction2 =
-            objects.prediction {
-                trip = trip2
-                departureTime = now + 5.minutes
-            }
-        val schedule3 =
-            objects.schedule {
-                trip = trip3
-                departureTime = now + 30.minutes
-            }
+        val schedule1 = objects.schedule {
+            trip = trip1
+            departureTime = now + 5.minutes
+        }
+        val prediction2 = objects.prediction {
+            trip = trip2
+            departureTime = now + 5.minutes
+        }
+        val schedule3 = objects.schedule {
+            trip = trip3
+            departureTime = now + 30.minutes
+        }
 
         val upcomingTrip1 = objects.upcomingTrip(schedule1)
         val upcomingTrip2 = objects.upcomingTrip(prediction2)
@@ -1683,43 +1633,36 @@ class RouteCardDataLeafTest {
         val trip4 = objects.trip()
         val trip5 = objects.trip()
 
-        val schedule1 =
-            objects.schedule {
-                trip = trip1
-                departureTime = now + 5.minutes
-            }
-        val prediction2 =
-            objects.prediction {
-                trip = trip2
-                departureTime = now + 5.minutes
-            }
-        val schedule3 =
-            objects.schedule {
-                trip = trip3
-                departureTime = now + 30.minutes
-            }
-        val schedule4 =
-            objects.schedule {
-                trip = trip4
-                departureTime = now + 35.minutes
-            }
-        val prediction4 =
-            objects.prediction {
-                trip = trip4
-                departureTime = null
-                scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
-            }
-        val schedule5 =
-            objects.schedule {
-                trip = trip5
-                departureTime = now + 40.minutes
-            }
-        val prediction5 =
-            objects.prediction {
-                trip = trip5
-                departureTime = null
-                scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
-            }
+        val schedule1 = objects.schedule {
+            trip = trip1
+            departureTime = now + 5.minutes
+        }
+        val prediction2 = objects.prediction {
+            trip = trip2
+            departureTime = now + 5.minutes
+        }
+        val schedule3 = objects.schedule {
+            trip = trip3
+            departureTime = now + 30.minutes
+        }
+        val schedule4 = objects.schedule {
+            trip = trip4
+            departureTime = now + 35.minutes
+        }
+        val prediction4 = objects.prediction {
+            trip = trip4
+            departureTime = null
+            scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+        }
+        val schedule5 = objects.schedule {
+            trip = trip5
+            departureTime = now + 40.minutes
+        }
+        val prediction5 = objects.prediction {
+            trip = trip5
+            departureTime = null
+            scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+        }
 
         val upcomingTrip1 = objects.upcomingTrip(schedule1)
         val upcomingTrip2 = objects.upcomingTrip(prediction2)
@@ -1829,26 +1772,22 @@ class RouteCardDataLeafTest {
         val objects = GreenLine.objects()
         val now = EasternTimeInstant.now()
 
-        val prediction1 =
-            objects.prediction {
-                departureTime = now + 3.minutes
-                trip = objects.trip(GreenLine.cWestbound)
-            }
-        val prediction2 =
-            objects.prediction {
-                departureTime = now + 5.minutes
-                trip = objects.trip(GreenLine.bWestbound)
-            }
-        val prediction3 =
-            objects.prediction {
-                departureTime = now + 10.minutes
-                trip = objects.trip(GreenLine.dWestbound)
-            }
-        val prediction4 =
-            objects.prediction {
-                departureTime = now + 15.minutes
-                trip = objects.trip(GreenLine.eWestbound)
-            }
+        val prediction1 = objects.prediction {
+            departureTime = now + 3.minutes
+            trip = objects.trip(GreenLine.cWestbound)
+        }
+        val prediction2 = objects.prediction {
+            departureTime = now + 5.minutes
+            trip = objects.trip(GreenLine.bWestbound)
+        }
+        val prediction3 = objects.prediction {
+            departureTime = now + 10.minutes
+            trip = objects.trip(GreenLine.dWestbound)
+        }
+        val prediction4 = objects.prediction {
+            departureTime = now + 15.minutes
+            trip = objects.trip(GreenLine.eWestbound)
+        }
 
         assertEquals(
             LeafFormat.branched {
@@ -1925,26 +1864,22 @@ class RouteCardDataLeafTest {
         val objects = GreenLine.objects()
         val now = EasternTimeInstant.now()
 
-        val prediction1 =
-            objects.prediction {
-                departureTime = now + 3.minutes
-                trip = objects.trip(GreenLine.dWestbound)
-            }
-        val prediction2 =
-            objects.prediction {
-                departureTime = now + 5.minutes
-                trip = objects.trip(GreenLine.dWestbound)
-            }
-        val prediction3 =
-            objects.prediction {
-                departureTime = now + 10.minutes
-                trip = objects.trip(GreenLine.dWestbound)
-            }
-        val prediction4 =
-            objects.prediction {
-                departureTime = now + 15.minutes
-                trip = objects.trip(GreenLine.dWestbound)
-            }
+        val prediction1 = objects.prediction {
+            departureTime = now + 3.minutes
+            trip = objects.trip(GreenLine.dWestbound)
+        }
+        val prediction2 = objects.prediction {
+            departureTime = now + 5.minutes
+            trip = objects.trip(GreenLine.dWestbound)
+        }
+        val prediction3 = objects.prediction {
+            departureTime = now + 10.minutes
+            trip = objects.trip(GreenLine.dWestbound)
+        }
+        val prediction4 = objects.prediction {
+            departureTime = now + 15.minutes
+            trip = objects.trip(GreenLine.dWestbound)
+        }
 
         assertEquals(
             LeafFormat.Single(
@@ -2035,21 +1970,18 @@ class RouteCardDataLeafTest {
         val thisTime = LocalTime(hour = 10, minute = 0)
         val now = EasternTimeInstant(today.atTime(thisTime))
 
-        val prediction1 =
-            objects.prediction {
-                departureTime = EasternTimeInstant(today.atTime(hour = 12, minute = 5))
-                trip = objects.trip(ProvidenceStoughtonLine.toStoughton)
-            }
-        val schedule2 =
-            objects.schedule {
-                departureTime = EasternTimeInstant(today.atTime(hour = 12 + 3, minute = 28))
-                trip = objects.trip(ProvidenceStoughtonLine.toProvidence)
-            }
-        val schedule3 =
-            objects.schedule {
-                departureTime = EasternTimeInstant(today.atTime(hour = 12 + 4, minute = 1))
-                trip = objects.trip(ProvidenceStoughtonLine.toWickford)
-            }
+        val prediction1 = objects.prediction {
+            departureTime = EasternTimeInstant(today.atTime(hour = 12, minute = 5))
+            trip = objects.trip(ProvidenceStoughtonLine.toStoughton)
+        }
+        val schedule2 = objects.schedule {
+            departureTime = EasternTimeInstant(today.atTime(hour = 12 + 3, minute = 28))
+            trip = objects.trip(ProvidenceStoughtonLine.toProvidence)
+        }
+        val schedule3 = objects.schedule {
+            departureTime = EasternTimeInstant(today.atTime(hour = 12 + 4, minute = 1))
+            trip = objects.trip(ProvidenceStoughtonLine.toWickford)
+        }
 
         assertEquals(
             LeafFormat.branched {
@@ -2135,21 +2067,18 @@ class RouteCardDataLeafTest {
         val thisTime = LocalTime(hour = 10, minute = 0)
         val now = EasternTimeInstant(today.atTime(thisTime))
 
-        val prediction1 =
-            objects.prediction {
-                departureTime = EasternTimeInstant(today.atTime(hour = 12 + 3, minute = 31))
-                trip = objects.trip(ProvidenceStoughtonLine.fromStoughton)
-            }
-        val prediction2 =
-            objects.prediction {
-                departureTime = EasternTimeInstant(today.atTime(hour = 12 + 3, minute = 53))
-                trip = objects.trip(ProvidenceStoughtonLine.fromProvidence)
-            }
-        val schedule3 =
-            objects.schedule {
-                departureTime = EasternTimeInstant(today.atTime(hour = 12 + 4, minute = 14))
-                trip = objects.trip(ProvidenceStoughtonLine.fromWickford)
-            }
+        val prediction1 = objects.prediction {
+            departureTime = EasternTimeInstant(today.atTime(hour = 12 + 3, minute = 31))
+            trip = objects.trip(ProvidenceStoughtonLine.fromStoughton)
+        }
+        val prediction2 = objects.prediction {
+            departureTime = EasternTimeInstant(today.atTime(hour = 12 + 3, minute = 53))
+            trip = objects.trip(ProvidenceStoughtonLine.fromProvidence)
+        }
+        val schedule3 = objects.schedule {
+            departureTime = EasternTimeInstant(today.atTime(hour = 12 + 4, minute = 14))
+            trip = objects.trip(ProvidenceStoughtonLine.fromWickford)
+        }
 
         assertEquals(
             LeafFormat.Single(
@@ -2230,21 +2159,18 @@ class RouteCardDataLeafTest {
         val objects = `87`.objects()
         val now = EasternTimeInstant.now()
 
-        val prediction1 =
-            objects.prediction {
-                departureTime = now + 3.minutes
-                trip = objects.trip(`87`.outboundTypical)
-            }
-        val prediction2 =
-            objects.prediction {
-                departureTime = now + 12.minutes
-                trip = objects.trip(`87`.outboundTypical)
-            }
-        val prediction3 =
-            objects.prediction {
-                departureTime = now + 35.minutes
-                trip = objects.trip(`87`.outboundDeviation)
-            }
+        val prediction1 = objects.prediction {
+            departureTime = now + 3.minutes
+            trip = objects.trip(`87`.outboundTypical)
+        }
+        val prediction2 = objects.prediction {
+            departureTime = now + 12.minutes
+            trip = objects.trip(`87`.outboundTypical)
+        }
+        val prediction3 = objects.prediction {
+            departureTime = now + 35.minutes
+            trip = objects.trip(`87`.outboundDeviation)
+        }
 
         assertEquals(
             LeafFormat.Single(
@@ -2295,21 +2221,18 @@ class RouteCardDataLeafTest {
         val objects = `87`.objects()
         val now = EasternTimeInstant.now()
 
-        val prediction1 =
-            objects.prediction {
-                departureTime = now + 3.minutes
-                trip = objects.trip(`87`.outboundTypical)
-            }
-        val prediction2 =
-            objects.prediction {
-                departureTime = now + 12.minutes
-                trip = objects.trip(`87`.outboundTypical)
-            }
-        val prediction3 =
-            objects.prediction {
-                departureTime = now + 35.minutes
-                trip = objects.trip(`87`.outboundDeviation)
-            }
+        val prediction1 = objects.prediction {
+            departureTime = now + 3.minutes
+            trip = objects.trip(`87`.outboundTypical)
+        }
+        val prediction2 = objects.prediction {
+            departureTime = now + 12.minutes
+            trip = objects.trip(`87`.outboundTypical)
+        }
+        val prediction3 = objects.prediction {
+            departureTime = now + 35.minutes
+            trip = objects.trip(`87`.outboundDeviation)
+        }
 
         assertEquals(
             LeafFormat.Branched(
@@ -2384,22 +2307,19 @@ class RouteCardDataLeafTest {
         val objects = `87`.objects()
         val now = EasternTimeInstant.now()
 
-        val prediction1 =
-            objects.prediction {
-                departureTime = now + 1.minutes
-                trip = objects.trip(`87`.outboundTypical)
-            }
-        val prediction2 =
-            objects.prediction {
-                departureTime = now + 32.minutes
-                trip = objects.trip(`87`.outboundDeviation)
-            }
+        val prediction1 = objects.prediction {
+            departureTime = now + 1.minutes
+            trip = objects.trip(`87`.outboundTypical)
+        }
+        val prediction2 = objects.prediction {
+            departureTime = now + 32.minutes
+            trip = objects.trip(`87`.outboundDeviation)
+        }
 
-        val prediction3 =
-            objects.prediction {
-                departureTime = now + 60.minutes
-                trip = objects.trip(`87`.outboundTypical)
-            }
+        val prediction3 = objects.prediction {
+            departureTime = now + 60.minutes
+            trip = objects.trip(`87`.outboundTypical)
+        }
 
         assertEquals(
             LeafFormat.branched {
@@ -2455,21 +2375,18 @@ class RouteCardDataLeafTest {
         val objects = `87`.objects()
         val now = EasternTimeInstant.now()
 
-        val prediction1 =
-            objects.prediction {
-                departureTime = now - 15.minutes
-                trip = objects.trip(`87`.outboundTypical)
-            }
-        val prediction2 =
-            objects.prediction {
-                departureTime = now + 15.minutes
-                trip = objects.trip(`87`.outboundTypical)
-            }
-        val prediction3 =
-            objects.prediction {
-                departureTime = now + 30.minutes
-                trip = objects.trip(`87`.outboundDeviation)
-            }
+        val prediction1 = objects.prediction {
+            departureTime = now - 15.minutes
+            trip = objects.trip(`87`.outboundTypical)
+        }
+        val prediction2 = objects.prediction {
+            departureTime = now + 15.minutes
+            trip = objects.trip(`87`.outboundTypical)
+        }
+        val prediction3 = objects.prediction {
+            departureTime = now + 30.minutes
+            trip = objects.trip(`87`.outboundDeviation)
+        }
 
         assertEquals(
             LeafFormat.branched {
@@ -2525,16 +2442,14 @@ class RouteCardDataLeafTest {
         val objects = `87`.objects()
         val now = EasternTimeInstant.now()
 
-        val prediction1 =
-            objects.prediction {
-                departureTime = now + 15.minutes
-                trip = objects.trip(`87`.outboundTypical)
-            }
-        val prediction2 =
-            objects.prediction {
-                departureTime = now + 15.hours
-                trip = objects.trip(`87`.outboundDeviation)
-            }
+        val prediction1 = objects.prediction {
+            departureTime = now + 15.minutes
+            trip = objects.trip(`87`.outboundTypical)
+        }
+        val prediction2 = objects.prediction {
+            departureTime = now + 15.hours
+            trip = objects.trip(`87`.outboundDeviation)
+        }
 
         assertEquals(
             LeafFormat.branched {
@@ -2587,16 +2502,14 @@ class RouteCardDataLeafTest {
             val objects = RedLine.objects()
             val now = EasternTimeInstant.now()
 
-            val prediction1 =
-                objects.prediction {
-                    departureTime = now + 1.minutes
-                    trip = objects.trip(RedLine.ashmontSouth)
-                }
-            val prediction2 =
-                objects.prediction {
-                    departureTime = now + 2.minutes
-                    trip = objects.trip(RedLine.ashmontSouth)
-                }
+            val prediction1 = objects.prediction {
+                departureTime = now + 1.minutes
+                trip = objects.trip(RedLine.ashmontSouth)
+            }
+            val prediction2 = objects.prediction {
+                departureTime = now + 2.minutes
+                trip = objects.trip(RedLine.ashmontSouth)
+            }
 
             assertEquals(
                 LeafFormat.branched {
@@ -2682,21 +2595,18 @@ class RouteCardDataLeafTest {
             val objects = GreenLine.objects()
             val now = EasternTimeInstant.now()
 
-            val prediction1 =
-                objects.prediction {
-                    departureTime = now + 3.minutes
-                    trip = objects.trip(GreenLine.cWestbound)
-                }
-            val prediction2 =
-                objects.prediction {
-                    departureTime = now + 5.minutes
-                    trip = objects.trip(GreenLine.bWestbound)
-                }
-            val prediction3 =
-                objects.prediction {
-                    departureTime = now + 10.minutes
-                    trip = objects.trip(GreenLine.bWestbound)
-                }
+            val prediction1 = objects.prediction {
+                departureTime = now + 3.minutes
+                trip = objects.trip(GreenLine.cWestbound)
+            }
+            val prediction2 = objects.prediction {
+                departureTime = now + 5.minutes
+                trip = objects.trip(GreenLine.bWestbound)
+            }
+            val prediction3 = objects.prediction {
+                departureTime = now + 10.minutes
+                trip = objects.trip(GreenLine.bWestbound)
+            }
 
             assertEquals(
                 LeafFormat.branched {
@@ -2773,16 +2683,14 @@ class RouteCardDataLeafTest {
             val objects = ObjectCollectionBuilder()
             val now = EasternTimeInstant.now()
 
-            val schedule1 =
-                objects.schedule {
-                    departureTime = now + 15.minutes
-                    trip = objects.trip(GreenLine.bWestbound)
-                }
-            val schedule2 =
-                objects.schedule {
-                    departureTime = now + 15.minutes
-                    trip = objects.trip(GreenLine.cWestbound)
-                }
+            val schedule1 = objects.schedule {
+                departureTime = now + 15.minutes
+                trip = objects.trip(GreenLine.bWestbound)
+            }
+            val schedule2 = objects.schedule {
+                departureTime = now + 15.minutes
+                trip = objects.trip(GreenLine.cWestbound)
+            }
 
             assertEquals(
                 LeafFormat.Single(
@@ -2819,40 +2727,37 @@ class RouteCardDataLeafTest {
             val objects = GreenLine.objects()
             val now = EasternTimeInstant.now()
 
-            val prediction1 =
-                objects.prediction {
-                    departureTime = now + 3.minutes
-                    trip = objects.trip(GreenLine.cWestbound)
-                    stopId = GreenLine.kenmore.id
-                }
-            val prediction2 =
-                objects.prediction {
-                    departureTime = now + 5.minutes
-                    trip = objects.trip(GreenLine.bWestbound)
-                    stopId = GreenLine.kenmore.id
-                }
+            val prediction1 = objects.prediction {
+                departureTime = now + 3.minutes
+                trip = objects.trip(GreenLine.cWestbound)
+                stopId = GreenLine.kenmore.id
+            }
+            val prediction2 = objects.prediction {
+                departureTime = now + 5.minutes
+                trip = objects.trip(GreenLine.bWestbound)
+                stopId = GreenLine.kenmore.id
+            }
             val prediction3 = // Won't be shown - only 2 predictions shown + shuttle
                 objects.prediction {
                     departureTime = now + 10.minutes
                     trip = objects.trip(GreenLine.bWestbound)
                     stopId = GreenLine.kenmore.id
                 }
-            val alert =
-                objects.alert {
-                    effect = Alert.Effect.Shuttle
-                    activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-                    informedEntity =
-                        mutableListOf(
-                            Alert.InformedEntity(
-                                activities = listOf(Alert.InformedEntity.Activity.Board),
-                                directionId = 0,
-                                route = GreenLine.d.id,
-                                routeType = RouteType.LIGHT_RAIL,
-                                stop = GreenLine.kenmore.id,
-                                trip = null,
-                            )
+            val alert = objects.alert {
+                effect = Alert.Effect.Shuttle
+                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+                informedEntity =
+                    mutableListOf(
+                        Alert.InformedEntity(
+                            activities = listOf(Alert.InformedEntity.Activity.Board),
+                            directionId = 0,
+                            route = GreenLine.d.id,
+                            routeType = RouteType.LIGHT_RAIL,
+                            stop = GreenLine.kenmore.id,
+                            trip = null,
                         )
-                }
+                    )
+            }
 
             assertEquals(
                 LeafFormat.branched {
@@ -2921,43 +2826,40 @@ class RouteCardDataLeafTest {
             val objects = GreenLine.objects()
             val now = EasternTimeInstant.now()
 
-            val prediction1 =
-                objects.prediction {
-                    departureTime = now + 3.minutes
-                    trip = objects.trip(GreenLine.cWestbound)
-                    stopId = GreenLine.kenmore.id
-                }
+            val prediction1 = objects.prediction {
+                departureTime = now + 3.minutes
+                trip = objects.trip(GreenLine.cWestbound)
+                stopId = GreenLine.kenmore.id
+            }
 
-            val prediction2 =
-                objects.prediction {
-                    departureTime = now + 5.minutes
-                    trip = objects.trip(GreenLine.cWestbound)
-                    stopId = GreenLine.kenmore.id
-                }
-            val alert =
-                objects.alert {
-                    effect = Alert.Effect.Shuttle
-                    activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-                    informedEntity =
-                        mutableListOf(
-                            Alert.InformedEntity(
-                                activities = listOf(Alert.InformedEntity.Activity.Board),
-                                directionId = 0,
-                                route = GreenLine.b.id,
-                                routeType = RouteType.LIGHT_RAIL,
-                                stop = GreenLine.kenmore.id,
-                                trip = null,
-                            ),
-                            Alert.InformedEntity(
-                                activities = listOf(Alert.InformedEntity.Activity.Board),
-                                directionId = 0,
-                                route = GreenLine.d.id,
-                                routeType = RouteType.LIGHT_RAIL,
-                                stop = GreenLine.kenmore.id,
-                                trip = null,
-                            ),
-                        )
-                }
+            val prediction2 = objects.prediction {
+                departureTime = now + 5.minutes
+                trip = objects.trip(GreenLine.cWestbound)
+                stopId = GreenLine.kenmore.id
+            }
+            val alert = objects.alert {
+                effect = Alert.Effect.Shuttle
+                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+                informedEntity =
+                    mutableListOf(
+                        Alert.InformedEntity(
+                            activities = listOf(Alert.InformedEntity.Activity.Board),
+                            directionId = 0,
+                            route = GreenLine.b.id,
+                            routeType = RouteType.LIGHT_RAIL,
+                            stop = GreenLine.kenmore.id,
+                            trip = null,
+                        ),
+                        Alert.InformedEntity(
+                            activities = listOf(Alert.InformedEntity.Activity.Board),
+                            directionId = 0,
+                            route = GreenLine.d.id,
+                            routeType = RouteType.LIGHT_RAIL,
+                            stop = GreenLine.kenmore.id,
+                            trip = null,
+                        ),
+                    )
+            }
 
             assertEquals(
                 LeafFormat.branched {
@@ -3017,50 +2919,45 @@ class RouteCardDataLeafTest {
             val objects = GreenLine.objects()
             val now = EasternTimeInstant.now()
 
-            val alert =
-                objects.alert {
-                    effect = Alert.Effect.Shuttle
-                    activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-                    informedEntity =
-                        mutableListOf(
-                            Alert.InformedEntity(
-                                activities = listOf(Alert.InformedEntity.Activity.Board),
-                                directionId = 0,
-                                route = GreenLine.d.id,
-                                routeType = RouteType.LIGHT_RAIL,
-                                stop = GreenLine.boylston.id,
-                                trip = null,
-                            )
+            val alert = objects.alert {
+                effect = Alert.Effect.Shuttle
+                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+                informedEntity =
+                    mutableListOf(
+                        Alert.InformedEntity(
+                            activities = listOf(Alert.InformedEntity.Activity.Board),
+                            directionId = 0,
+                            route = GreenLine.d.id,
+                            routeType = RouteType.LIGHT_RAIL,
+                            stop = GreenLine.boylston.id,
+                            trip = null,
                         )
-                }
+                    )
+            }
 
-            val schedB =
-                objects.schedule {
-                    departureTime = now + 3.minutes
-                    trip = objects.trip(GreenLine.bWestbound)
-                    stopId = GreenLine.boylston.id
-                }
+            val schedB = objects.schedule {
+                departureTime = now + 3.minutes
+                trip = objects.trip(GreenLine.bWestbound)
+                stopId = GreenLine.boylston.id
+            }
 
-            val schedC =
-                objects.schedule {
-                    departureTime = now + 5.minutes
-                    trip = objects.trip(GreenLine.cWestbound)
-                    stopId = GreenLine.boylston.id
-                }
+            val schedC = objects.schedule {
+                departureTime = now + 5.minutes
+                trip = objects.trip(GreenLine.cWestbound)
+                stopId = GreenLine.boylston.id
+            }
 
-            val schedD =
-                objects.schedule {
-                    departureTime = now + 7.minutes
-                    trip = objects.trip(GreenLine.dWestbound)
-                    stopId = GreenLine.boylston.id
-                }
+            val schedD = objects.schedule {
+                departureTime = now + 7.minutes
+                trip = objects.trip(GreenLine.dWestbound)
+                stopId = GreenLine.boylston.id
+            }
 
-            val schedE =
-                objects.schedule {
-                    departureTime = now + 9.minutes
-                    trip = objects.trip(GreenLine.dWestbound)
-                    stopId = GreenLine.boylston.id
-                }
+            val schedE = objects.schedule {
+                departureTime = now + 9.minutes
+                trip = objects.trip(GreenLine.dWestbound)
+                stopId = GreenLine.boylston.id
+            }
 
             assertEquals(
                 LeafFormat.branched {
@@ -3124,46 +3021,45 @@ class RouteCardDataLeafTest {
         parametricTest {
             val objects = GreenLine.objects()
             val now = EasternTimeInstant.now()
-            val alert =
-                objects.alert {
-                    effect = Alert.Effect.Shuttle
-                    activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-                    informedEntity =
-                        mutableListOf(
-                            Alert.InformedEntity(
-                                activities = listOf(Alert.InformedEntity.Activity.Board),
-                                directionId = 0,
-                                route = GreenLine.b.id,
-                                routeType = RouteType.LIGHT_RAIL,
-                                stop = GreenLine.boylston.id,
-                                trip = null,
-                            ),
-                            Alert.InformedEntity(
-                                activities = listOf(Alert.InformedEntity.Activity.Board),
-                                directionId = 0,
-                                route = GreenLine.c.id,
-                                routeType = RouteType.LIGHT_RAIL,
-                                stop = GreenLine.boylston.id,
-                                trip = null,
-                            ),
-                            Alert.InformedEntity(
-                                activities = listOf(Alert.InformedEntity.Activity.Board),
-                                directionId = 0,
-                                route = GreenLine.d.id,
-                                routeType = RouteType.LIGHT_RAIL,
-                                stop = GreenLine.boylston.id,
-                                trip = null,
-                            ),
-                            Alert.InformedEntity(
-                                activities = listOf(Alert.InformedEntity.Activity.Board),
-                                directionId = 0,
-                                route = GreenLine.e.id,
-                                routeType = RouteType.LIGHT_RAIL,
-                                stop = GreenLine.boylston.id,
-                                trip = null,
-                            ),
-                        )
-                }
+            val alert = objects.alert {
+                effect = Alert.Effect.Shuttle
+                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+                informedEntity =
+                    mutableListOf(
+                        Alert.InformedEntity(
+                            activities = listOf(Alert.InformedEntity.Activity.Board),
+                            directionId = 0,
+                            route = GreenLine.b.id,
+                            routeType = RouteType.LIGHT_RAIL,
+                            stop = GreenLine.boylston.id,
+                            trip = null,
+                        ),
+                        Alert.InformedEntity(
+                            activities = listOf(Alert.InformedEntity.Activity.Board),
+                            directionId = 0,
+                            route = GreenLine.c.id,
+                            routeType = RouteType.LIGHT_RAIL,
+                            stop = GreenLine.boylston.id,
+                            trip = null,
+                        ),
+                        Alert.InformedEntity(
+                            activities = listOf(Alert.InformedEntity.Activity.Board),
+                            directionId = 0,
+                            route = GreenLine.d.id,
+                            routeType = RouteType.LIGHT_RAIL,
+                            stop = GreenLine.boylston.id,
+                            trip = null,
+                        ),
+                        Alert.InformedEntity(
+                            activities = listOf(Alert.InformedEntity.Activity.Board),
+                            directionId = 0,
+                            route = GreenLine.e.id,
+                            routeType = RouteType.LIGHT_RAIL,
+                            stop = GreenLine.boylston.id,
+                            trip = null,
+                        ),
+                    )
+            }
 
             assertEquals(
                 LeafFormat.Single(
@@ -3204,14 +3100,13 @@ class RouteCardDataLeafTest {
             val stop2 = objects.stop {}
             val stop3 = objects.stop {}
 
-            val representativeTrip =
-                objects.trip {
-                    routeId = route.id.idText
-                    routePatternId = "rp1"
-                    directionId = 0
-                    stopIds = listOf(stop1.id, stop2.id)
-                    headsign = "Quincy Loop"
-                }
+            val representativeTrip = objects.trip {
+                routeId = route.id.idText
+                routePatternId = "rp1"
+                directionId = 0
+                stopIds = listOf(stop1.id, stop2.id)
+                headsign = "Quincy Loop"
+            }
 
             val rp1 =
                 objects.routePattern(route) {
@@ -3221,14 +3116,13 @@ class RouteCardDataLeafTest {
                 }
 
             // Pattern 2 isn't scheduled, but because typical will treat this as branched
-            val representativeTrip2 =
-                objects.trip {
-                    routeId = route.id.idText
-                    routePatternId = "rp2"
-                    directionId = 0
-                    stopIds = listOf(stop1.id, stop3.id)
-                    headsign = "Quincy Loop"
-                }
+            val representativeTrip2 = objects.trip {
+                routeId = route.id.idText
+                routePatternId = "rp2"
+                directionId = 0
+                stopIds = listOf(stop1.id, stop3.id)
+                headsign = "Quincy Loop"
+            }
 
             val rp2 =
                 objects.routePattern(route) {
@@ -3237,35 +3131,33 @@ class RouteCardDataLeafTest {
                     representativeTripId = representativeTrip.id
                 }
             val now = EasternTimeInstant.now()
-            val alert =
-                objects.alert {
-                    effect = Alert.Effect.Suspension
-                    activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-                    informedEntity =
-                        mutableListOf(
-                            Alert.InformedEntity(
-                                activities =
-                                    listOf(
-                                        Alert.InformedEntity.Activity.Board,
-                                        Alert.InformedEntity.Activity.Exit,
-                                        Alert.InformedEntity.Activity.Ride,
-                                    ),
-                                directionId = 0,
-                                route = route.id,
-                                routeType = RouteType.FERRY,
-                                stop = stop1.id,
-                                trip = null,
-                            )
+            val alert = objects.alert {
+                effect = Alert.Effect.Suspension
+                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+                informedEntity =
+                    mutableListOf(
+                        Alert.InformedEntity(
+                            activities =
+                                listOf(
+                                    Alert.InformedEntity.Activity.Board,
+                                    Alert.InformedEntity.Activity.Exit,
+                                    Alert.InformedEntity.Activity.Ride,
+                                ),
+                            directionId = 0,
+                            route = route.id,
+                            routeType = RouteType.FERRY,
+                            stop = stop1.id,
+                            trip = null,
                         )
-                }
+                    )
+            }
 
-            val schedule =
-                objects.schedule {
-                    tripId = representativeTrip.id
-                    stopId = stop1.id
-                    departureTime = now + 5.minutes
-                    stopHeadsign = "Central Wharf"
-                }
+            val schedule = objects.schedule {
+                tripId = representativeTrip.id
+                stopId = stop1.id
+                departureTime = now + 5.minutes
+                stopHeadsign = "Central Wharf"
+            }
 
             assertEquals(
                 LeafFormat.Single(
@@ -3299,16 +3191,15 @@ class RouteCardDataLeafTest {
         val trip1 = objects.trip()
         val trip2 = objects.trip()
         val trip3 = objects.trip()
-        val generalAlert =
-            objects.alert { informedEntity(listOf(Alert.InformedEntity.Activity.Board)) }
-        val trip1Alert =
-            objects.alert {
-                informedEntity(listOf(Alert.InformedEntity.Activity.Board), trip = trip1.id)
-            }
-        val trip2Alert =
-            objects.alert {
-                informedEntity(listOf(Alert.InformedEntity.Activity.Board), trip = trip2.id)
-            }
+        val generalAlert = objects.alert {
+            informedEntity(listOf(Alert.InformedEntity.Activity.Board))
+        }
+        val trip1Alert = objects.alert {
+            informedEntity(listOf(Alert.InformedEntity.Activity.Board), trip = trip1.id)
+        }
+        val trip2Alert = objects.alert {
+            informedEntity(listOf(Alert.InformedEntity.Activity.Board), trip = trip2.id)
+        }
         val leaf =
             RouteCardData.Leaf(
                 LineOrRoute.Route(route),

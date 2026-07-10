@@ -227,8 +227,9 @@ private fun EditFavoritesListGroupedByRoute(
 ) {
     val notificationsFlag = SettingsCache.get(Settings.Notifications)
 
-    val displayedFavorites =
-        routeCardData?.filter { data -> !removedFavorites.containsAll(data.routeStopDirections) }
+    val displayedFavorites = routeCardData?.filter { data ->
+        !removedFavorites.containsAll(data.routeStopDirections)
+    }
 
     if (displayedFavorites == null) {
         CompositionLocalProvider(IsLoadingSheetContents provides true) {
@@ -298,8 +299,9 @@ private fun EditFavoritesList(
 ) {
     val notificationsFlag = SettingsCache.get(Settings.Notifications)
 
-    val displayedFavorites =
-        stopCardData?.filter { data -> !removedFavorites.containsAll(data.routeStopDirections) }
+    val displayedFavorites = stopCardData?.filter { data ->
+        !removedFavorites.containsAll(data.routeStopDirections)
+    }
 
     if (displayedFavorites == null) {
         CompositionLocalProvider(IsLoadingSheetContents provides true) {

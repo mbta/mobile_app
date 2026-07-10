@@ -11,39 +11,34 @@ class ChildStopFeaturesBuilderTest {
     @Test
     fun `contains correct data`() {
         val objects = ObjectCollectionBuilder()
-        val parent =
-            objects.stop {
-                id = "1"
-                locationType = LocationType.STATION
-                name = "Stop"
-            }
-        val platform =
-            objects.stop {
-                id = "2"
-                locationType = LocationType.STOP
-                platformName = "Headsign"
-                parentStationId = parent.id
-            }
-        val entrance =
-            objects.stop {
-                id = "3"
-                locationType = LocationType.ENTRANCE_EXIT
-                name = "Stop - Entrance"
-                parentStationId = parent.id
-            }
-        val boardingArea =
-            objects.stop {
-                id = "4"
-                locationType = LocationType.BOARDING_AREA
-                platformName = "Other Headsign"
-                parentStationId = parent.id
-            }
-        val node =
-            objects.stop {
-                id = "5"
-                locationType = LocationType.GENERIC_NODE
-                parentStationId = parent.id
-            }
+        val parent = objects.stop {
+            id = "1"
+            locationType = LocationType.STATION
+            name = "Stop"
+        }
+        val platform = objects.stop {
+            id = "2"
+            locationType = LocationType.STOP
+            platformName = "Headsign"
+            parentStationId = parent.id
+        }
+        val entrance = objects.stop {
+            id = "3"
+            locationType = LocationType.ENTRANCE_EXIT
+            name = "Stop - Entrance"
+            parentStationId = parent.id
+        }
+        val boardingArea = objects.stop {
+            id = "4"
+            locationType = LocationType.BOARDING_AREA
+            platformName = "Other Headsign"
+            parentStationId = parent.id
+        }
+        val node = objects.stop {
+            id = "5"
+            locationType = LocationType.GENERIC_NODE
+            parentStationId = parent.id
+        }
 
         val stops =
             mapOf(

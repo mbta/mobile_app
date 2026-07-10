@@ -20,29 +20,27 @@ public data class RouteDetailsStopList(val directionId: Int, val segments: List<
                 stops.first().stickConnections.filter { it.fromVPos == RouteBranchSegment.VPos.Top }
             val connectionsAfter =
                 stops.last().stickConnections.filter { it.toVPos == RouteBranchSegment.VPos.Bottom }
-            val connectionsTransitive =
-                connectionsBefore.mapNotNull { first ->
-                    val second =
-                        connectionsAfter.find { second ->
-                            first.toLane == second.fromLane && first.toVPos == second.fromVPos
-                        }
-                    if (second != null) {
-                        Triple(
-                            first,
-                            second,
-                            RouteBranchSegment.StickConnection(
-                                fromStop = first.fromStop,
-                                toStop = second.toStop,
-                                fromLane = first.fromLane,
-                                toLane = second.toLane,
-                                fromVPos = first.fromVPos,
-                                toVPos = second.toVPos,
-                            ),
-                        )
-                    } else {
-                        null
-                    }
+            val connectionsTransitive = connectionsBefore.mapNotNull { first ->
+                val second = connectionsAfter.find { second ->
+                    first.toLane == second.fromLane && first.toVPos == second.fromVPos
                 }
+                if (second != null) {
+                    Triple(
+                        first,
+                        second,
+                        RouteBranchSegment.StickConnection(
+                            fromStop = first.fromStop,
+                            toStop = second.toStop,
+                            fromLane = first.fromLane,
+                            toLane = second.toLane,
+                            fromVPos = first.fromVPos,
+                            toVPos = second.toVPos,
+                        ),
+                    )
+                } else {
+                    null
+                }
+            }
             val connections =
                 (connectionsBefore.filter { first ->
                         !connectionsTransitive.any { it.first == first }
@@ -52,17 +50,14 @@ public data class RouteDetailsStopList(val directionId: Int, val segments: List<
                         } +
                         connectionsTransitive.map { it.third })
                     .distinct()
-            val stickConnections =
-                connections.map {
-                    it to
-                        (lanesWithStops.contains(it.fromLane) && lanesWithStops.contains(it.toLane))
-                }
-            val terminatedTwist =
-                stickConnections.any { (connection, twisted) ->
-                    twisted &&
-                        (connection.fromVPos != RouteBranchSegment.VPos.Top ||
-                            connection.toVPos != RouteBranchSegment.VPos.Bottom)
-                }
+            val stickConnections = connections.map {
+                it to (lanesWithStops.contains(it.fromLane) && lanesWithStops.contains(it.toLane))
+            }
+            val terminatedTwist = stickConnections.any { (connection, twisted) ->
+                twisted &&
+                    (connection.fromVPos != RouteBranchSegment.VPos.Top ||
+                        connection.toVPos != RouteBranchSegment.VPos.Bottom)
+            }
             return if (terminatedTwist) null else stickConnections
         }
     }

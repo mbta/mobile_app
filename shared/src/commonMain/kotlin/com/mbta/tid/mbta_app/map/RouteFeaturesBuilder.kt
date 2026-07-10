@@ -92,14 +92,13 @@ public object RouteFeaturesBuilder {
         alertsByStop: Map<String, AlertAssociatedStop>,
     ): RouteSourceData {
         val routeLines = generateRouteLines(routeId, routeShapes, stopsById, alertsByStop)
-        val routeFeatures =
-            routeLines.map { lineData ->
-                Feature(
-                    geometry = lineData.line,
-                    properties =
-                        buildFeatureProperties { put(propAlertStateKey, lineData.alertState.name) },
-                )
-            }
+        val routeFeatures = routeLines.map { lineData ->
+            Feature(
+                geometry = lineData.line,
+                properties =
+                    buildFeatureProperties { put(propAlertStateKey, lineData.alertState.name) },
+            )
+        }
         val featureCollection = FeatureCollection(routeFeatures)
         return RouteSourceData(routeId, routeLines, featureCollection)
     }

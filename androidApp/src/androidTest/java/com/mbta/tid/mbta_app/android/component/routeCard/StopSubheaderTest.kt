@@ -78,11 +78,10 @@ class StopSubheaderTest {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val stop = objects.stop { wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.ElevatorClosure
-                informedEntity()
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.ElevatorClosure
+            informedEntity()
+        }
 
         val lineOrRoute = LineOrRoute.Route(route)
         loadKoinMocks {

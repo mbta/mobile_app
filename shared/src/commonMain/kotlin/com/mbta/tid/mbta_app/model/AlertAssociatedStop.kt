@@ -47,7 +47,8 @@ public class AlertAssociatedStop internal constructor(internal val stop: Stop) {
                                 stopId = Alert.InformedEntity.Matcher.Data(stop.id),
                                 routeId = Alert.InformedEntity.Matcher.Data(pattern.routeId),
                                 routeType = Alert.InformedEntity.Matcher.Data(route.type),
-                                directionId = Alert.InformedEntity.Matcher.Data(pattern.directionId),
+                                directionId =
+                                    Alert.InformedEntity.Matcher.Data(pattern.directionId),
                             )
                         }
                     } + relevantAlerts
