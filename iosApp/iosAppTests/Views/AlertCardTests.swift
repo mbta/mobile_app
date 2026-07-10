@@ -574,6 +574,7 @@ final class AlertCardTests: XCTestCase {
     func testTripCancellationAlertCard() throws {
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
+            alert.cause = .mechanicalIssue
             alert.effect = .cancellation
         }
 
@@ -614,6 +615,7 @@ final class AlertCardTests: XCTestCase {
     func testMultipleTripSuspensionAlertCard() throws {
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
+            alert.cause = .holiday
             alert.effect = .suspension
         }
 
@@ -731,6 +733,7 @@ final class AlertCardTests: XCTestCase {
     func testTripSpecificReminder() throws {
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
+            alert.cause = .mechanicalIssue
             alert.effect = .cancellation
         }
 
