@@ -88,13 +88,11 @@ public data class RouteSegment(
                                     ?.flatMap { it.serviceAlerts }
                                     .orEmpty())
                             .distinct()
-                    val serviceAlerts =
-                        allServiceAlerts.filter { alert ->
-                            alert.anyInformedEntity { informedEntity ->
-                                informedEntity.route != null &&
-                                    routes.contains(informedEntity.route)
-                            }
+                    val serviceAlerts = allServiceAlerts.filter { alert ->
+                        alert.anyInformedEntity { informedEntity ->
+                            informedEntity.route != null && routes.contains(informedEntity.route)
                         }
+                    }
 
                     // TODO determine effects that count
                     StopAlertState(

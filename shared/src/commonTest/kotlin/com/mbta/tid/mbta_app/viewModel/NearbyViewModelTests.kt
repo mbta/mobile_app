@@ -40,34 +40,29 @@ import org.maplibre.spatialk.geojson.Position
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class NearbyViewModelTests : KoinTest {
     val objects = ObjectCollectionBuilder()
-    val stop1 =
-        objects.stop {
-            id = "stop1"
-            latitude = 0.0
-            longitude = 0.0
-        }
-    val stop2 =
-        objects.stop {
-            id = "stop2"
-            latitude = 1.0
-            longitude = 1.0
-        }
-    val stop3 =
-        objects.stop {
-            id = "stop3"
-            latitude = -0.5
-            longitude = -0.5
-        }
-    val route1 =
-        objects.route {
-            id = "route1"
-            directionNames = listOf("Outbound", "Inbound")
-        }
-    val route2 =
-        objects.route {
-            id = "route2"
-            directionNames = listOf("Outbound", "Inbound")
-        }
+    val stop1 = objects.stop {
+        id = "stop1"
+        latitude = 0.0
+        longitude = 0.0
+    }
+    val stop2 = objects.stop {
+        id = "stop2"
+        latitude = 1.0
+        longitude = 1.0
+    }
+    val stop3 = objects.stop {
+        id = "stop3"
+        latitude = -0.5
+        longitude = -0.5
+    }
+    val route1 = objects.route {
+        id = "route1"
+        directionNames = listOf("Outbound", "Inbound")
+    }
+    val route2 = objects.route {
+        id = "route2"
+        directionNames = listOf("Outbound", "Inbound")
+    }
     val patterns =
         listOf(Pair(route1, listOf(stop1)), Pair(route2, listOf(stop2, stop3))).associate {
             (route, stops) ->
@@ -371,13 +366,12 @@ internal class NearbyViewModelTests : KoinTest {
         val objects = objects.clone()
         predictionsEverywhere(objects, now)
 
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                activePeriod(now - 10.minutes, now + 10.minutes)
-                informedEntity(stop = stop1.id)
-                informedEntity(stop = stop2.id)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            activePeriod(now - 10.minutes, now + 10.minutes)
+            informedEntity(stop = stop1.id)
+            informedEntity(stop = stop2.id)
+        }
 
         val dispatcher = StandardTestDispatcher(testScheduler)
         setUpKoin(objects, dispatcher)

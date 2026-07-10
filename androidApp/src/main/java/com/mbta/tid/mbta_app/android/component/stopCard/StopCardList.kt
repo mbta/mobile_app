@@ -89,13 +89,12 @@ private fun StopCardListPreview() {
     val objects = TestData.clone("StopCardListPreview")
 
     val ruggles = objects.getStop("place-rugg")
-    val tremontAtMelneaCass =
-        objects.stop {
-            id = "1227"
-            locationType = LocationType.STOP
-            name = "Tremont St @ Melnea Cass Blvd"
-            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
-        }
+    val tremontAtMelneaCass = objects.stop {
+        id = "1227"
+        locationType = LocationType.STOP
+        name = "Tremont St @ Melnea Cass Blvd"
+        wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+    }
     val boylston = objects.getStop("place-boyls")
     val ol = LineOrRoute.Route(objects.getRoute("Orange"))
     val olSouthboundPattern = objects.getRoutePattern("Orange-3-0")

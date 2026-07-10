@@ -274,13 +274,12 @@ private fun StopList(
 @Composable
 private fun TripStopsPreview() {
     val objects = ObjectCollectionBuilder("TripStopsPreview")
-    val route =
-        objects.route {
-            color = "FFC72C"
-            shortName = "109"
-            textColor = "000000"
-            type = RouteType.BUS
-        }
+    val route = objects.route {
+        color = "FFC72C"
+        shortName = "109"
+        textColor = "000000"
+        type = RouteType.BUS
+    }
     val stops =
         (1..10).map {
             objects.stop {

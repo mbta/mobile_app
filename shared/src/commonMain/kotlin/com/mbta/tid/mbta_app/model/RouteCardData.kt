@@ -182,12 +182,11 @@ public data class RouteCardData(
                         !it.anyInformedEntitySatisfies { checkNullTrip() })
             } ?: alertsDownstream.firstOrNull()
 
-        public fun alertsHere(tripId: String? = null): List<Alert> =
-            alertsHere.filter { alert ->
-                alert.anyInformedEntitySatisfies {
-                    checkTrip(tripId?.let { Matcher.Data(it) } ?: Matcher.Wildcard)
-                }
+        public fun alertsHere(tripId: String? = null): List<Alert> = alertsHere.filter { alert ->
+            alert.anyInformedEntitySatisfies {
+                checkTrip(tripId?.let { Matcher.Data(it) } ?: Matcher.Wildcard)
             }
+        }
 
         public fun alertsDownstream(tripId: String? = null): List<Alert> =
             alertsDownstream.filter { alert ->
@@ -291,8 +290,9 @@ public data class RouteCardData(
             atTime: EasternTimeInstant,
         ): Map<String, ByHeadsignData> {
             return potentialService.associate { (_, headsign, patternIds) ->
-                val routePatterns =
-                    routePatterns.filter { pattern -> patternIds.contains(pattern.id) }
+                val routePatterns = routePatterns.filter { pattern ->
+                    patternIds.contains(pattern.id)
+                }
 
                 val routePatternIds = routePatterns.map { it.id }.toSet()
 
@@ -877,10 +877,9 @@ public data class RouteCardData(
                 val patternIds = (leafBuilder.routePatterns ?: emptyList()).map { it.id }.toSet()
                 leafBuilder.upcomingTrips = upcomingTripsHere
                 leafBuilder.allDataLoaded = schedules != null
-                leafBuilder.hasSchedulesTodayByPattern =
-                    hasSchedulesTodayByPattern?.let {
-                        patternIds.associateWith { patternId -> it.getOrElse(patternId) { false } }
-                    }
+                leafBuilder.hasSchedulesTodayByPattern = hasSchedulesTodayByPattern?.let {
+                    patternIds.associateWith { patternId -> it.getOrElse(patternId) { false } }
+                }
                 leafBuilder.subwayServiceStartTime =
                     if (leafBuilder.lineOrRoute.isSubway)
                         schedules

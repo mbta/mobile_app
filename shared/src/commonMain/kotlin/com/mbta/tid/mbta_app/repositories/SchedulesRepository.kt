@@ -106,19 +106,18 @@ internal class SchedulesRepository : ISchedulesRepository, KoinComponent {
     override suspend fun getSchedule(
         stopIds: List<String>,
         now: EasternTimeInstant,
-    ): ApiResult<ScheduleResponse> =
-        ApiResult.runCatching {
-            mobileBackendClient
-                .get {
-                    timeout { requestTimeoutMillis = 4000 }
-                    url {
-                        path("api/schedules")
-                        parameters.append("stop_ids", stopIds.joinToString(separator = ","))
-                        parameters.append("date_time", now.toString())
-                    }
+    ): ApiResult<ScheduleResponse> = ApiResult.runCatching {
+        mobileBackendClient
+            .get {
+                timeout { requestTimeoutMillis = 4000 }
+                url {
+                    path("api/schedules")
+                    parameters.append("stop_ids", stopIds.joinToString(separator = ","))
+                    parameters.append("date_time", now.toString())
                 }
-                .body()
-        }
+            }
+            .body()
+    }
 
     override suspend fun getSchedule(stopIds: List<String>): ApiResult<ScheduleResponse> {
         return getSchedule(stopIds, EasternTimeInstant.now())
@@ -129,28 +128,27 @@ internal class SchedulesRepository : ISchedulesRepository, KoinComponent {
         stopId: String,
         directionId: Int,
         now: EasternTimeInstant,
-    ): ApiResult<NextScheduleResponse> =
-        ApiResult.runCatching {
-            mobileBackendClient
-                .get {
-                    timeout { requestTimeoutMillis = 4000 }
-                    url {
-                        path("api/schedules/next")
-                        parameters.append(
-                            "route",
-                            when (route) {
-                                is LineOrRoute.Line ->
-                                    route.routes.joinToString(separator = ",") { it.id.idText }
-                                is LineOrRoute.Route -> route.id.idText
-                            },
-                        )
-                        parameters.append("stop", stopId)
-                        parameters.append("direction", directionId.toString())
-                        parameters.append("date_time", now.toString())
-                    }
+    ): ApiResult<NextScheduleResponse> = ApiResult.runCatching {
+        mobileBackendClient
+            .get {
+                timeout { requestTimeoutMillis = 4000 }
+                url {
+                    path("api/schedules/next")
+                    parameters.append(
+                        "route",
+                        when (route) {
+                            is LineOrRoute.Line ->
+                                route.routes.joinToString(separator = ",") { it.id.idText }
+                            is LineOrRoute.Route -> route.id.idText
+                        },
+                    )
+                    parameters.append("stop", stopId)
+                    parameters.append("direction", directionId.toString())
+                    parameters.append("date_time", now.toString())
                 }
-                .body()
-        }
+            }
+            .body()
+    }
 }
 
 public class MockScheduleRepository(

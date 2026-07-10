@@ -22,11 +22,10 @@ class StopCardTest {
         val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "Stop" }
-        val route =
-            objects.route {
-                longName = "Route"
-                type = RouteType.LIGHT_RAIL
-            }
+        val route = objects.route {
+            longName = "Route"
+            type = RouteType.LIGHT_RAIL
+        }
 
         composeTestRule.setContent {
             StopCard(

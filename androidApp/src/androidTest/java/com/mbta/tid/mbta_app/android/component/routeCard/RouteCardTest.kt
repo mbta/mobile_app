@@ -21,11 +21,10 @@ class RouteCardTest {
         val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
-        val route =
-            objects.route {
-                longName = "Route"
-                type = RouteType.LIGHT_RAIL
-            }
+        val route = objects.route {
+            longName = "Route"
+            type = RouteType.LIGHT_RAIL
+        }
 
         composeTestRule.setContent {
             RouteCard(
@@ -53,11 +52,10 @@ class RouteCardTest {
         val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
-        val route =
-            objects.route {
-                longName = "Route"
-                type = RouteType.LIGHT_RAIL
-            }
+        val route = objects.route {
+            longName = "Route"
+            type = RouteType.LIGHT_RAIL
+        }
 
         composeTestRule.setContent {
             RouteCard(
@@ -87,11 +85,10 @@ class RouteCardTest {
         val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
-        val route =
-            objects.route {
-                longName = "Route"
-                type = RouteType.LIGHT_RAIL
-            }
+        val route = objects.route {
+            longName = "Route"
+            type = RouteType.LIGHT_RAIL
+        }
 
         composeTestRule.setContent {
             RouteCard(

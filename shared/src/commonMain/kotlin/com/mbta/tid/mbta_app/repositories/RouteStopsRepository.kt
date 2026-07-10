@@ -33,20 +33,19 @@ internal class RouteStopsRepository : IRouteStopsRepository, KoinComponent {
     override suspend fun getRouteSegments(
         routeId: Route.Id,
         directionId: Int,
-    ): ApiResult<RouteStopsResult> =
-        ApiResult.runCatching {
-            val response: List<RouteBranchSegment> =
-                mobileBackendClient
-                    .get {
-                        url {
-                            path("api/route/stop-graph")
-                            parameters.append("route_id", routeId.idText)
-                            parameters.append("direction_id", directionId.toString())
-                        }
+    ): ApiResult<RouteStopsResult> = ApiResult.runCatching {
+        val response: List<RouteBranchSegment> =
+            mobileBackendClient
+                .get {
+                    url {
+                        path("api/route/stop-graph")
+                        parameters.append("route_id", routeId.idText)
+                        parameters.append("direction_id", directionId.toString())
                     }
-                    .body()
-            RouteStopsResult(routeId, directionId, response)
-        }
+                }
+                .body()
+        RouteStopsResult(routeId, directionId, response)
+    }
 }
 
 public class MockRouteStopsRepository(

@@ -9,11 +9,10 @@ class DirectionTest {
     @Test
     fun `basic case gets correct values`() {
         val objects = ObjectCollectionBuilder()
-        val route =
-            objects.route {
-                directionNames = listOf("Wrong Name", "Right Name")
-                directionDestinations = listOf("Wrong Destination", "Right Destination")
-            }
+        val route = objects.route {
+            directionNames = listOf("Wrong Name", "Right Name")
+            directionDestinations = listOf("Wrong Destination", "Right Destination")
+        }
 
         val direction = Direction(1, route)
         assertEquals("Right Name", direction.name)

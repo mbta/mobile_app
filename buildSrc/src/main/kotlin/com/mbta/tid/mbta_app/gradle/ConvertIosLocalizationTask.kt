@@ -220,8 +220,9 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
                 Plural(items.mapValues { convertIosTemplate(it.value) })
 
             override fun getTemplatePlaceholders(): Set<String> {
-                val templatePlaceholders =
-                    items.mapValues { (_, text) -> template.findAll(text).map { it.value }.toSet() }
+                val templatePlaceholders = items.mapValues { (_, text) ->
+                    template.findAll(text).map { it.value }.toSet()
+                }
                 return checkNotNull(templatePlaceholders.values.distinct().singleOrNull()) {
                     "plural string has inconsistent template placeholders: $templatePlaceholders"
                 }

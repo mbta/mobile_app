@@ -42,12 +42,11 @@ class SearchBarOverlayTest : KoinTest {
     private val builder = ObjectCollectionBuilder()
     private val visitedStop = builder.stop { name = "visitedStopName" }
     private val searchedStop = builder.stop { name = "stopName" }
-    private val route =
-        builder.route {
-            longName = "Here - There"
-            shortName = "3½"
-            type = RouteType.BUS
-        }
+    private val route = builder.route {
+        longName = "Here - There"
+        shortName = "3½"
+        type = RouteType.BUS
+    }
     private val routePattern =
         builder.routePattern(route) {
             representativeTrip { stopIds = listOf(visitedStop.id, searchedStop.id) }

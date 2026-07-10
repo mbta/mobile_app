@@ -433,23 +433,21 @@ private fun AlertFooter(updatedAt: EasternTimeInstant) {
 private fun AlertDetailsPreview() {
     MyApplicationTheme {
         val objects = ObjectCollectionBuilder("AlertDetailsPreview")
-        val route =
-            objects.route {
-                color = "ED8B00"
-                textColor = "FFFFFF"
-                longName = "Orange Line"
-            }
+        val route = objects.route {
+            color = "ED8B00"
+            textColor = "FFFFFF"
+            longName = "Orange Line"
+        }
         val now = EasternTimeInstant.now()
         val stop = objects.stop { name = "Here @ There" }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                cause = Alert.Cause.Maintenance
-                activePeriod(now - 3.days, now + 3.days)
-                description =
-                    "Orange Line service between Ruggles and Jackson Square will be suspended from Thursday, May 23 through Friday, May 31.\n\nAn accessible van will be available for riders. Please see Station Personnel or Transit Ambassadors for assistance.\n\nThe Haverhill Commuter Rail Line will be Fare Free between Oak Grove, Malden Center, and North Station during this work."
-                updatedAt = now - 10.minutes
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            cause = Alert.Cause.Maintenance
+            activePeriod(now - 3.days, now + 3.days)
+            description =
+                "Orange Line service between Ruggles and Jackson Square will be suspended from Thursday, May 23 through Friday, May 31.\n\nAn accessible van will be available for riders. Please see Station Personnel or Transit Ambassadors for assistance.\n\nThe Haverhill Commuter Rail Line will be Fare Free between Oak Grove, Malden Center, and North Station during this work."
+            updatedAt = now - 10.minutes
+        }
         Column(Modifier.background(colorResource(R.color.fill2)).padding(16.dp)) {
             AlertDetails(alert, null, listOf(route), stop, listOf(stop), now, MockAnalytics())
         }
@@ -464,33 +462,31 @@ private fun AlertDetailsPreview() {
 private fun AlertDetailsRecurringPreview() {
     MyApplicationTheme {
         val objects = ObjectCollectionBuilder("AlertDetailsPreview")
-        val route =
-            objects.route {
-                color = "ED8B00"
-                textColor = "FFFFFF"
-                longName = "Orange Line"
-            }
+        val route = objects.route {
+            color = "ED8B00"
+            textColor = "FFFFFF"
+            longName = "Orange Line"
+        }
         val now = EasternTimeInstant.now()
         val today = now.serviceDate
         val stop = objects.stop { name = "Here @ There" }
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                cause = Alert.Cause.Maintenance
-                val nineAM = LocalTime(9, 0)
-                val endOfService = LocalTime(3, 0)
-                activePeriod(
-                    EasternTimeInstant(today, nineAM),
-                    EasternTimeInstant(today.plus(DatePeriod(days = 1)), endOfService),
-                )
-                activePeriod(
-                    EasternTimeInstant(today.plus(DatePeriod(days = 2)), nineAM),
-                    EasternTimeInstant(today.plus(DatePeriod(days = 3)), endOfService),
-                )
-                description =
-                    "Orange Line service between Ruggles and Jackson Square will be suspended from Thursday, May 23 through Friday, May 31.\n\nAn accessible van will be available for riders. Please see Station Personnel or Transit Ambassadors for assistance.\n\nThe Haverhill Commuter Rail Line will be Fare Free between Oak Grove, Malden Center, and North Station during this work."
-                updatedAt = now - 10.minutes
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            cause = Alert.Cause.Maintenance
+            val nineAM = LocalTime(9, 0)
+            val endOfService = LocalTime(3, 0)
+            activePeriod(
+                EasternTimeInstant(today, nineAM),
+                EasternTimeInstant(today.plus(DatePeriod(days = 1)), endOfService),
+            )
+            activePeriod(
+                EasternTimeInstant(today.plus(DatePeriod(days = 2)), nineAM),
+                EasternTimeInstant(today.plus(DatePeriod(days = 3)), endOfService),
+            )
+            description =
+                "Orange Line service between Ruggles and Jackson Square will be suspended from Thursday, May 23 through Friday, May 31.\n\nAn accessible van will be available for riders. Please see Station Personnel or Transit Ambassadors for assistance.\n\nThe Haverhill Commuter Rail Line will be Fare Free between Oak Grove, Malden Center, and North Station during this work."
+            updatedAt = now - 10.minutes
+        }
         Column(Modifier.background(colorResource(R.color.fill2)).padding(16.dp)) {
             AlertDetails(alert, null, listOf(route), stop, listOf(stop), now, MockAnalytics())
         }

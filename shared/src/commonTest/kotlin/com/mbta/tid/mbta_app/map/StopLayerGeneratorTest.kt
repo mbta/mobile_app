@@ -184,11 +184,10 @@ class StopLayerGeneratorTest {
     @Test
     fun `state stop details filter applies correctly`() = runBlocking {
         val objects = ObjectCollectionBuilder()
-        val subwayRoute =
-            objects.route {
-                id = "Orange"
-                type = RouteType.HEAVY_RAIL
-            }
+        val subwayRoute = objects.route {
+            id = "Orange"
+            type = RouteType.HEAVY_RAIL
+        }
         val selectedBusRoute = objects.route { type = RouteType.BUS }
         val otherBusRoute = objects.route { type = RouteType.BUS }
         val busAndSubwayStop = objects.stop()
@@ -277,11 +276,10 @@ class StopLayerGeneratorTest {
     @Test
     fun `state trip details filter applies correctly`() = runBlocking {
         val objects = ObjectCollectionBuilder()
-        val subwayRoute =
-            objects.route {
-                id = "Orange"
-                type = RouteType.HEAVY_RAIL
-            }
+        val subwayRoute = objects.route {
+            id = "Orange"
+            type = RouteType.HEAVY_RAIL
+        }
         val selectedBusRoute = objects.route { type = RouteType.BUS }
         val otherBusRoute = objects.route { type = RouteType.BUS }
         val busAndSubwayStop = objects.stop()

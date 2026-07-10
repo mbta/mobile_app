@@ -50,40 +50,39 @@ class StopTest {
     fun `resolvedParentToAllStops builds map for station and and standalone stops`() {
         val objects = ObjectCollectionBuilder()
 
-        val station =
-            objects.stop {
-                id = "station"
-                locationType = LocationType.STATION
-                childStopIds = listOf("child1")
-            }
-        val child1 =
-            objects.stop {
-                id = "child1"
-                parentStationId = "station"
-            }
+        val station = objects.stop {
+            id = "station"
+            locationType = LocationType.STATION
+            childStopIds = listOf("child1")
+        }
+        val child1 = objects.stop {
+            id = "child1"
+            parentStationId = "station"
+        }
         val standalone = objects.stop()
 
         assertEquals(
             mapOf(station to setOf(child1.id, station.id), standalone to setOf(standalone.id)),
-            Stop.resolvedParentToAllStops(listOf(child1.id, standalone.id), GlobalResponse(objects)),
+            Stop.resolvedParentToAllStops(
+                listOf(child1.id, standalone.id),
+                GlobalResponse(objects),
+            ),
         )
     }
 
     @Test
     fun `isLastStopForAllPatterns true when last stop in every pattern appears in`() {
         val objects = ObjectCollectionBuilder()
-        val targetParent =
-            objects.stop {
-                id = "targetParent"
-                locationType = LocationType.STATION
-                childStopIds = listOf("targetChild")
-            }
-        val targetChild =
-            objects.stop {
-                id = "targetChild"
-                locationType = LocationType.STOP
-                parentStationId = "targetParent"
-            }
+        val targetParent = objects.stop {
+            id = "targetParent"
+            locationType = LocationType.STATION
+            childStopIds = listOf("targetChild")
+        }
+        val targetChild = objects.stop {
+            id = "targetChild"
+            locationType = LocationType.STOP
+            parentStationId = "targetParent"
+        }
 
         val other1 = objects.stop {}
         val other2 = objects.stop {}
@@ -128,18 +127,16 @@ class StopTest {
     @Test
     fun `isLastStopForAllPatterns false when mid-route in a pattern`() {
         val objects = ObjectCollectionBuilder()
-        val targetParent =
-            objects.stop {
-                id = "targetParent"
-                locationType = LocationType.STATION
-                childStopIds = listOf("targetChild")
-            }
-        val targetChild =
-            objects.stop {
-                id = "targetChild"
-                locationType = LocationType.STOP
-                parentStationId = "targetParent"
-            }
+        val targetParent = objects.stop {
+            id = "targetParent"
+            locationType = LocationType.STATION
+            childStopIds = listOf("targetChild")
+        }
+        val targetChild = objects.stop {
+            id = "targetChild"
+            locationType = LocationType.STOP
+            parentStationId = "targetParent"
+        }
 
         val other1 = objects.stop {}
         val other2 = objects.stop {}

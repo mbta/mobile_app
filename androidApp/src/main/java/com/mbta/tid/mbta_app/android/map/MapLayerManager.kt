@@ -34,16 +34,15 @@ class MapLayerManager(val map: MapboxMap, val context: Context) : IMapLayerManag
 
     private val lock = Mutex()
 
-    suspend fun loadImages() =
-        lock.withLock {
-            withContext(Dispatchers.Main) {
-                for (icon in StopIcons.all + AlertIcons.all) {
-                    val drawable = context.resources.getDrawable(drawableByName(icon), null)
+    suspend fun loadImages() = lock.withLock {
+        withContext(Dispatchers.Main) {
+            for (icon in StopIcons.all + AlertIcons.all) {
+                val drawable = context.resources.getDrawable(drawableByName(icon), null)
 
-                    map.addImage(icon, (drawable as BitmapDrawable).bitmap)
-                }
+                map.addImage(icon, (drawable as BitmapDrawable).bitmap)
             }
         }
+    }
 
     private suspend fun addSource(source: GeoJsonSource) {
         withContext(Dispatchers.Main) {
@@ -139,22 +138,21 @@ class MapLayerManager(val map: MapboxMap, val context: Context) : IMapLayerManag
         }
     }
 
-    suspend fun setUpAnchorLayers() =
-        lock.withLock {
-            withContext(Dispatchers.Main) {
-                if (!map.styleLayerExists(puckAnchorLayerId)) {
-                    map.addLayer(SlotLayer(puckAnchorLayerId))
-                }
-                if (!map.styleLayerExists(stopAnchorLayerId)) {
-                    val stopAnchorLayer = SlotLayer(stopAnchorLayerId)
-                    map.addLayerBelow(stopAnchorLayer, puckAnchorLayerId)
-                }
-                if (!map.styleLayerExists(routeAnchorLayerId)) {
-                    val routeAnchorLayer = SlotLayer(routeAnchorLayerId)
-                    map.addLayerBelow(routeAnchorLayer, stopAnchorLayerId)
-                }
+    suspend fun setUpAnchorLayers() = lock.withLock {
+        withContext(Dispatchers.Main) {
+            if (!map.styleLayerExists(puckAnchorLayerId)) {
+                map.addLayer(SlotLayer(puckAnchorLayerId))
+            }
+            if (!map.styleLayerExists(stopAnchorLayerId)) {
+                val stopAnchorLayer = SlotLayer(stopAnchorLayerId)
+                map.addLayerBelow(stopAnchorLayer, puckAnchorLayerId)
+            }
+            if (!map.styleLayerExists(routeAnchorLayerId)) {
+                val routeAnchorLayer = SlotLayer(routeAnchorLayerId)
+                map.addLayerBelow(routeAnchorLayer, stopAnchorLayerId)
             }
         }
+    }
 
     private suspend fun updateSourceData(sourceId: String, data: FeatureCollection) {
         // styleSourceExists is not thread safe, but setStyleGeoJSONSourceData is

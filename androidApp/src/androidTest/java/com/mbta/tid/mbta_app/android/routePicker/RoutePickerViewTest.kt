@@ -77,7 +77,8 @@ class RoutePickerViewTest {
                     NavigationCallbacks(
                         onBack = {},
                         onClose = {},
-                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
+                        backButtonPresentation =
+                            NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
                 errorBannerViewModel = koinInject(),
             )
@@ -308,11 +309,10 @@ class RoutePickerViewTest {
     @Test
     fun testRouteSelection() {
         val objects = ObjectCollectionBuilder()
-        val route =
-            objects.route {
-                longName = "Orange Line"
-                type = RouteType.HEAVY_RAIL
-            }
+        val route = objects.route {
+            longName = "Orange Line"
+            type = RouteType.HEAVY_RAIL
+        }
 
         var selectedRouteId: LineOrRoute.Id? = null
         var selectedContext: RouteDetailsContext? = null
@@ -401,7 +401,8 @@ class RoutePickerViewTest {
                     NavigationCallbacks(
                         onBack = null,
                         onClose = { closeCalled = true },
-                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
+                        backButtonPresentation =
+                            NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
                 errorBannerViewModel = koinInject(),
             )
@@ -418,18 +419,16 @@ class RoutePickerViewTest {
     @Test
     fun testFilterInputRequests() {
         val objects = ObjectCollectionBuilder()
-        val route1 =
-            objects.route {
-                shortName = "1"
-                longName = "Harvard Square - Nubian Station"
-                type = RouteType.BUS
-            }
-        val route71 =
-            objects.route {
-                shortName = "71"
-                longName = "Watertown Square - Harvard Station"
-                type = RouteType.BUS
-            }
+        val route1 = objects.route {
+            shortName = "1"
+            longName = "Harvard Square - Nubian Station"
+            type = RouteType.BUS
+        }
+        val route71 = objects.route {
+            shortName = "71"
+            longName = "Watertown Square - Harvard Station"
+            type = RouteType.BUS
+        }
 
         loadKoinMocks(objects) {
             global = MockGlobalRepository(GlobalResponse(objects))
@@ -491,18 +490,16 @@ class RoutePickerViewTest {
     @Test
     fun testNoFilterResults() {
         val objects = ObjectCollectionBuilder()
-        val route1 =
-            objects.route {
-                shortName = "1"
-                longName = "Harvard Square - Nubian Station"
-                type = RouteType.BUS
-            }
-        val route71 =
-            objects.route {
-                shortName = "71"
-                longName = "Watertown Square - Harvard Station"
-                type = RouteType.BUS
-            }
+        val route1 = objects.route {
+            shortName = "1"
+            longName = "Harvard Square - Nubian Station"
+            type = RouteType.BUS
+        }
+        val route71 = objects.route {
+            shortName = "71"
+            longName = "Watertown Square - Harvard Station"
+            type = RouteType.BUS
+        }
 
         loadKoinMocks(objects) {
             global = MockGlobalRepository(GlobalResponse(objects))

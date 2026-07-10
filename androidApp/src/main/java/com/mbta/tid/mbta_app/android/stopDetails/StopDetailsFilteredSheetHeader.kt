@@ -106,12 +106,11 @@ fun StopDetailsFilteredHeader(
 @Composable
 private fun StopDetailsFilteredHeaderPreview() {
     val objects = ObjectCollectionBuilder("StopDetailsFilteredHeaderPreview")
-    val route =
-        objects.route {
-            color = "ED8B00"
-            type = RouteType.HEAVY_RAIL
-            longName = "Orange Line"
-        }
+    val route = objects.route {
+        color = "ED8B00"
+        type = RouteType.HEAVY_RAIL
+        longName = "Orange Line"
+    }
     val stop = objects.stop { name = "Back Bay" }
 
     MyApplicationTheme {
@@ -126,7 +125,8 @@ private fun StopDetailsFilteredHeaderPreview() {
                     NavigationCallbacks(
                         onBack = {},
                         onClose = {},
-                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
+                        backButtonPresentation =
+                            NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
             )
             HorizontalDivider()
@@ -140,7 +140,8 @@ private fun StopDetailsFilteredHeaderPreview() {
                     NavigationCallbacks(
                         onBack = null,
                         onClose = null,
-                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
+                        backButtonPresentation =
+                            NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
             )
         }

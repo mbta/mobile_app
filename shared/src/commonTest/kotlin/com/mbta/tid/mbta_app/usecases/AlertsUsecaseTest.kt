@@ -24,13 +24,12 @@ class AlertsUsecaseTest {
     fun `connect with successful alerts response and existing global state`() {
         val objects = ObjectCollectionBuilder()
         val facility = objects.facility { type = Facility.Type.Elevator }
-        val alert =
-            objects.alert {
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.UsingWheelchair),
-                    facility = facility.id,
-                )
-            }
+        val alert = objects.alert {
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.UsingWheelchair),
+                facility = facility.id,
+            )
+        }
 
         val alertResponse = AlertsStreamDataResponse(objects)
         val mockGlobalRepository = MockGlobalRepository(GlobalResponse(objects))
@@ -57,13 +56,12 @@ class AlertsUsecaseTest {
     fun `global data is still injected when alert data changes`() {
         val objects = ObjectCollectionBuilder()
         val facility = objects.facility { type = Facility.Type.Elevator }
-        val alert1 =
-            objects.alert {
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.UsingWheelchair),
-                    facility = facility.id,
-                )
-            }
+        val alert1 = objects.alert {
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.UsingWheelchair),
+                facility = facility.id,
+            )
+        }
 
         val mockGlobalRepository = MockGlobalRepository(GlobalResponse(objects))
         val mockAlertsRepository = MockAlertsRepository(AlertsStreamDataResponse(objects))
@@ -84,13 +82,12 @@ class AlertsUsecaseTest {
                 ?.get(facility.id),
         )
 
-        val alert2 =
-            objects.alert {
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.UsingWheelchair),
-                    facility = facility.id,
-                )
-            }
+        val alert2 = objects.alert {
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.UsingWheelchair),
+                facility = facility.id,
+            )
+        }
         mockAlertsRepository.receiveResult(ApiResult.Ok(AlertsStreamDataResponse(objects)))
         assertEquals(
             facility,
@@ -142,13 +139,12 @@ class AlertsUsecaseTest {
     fun `alerts are updated when global data is updated`() = runTest {
         val objects = ObjectCollectionBuilder()
         val facility1 = objects.facility { type = Facility.Type.Elevator }
-        val alert =
-            objects.alert {
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.UsingWheelchair),
-                    facility = facility1.id,
-                )
-            }
+        val alert = objects.alert {
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.UsingWheelchair),
+                facility = facility1.id,
+            )
+        }
         val mockGlobalRepository = MockGlobalRepository(GlobalResponse(objects))
         val mockAlertsRepository = MockAlertsRepository(AlertsStreamDataResponse(objects))
         val usecase =
@@ -173,12 +169,11 @@ class AlertsUsecaseTest {
                 ?.get(facility1.id),
         )
 
-        val facility2 =
-            objects.facility {
-                id = facility1.id
-                shortName = "New name"
-                type = Facility.Type.Elevator
-            }
+        val facility2 = objects.facility {
+            id = facility1.id
+            shortName = "New name"
+            type = Facility.Type.Elevator
+        }
         mockGlobalRepository.updateGlobalData(GlobalResponse(objects))
 
         advanceUntilIdle()

@@ -51,7 +51,8 @@ class TripDetailsPageTest {
                     NavigationCallbacks(
                         onBack = null,
                         onClose = { onCloseCalled = true },
-                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
+                        backButtonPresentation =
+                            NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
             )
         }
@@ -70,12 +71,11 @@ class TripDetailsPageTest {
                 stopIds = objects.getTrip(routePattern.representativeTripId).stopIds
             }
         val targetStop = objects.getStop("place-dwnxg")
-        val vehicle =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.IncomingAt
-                stopId = targetStop.id
-                tripId = trip.id
-            }
+        val vehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.IncomingAt
+            stopId = targetStop.id
+            tripId = trip.id
+        }
 
         loadKoinMocks(objects) {
             this.trip =

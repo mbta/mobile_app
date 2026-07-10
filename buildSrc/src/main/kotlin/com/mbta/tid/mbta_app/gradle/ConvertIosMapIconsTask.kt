@@ -139,21 +139,20 @@ abstract class ConvertIosMapIconsTask @Inject constructor(private val exec: Exec
             !destinationPath.exists() ||
                 sourcePath.getLastModifiedTime() > destinationPath.getLastModifiedTime()
         ) {
-            val result =
-                exec.exec {
-                    commandLine(
-                        "rsvg-convert",
-                        sourcePath,
-                        "--dpi-x",
-                        dpi,
-                        "--dpi-y",
-                        dpi,
-                        "-z",
-                        dpi / 160.0,
-                        "-o",
-                        destinationPath,
-                    )
-                }
+            val result = exec.exec {
+                commandLine(
+                    "rsvg-convert",
+                    sourcePath,
+                    "--dpi-x",
+                    dpi,
+                    "--dpi-y",
+                    dpi,
+                    "-z",
+                    dpi / 160.0,
+                    "-o",
+                    destinationPath,
+                )
+            }
             result.assertNormalExitValue()
         }
     }

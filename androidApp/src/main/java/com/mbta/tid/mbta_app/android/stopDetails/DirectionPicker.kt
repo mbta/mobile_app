@@ -100,21 +100,18 @@ fun DirectionPicker(
 @Composable
 private fun DirectionPickerPreview() {
     val objects = ObjectCollectionBuilder("DirectionPickerPreview")
-    val red =
-        objects.route {
-            color = "DA291C"
-            textColor = "FFFFFF"
-        }
-    val bus =
-        objects.route {
-            color = "FFC72C"
-            textColor = "000000"
-        }
-    val green =
-        objects.route {
-            color = "00843D"
-            textColor = "FFFFFF"
-        }
+    val red = objects.route {
+        color = "DA291C"
+        textColor = "FFFFFF"
+    }
+    val bus = objects.route {
+        color = "FFC72C"
+        textColor = "000000"
+    }
+    val green = objects.route {
+        color = "00843D"
+        textColor = "FFFFFF"
+    }
     MyApplicationTheme {
         Column {
             DirectionPicker(

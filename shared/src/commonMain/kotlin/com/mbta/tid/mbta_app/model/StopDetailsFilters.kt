@@ -48,8 +48,9 @@ public data class StopDetailsPageFilters(
     val stopFilter: StopDetailsFilter?,
     val tripFilter: TripDetailsFilter?,
 ) {
-    public var routeStopDirection: RouteStopDirection? =
-        stopFilter?.let { RouteStopDirection(it.routeId, stopId, it.directionId) }
+    public var routeStopDirection: RouteStopDirection? = stopFilter?.let {
+        RouteStopDirection(it.routeId, stopId, it.directionId)
+    }
 }
 
 @Serializable

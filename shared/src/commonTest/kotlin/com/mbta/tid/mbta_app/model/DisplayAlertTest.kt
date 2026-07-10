@@ -16,33 +16,29 @@ class DisplayAlertTest {
     val stop = objects.stop()
     val now = EasternTimeInstant.now()
 
-    val hereMajorNow =
-        objects.alert {
-            id = "hereMajorNow"
-            effect = Effect.Shuttle
-            activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
-        }
+    val hereMajorNow = objects.alert {
+        id = "hereMajorNow"
+        effect = Effect.Shuttle
+        activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
+    }
 
-    val hereElevatorNow =
-        objects.alert {
-            id = "hereElevatorNow"
-            effect = Effect.ElevatorClosure
-            activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
-        }
+    val hereElevatorNow = objects.alert {
+        id = "hereElevatorNow"
+        effect = Effect.ElevatorClosure
+        activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
+    }
 
-    val hereMajorLater =
-        objects.alert {
-            id = "hereMajorLater"
-            effect = Effect.Shuttle
-            activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(10.minutes), null))
-        }
+    val hereMajorLater = objects.alert {
+        id = "hereMajorLater"
+        effect = Effect.Shuttle
+        activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(10.minutes), null))
+    }
 
-    val downstreamMajorNow =
-        objects.alert {
-            id = "downstreamMajorNow"
-            effect = Effect.Shuttle
-            activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
-        }
+    val downstreamMajorNow = objects.alert {
+        id = "downstreamMajorNow"
+        effect = Effect.Shuttle
+        activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
+    }
 
     @Test
     fun `cardSpec major with still some service somehow is regular`() = runBlocking {
@@ -56,67 +52,64 @@ class DisplayAlertTest {
 
     @Test
     fun `cardSpec major for selected trip is takeover`() = runBlocking {
-        val tripAlert =
-            objects.alert {
-                id = "hereForTargetTrip"
-                effect = Effect.Shuttle
-                activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
-                informedEntity =
-                    mutableListOf(
-                        Alert.InformedEntity(
-                            trip = "trip1",
-                            activities =
-                                listOf(
-                                    Alert.InformedEntity.Activity.Board,
-                                    Alert.InformedEntity.Activity.Exit,
-                                    Alert.InformedEntity.Activity.Ride,
-                                ),
-                        )
+        val tripAlert = objects.alert {
+            id = "hereForTargetTrip"
+            effect = Effect.Shuttle
+            activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
+            informedEntity =
+                mutableListOf(
+                    Alert.InformedEntity(
+                        trip = "trip1",
+                        activities =
+                            listOf(
+                                Alert.InformedEntity.Activity.Board,
+                                Alert.InformedEntity.Activity.Exit,
+                                Alert.InformedEntity.Activity.Ride,
+                            ),
                     )
-            }
+                )
+        }
         assertEquals(AlertCardSpec.Takeover, DisplayAlert(tripAlert).cardSpec(now, true, "trip1"))
     }
 
     @Test
     fun `cardSpec cancellation for selected trip is takeover`() = runBlocking {
-        val tripAlert =
-            objects.alert {
-                id = "hereForTargetTrip"
-                effect = Effect.Cancellation
-                activePeriod(now.minus(10.minutes), null)
-                informedEntity(
-                    trip = "trip1",
-                    activities =
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                )
-            }
+        val tripAlert = objects.alert {
+            id = "hereForTargetTrip"
+            effect = Effect.Cancellation
+            activePeriod(now.minus(10.minutes), null)
+            informedEntity(
+                trip = "trip1",
+                activities =
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride,
+                    ),
+            )
+        }
         assertEquals(AlertCardSpec.Takeover, DisplayAlert(tripAlert).cardSpec(now, true, "trip1"))
     }
 
     @Test
     fun `cardSpec when alert is major but not trip-specific an not all service is disrupted`() =
         runBlocking {
-            val majorAlert =
-                objects.alert {
-                    id = "hereForTargetTrip"
-                    effect = Effect.Shuttle
-                    activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
-                    informedEntity =
-                        mutableListOf(
-                            Alert.InformedEntity(
-                                activities =
-                                    listOf(
-                                        Alert.InformedEntity.Activity.Board,
-                                        Alert.InformedEntity.Activity.Exit,
-                                        Alert.InformedEntity.Activity.Ride,
-                                    )
-                            )
+            val majorAlert = objects.alert {
+                id = "hereForTargetTrip"
+                effect = Effect.Shuttle
+                activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
+                informedEntity =
+                    mutableListOf(
+                        Alert.InformedEntity(
+                            activities =
+                                listOf(
+                                    Alert.InformedEntity.Activity.Board,
+                                    Alert.InformedEntity.Activity.Exit,
+                                    Alert.InformedEntity.Activity.Ride,
+                                )
                         )
-                }
+                    )
+            }
             assertEquals(
                 AlertCardSpec.Basic,
                 DisplayAlert(majorAlert).cardSpec(now, false, "trip1"),
@@ -125,24 +118,23 @@ class DisplayAlertTest {
 
     @Test
     fun `cardSpec major for selected trip with alert in  future is takeover`() = runBlocking {
-        val tripAlert =
-            objects.alert {
-                id = "hereForTargetTrip"
-                effect = Effect.Shuttle
-                activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(5.hours), null))
-                informedEntity =
-                    mutableListOf(
-                        Alert.InformedEntity(
-                            trip = "trip1",
-                            activities =
-                                listOf(
-                                    Alert.InformedEntity.Activity.Board,
-                                    Alert.InformedEntity.Activity.Exit,
-                                    Alert.InformedEntity.Activity.Ride,
-                                ),
-                        )
+        val tripAlert = objects.alert {
+            id = "hereForTargetTrip"
+            effect = Effect.Shuttle
+            activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(5.hours), null))
+            informedEntity =
+                mutableListOf(
+                    Alert.InformedEntity(
+                        trip = "trip1",
+                        activities =
+                            listOf(
+                                Alert.InformedEntity.Activity.Board,
+                                Alert.InformedEntity.Activity.Exit,
+                                Alert.InformedEntity.Activity.Ride,
+                            ),
                     )
-            }
+                )
+        }
         assertEquals(AlertCardSpec.Takeover, DisplayAlert(tripAlert).cardSpec(now, true, "trip1"))
     }
 

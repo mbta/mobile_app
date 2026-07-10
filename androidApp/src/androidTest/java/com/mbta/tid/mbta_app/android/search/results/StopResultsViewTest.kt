@@ -22,48 +22,43 @@ class StopResultsViewTest {
     @Test
     fun testStationResultWithMultipleRoutes() {
         val objects = ObjectCollectionBuilder()
-        val station =
-            objects.stop {
-                id = "place-sstat"
-                name = "South Station"
-                locationType = LocationType.STATION
-            }
+        val station = objects.stop {
+            id = "place-sstat"
+            name = "South Station"
+            locationType = LocationType.STATION
+        }
 
-        val red =
-            objects.route {
-                id = "red"
-                shortName = "RL"
-                longName = "Red Line"
-                type = RouteType.HEAVY_RAIL
-                sortOrder = 1
-            }
+        val red = objects.route {
+            id = "red"
+            shortName = "RL"
+            longName = "Red Line"
+            type = RouteType.HEAVY_RAIL
+            sortOrder = 1
+        }
 
-        val cr =
-            objects.route {
-                id = "cr-worcester"
-                shortName = "Worcester"
-                longName = "Worcester"
-                type = RouteType.COMMUTER_RAIL
-                sortOrder = 2
-            }
+        val cr = objects.route {
+            id = "cr-worcester"
+            shortName = "Worcester"
+            longName = "Worcester"
+            type = RouteType.COMMUTER_RAIL
+            sortOrder = 2
+        }
 
-        val sl =
-            objects.route {
-                id = "741"
-                shortName = "SL1"
-                longName = "Silver Line 1"
-                type = RouteType.BUS
-                color = "7C878E"
-                sortOrder = 3
-            }
+        val sl = objects.route {
+            id = "741"
+            shortName = "SL1"
+            longName = "Silver Line 1"
+            type = RouteType.BUS
+            color = "7C878E"
+            sortOrder = 3
+        }
 
-        val bus5 =
-            objects.route {
-                id = "5"
-                shortName = "5"
-                type = RouteType.BUS
-                sortOrder = 5
-            }
+        val bus5 = objects.route {
+            id = "5"
+            shortName = "5"
+            type = RouteType.BUS
+            sortOrder = 5
+        }
 
         var handleSearchCalled = false
 
@@ -137,28 +132,25 @@ class StopResultsViewTest {
     @Test
     fun testStandaloneStopShowsAllRoutesResultWithMultipleRoutes() {
         val objects = ObjectCollectionBuilder()
-        val stop =
-            objects.stop {
-                id = "platform-stop"
-                name = "Platform Stop"
-                locationType = LocationType.STOP
-            }
+        val stop = objects.stop {
+            id = "platform-stop"
+            name = "Platform Stop"
+            locationType = LocationType.STOP
+        }
 
-        val bus4 =
-            objects.route {
-                id = "4"
-                shortName = "4"
-                type = RouteType.BUS
-                sortOrder = 1
-            }
+        val bus4 = objects.route {
+            id = "4"
+            shortName = "4"
+            type = RouteType.BUS
+            sortOrder = 1
+        }
 
-        val bus5 =
-            objects.route {
-                id = "5"
-                shortName = "5"
-                type = RouteType.BUS
-                sortOrder = 2
-            }
+        val bus5 = objects.route {
+            id = "5"
+            shortName = "5"
+            type = RouteType.BUS
+            sortOrder = 2
+        }
 
         composeTestRule.setContent {
             StopResultsView(

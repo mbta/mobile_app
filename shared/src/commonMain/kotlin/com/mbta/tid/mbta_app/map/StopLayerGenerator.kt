@@ -198,7 +198,8 @@ public object StopLayerGenerator {
         return Exp.step(
             Exp.zoom(),
             MapExp.offsetTransferExp(closeZoom = false, index),
-            Exp(MapDefaults.closeZoomThreshold) to MapExp.offsetTransferExp(closeZoom = true, index),
+            Exp(MapDefaults.closeZoomThreshold) to
+                MapExp.offsetTransferExp(closeZoom = true, index),
         )
     }
 

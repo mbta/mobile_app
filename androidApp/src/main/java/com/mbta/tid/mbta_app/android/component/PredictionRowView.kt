@@ -61,7 +61,8 @@ fun PredictionRowView(
                 line = null,
                 RoutePillType.Flex,
                 modifier =
-                    if (predictions.warningAlert == null) Modifier.padding(end = 8.dp) else Modifier,
+                    if (predictions.warningAlert == null) Modifier.padding(end = 8.dp)
+                    else Modifier,
             )
         }
         predictions.warningAlert?.let { warningAlert ->
@@ -125,15 +126,14 @@ fun PredictionRowView(
 private fun PredictionRowViewPreview() {
     val objects = ObjectCollectionBuilder("PredictionRowViewPreview")
     val green = objects.line()
-    val greenB =
-        objects.route {
-            lineId = green.id.idText
-            color = "00843D"
-            textColor = "FFFFFF"
-            shortName = "B"
-            longName = "Green Line B"
-            type = RouteType.LIGHT_RAIL
-        }
+    val greenB = objects.route {
+        lineId = green.id.idText
+        color = "00843D"
+        textColor = "FFFFFF"
+        shortName = "B"
+        longName = "Green Line B"
+        type = RouteType.LIGHT_RAIL
+    }
     val trip = objects.trip()
 
     MyApplicationTheme {

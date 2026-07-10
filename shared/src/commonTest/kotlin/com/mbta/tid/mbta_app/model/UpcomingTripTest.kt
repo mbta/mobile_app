@@ -316,27 +316,26 @@ class UpcomingTripTest {
             val stop = objects.stop()
             val trip = objects.trip()
             val route = objects.route()
-            val shuttle =
-                objects.alert {
-                    effect = Alert.Effect.Shuttle
-                    activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-                    informedEntity =
-                        mutableListOf(
-                            Alert.InformedEntity(
-                                activities =
-                                    listOf(
-                                        Alert.InformedEntity.Activity.Board,
-                                        Alert.InformedEntity.Activity.Exit,
-                                        Alert.InformedEntity.Activity.Ride,
-                                    ),
-                                directionId = 0,
-                                route = route.id,
-                                routeType = RouteType.COMMUTER_RAIL,
-                                stop = stop.id,
-                                trip = trip.id,
-                            )
+            val shuttle = objects.alert {
+                effect = Alert.Effect.Shuttle
+                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+                informedEntity =
+                    mutableListOf(
+                        Alert.InformedEntity(
+                            activities =
+                                listOf(
+                                    Alert.InformedEntity.Activity.Board,
+                                    Alert.InformedEntity.Activity.Exit,
+                                    Alert.InformedEntity.Activity.Ride,
+                                ),
+                            directionId = 0,
+                            route = route.id,
+                            routeType = RouteType.COMMUTER_RAIL,
+                            stop = stop.id,
+                            trip = trip.id,
                         )
-                }
+                    )
+            }
             assertEquals(
                 TripInstantDisplay.Shuttle(now + 15.minutes),
                 UpcomingTrip(
@@ -552,11 +551,10 @@ class UpcomingTripTest {
         // schedule and prediction match
         val trip = objects.trip()
         val schedule = objects.schedule { sts("stop1", trip.id, 1) }
-        val prediction =
-            objects.prediction {
-                sts("stop1", trip.id, 2)
-                scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
-            }
+        val prediction = objects.prediction {
+            sts("stop1", trip.id, 2)
+            scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+        }
 
         val result =
             UpcomingTrip.tripsFromData(
@@ -579,11 +577,10 @@ class UpcomingTripTest {
         val route2 = objects.route()
         val trip = objects.trip { routeId = route1.id.idText }
         val sched1 = objects.schedule { this.trip = trip }
-        val sched2 =
-            objects.schedule {
-                this.trip = trip
-                routeId = route2.id.idText
-            }
+        val sched2 = objects.schedule {
+            this.trip = trip
+            routeId = route2.id.idText
+        }
         val pred1 = objects.prediction(sched1)
         val pred2 = objects.prediction(sched2)
 

@@ -112,21 +112,18 @@ class PatternSortingTest {
     fun compareStopsOnRoute() {
         objects.route()
         val position = Position(latitude = 0.0, longitude = 0.0)
-        val veryNearStop =
-            objects.stop {
-                latitude = 0.0001
-                longitude = 0.0001
-            }
-        val nearStop =
-            objects.stop {
-                latitude = 0.1
-                longitude = 0.1
-            }
-        val farStop =
-            objects.stop {
-                latitude = 2.0
-                longitude = 2.0
-            }
+        val veryNearStop = objects.stop {
+            latitude = 0.0001
+            longitude = 0.0001
+        }
+        val nearStop = objects.stop {
+            latitude = 0.1
+            longitude = 0.1
+        }
+        val farStop = objects.stop {
+            latitude = 2.0
+            longitude = 2.0
+        }
 
         val veryNearNoService =
             stopData(
@@ -180,21 +177,18 @@ class PatternSortingTest {
     @Test
     fun compareRouteCards() {
         val position = Position(latitude = 0.0, longitude = 0.0)
-        val veryNearStop =
-            objects.stop {
-                latitude = 0.0001
-                longitude = 0.0001
-            }
-        val nearStop =
-            objects.stop {
-                latitude = 0.1
-                longitude = 0.1
-            }
-        val farStop =
-            objects.stop {
-                latitude = 2.0
-                longitude = 2.0
-            }
+        val veryNearStop = objects.stop {
+            latitude = 0.0001
+            longitude = 0.0001
+        }
+        val nearStop = objects.stop {
+            latitude = 0.1
+            longitude = 0.1
+        }
+        val farStop = objects.stop {
+            latitude = 2.0
+            longitude = 2.0
+        }
 
         fun routeCard(
             service: Service,
@@ -202,11 +196,10 @@ class PatternSortingTest {
             stop: Stop,
             sortOrder: Int,
         ): RouteCardData {
-            val route =
-                objects.route {
-                    type = if (subway) RouteType.HEAVY_RAIL else RouteType.BUS
-                    this.sortOrder = sortOrder
-                }
+            val route = objects.route {
+                type = if (subway) RouteType.HEAVY_RAIL else RouteType.BUS
+                this.sortOrder = sortOrder
+            }
             val lineOrRoute = LineOrRoute.Route(route)
             return routeCard(
                 route,
@@ -267,22 +260,19 @@ class PatternSortingTest {
     @Test
     fun compareRouteCardsOnFavoritesIgnoresRouteType() {
         val position = Position(latitude = 0.0, longitude = 0.0)
-        val nearStop =
-            objects.stop {
-                latitude = 0.1
-                longitude = 0.1
-            }
-        val farStop =
-            objects.stop {
-                latitude = 2.0
-                longitude = 2.0
-            }
+        val nearStop = objects.stop {
+            latitude = 0.1
+            longitude = 0.1
+        }
+        val farStop = objects.stop {
+            latitude = 2.0
+            longitude = 2.0
+        }
         fun routeCard(subway: Boolean, near: Boolean, sortOrder: Int): RouteCardData {
-            val route =
-                objects.route {
-                    type = if (subway) RouteType.HEAVY_RAIL else RouteType.BUS
-                    this.sortOrder = sortOrder
-                }
+            val route = objects.route {
+                type = if (subway) RouteType.HEAVY_RAIL else RouteType.BUS
+                this.sortOrder = sortOrder
+            }
             val lineOrRoute = LineOrRoute.Route(route)
             val stop = if (near) nearStop else farStop
             return routeCard(
@@ -324,18 +314,16 @@ class PatternSortingTest {
     @Test
     fun `sorts World Cup correctly despite lack of schedules in data`() {
         val stop = objects.stop()
-        val rapidTransitRoute =
-            objects.route {
-                type = RouteType.BUS
-                sortOrder = 11000
-            }
+        val rapidTransitRoute = objects.route {
+            type = RouteType.BUS
+            sortOrder = 11000
+        }
         val worldCupRoute = WorldCupService.route
         objects.put(worldCupRoute)
-        val commuterRailRoute =
-            objects.route {
-                type = RouteType.COMMUTER_RAIL
-                sortOrder = 20001
-            }
+        val commuterRailRoute = objects.route {
+            type = RouteType.COMMUTER_RAIL
+            sortOrder = 20001
+        }
 
         val rapidTransitPattern = objects.routePattern(rapidTransitRoute) { sortOrder = 110000000 }
         val worldCupPattern = WorldCupService.routePatternOutbound

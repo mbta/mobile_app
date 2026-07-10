@@ -60,13 +60,12 @@ class DepartureTileTest {
     @Test
     fun testRoutePill() {
         val objects = ObjectCollectionBuilder()
-        val route =
-            objects.route {
-                id = "Green-B"
-                longName = "Green Line B"
-                shortName = "B"
-                type = RouteType.LIGHT_RAIL
-            }
+        val route = objects.route {
+            id = "Green-B"
+            longName = "Green Line B"
+            shortName = "B"
+            type = RouteType.LIGHT_RAIL
+        }
         val trip = objects.trip()
         val upcoming = UpcomingTrip(trip)
         composeTestRule.setContent {

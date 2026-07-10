@@ -236,7 +236,8 @@ private fun SheetHeaderPreview() {
                     NavigationCallbacks(
                         onBack = {},
                         onClose = {},
-                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
+                        backButtonPresentation =
+                            NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
             )
             HorizontalDivider()
@@ -246,7 +247,8 @@ private fun SheetHeaderPreview() {
                     NavigationCallbacks(
                         onBack = {},
                         onClose = {},
-                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
+                        backButtonPresentation =
+                            NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
             )
             HorizontalDivider()
@@ -256,7 +258,8 @@ private fun SheetHeaderPreview() {
                     NavigationCallbacks(
                         onBack = null,
                         onClose = null,
-                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
+                        backButtonPresentation =
+                            NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
             )
             HorizontalDivider()

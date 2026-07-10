@@ -111,23 +111,21 @@ public data class GlobalMapData(
                             }
                         }
 
-                val isTerminal =
-                    patterns.any { pattern ->
-                        val route = globalData.routes[pattern.routeId]
-                        if (route == null || route.type == RouteType.BUS) {
-                            // Don't mark bus terminals, only rail and ferry
-                            return@any false
-                        }
-                        val trip =
-                            globalData.trips[pattern.representativeTripId] ?: return@any false
-                        val tripIds = trip.stopIds ?: listOf()
-                        if (tripIds.size < 2) {
-                            return@any false
-                        }
-                        return@any setOf(tripIds.first(), tripIds.last())
-                            .intersect(stopIdSet)
-                            .isNotEmpty()
+                val isTerminal = patterns.any { pattern ->
+                    val route = globalData.routes[pattern.routeId]
+                    if (route == null || route.type == RouteType.BUS) {
+                        // Don't mark bus terminals, only rail and ferry
+                        return@any false
                     }
+                    val trip = globalData.trips[pattern.representativeTripId] ?: return@any false
+                    val tripIds = trip.stopIds ?: listOf()
+                    if (tripIds.size < 2) {
+                        return@any false
+                    }
+                    return@any setOf(tripIds.first(), tripIds.last())
+                        .intersect(stopIdSet)
+                        .isNotEmpty()
+                }
 
                 val allRoutes = mutableSetOf<Route>()
                 val typicalRouteDirections = mutableMapOf<Route.Id, MutableSet<Int>>()

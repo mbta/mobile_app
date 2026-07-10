@@ -18,11 +18,10 @@ class DirectionPickerTest {
     @Test
     fun testDirectionToggle() {
         val objects = ObjectCollectionBuilder()
-        val route =
-            objects.route {
-                color = "000000"
-                textColor = "ffffff"
-            }
+        val route = objects.route {
+            color = "000000"
+            textColor = "ffffff"
+        }
         var directionId = 0
         composeTestRule.setContent {
             DirectionPicker(
@@ -42,11 +41,10 @@ class DirectionPickerTest {
     @Test
     fun testSingleDirection() {
         val objects = ObjectCollectionBuilder()
-        val route =
-            objects.route {
-                color = "000000"
-                textColor = "ffffff"
-            }
+        val route = objects.route {
+            color = "000000"
+            textColor = "ffffff"
+        }
         var directionId = 1
         composeTestRule.setContent {
             DirectionPicker(

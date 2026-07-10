@@ -206,12 +206,12 @@ internal constructor(
 
     public fun getAlertAffectedStops(alert: Alert?, routes: List<Route>?): List<Stop>? {
         if (alert == null || routes == null) return null
-        val routeEntities =
-            routes.flatMap { route ->
-                alert.matchingEntities { entity -> entity.satisfies { checkRoute(route) } }
-            }
-        val parentStops =
-            routeEntities.mapNotNull { this.stops[it.stop]?.resolveParent(this.stops) }
+        val routeEntities = routes.flatMap { route ->
+            alert.matchingEntities { entity -> entity.satisfies { checkRoute(route) } }
+        }
+        val parentStops = routeEntities.mapNotNull {
+            this.stops[it.stop]?.resolveParent(this.stops)
+        }
         return parentStops.distinct()
     }
 

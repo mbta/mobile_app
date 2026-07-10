@@ -17,12 +17,11 @@ class RoutePickerRowTest {
     @Test
     fun testBasic() {
         val objects = ObjectCollectionBuilder()
-        val route =
-            objects.route {
-                shortName = "66"
-                longName = "Harvard Square - Nubian Station"
-                type = RouteType.BUS
-            }
+        val route = objects.route {
+            shortName = "66"
+            longName = "Harvard Square - Nubian Station"
+            type = RouteType.BUS
+        }
 
         composeTestRule.setContent { RoutePickerRow(LineOrRoute.Route(route)) {} }
 
@@ -34,11 +33,10 @@ class RoutePickerRowTest {
     fun testTap() {
         var tapped = false
         val objects = ObjectCollectionBuilder()
-        val route =
-            objects.route {
-                longName = "Lynn Ferry"
-                type = RouteType.FERRY
-            }
+        val route = objects.route {
+            longName = "Lynn Ferry"
+            type = RouteType.FERRY
+        }
 
         composeTestRule.setContent { RoutePickerRow(LineOrRoute.Route(route)) { tapped = true } }
 

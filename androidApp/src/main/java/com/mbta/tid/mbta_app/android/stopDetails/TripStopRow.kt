@@ -142,13 +142,12 @@ private fun TripStopRowPreview() {
     val objects = ObjectCollectionBuilder("TripStopRowPreview")
     val trip = objects.trip()
     val now = EasternTimeInstant.now()
-    val red =
-        objects.route {
-            color = "DA291C"
-            longName = "Red Line"
-            textColor = "FFFFFF"
-            type = RouteType.HEAVY_RAIL
-        }
+    val red = objects.route {
+        color = "DA291C"
+        longName = "Red Line"
+        textColor = "FFFFFF"
+        type = RouteType.HEAVY_RAIL
+    }
     val redAccents = TripRouteAccents(red)
     KoinContext(koin.koin) {
         MyApplicationTheme {
@@ -253,13 +252,12 @@ private fun TripStopRowDisruptionsPreview() {
     val objects = ObjectCollectionBuilder("TripStopRowDisruptionsPreview")
     val trip = objects.trip()
     val now = EasternTimeInstant.now()
-    val red =
-        objects.route {
-            color = "DA291C"
-            longName = "Red Line"
-            textColor = "FFFFFF"
-            type = RouteType.HEAVY_RAIL
-        }
+    val red = objects.route {
+        color = "DA291C"
+        longName = "Red Line"
+        textColor = "FFFFFF"
+        type = RouteType.HEAVY_RAIL
+    }
     val redAccents = TripRouteAccents(red)
     KoinContext(koin.koin) {
         MyApplicationTheme {

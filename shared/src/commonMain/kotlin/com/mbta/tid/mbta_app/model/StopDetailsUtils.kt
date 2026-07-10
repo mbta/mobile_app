@@ -40,13 +40,12 @@ public object StopDetailsUtils {
                 is LeafFormat.Single -> listOf(leafFormat.format)
                 is LeafFormat.Branched -> leafFormat.branchRows.map { it.format }
             }
-        val relevantTrips =
-            formats.flatMap { format ->
-                when (format) {
-                    is UpcomingFormat.Some -> format.trips.map { it.trip }
-                    else -> emptyList()
-                }
+        val relevantTrips = formats.flatMap { format ->
+            when (format) {
+                is UpcomingFormat.Some -> format.trips.map { it.trip }
+                else -> emptyList()
             }
+        }
 
         val alreadySelectedTrip = relevantTrips.find { it.trip.id == currentTripFilter?.tripId }
 

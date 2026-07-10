@@ -27,21 +27,20 @@ public object LoadingPlaceholders {
                     textColor = "FFFFFF"
                 }
             } else null
-        val route =
-            objects.route {
-                if (routeId is Route.Id) {
-                    id = routeId.idText
-                }
-                color = "8A9199"
-                longName = "Loading"
-                shortName = "00"
-                textColor = "FFFFFF"
-                directionNames = listOf("Loading", "Loading")
-                directionDestinations = listOf("Loading", "Loading")
-                if (routeId is Line.Id) {
-                    lineId = routeId.idText
-                }
+        val route = objects.route {
+            if (routeId is Route.Id) {
+                id = routeId.idText
             }
+            color = "8A9199"
+            longName = "Loading"
+            shortName = "00"
+            textColor = "FFFFFF"
+            directionNames = listOf("Loading", "Loading")
+            directionDestinations = listOf("Loading", "Loading")
+            if (routeId is Line.Id) {
+                lineId = routeId.idText
+            }
+        }
         val pattern1 =
             objects.routePattern(route = route) {
                 typicality = RoutePattern.Typicality.Typical
@@ -52,20 +51,18 @@ public object LoadingPlaceholders {
                 typicality = RoutePattern.Typicality.Typical
                 directionId = 1
             }
-        val stop =
-            objects.stop {
-                name = "Loading"
-                wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
-            }
+        val stop = objects.stop {
+            name = "Loading"
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+        }
 
         fun newTrip(routePattern: RoutePattern, departsIn: Duration): UpcomingTrip {
             val trip = objects.trip(routePattern)
-            val prediction =
-                objects.prediction {
-                    this.trip = trip
-                    stopId = stop.id
-                    departureTime = EasternTimeInstant.now() + departsIn
-                }
+            val prediction = objects.prediction {
+                this.trip = trip
+                stopId = stop.id
+                departureTime = EasternTimeInstant.now() + departsIn
+            }
             return UpcomingTrip(trip, prediction = prediction)
         }
 
@@ -188,42 +185,38 @@ public object LoadingPlaceholders {
 
     public fun tripDetailsInfo(): TripDetailsInfo {
         val objects = ObjectCollectionBuilder("LoadingPlaceholders.tripDetailsInfo")
-        val route =
-            objects.route {
-                color = "8A9199"
-                longName = "Loading"
-                shortName = "00"
-                textColor = "8A9199"
-            }
+        val route = objects.route {
+            color = "8A9199"
+            longName = "Loading"
+            shortName = "00"
+            textColor = "8A9199"
+        }
         val routePattern = objects.routePattern(route)
         val trip = objects.trip(routePattern)
         val vehicleStop = objects.stop { name = "Loading" }
-        val vehicle =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.InTransitTo
-                stopId = vehicleStop.id
-                tripId = trip.id
-            }
-        val otherRoute =
-            objects.route {
-                color = "8A9199"
-                longName = "Loading"
-                shortName = "00"
-                textColor = "8A9199"
-                type = RouteType.COMMUTER_RAIL
-            }
+        val vehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+            stopId = vehicleStop.id
+            tripId = trip.id
+        }
+        val otherRoute = objects.route {
+            color = "8A9199"
+            longName = "Loading"
+            shortName = "00"
+            textColor = "8A9199"
+            type = RouteType.COMMUTER_RAIL
+        }
         return TripDetailsInfo(
             TripDetailsStopList(
                 trip,
                 (1..8).map { sequence ->
                     val stop = objects.stop { name = "Loading" }
-                    val prediction =
-                        objects.prediction {
-                            this.trip = trip
-                            this.stopId = stop.id
-                            this.vehicleId = vehicle.id
-                            departureTime = EasternTimeInstant.now() + sequence.minutes
-                        }
+                    val prediction = objects.prediction {
+                        this.trip = trip
+                        this.stopId = stop.id
+                        this.vehicleId = vehicle.id
+                        departureTime = EasternTimeInstant.now() + sequence.minutes
+                    }
                     TripDetailsStopList.Entry(
                         stop,
                         sequence,

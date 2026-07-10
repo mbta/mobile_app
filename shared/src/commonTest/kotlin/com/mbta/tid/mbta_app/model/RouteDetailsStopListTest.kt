@@ -46,21 +46,18 @@ class RouteDetailsStopListTest {
     @Test
     fun `RouteParameters finds direction info`() {
         val objects = ObjectCollectionBuilder()
-        val route1 =
-            objects.route {
-                directionNames = listOf("East", "West")
-                directionDestinations = listOf("Here", "There")
-            }
-        val route2 =
-            objects.route {
-                directionNames = listOf("East", "West")
-                directionDestinations = listOf("Here", "Elsewhere")
-            }
-        val route3 =
-            objects.route {
-                directionNames = listOf("North", "South")
-                directionDestinations = listOf("Somewhere", "Wherever")
-            }
+        val route1 = objects.route {
+            directionNames = listOf("East", "West")
+            directionDestinations = listOf("Here", "There")
+        }
+        val route2 = objects.route {
+            directionNames = listOf("East", "West")
+            directionDestinations = listOf("Here", "Elsewhere")
+        }
+        val route3 = objects.route {
+            directionNames = listOf("North", "South")
+            directionDestinations = listOf("Somewhere", "Wherever")
+        }
         val line = objects.line()
 
         val globalData = GlobalResponse(objects)

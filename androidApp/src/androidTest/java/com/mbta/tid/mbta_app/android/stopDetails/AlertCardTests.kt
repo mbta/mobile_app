@@ -284,11 +284,10 @@ class AlertCardTests {
     fun testAllClearAlertCard() {
         val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Suspension
-                activePeriod(now - 3.days, now - 1.days)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Suspension
+            activePeriod(now - 3.days, now - 1.days)
+        }
         composeTestRule.setContent {
             AlertCard(
                 alert,
@@ -314,11 +313,10 @@ class AlertCardTests {
     fun testUpdateAlertCard() {
         val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
-        val alert =
-            objects.alert {
-                effect = Alert.Effect.Shuttle
-                activePeriod(now - 3.days, now + 3.days)
-            }
+        val alert = objects.alert {
+            effect = Alert.Effect.Shuttle
+            activePeriod(now - 3.days, now + 3.days)
+        }
         composeTestRule.setContent {
             AlertCard(
                 alert,

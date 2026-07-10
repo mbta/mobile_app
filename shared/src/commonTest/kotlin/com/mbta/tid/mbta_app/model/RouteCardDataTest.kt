@@ -662,16 +662,14 @@ class RouteCardDataTest {
 
         val station1 = objects.stop { id = "station_1" }
 
-        val station1stop1 =
-            objects.stop {
-                parentStationId = station1.id
-                id = "stop_1"
-            }
-        val station1stop2 =
-            objects.stop {
-                parentStationId = station1.id
-                id = "stop_2"
-            }
+        val station1stop1 = objects.stop {
+            parentStationId = station1.id
+            id = "stop_1"
+        }
+        val station1stop2 = objects.stop {
+            parentStationId = station1.id
+            id = "stop_2"
+        }
 
         val stop2 = objects.stop()
 
@@ -775,16 +773,14 @@ class RouteCardDataTest {
 
         val parentStation = objects.stop { id = "place-forhl" }
 
-        val logicalPlatform =
-            objects.stop {
-                id = "70001"
-                parentStationId = parentStation.id
-            }
-        val physicalPlatform =
-            objects.stop {
-                id = "Forest Hills-01"
-                parentStationId = parentStation.id
-            }
+        val logicalPlatform = objects.stop {
+            id = "70001"
+            parentStationId = parentStation.id
+        }
+        val physicalPlatform = objects.stop {
+            id = "Forest Hills-01"
+            parentStationId = parentStation.id
+        }
 
         val route = objects.route { id = "Orange" }
 
@@ -852,23 +848,20 @@ class RouteCardDataTest {
 
             val stop = objects.stop()
 
-            val line =
-                objects.line {
-                    id = "line-Green"
-                    sortOrder = 0
-                }
+            val line = objects.line {
+                id = "line-Green"
+                sortOrder = 0
+            }
 
-            val railRoute =
-                objects.route {
-                    lineId = line.id.idText
-                    directionNames = listOf("West", "East")
-                    directionDestinations = listOf("Boston College", "Government Center")
-                }
-            val shuttleRoute =
-                objects.route {
-                    id = "Shuttle-$id"
-                    lineId = line.id.idText
-                }
+            val railRoute = objects.route {
+                lineId = line.id.idText
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Boston College", "Government Center")
+            }
+            val shuttleRoute = objects.route {
+                id = "Shuttle-$id"
+                lineId = line.id.idText
+            }
 
             val railPattern =
                 objects.routePattern(railRoute) {
@@ -970,32 +963,28 @@ class RouteCardDataTest {
         val dWestPlatform = objects.stop { parentStationId = parkSt.id }
         val eastPlatform = objects.stop { parentStationId = parkSt.id }
 
-        val line =
-            objects.line {
-                id = "line-Green"
-                sortOrder = 0
-            }
+        val line = objects.line {
+            id = "line-Green"
+            sortOrder = 0
+        }
 
-        val bRoute =
-            objects.route {
-                lineId = line.id.idText
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Boston College", "Government Center")
-            }
+        val bRoute = objects.route {
+            lineId = line.id.idText
+            directionNames = listOf("West", "East")
+            directionDestinations = listOf("Boston College", "Government Center")
+        }
 
-        val cRoute =
-            objects.route {
-                lineId = line.id.idText
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Cleveland Circle", "Government Center")
-            }
+        val cRoute = objects.route {
+            lineId = line.id.idText
+            directionNames = listOf("West", "East")
+            directionDestinations = listOf("Cleveland Circle", "Government Center")
+        }
 
-        val dRoute =
-            objects.route {
-                lineId = line.id.idText
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Riverside", "Union Sq")
-            }
+        val dRoute = objects.route {
+            lineId = line.id.idText
+            directionNames = listOf("West", "East")
+            directionDestinations = listOf("Riverside", "Union Sq")
+        }
 
         val bWestPattern =
             objects.routePattern(bRoute) { typicality = RoutePattern.Typicality.Typical }
@@ -1120,27 +1109,24 @@ class RouteCardDataTest {
 
             val line = objects.line { id = "line-Green" }
 
-            val routeB =
-                objects.route {
-                    id = "Green-B"
-                    lineId = line.id.idText
-                    directionNames = listOf("West", "East")
-                    directionDestinations = listOf("Boston College", "Government Center")
-                }
-            val routeC =
-                objects.route {
-                    id = "Green-C"
-                    lineId = line.id.idText
-                    directionNames = listOf("West", "East")
-                    directionDestinations = listOf("Cleveland Circle", "Government Center")
-                }
-            val routeD =
-                objects.route {
-                    id = "Green-D"
-                    lineId = line.id.idText
-                    directionNames = listOf("West", "East")
-                    directionDestinations = listOf("Riverside", "Union Square")
-                }
+            val routeB = objects.route {
+                id = "Green-B"
+                lineId = line.id.idText
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Boston College", "Government Center")
+            }
+            val routeC = objects.route {
+                id = "Green-C"
+                lineId = line.id.idText
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Cleveland Circle", "Government Center")
+            }
+            val routeD = objects.route {
+                id = "Green-D"
+                lineId = line.id.idText
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Riverside", "Union Square")
+            }
 
             val routeBrp1 =
                 objects.routePattern(routeB) {
@@ -1350,40 +1336,36 @@ class RouteCardDataTest {
             val time = EasternTimeInstant(2024, Month.FEBRUARY, 21, 9, 30, 8)
 
             // should be sorted before the pattern 1 prediction under Harvard
-            val stop1Pattern2Prediction =
-                objects.prediction {
-                    arrivalTime = time
-                    departureTime = time + 10.seconds
-                    stopId = stop1.id
-                    trip = trip2
-                }
+            val stop1Pattern2Prediction = objects.prediction {
+                arrivalTime = time
+                departureTime = time + 10.seconds
+                stopId = stop1.id
+                trip = trip2
+            }
 
             // should be sorted after the pattern 2 prediction under Harvard
-            val stop1Pattern1Prediction =
-                objects.prediction {
-                    arrivalTime = time + 5.seconds
-                    departureTime = time + 15.seconds
-                    stopId = stop1.id
-                    trip = trip1
-                }
+            val stop1Pattern1Prediction = objects.prediction {
+                arrivalTime = time + 5.seconds
+                departureTime = time + 15.seconds
+                stopId = stop1.id
+                trip = trip1
+            }
 
             // should *not* be ignored since pattern 1 shows at stop, but pattern 3 does not
-            val stop2Pattern1Prediction =
-                objects.prediction {
-                    arrivalTime = time + 10.seconds
-                    departureTime = time + 20.seconds
-                    stopId = stop2.id
-                    trip = trip1
-                }
+            val stop2Pattern1Prediction = objects.prediction {
+                arrivalTime = time + 10.seconds
+                departureTime = time + 20.seconds
+                stopId = stop2.id
+                trip = trip1
+            }
 
             // should be shown under Nubian
-            val stop2Pattern3Prediction =
-                objects.prediction {
-                    arrivalTime = time + 20.seconds
-                    departureTime = time + 30.seconds
-                    stopId = stop2.id
-                    trip = trip3
-                }
+            val stop2Pattern3Prediction = objects.prediction {
+                arrivalTime = time + 20.seconds
+                departureTime = time + 30.seconds
+                stopId = stop2.id
+                trip = trip3
+            }
 
             val lineOrRoute1 = LineOrRoute.Route(route1)
             assertEquals(
@@ -1507,18 +1489,16 @@ class RouteCardDataTest {
             val context = RouteCardData.Context.NearbyTransit
             val now = EasternTimeInstant.now()
 
-            val futureSchedule =
-                objects.schedule {
-                    trip = objects.trip(pattern1)
-                    stopId = stop1.id
-                    departureTime = now + 2.hours
-                }
-            val pastSchedule =
-                objects.schedule {
-                    trip = objects.trip(pattern2)
-                    stopId = stop2.id
-                    departureTime = now - 2.hours
-                }
+            val futureSchedule = objects.schedule {
+                trip = objects.trip(pattern1)
+                stopId = stop1.id
+                departureTime = now + 2.hours
+            }
+            val pastSchedule = objects.schedule {
+                trip = objects.trip(pattern2)
+                stopId = stop2.id
+                departureTime = now - 2.hours
+            }
 
             val lineOrRoute = LineOrRoute.Route(route)
             assertEquals(
@@ -1631,34 +1611,30 @@ class RouteCardDataTest {
         val greenB = objects.getRoute("Green-B")
         val greenBWestbound = objects.getRoutePattern("Green-B-812-0")
 
-        val greenBPrediction =
-            objects.prediction {
-                trip = objects.trip(greenBWestbound)
-                departureTime = now + 3.minutes
-                stopId = platform.id
-            }
+        val greenBPrediction = objects.prediction {
+            trip = objects.trip(greenBWestbound)
+            departureTime = now + 3.minutes
+            stopId = platform.id
+        }
 
-        val alertB =
-            objects.alert {
-                activePeriod(now - 15.minutes, null)
-                effect = Alert.Effect.Delay
-                informedEntity(route = greenB.id.idText, routeType = RouteType.LIGHT_RAIL)
-                severity = 5
-            }
-        val alertC =
-            objects.alert {
-                activePeriod(now - 15.minutes, null)
-                effect = Alert.Effect.Delay
-                informedEntity(route = "Green-C", routeType = RouteType.LIGHT_RAIL)
-                severity = 5
-            }
-        val alertE =
-            objects.alert {
-                activePeriod(now - 15.minutes, null)
-                effect = Alert.Effect.Delay
-                informedEntity(route = "Green-E", routeType = RouteType.LIGHT_RAIL)
-                severity = 5
-            }
+        val alertB = objects.alert {
+            activePeriod(now - 15.minutes, null)
+            effect = Alert.Effect.Delay
+            informedEntity(route = greenB.id.idText, routeType = RouteType.LIGHT_RAIL)
+            severity = 5
+        }
+        val alertC = objects.alert {
+            activePeriod(now - 15.minutes, null)
+            effect = Alert.Effect.Delay
+            informedEntity(route = "Green-C", routeType = RouteType.LIGHT_RAIL)
+            severity = 5
+        }
+        val alertE = objects.alert {
+            activePeriod(now - 15.minutes, null)
+            effect = Alert.Effect.Delay
+            informedEntity(route = "Green-E", routeType = RouteType.LIGHT_RAIL)
+            severity = 5
+        }
 
         val globalData = GlobalResponse(objects)
 
@@ -1958,52 +1934,43 @@ class RouteCardDataTest {
             val objects = ObjectCollectionBuilder()
 
             val closeBusStop = objects.stop()
-            val midBusStop =
-                objects.stop {
-                    latitude = closeBusStop.latitude + 0.05
-                    longitude = closeBusStop.longitude + 0.05
-                }
-            val farBusStop =
-                objects.stop {
-                    latitude = closeBusStop.latitude + 0.1
-                    longitude = closeBusStop.longitude + 0.1
-                }
-            val closeSubwayStop =
-                objects.stop {
-                    latitude = closeBusStop.latitude + 0.2
-                    longitude = closeBusStop.longitude + 0.2
-                }
-            val farSubwayStop =
-                objects.stop {
-                    latitude = closeBusStop.latitude + 0.3
-                    longitude = closeBusStop.longitude + 0.3
-                }
+            val midBusStop = objects.stop {
+                latitude = closeBusStop.latitude + 0.05
+                longitude = closeBusStop.longitude + 0.05
+            }
+            val farBusStop = objects.stop {
+                latitude = closeBusStop.latitude + 0.1
+                longitude = closeBusStop.longitude + 0.1
+            }
+            val closeSubwayStop = objects.stop {
+                latitude = closeBusStop.latitude + 0.2
+                longitude = closeBusStop.longitude + 0.2
+            }
+            val farSubwayStop = objects.stop {
+                latitude = closeBusStop.latitude + 0.3
+                longitude = closeBusStop.longitude + 0.3
+            }
 
-            val closeBusRoute =
-                objects.route {
-                    type = RouteType.BUS
-                    sortOrder = 5
-                }
-            val midBusRoute =
-                objects.route {
-                    type = RouteType.BUS
-                    sortOrder = 4
-                }
-            val farBusRoute =
-                objects.route {
-                    type = RouteType.BUS
-                    sortOrder = 3
-                }
-            val closeSubwayRoute =
-                objects.route {
-                    type = RouteType.LIGHT_RAIL
-                    sortOrder = 2
-                }
-            val farSubwayRoute =
-                objects.route {
-                    type = RouteType.LIGHT_RAIL
-                    sortOrder = 1
-                }
+            val closeBusRoute = objects.route {
+                type = RouteType.BUS
+                sortOrder = 5
+            }
+            val midBusRoute = objects.route {
+                type = RouteType.BUS
+                sortOrder = 4
+            }
+            val farBusRoute = objects.route {
+                type = RouteType.BUS
+                sortOrder = 3
+            }
+            val closeSubwayRoute = objects.route {
+                type = RouteType.LIGHT_RAIL
+                sortOrder = 2
+            }
+            val farSubwayRoute = objects.route {
+                type = RouteType.LIGHT_RAIL
+                sortOrder = 1
+            }
 
             val closeSubwayPattern =
                 objects.routePattern(closeSubwayRoute) {
@@ -2112,68 +2079,57 @@ class RouteCardDataTest {
         val objects = ObjectCollectionBuilder()
 
         val closeBusStop = objects.stop()
-        val midBusStop =
-            objects.stop {
-                latitude = closeBusStop.latitude + 0.2
-                longitude = closeBusStop.longitude + 0.2
-            }
-        val farBusStop =
-            objects.stop {
-                latitude = closeBusStop.latitude + 0.4
-                longitude = closeBusStop.longitude + 0.4
-            }
-        val closeSubwayStop =
-            objects.stop {
-                latitude = closeBusStop.latitude + 0.1
-                longitude = closeBusStop.longitude + 0.1
-            }
-        val midSubwayStop =
-            objects.stop {
-                latitude = closeBusStop.latitude + 0.3
-                longitude = closeBusStop.longitude + 0.3
-            }
-        val farSubwayStop =
-            objects.stop {
-                latitude = closeBusStop.latitude + 0.5
-                longitude = closeBusStop.longitude + 0.5
-            }
+        val midBusStop = objects.stop {
+            latitude = closeBusStop.latitude + 0.2
+            longitude = closeBusStop.longitude + 0.2
+        }
+        val farBusStop = objects.stop {
+            latitude = closeBusStop.latitude + 0.4
+            longitude = closeBusStop.longitude + 0.4
+        }
+        val closeSubwayStop = objects.stop {
+            latitude = closeBusStop.latitude + 0.1
+            longitude = closeBusStop.longitude + 0.1
+        }
+        val midSubwayStop = objects.stop {
+            latitude = closeBusStop.latitude + 0.3
+            longitude = closeBusStop.longitude + 0.3
+        }
+        val farSubwayStop = objects.stop {
+            latitude = closeBusStop.latitude + 0.5
+            longitude = closeBusStop.longitude + 0.5
+        }
 
         // no schedules
-        val closeBusRoute =
-            objects.route {
-                id = "close-bus"
-                type = RouteType.BUS
-            }
+        val closeBusRoute = objects.route {
+            id = "close-bus"
+            type = RouteType.BUS
+        }
         // with schedules
-        val midBusRoute =
-            objects.route {
-                id = "mid-bus"
-                type = RouteType.BUS
-            }
+        val midBusRoute = objects.route {
+            id = "mid-bus"
+            type = RouteType.BUS
+        }
         // no schedules
-        val farBusRoute =
-            objects.route {
-                id = "far-bus"
-                type = RouteType.BUS
-            }
+        val farBusRoute = objects.route {
+            id = "far-bus"
+            type = RouteType.BUS
+        }
         // no schedules
-        val closeSubwayRoute =
-            objects.route {
-                id = "close-subway"
-                type = RouteType.HEAVY_RAIL
-            }
+        val closeSubwayRoute = objects.route {
+            id = "close-subway"
+            type = RouteType.HEAVY_RAIL
+        }
         // no schedules
-        val midSubwayRoute =
-            objects.route {
-                id = "mid-subway"
-                type = RouteType.LIGHT_RAIL
-            }
+        val midSubwayRoute = objects.route {
+            id = "mid-subway"
+            type = RouteType.LIGHT_RAIL
+        }
         // with schedules
-        val farSubwayRoute =
-            objects.route {
-                id = "far-subway"
-                type = RouteType.HEAVY_RAIL
-            }
+        val farSubwayRoute = objects.route {
+            id = "far-subway"
+            type = RouteType.HEAVY_RAIL
+        }
 
         val closeBusPattern =
             objects.routePattern(closeBusRoute) {
@@ -2305,61 +2261,52 @@ class RouteCardDataTest {
             val objects = ObjectCollectionBuilder()
 
             val terminalStop = objects.stop()
-            val midBusStop =
-                objects.stop {
-                    id = "mid-bus"
-                    latitude = terminalStop.latitude + 0.2
-                    longitude = terminalStop.longitude + 0.2
-                }
-            val farBusStop =
-                objects.stop {
-                    id = "far-bus"
-                    latitude = terminalStop.latitude + 0.4
-                    longitude = terminalStop.longitude + 0.4
-                }
-            val closeSubwayStop =
-                objects.stop {
-                    id = "close-subway"
-                    latitude = terminalStop.latitude + 0.1
-                    longitude = terminalStop.longitude + 0.1
-                }
-            val midSubwayStop =
-                objects.stop {
-                    id = "mid-subway"
-                    latitude = terminalStop.latitude + 0.3
-                    longitude = terminalStop.longitude + 0.3
-                }
-            val farSubwayStop =
-                objects.stop {
-                    id = "far-subway"
-                    latitude = terminalStop.latitude + 0.5
-                    longitude = terminalStop.longitude + 0.5
-                }
+            val midBusStop = objects.stop {
+                id = "mid-bus"
+                latitude = terminalStop.latitude + 0.2
+                longitude = terminalStop.longitude + 0.2
+            }
+            val farBusStop = objects.stop {
+                id = "far-bus"
+                latitude = terminalStop.latitude + 0.4
+                longitude = terminalStop.longitude + 0.4
+            }
+            val closeSubwayStop = objects.stop {
+                id = "close-subway"
+                latitude = terminalStop.latitude + 0.1
+                longitude = terminalStop.longitude + 0.1
+            }
+            val midSubwayStop = objects.stop {
+                id = "mid-subway"
+                latitude = terminalStop.latitude + 0.3
+                longitude = terminalStop.longitude + 0.3
+            }
+            val farSubwayStop = objects.stop {
+                id = "far-subway"
+                latitude = terminalStop.latitude + 0.5
+                longitude = terminalStop.longitude + 0.5
+            }
 
             // With predictions
-            val predictedBusRoute =
-                objects.route {
-                    id = "predicted-bus"
-                    type = RouteType.BUS
-                }
+            val predictedBusRoute = objects.route {
+                id = "predicted-bus"
+                type = RouteType.BUS
+            }
             // With no upcoming schedules or predictions
-            val serviceEndedBusRoute =
-                objects.route {
-                    id = "bus-service-ended"
-                    type = RouteType.BUS
-                }
+            val serviceEndedBusRoute = objects.route {
+                id = "bus-service-ended"
+                type = RouteType.BUS
+            }
             // With schedules
-            val scheduledSubwayRoute =
-                objects.route {
-                    id = "scheduled-subway"
-                    type = RouteType.HEAVY_RAIL
-                }
+            val scheduledSubwayRoute = objects.route {
+                id = "scheduled-subway"
+                type = RouteType.HEAVY_RAIL
+            }
             // With predictions
-            val predictedSubwayRoute =
-                objects.route {
-                    id = "predicted-subway"
-                    type = RouteType.LIGHT_RAIL
-                }
+            val predictedSubwayRoute = objects.route {
+                id = "predicted-subway"
+                type = RouteType.LIGHT_RAIL
+            }
 
             val predictedBusPattern =
                 objects.routePattern(predictedBusRoute) {
@@ -2509,8 +2456,9 @@ class RouteCardDataTest {
                 checkNotNull(routeCardsSorted).flatMap { it.lineOrRoute.allRoutes },
             )
 
-            val partialServiceEndedRoute =
-                routeCardsSorted.find { it.lineOrRoute.sortRoute.id == predictedBusRoute.id }
+            val partialServiceEndedRoute = routeCardsSorted.find {
+                it.lineOrRoute.sortRoute.id == predictedBusRoute.id
+            }
             assertEquals(
                 listOf(farBusStop.id, midBusStop.id),
                 partialServiceEndedRoute?.stopData?.map { it.stop.id } ?: emptyList(),
@@ -2552,21 +2500,19 @@ class RouteCardDataTest {
             val context = RouteCardData.Context.NearbyTransit
             val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
-            val typicalOutboundPrediction =
-                objects.prediction {
-                    departureTime = time
-                    routeId = route1.id.idText
-                    stopId = stop1.id
-                    tripId = typicalOutbound.representativeTripId
-                }
+            val typicalOutboundPrediction = objects.prediction {
+                departureTime = time
+                routeId = route1.id.idText
+                stopId = stop1.id
+                tripId = typicalOutbound.representativeTripId
+            }
 
-            val deviationInboundPrediction =
-                objects.prediction {
-                    departureTime = time + 121.minutes
-                    routeId = route1.id.idText
-                    stopId = stop1.id
-                    tripId = deviationInbound.representativeTripId
-                }
+            val deviationInboundPrediction = objects.prediction {
+                departureTime = time + 121.minutes
+                routeId = route1.id.idText
+                stopId = stop1.id
+                tripId = deviationInbound.representativeTripId
+            }
             val lineOrRoute1 = LineOrRoute.Route(route1)
             assertEquals(
                 listOf(
@@ -2657,12 +2603,11 @@ class RouteCardDataTest {
                     representativeTrip { headsign = "Deviation In" }
                 }
 
-            val deviationInboundTrip2 =
-                objects.trip {
-                    directionId = 1
-                    routePatternId = deviationInbound.id
-                    routeId = route1.id.idText
-                }
+            val deviationInboundTrip2 = objects.trip {
+                directionId = 1
+                routePatternId = deviationInbound.id
+                routeId = route1.id.idText
+            }
 
             val global =
                 GlobalResponse(
@@ -2673,29 +2618,26 @@ class RouteCardDataTest {
             val context = RouteCardData.Context.NearbyTransit
             val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
-            val typicalOutboundPrediction =
-                objects.prediction {
-                    departureTime = time
-                    routeId = route1.id.idText
-                    stopId = stop1.id
-                    tripId = typicalOutbound.representativeTripId
-                }
+            val typicalOutboundPrediction = objects.prediction {
+                departureTime = time
+                routeId = route1.id.idText
+                stopId = stop1.id
+                tripId = typicalOutbound.representativeTripId
+            }
 
-            val deviationInboundPrediction =
-                objects.prediction {
-                    departureTime = time + 119.minutes
-                    routeId = route1.id.idText
-                    stopId = stop1.id
-                    tripId = deviationInbound.representativeTripId
-                }
+            val deviationInboundPrediction = objects.prediction {
+                departureTime = time + 119.minutes
+                routeId = route1.id.idText
+                stopId = stop1.id
+                tripId = deviationInbound.representativeTripId
+            }
 
-            val deviationInboundPredictionLater =
-                objects.prediction {
-                    departureTime = time + 121.minutes
-                    routeId = route1.id.idText
-                    stopId = stop1.id
-                    tripId = deviationInboundTrip2.id
-                }
+            val deviationInboundPredictionLater = objects.prediction {
+                departureTime = time + 121.minutes
+                routeId = route1.id.idText
+                stopId = stop1.id
+                tripId = deviationInboundTrip2.id
+            }
             val lineOrRoute1 = LineOrRoute.Route(route1)
             assertEquals(
                 listOf(
@@ -2804,21 +2746,19 @@ class RouteCardDataTest {
             val context = RouteCardData.Context.NearbyTransit
             val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
-            val typicalOutboundPredictionStop1 =
-                objects.prediction {
-                    departureTime = time
-                    routeId = route1.id.idText
-                    stopId = stop1.id
-                    tripId = typicalOutbound.representativeTripId
-                }
+            val typicalOutboundPredictionStop1 = objects.prediction {
+                departureTime = time
+                routeId = route1.id.idText
+                stopId = stop1.id
+                tripId = typicalOutbound.representativeTripId
+            }
 
-            val typicalOutboundPredictionStop2 =
-                objects.prediction {
-                    departureTime = time + 121.minutes
-                    routeId = route1.id.idText
-                    stopId = stop2.id
-                    tripId = typicalOutbound.representativeTripId
-                }
+            val typicalOutboundPredictionStop2 = objects.prediction {
+                departureTime = time + 121.minutes
+                routeId = route1.id.idText
+                stopId = stop2.id
+                tripId = typicalOutbound.representativeTripId
+            }
             val lineOrRoute1 = LineOrRoute.Route(route1)
             assertEquals(
                 listOf(
@@ -2908,29 +2848,26 @@ class RouteCardDataTest {
             val context = RouteCardData.Context.NearbyTransit
             val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
-            val typicalOutboundPredictionStop1 =
-                objects.prediction {
-                    departureTime = time
-                    routeId = route1.id.idText
-                    stopId = stop1.id
-                    tripId = typicalOutbound.representativeTripId
-                }
+            val typicalOutboundPredictionStop1 = objects.prediction {
+                departureTime = time
+                routeId = route1.id.idText
+                stopId = stop1.id
+                tripId = typicalOutbound.representativeTripId
+            }
 
-            val typicalOutboundPredictionStop2 =
-                objects.prediction {
-                    departureTime = time + 118.minutes
-                    routeId = route1.id.idText
-                    stopId = stop2.id
-                    tripId = typicalOutbound.representativeTripId
-                }
+            val typicalOutboundPredictionStop2 = objects.prediction {
+                departureTime = time + 118.minutes
+                routeId = route1.id.idText
+                stopId = stop2.id
+                tripId = typicalOutbound.representativeTripId
+            }
 
-            val deviationOutboundPredictionStop2 =
-                objects.prediction {
-                    departureTime = time + 100.minutes
-                    routeId = route1.id.idText
-                    stopId = stop2.id
-                    tripId = deviationOutbound.representativeTripId
-                }
+            val deviationOutboundPredictionStop2 = objects.prediction {
+                departureTime = time + 100.minutes
+                routeId = route1.id.idText
+                stopId = stop2.id
+                tripId = deviationOutbound.representativeTripId
+            }
             val lineOrRoute1 = LineOrRoute.Route(route1)
             assertEquals(
                 listOf(
@@ -3064,61 +3001,54 @@ class RouteCardDataTest {
             val trip3 = makeTypicalTrip("trip3")
             val trip4 = makeDeviationTrip("trip4")
 
-            val typicalOutboundPrediction1Stop1 =
-                objects.prediction {
-                    departureTime = time + 5.minutes
-                    routeId = route1.id.idText
-                    stopId = stop1.id
-                    tripId = trip1.id
-                }
+            val typicalOutboundPrediction1Stop1 = objects.prediction {
+                departureTime = time + 5.minutes
+                routeId = route1.id.idText
+                stopId = stop1.id
+                tripId = trip1.id
+            }
 
-            val typicalOutboundPrediction2Stop1 =
-                objects.prediction {
-                    departureTime = time + 15.minutes
-                    routeId = route1.id.idText
-                    stopId = stop1.id
-                    tripId = trip2.id
-                }
+            val typicalOutboundPrediction2Stop1 = objects.prediction {
+                departureTime = time + 15.minutes
+                routeId = route1.id.idText
+                stopId = stop1.id
+                tripId = trip2.id
+            }
 
-            val typicalOutboundPrediction3Stop1 =
-                objects.prediction {
-                    departureTime = time + 30.minutes
-                    routeId = route1.id.idText
-                    stopId = stop1.id
-                    tripId = trip3.id
-                }
+            val typicalOutboundPrediction3Stop1 = objects.prediction {
+                departureTime = time + 30.minutes
+                routeId = route1.id.idText
+                stopId = stop1.id
+                tripId = trip3.id
+            }
 
-            val typicalOutboundPrediction1Stop2 =
-                objects.prediction {
-                    departureTime = time + 2.minutes
-                    routeId = route1.id.idText
-                    stopId = stop2.id
-                    tripId = trip1.id
-                }
+            val typicalOutboundPrediction1Stop2 = objects.prediction {
+                departureTime = time + 2.minutes
+                routeId = route1.id.idText
+                stopId = stop2.id
+                tripId = trip1.id
+            }
 
-            val typicalOutboundPrediction2Stop2 =
-                objects.prediction {
-                    departureTime = time + 12.minutes
-                    routeId = route1.id.idText
-                    stopId = stop2.id
-                    tripId = trip2.id
-                }
+            val typicalOutboundPrediction2Stop2 = objects.prediction {
+                departureTime = time + 12.minutes
+                routeId = route1.id.idText
+                stopId = stop2.id
+                tripId = trip2.id
+            }
 
-            val typicalOutboundPrediction3Stop2 =
-                objects.prediction {
-                    departureTime = time + 27.minutes
-                    routeId = route1.id.idText
-                    stopId = stop2.id
-                    tripId = trip3.id
-                }
+            val typicalOutboundPrediction3Stop2 = objects.prediction {
+                departureTime = time + 27.minutes
+                routeId = route1.id.idText
+                stopId = stop2.id
+                tripId = trip3.id
+            }
 
-            val deviationOutboundPredictionStop2 =
-                objects.prediction {
-                    departureTime = time + 40.minutes
-                    routeId = route1.id.idText
-                    stopId = stop2.id
-                    tripId = trip4.id
-                }
+            val deviationOutboundPredictionStop2 = objects.prediction {
+                departureTime = time + 40.minutes
+                routeId = route1.id.idText
+                stopId = stop2.id
+                tripId = trip4.id
+            }
             val lineOrRoute1 = LineOrRoute.Route(route1)
             assertEquals(
                 listOf(
@@ -3215,13 +3145,12 @@ class RouteCardDataTest {
             val context = RouteCardData.Context.NearbyTransit
             val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
-            val deviationOutboundPredictionStop1 =
-                objects.prediction {
-                    departureTime = time + 100.minutes
-                    routeId = route1.id.idText
-                    stopId = stop1.id
-                    tripId = deviationOutbound.representativeTripId
-                }
+            val deviationOutboundPredictionStop1 = objects.prediction {
+                departureTime = time + 100.minutes
+                routeId = route1.id.idText
+                stopId = stop1.id
+                tripId = deviationOutbound.representativeTripId
+            }
             val lineOrRoute1 = LineOrRoute.Route(route1)
             assertEquals(
                 listOf(
@@ -3372,57 +3301,49 @@ class RouteCardDataTest {
             val context = RouteCardData.Context.NearbyTransit
             val time = EasternTimeInstant(2024, Month.SEPTEMBER, 19, 13, 43, 19)
 
-            val schedulePastSchedule =
-                objects.schedule {
-                    stopId = stop1.id
-                    trip = objects.trip(schedulePast)
-                    departureTime = time - 1.minutes
-                }
-            val scheduleSoonSchedule =
-                objects.schedule {
-                    stopId = stop1.id
-                    trip = objects.trip(scheduleSoon)
-                    departureTime = time + 5.minutes
-                }
-            val scheduleLaterSchedule =
-                objects.schedule {
-                    stopId = stop1.id
-                    trip = objects.trip(scheduleLater)
-                    departureTime = time + 121.minutes
-                }
+            val schedulePastSchedule = objects.schedule {
+                stopId = stop1.id
+                trip = objects.trip(schedulePast)
+                departureTime = time - 1.minutes
+            }
+            val scheduleSoonSchedule = objects.schedule {
+                stopId = stop1.id
+                trip = objects.trip(scheduleSoon)
+                departureTime = time + 5.minutes
+            }
+            val scheduleLaterSchedule = objects.schedule {
+                stopId = stop1.id
+                trip = objects.trip(scheduleLater)
+                departureTime = time + 121.minutes
+            }
             // stop id has to be different to current stop otherwise is considered boarding
-            val predictionPastPrediction =
-                objects.prediction {
-                    stopId = stop1.id
-                    trip = objects.trip(predictionPast)
-                    departureTime = time - 1.minutes
-                }
+            val predictionPastPrediction = objects.prediction {
+                stopId = stop1.id
+                trip = objects.trip(predictionPast)
+                departureTime = time - 1.minutes
+            }
             val predictionBrdTrip = objects.trip(predictionBrd)
-            val predictionBrdVehicle =
-                objects.vehicle {
-                    stopId = stop1.id
-                    tripId = predictionBrdTrip.id
-                    currentStatus = Vehicle.CurrentStatus.StoppedAt
-                }
-            val predictionBrdPrediction =
-                objects.prediction {
-                    stopId = stop1.id
-                    trip = predictionBrdTrip
-                    departureTime = time - 1.minutes
-                    vehicleId = predictionBrdVehicle.id
-                }
-            val predictionSoonPrediction =
-                objects.prediction {
-                    stopId = stop1.id
-                    trip = objects.trip(predictionSoon)
-                    departureTime = time + 5.minutes
-                }
-            val predictionLaterPrediction =
-                objects.prediction {
-                    stopId = stop1.id
-                    trip = objects.trip(predictionLater)
-                    departureTime = time + 121.minutes
-                }
+            val predictionBrdVehicle = objects.vehicle {
+                stopId = stop1.id
+                tripId = predictionBrdTrip.id
+                currentStatus = Vehicle.CurrentStatus.StoppedAt
+            }
+            val predictionBrdPrediction = objects.prediction {
+                stopId = stop1.id
+                trip = predictionBrdTrip
+                departureTime = time - 1.minutes
+                vehicleId = predictionBrdVehicle.id
+            }
+            val predictionSoonPrediction = objects.prediction {
+                stopId = stop1.id
+                trip = objects.trip(predictionSoon)
+                departureTime = time + 5.minutes
+            }
+            val predictionLaterPrediction = objects.prediction {
+                stopId = stop1.id
+                trip = objects.trip(predictionLater)
+                departureTime = time + 121.minutes
+            }
 
             val lineOrRoute1 = LineOrRoute.Route(route1)
             val lineOrRoute2 = LineOrRoute.Route(route2)
@@ -3609,7 +3530,8 @@ class RouteCardDataTest {
         val global =
             GlobalResponse(
                 objects,
-                patternIdsByStop = mapOf(stop1.id to listOf(typicalOutbound.id, atypicalInbound.id)),
+                patternIdsByStop =
+                    mapOf(stop1.id to listOf(typicalOutbound.id, atypicalInbound.id)),
             )
 
         val context = RouteCardData.Context.NearbyTransit
@@ -3695,21 +3617,19 @@ class RouteCardDataTest {
             val context = RouteCardData.Context.StopDetailsFiltered
             val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
-            val typicalOutboundPrediction =
-                objects.prediction {
-                    departureTime = time
-                    routeId = route1.id.idText
-                    stopId = stop1.id
-                    tripId = typicalOutbound.representativeTripId
-                }
+            val typicalOutboundPrediction = objects.prediction {
+                departureTime = time
+                routeId = route1.id.idText
+                stopId = stop1.id
+                tripId = typicalOutbound.representativeTripId
+            }
 
-            val deviationInboundPrediction =
-                objects.prediction {
-                    departureTime = time + 400.minutes
-                    routeId = route1.id.idText
-                    stopId = stop1.id
-                    tripId = deviationInbound.representativeTripId
-                }
+            val deviationInboundPrediction = objects.prediction {
+                departureTime = time + 400.minutes
+                routeId = route1.id.idText
+                stopId = stop1.id
+                tripId = deviationInbound.representativeTripId
+            }
 
             val lineOrRoute1 = LineOrRoute.Route(route1)
             assertEquals(
@@ -3799,23 +3719,21 @@ class RouteCardDataTest {
             val context = RouteCardData.Context.StopDetailsFiltered
             val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
-            val typicalOutboundSchedule =
-                objects.schedule {
-                    routeId = route1.id.idText
-                    tripId = typicalOutbound.representativeTripId
-                    stopId = stop1.id
-                    arrivalTime = time
-                    departureTime = time
-                }
+            val typicalOutboundSchedule = objects.schedule {
+                routeId = route1.id.idText
+                tripId = typicalOutbound.representativeTripId
+                stopId = stop1.id
+                arrivalTime = time
+                departureTime = time
+            }
 
-            val typicalOutboundPrediction =
-                objects.prediction {
-                    departureTime = null
-                    routeId = route1.id.idText
-                    stopId = stop1.id
-                    tripId = typicalOutbound.representativeTripId
-                    scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
-                }
+            val typicalOutboundPrediction = objects.prediction {
+                departureTime = null
+                routeId = route1.id.idText
+                stopId = stop1.id
+                tripId = typicalOutbound.representativeTripId
+                scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+            }
 
             val lineOrRoute1 = LineOrRoute.Route(route1)
             assertEquals(
@@ -3871,11 +3789,10 @@ class RouteCardDataTest {
     fun `RouteCardData routeCardsForStopList handles parent stops`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val parentStop = objects.stop { childStopIds = listOf("childStop") }
-        val childStop =
-            objects.stop {
-                id = "childStop"
-                parentStationId = parentStop.id
-            }
+        val childStop = objects.stop {
+            id = "childStop"
+            parentStationId = parentStop.id
+        }
         val route1 = objects.route()
         val pattern1 = objects.routePattern(route1) { representativeTrip { headsign = "Harvard" } }
 
@@ -3884,13 +3801,12 @@ class RouteCardDataTest {
         val context = RouteCardData.Context.NearbyTransit
         val time = EasternTimeInstant(2024, Month.FEBRUARY, 26, 10, 45, 38)
 
-        val prediction1 =
-            objects.prediction {
-                departureTime = time
-                routeId = route1.id.idText
-                stopId = childStop.id
-                tripId = pattern1.representativeTripId
-            }
+        val prediction1 = objects.prediction {
+            departureTime = time
+            routeId = route1.id.idText
+            stopId = childStop.id
+            tripId = pattern1.representativeTripId
+        }
 
         val lineOrRoute1 = LineOrRoute.Route(route1)
         assertEquals(
@@ -3950,20 +3866,18 @@ class RouteCardDataTest {
         val context = RouteCardData.Context.NearbyTransit
         val time = EasternTimeInstant(2024, Month.MARCH, 14, 12, 23, 44)
 
-        val sched1 =
-            objects.schedule {
-                trip = trip1
-                stopId = stop.id
-                stopSequence = 90
-                departureTime = time + 1.minutes
-            }
-        val sched2 =
-            objects.schedule {
-                trip = trip2
-                stopId = stop.id
-                stopSequence = 90
-                departureTime = time + 2.minutes
-            }
+        val sched1 = objects.schedule {
+            trip = trip1
+            stopId = stop.id
+            stopSequence = 90
+            departureTime = time + 1.minutes
+        }
+        val sched2 = objects.schedule {
+            trip = trip2
+            stopId = stop.id
+            stopSequence = 90
+            departureTime = time + 2.minutes
+        }
 
         val pred1 = objects.prediction(sched1) { departureTime = time + 1.5.minutes }
         val pred2 = objects.prediction(sched2) { departureTime = null }
@@ -4039,13 +3953,12 @@ class RouteCardDataTest {
             val context = RouteCardData.Context.NearbyTransit
             val time = EasternTimeInstant(2024, Month.MARCH, 14, 12, 23, 44)
 
-            val pred =
-                objects.prediction {
-                    this.trip = trip
-                    stopId = stop.id
-                    departureTime = time - 1.minutes
-                    status = "foo"
-                }
+            val pred = objects.prediction {
+                this.trip = trip
+                stopId = stop.id
+                departureTime = time - 1.minutes
+                status = "foo"
+            }
 
             val lineOrRoute = LineOrRoute.Route(route)
             assertEquals(
@@ -4109,13 +4022,12 @@ class RouteCardDataTest {
             val context = RouteCardData.Context.NearbyTransit
             val time = EasternTimeInstant(2024, Month.MARCH, 14, 12, 23, 44)
 
-            val sched =
-                objects.schedule {
-                    this.trip = trip
-                    stopId = stop.id
-                    stopSequence = 90
-                    departureTime = time - 1.minutes
-                }
+            val sched = objects.schedule {
+                this.trip = trip
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time - 1.minutes
+            }
 
             val pred =
                 objects.prediction(sched) {
@@ -4208,13 +4120,12 @@ class RouteCardDataTest {
 
             val time = EasternTimeInstant(2024, Month.MARCH, 14, 12, 23, 44)
 
-            val pastSchedule =
-                objects.schedule {
-                    trip = trip1
-                    stopId = stop.id
-                    stopSequence = 90
-                    departureTime = time - 2.hours
-                }
+            val pastSchedule = objects.schedule {
+                trip = trip1
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time - 2.hours
+            }
 
             val lineOrRoute = LineOrRoute.Route(route)
             val context = RouteCardData.Context.NearbyTransit
@@ -4302,29 +4213,26 @@ class RouteCardDataTest {
 
         val time = EasternTimeInstant(2024, Month.MARCH, 14, 12, 23, 44)
 
-        val schedule1 =
-            objects.schedule {
-                trip = trip1
-                stopId = stop.id
-                stopSequence = 90
-                departureTime = time + 2.hours
-            }
+        val schedule1 = objects.schedule {
+            trip = trip1
+            stopId = stop.id
+            stopSequence = 90
+            departureTime = time + 2.hours
+        }
 
-        val schedule2 =
-            objects.schedule {
-                trip = trip2
-                stopId = stop.id
-                stopSequence = 90
-                departureTime = time + 3.hours
-            }
+        val schedule2 = objects.schedule {
+            trip = trip2
+            stopId = stop.id
+            stopSequence = 90
+            departureTime = time + 3.hours
+        }
 
-        val schedule3 =
-            objects.schedule {
-                trip = trip3
-                stopId = stop.id
-                stopSequence = 90
-                departureTime = time + 4.hours
-            }
+        val schedule3 = objects.schedule {
+            trip = trip3
+            stopId = stop.id
+            stopSequence = 90
+            departureTime = time + 4.hours
+        }
 
         val lineOrRoute = LineOrRoute.Route(route)
         val context = RouteCardData.Context.StopDetailsFiltered
@@ -4440,27 +4348,24 @@ class RouteCardDataTest {
             val context = RouteCardData.Context.NearbyTransit
             val time = EasternTimeInstant(2024, Month.MARCH, 18, 10, 41, 13)
 
-            val sched1 =
-                objects.schedule {
-                    trip = trip1
-                    stopId = stop.id
-                    stopSequence = 90
-                    departureTime = time + 1.minutes
-                }
-            val sched2 =
-                objects.schedule {
-                    trip = trip2
-                    stopId = stop.id
-                    stopSequence = 90
-                    departureTime = time + 2.minutes
-                }
-            val sched3 =
-                objects.schedule {
-                    trip = trip3
-                    stopId = stop.id
-                    stopSequence = 90
-                    departureTime = time + 3.minutes
-                }
+            val sched1 = objects.schedule {
+                trip = trip1
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 1.minutes
+            }
+            val sched2 = objects.schedule {
+                trip = trip2
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 2.minutes
+            }
+            val sched3 = objects.schedule {
+                trip = trip3
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 3.minutes
+            }
 
             val pred1 = objects.prediction(sched1) { departureTime = time + 1.5.minutes }
             val pred2 = objects.prediction(sched2) { departureTime = time + 2.3.minutes }
@@ -4572,14 +4477,13 @@ class RouteCardDataTest {
         val magoun = objects.stop { id = "place-mgngl" }
 
         val line = objects.line { id = "line-Green" }
-        val routeB =
-            objects.route {
-                id = "Green-B"
-                sortOrder = 1
-                lineId = "line-Green"
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Ignored West B", "Ignored East B")
-            }
+        val routeB = objects.route {
+            id = "Green-B"
+            sortOrder = 1
+            lineId = "line-Green"
+            directionNames = listOf("West", "East")
+            directionDestinations = listOf("Ignored West B", "Ignored East B")
+        }
         val routePatternB1 =
             objects.routePattern(routeB) {
                 representativeTrip {
@@ -4601,14 +4505,13 @@ class RouteCardDataTest {
         val tripB1 = objects.trip(routePatternB1)
         val tripB2 = objects.trip(routePatternB2)
 
-        val routeC =
-            objects.route {
-                id = "Green-C"
-                sortOrder = 2
-                lineId = "line-Green"
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Ignored West C", "Ignored East C")
-            }
+        val routeC = objects.route {
+            id = "Green-C"
+            sortOrder = 2
+            lineId = "line-Green"
+            directionNames = listOf("West", "East")
+            directionDestinations = listOf("Ignored West C", "Ignored East C")
+        }
         val routePatternC1 =
             objects.routePattern(routeC) {
                 representativeTrip {
@@ -4630,14 +4533,13 @@ class RouteCardDataTest {
         val tripC1 = objects.trip(routePatternC1)
         val tripC2 = objects.trip(routePatternC2)
 
-        val routeE =
-            objects.route {
-                id = "Green-E"
-                sortOrder = 3
-                lineId = "line-Green"
-                directionNames = listOf("West", "East")
-                directionDestinations = listOf("Ignored West E", "Ignored East E")
-            }
+        val routeE = objects.route {
+            id = "Green-E"
+            sortOrder = 3
+            lineId = "line-Green"
+            directionNames = listOf("West", "East")
+            directionDestinations = listOf("Ignored West E", "Ignored East E")
+        }
         val routePatternE1 =
             objects.routePattern(routeE) {
                 id = "test-hs"
@@ -4680,48 +4582,42 @@ class RouteCardDataTest {
 
         val time = EasternTimeInstant(2024, Month.MARCH, 18, 10, 41, 13)
 
-        val schedB1 =
-            objects.schedule {
-                trip = tripB1
-                stopId = hynes.id
-                stopSequence = 90
-                departureTime = time + 1.minutes
-            }
-        val schedB2 =
-            objects.schedule {
-                trip = tripB2
-                stopId = hynes.id
-                stopSequence = 90
-                departureTime = time + 4.minutes
-            }
-        val schedC1 =
-            objects.schedule {
-                trip = tripC1
-                stopId = hynes.id
-                stopSequence = 90
-                departureTime = time + 2.minutes
-            }
-        val schedC2 =
-            objects.schedule {
-                trip = tripC2
-                stopId = hynes.id
-                stopSequence = 90
-                departureTime = time + 5.minutes
-            }
-        val schedE1 =
-            objects.schedule {
-                trip = tripE1
-                stopId = hynes.id
-                stopSequence = 90
-                departureTime = time + 3.minutes
-            }
-        val schedE2 =
-            objects.schedule {
-                trip = tripE2
-                stopId = hynes.id
-                stopSequence = 90
-                departureTime = time + 6.minutes
-            }
+        val schedB1 = objects.schedule {
+            trip = tripB1
+            stopId = hynes.id
+            stopSequence = 90
+            departureTime = time + 1.minutes
+        }
+        val schedB2 = objects.schedule {
+            trip = tripB2
+            stopId = hynes.id
+            stopSequence = 90
+            departureTime = time + 4.minutes
+        }
+        val schedC1 = objects.schedule {
+            trip = tripC1
+            stopId = hynes.id
+            stopSequence = 90
+            departureTime = time + 2.minutes
+        }
+        val schedC2 = objects.schedule {
+            trip = tripC2
+            stopId = hynes.id
+            stopSequence = 90
+            departureTime = time + 5.minutes
+        }
+        val schedE1 = objects.schedule {
+            trip = tripE1
+            stopId = hynes.id
+            stopSequence = 90
+            departureTime = time + 3.minutes
+        }
+        val schedE2 = objects.schedule {
+            trip = tripE2
+            stopId = hynes.id
+            stopSequence = 90
+            departureTime = time + 6.minutes
+        }
 
         val predB1 = objects.prediction(schedB1) { departureTime = time + 1.5.minutes }
         val predB2 = objects.prediction(schedB2) { departureTime = time + 4.5.minutes }
@@ -4867,14 +4763,13 @@ class RouteCardDataTest {
             val haymarket = objects.stop { id = "place-haecl" }
 
             val line = objects.line { id = "line-Green" }
-            val routeB =
-                objects.route {
-                    id = "Green-B"
-                    sortOrder = 1
-                    lineId = "line-Green"
-                    directionNames = listOf("West", "East")
-                    directionDestinations = listOf("Real B West", "Real B East")
-                }
+            val routeB = objects.route {
+                id = "Green-B"
+                sortOrder = 1
+                lineId = "line-Green"
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Real B West", "Real B East")
+            }
             val routePatternB1 =
                 objects.routePattern(routeB) {
                     representativeTrip {
@@ -4898,20 +4793,18 @@ class RouteCardDataTest {
 
             val time = EasternTimeInstant(2024, Month.MARCH, 18, 10, 41, 13)
 
-            val schedB1 =
-                objects.schedule {
-                    trip = tripB1
-                    stopId = southSt.id
-                    stopSequence = 90
-                    departureTime = time + 1.minutes
-                }
-            val schedB2 =
-                objects.schedule {
-                    trip = tripB2
-                    stopId = southSt.id
-                    stopSequence = 90
-                    departureTime = time + 4.minutes
-                }
+            val schedB1 = objects.schedule {
+                trip = tripB1
+                stopId = southSt.id
+                stopSequence = 90
+                departureTime = time + 1.minutes
+            }
+            val schedB2 = objects.schedule {
+                trip = tripB2
+                stopId = southSt.id
+                stopSequence = 90
+                departureTime = time + 4.minutes
+            }
 
             val predB1 = objects.prediction(schedB1) { departureTime = time + 1.5.minutes }
             val predB2 = objects.prediction(schedB2) { departureTime = time + 4.5.minutes }
@@ -5004,13 +4897,11 @@ class RouteCardDataTest {
         runBlocking {
             val objects = ObjectCollectionBuilder()
             val stop = objects.stop()
-            val route1 =
-                objects.route {
-                    sortOrder = 1
-                    directionNames = listOf("Direction 0", "Direction 1")
-                    directionDestinations =
-                        listOf("Direction 0 destination", "Direction 1 destination")
-                }
+            val route1 = objects.route {
+                sortOrder = 1
+                directionNames = listOf("Direction 0", "Direction 1")
+                directionDestinations = listOf("Direction 0 destination", "Direction 1 destination")
+            }
 
             val routePattern1 =
                 objects.routePattern(route1) { representativeTrip { headsign = "A" } }
@@ -5018,13 +4909,12 @@ class RouteCardDataTest {
 
             val time = EasternTimeInstant(2024, Month.MARCH, 18, 10, 41, 13)
 
-            val sched1 =
-                objects.schedule {
-                    trip = trip1
-                    stopId = stop.id
-                    stopSequence = 90
-                    departureTime = time + 1.minutes
-                }
+            val sched1 = objects.schedule {
+                trip = trip1
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 1.minutes
+            }
 
             val pred1 = objects.prediction(sched1) { departureTime = time + 1.5.minutes }
 
@@ -5088,60 +4978,52 @@ class RouteCardDataTest {
     @Test
     fun `RouteCardData routeCardsForStopList north station disruption case`() = runBlocking {
         val objects = ObjectCollectionBuilder()
-        val northStation =
-            objects.stop {
-                id = "place-north"
-                locationType = LocationType.STATION
-                childStopIds = listOf("70027", "70026")
-            }
+        val northStation = objects.stop {
+            id = "place-north"
+            locationType = LocationType.STATION
+            childStopIds = listOf("70027", "70026")
+        }
 
-        val northStationNorthboundPlatform =
-            objects.stop {
-                id = "70027"
-                locationType = LocationType.STOP
-                parentStationId = "place-north"
-            }
+        val northStationNorthboundPlatform = objects.stop {
+            id = "70027"
+            locationType = LocationType.STOP
+            parentStationId = "place-north"
+        }
 
-        val northStationSouthboundPlatform =
-            objects.stop {
-                id = "70026"
-                locationType = LocationType.STOP
-                parentStationId = "place-north"
-            }
+        val northStationSouthboundPlatform = objects.stop {
+            id = "70026"
+            locationType = LocationType.STOP
+            parentStationId = "place-north"
+        }
 
-        val oakGrove =
-            objects.stop {
-                id = "place-ogmnl"
-                locationType = LocationType.STATION
-                childStopIds = listOf("70036")
-            }
+        val oakGrove = objects.stop {
+            id = "place-ogmnl"
+            locationType = LocationType.STATION
+            childStopIds = listOf("70036")
+        }
 
-        val oakGrovePlatform =
-            objects.stop {
-                id = "70036"
-                locationType = LocationType.STOP
-                parentStationId = "place-ogmnl"
-            }
+        val oakGrovePlatform = objects.stop {
+            id = "70036"
+            locationType = LocationType.STOP
+            parentStationId = "place-ogmnl"
+        }
 
-        val forestHills =
-            objects.stop {
-                id = "place-forhl"
-                locationType = LocationType.STATION
-                childStopIds = listOf("70001")
-            }
+        val forestHills = objects.stop {
+            id = "place-forhl"
+            locationType = LocationType.STATION
+            childStopIds = listOf("70001")
+        }
 
-        val forestHillsPlatform =
-            objects.stop {
-                id = "70001"
-                locationType = LocationType.STOP
-                parentStationId = "place-forhl"
-            }
+        val forestHillsPlatform = objects.stop {
+            id = "70001"
+            locationType = LocationType.STOP
+            parentStationId = "place-forhl"
+        }
 
-        val orangeRoute =
-            objects.route {
-                id = "Orange"
-                type = RouteType.HEAVY_RAIL
-            }
+        val orangeRoute = objects.route {
+            id = "Orange"
+            type = RouteType.HEAVY_RAIL
+        }
         val orangeNorthboundTypical =
             objects.routePattern(orangeRoute) {
                 id = "Orange-3-1"
@@ -5205,101 +5087,97 @@ class RouteCardDataTest {
         val time = EasternTimeInstant(2024, Month.OCTOBER, 30, 16, 40)
 
         // Scheduled northbound arrivals with North station as last stop
-        val northboundSchedule =
-            objects.schedule {
-                trip = orangeNorthboundDiversionTrip
-                stopId = northStationNorthboundPlatform.id
-                stopSequence = 130
-                arrivalTime = time + 4.minutes
-                departureTime = null
-            }
+        val northboundSchedule = objects.schedule {
+            trip = orangeNorthboundDiversionTrip
+            stopId = northStationNorthboundPlatform.id
+            stopSequence = 130
+            arrivalTime = time + 4.minutes
+            departureTime = null
+        }
 
-        val northboundPrediction =
-            objects.prediction {
-                trip = orangeNorthboundTypicalTrip
-                stopId = northStationNorthboundPlatform.id
-                stopSequence = 130
-                arrivalTime = time + 8.minutes
-                departureTime = null
-            }
+        val northboundPrediction = objects.prediction {
+            trip = orangeNorthboundTypicalTrip
+            stopId = northStationNorthboundPlatform.id
+            stopSequence = 130
+            arrivalTime = time + 8.minutes
+            departureTime = null
+        }
 
         // Scheduled southbound departures
-        val southboundSchedule =
-            objects.schedule {
-                trip = orangeSouthboundDiversionTrip
-                stopId = northStationSouthboundPlatform.id
-                stopSequence = 60
-                arrivalTime = null
-                departureTime = time + 6.minutes
-            }
+        val southboundSchedule = objects.schedule {
+            trip = orangeSouthboundDiversionTrip
+            stopId = northStationSouthboundPlatform.id
+            stopSequence = 60
+            arrivalTime = null
+            departureTime = time + 6.minutes
+        }
 
-        val alert =
-            objects.alert {
-                id = "601685"
-                activePeriod(
-                    EasternTimeInstant(2024, Month.OCTOBER, 28, 3, 0),
-                    EasternTimeInstant(2024, Month.NOVEMBER, 2, 3, 0),
+        val alert = objects.alert {
+            id = "601685"
+            activePeriod(
+                EasternTimeInstant(2024, Month.OCTOBER, 28, 3, 0),
+                EasternTimeInstant(2024, Month.NOVEMBER, 2, 3, 0),
+            )
+            cause = Alert.Cause.Maintenance
+            effect = Alert.Effect.Shuttle
+            informedEntity =
+                mutableListOf(
+                    // North station entities
+                    Alert.InformedEntity(
+                        activities =
+                            listOf(
+                                Alert.InformedEntity.Activity.Exit,
+                                Alert.InformedEntity.Activity.Ride,
+                            ),
+                        route = orangeRoute.id,
+                        routeType = RouteType.HEAVY_RAIL,
+                        stop = northStationSouthboundPlatform.id,
+                    ),
+                    Alert.InformedEntity(
+                        activities =
+                            listOf(
+                                Alert.InformedEntity.Activity.Board,
+                                Alert.InformedEntity.Activity.Ride,
+                            ),
+                        route = orangeRoute.id,
+                        routeType = RouteType.HEAVY_RAIL,
+                        stop = northStationNorthboundPlatform.id,
+                    ),
+                    Alert.InformedEntity(
+                        activities =
+                            listOf(
+                                Alert.InformedEntity.Activity.Board,
+                                Alert.InformedEntity.Activity.Exit,
+                                Alert.InformedEntity.Activity.Ride,
+                            ),
+                        route = orangeRoute.id,
+                        routeType = RouteType.HEAVY_RAIL,
+                        stop = northStation.id,
+                    ),
+                    Alert.InformedEntity(
+                        activities =
+                            listOf(
+                                Alert.InformedEntity.Activity.Board,
+                                Alert.InformedEntity.Activity.Exit,
+                                Alert.InformedEntity.Activity.Ride,
+                            ),
+                        route = orangeRoute.id,
+                        routeType = RouteType.HEAVY_RAIL,
+                        stop = oakGrove.id,
+                    ),
+                    Alert.InformedEntity(
+                        activities =
+                            listOf(
+                                Alert.InformedEntity.Activity.Board,
+                                Alert.InformedEntity.Activity.Exit,
+                                Alert.InformedEntity.Activity.Ride,
+                            ),
+                        route = orangeRoute.id,
+                        routeType = RouteType.HEAVY_RAIL,
+                        stop = oakGrovePlatform.id,
+                    ),
                 )
-                cause = Alert.Cause.Maintenance
-                effect = Alert.Effect.Shuttle
-                informedEntity =
-                    mutableListOf(
-                        // North station entities
-                        Alert.InformedEntity(
-                            activities =
-                                listOf(
-                                    Alert.InformedEntity.Activity.Exit,
-                                    Alert.InformedEntity.Activity.Ride,
-                                ),
-                            route = orangeRoute.id,
-                            routeType = RouteType.HEAVY_RAIL,
-                            stop = northStationSouthboundPlatform.id,
-                        ),
-                        Alert.InformedEntity(
-                            activities =
-                                listOf(
-                                    Alert.InformedEntity.Activity.Board,
-                                    Alert.InformedEntity.Activity.Ride,
-                                ),
-                            route = orangeRoute.id,
-                            routeType = RouteType.HEAVY_RAIL,
-                            stop = northStationNorthboundPlatform.id,
-                        ),
-                        Alert.InformedEntity(
-                            activities =
-                                listOf(
-                                    Alert.InformedEntity.Activity.Board,
-                                    Alert.InformedEntity.Activity.Exit,
-                                    Alert.InformedEntity.Activity.Ride,
-                                ),
-                            route = orangeRoute.id,
-                            routeType = RouteType.HEAVY_RAIL,
-                            stop = northStation.id,
-                        ),
-                        Alert.InformedEntity(
-                            activities =
-                                listOf(
-                                    Alert.InformedEntity.Activity.Board,
-                                    Alert.InformedEntity.Activity.Exit,
-                                    Alert.InformedEntity.Activity.Ride,
-                                ),
-                            route = orangeRoute.id,
-                            routeType = RouteType.HEAVY_RAIL,
-                            stop = oakGrove.id,
-                        ),
-                        Alert.InformedEntity(
-                            activities =
-                                listOf(
-                                    Alert.InformedEntity.Activity.Board,
-                                    Alert.InformedEntity.Activity.Exit,
-                                    Alert.InformedEntity.Activity.Ride,
-                                ),
-                            route = orangeRoute.id,
-                            routeType = RouteType.HEAVY_RAIL,
-                            stop = oakGrovePlatform.id,
-                        ),
-                    )
-            }
+        }
 
         val global = GlobalResponse(objects)
         val context = RouteCardData.Context.NearbyTransit
@@ -5393,12 +5271,11 @@ class RouteCardDataTest {
         runBlocking {
             val objects = ObjectCollectionBuilder()
 
-            val oakGrove =
-                objects.stop {
-                    id = "place-ogmnl"
-                    locationType = LocationType.STATION
-                    childStopIds = listOf("70036")
-                }
+            val oakGrove = objects.stop {
+                id = "place-ogmnl"
+                locationType = LocationType.STATION
+                childStopIds = listOf("70036")
+            }
 
             val orangeRoute = objects.route { id = "Orange" }
             val orangeNorthboundTypical =
@@ -5442,21 +5319,19 @@ class RouteCardDataTest {
             val orangeNorthboundTypicalTrip = objects.trip(orangeNorthboundTypical)
             val orangeSouthboundTypicalTrip = objects.trip(orangeSouthboundTypical)
 
-            val sched1 =
-                objects.schedule {
-                    trip = orangeSouthboundTypicalTrip
-                    stopId = oakGrove.id
-                    stopSequence = 90
-                    departureTime = time + 1.minutes
-                }
-            val sched2 =
-                objects.schedule {
-                    trip = orangeNorthboundTypicalTrip
-                    stopId = oakGrove.id
-                    stopSequence = 90
-                    arrivalTime = time + 2.minutes
-                    departureTime = null
-                }
+            val sched1 = objects.schedule {
+                trip = orangeSouthboundTypicalTrip
+                stopId = oakGrove.id
+                stopSequence = 90
+                departureTime = time + 1.minutes
+            }
+            val sched2 = objects.schedule {
+                trip = orangeNorthboundTypicalTrip
+                stopId = oakGrove.id
+                stopSequence = 90
+                arrivalTime = time + 2.minutes
+                departureTime = null
+            }
 
             val lineOrRoute = LineOrRoute.Route(orangeRoute)
             assertEquals(
@@ -5514,11 +5389,10 @@ class RouteCardDataTest {
 
         val longWharf = objects.stop { id = "Boat-Long" }
 
-        val ferryRoute =
-            objects.route {
-                id = "Boat-F1"
-                type = RouteType.FERRY
-            }
+        val ferryRoute = objects.route {
+            id = "Boat-F1"
+            type = RouteType.FERRY
+        }
         val ferryInboundToLongWharf =
             objects.routePattern(ferryRoute) {
                 id = "Boat-F1-3-1"
@@ -5562,21 +5436,19 @@ class RouteCardDataTest {
         val ferryInboundTrip = objects.trip(ferryInboundToLongWharf)
         val ferryOutboundTrip = objects.trip(ferryOutboundToHingham)
 
-        val schedInbound =
-            objects.schedule {
-                trip = ferryInboundTrip
-                stopId = longWharf.id
-                stopSequence = 90
-                arrivalTime = time + 2.minutes
-                departureTime = null
-            }
-        val schedOutbound =
-            objects.schedule {
-                trip = ferryOutboundTrip
-                stopId = longWharf.id
-                stopSequence = 90
-                departureTime = time + 2.minutes
-            }
+        val schedInbound = objects.schedule {
+            trip = ferryInboundTrip
+            stopId = longWharf.id
+            stopSequence = 90
+            arrivalTime = time + 2.minutes
+            departureTime = null
+        }
+        val schedOutbound = objects.schedule {
+            trip = ferryOutboundTrip
+            stopId = longWharf.id
+            stopSequence = 90
+            departureTime = time + 2.minutes
+        }
 
         val ferryLineOrRoute = LineOrRoute.Route(ferryRoute)
         assertEquals(
@@ -5659,75 +5531,69 @@ class RouteCardDataTest {
             val time = EasternTimeInstant.now()
 
             val tripBraintree = objects.trip(routePatternBraintree)
-            val scheduleBraintree =
-                objects.schedule {
-                    trip = tripBraintree
-                    departureTime = time + 2.minutes
-                }
+            val scheduleBraintree = objects.schedule {
+                trip = tripBraintree
+                departureTime = time + 2.minutes
+            }
             val upcomingTripBraintree = objects.upcomingTrip(scheduleBraintree)
 
             val tripAshmont = objects.trip(routePatternAshmont)
-            val scheduleAshmont =
-                objects.schedule {
-                    trip = tripAshmont
-                    departureTime = time + 10.minutes
-                }
+            val scheduleAshmont = objects.schedule {
+                trip = tripAshmont
+                departureTime = time + 10.minutes
+            }
             val upcomingTripAshmont = objects.upcomingTrip(scheduleAshmont)
 
-            val shawmutShuttleAlert =
-                objects.alert {
-                    effect = Alert.Effect.Shuttle
-                    activePeriod(time - 1.seconds, null)
-                    informedEntity(
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                        route = route.id.idText,
-                        stop = shawmut.id,
-                    )
-                }
+            val shawmutShuttleAlert = objects.alert {
+                effect = Alert.Effect.Shuttle
+                activePeriod(time - 1.seconds, null)
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Ride,
+                    ),
+                    route = route.id.idText,
+                    stop = shawmut.id,
+                )
+            }
 
-            val ashmontShuttleAlert =
-                objects.alert {
-                    effect = Alert.Effect.Shuttle
-                    activePeriod(time - 1.seconds, null)
-                    informedEntity(
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                        route = route.id.idText,
-                        stop = ashmont.id,
-                    )
-                }
+            val ashmontShuttleAlert = objects.alert {
+                effect = Alert.Effect.Shuttle
+                activePeriod(time - 1.seconds, null)
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Ride,
+                    ),
+                    route = route.id.idText,
+                    stop = ashmont.id,
+                )
+            }
 
-            val parkShuttleAlert =
-                objects.alert {
-                    id = "park_shuttle_alert"
-                    effect = Alert.Effect.Shuttle
-                    activePeriod(time - 1.seconds, null)
-                    informedEntity(
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                        route = route.id.idText,
-                        stop = park.id,
-                    )
-                }
+            val parkShuttleAlert = objects.alert {
+                id = "park_shuttle_alert"
+                effect = Alert.Effect.Shuttle
+                activePeriod(time - 1.seconds, null)
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Ride,
+                    ),
+                    route = route.id.idText,
+                    stop = park.id,
+                )
+            }
 
-            val parkElevatorAlert =
-                objects.alert {
-                    id = "park_elevator_alert"
-                    effect = Alert.Effect.ElevatorClosure
-                    activePeriod(time - 1.seconds, null)
-                    informedEntity(
-                        listOf(Alert.InformedEntity.Activity.UsingWheelchair),
-                        route = route.id.idText,
-                        stop = park.id,
-                    )
-                }
+            val parkElevatorAlert = objects.alert {
+                id = "park_elevator_alert"
+                effect = Alert.Effect.ElevatorClosure
+                activePeriod(time - 1.seconds, null)
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.UsingWheelchair),
+                    route = route.id.idText,
+                    stop = park.id,
+                )
+            }
 
             val global =
                 GlobalResponse(
@@ -5823,40 +5689,37 @@ class RouteCardDataTest {
             val time = EasternTimeInstant.now()
 
             val tripPvd = objects.trip(routePatternPvd)
-            val schedulePvd =
-                objects.schedule {
-                    trip = tripPvd
-                    departureTime = time + 2.minutes
-                }
+            val schedulePvd = objects.schedule {
+                trip = tripPvd
+                departureTime = time + 2.minutes
+            }
             val upcomingTripPvd = objects.upcomingTrip(schedulePvd)
 
-            val southStationTrackChangeAlert =
-                objects.alert {
-                    effect = Alert.Effect.TrackChange
-                    activePeriod(time - 1.seconds, null)
-                    informedEntity(
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                        route = route.id.idText,
-                        stop = southStation.id,
-                    )
-                }
+            val southStationTrackChangeAlert = objects.alert {
+                effect = Alert.Effect.TrackChange
+                activePeriod(time - 1.seconds, null)
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Ride,
+                    ),
+                    route = route.id.idText,
+                    stop = southStation.id,
+                )
+            }
 
-            val providenceTrackChangeAlert =
-                objects.alert {
-                    effect = Alert.Effect.TrackChange
-                    activePeriod(time - 1.seconds, null)
-                    informedEntity(
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                        route = route.id.idText,
-                        stop = providence.id,
-                    )
-                }
+            val providenceTrackChangeAlert = objects.alert {
+                effect = Alert.Effect.TrackChange
+                activePeriod(time - 1.seconds, null)
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Ride,
+                    ),
+                    route = route.id.idText,
+                    stop = providence.id,
+                )
+            }
 
             val global =
                 GlobalResponse(
@@ -5960,68 +5823,57 @@ class RouteCardDataTest {
         val objects = ObjectCollectionBuilder()
 
         val closeBusStop = objects.stop()
-        val midBusStop =
-            objects.stop {
-                latitude = closeBusStop.latitude + 0.2
-                longitude = closeBusStop.longitude + 0.2
-            }
-        val farBusStop =
-            objects.stop {
-                latitude = closeBusStop.latitude + 0.4
-                longitude = closeBusStop.longitude + 0.4
-            }
-        val closeSubwayStop =
-            objects.stop {
-                latitude = closeBusStop.latitude + 0.1
-                longitude = closeBusStop.longitude + 0.1
-            }
-        val midSubwayStop =
-            objects.stop {
-                latitude = closeBusStop.latitude + 0.3
-                longitude = closeBusStop.longitude + 0.3
-            }
-        val farSubwayStop =
-            objects.stop {
-                latitude = closeBusStop.latitude + 0.5
-                longitude = closeBusStop.longitude + 0.5
-            }
+        val midBusStop = objects.stop {
+            latitude = closeBusStop.latitude + 0.2
+            longitude = closeBusStop.longitude + 0.2
+        }
+        val farBusStop = objects.stop {
+            latitude = closeBusStop.latitude + 0.4
+            longitude = closeBusStop.longitude + 0.4
+        }
+        val closeSubwayStop = objects.stop {
+            latitude = closeBusStop.latitude + 0.1
+            longitude = closeBusStop.longitude + 0.1
+        }
+        val midSubwayStop = objects.stop {
+            latitude = closeBusStop.latitude + 0.3
+            longitude = closeBusStop.longitude + 0.3
+        }
+        val farSubwayStop = objects.stop {
+            latitude = closeBusStop.latitude + 0.5
+            longitude = closeBusStop.longitude + 0.5
+        }
 
         // no schedules
-        val closeBusRoute =
-            objects.route {
-                id = "close-bus"
-                type = RouteType.BUS
-            }
+        val closeBusRoute = objects.route {
+            id = "close-bus"
+            type = RouteType.BUS
+        }
         // with schedules
-        val midBusRoute =
-            objects.route {
-                id = "mid-bus"
-                type = RouteType.BUS
-            }
+        val midBusRoute = objects.route {
+            id = "mid-bus"
+            type = RouteType.BUS
+        }
         // no schedules
-        val farBusRoute =
-            objects.route {
-                id = "far-bus"
-                type = RouteType.BUS
-            }
+        val farBusRoute = objects.route {
+            id = "far-bus"
+            type = RouteType.BUS
+        }
         // no schedules
-        val closeSubwayRoute =
-            objects.route {
-                id = "close-subway"
-                type = RouteType.HEAVY_RAIL
-            }
+        val closeSubwayRoute = objects.route {
+            id = "close-subway"
+            type = RouteType.HEAVY_RAIL
+        }
         // no schedules
-        val midSubwayRoute =
-            objects.route {
-                id = "mid-subway"
-                type = RouteType.LIGHT_RAIL
-            }
+        val midSubwayRoute = objects.route {
+            id = "mid-subway"
+            type = RouteType.LIGHT_RAIL
+        }
         // with schedules
-        val farSubwayRoute =
-            objects.route {
-                id = "far-subway"
-                type = RouteType.HEAVY_RAIL
-            }
+        val farSubwayRoute = objects.route {
+            id = "far-subway"
+            type = RouteType.HEAVY_RAIL
+        }
 
         val closeBusPattern =
             objects.routePattern(closeBusRoute) {
@@ -6180,22 +6032,19 @@ class RouteCardDataTest {
         val objects = ObjectCollectionBuilder()
 
         val busStop = objects.stop()
-        val subwayStop =
-            objects.stop {
-                latitude = busStop.latitude + 0.1
-                longitude = busStop.longitude + 0.1
-            }
+        val subwayStop = objects.stop {
+            latitude = busStop.latitude + 0.1
+            longitude = busStop.longitude + 0.1
+        }
 
-        val busRoute =
-            objects.route {
-                id = "bus"
-                type = RouteType.BUS
-            }
-        val subwayRoute =
-            objects.route {
-                id = "subway"
-                type = RouteType.HEAVY_RAIL
-            }
+        val busRoute = objects.route {
+            id = "bus"
+            type = RouteType.BUS
+        }
+        val subwayRoute = objects.route {
+            id = "subway"
+            type = RouteType.HEAVY_RAIL
+        }
 
         val busPattern =
             objects.routePattern(busRoute) {
@@ -6254,7 +6103,11 @@ class RouteCardDataTest {
                 favorites =
                     setOf(
                         RouteStopDirection(busRoute.id, busStop.id, 0),
-                        RouteStopDirection(subwayRoute.id, subwayStop.id, subwayPattern.directionId),
+                        RouteStopDirection(
+                            subwayRoute.id,
+                            subwayStop.id,
+                            subwayPattern.directionId,
+                        ),
                     ),
                 sentryRepository = TestSentryRepo(),
             )
@@ -6275,11 +6128,10 @@ class RouteCardDataTest {
 
         val lastStop = objects.stop { id = "last-stop" }
 
-        val serviceEndedRoute =
-            objects.route {
-                id = "Shuttle-service-ended"
-                type = RouteType.BUS
-            }
+        val serviceEndedRoute = objects.route {
+            id = "Shuttle-service-ended"
+            type = RouteType.BUS
+        }
 
         val serviceEndedPattern =
             objects.routePattern(serviceEndedRoute) {
@@ -6327,11 +6179,10 @@ class RouteCardDataTest {
 
         val stop = objects.stop { id = "test" }
 
-        val servicedRoute =
-            objects.route {
-                id = "Shuttle-with-service"
-                type = RouteType.BUS
-            }
+        val servicedRoute = objects.route {
+            id = "Shuttle-with-service"
+            type = RouteType.BUS
+        }
 
         val servicedPattern =
             objects.routePattern(servicedRoute) {

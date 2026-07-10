@@ -95,24 +95,23 @@ class RouteFeaturesBuilderTest {
 
         val objects = ObjectCollectionBuilder()
 
-        val redAlert =
-            objects.alert {
-                id = "a1"
-                effect = Alert.Effect.Shuttle
-                activePeriod(start = now - 1.seconds, end = null)
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
-                    route = MapTestDataHelper.routeRed.id.idText,
-                    routeType = RouteType.HEAVY_RAIL,
-                    stop = MapTestDataHelper.stopPorter.id,
-                )
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
-                    route = MapTestDataHelper.routeRed.id.idText,
-                    routeType = RouteType.HEAVY_RAIL,
-                    stop = MapTestDataHelper.stopHarvard.id,
-                )
-            }
+        val redAlert = objects.alert {
+            id = "a1"
+            effect = Alert.Effect.Shuttle
+            activePeriod(start = now - 1.seconds, end = null)
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board),
+                route = MapTestDataHelper.routeRed.id.idText,
+                routeType = RouteType.HEAVY_RAIL,
+                stop = MapTestDataHelper.stopPorter.id,
+            )
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board),
+                route = MapTestDataHelper.routeRed.id.idText,
+                routeType = RouteType.HEAVY_RAIL,
+                stop = MapTestDataHelper.stopHarvard.id,
+            )
+        }
         val alertsByStop =
             mapOf(
                 MapTestDataHelper.stopPorter.id to
@@ -194,24 +193,23 @@ class RouteFeaturesBuilderTest {
 
         val objects = ObjectCollectionBuilder()
 
-        val redAlert =
-            objects.alert {
-                id = "a1"
-                effect = Alert.Effect.Shuttle
-                activePeriod(start = now - 1.seconds, end = null)
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
-                    route = MapTestDataHelper.routeRed.id.idText,
-                    routeType = RouteType.HEAVY_RAIL,
-                    stop = MapTestDataHelper.stopAlewife.id,
-                )
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Board),
-                    route = MapTestDataHelper.routeRed.id.idText,
-                    routeType = RouteType.HEAVY_RAIL,
-                    stop = MapTestDataHelper.stopDavis.id,
-                )
-            }
+        val redAlert = objects.alert {
+            id = "a1"
+            effect = Alert.Effect.Shuttle
+            activePeriod(start = now - 1.seconds, end = null)
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board),
+                route = MapTestDataHelper.routeRed.id.idText,
+                routeType = RouteType.HEAVY_RAIL,
+                stop = MapTestDataHelper.stopAlewife.id,
+            )
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.Board),
+                route = MapTestDataHelper.routeRed.id.idText,
+                routeType = RouteType.HEAVY_RAIL,
+                stop = MapTestDataHelper.stopDavis.id,
+            )
+        }
         val alertsByStop =
             listOf(
                 MapTestDataHelper.stopAlewife.id to

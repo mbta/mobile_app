@@ -17,12 +17,11 @@ public interface IConfigRepository {
 internal class ConfigRepository : IConfigRepository, KoinComponent {
     private val mobileBackendClient: MobileBackendClient by inject()
 
-    override suspend fun getConfig(): ApiResult<ConfigResponse> =
-        ApiResult.runCatching {
-            val response = mobileBackendClient.get { url { path("api/protected/config") } }
+    override suspend fun getConfig(): ApiResult<ConfigResponse> = ApiResult.runCatching {
+        val response = mobileBackendClient.get { url { path("api/protected/config") } }
 
-            return ApiResult.Ok(json.decodeFromString(response.body()))
-        }
+        return ApiResult.Ok(json.decodeFromString(response.body()))
+    }
 }
 
 public class MockConfigRepository(

@@ -67,7 +67,8 @@ fun TripDetailsPageHeader(route: Route?, direction: Direction?, navCallbacks: Na
                         direction,
                         modifier =
                             Modifier.semantics { heading() }.weight(1f).placeholderIfLoading(),
-                        textColor = route?.textColor?.let { Color.fromHex(it) } ?: Color.Unspecified,
+                        textColor =
+                            route?.textColor?.let { Color.fromHex(it) } ?: Color.Unspecified,
                     )
                 } else {
                     Spacer(Modifier.weight(1f))
@@ -100,7 +101,8 @@ private fun TripDetailsPageHeaderPreview() {
                     NavigationCallbacks(
                         onBack = null,
                         onClose = {},
-                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
+                        backButtonPresentation =
+                            NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
             )
         }

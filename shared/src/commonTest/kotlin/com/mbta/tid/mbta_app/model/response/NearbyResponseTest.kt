@@ -28,31 +28,27 @@ class NearbyResponseTest {
         val patternAllStops = objects.routePattern(route)
         val patternStop3 = objects.routePattern(route) {}
 
-        val station =
-            objects.stop {
-                position = pointAtDistance(0.01)
-                childStopIds = listOf("stop1", "stop1Node")
-            }
+        val station = objects.stop {
+            position = pointAtDistance(0.01)
+            childStopIds = listOf("stop1", "stop1Node")
+        }
 
-        val stop1 =
-            objects.stop {
-                id = "stop1"
-                position = pointAtDistance(0.01)
-                vehicleType = RouteType.HEAVY_RAIL
-                parentStationId = station.id
-            }
+        val stop1 = objects.stop {
+            id = "stop1"
+            position = pointAtDistance(0.01)
+            vehicleType = RouteType.HEAVY_RAIL
+            parentStationId = station.id
+        }
 
-        val stop2 =
-            objects.stop {
-                position = pointAtDistance(0.02)
-                vehicleType = RouteType.HEAVY_RAIL
-            }
+        val stop2 = objects.stop {
+            position = pointAtDistance(0.02)
+            vehicleType = RouteType.HEAVY_RAIL
+        }
 
-        val stop3 =
-            objects.stop {
-                position = pointAtDistance(0.03)
-                vehicleType = RouteType.HEAVY_RAIL
-            }
+        val stop3 = objects.stop {
+            position = pointAtDistance(0.03)
+            vehicleType = RouteType.HEAVY_RAIL
+        }
 
         val patternIdsByStop: Map<String, List<String>> =
             mapOf(

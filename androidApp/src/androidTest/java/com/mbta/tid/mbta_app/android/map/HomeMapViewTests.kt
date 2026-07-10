@@ -445,7 +445,8 @@ class HomeMapViewTests {
                     NavigationCallbacks(
                         onBack = {},
                         onClose = null,
-                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
+                        backButtonPresentation =
+                            NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
             )
         }

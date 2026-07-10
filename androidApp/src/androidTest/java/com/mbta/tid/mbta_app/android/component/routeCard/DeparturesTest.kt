@@ -34,12 +34,11 @@ class DeparturesTest {
 
         val downstreamAlert = objects.alert { effect = Alert.Effect.Shuttle }
         val stop = objects.stop {}
-        val route =
-            objects.route {
-                longName = "Route"
-                type = RouteType.LIGHT_RAIL
-                directionDestinations = listOf("A", "B")
-            }
+        val route = objects.route {
+            longName = "Route"
+            type = RouteType.LIGHT_RAIL
+            directionDestinations = listOf("A", "B")
+        }
 
         val aTrip = objects.trip { headsign = "A" }
         val bTrip = objects.trip { headsign = "B" }
@@ -111,12 +110,11 @@ class DeparturesTest {
         val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
-        val route =
-            objects.route {
-                longName = "Route"
-                type = RouteType.LIGHT_RAIL
-                directionDestinations = listOf("A", "B")
-            }
+        val route = objects.route {
+            longName = "Route"
+            type = RouteType.LIGHT_RAIL
+            directionDestinations = listOf("A", "B")
+        }
 
         val aTrip = objects.trip { headsign = "A" }
         val aSchedule = objects.schedule { stopHeadsign = "A Stop Headsign" }
@@ -234,12 +232,11 @@ class DeparturesTest {
         val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
-        val route =
-            objects.route {
-                longName = "Route"
-                type = RouteType.LIGHT_RAIL
-                directionDestinations = listOf("A", "B")
-            }
+        val route = objects.route {
+            longName = "Route"
+            type = RouteType.LIGHT_RAIL
+            directionDestinations = listOf("A", "B")
+        }
 
         val aTrip = objects.trip { headsign = "A" }
         val bTrip = objects.trip { headsign = "B" }

@@ -288,15 +288,14 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
     fun playAnimation() {
         animationJob?.cancel()
         screenState = NotificationsScreenState.Initial
-        animationJob =
-            coroutineScope.launch {
-                delay(2.seconds)
-                screenState = NotificationsScreenState.AfterFavorite
-                delay(2.seconds)
-                screenState = NotificationsScreenState.AfterSchedule
-                delay(2.seconds)
-                screenState = NotificationsScreenState.Final
-            }
+        animationJob = coroutineScope.launch {
+            delay(2.seconds)
+            screenState = NotificationsScreenState.AfterFavorite
+            delay(2.seconds)
+            screenState = NotificationsScreenState.AfterSchedule
+            delay(2.seconds)
+            screenState = NotificationsScreenState.Final
+        }
     }
 
     LaunchedEffect(null) { playAnimation() }
@@ -426,16 +425,13 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    val starColor by
-                        transition.animateColor {
-                            if (it >= NotificationsScreenState.AfterFavorite)
-                                colorResource(R.color.key)
-                            else colorResource(R.color.text).copy(alpha = 0.4f)
-                        }
-                    val textAlpha by
-                        transition.animateFloat {
-                            if (it >= NotificationsScreenState.AfterFavorite) 1f else 0.4f
-                        }
+                    val starColor by transition.animateColor {
+                        if (it >= NotificationsScreenState.AfterFavorite) colorResource(R.color.key)
+                        else colorResource(R.color.text).copy(alpha = 0.4f)
+                    }
+                    val textAlpha by transition.animateFloat {
+                        if (it >= NotificationsScreenState.AfterFavorite) 1f else 0.4f
+                    }
                     StarIcon(
                         starred = screenState >= NotificationsScreenState.AfterFavorite,
                         color = starColor,
@@ -453,10 +449,9 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    val textAlpha by
-                        transition.animateFloat {
-                            if (it >= NotificationsScreenState.AfterSchedule) 1f else 0.4f
-                        }
+                    val textAlpha by transition.animateFloat {
+                        if (it >= NotificationsScreenState.AfterSchedule) 1f else 0.4f
+                    }
                     Switch(
                         checked = screenState >= NotificationsScreenState.AfterSchedule,
                         onCheckedChange = null,
@@ -468,10 +463,9 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
                         style = Typography.title3,
                     )
                 }
-                val textAlpha by
-                    transition.animateFloat {
-                        if (it >= NotificationsScreenState.Final) 1f else 0.4f
-                    }
+                val textAlpha by transition.animateFloat {
+                    if (it >= NotificationsScreenState.Final) 1f else 0.4f
+                }
                 Text(
                     stringResource(R.string.promo_notifications_body),
                     modifier = Modifier.alpha(textAlpha),

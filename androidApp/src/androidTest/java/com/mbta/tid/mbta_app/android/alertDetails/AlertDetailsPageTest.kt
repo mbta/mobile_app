@@ -19,54 +19,48 @@ class AlertDetailsPageTest {
     @Test
     fun testAlertDetailsPageParentStopResolution() {
         val objects = ObjectCollectionBuilder()
-        val stop1 =
-            objects.stop {
-                name = "Stop 1"
-                childStopIds = listOf("stop1a", "stop1b")
-            }
-        val stop1a =
-            objects.stop {
-                id = "stop1a"
-                name = "Stop 1a"
-                parentStationId = stop1.id
-            }
-        val stop1b =
-            objects.stop {
-                id = "stop1b"
-                name = "Stop 1b"
-                parentStationId = stop1.id
-            }
-        val stop2 =
-            objects.stop {
-                name = "Stop 2"
-                childStopIds = listOf("stop2a")
-            }
-        val stop2a =
-            objects.stop {
-                id = "stop2a"
-                name = "Stop 2a"
-                parentStationId = stop2.id
-            }
+        val stop1 = objects.stop {
+            name = "Stop 1"
+            childStopIds = listOf("stop1a", "stop1b")
+        }
+        val stop1a = objects.stop {
+            id = "stop1a"
+            name = "Stop 1a"
+            parentStationId = stop1.id
+        }
+        val stop1b = objects.stop {
+            id = "stop1b"
+            name = "Stop 1b"
+            parentStationId = stop1.id
+        }
+        val stop2 = objects.stop {
+            name = "Stop 2"
+            childStopIds = listOf("stop2a")
+        }
+        val stop2a = objects.stop {
+            id = "stop2a"
+            name = "Stop 2a"
+            parentStationId = stop2.id
+        }
         val stop3 = objects.stop { name = "Stop 3" }
 
         val route = objects.route { longName = "Orange Line" }
 
         val now = EasternTimeInstant.now()
 
-        val alert =
-            objects.alert {
-                activePeriod(now - 5.seconds, now + 5.seconds)
-                description = "Long description"
-                cause = Alert.Cause.Fire
-                effect = Alert.Effect.Suspension
-                effectName = "Suspension"
-                header = "Alert header"
-                informedEntity(route = route.id.idText, stop = stop1.id)
-                informedEntity(directionId = 0, route = route.id.idText, stop = stop1a.id)
-                informedEntity(directionId = 1, route = route.id.idText, stop = stop1b.id)
-                informedEntity(route = route.id.idText, stop = stop2a.id)
-                informedEntity(route = route.id.idText, stop = stop3.id)
-            }
+        val alert = objects.alert {
+            activePeriod(now - 5.seconds, now + 5.seconds)
+            description = "Long description"
+            cause = Alert.Cause.Fire
+            effect = Alert.Effect.Suspension
+            effectName = "Suspension"
+            header = "Alert header"
+            informedEntity(route = route.id.idText, stop = stop1.id)
+            informedEntity(directionId = 0, route = route.id.idText, stop = stop1a.id)
+            informedEntity(directionId = 1, route = route.id.idText, stop = stop1b.id)
+            informedEntity(route = route.id.idText, stop = stop2a.id)
+            informedEntity(route = route.id.idText, stop = stop3.id)
+        }
 
         loadKoinMocks(objects)
 

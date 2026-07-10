@@ -44,19 +44,18 @@ import org.koin.dsl.module
 class StopDetailsViewTest {
     val builder = ObjectCollectionBuilder()
     val now = EasternTimeInstant.now()
-    val route =
-        builder.route {
-            id = "route_1"
-            type = RouteType.BUS
-            color = "FF0000"
-            directionNames = listOf("North", "South")
-            directionDestinations = listOf("Downtown", "Uptown")
-            longName = "Sample Route Long Name"
-            shortName = "Sample Route"
-            textColor = "000000"
-            lineId = "line_1"
-            routePatternIds = mutableListOf("pattern_1", "pattern_2")
-        }
+    val route = builder.route {
+        id = "route_1"
+        type = RouteType.BUS
+        color = "FF0000"
+        directionNames = listOf("North", "South")
+        directionDestinations = listOf("Downtown", "Uptown")
+        longName = "Sample Route Long Name"
+        shortName = "Sample Route"
+        textColor = "000000"
+        lineId = "line_1"
+        routePatternIds = mutableListOf("pattern_1", "pattern_2")
+    }
     val lineOrRoute = LineOrRoute.Route(route)
     val routePatternOne =
         builder.routePattern(route) {
@@ -74,40 +73,36 @@ class StopDetailsViewTest {
             routeId = "route_1"
             representativeTripId = "trip_1"
         }
-    val stop =
-        builder.stop {
-            id = "stop_1"
-            name = "Sample Stop"
-            locationType = LocationType.STOP
-            latitude = 0.0
-            longitude = 0.0
-        }
-    val line =
-        builder.line {
-            id = "line_1"
-            color = "FF0000"
-            textColor = "FFFFFF"
-        }
-    val trip =
-        builder.trip {
-            id = "trip_1"
-            routeId = "route_1"
-            directionId = 0
-            headsign = "Sample Headsign"
-            stopIds = listOf(stop.id)
-        }
-    val prediction =
-        builder.prediction {
-            id = "prediction_1"
-            revenue = true
-            stopId = "stop_1"
-            tripId = "trip_1"
-            routeId = "route_1"
-            stopSequence = 1
-            directionId = 0
-            arrivalTime = now.plus(1.minutes)
-            departureTime = now.plus(1.5.minutes)
-        }
+    val stop = builder.stop {
+        id = "stop_1"
+        name = "Sample Stop"
+        locationType = LocationType.STOP
+        latitude = 0.0
+        longitude = 0.0
+    }
+    val line = builder.line {
+        id = "line_1"
+        color = "FF0000"
+        textColor = "FFFFFF"
+    }
+    val trip = builder.trip {
+        id = "trip_1"
+        routeId = "route_1"
+        directionId = 0
+        headsign = "Sample Headsign"
+        stopIds = listOf(stop.id)
+    }
+    val prediction = builder.prediction {
+        id = "prediction_1"
+        revenue = true
+        stopId = "stop_1"
+        tripId = "trip_1"
+        routeId = "route_1"
+        stopSequence = 1
+        directionId = 0
+        arrivalTime = now.plus(1.minutes)
+        departureTime = now.plus(1.5.minutes)
+    }
 
     val global = GlobalResponse(builder)
 
@@ -243,7 +238,8 @@ class StopDetailsViewTest {
                     NavigationCallbacks(
                         onBack = null,
                         onClose = {},
-                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
+                        backButtonPresentation =
+                            NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
                 updateStopFilter = filterState::value::set,
                 updateTripFilter = {},
@@ -265,12 +261,11 @@ class StopDetailsViewTest {
 
     @Test
     fun testStopDetailsViewDisplaysElevatorAlertsOnUnfiltered() {
-        val alert =
-            builder.alert {
-                effect = Alert.Effect.ElevatorClosure
-                header = "Elevator alert header"
-                informedEntity()
-            }
+        val alert = builder.alert {
+            effect = Alert.Effect.ElevatorClosure
+            header = "Elevator alert header"
+            informedEntity()
+        }
 
         val global = GlobalResponse(builder)
 
@@ -352,12 +347,11 @@ class StopDetailsViewTest {
 
     @Test
     fun testStopDetailsViewDisplaysElevatorAlertsOnFiltered() {
-        val alert =
-            builder.alert {
-                effect = Alert.Effect.ElevatorClosure
-                header = "Elevator alert header"
-                informedEntity()
-            }
+        val alert = builder.alert {
+            effect = Alert.Effect.ElevatorClosure
+            header = "Elevator alert header"
+            informedEntity()
+        }
 
         val global = GlobalResponse(builder)
         val filteredVM =

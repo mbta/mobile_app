@@ -31,19 +31,18 @@ import org.koin.compose.koinInject
 class StopDetailsUnfilteredRoutesViewTest {
     val builder = ObjectCollectionBuilder()
     val now = EasternTimeInstant.now()
-    val route =
-        builder.route {
-            id = "route_1"
-            type = RouteType.BUS
-            color = "FF0000"
-            directionNames = listOf("North", "South")
-            directionDestinations = listOf("Downtown", "Uptown")
-            longName = "Sample Route Long Name"
-            shortName = "Sample Route"
-            textColor = "000000"
-            lineId = "line_1"
-            routePatternIds = mutableListOf("pattern_1", "pattern_2")
-        }
+    val route = builder.route {
+        id = "route_1"
+        type = RouteType.BUS
+        color = "FF0000"
+        directionNames = listOf("North", "South")
+        directionDestinations = listOf("Downtown", "Uptown")
+        longName = "Sample Route Long Name"
+        shortName = "Sample Route"
+        textColor = "000000"
+        lineId = "line_1"
+        routePatternIds = mutableListOf("pattern_1", "pattern_2")
+    }
     val routePatternOne =
         builder.routePattern(route) {
             id = "pattern_1"
@@ -60,50 +59,45 @@ class StopDetailsUnfilteredRoutesViewTest {
             routeId = "route_1"
             representativeTripId = "trip_1"
         }
-    val stop =
-        builder.stop {
-            id = "stop_1"
-            name = "Sample Stop"
-            locationType = LocationType.STOP
-            latitude = 0.0
-            longitude = 0.0
-            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
-        }
-    val inaccessibleStop =
-        builder.stop {
-            id = "stop_2"
-            name = "Inaccessible Stop"
-            locationType = LocationType.STOP
-            latitude = 0.0
-            longitude = 0.0
-            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
-        }
-    val line =
-        builder.line {
-            id = "line_1"
-            color = "FF0000"
-            textColor = "FFFFFF"
-        }
-    val trip =
-        builder.trip {
-            id = "trip_1"
-            routeId = "route_1"
-            directionId = 0
-            headsign = "Sample Headsign"
-            routePatternId = "pattern_1"
-        }
-    val prediction =
-        builder.prediction {
-            id = "prediction_1"
-            revenue = true
-            stopId = "stop_1"
-            tripId = "trip_1"
-            routeId = "route_1"
-            stopSequence = 1
-            directionId = 0
-            arrivalTime = now.plus(1.minutes)
-            departureTime = now.plus(1.5.minutes)
-        }
+    val stop = builder.stop {
+        id = "stop_1"
+        name = "Sample Stop"
+        locationType = LocationType.STOP
+        latitude = 0.0
+        longitude = 0.0
+        wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+    }
+    val inaccessibleStop = builder.stop {
+        id = "stop_2"
+        name = "Inaccessible Stop"
+        locationType = LocationType.STOP
+        latitude = 0.0
+        longitude = 0.0
+        wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
+    }
+    val line = builder.line {
+        id = "line_1"
+        color = "FF0000"
+        textColor = "FFFFFF"
+    }
+    val trip = builder.trip {
+        id = "trip_1"
+        routeId = "route_1"
+        directionId = 0
+        headsign = "Sample Headsign"
+        routePatternId = "pattern_1"
+    }
+    val prediction = builder.prediction {
+        id = "prediction_1"
+        revenue = true
+        stopId = "stop_1"
+        tripId = "trip_1"
+        routeId = "route_1"
+        stopSequence = 1
+        directionId = 0
+        arrivalTime = now.plus(1.minutes)
+        departureTime = now.plus(1.5.minutes)
+    }
 
     val globalResponse =
         GlobalResponse(
@@ -196,16 +190,15 @@ class StopDetailsUnfilteredRoutesViewTest {
 
     @Test
     fun testShowsElevatorAlertsWhenGroupedByDirection(): Unit = runBlocking {
-        val alert =
-            Single.alert {
-                header = "Elevator alert"
-                activePeriod(start = EasternTimeInstant(Instant.DISTANT_PAST), end = null)
-                effect = Alert.Effect.ElevatorClosure
-                informedEntity(
-                    listOf(Alert.InformedEntity.Activity.UsingWheelchair),
-                    stop = stop.id,
-                )
-            }
+        val alert = Single.alert {
+            header = "Elevator alert"
+            activePeriod(start = EasternTimeInstant(Instant.DISTANT_PAST), end = null)
+            effect = Alert.Effect.ElevatorClosure
+            informedEntity(
+                listOf(Alert.InformedEntity.Activity.UsingWheelchair),
+                stop = stop.id,
+            )
+        }
         val routeCardData =
             checkNotNull(
                 RouteCardData.routeCardsForStopList(

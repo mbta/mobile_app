@@ -51,17 +51,15 @@ class ViewportProviderTest {
     @Test
     fun testLazyPadding() = runBlocking {
         val objects = ObjectCollectionBuilder()
-        val stop =
-            objects.stop {
-                latitude = 42.3531
-                longitude = -71.0697
-            }
-        val vehicle =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                latitude = 42.3547
-                longitude = -71.0702
-            }
+        val stop = objects.stop {
+            latitude = 42.3531
+            longitude = -71.0697
+        }
+        val vehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+            latitude = 42.3547
+            longitude = -71.0702
+        }
         val mapViewportState =
             MapViewportState().apply {
                 setCameraOptions {

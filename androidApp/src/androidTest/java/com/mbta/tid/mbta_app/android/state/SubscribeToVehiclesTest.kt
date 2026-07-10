@@ -132,16 +132,14 @@ class SubscribeToVehiclesTest {
         val route1 = objects.route { id = "A" }
         val route2 = objects.route { id = "B" }
 
-        val vehicle1 =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                routeId = route1.id.idText
-            }
-        val vehicle2 =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                routeId = route2.id.idText
-            }
+        val vehicle1 = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+            routeId = route1.id.idText
+        }
+        val vehicle2 = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+            routeId = route2.id.idText
+        }
 
         var connectProps: Pair<LineOrRoute.Id, Int>? = null
 
@@ -217,18 +215,16 @@ class SubscribeToVehiclesTest {
         val route = objects.route {}
 
         val now = EasternTimeInstant.now()
-        val vehicle1 =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                routeId = route.id.idText
-                updatedAt = now.minus(10.seconds)
-            }
-        val vehicle2 =
-            objects.vehicle {
-                currentStatus = Vehicle.CurrentStatus.StoppedAt
-                routeId = route.id.idText
-                updatedAt = now.minus(2.hours)
-            }
+        val vehicle1 = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+            routeId = route.id.idText
+            updatedAt = now.minus(10.seconds)
+        }
+        val vehicle2 = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+            routeId = route.id.idText
+            updatedAt = now.minus(2.hours)
+        }
 
         var connectProps: Pair<LineOrRoute.Id, Int>? = null
 

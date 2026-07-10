@@ -74,30 +74,26 @@ fun FavoriteStopCard(
 @Composable
 private fun FavoriteStopCardPreview() {
     val objects = TestData.clone()
-    val wellington =
-        objects.stop {
-            id = "place-welln"
-            locationType = LocationType.STATION
-            name = "Wellington"
-        }
-    val wonderland =
-        objects.stop {
-            id = "place-wondl"
-            locationType = LocationType.STATION
-            name = "Wonderland"
-        }
-    val harvardStadiumGate2Inbound =
-        objects.stop {
-            id = "2551"
-            locationType = LocationType.STOP
-            name = "N Harvard St @ Gate 2 Harvard Stadium"
-        }
-    val forestHills =
-        objects.stop {
-            id = "place-forhl"
-            locationType = LocationType.STATION
-            name = "Forest Hills"
-        }
+    val wellington = objects.stop {
+        id = "place-welln"
+        locationType = LocationType.STATION
+        name = "Wellington"
+    }
+    val wonderland = objects.stop {
+        id = "place-wondl"
+        locationType = LocationType.STATION
+        name = "Wonderland"
+    }
+    val harvardStadiumGate2Inbound = objects.stop {
+        id = "2551"
+        locationType = LocationType.STOP
+        name = "N Harvard St @ Gate 2 Harvard Stadium"
+    }
+    val forestHills = objects.stop {
+        id = "place-forhl"
+        locationType = LocationType.STATION
+        name = "Forest Hills"
+    }
     val boylston = objects.getStop("place-boyls")
     val ol = LineOrRoute.Route(objects.getRoute("Orange"))
     val bl =

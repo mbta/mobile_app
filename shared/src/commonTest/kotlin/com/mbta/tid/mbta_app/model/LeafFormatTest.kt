@@ -103,12 +103,11 @@ class LeafFormatTest {
                 lastTrip,
             )
 
-        val format =
-            LeafFormat.branched {
-                branchRow(route1, "Headsign 1", UpcomingFormat.Some(trip1, null))
-                branchRow(route2, "Headsign 2", UpcomingFormat.Some(trip2, null))
-                branchRow(route1, "Headsign 3", UpcomingFormat.Some(trip3, null))
-            }
+        val format = LeafFormat.branched {
+            branchRow(route1, "Headsign 1", UpcomingFormat.Some(trip1, null))
+            branchRow(route2, "Headsign 2", UpcomingFormat.Some(trip2, null))
+            branchRow(route1, "Headsign 3", UpcomingFormat.Some(trip3, null))
+        }
         assertEquals(
             listOf(
                 TileData(route1, "Headsign 1", UpcomingFormat.Some(trip1, null), trip1.trip),
@@ -140,12 +139,11 @@ class LeafFormatTest {
                 lastTrip,
             )
 
-        val format =
-            LeafFormat.branched {
-                branchRow("Headsign 1", UpcomingFormat.Some(trip1, null))
-                branchRow("Headsign 2", UpcomingFormat.Some(trip2, null))
-                branchRow("Headsign 3", UpcomingFormat.Loading)
-            }
+        val format = LeafFormat.branched {
+            branchRow("Headsign 1", UpcomingFormat.Some(trip1, null))
+            branchRow("Headsign 2", UpcomingFormat.Some(trip2, null))
+            branchRow("Headsign 3", UpcomingFormat.Loading)
+        }
         assertEquals(
             listOf(
                 TileData(null, "Headsign 1", UpcomingFormat.Some(trip1, null), trip1.trip),
@@ -168,14 +166,13 @@ class LeafFormatTest {
 
     @Test
     fun `Branched tileData empty if no trips`() {
-        val format =
-            LeafFormat.branched {
-                branchRow(
-                    "Headsign 1",
-                    UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable),
-                )
-                branchRow("Headsign 2", UpcomingFormat.Loading)
-            }
+        val format = LeafFormat.branched {
+            branchRow(
+                "Headsign 1",
+                UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable),
+            )
+            branchRow("Headsign 2", UpcomingFormat.Loading)
+        }
         assertEquals(emptyList(), format.tileData(directionDestination = null))
     }
 
@@ -195,18 +192,17 @@ class LeafFormatTest {
 
     @Test
     fun `Branched noPredictionsStatus returns any status if no predictions`() {
-        val format =
-            LeafFormat.branched {
-                branchRow("Headsign 2", UpcomingFormat.Loading)
-                branchRow(
-                    "Headsign 1",
-                    UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.ServiceEndedToday),
-                )
-                branchRow(
-                    "Headsign 2",
-                    UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable),
-                )
-            }
+        val format = LeafFormat.branched {
+            branchRow("Headsign 2", UpcomingFormat.Loading)
+            branchRow(
+                "Headsign 1",
+                UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.ServiceEndedToday),
+            )
+            branchRow(
+                "Headsign 2",
+                UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable),
+            )
+        }
         assertEquals(UpcomingFormat.NoTripsFormat.ServiceEndedToday, format.noPredictionsStatus())
     }
 
@@ -237,15 +233,14 @@ class LeafFormatTest {
                 TripInstantDisplay.Now(lastTrip),
                 lastTrip,
             )
-        val format =
-            LeafFormat.branched {
-                branchRow("Headsign 1", UpcomingFormat.Loading)
-                branchRow(
-                    "Headsign 2",
-                    UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.NoSchedulesToday),
-                )
-                branchRow("Headsign 3", UpcomingFormat.Some(trip, null))
-            }
+        val format = LeafFormat.branched {
+            branchRow("Headsign 1", UpcomingFormat.Loading)
+            branchRow(
+                "Headsign 2",
+                UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.NoSchedulesToday),
+            )
+            branchRow("Headsign 3", UpcomingFormat.Some(trip, null))
+        }
         assertNull(format.noPredictionsStatus())
     }
 }

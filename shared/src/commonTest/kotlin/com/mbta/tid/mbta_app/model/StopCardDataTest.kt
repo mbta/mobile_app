@@ -12,11 +12,10 @@ class StopCardDataTest {
         val now = EasternTimeInstant.now()
         val objects = TestData.clone()
         val ruggles = objects.getStop("place-rugg")
-        val tremontAtMelneaCass =
-            objects.stop {
-                id = "1227"
-                name = "Tremont St @ Melnea Cass Blvd"
-            }
+        val tremontAtMelneaCass = objects.stop {
+            id = "1227"
+            name = "Tremont St @ Melnea Cass Blvd"
+        }
         val boylston = objects.getStop("place-boyls")
         val ol = LineOrRoute.Route(objects.getRoute("Orange"))
         val gl =

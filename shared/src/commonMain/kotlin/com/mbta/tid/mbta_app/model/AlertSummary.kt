@@ -296,10 +296,9 @@ public sealed class AlertSummary {
             // If the route is on the GL, check if the alert applies to the entirety of every
             // branch or an entire single branch (not necessarily a provided branch)
             if (isGL) {
-                val affectedBranches =
-                    greenRoutes.filter {
-                        alertAppliesToWholeGLRoute(alert, it, directionId, global)
-                    }
+                val affectedBranches = greenRoutes.filter {
+                    alertAppliesToWholeGLRoute(alert, it, directionId, global)
+                }
                 if (affectedBranches.containsAll(greenRoutes)) {
                     return Location.WholeRoute(GL_LABEL, RouteType.LIGHT_RAIL)
                 }
