@@ -75,6 +75,7 @@ import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single
 import com.mbta.tid.mbta_app.model.OnboardingScreen
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
@@ -373,7 +374,7 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
                     }
                     val alert =
                         FormattedAlert(
-                            alert = null,
+                            alert = Single.alert(),
                             alertSummary =
                                 AlertSummary.Standard(
                                     effect = Alert.Effect.Suspension,

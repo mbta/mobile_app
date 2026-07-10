@@ -341,7 +341,10 @@ class AlertCardTests {
     @Test
     fun testTripCancellationAlertCard() {
         val objects = ObjectCollectionBuilder()
-        val alert = objects.alert { effect = Alert.Effect.Cancellation }
+        val alert = objects.alert {
+            cause = Alert.Cause.MechanicalIssue
+            effect = Alert.Effect.Cancellation
+        }
         composeTestRule.setContent {
             AlertCard(
                 alert,
@@ -376,7 +379,10 @@ class AlertCardTests {
     @Test
     fun testMultipleTripSuspensionAlertCard() {
         val objects = ObjectCollectionBuilder()
-        val alert = objects.alert { effect = Alert.Effect.Suspension }
+        val alert = objects.alert {
+            cause = Alert.Cause.Holiday
+            effect = Alert.Effect.Suspension
+        }
         composeTestRule.setContent {
             AlertCard(
                 alert,
@@ -554,7 +560,10 @@ class AlertCardTests {
     @Test
     fun testTripSpecificReminder() {
         val objects = ObjectCollectionBuilder()
-        val alert = objects.alert { effect = Alert.Effect.Cancellation }
+        val alert = objects.alert {
+            cause = Alert.Cause.MechanicalIssue
+            effect = Alert.Effect.Cancellation
+        }
         composeTestRule.setContent {
             AlertCard(
                 alert,

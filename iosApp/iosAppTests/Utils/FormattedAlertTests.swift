@@ -15,7 +15,7 @@ import XCTest
 final class FormattedAlertTests: XCTestCase {
     func testTripShuttle() {
         let formatted = FormattedAlert(
-            alert: nil,
+            alert: ObjectCollectionBuilder.Single.shared.alert { _ in },
             alertSummary: TripShuttleAlertSummary(
                 tripIdentity: TripShuttleAlertSummary.SingleTrip(
                     tripTime: .init(
@@ -42,7 +42,7 @@ final class FormattedAlertTests: XCTestCase {
 
     func testDownstreamTripShuttle() {
         let formatted = FormattedAlert(
-            alert: nil,
+            alert: ObjectCollectionBuilder.Single.shared.alert { _ in },
             alertSummary: TripShuttleAlertSummary(
                 tripIdentity: TripShuttleAlertSummary.SingleTrip(
                     tripTime: .init(
@@ -69,7 +69,7 @@ final class FormattedAlertTests: XCTestCase {
 
     func testThisTripShuttle() {
         let formatted = FormattedAlert(
-            alert: nil,
+            alert: ObjectCollectionBuilder.Single.shared.alert { _ in },
             alertSummary: TripShuttleAlertSummary(
                 tripIdentity: TripShuttleAlertSummary.ThisTrip(
                     routeType: .commuterRail
@@ -87,7 +87,7 @@ final class FormattedAlertTests: XCTestCase {
 
     func testDownstreamTripShuttleRecurrence() {
         let formatted = FormattedAlert(
-            alert: nil,
+            alert: ObjectCollectionBuilder.Single.shared.alert { _ in },
             alertSummary: TripShuttleAlertSummary(
                 tripIdentity: TripShuttleAlertSummary.SingleTrip(
                     tripTime: .init(
@@ -125,7 +125,7 @@ final class FormattedAlertTests: XCTestCase {
 
     func testThisTripShuttleRecurrence() {
         let formatted = FormattedAlert(
-            alert: nil,
+            alert: ObjectCollectionBuilder.Single.shared.alert { _ in },
             alertSummary: TripShuttleAlertSummary(
                 tripIdentity: TripShuttleAlertSummary.ThisTrip(
                     routeType: .commuterRail
@@ -154,7 +154,7 @@ final class FormattedAlertTests: XCTestCase {
 
     func testTripSuspension() {
         let formatted = FormattedAlert(
-            alert: nil,
+            alert: ObjectCollectionBuilder.Single.shared.alert { $0.cause = .weather },
             alertSummary: TripSpecificAlertSummary(
                 tripIdentity: TripSpecificAlertSummary.TripFrom(
                     tripTime: .init(
@@ -182,7 +182,7 @@ final class FormattedAlertTests: XCTestCase {
 
     func testThisTripSuspension() {
         let formatted = FormattedAlert(
-            alert: nil,
+            alert: ObjectCollectionBuilder.Single.shared.alert { $0.cause = .weather },
             alertSummary: TripSpecificAlertSummary(
                 tripIdentity: TripSpecificAlertSummary.ThisTrip(
                     routeType: .commuterRail
@@ -201,7 +201,7 @@ final class FormattedAlertTests: XCTestCase {
 
     func testDownstreamTripSuspension() {
         let formatted = FormattedAlert(
-            alert: nil,
+            alert: ObjectCollectionBuilder.Single.shared.alert { $0.cause = .weather },
             alertSummary: TripSpecificAlertSummary(
                 tripIdentity: TripSpecificAlertSummary.TripFrom(
                     tripTime: .init(
@@ -229,7 +229,7 @@ final class FormattedAlertTests: XCTestCase {
 
     func testThisDownstreamTripSuspension() {
         let formatted = FormattedAlert(
-            alert: nil,
+            alert: ObjectCollectionBuilder.Single.shared.alert { $0.cause = .weather },
             alertSummary: TripSpecificAlertSummary(
                 tripIdentity: TripSpecificAlertSummary.ThisTrip(
                     routeType: .commuterRail
@@ -248,7 +248,7 @@ final class FormattedAlertTests: XCTestCase {
 
     func testTripStopSkipped() {
         let formatted = FormattedAlert(
-            alert: nil,
+            alert: ObjectCollectionBuilder.Single.shared.alert { $0.cause = .weather },
             alertSummary: TripSpecificAlertSummary(
                 tripIdentity: TripSpecificAlertSummary.TripTo(
                     tripTime: .init(
@@ -276,7 +276,7 @@ final class FormattedAlertTests: XCTestCase {
 
     func testThisTripStopSkipped() {
         let formatted = FormattedAlert(
-            alert: nil,
+            alert: ObjectCollectionBuilder.Single.shared.alert { $0.cause = .weather },
             alertSummary: TripSpecificAlertSummary(
                 tripIdentity: TripSpecificAlertSummary.ThisTrip(
                     routeType: .ferry
@@ -296,7 +296,7 @@ final class FormattedAlertTests: XCTestCase {
 
     func testOneStopSkipped() {
         let formatted = FormattedAlert(
-            alert: nil,
+            alert: ObjectCollectionBuilder.Single.shared.alert { _ in },
             alertSummary: AlertSummary.Standard(
                 effect: .stationClosure,
                 location: AlertSummary.LocationAffectedStops(stops: ["Back Bay"]),
@@ -313,7 +313,7 @@ final class FormattedAlertTests: XCTestCase {
 
     func testTwoStopsSkipped() {
         let formatted = FormattedAlert(
-            alert: nil,
+            alert: ObjectCollectionBuilder.Single.shared.alert { _ in },
             alertSummary: AlertSummary.Standard(
                 effect: .stationClosure,
                 location: AlertSummary.LocationAffectedStops(stops: ["Back Bay", "Ruggles"]),
@@ -330,7 +330,7 @@ final class FormattedAlertTests: XCTestCase {
 
     func testThreeStopsSkipped() {
         let formatted = FormattedAlert(
-            alert: nil,
+            alert: ObjectCollectionBuilder.Single.shared.alert { _ in },
             alertSummary: AlertSummary.Standard(
                 effect: .stationClosure,
                 location: AlertSummary.LocationAffectedStops(stops: ["Back Bay", "Ruggles", "Hyde Park"]),
@@ -347,7 +347,7 @@ final class FormattedAlertTests: XCTestCase {
 
     func testMultipleStopsSkipped() {
         let formatted = FormattedAlert(
-            alert: nil,
+            alert: ObjectCollectionBuilder.Single.shared.alert { _ in },
             alertSummary: AlertSummary.Standard(
                 effect: .stationClosure,
                 location: AlertSummary.LocationAffectedStops(stops: ["Back Bay", "Ruggles", "Hyde Park", "Readville"]),
