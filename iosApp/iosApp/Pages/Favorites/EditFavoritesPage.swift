@@ -278,7 +278,7 @@ struct FavoriteDepartures: View {
                             route: (leaf.lineOrRoute as? LineOrRoute.Route)?.route,
                             line: (leaf.lineOrRoute as? LineOrRoute.Line)?.line,
                             type: .fixed
-                        )
+                        ).padding(.trailing, 8)
                     }
                     switch onEnum(of: formatted) {
                     case let .single(single):
@@ -312,7 +312,7 @@ struct FavoriteDepartures: View {
                         }
                     }
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, groupByStop ? 8 : 16)
                 .padding(.vertical, 10)
 
                 if index < leaves.endIndex {
