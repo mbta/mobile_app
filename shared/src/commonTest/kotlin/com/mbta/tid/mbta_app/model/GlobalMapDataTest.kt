@@ -22,13 +22,18 @@ internal class GlobalMapDataTest {
         val stopB = objects.stop { id = "B" }
         val stopC = objects.stop { id = "C" }
         val stopD = objects.stop {
-            id = "D"
-            locationType = LocationType.STOP
-        }
+                id = "D"
+                locationType = LocationType.STOP
+            }
         val stopE = objects.stop {
             id = "E"
             locationType = LocationType.STATION
-        }
+          }
+        val stopF =
+            objects.stop {
+                id = "F"
+                locationType = LocationType.STOP
+            }
 
         val routeRed = objects.route {
             id = "Red"
@@ -79,6 +84,11 @@ internal class GlobalMapDataTest {
                 id = "Bus1"
                 typicality = RoutePattern.Typicality.Typical
             }
+        val patternBusAtypical =
+            objects.routePattern(routeBus) {
+                id = "Bus2"
+                typicality = RoutePattern.Typicality.Atypical
+            }
         val patternCR =
             objects.routePattern(routeCR) {
                 id = "CR1"
@@ -109,6 +119,7 @@ internal class GlobalMapDataTest {
                         Pair(stopC.id, listOf(patternBus.id, patternSilver.id)),
                         Pair(stopD.id, listOf(patternSilver.id)),
                         Pair(stopE.id, listOf(patternSilver.id)),
+                        Pair(stopF.id, listOf(patternBusAtypical.id)),
                     ),
             )
 
@@ -144,9 +155,13 @@ internal class GlobalMapDataTest {
             "Route types are ordered to match the route sort order",
         )
 
-        assertTrue(
+        assertFalse(
             mapData.mapStops["A1"]!!.routeTypes.contains(MapStopRoute.BLUE),
-            "Atypical routes should be included",
+            "Atypical rail routes should not be included",
+        )
+        assertTrue(
+            mapData.mapStops["F"]!!.routeTypes.contains(MapStopRoute.BUS),
+            "Atypical bus routes should be included",
         )
         assertFalse(
             mapData.mapStops["A"]!!.routeTypes.contains(MapStopRoute.BUS),
