@@ -312,8 +312,7 @@ struct FavoriteDepartures: View {
                         }
                     }
                 }
-                .padding(.leading, groupByStop ? 8 : 16)
-                .padding(.trailing, 16)
+                .padding(.horizontal, groupByStop ? 8 : 16)
                 .padding(.vertical, 10)
 
                 if index < leaves.endIndex {

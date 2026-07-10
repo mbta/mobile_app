@@ -417,23 +417,26 @@ private fun FavoriteDepartures(
                     }
 
                     Row(
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier =
                             Modifier.background(colorResource(R.color.fill3))
                                 .fillMaxHeight()
-                                .padding(vertical = 10.dp, horizontal = 16.dp)
+                                .padding(vertical = 10.dp)
+                                .padding(horizontal = if (groupByStop) 8.dp else 16.dp)
                                 .semantics(mergeDescendants = true) {
                                     role = Role.Button
                                     onClick(overriddenClickLabel) {
                                         onClick(leaf)
                                         true
                                     }
-                                }
+                                },
                     ) {
                         if (groupByStop) {
                             RoutePill(
                                 (leaf.lineOrRoute as? LineOrRoute.Route)?.route,
                                 (leaf.lineOrRoute as? LineOrRoute.Line)?.line,
                                 type = RoutePillType.Fixed,
+                                modifier = Modifier.padding(end = 8.dp),
                             )
                         }
                         when (formatted) {
