@@ -22,18 +22,17 @@ internal class GlobalMapDataTest {
         val stopB = objects.stop { id = "B" }
         val stopC = objects.stop { id = "C" }
         val stopD = objects.stop {
-                id = "D"
-                locationType = LocationType.STOP
-            }
+            id = "D"
+            locationType = LocationType.STOP
+        }
         val stopE = objects.stop {
             id = "E"
             locationType = LocationType.STATION
-          }
-        val stopF =
-            objects.stop {
-                id = "F"
-                locationType = LocationType.STOP
-            }
+        }
+        val stopF = objects.stop {
+            id = "F"
+            locationType = LocationType.STOP
+        }
 
         val routeRed = objects.route {
             id = "Red"

@@ -115,7 +115,8 @@ public data class GlobalMapData(
                 fun typical(pattern: RoutePattern) =
                     pattern.isTypical() || pattern.typicality == Typicality.CanonicalOnly
 
-                val isTerminal = patterns
+                val isTerminal =
+                    patterns
                         .filter(::typical)
                         .ifEmpty { patterns }
                         .any { pattern ->
