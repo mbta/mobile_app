@@ -27,12 +27,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
 
     @Published var viewport: Viewport
     private var savedNearbyTransitViewport: Viewport?
-    var cameraStatePublisher: AnyPublisher<CameraState, Never> {
-        cameraStateSubject
-            .removeDuplicates(by: { lhs, rhs in lhs.center.isRoughlyEqualTo(rhs.center) })
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
-    }
+    let cameraStatePublisher: AnyPublisher<CameraState, Never>
 
     private let cameraStateSubject: CurrentValueSubject<CameraState, Never>
 
@@ -49,6 +44,12 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
         )
         cameraStateSubject = .init(initialCameraState)
         self.isManuallyCentering = isManuallyCentering
+
+        cameraStatePublisher =
+            cameraStateSubject
+                .removeDuplicates(by: { lhs, rhs in lhs.center.isRoughlyEqualTo(rhs.center) })
+                .receive(on: DispatchQueue.main)
+                .eraseToAnyPublisher()
     }
 
     @MainActor func follow(animation: ViewportAnimation = Defaults.animation) {
