@@ -37,10 +37,6 @@ final class AlertListContainerTests: XCTestCase {
 
         let downstreamAlert = objects.alert { alert in
             alert.effect = .serviceChange
-            alert.activePeriod(
-                start: now.minus(hours: 3 * 24),
-                end: now.plus(hours: 3 * 24)
-            )
         }
 
         let sut = AlertListContainer(displayAlerts: .init(highPriority: [.init(alert: highAlert, isDownstream: false)],

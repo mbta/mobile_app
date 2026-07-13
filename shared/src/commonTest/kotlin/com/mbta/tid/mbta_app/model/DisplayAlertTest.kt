@@ -19,25 +19,22 @@ class DisplayAlertTest {
     val hereMajorNow = objects.alert {
         id = "hereMajorNow"
         effect = Effect.Shuttle
-        activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
     }
 
     val hereElevatorNow = objects.alert {
         id = "hereElevatorNow"
         effect = Effect.ElevatorClosure
-        activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
     }
 
     val hereMajorLater = objects.alert {
         id = "hereMajorLater"
         effect = Effect.Shuttle
-        activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(10.minutes), null))
+        activePeriod(now.plus(10.minutes), null)
     }
 
     val downstreamMajorNow = objects.alert {
         id = "downstreamMajorNow"
         effect = Effect.Shuttle
-        activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
     }
 
     @Test
@@ -55,7 +52,6 @@ class DisplayAlertTest {
         val tripAlert = objects.alert {
             id = "hereForTargetTrip"
             effect = Effect.Shuttle
-            activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
             informedEntity =
                 mutableListOf(
                     Alert.InformedEntity(
@@ -77,7 +73,6 @@ class DisplayAlertTest {
         val tripAlert = objects.alert {
             id = "hereForTargetTrip"
             effect = Effect.Cancellation
-            activePeriod(now.minus(10.minutes), null)
             informedEntity(
                 trip = "trip1",
                 activities =
@@ -97,7 +92,6 @@ class DisplayAlertTest {
             val majorAlert = objects.alert {
                 id = "hereForTargetTrip"
                 effect = Effect.Shuttle
-                activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
                 informedEntity =
                     mutableListOf(
                         Alert.InformedEntity(
@@ -121,7 +115,7 @@ class DisplayAlertTest {
         val tripAlert = objects.alert {
             id = "hereForTargetTrip"
             effect = Effect.Shuttle
-            activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(5.hours), null))
+            activePeriod(now.plus(5.hours), null)
             informedEntity =
                 mutableListOf(
                     Alert.InformedEntity(

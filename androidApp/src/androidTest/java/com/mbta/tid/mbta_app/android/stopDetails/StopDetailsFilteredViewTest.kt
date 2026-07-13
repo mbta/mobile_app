@@ -34,7 +34,6 @@ import com.mbta.tid.mbta_app.viewModel.StopDetailsViewModel
 import com.mbta.tid.mbta_app.viewModel.StopDetailsViewModel.RouteData
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
@@ -258,7 +257,6 @@ class StopDetailsFilteredViewTest {
             effect = Alert.Effect.ElevatorClosure
             header = "Elevator Alert Header"
             informedEntity(listOf(Alert.InformedEntity.Activity.UsingWheelchair), stop = stop.id)
-            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
         }
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)

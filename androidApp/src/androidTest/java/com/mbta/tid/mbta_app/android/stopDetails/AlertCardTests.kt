@@ -18,7 +18,6 @@ import com.mbta.tid.mbta_app.model.TripShuttleAlertSummary
 import com.mbta.tid.mbta_app.model.TripSpecificAlertSummary
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertTrue
-import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.Month
 import org.junit.Rule
 import org.junit.Test
@@ -282,11 +281,10 @@ class AlertCardTests {
 
     @Test
     fun testAllClearAlertCard() {
-        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val alert = objects.alert {
             effect = Alert.Effect.Suspension
-            activePeriod(now - 3.days, now - 1.days)
+            allClear()
         }
         composeTestRule.setContent {
             AlertCard(
@@ -311,11 +309,9 @@ class AlertCardTests {
 
     @Test
     fun testUpdateAlertCard() {
-        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val alert = objects.alert {
             effect = Alert.Effect.Shuttle
-            activePeriod(now - 3.days, now + 3.days)
         }
         composeTestRule.setContent {
             AlertCard(

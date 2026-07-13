@@ -22,7 +22,6 @@ import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -192,7 +191,6 @@ class StopDetailsUnfilteredRoutesViewTest {
     fun testShowsElevatorAlertsWhenGroupedByDirection(): Unit = runBlocking {
         val alert = Single.alert {
             header = "Elevator alert"
-            activePeriod(start = EasternTimeInstant(Instant.DISTANT_PAST), end = null)
             effect = Alert.Effect.ElevatorClosure
             informedEntity(
                 listOf(Alert.InformedEntity.Activity.UsingWheelchair),

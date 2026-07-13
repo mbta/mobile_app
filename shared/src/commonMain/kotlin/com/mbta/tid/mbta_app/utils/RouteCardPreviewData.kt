@@ -14,7 +14,6 @@ import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.atTime
 
@@ -66,11 +65,9 @@ public open class RouteCardPreviewData {
     private val bowAtWarren = objects.getStop("26131")
     private val shuttleAlert = objects.alert {
         effect = Alert.Effect.Shuttle
-        activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
     }
     private val suspensionAlert = objects.alert {
         effect = Alert.Effect.Suspension
-        activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
     }
     private val context = RouteCardData.Context.NearbyTransit
 
@@ -722,7 +719,6 @@ public open class RouteCardPreviewData {
             )
         val wickfordShuttle = objects.alert {
             effect = Alert.Effect.Shuttle
-            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
             informedEntity =
                 mutableListOf(
                     Alert.InformedEntity(
@@ -1074,7 +1070,6 @@ public open class RouteCardPreviewData {
     public fun GL5(): RouteCardData {
         val kenmoreShuttleToRiverside = objects.alert {
             effect = Alert.Effect.Shuttle
-            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
             informedEntity =
                 mutableListOf(
                     Alert.InformedEntity(
@@ -1125,7 +1120,6 @@ public open class RouteCardPreviewData {
     public fun GL6(): RouteCardData {
         val boylstonShuttleToRiverside = objects.alert {
             effect = Alert.Effect.Shuttle
-            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
             informedEntity =
                 mutableListOf(
                     Alert.InformedEntity(
@@ -1176,7 +1170,6 @@ public open class RouteCardPreviewData {
 
         val shuttleAllBranches = objects.alert {
             effect = Alert.Effect.Shuttle
-            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
             informedEntity =
                 mutableListOf(
                     Alert.InformedEntity(

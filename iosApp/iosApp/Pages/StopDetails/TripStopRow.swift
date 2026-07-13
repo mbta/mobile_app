@@ -175,14 +175,7 @@ struct TripStopRow: View {
                 predictionStop: objects.stop { $0.platformCode = "1" },
                 vehicle: nil,
                 routes: [],
-                elevatorAlerts: [
-                    objects.alert {
-                        $0.activePeriod(
-                            start: now.minus(minutes: 20),
-                            end: now.plus(minutes: 20)
-                        )
-                    },
-                ]
+                elevatorAlerts: [objects.alert { _ in }]
             ),
             trip: trip,
             now: now,

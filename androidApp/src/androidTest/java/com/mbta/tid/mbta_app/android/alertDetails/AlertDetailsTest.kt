@@ -222,7 +222,6 @@ class AlertDetailsTest {
         val now = EasternTimeInstant.now()
 
         val alert = objects.alert {
-            activePeriod(now - 5.minutes, now + 5.minutes)
             cause = Alert.Cause.UnrulyPassenger
             effect = Alert.Effect.StopClosure
             effectName = "Closure"
@@ -254,7 +253,6 @@ class AlertDetailsTest {
         val stop3 = objects.stop { name = "Stop 3" }
 
         val alert = objects.alert {
-            activePeriod(now - 5.minutes, now + 5.minutes)
             cause = Alert.Cause.UnrulyPassenger
             effect = Alert.Effect.StopClosure
             effectName = "Closure"
@@ -304,7 +302,6 @@ class AlertDetailsTest {
         val stop = objects.stop { name = "Stop" }
 
         val alert = objects.alert {
-            activePeriod(now - 5.minutes, now + 5.minutes)
             cause = Alert.Cause.UnrulyPassenger
             effect = Alert.Effect.Suspension
             effectName = "Suspension"
@@ -336,7 +333,6 @@ class AlertDetailsTest {
         val stop = objects.stop { name = "Stop" }
 
         val alert = objects.alert {
-            activePeriod(now - 5.minutes, now + 5.minutes)
             cause = Alert.Cause.Maintenance
             effect = Alert.Effect.ElevatorClosure
             effectName = "Elevator Closure"

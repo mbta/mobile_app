@@ -220,12 +220,7 @@ private fun TripStopRowPreview() {
                             predictionStop = objects.stop { platformCode = "1" },
                             vehicle = null,
                             routes = emptyList(),
-                            elevatorAlerts =
-                                listOf(
-                                    objects.alert {
-                                        activePeriod(now.minus(20.minutes), now.plus(20.minutes))
-                                    }
-                                ),
+                            elevatorAlerts = listOf(objects.alert {}),
                         ),
                     trip,
                     now,
@@ -345,15 +340,7 @@ private fun TripStopRowDisruptionsPreview() {
                                 predictionStop = objects.stop { platformCode = "1" },
                                 vehicle = null,
                                 routes = emptyList(),
-                                elevatorAlerts =
-                                    listOf(
-                                        objects.alert {
-                                            activePeriod(
-                                                now.minus(20.minutes),
-                                                now.plus(20.minutes),
-                                            )
-                                        }
-                                    ),
+                                elevatorAlerts = listOf(objects.alert {}),
                             ),
                         trip,
                         now,

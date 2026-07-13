@@ -51,7 +51,6 @@ final class AlertDetailsPageTests: XCTestCase {
         let now = EasternTimeInstant.now()
 
         let alert = objects.alert { alert in
-            alert.activePeriod(start: now.minus(seconds: 5), end: now.plus(seconds: 5))
             alert.description_ = "Long description"
             alert.cause = .fire
             alert.effect = .stopClosure

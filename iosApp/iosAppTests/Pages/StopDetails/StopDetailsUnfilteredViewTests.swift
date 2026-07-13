@@ -182,7 +182,6 @@ import XCTest
     func testShowsElevatorAlertsWhenGroupedByDirection() async throws {
         let alert = try XCTUnwrap(builder?.clone().alert { alert in
             alert.header = "Elevator alert"
-            alert.activePeriod(start: Date(timeIntervalSince1970: 0).toEasternInstant(), end: nil)
             alert.effect = .elevatorClosure
             alert.informedEntity(
                 activities: [.usingWheelchair],

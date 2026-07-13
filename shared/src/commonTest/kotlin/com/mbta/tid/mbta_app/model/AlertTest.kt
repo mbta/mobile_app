@@ -9,7 +9,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
@@ -950,7 +949,6 @@ class AlertTest {
 
         val shawmutClosureAlert = objects.alert {
             effect = Alert.Effect.StationClosure
-            activePeriod(time - 1.seconds, null)
             informedEntity(
                 listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                 route = route.id.idText,
@@ -960,7 +958,6 @@ class AlertTest {
 
         val ashmontShuttleAlert = objects.alert {
             effect = Alert.Effect.Shuttle
-            activePeriod(time - 1.seconds, null)
             informedEntity(
                 listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                 route = route.id.idText,
@@ -970,7 +967,6 @@ class AlertTest {
         val alewifeShuttleAlert = objects.alert {
             id = "alewife_alert_id"
             effect = Alert.Effect.Shuttle
-            activePeriod(time - 1.seconds, null)
             informedEntity(
                 listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                 route = route.id.idText,
@@ -981,7 +977,6 @@ class AlertTest {
         val parkShuttleAlert = objects.alert {
             id = "park_alert_id"
             effect = Alert.Effect.Shuttle
-            activePeriod(time - 1.seconds, null)
             informedEntity(
                 listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                 route = route.id.idText,
@@ -1057,12 +1052,9 @@ class AlertTest {
                 }
             }
 
-        val time = EasternTimeInstant.now()
-
         val canonicalOnlyStopAlert = objects.alert {
             id = "alert_id"
             effect = Alert.Effect.StopClosure
-            activePeriod(time - 10.seconds, null)
             informedEntity(
                 listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Exit),
                 route = route.id.idText,
@@ -1099,10 +1091,10 @@ class AlertTest {
         val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val active = objects.alert {
-            activePeriod = mutableListOf(Alert.ActivePeriod(now - 5.minutes, now + 5.minutes))
+            activePeriod(now - 5.minutes, now + 5.minutes)
         }
         val allClear = objects.alert {
-            activePeriod = mutableListOf(Alert.ActivePeriod(now - 10.minutes, now - 5.minutes))
+            activePeriod(now - 10.minutes, now - 5.minutes)
         }
         assertFalse { active.allClear(now) }
         assertTrue { allClear.allClear(now) }

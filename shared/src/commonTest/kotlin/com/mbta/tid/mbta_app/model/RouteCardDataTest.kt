@@ -1618,19 +1618,16 @@ class RouteCardDataTest {
         }
 
         val alertB = objects.alert {
-            activePeriod(now - 15.minutes, null)
             effect = Alert.Effect.Delay
             informedEntity(route = greenB.id.idText, routeType = RouteType.LIGHT_RAIL)
             severity = 5
         }
         val alertC = objects.alert {
-            activePeriod(now - 15.minutes, null)
             effect = Alert.Effect.Delay
             informedEntity(route = "Green-C", routeType = RouteType.LIGHT_RAIL)
             severity = 5
         }
         val alertE = objects.alert {
-            activePeriod(now - 15.minutes, null)
             effect = Alert.Effect.Delay
             informedEntity(route = "Green-E", routeType = RouteType.LIGHT_RAIL)
             severity = 5
@@ -5546,7 +5543,6 @@ class RouteCardDataTest {
 
             val shawmutShuttleAlert = objects.alert {
                 effect = Alert.Effect.Shuttle
-                activePeriod(time - 1.seconds, null)
                 informedEntity(
                     listOf(
                         Alert.InformedEntity.Activity.Board,
@@ -5559,7 +5555,6 @@ class RouteCardDataTest {
 
             val ashmontShuttleAlert = objects.alert {
                 effect = Alert.Effect.Shuttle
-                activePeriod(time - 1.seconds, null)
                 informedEntity(
                     listOf(
                         Alert.InformedEntity.Activity.Board,
@@ -5573,7 +5568,6 @@ class RouteCardDataTest {
             val parkShuttleAlert = objects.alert {
                 id = "park_shuttle_alert"
                 effect = Alert.Effect.Shuttle
-                activePeriod(time - 1.seconds, null)
                 informedEntity(
                     listOf(
                         Alert.InformedEntity.Activity.Board,
@@ -5587,7 +5581,6 @@ class RouteCardDataTest {
             val parkElevatorAlert = objects.alert {
                 id = "park_elevator_alert"
                 effect = Alert.Effect.ElevatorClosure
-                activePeriod(time - 1.seconds, null)
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.UsingWheelchair),
                     route = route.id.idText,
@@ -5697,7 +5690,6 @@ class RouteCardDataTest {
 
             val southStationTrackChangeAlert = objects.alert {
                 effect = Alert.Effect.TrackChange
-                activePeriod(time - 1.seconds, null)
                 informedEntity(
                     listOf(
                         Alert.InformedEntity.Activity.Board,
@@ -5710,7 +5702,6 @@ class RouteCardDataTest {
 
             val providenceTrackChangeAlert = objects.alert {
                 effect = Alert.Effect.TrackChange
-                activePeriod(time - 1.seconds, null)
                 informedEntity(
                     listOf(
                         Alert.InformedEntity.Activity.Board,
