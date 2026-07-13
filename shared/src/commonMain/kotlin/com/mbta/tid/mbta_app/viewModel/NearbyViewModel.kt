@@ -119,23 +119,30 @@ public class NearbyViewModel(
             val resolvedLocation = location
             if (globalData == null || resolvedLocation == null) return@LaunchedEffect
             nearbyResponse = nearbyRepository.getStopIdsNearby(globalData, resolvedLocation)
-            stopIds = nearbyResponse?.filter(globalData, alerts, now)
+            val newStopIds = nearbyResponse?.filter(globalData, alerts, now)?.sorted()
+            stopIds = newStopIds
+
+            if (stopIds == newStopIds) {
+                println("KB stops are the same")
+            } else {
+                println("KB stops are different")
+            }
         }
 
         LaunchedEffect(stopIds) {
             if (stopIds?.toSet() != loadedStopIds?.toSet()) {
-                routeCardData = null
-                loadedLocation = null
-                loadedStopIds = null
+                //       routeCardData = null
+                //          loadedLocation = null
+                //       loadedStopIds = null
             }
         }
 
         LaunchedEffect(stopIds, globalData, location, schedules, predictions, alerts, now) {
             val resolvedStopIds = stopIds
             if (resolvedStopIds == null || globalData == null || location == null) {
-                routeCardData = null
-                loadedLocation = null
-                loadedStopIds = null
+                //      routeCardData = null
+                //     loadedLocation = null
+                //     loadedStopIds = null
             } else if (resolvedStopIds.isEmpty()) {
                 routeCardData = emptyList()
                 loadedLocation = location
@@ -153,11 +160,14 @@ public class NearbyViewModel(
                         RouteCardData.Context.NearbyTransit,
                         null,
                         coroutineDispatcher,
-                    )
+                    ) ?: routeCardData // This is sketchy and we'd want to do this a better way if
+                // we actually have to do this
                 loadedLocation = location
                 loadedStopIds = resolvedStopIds
             }
         }
+
+        println("KB: routecardData ${routeCardData?.size}")
 
         return State(
             awaitingPredictionsAfterBackground,
