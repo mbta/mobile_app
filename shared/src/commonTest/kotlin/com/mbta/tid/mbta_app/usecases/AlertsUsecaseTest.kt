@@ -4,6 +4,7 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Facility
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.AlertsStreamUpdateResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.IdleGlobalRepository
@@ -31,7 +32,7 @@ class AlertsUsecaseTest {
             )
         }
 
-        val alertResponse = AlertsStreamDataResponse(objects)
+        val alertResponse = AlertsStreamUpdateResponse(objects)
         val mockGlobalRepository = MockGlobalRepository(GlobalResponse(objects))
         val mockAlertsRepository = MockAlertsRepository(alertResponse)
         val usecase = AlertsUsecase(mockAlertsRepository, mockGlobalRepository)
@@ -64,7 +65,7 @@ class AlertsUsecaseTest {
         }
 
         val mockGlobalRepository = MockGlobalRepository(GlobalResponse(objects))
-        val mockAlertsRepository = MockAlertsRepository(AlertsStreamDataResponse(objects))
+        val mockAlertsRepository = MockAlertsRepository(AlertsStreamUpdateResponse(objects))
         val usecase = AlertsUsecase(mockAlertsRepository, mockGlobalRepository)
 
         var result: ApiResult<AlertsStreamDataResponse>? = null
@@ -88,7 +89,7 @@ class AlertsUsecaseTest {
                 facility = facility.id,
             )
         }
-        mockAlertsRepository.receiveResult(ApiResult.Ok(AlertsStreamDataResponse(objects)))
+        mockAlertsRepository.receiveResult(ApiResult.Ok(AlertsStreamUpdateResponse(objects)))
         assertEquals(
             facility,
             (result as ApiResult.Ok<AlertsStreamDataResponse>)
@@ -120,7 +121,7 @@ class AlertsUsecaseTest {
         val alert = objects.alert {}
 
         val mockGlobalRepository = IdleGlobalRepository()
-        val mockAlertsRepository = MockAlertsRepository(AlertsStreamDataResponse(objects))
+        val mockAlertsRepository = MockAlertsRepository(AlertsStreamUpdateResponse(objects))
         val usecase = AlertsUsecase(mockAlertsRepository, mockGlobalRepository)
 
         var result: ApiResult<AlertsStreamDataResponse>? = null
@@ -146,7 +147,7 @@ class AlertsUsecaseTest {
             )
         }
         val mockGlobalRepository = MockGlobalRepository(GlobalResponse(objects))
-        val mockAlertsRepository = MockAlertsRepository(AlertsStreamDataResponse(objects))
+        val mockAlertsRepository = MockAlertsRepository(AlertsStreamUpdateResponse(objects))
         val usecase =
             AlertsUsecase(
                 mockAlertsRepository,
