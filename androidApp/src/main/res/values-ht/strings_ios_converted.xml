@@ -27,7 +27,7 @@
     <string name="alert_elevator_header">Fèmti Asansè (%1$s)</string>
     <string name="alert_ended">Avètisman an pa aplikab ankò</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
-    <string name="alert_summary_all_clear">&lt;b>Tout bagay klè:&lt;/b> Sèvis regilye %1$s</string>
+    <string name="alert_summary_all_clear">&lt;b>Tout bagay nòmal:&lt;/b> Sèvis regilye %1$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020soti nan &lt;b>%1$s&lt;/b> sispann rive nan &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">\u0020nan &lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_location_stop_to_direction">\u0020soti nan &lt;b>%1$s&lt;/b> rive nan &lt;b>%2$s&lt;/b> sispann</string>
@@ -98,7 +98,7 @@
     <string name="crowding_car_description">Machin %1$s sou %2$s, %3$s</string>
     <string name="crowding_crowded">Anpil moun</string>
     <string name="crowding_diagram">Dyagram anbouteyaj tren yo</string>
-    <string name="crowding_not_crowded">Pa gen moun</string>
+    <string name="crowding_not_crowded">Pa gen anpil moun</string>
     <string name="crowding_some_crowding">Gen kèk moun ki te twò chaje</string>
     <string name="crowding_unknown">Foul moun enkoni</string>
     <string name="current_locale">ht</string>
@@ -298,14 +298,14 @@
     <string name="not_accessible_stop_card">Estasyon sa a pa aksesib</string>
     <string name="notice">Avi</string>
     <string name="notifications_beta_dialog_body">Èske nou ka kontakte ou pou pataje fidbak ou sou Notifikasyon yo?</string>
-    <string name="notifications_beta_dialog_header">Nou konte sou siklis tankou ou pou aprann kijan nou ka amelyore!</string>
+    <string name="notifications_beta_dialog_header">Nou konte sou pasaje tankou ou pou aprann kijan nou ka amelyore!</string>
     <string name="notifications_beta_dialog_no">Non mèsi</string>
     <string name="notifications_beta_dialog_yes">Wi</string>
-    <string name="notifications_beta_toast">&lt;u>Jwenn aksè bonè nan Notifikasyon yo&lt;/u> epi bay fidbak</string>
+    <string name="notifications_beta_toast">&lt;u>Jwenn avi otifikasyon yo bonè&lt;/u> epi bay fidbak</string>
     <string name="notifications_beta_toggle_label">Notifikasyon Entèripsyon</string>
     <string name="notifications_enabled">notifikasyon yo pèmèt</string>
     <string name="notifications_favorites_hint">Kounye a, &lt;u>modifye favori ou yo&lt;/u> pou resevwa notifikasyon entèripsyon yo</string>
-    <string name="notifications_settings_link">Pèmèt Notifikasyon nan Anviwònman yo</string>
+    <string name="notifications_settings_link">Pèmèt avi Notifikasyon nan Anviwònman yo</string>
     <string name="now">Kounye a</string>
     <string name="now_at">Kounye a li nan</string>
     <string name="okay">Oke</string>
@@ -347,7 +347,7 @@
     <string name="promo_favorites_header">Ajoute nan Preferans ou yo</string>
     <string name="promo_notifications_body">N ap di w nenpòt pwoblèm anvan w ale!</string>
     <string name="promo_notifications_header">Kounye a resevwa notifikasyon pou entèripsyon</string>
-    <string name="promo_notifications_step1">Ajoute yon arè pi renmen</string>
+    <string name="promo_notifications_step1">Ajoute yon arè ou pi renmen</string>
     <string name="promo_notifications_step2">Fikse pwòp orè ou</string>
     <string name="rail_defect">Defo nan ray tren yo</string>
     <string name="rail_defect_lowercase">defo nan ray</string>
@@ -447,7 +447,7 @@
     <string name="strike">Grèv</string>
     <string name="strike_lowercase">grèv</string>
     <string name="subway">Subway</string>
-    <string name="subway_early_am_detail">Premye tren &lt;b>%1$s&lt;/b> la pwograme pou rive a &lt;b>%2$s&lt;/b>. Nou poko gen prediksyon pou montre w ankò, men y ap parèt isit la pi pre lè pwograme a.</string>
+    <string name="subway_early_am_detail">Premye tren &lt;b>%1$s&lt;/b> la pwograme pou rive a &lt;b>%2$s&lt;/b>. Nou poko gen prediksyon pou montre w, men y ap parèt isit la pi pre lè pwograme a.</string>
     <string name="subway_early_am_first_time">Premye &lt;b>%1$s&lt;/b></string>
     <string name="summary">Rezime</string>
     <string name="suspension">Sispansyon</string>
@@ -461,7 +461,7 @@
     <string name="the_time_mode">&lt;b>%1$s&lt;/b> %2$s la</string>
     <string name="this_stop_is_drop_off_only">Arè sa a se pou depoze moun sèlman</string>
     <string name="this_vehicle">Sa a %1$s</string>
-    <string name="this_vehicle_shuttle">sa a %1$s</string>
+    <string name="this_vehicle_shuttle">%1$s sa a</string>
     <string name="tie_replacement">Ranplasman kòd</string>
     <string name="tie_replacement_lowercase">ranplasman mare</string>
     <string name="time_picker_type_toggle">Chanje/dezaktive kalite seleksyon tan an</string>
@@ -491,7 +491,7 @@
     <string name="trip_complete">Vwayaj konplè</string>
     <string name="trip_complete_body">%1$s sa a rive nan destinasyon li.</string>
     <string name="trip_from">&lt;b>%1$s&lt;/b> %2$s soti nan &lt;b>%3$s&lt;/b></string>
-    <string name="trip_not_available">Vwayaj pa disponib</string>
+    <string name="trip_not_available">Vwayaj sa a pa disponib</string>
     <string name="trip_not_available_body">%1$s sa a poko resevwa yon vwayaj.</string>
     <string name="trip_to">&lt;b>%1$s&lt;/b> %2$s pou rive nan &lt;b>%3$s&lt;/b></string>
     <string name="try_a_different_spelling_or_name">Eseye yon diferan òtograf oswa non.</string>
@@ -550,7 +550,7 @@
     <string name="weather">Tan</string>
     <string name="weather_lowercase">move tan</string>
     <string name="weekdays">Jou lasemèn</string>
-    <string name="weekends">Wikenn yo</string>
+    <string name="weekends">Jou wikenn</string>
     <string name="westbound">Pran direksyon lwès</string>
     <string name="will_not_stop_at">p ap rete nan %1$s %2$s</string>
     <string name="will_terminate_at">ap fini nan %1$s %2$s</string>
