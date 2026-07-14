@@ -42,7 +42,6 @@ import com.mbta.tid.mbta_app.viewModel.MockStopDetailsViewModel
 import com.mbta.tid.mbta_app.viewModel.StopDetailsViewModel
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Month
 import org.junit.Before
@@ -396,7 +395,6 @@ class StopDetailsFilteredDeparturesViewTest {
 
         val alert = objects.alert {
             effect = Alert.Effect.Cancellation
-            activePeriod(now - 5.seconds, now + 5.seconds)
             informedEntity(
                 directionId = 0,
                 route = route.id.idText,
@@ -533,7 +531,6 @@ class StopDetailsFilteredDeparturesViewTest {
     fun testShowsSuspension(): Unit = runBlocking {
         val now = EasternTimeInstant.now()
         val alert = builder.alert {
-            activePeriod(now - 5.seconds, now + 5.seconds)
             effect = Alert.Effect.Suspension
             header = "Fuchsia Line suspended from Here to There"
             informedEntity(directionId = 0, route = route.id.idText, stop = stop.id)
@@ -619,7 +616,6 @@ class StopDetailsFilteredDeparturesViewTest {
         val tripPattern = objects.routePatterns["Green-D-855-0"]!!
 
         val alert = objects.alert {
-            activePeriod(now - 5.seconds, now + 20.minutes)
             effect = Alert.Effect.Shuttle
             header = "Green line shuttle on B and C branches"
             informedEntity(directionId = 0, route = routeB.id.idText, stop = "71151")
@@ -698,7 +694,6 @@ class StopDetailsFilteredDeparturesViewTest {
     @Test
     fun testShowsDownstreamAlert(): Unit = runBlocking {
         val alert = builder.alert {
-            activePeriod(now - 5.seconds, now + 5.seconds)
             effect = Alert.Effect.Suspension
             informedEntity(directionId = 0, route = route.id.idText, stop = downstreamStop.id)
         }
@@ -774,7 +769,6 @@ class StopDetailsFilteredDeparturesViewTest {
                 listOf(Alert.InformedEntity.Activity.UsingWheelchair),
                 stop = stop.id,
             )
-            activePeriod(now - 30.minutes, null)
         }
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
@@ -830,7 +824,6 @@ class StopDetailsFilteredDeparturesViewTest {
     fun testShowsSubwayDelayAlert(): Unit = runBlocking {
         val now = EasternTimeInstant.now()
         val alert = builder.alert {
-            activePeriod(now - 5.seconds, now + 5.seconds)
             effect = Alert.Effect.Delay
             header = "Delays alert header"
             cause = Alert.Cause.HeavyRidership

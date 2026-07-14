@@ -151,7 +151,6 @@ class TripDetailsPageViewModelTest : KoinTest {
 
         val alert = objects.alert {
             effect = Alert.Effect.Suspension
-            activePeriod(EasternTimeInstant.now() - 1.hours, null)
             informedEntity(route = route.id.idText, stop = alertStop.id)
         }
 

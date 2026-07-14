@@ -411,10 +411,6 @@ struct AlertDetails: View {
             "Elevator 804 (Government Center & North lobby to Tremont Street, Winter Street)"
                 + "unavailable on Thu Feb 6 due to maintenance"
         alert.cause = .maintenance
-        alert.activePeriod(
-            start: now.minus(hours: 3 * 24),
-            end: nil
-        )
         alert.description_ =
             """
             To exit, travel down the Winter St concourse towards Downtown Crossing. At the end of the concourse, exit \

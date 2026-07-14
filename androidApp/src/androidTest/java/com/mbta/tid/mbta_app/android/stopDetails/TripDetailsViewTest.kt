@@ -152,7 +152,6 @@ class TripDetailsViewTest {
         objects.alert {
             cause = Alert.Cause.Parade
             effect = Alert.Effect.StopClosure
-            activePeriod(now.minus(5.minutes), now.plus(30.minutes))
             informedEntity(directionId = 0, route = route.id.idText, stop = downstreamStop.id)
         }
 

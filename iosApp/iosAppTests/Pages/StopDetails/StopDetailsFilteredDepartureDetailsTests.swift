@@ -360,7 +360,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
                 stop: stop.id,
                 trip: trip1.id
             )
-            alert.activePeriod(start: now.minus(minutes: 30), end: nil)
         }
         let leaf = makeLeaf(
             route: route,
@@ -438,10 +437,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let alert = objects.alert { alert in
             alert.effect = .suspension
             alert.header = "Fuchsia Line suspended from Here to There"
-            alert.activePeriod(
-                start: now.minus(hours: 3 * 24),
-                end: now.plus(hours: 3 * 24)
-            )
             alert.informedEntity(stop: stop.id)
         }
 
@@ -498,10 +493,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let alert = objects.alert { alert in
             alert.effect = .suspension
             alert.header = "Fuchsia Line suspended from Here to There"
-            alert.activePeriod(
-                start: now.minus(hours: 3 * 24),
-                end: now.plus(hours: 3 * 24)
-            )
             alert.informedEntity(stop: stop.id)
         }
 
@@ -633,7 +624,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
                 stop: stop.id,
                 trip: nil
             )
-            alert.activePeriod(start: now.minus(minutes: 30), end: nil)
         }
         let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip { $0.headsign = "A" }
@@ -721,9 +711,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let route = objects.route { _ in }
         let alert = objects.alert { alert in
             alert.effect = .delay
-            alert.activePeriod(
-                start: .init(year: 2000, month: .january, day: 1, hour: 0, minute: 0, second: 0), end: nil
-            )
             alert.header = "Delay header"
             alert.cause = .heavyRidership
             alert.severity = 10
@@ -787,10 +774,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let alert =
             objects.alert { alert in
-                alert.activePeriod(
-                    start: now.minus(seconds: 5),
-                    end: now.plus(seconds: 100)
-                )
                 alert.effect = .shuttle
                 alert.header = "Green line shuttle on B and C branches"
                 alert.informedEntity(

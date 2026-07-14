@@ -301,7 +301,6 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let harvardNorthbound = objects.getStop(id: "70068")
         let alert = objects.alert { alert in
-            alert.activePeriod(start: .init(instant: .companion.DISTANT_PAST), end: nil)
             alert.effect = .suspension
             alert.informedEntity(activities: [.board, .exit, .ride], stop: harvardNorthbound.id)
         }

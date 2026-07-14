@@ -23,10 +23,6 @@ final class AlertCardTests: XCTestCase {
         let alert = objects.alert { alert in
             alert.effect = .suspension
             alert.header = "Test header"
-            alert.activePeriod(
-                start: now.minus(hours: 3 * 24),
-                end: now.plus(hours: 3 * 24)
-            )
         }
 
         let exp = XCTestExpectation(description: "Detail button pressed")
@@ -261,10 +257,6 @@ final class AlertCardTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
             alert.effect = .detour
-            alert.activePeriod(
-                start: now.minus(hours: 3 * 24),
-                end: now.plus(hours: 3 * 24)
-            )
         }
 
         let exp = XCTestExpectation(description: "Card pressed")
@@ -313,10 +305,6 @@ final class AlertCardTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
             alert.effect = .serviceChange
-            alert.activePeriod(
-                start: now.minus(hours: 3 * 24),
-                end: now.plus(hours: 3 * 24)
-            )
         }
 
         let exp = XCTestExpectation(description: "Card pressed")
@@ -344,10 +332,6 @@ final class AlertCardTests: XCTestCase {
         let alert = objects.alert { alert in
             alert.effect = .elevatorClosure
             alert.header = "Elevator header"
-            alert.activePeriod(
-                start: now.minus(hours: 3 * 24),
-                end: now.plus(hours: 3 * 24)
-            )
         }
 
         let exp = XCTestExpectation(description: "Card pressed")
@@ -384,10 +368,6 @@ final class AlertCardTests: XCTestCase {
                 facility: facility.id
             )
             alert.facilities = [facility.id: facility]
-            alert.activePeriod(
-                start: now.minus(hours: 3 * 24),
-                end: now.plus(hours: 3 * 24)
-            )
         }
 
         let exp = XCTestExpectation(description: "Card pressed")
@@ -519,10 +499,7 @@ final class AlertCardTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
             alert.effect = .suspension
-            alert.activePeriod(
-                start: now.minus(hours: 3 * 24),
-                end: now.minus(hours: 1 * 24)
-            )
+            alert.allClear()
         }
         let exp = XCTestExpectation(description: "Card pressed")
         let sut = AlertCard(
@@ -559,10 +536,6 @@ final class AlertCardTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
             alert.effect = .shuttle
-            alert.activePeriod(
-                start: now.minus(hours: 3 * 24),
-                end: now.plus(hours: 3 * 24)
-            )
         }
         let exp = XCTestExpectation(description: "Card pressed")
         let sut = AlertCard(

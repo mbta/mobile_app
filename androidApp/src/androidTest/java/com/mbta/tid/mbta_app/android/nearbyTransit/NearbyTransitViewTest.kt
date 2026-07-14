@@ -36,7 +36,6 @@ import com.mbta.tid.mbta_app.viewModel.MockNearbyViewModel
 import com.mbta.tid.mbta_app.viewModel.NearbyViewModel
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.koinInject
@@ -376,7 +375,6 @@ class NearbyTransitViewTest : KoinTest {
         val harvardNorthbound = objects.getStop("70068")
         val centralNorthbound = objects.getStop("70070")
         val alert = objects.alert {
-            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
             effect = Alert.Effect.Suspension
             informedEntity(
                 activities =

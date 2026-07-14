@@ -24,7 +24,6 @@ import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertEquals
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Month
 import org.junit.Rule
@@ -303,7 +302,7 @@ class TripStopRowTest {
         testEntry =
             entry(
                 accessibleStop,
-                listOf(objects.alert { activePeriod(now.minus(20.minutes), now.plus(20.minutes)) }),
+                listOf(objects.alert {}),
             )
         composeTestRule
             .onNodeWithTag("wheelchair_not_accessible", useUnmergedTree = true)

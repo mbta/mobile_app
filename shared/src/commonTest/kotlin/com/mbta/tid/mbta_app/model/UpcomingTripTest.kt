@@ -13,7 +13,6 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.Instant
 
 class UpcomingTripTest {
     class DisplayTest {
@@ -318,7 +317,6 @@ class UpcomingTripTest {
             val route = objects.route()
             val shuttle = objects.alert {
                 effect = Alert.Effect.Shuttle
-                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                 informedEntity =
                     mutableListOf(
                         Alert.InformedEntity(
