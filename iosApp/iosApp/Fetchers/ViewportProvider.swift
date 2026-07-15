@@ -28,6 +28,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
     @Published var viewport: Viewport
     private var savedNearbyTransitViewport: Viewport?
     let cameraStatePublisher: AnyPublisher<CameraState, Never>
+    let cameraStatePublisherThrottled: AnyPublisher<CameraState, Never>
 
     private let cameraStateSubject: CurrentValueSubject<CameraState, Never>
 
@@ -50,6 +51,12 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
                 .removeDuplicates(by: { lhs, rhs in lhs.center.isRoughlyEqualTo(rhs.center) })
                 .receive(on: DispatchQueue.main)
                 .eraseToAnyPublisher()
+
+        cameraStatePublisherThrottled = cameraStatePublisher.throttle(
+            for: .seconds(2),
+            scheduler: DispatchQueue.main,
+            latest: true
+        ).eraseToAnyPublisher()
     }
 
     @MainActor func follow(animation: ViewportAnimation = Defaults.animation) {

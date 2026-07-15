@@ -62,14 +62,11 @@ struct NearbyTransitPage: View {
                     viewportProvider: viewportProvider,
                 )
                 .onReceive(
-                    viewportProvider.cameraStatePublisher
-                        .throttle(for: .seconds(2), scheduler: DispatchQueue.main, latest: true)
-
+                    viewportProvider.cameraStatePublisherThrottled
                 ) { newCameraState in
                     guard navManager.isNearbyVisible() else { return }
                     if !newCameraState.center.isRoughlyEqualTo(location) {
                         location = newCameraState.center
-                        print("KB: location updated")
                     }
                 }
                 .onReceive(inspection.notice) { inspection.visit(self, $0) }
