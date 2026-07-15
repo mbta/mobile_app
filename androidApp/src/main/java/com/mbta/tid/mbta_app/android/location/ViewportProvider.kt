@@ -39,8 +39,8 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -117,7 +117,7 @@ class ViewportProvider(
             old.center.isRoughlyEqualTo(new.center)
         }
     @OptIn(FlowPreview::class)
-    override var cameraStateFlowDebounced = cameraStateFlow.debounce(0.5.seconds)
+    override var cameraStateFlowDebounced = cameraStateFlow.sample(2.seconds)
 
     private var lastEdgeInsets: EdgeInsets = EdgeInsets(0.0, 0.0, 0.0, 0.0)
 
