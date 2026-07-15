@@ -35,9 +35,7 @@ struct FavoritesPage: View {
             )
             .toolbarBackground(.visible, for: .tabBar)
             .onReceive(
-                viewportProvider.cameraStatePublisher
-                    .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-
+                viewportProvider.cameraStatePublisherThrottled
             ) { newCameraState in
                 guard navManager.isFavoritesVisible() else { return }
                 location = newCameraState.center
