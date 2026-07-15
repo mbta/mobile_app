@@ -96,8 +96,7 @@ struct ProductionAppView: View {
     }
 
     private static func initSocket() -> PhoenixSocket {
-        let locale = NSLocalizedString("key/current_locale", comment: "")
-        let socket = Socket(appVariant.socketUrl, paramsClosure: { ["locale": locale] })
+        let socket = Socket(appVariant.socketUrl)
 
         // decreasing default from 5s
         socket.reconnectAfter = { tries in

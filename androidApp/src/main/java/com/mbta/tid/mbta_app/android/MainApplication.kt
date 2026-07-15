@@ -26,15 +26,10 @@ import org.phoenixframework.Socket
 // expect val appVariant: AppVariant
 
 class MainApplication : Application() {
+    private val socket = Socket(appVariant.socketUrl, decode = ::decodeMessage)
+
     override fun onCreate() {
         super.onCreate()
-        val locale = resources.getString(R.string.current_locale)
-        val socket =
-            Socket(
-                appVariant.socketUrl,
-                params = mapOf("locale" to locale),
-                decode = ::decodeMessage,
-            )
         initKoin(
             appVariant,
             makeNativeModule(

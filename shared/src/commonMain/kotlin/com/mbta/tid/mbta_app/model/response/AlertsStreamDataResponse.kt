@@ -5,21 +5,6 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import kotlinx.serialization.Serializable
 
 @Serializable
-public data class AlertsStreamUpdateResponse(
-    internal val remove: List<String>,
-    internal val update: Map<String, Alert>,
-) {
-    public constructor(objects: ObjectCollectionBuilder) : this(emptyList(), objects.alerts.toMap())
-
-    public fun mergeInto(alertsData: AlertsStreamDataResponse?): AlertsStreamDataResponse =
-        alertsData?.let {
-            AlertsStreamDataResponse(
-                it.alerts.filter { (key, _) -> !remove.contains(key) } + update
-            )
-        } ?: AlertsStreamDataResponse(update)
-}
-
-@Serializable
 public data class AlertsStreamDataResponse(internal val alerts: Map<String, Alert>) {
     public constructor(objects: ObjectCollectionBuilder) : this(objects.alerts.toMap())
 

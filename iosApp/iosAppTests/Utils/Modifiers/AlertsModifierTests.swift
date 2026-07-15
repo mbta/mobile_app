@@ -31,7 +31,7 @@ final class AlertsModifierTests: XCTestCase {
         var repoFulfilled = false
         let mockRepos = MockRepositories()
         mockRepos.alerts = MockAlertsRepository(
-            response: .init(remove: [], update: [:]),
+            response: updatedAlerts,
             onConnect: {
                 guard !repoFulfilled else { return }
                 repoFulfilled = true
