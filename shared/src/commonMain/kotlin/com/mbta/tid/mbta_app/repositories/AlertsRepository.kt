@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.repositories
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
-import com.mbta.tid.mbta_app.model.response.AlertsStreamUpdateResponse
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixSocket
@@ -11,7 +11,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import org.koin.core.component.KoinComponent
 
 public interface IAlertsRepository {
-    public fun connect(onReceive: (ApiResult<AlertsStreamUpdateResponse>) -> Unit)
+    public fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit)
 
     public fun disconnect()
 }
@@ -23,7 +23,7 @@ internal class AlertsRepository(
     ioDispatcher: CoroutineDispatcher,
 ) : IAlertsRepository, KoinComponent {
     private val channelOwner =
-        ChannelOwner<AlertsStreamUpdateResponse>(
+        ChannelOwner<AlertsStreamDataResponse>(
             socket,
             ioDispatcher,
             debugRepository,
@@ -31,13 +31,13 @@ internal class AlertsRepository(
         )
     internal var channel: PhoenixChannel? by channelOwner::channel
 
-    override fun connect(onReceive: (ApiResult<AlertsStreamUpdateResponse>) -> Unit) {
+    override fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit) {
         channelOwner.connect(
             AlertsChannel,
             AlertsChannel::parseMessage,
             {
                 when (it) {
-                    is ApiResult.Ok -> println("Received ${it.data.update.size} alerts")
+                    is ApiResult.Ok -> println("Received ${it.data.alerts.size} alerts")
                     else -> {}
                 }
                 onReceive(it)
@@ -54,20 +54,20 @@ internal class AlertsRepository(
 public class MockAlertsRepository
 @DefaultArgumentInterop.Enabled
 internal constructor(
-    private val result: ApiResult<AlertsStreamUpdateResponse>,
+    private val result: ApiResult<AlertsStreamDataResponse>,
     private val onConnect: () -> Unit = {},
     private val onDisconnect: () -> Unit = {},
 ) : IAlertsRepository {
     @DefaultArgumentInterop.Enabled
     public constructor(
-        response: AlertsStreamUpdateResponse = AlertsStreamUpdateResponse(emptyList(), emptyMap()),
+        response: AlertsStreamDataResponse = AlertsStreamDataResponse(emptyMap()),
         onConnect: () -> Unit = {},
         onDisconnect: () -> Unit = {},
     ) : this(ApiResult.Ok(response), onConnect, onDisconnect)
 
-    private var receiveCallback: ((ApiResult<AlertsStreamUpdateResponse>) -> Unit)? = null
+    private var receiveCallback: ((ApiResult<AlertsStreamDataResponse>) -> Unit)? = null
 
-    override fun connect(onReceive: (ApiResult<AlertsStreamUpdateResponse>) -> Unit) {
+    override fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit) {
         receiveCallback = onReceive
         onConnect()
         onReceive(result)
@@ -77,7 +77,7 @@ internal constructor(
         onDisconnect()
     }
 
-    internal fun receiveResult(result: ApiResult<AlertsStreamUpdateResponse>) {
+    internal fun receiveResult(result: ApiResult<AlertsStreamDataResponse>) {
         receiveCallback?.let { it(result) }
     }
 }

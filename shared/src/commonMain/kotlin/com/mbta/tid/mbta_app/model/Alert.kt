@@ -26,7 +26,6 @@ internal constructor(
     @SerialName("informed_entity") val informedEntity: List<InformedEntity>,
     val lifecycle: Lifecycle,
     val severity: Int,
-    val summaries: List<AlertSummaryEntity>? = null,
     @SerialName("updated_at") val updatedAt: EasternTimeInstant,
     // This field is not parsed from the Alert object from the backend, it is injected from
     // global data in the AlertsUsecase if any informed entities apply to a facility.
@@ -135,14 +134,6 @@ internal constructor(
         global: GlobalResponse,
     ): AlertSummary? =
         AlertSummary.summarizing(this, stopId, directionId, patterns, atTime, upcomingTrips, global)
-
-    public fun summary(
-        routeId: Matcher<Route.Id>,
-        stopId: Matcher<String>,
-        directionId: Matcher<Int>,
-        tripId: Matcher<String>,
-    ): AlertSummaryEntity? =
-        AlertSummaryEntity.matching(summaries.orEmpty(), routeId, stopId, directionId, tripId)
 
     @Serializable
     public data class ActivePeriod
