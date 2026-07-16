@@ -68,7 +68,10 @@ struct ContentView: View {
         }
         .withScenePhaseHandlers(
             onActive: { socketProvider.socket.attach() },
-            onBackground: { socketProvider.socket.detach() }
+            onBackground: {
+                socketProvider.socket.detach()
+                errorBannerVM.clearState()
+            }
         )
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onAppear {
