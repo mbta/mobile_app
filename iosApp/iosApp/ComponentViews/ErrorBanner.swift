@@ -55,10 +55,8 @@ struct ErrorBanner: View {
         .withScenePhaseHandlers(
             onActive: {
                 timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect().eraseToAnyPublisher()
-                errorBannerVM.returnFromBackground()
             },
             onBackground: {
-                errorBannerVM.sendToBackground()
                 timer = Empty<Date, Never>().eraseToAnyPublisher()
             }
         )

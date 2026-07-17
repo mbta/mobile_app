@@ -99,6 +99,7 @@ public class ErrorBannerViewModel(
                 is Event.SendToBackground -> {
                     hideBanner = true
                     backgroundReturnInstant = null
+                    errorRepository.clearState()
                 }
                 is Event.SetSheetRoute -> {
                     if (SheetRoutes.pageChanged(sheetRoute, event.sheetRoute)) {

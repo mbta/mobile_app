@@ -180,10 +180,7 @@ fun ContentView(
     LifecycleResumeEffect(null) {
         socket.attach()
         (socket as? PhoenixSocketWrapper)?.attachLogging()
-        onPauseOrDispose {
-            socket.detach()
-            scope.launch { errorBannerRepository.clearState() }
-        }
+        onPauseOrDispose { socket.detach() }
     }
 
     LaunchedEffect(pendingFeaturePromos) {

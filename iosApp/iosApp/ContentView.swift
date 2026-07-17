@@ -67,10 +67,13 @@ struct ContentView: View {
             contentHeight = height
         }
         .withScenePhaseHandlers(
-            onActive: { socketProvider.socket.attach() },
+            onActive: {
+                socketProvider.socket.attach()
+                errorBannerVM.returnFromBackground()
+            },
             onBackground: {
                 socketProvider.socket.detach()
-                errorBannerVM.clearState()
+                errorBannerVM.sendToBackground()
             }
         )
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
