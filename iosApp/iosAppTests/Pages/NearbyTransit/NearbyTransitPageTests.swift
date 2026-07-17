@@ -76,6 +76,7 @@ final class NearbyTransitPageTests: XCTestCase {
             errorBannerVM: MockErrorBannerViewModel(
                 initialState: .init(
                     loadingWhenPredictionsStale: false,
+                    hideBanner: false,
                     errorState: .DataError(messages: [], details: [], action: {})
                 )
             ),

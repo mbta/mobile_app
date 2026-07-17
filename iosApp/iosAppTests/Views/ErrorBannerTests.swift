@@ -53,8 +53,11 @@ final class ErrorBannerTests: XCTestCase {
     }
 
     @MainActor func testWhenNetworkError() {
-        let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(loadingWhenPredictionsStale: false,
-                                                                           errorState: .NetworkError())))
+        let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(
+            loadingWhenPredictionsStale: false,
+            hideBanner: false,
+            errorState: .NetworkError()
+        )))
 
         ViewHosting.host(view: sut)
 
@@ -66,10 +69,11 @@ final class ErrorBannerTests: XCTestCase {
     }
 
     @MainActor func testWhenDataError() {
-        let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(loadingWhenPredictionsStale: false,
-                                                                           errorState: .DataError(messages: [],
-                                                                                                  details: [],
-                                                                                                  action: {}))))
+        let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(
+            loadingWhenPredictionsStale: false,
+            hideBanner: false,
+            errorState: .DataError(messages: [], details: [], action: {})
+        )))
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
 
@@ -81,12 +85,14 @@ final class ErrorBannerTests: XCTestCase {
     }
 
     @MainActor func testLoadingWhenPredictionsStale() {
-        let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(loadingWhenPredictionsStale: true,
-                                                                           errorState: .StalePredictions(
-                                                                               lastUpdated: Date.distantPast
-                                                                                   .toEasternInstant(),
-                                                                               action: {}
-                                                                           ))))
+        let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(
+            loadingWhenPredictionsStale: true,
+            hideBanner: false,
+            errorState: .StalePredictions(
+                lastUpdated: Date.distantPast.toEasternInstant(),
+                action: {}
+            )
+        )))
 
         ViewHosting.host(view: sut)
 
@@ -101,6 +107,7 @@ final class ErrorBannerTests: XCTestCase {
         let sut = ErrorBanner(
             MockErrorBannerViewModel(initialState: .init(
                 loadingWhenPredictionsStale: false,
+                hideBanner: false,
                 errorState: .DataError(messages: ["Fake message"], details: [], action: {})
             ))
         )
@@ -108,5 +115,21 @@ final class ErrorBannerTests: XCTestCase {
         ViewHosting.host(view: sut.withFixedSettings([:]))
 
         XCTAssertThrowsError(try sut.inspect().find(text: "Fake message"))
+    }
+
+    @MainActor func testBannerHidden() {
+        let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(
+            loadingWhenPredictionsStale: false,
+            hideBanner: true,
+            errorState: .DataError(messages: [], details: [], action: {})
+        )))
+
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+
+        let hidError = sut.inspection.inspect(after: 0.5) { view in
+            XCTAssertThrowsError(try view.find(text: "Error loading data"))
+        }
+
+        wait(for: [hidError], timeout: 1)
     }
 }
