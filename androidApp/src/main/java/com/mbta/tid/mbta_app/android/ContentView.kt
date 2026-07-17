@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,6 +18,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -42,6 +45,7 @@ import com.mbta.tid.mbta_app.android.state.subscribeToAlerts
 import com.mbta.tid.mbta_app.android.util.NotificationsBeta
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.fcmToken
+import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.cache.ScheduleCache
 import com.mbta.tid.mbta_app.model.FeaturePromo
 import com.mbta.tid.mbta_app.model.OnboardingScreen
@@ -58,8 +62,10 @@ import com.mbta.tid.mbta_app.routes.DeepLinkState
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -78,6 +84,7 @@ fun ContentView(
     scheduleCache: ScheduleCache = koinInject(),
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
     subscriptionsRepository: ISubscriptionsRepository = koinInject(),
+    errorBannerViewModel: IErrorBannerViewModel = koinInject(),
     mapViewModel: MapViewModel = koinInject(),
     accessibilityStatusRepository: IAccessibilityStatusRepository = koinInject(),
 ) {
@@ -149,6 +156,25 @@ fun ContentView(
             }
         }
         socket.onAttach { scope.launch { errorBannerRepository.clearDataError(errorKey) } }
+    }
+
+    val errorBannerState by errorBannerViewModel.models.collectAsState()
+    var startErrorBannerTimer by remember { mutableStateOf(false) }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        errorBannerViewModel.returnFromBackground()
+        if (errorBannerState.hideBanner) startErrorBannerTimer = true
+    }
+    LifecycleEventEffect(Lifecycle.Event.ON_PAUSE) {
+        startErrorBannerTimer = false
+        errorBannerViewModel.sendToBackground()
+    }
+
+    val errorBannerTimer: State<EasternTimeInstant>? =
+        if (startErrorBannerTimer) timer(updateInterval = 1.seconds) else null
+    LaunchedEffect(errorBannerTimer?.value) { errorBannerViewModel.setNow(errorBannerTimer?.value) }
+    LaunchedEffect(errorBannerState.hideBanner) {
+        if (!errorBannerState.hideBanner && startErrorBannerTimer) startErrorBannerTimer = false
     }
 
     LifecycleResumeEffect(null) {

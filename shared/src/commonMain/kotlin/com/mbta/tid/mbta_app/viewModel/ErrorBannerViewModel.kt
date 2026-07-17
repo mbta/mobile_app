@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.ErrorBannerState
@@ -22,7 +23,13 @@ public interface IErrorBannerViewModel {
 
     public fun clearState()
 
+    public fun returnFromBackground()
+
+    public fun sendToBackground()
+
     public fun setIsLoadingWhenPredictionsStale(isLoading: Boolean)
+
+    public fun setNow(now: EasternTimeInstant?)
 
     public fun checkPredictionsStale(
         predictionsLastUpdated: EasternTimeInstant,
@@ -43,30 +50,56 @@ public class ErrorBannerViewModel(
 
     public data class State(
         val loadingWhenPredictionsStale: Boolean = false,
+        val hideBanner: Boolean = false,
         val errorState: ErrorBannerState? = null,
     ) {
-        public constructor() : this(false, null)
+        public constructor() : this(false, false, null)
     }
 
     public sealed interface Event {
         public data class SetSheetRoute(val sheetRoute: SheetRoutes?) : Event
 
         public data object ClearState : Event
+
+        public data object ReturnFromBackground : Event
+
+        public data object SendToBackground : Event
     }
 
     private var awaitingPredictionsAfterBackground: Boolean by mutableStateOf(false)
 
     @set:JvmName("setSheetRouteState") private var sheetRoute: SheetRoutes? by mutableStateOf(null)
 
+    @set:JvmName("setNowState") private var now: EasternTimeInstant? by mutableStateOf(null)
+
     @Composable
     override fun runLogic(): State {
         LaunchedEffect(Unit) { errorRepository.subscribeToNetworkStatusChanges() }
 
         val errorState by errorRepository.state.collectAsState()
+        var backgroundReturnInstant: EasternTimeInstant? by remember { mutableStateOf(null) }
+        var hideBanner by remember { mutableStateOf(false) }
+
+        LaunchedEffect(now, backgroundReturnInstant) {
+            backgroundReturnInstant?.let { returnedAt ->
+                now?.let {
+                    if (it.minus(returnedAt) > 5.seconds) {
+                        hideBanner = false
+                        backgroundReturnInstant = null
+                    }
+                }
+            }
+        }
 
         EventSink(eventHandlingTimeout = 1.seconds, sentryRepository = sentryRepository) { event ->
             when (event) {
                 is Event.ClearState -> errorRepository.clearState()
+                is Event.ReturnFromBackground ->
+                    if (hideBanner) backgroundReturnInstant = EasternTimeInstant.now()
+                is Event.SendToBackground -> {
+                    hideBanner = true
+                    backgroundReturnInstant = null
+                }
                 is Event.SetSheetRoute -> {
                     if (SheetRoutes.pageChanged(sheetRoute, event.sheetRoute)) {
                         errorRepository.clearState()
@@ -77,7 +110,7 @@ public class ErrorBannerViewModel(
             }
         }
 
-        return State(awaitingPredictionsAfterBackground, errorState)
+        return State(awaitingPredictionsAfterBackground, hideBanner, errorState)
     }
 
     override val models: StateFlow<State>
@@ -87,8 +120,20 @@ public class ErrorBannerViewModel(
         fireEvent(Event.ClearState)
     }
 
+    override fun returnFromBackground() {
+        fireEvent(Event.ReturnFromBackground)
+    }
+
+    override fun sendToBackground() {
+        fireEvent(Event.SendToBackground)
+    }
+
     override fun setIsLoadingWhenPredictionsStale(isLoading: Boolean) {
         this.awaitingPredictionsAfterBackground = isLoading
+    }
+
+    override fun setNow(now: EasternTimeInstant?) {
+        this.now = now
     }
 
     override fun checkPredictionsStale(
@@ -119,7 +164,13 @@ constructor(initialState: ErrorBannerViewModel.State = ErrorBannerViewModel.Stat
 
     override fun clearState() {}
 
+    override fun returnFromBackground() {}
+
+    override fun sendToBackground() {}
+
     override fun setIsLoadingWhenPredictionsStale(isLoading: Boolean) {}
+
+    override fun setNow(now: EasternTimeInstant?) {}
 
     override fun checkPredictionsStale(
         predictionsLastUpdated: EasternTimeInstant,
