@@ -68,7 +68,7 @@ internal fun subscribeToPredictions(
         }
     }
 
-    fun checkStale() {
+    suspend fun checkStale() {
         val lastUpdated = predictionsRepository.lastUpdated
         if (lastUpdated != null) {
             errorBannerRepository.checkPredictionsStale(

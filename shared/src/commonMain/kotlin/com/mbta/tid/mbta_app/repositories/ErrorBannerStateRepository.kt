@@ -7,12 +7,13 @@ import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.reflect.KClass
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import okio.ArrayIndexOutOfBoundsException
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -78,8 +79,12 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
      */
     public open fun subscribeToNetworkStatusChanges() {
         this.networkConnectivityMonitor.registerListener(
-            onNetworkAvailable = { setNetworkStatus(NetworkStatus.Connected) },
-            onNetworkLost = { setNetworkStatus(NetworkStatus.Disconnected) },
+            onNetworkAvailable = {
+                runBlocking(Dispatchers.Default) { setNetworkStatus(NetworkStatus.Connected) }
+            },
+            onNetworkLost = {
+                runBlocking(Dispatchers.Default) { setNetworkStatus(NetworkStatus.Disconnected) }
+            },
         )
     }
 
@@ -93,7 +98,8 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
     private val dataErrors = mutableMapOf<ErrorKey, ErrorBannerState.DataError>()
     private val mutex = Mutex()
 
-    protected open fun updateState() {
+    protected open suspend fun updateState() {
+        val dataErrors = mutex.withLock { dataErrors.toMap() }
         flow.value =
             when {
                 networkStatus == NetworkStatus.Disconnected -> ErrorBannerState.NetworkError(null)
@@ -109,7 +115,7 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
             }
     }
 
-    public open fun checkPredictionsStale(
+    public open suspend fun checkPredictionsStale(
         predictionsLastUpdated: EasternTimeInstant,
         predictionQuantity: Int,
         checkingSheetRoute: SheetRoutes?,
@@ -151,7 +157,7 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
         updateState()
     }
 
-    private fun setNetworkStatus(newStatus: NetworkStatus) {
+    private suspend fun setNetworkStatus(newStatus: NetworkStatus) {
         networkStatus = newStatus
         updateState()
     }
@@ -179,11 +185,7 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
 
     public suspend fun clearState() {
         predictionsStale = null
-        try {
-            mutex.withLock { dataErrors.clear() }
-        } catch (e: ArrayIndexOutOfBoundsException) {
-            // ignore race condition if clearing multiple times
-        }
+        mutex.withLock { dataErrors.clear() }
         flow.value = null
     }
 }
@@ -207,7 +209,7 @@ constructor(
         onSubscribeToNetworkChanges?.invoke()
     }
 
-    override fun checkPredictionsStale(
+    override suspend fun checkPredictionsStale(
         predictionsLastUpdated: EasternTimeInstant,
         predictionQuantity: Int,
         checkingSheetRoute: SheetRoutes?,

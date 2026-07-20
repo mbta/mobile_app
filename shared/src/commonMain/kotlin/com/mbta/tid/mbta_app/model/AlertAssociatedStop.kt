@@ -5,10 +5,10 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.serialization.Serializable
 
 public class AlertAssociatedStop internal constructor(internal val stop: Stop) {
-    internal var relevantAlerts: List<Alert> = mutableListOf()
-    internal var serviceAlerts: List<Alert> = mutableListOf()
-    internal var childAlerts: Map<String, AlertAssociatedStop> = mutableMapOf()
-    internal var stateByRoute: Map<MapStopRoute, StopAlertState> = mutableMapOf()
+    internal var relevantAlerts: List<Alert> = listOf()
+    internal var serviceAlerts: List<Alert> = listOf()
+    internal var childAlerts: Map<String, AlertAssociatedStop> = mapOf()
+    internal var stateByRoute: Map<MapStopRoute, StopAlertState> = mapOf()
 
     internal constructor(
         stop: Stop,
