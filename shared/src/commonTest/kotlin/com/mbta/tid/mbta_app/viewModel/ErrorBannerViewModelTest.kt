@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.viewModel
 import app.cash.turbine.test
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
+import com.mbta.tid.mbta_app.mocks.MockClock
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.network.INetworkConnectivityMonitor
@@ -21,6 +22,7 @@ import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.context.startKoin
@@ -227,13 +229,13 @@ internal class ErrorBannerViewModelTest : KoinTest {
     @Test
     fun testBackgroundHiding() = runTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
+        val clock = MockClock()
 
         val errorRepo = ErrorBannerStateRepository()
 
-        setUpKoin(dispatcher) { errorBanner = errorRepo }
+        setUpKoin(dispatcher, clock) { errorBanner = errorRepo }
 
         val viewModel: ErrorBannerViewModel = get()
-        val now = EasternTimeInstant.now()
 
         testViewModelFlow(viewModel).test {
             assertEquals(ErrorBannerViewModel.State(false, false, null), awaitItem())
@@ -243,10 +245,9 @@ internal class ErrorBannerViewModelTest : KoinTest {
                 it == ErrorBannerViewModel.State(false, true, null)
             }
             viewModel.returnFromBackground()
-            viewModel.setNow(now.plus(1.seconds))
             advanceUntilIdle()
             expectNoEvents()
-            viewModel.setNow(now.plus(6.seconds))
+            advanceTimeBy(6.seconds)
             advanceUntilIdle()
             awaitItemSatisfying {
                 it == ErrorBannerViewModel.State(false, false, null)

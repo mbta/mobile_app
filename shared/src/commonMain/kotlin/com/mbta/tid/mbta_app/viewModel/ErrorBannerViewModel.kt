@@ -13,7 +13,9 @@ import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.utils.timer
 import kotlin.jvm.JvmName
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,8 +31,6 @@ public interface IErrorBannerViewModel {
 
     public fun setIsLoadingWhenPredictionsStale(isLoading: Boolean)
 
-    public fun setNow(now: EasternTimeInstant?)
-
     public fun checkPredictionsStale(
         predictionsLastUpdated: EasternTimeInstant,
         predictionQuantity: Int,
@@ -44,13 +44,14 @@ public interface IErrorBannerViewModel {
 public class ErrorBannerViewModel(
     private val errorRepository: IErrorBannerStateRepository,
     private val sentryRepository: ISentryRepository,
+    private val clock: Clock,
 ) :
     MoleculeViewModel<ErrorBannerViewModel.Event, ErrorBannerViewModel.State>(),
     IErrorBannerViewModel {
 
     public data class State(
         val loadingWhenPredictionsStale: Boolean = false,
-        val hideBanner: Boolean = false,
+        val bannerHiddenAfterBackground: Boolean = false,
         val errorState: ErrorBannerState? = null,
     ) {
         public constructor() : this(false, false, null)
@@ -70,22 +71,25 @@ public class ErrorBannerViewModel(
 
     @set:JvmName("setSheetRouteState") private var sheetRoute: SheetRoutes? by mutableStateOf(null)
 
-    @set:JvmName("setNowState") private var now: EasternTimeInstant? by mutableStateOf(null)
-
     @Composable
     override fun runLogic(): State {
         LaunchedEffect(Unit) { errorRepository.subscribeToNetworkStatusChanges() }
 
         val errorState by errorRepository.state.collectAsState()
         var backgroundReturnInstant: EasternTimeInstant? by remember { mutableStateOf(null) }
-        var hideBanner by remember { mutableStateOf(false) }
+        var bannerHiddenAfterBackground by remember { mutableStateOf(false) }
 
-        LaunchedEffect(now, backgroundReturnInstant) {
+        var startTimer by remember { mutableStateOf(false) }
+        val timer: androidx.compose.runtime.State<EasternTimeInstant>? =
+            if (startTimer) timer(updateInterval = 1.seconds, clock = clock) else null
+
+        LaunchedEffect(timer?.value, backgroundReturnInstant) {
             backgroundReturnInstant?.let { returnedAt ->
-                now?.let {
+                timer?.value?.let {
                     if (it.minus(returnedAt) > 5.seconds) {
-                        hideBanner = false
+                        bannerHiddenAfterBackground = false
                         backgroundReturnInstant = null
+                        startTimer = false
                     }
                 }
             }
@@ -95,11 +99,14 @@ public class ErrorBannerViewModel(
             when (event) {
                 is Event.ClearState -> errorRepository.clearState()
                 is Event.ReturnFromBackground ->
-                    if (hideBanner) backgroundReturnInstant = EasternTimeInstant.now()
+                    if (bannerHiddenAfterBackground) {
+                        backgroundReturnInstant = EasternTimeInstant.now()
+                        startTimer = true
+                    }
                 is Event.SendToBackground -> {
-                    hideBanner = true
+                    bannerHiddenAfterBackground = true
                     backgroundReturnInstant = null
-                    errorRepository.clearState()
+                    startTimer = false
                 }
                 is Event.SetSheetRoute -> {
                     if (SheetRoutes.pageChanged(sheetRoute, event.sheetRoute)) {
@@ -111,7 +118,7 @@ public class ErrorBannerViewModel(
             }
         }
 
-        return State(awaitingPredictionsAfterBackground, hideBanner, errorState)
+        return State(awaitingPredictionsAfterBackground, bannerHiddenAfterBackground, errorState)
     }
 
     override val models: StateFlow<State>
@@ -131,10 +138,6 @@ public class ErrorBannerViewModel(
 
     override fun setIsLoadingWhenPredictionsStale(isLoading: Boolean) {
         this.awaitingPredictionsAfterBackground = isLoading
-    }
-
-    override fun setNow(now: EasternTimeInstant?) {
-        this.now = now
     }
 
     override fun checkPredictionsStale(
@@ -170,8 +173,6 @@ constructor(initialState: ErrorBannerViewModel.State = ErrorBannerViewModel.Stat
     override fun sendToBackground() {}
 
     override fun setIsLoadingWhenPredictionsStale(isLoading: Boolean) {}
-
-    override fun setNow(now: EasternTimeInstant?) {}
 
     override fun checkPredictionsStale(
         predictionsLastUpdated: EasternTimeInstant,

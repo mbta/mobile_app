@@ -55,7 +55,7 @@ final class ErrorBannerTests: XCTestCase {
     @MainActor func testWhenNetworkError() {
         let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(
             loadingWhenPredictionsStale: false,
-            hideBanner: false,
+            bannerHiddenAfterBackground: false,
             errorState: .NetworkError()
         )))
 
@@ -71,7 +71,7 @@ final class ErrorBannerTests: XCTestCase {
     @MainActor func testWhenDataError() {
         let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(
             loadingWhenPredictionsStale: false,
-            hideBanner: false,
+            bannerHiddenAfterBackground: false,
             errorState: .DataError(messages: [], details: [], action: {})
         )))
 
@@ -87,7 +87,7 @@ final class ErrorBannerTests: XCTestCase {
     @MainActor func testLoadingWhenPredictionsStale() {
         let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(
             loadingWhenPredictionsStale: true,
-            hideBanner: false,
+            bannerHiddenAfterBackground: false,
             errorState: .StalePredictions(
                 lastUpdated: Date.distantPast.toEasternInstant(),
                 action: {}
@@ -107,7 +107,7 @@ final class ErrorBannerTests: XCTestCase {
         let sut = ErrorBanner(
             MockErrorBannerViewModel(initialState: .init(
                 loadingWhenPredictionsStale: false,
-                hideBanner: false,
+                bannerHiddenAfterBackground: false,
                 errorState: .DataError(messages: ["Fake message"], details: [], action: {})
             ))
         )
@@ -120,7 +120,7 @@ final class ErrorBannerTests: XCTestCase {
     @MainActor func testBannerHidden() {
         let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(
             loadingWhenPredictionsStale: false,
-            hideBanner: true,
+            bannerHiddenAfterBackground: true,
             errorState: .DataError(messages: [], details: [], action: {})
         )))
 

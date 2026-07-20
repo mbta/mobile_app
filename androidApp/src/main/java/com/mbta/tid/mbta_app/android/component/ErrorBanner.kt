@@ -52,7 +52,7 @@ import org.koin.dsl.module
 fun ErrorBanner(vm: IErrorBannerViewModel, modifier: Modifier = Modifier) {
     val state by vm.models.collectAsState()
 
-    if (state.hideBanner) return
+    if (state.bannerHiddenAfterBackground) return
 
     when (val errorState = state.errorState) {
         is ErrorBannerState.DataError -> {

@@ -15,7 +15,6 @@ struct ErrorBanner: View {
     let errorBannerVM: IErrorBannerViewModel
     let padding: [BannerPadding]
     @State var errorBannerVMState: ErrorBannerViewModel.State = .init()
-    @State private var timer: AnyPublisher<Date, Never> = Empty().eraseToAnyPublisher()
 
     let minHeight = 60.0
     let inspection = Inspection<Self>()
@@ -37,33 +36,21 @@ struct ErrorBanner: View {
     }
 
     var state: ErrorBannerState? { errorBannerVMState.errorState }
-    var hideBanner: Bool { errorBannerVMState.hideBanner }
+    var bannerHiddenAfterBackground: Bool { errorBannerVMState.bannerHiddenAfterBackground }
 
     var body: some View {
         VStack {
-            if hideBanner { EmptyView() } else { content }
+            if bannerHiddenAfterBackground { EmptyView() } else { content }
         }
         // The content must be wrapped in a VStack so that the task can run when the error banner is
         // an EmptyView, but applying padding directly to the ErrorBanner will result in that padding
         // sticking around even when the banner is empty. This removes provided padding when empty.
-        .bannerPadding(isEmpty: state == nil || hideBanner, padding)
+        .bannerPadding(isEmpty: state == nil || bannerHiddenAfterBackground, padding)
         .task {
             for await model in errorBannerVM.models {
                 errorBannerVMState = model
             }
         }
-        .withScenePhaseHandlers(
-            onActive: {
-                timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect().eraseToAnyPublisher()
-            },
-            onBackground: {
-                timer = Empty<Date, Never>().eraseToAnyPublisher()
-            }
-        )
-        .onChange(of: hideBanner) { _ in
-            if !hideBanner { timer = Empty<Date, Never>().eraseToAnyPublisher() }
-        }
-        .onReceive(timer) { now in errorBannerVM.setNow(now: now.toEasternInstant()) }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .enableInjection()
     }
@@ -188,12 +175,12 @@ public extension View {
     VStack(spacing: 16) {
         ErrorBanner(MockErrorBannerViewModel(initialState: .init(
             loadingWhenPredictionsStale: false,
-            hideBanner: false,
+            bannerHiddenAfterBackground: false,
             errorState: .DataError(messages: Set(), details: Set(), action: {})
         )))
         ErrorBanner(MockErrorBannerViewModel(initialState:
             .init(loadingWhenPredictionsStale: false,
-                  hideBanner: false,
+                  bannerHiddenAfterBackground: false,
                   errorState: .StalePredictions(
                       lastUpdated: EasternTimeInstant.now()
                           .minus(minutes: 2),
@@ -201,7 +188,7 @@ public extension View {
                   ))))
         ErrorBanner(MockErrorBannerViewModel(initialState:
             .init(loadingWhenPredictionsStale: true,
-                  hideBanner: false,
+                  bannerHiddenAfterBackground: false,
                   errorState: .StalePredictions(
                       lastUpdated: EasternTimeInstant.now().minus(minutes: 2),
                       action: {}
