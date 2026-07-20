@@ -139,7 +139,7 @@ struct SaveFavoritesFlow: View {
             .saveFavorite(
                 routeId: lineOrRoute.id,
                 stopId: stop.id,
-                selectedDirection: selectedDirection,
+                selectedDirection: directions.count == 1 ? directions[0].id : selectedDirection,
                 context: context
             )
         )
