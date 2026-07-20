@@ -503,6 +503,7 @@ internal class MapViewModelTests : KoinTest {
                     any(),
                     any(),
                     any(),
+                    any(),
                 )
             }
             viewModel.layerManagerInitialized(layerManager2)
@@ -510,6 +511,7 @@ internal class MapViewModelTests : KoinTest {
             verifySuspend {
                 layerManager2.addLayers(
                     any<List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>>(),
+                    any(),
                     any(),
                     any(),
                     any(),
@@ -644,6 +646,7 @@ internal class MapViewModelTests : KoinTest {
                 globalRepository = get(),
                 railRouteShapeRepository = get(),
                 sentryRepository = get(),
+                settingsRepository = get(),
                 stopRepository = stopRepo,
                 tripRepository = get(),
                 clock = get(),
