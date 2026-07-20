@@ -15,41 +15,32 @@ import XCTest
 
 final class ErrorBannerTests: XCTestCase {
     @MainActor
-    func testRespondsToState() {
-        let repo = MockErrorBannerStateRepository(state: nil)
-        let errorBannerVM = ErrorBannerViewModel(
-            errorRepository: repo,
-            sentryRepository: MockSentryRepository()
-        )
-
-        let sut = ErrorBanner(errorBannerVM)
-
-        ViewHosting.host(view: sut)
-
-        XCTAssertNil(try? sut.inspect().find(ViewType.Text.self))
-
+    func testStalePredictions() {
         let now = EasternTimeInstant.now()
         let minutesAgo = 2
         let predictionsLastUpdated = now.minus(minutes: Int32(minutesAgo))
         let callsAction = expectation(description: "calls action when button pressed")
 
-        let stateSetPublisher = PassthroughSubject<Void, Never>()
+        let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(
+            loadingWhenPredictionsStale: false,
+            bannerHiddenAfterBackground: false,
+            errorState: .StalePredictions(
+                lastUpdated: predictionsLastUpdated,
+                action: { callsAction.fulfill() }
+            )
+        )))
 
-        let showedState = sut.inspection.inspect(onReceive: stateSetPublisher, after: 0.5) { view in
+        ViewHosting.host(view: sut)
+
+        XCTAssertNil(try? sut.inspect().find(ViewType.Text.self))
+
+        let showedError = sut.inspection.inspect(after: 0.5) { view in
             XCTAssertEqual(try view.find(ViewType.Text.self).string(), "Updated \(minutesAgo) minutes ago")
-
             try view.find(ViewType.Button.self).tap()
         }
 
-        repo.mutableFlow.value = .StalePredictions(
-            lastUpdated: predictionsLastUpdated,
-            action: { callsAction.fulfill() }
-        )
-
-        stateSetPublisher.send()
-
-        wait(for: [showedState], timeout: 1)
-        wait(for: [callsAction], timeout: 1)
+        wait(for: [showedError], timeout: 1)
+        wait(for: [callsAction], timeout: 2)
     }
 
     @MainActor func testWhenNetworkError() {
