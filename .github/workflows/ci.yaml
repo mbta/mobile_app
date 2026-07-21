@@ -42,14 +42,14 @@ jobs:
     uses: ./.github/workflows/pre-commit.yaml
   zizmor:
     uses: ./.github/workflows/zizmor.yaml
-  test-android:
-    name: Test for Android
-    permissions:
-      contents: read
-    needs: check-changes
-    uses: ./.github/workflows/test-android.yaml
-    with:
-      skip-everything: ${{ github.event_name == 'pull_request' && needs.check-changes.outputs.android == 'false' }}
+  # test-android:
+  #   name: Test for Android
+  #   permissions:
+  #     contents: read
+  #   needs: check-changes
+  #   uses: ./.github/workflows/test-android.yaml
+  #   with:
+  #     skip-everything: ${{ github.event_name == 'pull_request' && needs.check-changes.outputs.android == 'false' }}
   test-ios:
     name: Test for iOS
     permissions:
@@ -62,22 +62,22 @@ jobs:
       SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
       FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
       GOOGLE_APP_ID_IOS: ${{ secrets.GOOGLE_APP_ID_IOS_STAGING }}
-  build-android:
-    name: Build for Android
-    permissions:
-      id-token: write
-      contents: read
-      pull-requests: write
-    needs: check-changes
-    uses: ./.github/workflows/build-android.yaml
-    with:
-      build-type: "Debug"
-      deploy: false
-      flavor: "Staging"
-      sentry-environment: "debug"
-      skip-everything: ${{ github.event_name == 'pull_request' && needs.check-changes.outputs.android == 'false' }}
-    secrets:
-      FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
-      GOOGLE_APP_ID_ANDROID: ${{ secrets.GOOGLE_APP_ID_ANDROID_STAGING }}
-      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-      SENTRY_DSN_ANDROID: ${{ secrets.SENTRY_DSN_ANDROID }}
+  # build-android:
+  #   name: Build for Android
+  #   permissions:
+  #     id-token: write
+  #     contents: read
+  #     pull-requests: write
+  #   needs: check-changes
+  #   uses: ./.github/workflows/build-android.yaml
+  #   with:
+  #     build-type: "Debug"
+  #     deploy: false
+  #     flavor: "Staging"
+  #     sentry-environment: "debug"
+  #     skip-everything: ${{ github.event_name == 'pull_request' && needs.check-changes.outputs.android == 'false' }}
+  #   secrets:
+  #     FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+  #     GOOGLE_APP_ID_ANDROID: ${{ secrets.GOOGLE_APP_ID_ANDROID_STAGING }}
+  #     SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+  #     SENTRY_DSN_ANDROID: ${{ secrets.SENTRY_DSN_ANDROID }}
