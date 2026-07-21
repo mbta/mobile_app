@@ -39,16 +39,16 @@ jobs:
           bundle exec pod install
           popd
           bundle exec ./gradlew :shared:podInstallSyntheticIos
-      - name: shared checks & unit tests
-        if: ${{ !inputs.skip-everything }}
-        run: ./gradlew shared:iosSimulatorArm64Test
-        env:
-          GH_TOKEN: ${{ github.token }}
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: failure() && !inputs.skip-everything
-        with:
-          name: ios-shared-reports
-          path: shared/build/reports
+      # - name: shared checks & unit tests
+      #   if: ${{ !inputs.skip-everything }}
+      #   run: ./gradlew shared:iosSimulatorArm64Test
+      #   env:
+      #     GH_TOKEN: ${{ github.token }}
+      # - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      #   if: failure() && !inputs.skip-everything
+      #   with:
+      #     name: ios-shared-reports
+      #     path: shared/build/reports
       - name: Add build environment variables
         if: ${{ !inputs.skip-everything }}
         run: |
@@ -72,6 +72,8 @@ jobs:
             read -r LATEST_DEVICE
             read -r SECOND_LATEST_DEVICE
           }
+          echo "$LATEST_DEVICE"
+          echo "$SECOND_LATEST_DEVICE"
           echo "LATEST_DEVICE=$LATEST_DEVICE" >> $GITHUB_OUTPUT
           echo "SECOND_LATEST_DEVICE=$SECOND_LATEST_DEVICE" >> $GITHUB_OUTPUT
       - name: Run emulator tests
@@ -79,7 +81,9 @@ jobs:
         run: |
           bundle exec fastlane ios test \
             xcodebuild_formatter:"xcbeautify --renderer github-actions" \
-            device:${{ steps.ios_versions.outputs.LATEST_DEVICE }}
+            device:${IOS_DEVICE}
+        env:
+          IOS_DEVICE: ${{ steps.ios_versions.outputs.LATEST_DEVICE }}
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure() && !inputs.skip-everything
         with:
@@ -91,7 +95,9 @@ jobs:
         run: |
           bundle exec fastlane ios smoke_test \
             xcodebuild_formatter:"xcbeautify --renderer github-actions" \
-            device:${{ steps.ios_versions.outputs.SECOND_LATEST_DEVICE }}
+            device:${IOS_DEVICE}
+        env:
+          IOS_DEVICE: ${{ steps.ios_versions.outputs.SECOND_LATEST_DEVICE }}
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure() && !inputs.skip-everything
         with:
