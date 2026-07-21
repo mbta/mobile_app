@@ -75,29 +75,27 @@ jobs:
       - name: Run emulator tests
         if: ${{ !inputs.skip-everything }}
         run: |
-          bundle exec fastlane ios test smoke_test \
+          bundle exec fastlane ios test \
             xcodebuild_formatter:"xcbeautify --renderer github-actions" \
-            latest_device:"${LATEST_DEVICE}" \
-            second_latest_device:"${SECOND_LATEST_DEVICE}"
+            device:"${IOS_DEVICE}"
         env:
-          LATEST_DEVICE: ${{ steps.ios_versions.outputs.LATEST_DEVICE }}
-          SECOND_LATEST_DEVICE: ${{ steps.ios_versions.outputs.SECOND_LATEST_DEVICE }}
+          IOS_DEVICE: ${{ steps.ios_versions.outputs.LATEST_DEVICE }}
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure() && !inputs.skip-everything
         with:
           name: ios-ios-results
           path: fastlane/test_output/*
 
-      # - name: Run emulator smoke tests
-      #   if: ${{ !inputs.skip-everything }}
-      #   run: |
-      #     bundle exec fastlane ios smoke_test \
-      #       xcodebuild_formatter:"xcbeautify --renderer github-actions" \
-      #       device:${IOS_DEVICE}
-      #   env:
-      #     IOS_DEVICE: ${{ steps.ios_versions.outputs.SECOND_LATEST_DEVICE }}
-      # - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-      #   if: failure() && !inputs.skip-everything
-      #   with:
-      #     name: ios-ios-results
-      #     path: fastlane/smoke_test_output/*
+      - name: Run emulator smoke tests
+        if: ${{ !inputs.skip-everything }}
+        run: |
+          bundle exec fastlane ios smoke_test \
+            xcodebuild_formatter:"xcbeautify --renderer github-actions" \
+            device:"${IOS_DEVICE}"
+        env:
+          IOS_DEVICE: ${{ steps.ios_versions.outputs.SECOND_LATEST_DEVICE }}
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: failure() && !inputs.skip-everything
+        with:
+          name: ios-ios-results
+          path: fastlane/smoke_test_output/*
