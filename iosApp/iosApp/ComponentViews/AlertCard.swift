@@ -255,7 +255,10 @@ struct AlertCard: View {
             .padding(32)
 
             AlertCard(
-                alert: objects.alert { $0.effect = .cancellation },
+                alert: objects.alert {
+                    $0.cause = .mechanicalIssue
+                    $0.effect = .cancellation
+                },
                 alertSummary: TripSpecificAlertSummary(
                     tripIdentity: TripSpecificAlertSummary.TripFrom(
                         tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),

@@ -214,7 +214,10 @@ fun AlertCardPreview() {
         )
 
         AlertCard(
-            ObjectCollectionBuilder.Single.alert { effect = Alert.Effect.Cancellation },
+            ObjectCollectionBuilder.Single.alert {
+                cause = Alert.Cause.Holiday
+                effect = Alert.Effect.Cancellation
+            },
             TripSpecificAlertSummary(
                 TripSpecificAlertSummary.TripFrom(
                     EasternTimeInstant(2026, Month.MARCH, 10, 22, 17),

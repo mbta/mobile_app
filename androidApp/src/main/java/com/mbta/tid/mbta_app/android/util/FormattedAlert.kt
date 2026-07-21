@@ -21,7 +21,7 @@ import com.mbta.tid.mbta_app.model.TripSpecificAlertSummary
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
 data class FormattedAlert(
-    val alert: Alert?,
+    val alert: Alert,
     val alertSummary: AlertSummary?,
     @StringRes val effectRes: Int,
     @StringRes val sentenceEffectRes: Int,
@@ -34,16 +34,16 @@ data class FormattedAlert(
     val predictionReplacement: PredictionReplacement,
 ) {
     constructor(
-        alert: Alert?,
+        alert: Alert,
         alertSummary: AlertSummary? = null,
     ) : this(
         alert,
         alertSummary,
-        effectRes(alert?.effect ?: alertSummary?.effect),
-        sentenceEffectRes(alert?.effect ?: alertSummary?.effect),
-        causeRes(alert?.cause),
-        dueToCauseRes(alert?.cause ?: (alertSummary as? TripSpecificAlertSummary)?.cause),
-        predictionReplacement(alert?.effect ?: alertSummary?.effect),
+        effectRes(alert.effect),
+        sentenceEffectRes(alert.effect),
+        causeRes(alert.cause),
+        dueToCauseRes(alert.cause),
+        predictionReplacement(alert.effect),
     )
 
     fun cause(resources: Resources) = causeRes?.let { resources.getString(it) }
@@ -78,7 +78,7 @@ data class FormattedAlert(
         // Show "Single Tracking" if there is an informational delay alert with that cause
         // (Any other information severity delay alerts are never shown)
         return cause(resources)?.let {
-            if (alert?.cause == Alert.Cause.SingleTracking && alert.severity < 3) {
+            if (alert.cause == Alert.Cause.SingleTracking && alert.severity < 3) {
                 AnnotatedString.fromHtml(resources.getString(R.string.effect, it))
             } else null
         } ?: AnnotatedString.fromHtml(delaysDueToCause(resources))
@@ -86,16 +86,15 @@ data class FormattedAlert(
 
     private fun elevatorHeader(resources: Resources) =
         AnnotatedString(
-            alert
-                ?.informedEntity
-                ?.mapNotNull { alert.facilities?.get(it.facility) }
-                ?.filter { it.type == Facility.Type.Elevator }
-                ?.distinct()
-                ?.singleOrNull()
+            alert.informedEntity
+                .mapNotNull { alert.facilities?.get(it.facility) }
+                .filter { it.type == Facility.Type.Elevator }
+                .distinct()
+                .singleOrNull()
                 ?.shortName
                 ?.let { facilityName ->
                     resources.getString(R.string.alert_elevator_header, facilityName)
-                } ?: alert?.header ?: effect(resources)
+                } ?: alert.header ?: effect(resources)
         )
 
     private fun summary(resources: Resources) = summary(alertSummary, resources)
@@ -199,7 +198,7 @@ data class FormattedAlert(
             AlertCardSpec.Delay -> delayHeader(resources)
             AlertCardSpec.Basic -> summary(resources) ?: AnnotatedString.fromHtml(effect(resources))
             else -> {
-                val effect = alert?.effect ?: alertSummary?.effect
+                val effect = alert.effect
                 val isTripSpecificAlertSummary =
                     alertSummary is TripSpecificAlertSummary ||
                         alertSummary is TripShuttleAlertSummary
@@ -240,7 +239,7 @@ data class FormattedAlert(
         alertCardHeader(spec, type, LocalResources.current)
 
     fun alertCardMajorBody(resources: Resources) =
-        summary(resources) ?: AnnotatedString(alert?.header ?: "")
+        summary(resources) ?: AnnotatedString(alert.header ?: "")
 
     val alertCardMajorBody
         @Composable get() = alertCardMajorBody(LocalResources.current)
@@ -258,7 +257,7 @@ data class FormattedAlert(
 
     companion object {
         @StringRes
-        private fun effectRes(effect: Alert.Effect?) =
+        private fun effectRes(effect: Alert.Effect) =
             when (effect) {
                 Alert.Effect.AccessIssue -> R.string.access_issue
                 Alert.Effect.AdditionalService -> R.string.additional_service
@@ -293,12 +292,11 @@ data class FormattedAlert(
                 Alert.Effect.Suspension -> R.string.suspension
                 Alert.Effect.TrackChange -> R.string.track_change
                 Alert.Effect.OtherEffect,
-                Alert.Effect.UnknownEffect,
-                null -> R.string.alert
+                Alert.Effect.UnknownEffect -> R.string.alert
             }
 
         @StringRes
-        private fun sentenceEffectRes(effect: Alert.Effect?) =
+        private fun sentenceEffectRes(effect: Alert.Effect) =
             when (effect) {
                 Alert.Effect.AccessIssue -> R.string.access_issue_sentence_case
                 Alert.Effect.AdditionalService -> R.string.additional_service_sentence_case
@@ -333,8 +331,7 @@ data class FormattedAlert(
                 Alert.Effect.Suspension -> R.string.service_suspended
                 Alert.Effect.TrackChange -> R.string.track_change_sentence_case
                 Alert.Effect.OtherEffect,
-                Alert.Effect.UnknownEffect,
-                null -> R.string.alert
+                Alert.Effect.UnknownEffect -> R.string.alert
             }
 
         private fun causeRes(cause: Alert.Cause?) =
@@ -462,7 +459,7 @@ data class FormattedAlert(
                 else -> null
             }
 
-        private fun predictionReplacement(effect: Alert.Effect?) =
+        private fun predictionReplacement(effect: Alert.Effect) =
             when (effect) {
                 Alert.Effect.DockClosure -> PredictionReplacement(R.string.dock_closed)
                 Alert.Effect.Shuttle ->
