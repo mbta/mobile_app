@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "13C85839-B2C7-430C-A2BF-EA3FBE5FFA0D",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "IosAppUITests\/testLaunchPerformance()",
+        "IosAppUITests\/testMapShown()",
+        "IosAppUITestsLaunchTests"
+      ],
+      "target" : {
+        "containerPath" : "container:iosApp.xcodeproj",
+        "identifier" : "C6FCE5742C7A4D59A165E213",
+        "name" : "iosAppUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
