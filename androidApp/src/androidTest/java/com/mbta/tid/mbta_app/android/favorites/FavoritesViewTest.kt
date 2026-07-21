@@ -29,6 +29,7 @@ import dev.mokkery.resetCalls
 import dev.mokkery.verify
 import dev.mokkery.verify.VerifyMode
 import kotlin.collections.emptyList
+import kotlin.time.Clock
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -66,6 +67,7 @@ class FavoritesViewTest {
                     ErrorBannerViewModel(
                         errorRepository = MockErrorBannerStateRepository(),
                         MockSentryRepository(),
+                        Clock.System,
                     ),
                 toastViewModel = toastVM,
                 alertData = AlertsStreamDataResponse(objects),
@@ -121,6 +123,7 @@ class FavoritesViewTest {
                     ErrorBannerViewModel(
                         errorRepository = MockErrorBannerStateRepository(),
                         MockSentryRepository(),
+                        Clock.System,
                     ),
                 toastViewModel = MockToastViewModel(),
                 alertData = AlertsStreamDataResponse(objects),
@@ -172,6 +175,7 @@ class FavoritesViewTest {
                     ErrorBannerViewModel(
                         errorRepository = MockErrorBannerStateRepository(),
                         MockSentryRepository(),
+                        Clock.System,
                     ),
                 toastViewModel = MockToastViewModel(),
                 alertData = AlertsStreamDataResponse(objects),

@@ -10,6 +10,7 @@ import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import org.junit.Rule
 import org.junit.Test
@@ -22,7 +23,7 @@ class ErrorBannerTests {
     @Test
     fun testRespondsToState() {
         val errorRepo = MockErrorBannerStateRepository(state = ErrorBannerState.NetworkError {})
-        val viewModel = ErrorBannerViewModel(errorRepo, MockSentryRepository())
+        val viewModel = ErrorBannerViewModel(errorRepo, MockSentryRepository(), Clock.System)
 
         composeTestRule.setContent { ErrorBanner(viewModel) }
 
@@ -46,7 +47,8 @@ class ErrorBannerTests {
     fun testNetworkError() {
         val networkErrorRepo =
             MockErrorBannerStateRepository(state = ErrorBannerState.NetworkError {})
-        val networkErrorVM = ErrorBannerViewModel(networkErrorRepo, MockSentryRepository())
+        val networkErrorVM =
+            ErrorBannerViewModel(networkErrorRepo, MockSentryRepository(), Clock.System)
 
         composeTestRule.setContent { ErrorBanner(networkErrorVM) }
 
@@ -64,7 +66,7 @@ class ErrorBannerTests {
                         action = {},
                     )
             )
-        val dataErrorVM = ErrorBannerViewModel(dataErrorRepo, MockSentryRepository())
+        val dataErrorVM = ErrorBannerViewModel(dataErrorRepo, MockSentryRepository(), Clock.System)
         composeTestRule.setContent { ErrorBanner(dataErrorVM) }
 
         composeTestRule.onNodeWithText("Error loading data").assertExists()
@@ -80,7 +82,7 @@ class ErrorBannerTests {
                         action = {},
                     )
             )
-        val staleVM = ErrorBannerViewModel(staleRepo, MockSentryRepository())
+        val staleVM = ErrorBannerViewModel(staleRepo, MockSentryRepository(), Clock.System)
         composeTestRule.setContent { ErrorBanner(staleVM) }
 
         composeTestRule.onNodeWithText("Updated 2 minutes ago").assertExists()
@@ -96,7 +98,7 @@ class ErrorBannerTests {
                         action = {},
                     )
             )
-        val staleVM = ErrorBannerViewModel(staleRepo, MockSentryRepository())
+        val staleVM = ErrorBannerViewModel(staleRepo, MockSentryRepository(), Clock.System)
         composeTestRule.setContent { ErrorBanner(staleVM) }
 
         composeTestRule.onNodeWithText("Updated 1 minute ago").assertExists()
@@ -112,7 +114,7 @@ class ErrorBannerTests {
                         action = {},
                     )
             )
-        val staleVM = ErrorBannerViewModel(staleRepo, MockSentryRepository())
+        val staleVM = ErrorBannerViewModel(staleRepo, MockSentryRepository(), Clock.System)
         staleVM.setIsLoadingWhenPredictionsStale(true)
         composeTestRule.setContent { ErrorBanner(staleVM) }
 

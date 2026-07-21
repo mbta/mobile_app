@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.viewModel
 import app.cash.turbine.test
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
+import com.mbta.tid.mbta_app.mocks.MockClock
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.network.INetworkConnectivityMonitor
@@ -17,9 +18,11 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.context.startKoin
@@ -75,7 +78,7 @@ internal class ErrorBannerViewModelTest : KoinTest {
         val action = {}
 
         testViewModelFlow(viewModel).test {
-            assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
+            assertEquals(ErrorBannerViewModel.State(false, false, null), awaitItem())
             errorRepo.setDataError(ErrorKey(setOf(), "FakeError"), "FakeDetails", action)
             val state = awaitItem().errorState
             assertEquals(setOf("FakeError"), (state as ErrorBannerState.DataError).messages)
@@ -95,12 +98,12 @@ internal class ErrorBannerViewModelTest : KoinTest {
         val action = {}
 
         testViewModelFlow(viewModel).test {
-            assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
+            assertEquals(ErrorBannerViewModel.State(false, false, null), awaitItem())
             errorRepo.setDataError(ErrorKey(setOf(), "FakeError"), "FakeDetails", action)
             val nextState = awaitItem().errorState
             assertEquals(setOf("FakeError"), (nextState as ErrorBannerState.DataError).messages)
             viewModel.clearState()
-            assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
+            assertEquals(ErrorBannerViewModel.State(false, false, null), awaitItem())
         }
     }
 
@@ -115,9 +118,9 @@ internal class ErrorBannerViewModelTest : KoinTest {
         val viewModel: ErrorBannerViewModel = get()
 
         testViewModelFlow(viewModel).test {
-            assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
+            assertEquals(ErrorBannerViewModel.State(false, false, null), awaitItem())
             viewModel.setIsLoadingWhenPredictionsStale(true)
-            assertEquals(ErrorBannerViewModel.State(true, null), awaitItem())
+            assertEquals(ErrorBannerViewModel.State(true, false, null), awaitItem())
         }
     }
 
@@ -133,13 +136,13 @@ internal class ErrorBannerViewModelTest : KoinTest {
         val action = {}
 
         testViewModelFlow(viewModel).test {
-            assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
+            assertEquals(ErrorBannerViewModel.State(false, false, null), awaitItem())
             errorRepo.setDataError(ErrorKey(setOf(), "FakeError"), "FakeDetails", action)
             val nextState = awaitItem().errorState
             assertEquals(setOf("FakeError"), (nextState as ErrorBannerState.DataError).messages)
             assertEquals(setOf("FakeDetails"), nextState.details)
             viewModel.setSheetRoute(SheetRoutes.Favorites)
-            assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
+            assertEquals(ErrorBannerViewModel.State(false, false, null), awaitItem())
         }
     }
 
@@ -155,7 +158,7 @@ internal class ErrorBannerViewModelTest : KoinTest {
         val action = {}
 
         testViewModelFlow(viewModel).test {
-            assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
+            assertEquals(ErrorBannerViewModel.State(false, false, null), awaitItem())
             viewModel.setSheetRoute(SheetRoutes.Favorites)
             advanceUntilIdle()
             errorRepo.setDataError(ErrorKey(setOf(), "FakeError"), "FakeDetails", action)
@@ -180,13 +183,14 @@ internal class ErrorBannerViewModelTest : KoinTest {
         val lastUpdated = EasternTimeInstant.now().minus(10.hours)
 
         testViewModelFlow(viewModel).test {
-            assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
+            assertEquals(ErrorBannerViewModel.State(false, false, null), awaitItem())
             viewModel.setSheetRoute(SheetRoutes.NearbyTransit)
             advanceUntilIdle()
             viewModel.checkPredictionsStale(lastUpdated, 2, SheetRoutes.NearbyTransit, action)
             awaitItemSatisfying {
                 it ==
                     ErrorBannerViewModel.State(
+                        false,
                         false,
                         ErrorBannerState.StalePredictions(lastUpdated, action),
                     )
@@ -208,7 +212,7 @@ internal class ErrorBannerViewModelTest : KoinTest {
         val lastUpdated = EasternTimeInstant.now().minus(10.hours)
 
         testViewModelFlow(viewModel).test {
-            assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
+            assertEquals(ErrorBannerViewModel.State(false, false, null), awaitItem())
             viewModel.setSheetRoute(SheetRoutes.StopDetails("stop1", null, null))
             advanceUntilIdle()
             viewModel.checkPredictionsStale(
@@ -219,6 +223,35 @@ internal class ErrorBannerViewModelTest : KoinTest {
             )
             advanceUntilIdle()
             expectNoEvents()
+        }
+    }
+
+    @Test
+    fun testBackgroundHiding() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        val clock = MockClock()
+
+        val errorRepo = ErrorBannerStateRepository()
+
+        setUpKoin(dispatcher, clock) { errorBanner = errorRepo }
+
+        val viewModel: ErrorBannerViewModel = get()
+
+        testViewModelFlow(viewModel).test {
+            assertEquals(ErrorBannerViewModel.State(false, false, null), awaitItem())
+            viewModel.sendToBackground()
+            advanceUntilIdle()
+            awaitItemSatisfying {
+                it == ErrorBannerViewModel.State(false, true, null)
+            }
+            viewModel.returnFromBackground()
+            advanceUntilIdle()
+            expectNoEvents()
+            advanceTimeBy(6.seconds)
+            advanceUntilIdle()
+            awaitItemSatisfying {
+                it == ErrorBannerViewModel.State(false, false, null)
+            }
         }
     }
 }

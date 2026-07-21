@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -42,6 +43,7 @@ import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import org.koin.compose.KoinContext
 import org.koin.dsl.koinApplication
@@ -50,6 +52,8 @@ import org.koin.dsl.module
 @Composable
 fun ErrorBanner(vm: IErrorBannerViewModel, modifier: Modifier = Modifier) {
     val state by vm.models.collectAsState()
+
+    if (state.bannerHiddenAfterBackground) return
 
     when (val errorState = state.errorState) {
         is ErrorBannerState.DataError -> {
@@ -172,10 +176,11 @@ class ErrorBannerPreviews() {
                     action = {},
                 )
         )
-    val dataErrorVM = ErrorBannerViewModel(dataErrorRepo, MockSentryRepository())
+    val dataErrorVM = ErrorBannerViewModel(dataErrorRepo, MockSentryRepository(), Clock.System)
 
     val networkErrorRepo = MockErrorBannerStateRepository(state = ErrorBannerState.NetworkError {})
-    val networkErrorVM = ErrorBannerViewModel(networkErrorRepo, MockSentryRepository())
+    val networkErrorVM =
+        ErrorBannerViewModel(networkErrorRepo, MockSentryRepository(), Clock.System)
 
     val staleRepo =
         MockErrorBannerStateRepository(
@@ -185,8 +190,8 @@ class ErrorBannerPreviews() {
                     action = {},
                 )
         )
-    val staleVM = ErrorBannerViewModel(staleRepo, MockSentryRepository())
-    val staleLoadingVM = ErrorBannerViewModel(staleRepo, MockSentryRepository())
+    val staleVM = ErrorBannerViewModel(staleRepo, MockSentryRepository(), Clock.System)
+    val staleLoadingVM = ErrorBannerViewModel(staleRepo, MockSentryRepository(), Clock.System)
 
     // The preview requires Koin to contain the cache in order to render,
     // but it won't actually use the debug value set here when displayed
