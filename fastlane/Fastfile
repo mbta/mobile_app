@@ -214,8 +214,8 @@ platform :ios do
     run_tests(
       workspace: 'iosApp/iosApp.xcworkspace',
       scheme: 'Staging',
-      device: ENV.fetch('LATEST_DEVICE', 'iPhone 16 (26.2)'),
-      testplan: 'iosAppRetries',
+      device: options[:device] || 'iPhone 16 (26.2)',
+      testplan: 'iosAppSmokeTest',
       output_directory: options[:output_directory],
       include_simulator_logs: true,
       xcodebuild_formatter: options[:xcodebuild_formatter],
@@ -229,7 +229,7 @@ platform :ios do
     run_tests(
       workspace: 'iosApp/iosApp.xcworkspace',
       scheme: 'Staging',
-      device: ENV.fetch('SECOND_LATEST_DEVICE', 'iPhone 15 (17.4)'),
+      device: options[:device] || 'iPhone 15 (17.4)',
       testplan: 'iosAppSmokeTest',
       output_directory: options[:output_directory],
       include_simulator_logs: true,

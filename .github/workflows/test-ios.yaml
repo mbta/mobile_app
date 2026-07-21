@@ -75,18 +75,20 @@ jobs:
         if: ${{ !inputs.skip-everything }}
         run: |
           bundle exec fastlane ios test \
-            xcodebuild_formatter:"xcbeautify --renderer github-actions"
+            xcodebuild_formatter:"xcbeautify --renderer github-actions" \
+            device:"$LATEST_DEVICE"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure() && !inputs.skip-everything
         with:
           name: ios-ios-results
           path: fastlane/test_output/*
 
-      - name: Run emulator tests
+      - name: Run emulator smoke tests
         if: ${{ !inputs.skip-everything }}
         run: |
           bundle exec fastlane ios smoke_test \
-            xcodebuild_formatter:"xcbeautify --renderer github-actions"
+            xcodebuild_formatter:"xcbeautify --renderer github-actions" \
+            device:"$SECOND_LATEST_DEVICE"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure() && !inputs.skip-everything
         with:
