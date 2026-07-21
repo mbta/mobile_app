@@ -6,6 +6,7 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import Combine
 import Shared
 import SwiftUI
 
@@ -35,15 +36,16 @@ struct ErrorBanner: View {
     }
 
     var state: ErrorBannerState? { errorBannerVMState.errorState }
+    var bannerHiddenAfterBackground: Bool { errorBannerVMState.bannerHiddenAfterBackground }
 
     var body: some View {
         VStack {
-            content
+            if bannerHiddenAfterBackground { EmptyView() } else { content }
         }
         // The content must be wrapped in a VStack so that the task can run when the error banner is
         // an EmptyView, but applying padding directly to the ErrorBanner will result in that padding
         // sticking around even when the banner is empty. This removes provided padding when empty.
-        .bannerPadding(isEmpty: state == nil, padding)
+        .bannerPadding(isEmpty: state == nil || bannerHiddenAfterBackground, padding)
         .task {
             for await model in errorBannerVM.models {
                 errorBannerVMState = model
@@ -173,10 +175,12 @@ public extension View {
     VStack(spacing: 16) {
         ErrorBanner(MockErrorBannerViewModel(initialState: .init(
             loadingWhenPredictionsStale: false,
+            bannerHiddenAfterBackground: false,
             errorState: .DataError(messages: Set(), details: Set(), action: {})
         )))
         ErrorBanner(MockErrorBannerViewModel(initialState:
             .init(loadingWhenPredictionsStale: false,
+                  bannerHiddenAfterBackground: false,
                   errorState: .StalePredictions(
                       lastUpdated: EasternTimeInstant.now()
                           .minus(minutes: 2),
@@ -184,6 +188,7 @@ public extension View {
                   ))))
         ErrorBanner(MockErrorBannerViewModel(initialState:
             .init(loadingWhenPredictionsStale: true,
+                  bannerHiddenAfterBackground: false,
                   errorState: .StalePredictions(
                       lastUpdated: EasternTimeInstant.now().minus(minutes: 2),
                       action: {}

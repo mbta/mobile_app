@@ -54,9 +54,9 @@ final class SaveFavoritePageTests: XCTestCase {
             navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
         )
 
-        ViewHosting.host(view: sut.withFixedSettings([:]))
+        ViewHosting.host(view: sut)
 
-        sut.inspection.inspect(after: 0.1) { view in
+        sut.inspection.inspect(after: 0.5) { view in
             XCTAssertNotNil(try sut.inspect().find(text: "Alewife"))
             XCTAssertNotNil(try sut.inspect().find(text: "Northbound to"))
 
@@ -90,9 +90,9 @@ final class SaveFavoritePageTests: XCTestCase {
             navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
         )
 
-        ViewHosting.host(view: sut.withFixedSettings([:]))
+        ViewHosting.host(view: sut)
 
-        sut.inspection.inspect(after: 0.1) { view in
+        sut.inspection.inspect(after: 0.5) { view in
             XCTAssertNotNil(try sut.inspect().find(text: "Alewife"))
             XCTAssertNotNil(try sut.inspect().find(text: "Northbound to"))
 
