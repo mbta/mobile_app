@@ -273,6 +273,40 @@ final class SaveFavoritesFlowTest: XCTestCase {
         )
     }
 
+    func testOpensSavePageWhenNotificationsFlagIsOnForLastStopMultiDirection() {
+        let onCloseExp = XCTestExpectation(description: "On close called")
+        let onPushNavExp = XCTestExpectation(description: "Navigation pushed")
+        var pushedNav: SheetNavigationStackEntry?
+
+        let route = ObjectCollectionBuilder().route { route in
+            route.type = RouteType.bus
+        }
+
+        let sut = SaveFavoritesFlow(
+            lineOrRoute: LineOrRoute.route(route),
+            stop: stop,
+            directions: [direction0],
+            selectedDirection: 1,
+            context: EditFavoritesContext.favorites,
+            global: .init(objects: .init()),
+            isFavorite: { _ in false },
+            updateFavorites: { _ in XCTFail("Favorites should not be updated automatically") },
+            onClose: { onCloseExp.fulfill() },
+            pushNavEntry: { entry in
+                pushedNav = entry
+                onPushNavExp.fulfill()
+            },
+        )
+
+        ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))
+
+        wait(for: [onCloseExp, onPushNavExp], timeout: 2)
+        XCTAssertEqual(
+            pushedNav,
+            .saveFavorite(routeId: route.id, stopId: stop.id, selectedDirection: 0, context: .favorites)
+        )
+    }
+
     @MainActor
     func testOpensSavePageWhenNotificationsFlagIsOnForMultiDirection() {
         let onCloseExp = XCTestExpectation(description: "On close called")
