@@ -7,11 +7,12 @@ import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.reflect.KClass
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.koin.core.component.KoinComponent
@@ -80,10 +81,14 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
     public open fun subscribeToNetworkStatusChanges() {
         this.networkConnectivityMonitor.registerListener(
             onNetworkAvailable = {
-                runBlocking(Dispatchers.Default) { setNetworkStatus(NetworkStatus.Connected) }
+                CoroutineScope(Dispatchers.Default).launch {
+                    setNetworkStatus(NetworkStatus.Connected)
+                }
             },
             onNetworkLost = {
-                runBlocking(Dispatchers.Default) { setNetworkStatus(NetworkStatus.Disconnected) }
+                CoroutineScope(Dispatchers.Default).launch {
+                    setNetworkStatus(NetworkStatus.Disconnected)
+                }
             },
         )
     }
