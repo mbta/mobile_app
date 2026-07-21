@@ -63,13 +63,39 @@ jobs:
           SENTRY_ENVIRONMENT: staging
           FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
           GOOGLE_APP_ID_IOS: ${{ secrets.GOOGLE_APP_ID_IOS }}
+      - name: Get latest two iOS versions
+        if: ${{ !inputs.skip-everything }}
+        id: ios_versions
+        run: |
+          DEVICES=$(xcrun simctl list devices | awk '/^-- iOS/ {v=$3; next} v && /iPhone/ {print $1, $2, $3, "("v")"; v=""}' | sort -r | awk -F'[(.]' '!seen[$1]++')
+          LATEST_DEVICE=$(echo "$DEVICES" | head -n 1)
+          SECOND_LATEST_DEVICE=$(echo "$DEVICES" | head -n 2 | tail -n 1)
+          echo "LATEST_DEVICE=$LATEST_DEVICE" >> $GITHUB_OUTPUT
+          echo "SECOND_LATEST_DEVICE=$SECOND_LATEST_DEVICE" >> $GITHUB_OUTPUT
       - name: Run emulator tests
         if: ${{ !inputs.skip-everything }}
         run: |
           bundle exec fastlane ios test \
-            xcodebuild_formatter:"xcbeautify --renderer github-actions"
+            xcodebuild_formatter:"xcbeautify --renderer github-actions" \
+            device:"${IOS_DEVICE}"
+        env:
+          IOS_DEVICE: ${{ steps.ios_versions.outputs.LATEST_DEVICE }}
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure() && !inputs.skip-everything
         with:
           name: ios-ios-results
           path: fastlane/test_output/*
+
+      - name: Run emulator smoke tests
+        if: ${{ !inputs.skip-everything }}
+        run: |
+          bundle exec fastlane ios smoke_test \
+            xcodebuild_formatter:"xcbeautify --renderer github-actions" \
+            device:"${IOS_DEVICE}"
+        env:
+          IOS_DEVICE: ${{ steps.ios_versions.outputs.SECOND_LATEST_DEVICE }}
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: failure() && !inputs.skip-everything
+        with:
+          name: ios-ios-results
+          path: fastlane/smoke_test_output/*
