@@ -35,14 +35,10 @@ jobs:
         if: ${{ !inputs.skip-everything }}
         shell: bash
         run: |
-          xcrun simctl list devices
-          xcrun simctl list devices | awk '/^-- iOS/ {v=$3; next} v && /iPhone/ {print $1, $2, $3, "("v")"; v=""}'
-          DEVICES=$(xcrun simctl list devices | awk '/^-- iOS/ {v=$3; next} v && /iPhone/ {print $1, $2, $3, "("v")"; v=""}')
-          echo "$DEVICES" | sort -r | head -n 2
-          echo "$DEVICES" | sort -r | head -n 2 | {
-            read -r LATEST_DEVICE
-            read -r SECOND_LATEST_DEVICE
-          }
+          DEVICES=$(xcrun simctl list devices | awk '/^-- iOS/ {v=$3; next} v && /iPhone/ {print $1, $2, $3, "("v")"; v=""}' | sort -r | awk -F'[(.]' '!seen[$1]++')
+          LATEST_DEVICE=$(echo "$DEVICES" | head -n 1)
+          SECOND_LATEST_DEVICE=$(echo "$DEVICES" | head -n 2 | tail -n 1)
+          echo "OUTPUTS ===> "
           echo "$LATEST_DEVICE"
           echo "$SECOND_LATEST_DEVICE"
           echo "LATEST_DEVICE=$LATEST_DEVICE" >> $GITHUB_OUTPUT
