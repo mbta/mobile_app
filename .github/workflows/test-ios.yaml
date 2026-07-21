@@ -65,18 +65,21 @@ jobs:
           GOOGLE_APP_ID_IOS: ${{ secrets.GOOGLE_APP_ID_IOS }}
       - name: Get latest two iOS versions
         if: ${{ !inputs.skip-everything }}
+        id: ios_versions
         run: |
           DEVICES=$(xcrun simctl list devices | awk '/^-- iOS/ {v=$3; next} v && /iPhone/ {print $1, $2, $3, "("v")"; v=""}')
           echo "$DEVICES" | sort -r | head -n 2 | {
             read -r LATEST_DEVICE
             read -r SECOND_LATEST_DEVICE
           }
+          echo "LATEST_DEVICE=$LATEST_DEVICE" >> $GITHUB_OUTPUT
+          echo "SECOND_LATEST_DEVICE=$SECOND_LATEST_DEVICE" >> $GITHUB_OUTPUT
       - name: Run emulator tests
         if: ${{ !inputs.skip-everything }}
         run: |
           bundle exec fastlane ios test \
             xcodebuild_formatter:"xcbeautify --renderer github-actions" \
-            device:"$LATEST_DEVICE"
+            device:${{ steps.ios_versions.outputs.LATEST_DEVICE }}
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure() && !inputs.skip-everything
         with:
@@ -88,7 +91,7 @@ jobs:
         run: |
           bundle exec fastlane ios smoke_test \
             xcodebuild_formatter:"xcbeautify --renderer github-actions" \
-            device:"$SECOND_LATEST_DEVICE"
+            device:${{ steps.ios_versions.outputs.SECOND_LATEST_DEVICE }}
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure() && !inputs.skip-everything
         with:
