@@ -88,7 +88,7 @@ final class MorePageTests: XCTestCase {
 
     @MainActor func testLinksExist() async {
         let sut = MorePage(highlight: nil)
-        let exp = sut.inspection.inspect(after: 2) { view in
+        let exp = sut.inspection.inspect(after: 0) { view in
             try XCTAssertNotNil(view.find(text: "Send App Feedback"))
             try XCTAssertNotNil(view.find(text: "Trip Planner"))
             try XCTAssertNotNil(view.find(text: "Fare Information"))
@@ -101,7 +101,7 @@ final class MorePageTests: XCTestCase {
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
 
-        await fulfillment(of: [exp], timeout: 5)
+        await fulfillment(of: [exp], timeout: 3)
     }
 
     @MainActor func testShowsBuildNumberOnTap() {

@@ -214,10 +214,25 @@ platform :ios do
     run_tests(
       workspace: 'iosApp/iosApp.xcworkspace',
       scheme: 'Staging',
-      device: 'iPhone 16 (26.2)',
+      device: options[:device]&.strip || 'iPhone 16 (26.2)',
       testplan: 'iosAppRetries',
       output_directory: options[:output_directory],
-      include_simulator_logs: true,
+      include_simulator_logs: false,
+      xcodebuild_formatter: options[:xcodebuild_formatter],
+      result_bundle: true,
+      number_of_retries: 3
+    )
+  end
+
+  desc 'Run smoke tests'
+  lane :smoke_test do |options|
+    run_tests(
+      workspace: 'iosApp/iosApp.xcworkspace',
+      scheme: 'Staging',
+      device: options[:device]&.strip || 'iPhone 15 (17.4)',
+      testplan: 'iosAppSmokeTest',
+      output_directory: options[:output_directory],
+      include_simulator_logs: false,
       xcodebuild_formatter: options[:xcodebuild_formatter],
       result_bundle: true,
       number_of_retries: 3
