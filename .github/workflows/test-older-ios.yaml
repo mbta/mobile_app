@@ -53,7 +53,7 @@ jobs:
         if: ${{ !inputs.skip-everything }}
         run: |
           bundle exec fastlane ios smoke_test \
-            xcodebuild_formatter:"xcbeautify --renderer github-actions" \
+            xcodebuild_formatter:"xcbeautify --quieter --is-ci --renderer github-actions" \
             device:"${IOS_DEVICE}"
         env:
           IOS_DEVICE: ${{ steps.ios_versions.outputs.SECOND_LATEST_DEVICE }}

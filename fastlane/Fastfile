@@ -217,7 +217,7 @@ platform :ios do
       device: options[:device]&.strip || 'iPhone 16 (26.2)',
       testplan: 'iosAppRetries',
       output_directory: options[:output_directory],
-      include_simulator_logs: true,
+      include_simulator_logs: false,
       xcodebuild_formatter: options[:xcodebuild_formatter],
       result_bundle: true,
       number_of_retries: 3,
@@ -233,7 +233,7 @@ platform :ios do
       device: options[:device]&.strip || 'iPhone 15 (17.4)',
       testplan: 'iosAppSmokeTest',
       output_directory: options[:output_directory],
-      include_simulator_logs: true,
+      include_simulator_logs: false,
       xcodebuild_formatter: options[:xcodebuild_formatter],
       result_bundle: true,
       number_of_retries: 3

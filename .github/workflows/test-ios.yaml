@@ -68,7 +68,7 @@ jobs:
         id: ios_versions
         run: |
           DEVICES=$(xcrun simctl list devices | awk '/^-- iOS/ {v=$3; next} v && /iPhone/ {print $1, $2, $3, "("v")"; v=""}' | sort -r | awk -F'[(.]' '!seen[$1]++')
-          SECOND_LATEST_DEVICE=$(echo "$DEVICES" | head -n 2 | tail -n 1)
+          LATEST_DEVICE=$(echo "$DEVICES" | head -n 1)
           echo "LATEST_DEVICE=$LATEST_DEVICE" >> $GITHUB_OUTPUT
       - name: Run emulator tests
         if: ${{ !inputs.skip-everything }}
