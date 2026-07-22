@@ -22,7 +22,7 @@ plugins {
 
 kotlin {
     compilerOptions {
-        jvmTarget = JvmTarget.JVM_1_8
+        jvmTarget = JvmTarget.JVM_11
         optIn.add("kotlin.time.ExperimentalTime")
     }
 }
@@ -55,7 +55,7 @@ sentry {
 
 android {
     namespace = "com.mbta.tid.mbta_app.android"
-    compileSdk = 36
+    compileSdk = 37
     defaultConfig {
         applicationId = "com.mbta.tid.mbta_app"
         minSdk = 28
@@ -98,8 +98,8 @@ android {
         create("prod") { dimension = "environment" }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     androidResources {
         @Suppress("UnstableApiUsage")

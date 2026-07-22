@@ -4,6 +4,9 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.hasTextMatching
 import com.mbta.tid.mbta_app.model.FavoriteSettings
@@ -64,10 +67,17 @@ class FavoritesViewTest {
                 openSheetRoute = {},
                 favoritesViewModel = favoritesVM,
                 errorBannerViewModel =
-                    ErrorBannerViewModel(
-                        errorRepository = MockErrorBannerStateRepository(),
-                        MockSentryRepository(),
-                        Clock.System,
+                    viewModel<ErrorBannerViewModel>(
+                        factory =
+                            viewModelFactory {
+                                initializer {
+                                    ErrorBannerViewModel(
+                                        errorRepository = MockErrorBannerStateRepository(),
+                                        MockSentryRepository(),
+                                        Clock.System,
+                                    )
+                                }
+                            }
                     ),
                 toastViewModel = toastVM,
                 alertData = AlertsStreamDataResponse(objects),
@@ -120,10 +130,17 @@ class FavoritesViewTest {
                 openSheetRoute = {},
                 favoritesViewModel = favoritesVM,
                 errorBannerViewModel =
-                    ErrorBannerViewModel(
-                        errorRepository = MockErrorBannerStateRepository(),
-                        MockSentryRepository(),
-                        Clock.System,
+                    viewModel<ErrorBannerViewModel>(
+                        factory =
+                            viewModelFactory {
+                                initializer {
+                                    ErrorBannerViewModel(
+                                        errorRepository = MockErrorBannerStateRepository(),
+                                        MockSentryRepository(),
+                                        Clock.System,
+                                    )
+                                }
+                            }
                     ),
                 toastViewModel = MockToastViewModel(),
                 alertData = AlertsStreamDataResponse(objects),
@@ -172,10 +189,17 @@ class FavoritesViewTest {
                 openSheetRoute = {},
                 favoritesViewModel = favoritesVM,
                 errorBannerViewModel =
-                    ErrorBannerViewModel(
-                        errorRepository = MockErrorBannerStateRepository(),
-                        MockSentryRepository(),
-                        Clock.System,
+                    viewModel<ErrorBannerViewModel>(
+                        factory =
+                            viewModelFactory {
+                                initializer {
+                                    ErrorBannerViewModel(
+                                        errorRepository = MockErrorBannerStateRepository(),
+                                        MockSentryRepository(),
+                                        Clock.System,
+                                    )
+                                }
+                            }
                     ),
                 toastViewModel = MockToastViewModel(),
                 alertData = AlertsStreamDataResponse(objects),
