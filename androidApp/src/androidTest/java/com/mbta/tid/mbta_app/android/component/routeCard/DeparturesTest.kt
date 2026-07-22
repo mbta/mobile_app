@@ -14,7 +14,6 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingTrip
-import com.mbta.tid.mbta_app.model.WorldCupService
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.TestData
@@ -318,50 +317,5 @@ class DeparturesTest {
                 ),
             ),
         )
-    }
-
-    @Test
-    fun testShowsWorldCupBlurb() {
-        val objects = ObjectCollectionBuilder()
-        val stop = objects.stop()
-        val route = WorldCupService.route
-        objects.put(route)
-        composeTestRule.setContent {
-            Departures(
-                stopData =
-                    RouteCardData.RouteStopData(
-                        route,
-                        stop,
-                        listOf(
-                            RouteCardData.Leaf(
-                                LineOrRoute.Route(route),
-                                stop,
-                                Direction(0, route),
-                                routePatterns = listOf(WorldCupService.routePatternOutbound),
-                                stopIds = emptySet(),
-                                upcomingTrips = emptyList(),
-                                alertsHere = emptyList(),
-                                allDataLoaded = true,
-                                hasSchedulesToday = false,
-                                subwayServiceStartTime = null,
-                                alertsDownstream = emptyList(),
-                                context = RouteCardData.Context.NearbyTransit,
-                            )
-                        ),
-                    ),
-                globalData = GlobalResponse(objects),
-                now = EasternTimeInstant.now(),
-                isFavorite = { false },
-                analytics = MockAnalytics(),
-                onClick = {},
-            )
-        }
-        composeTestRule
-            .onNodeWithText("Service from South Station to today’s World Cup match")
-            .assertCanBeDisplayed()
-        composeTestRule
-            .onNodeWithText("Boston Stadium Train ticket required")
-            .assertCanBeDisplayed()
-        composeTestRule.onNodeWithText("View details").assertDoesNotExist()
     }
 }

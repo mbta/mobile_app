@@ -529,8 +529,5 @@
     <string name="westbound">西行</string>
     <string name="will_not_stop_at">将不停靠%1$s%2$s</string>
     <string name="will_terminate_at">将在%1$s%2$s终止运营</string>
-    <string name="world_cup_service_inbound">从今日&lt;b>世界杯赛事场馆&lt;/b>发往&lt;b>South Station&lt;/b>的专线</string>
-    <string name="world_cup_service_outbound">从&lt;b>South Station&lt;/b>发往今日&lt;b>世界杯赛事场馆&lt;/b>的专线</string>
-    <string name="world_cup_ticket_required">前往Boston Stadium需持列车车票</string>
     <string name="x_and_y">%1$s和%2$s</string>
 </resources>

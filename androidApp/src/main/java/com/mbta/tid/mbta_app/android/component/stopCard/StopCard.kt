@@ -22,9 +22,7 @@ import com.mbta.tid.mbta_app.android.component.PillDecoration
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.routeCard.StopSubheader
-import com.mbta.tid.mbta_app.android.component.routeCard.WorldCupBlurb
 import com.mbta.tid.mbta_app.android.component.warningIcon
-import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.LeafFormat
@@ -34,7 +32,6 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.StopCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingFormat
-import com.mbta.tid.mbta_app.model.WorldCupService
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import org.koin.compose.koinInject
@@ -132,13 +129,6 @@ fun Departures(
                     verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
                 ) {
                     when {
-                        leaf.lineOrRoute.id == WorldCupService.route.id -> {
-                            WorldCupBlurb(
-                                leaf,
-                                TripRouteAccents(leaf.lineOrRoute.sortRoute),
-                                offerDetails = false,
-                            )
-                        }
                         formatted is LeafFormat.Single -> {
                             DirectionRowView(
                                 direction.copy(

@@ -2,8 +2,6 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,7 +13,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,15 +25,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.component.routeCard.WorldCupBlurb
 import com.mbta.tid.mbta_app.android.component.routeSlashIcon
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.SettingsCache
@@ -55,7 +49,6 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.UpcomingFormat
-import com.mbta.tid.mbta_app.model.WorldCupService
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.NextScheduleResponse
@@ -254,18 +247,7 @@ fun StopDetailsFilteredDeparturesView(
             }
         }
 
-        if (leaf.lineOrRoute.id == WorldCupService.route.id) {
-            Box(
-                Modifier.padding(horizontal = 10.dp)
-                    .padding(bottom = 12.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .border(1.dp, colorResource(R.color.halo), shape = RoundedCornerShape(8.dp))
-                    .background(colorResource(R.color.fill3))
-                    .padding(16.dp)
-            ) {
-                WorldCupBlurb(leaf, routeAccents, offerDetails = true)
-            }
-        } else if (
+        if (
             isAllServiceDisrupted ||
                 displayAlerts.hasTakeover(now, isAllServiceDisrupted, tripFilter?.tripId)
         ) {

@@ -353,34 +353,4 @@ final class RouteCardDeparturesTests: XCTestCase {
         try sut.inspect().findAll(ViewType.Button.self)[0].tap()
         XCTAssertEqual(eventProps["pinned"], "true")
     }
-
-    func testShowsWorldCupBlurb() {
-        let objects = ObjectCollectionBuilder()
-        let stop = objects.stop { _ in }
-        let route = WorldCupService.shared.route
-        objects.put(object: route)
-        let sut = RouteCardDepartures(
-            stopData: .init(route: route, stop: stop, data: [.init(
-                lineOrRoute: .Route(route: route),
-                stop: stop,
-                direction: .init(directionId: 0, route: route),
-                routePatterns: [WorldCupService.shared.routePatternOutbound],
-                stopIds: [],
-                upcomingTrips: [],
-                alertsHere: [],
-                allDataLoaded: true,
-                hasSchedulesToday: false,
-                subwayServiceStartTime: nil,
-                alertsDownstream: [],
-                context: .nearbyTransit
-            )]),
-            global: .init(objects: objects),
-            now: .now(),
-            isFavorite: { _ in false },
-            pushNavEntry: { _ in }
-        )
-        XCTAssertNotNil(try sut.inspect().find(text: "Service from South Station to today’s World Cup match"))
-        XCTAssertNotNil(try sut.inspect().find(text: "Boston Stadium Train ticket required"))
-        XCTAssertThrowsError(try sut.inspect().find(text: "View details"))
-    }
 }

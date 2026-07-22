@@ -37,7 +37,6 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
-import com.mbta.tid.mbta_app.model.WorldCupService
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 
 @Composable
@@ -94,7 +93,7 @@ fun StopDetailsFilteredHeader(
         },
         navCallbacks = navCallbacks,
         rightActionContents = {
-            if (onFavorite != null && route?.id != WorldCupService.route.id) {
+            if (onFavorite != null) {
                 StarButton(isFavorite, colorResource(R.color.text), onFavorite)
             }
         },

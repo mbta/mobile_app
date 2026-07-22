@@ -27,7 +27,6 @@ import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
-import com.mbta.tid.mbta_app.model.WorldCupService
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NextScheduleResponse
@@ -1183,46 +1182,5 @@ class StopDetailsFilteredDeparturesViewTest {
 
         composeTestRule.onNodeWithTag("sunrise").assertIsNotDisplayed()
         composeTestRule.onNodeWithText("Good morning!").assertIsNotDisplayed()
-    }
-
-    @Test
-    fun showsWorldCupBlurb() {
-        val route = WorldCupService.route
-        composeTestRule.setContent {
-            StopDetailsFilteredDeparturesView(
-                stopId = stop.id,
-                StopDetailsFilter(route.id, 0),
-                tripFilter = null,
-                RouteCardData.Leaf(
-                    LineOrRoute.Route(route),
-                    stop,
-                    Direction(0, route),
-                    listOf(WorldCupService.routePatternOutbound),
-                    stopIds = emptySet(),
-                    upcomingTrips = emptyList(),
-                    alertsHere = emptyList(),
-                    allDataLoaded = true,
-                    hasSchedulesToday = false,
-                    subwayServiceStartTime = null,
-                    alertsDownstream = emptyList(),
-                    RouteCardData.Context.StopDetailsFiltered,
-                ),
-                Direction(0, route),
-                allAlerts = AlertsStreamDataResponse(emptyMap()),
-                now = EasternTimeInstant.now(),
-                updateTripFilter = {},
-                tileScrollState = rememberScrollState(),
-                isFavorite = false,
-                openModal = {},
-                openSheetRoute = {},
-            )
-        }
-        composeTestRule
-            .onNodeWithText("Service from South Station to today’s World Cup match")
-            .assertCanBeDisplayed()
-        composeTestRule
-            .onNodeWithText("Boston Stadium Train ticket required")
-            .assertCanBeDisplayed()
-        composeTestRule.onNodeWithText("View details").assertCanBeDisplayed()
     }
 }

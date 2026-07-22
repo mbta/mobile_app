@@ -25,7 +25,6 @@ import com.mbta.tid.mbta_app.android.component.HeadsignRowView
 import com.mbta.tid.mbta_app.android.component.NavDrilldownRow
 import com.mbta.tid.mbta_app.android.component.PillDecoration
 import com.mbta.tid.mbta_app.android.generated.drawableByName
-import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LeafFormat
@@ -37,7 +36,6 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
-import com.mbta.tid.mbta_app.model.WorldCupService
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
@@ -90,13 +88,6 @@ fun Departures(
                     verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
                 ) {
                     when {
-                        leaf.lineOrRoute.id == WorldCupService.route.id -> {
-                            WorldCupBlurb(
-                                leaf,
-                                TripRouteAccents(leaf.lineOrRoute.sortRoute),
-                                offerDetails = false,
-                            )
-                        }
                         formatted is LeafFormat.Single -> {
                             DirectionRowView(
                                 direction.copy(

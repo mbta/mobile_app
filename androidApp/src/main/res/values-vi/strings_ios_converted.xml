@@ -529,8 +529,5 @@
     <string name="westbound">Về hướng tây</string>
     <string name="will_not_stop_at">sẽ không dừng lại ở %1$s %2$s</string>
     <string name="will_terminate_at">sẽ kết thúc tại %1$s %2$s</string>
-    <string name="world_cup_service_inbound">Dịch vụ từ &lt;b>trận đấu World Cup&lt;/b> hôm nay đến &lt;b>Ga Nam&lt;/b></string>
-    <string name="world_cup_service_outbound">Dịch vụ từ &lt;b>Ga Nam&lt;/b> đến &lt;b>trận đấu World Cup&lt;/b> hôm nay</string>
-    <string name="world_cup_ticket_required">Cần có vé tàu đến Sân vận động Boston</string>
     <string name="x_and_y">%1$s và %2$s</string>
 </resources>
