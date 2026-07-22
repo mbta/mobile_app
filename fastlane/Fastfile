@@ -220,8 +220,7 @@ platform :ios do
       include_simulator_logs: false,
       xcodebuild_formatter: options[:xcodebuild_formatter],
       result_bundle: true,
-      number_of_retries: 3,
-      parallel_testing: true
+      number_of_retries: 3
     )
   end
 
