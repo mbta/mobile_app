@@ -1,6 +1,9 @@
 package com.mbta.tid.mbta_app.android
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.AppVersion
 import com.mbta.tid.mbta_app.repositories.DefaultTab
@@ -32,15 +35,24 @@ class ContentViewModelTests : KoinTest {
         lateinit var vm: ContentViewModel
         composeTestRule.setContent {
             vm =
-                ContentViewModel(
-                    featurePromoUseCase =
-                        FeaturePromoUseCase(
-                            MockCurrentAppVersionRepository(AppVersion(4u, 0u, 0u)),
-                            // Favorites promo in version 2.0.0
-                            MockLastLaunchedAppVersionRepository(AppVersion(3u, 0u, 0u)),
-                        ),
-                    onboardingRepository = MockOnboardingRepository(),
-                    tabPreferencesRepository = tabPreferencesRepository,
+                viewModel(
+                    factory =
+                        viewModelFactory {
+                            initializer {
+                                ContentViewModel(
+                                    featurePromoUseCase =
+                                        FeaturePromoUseCase(
+                                            MockCurrentAppVersionRepository(AppVersion(4u, 0u, 0u)),
+                                            // Favorites promo in version 2.0.0
+                                            MockLastLaunchedAppVersionRepository(
+                                                AppVersion(3u, 0u, 0u)
+                                            ),
+                                        ),
+                                    onboardingRepository = MockOnboardingRepository(),
+                                    tabPreferencesRepository = tabPreferencesRepository,
+                                )
+                            }
+                        }
                 )
         }
 
@@ -54,15 +66,24 @@ class ContentViewModelTests : KoinTest {
         lateinit var vm: ContentViewModel
         composeTestRule.setContent {
             vm =
-                ContentViewModel(
-                    featurePromoUseCase =
-                        FeaturePromoUseCase(
-                            MockCurrentAppVersionRepository(AppVersion(4u, 0u, 0u)),
-                            // Favorites promo in version 2.0.0
-                            MockLastLaunchedAppVersionRepository(AppVersion(3u, 0u, 0u)),
-                        ),
-                    onboardingRepository = MockOnboardingRepository(),
-                    tabPreferencesRepository = tabPreferencesRepository,
+                viewModel(
+                    factory =
+                        viewModelFactory {
+                            initializer {
+                                ContentViewModel(
+                                    featurePromoUseCase =
+                                        FeaturePromoUseCase(
+                                            MockCurrentAppVersionRepository(AppVersion(4u, 0u, 0u)),
+                                            // Favorites promo in version 2.0.0
+                                            MockLastLaunchedAppVersionRepository(
+                                                AppVersion(3u, 0u, 0u)
+                                            ),
+                                        ),
+                                    onboardingRepository = MockOnboardingRepository(),
+                                    tabPreferencesRepository = tabPreferencesRepository,
+                                )
+                            }
+                        }
                 )
         }
 
@@ -76,15 +97,28 @@ class ContentViewModelTests : KoinTest {
 
         composeTestRule.setContent {
             vm =
-                ContentViewModel(
-                    featurePromoUseCase =
-                        FeaturePromoUseCase(
-                            MockCurrentAppVersionRepository(AppVersion(4u, 0u, 0u)),
-                            // Favorites promo in version 2.0.0
-                            MockLastLaunchedAppVersionRepository(AppVersion(3u, 0u, 0u)),
-                        ),
-                    onboardingRepository = MockOnboardingRepository(),
-                    tabPreferencesRepository = tabPreferencesRepository,
+                viewModel(
+                    factory =
+                        viewModelFactory {
+                            initializer {
+                                ContentViewModel(
+                                    featurePromoUseCase =
+                                        FeaturePromoUseCase(
+                                            MockCurrentAppVersionRepository(AppVersion(4u, 0u, 0u)),
+                                            // Favorites promo in version 2.0.0
+                                            MockLastLaunchedAppVersionRepository(
+                                                AppVersion(
+                                                    3u,
+                                                    0u,
+                                                    0u,
+                                                )
+                                            ),
+                                        ),
+                                    onboardingRepository = MockOnboardingRepository(),
+                                    tabPreferencesRepository = tabPreferencesRepository,
+                                )
+                            }
+                        }
                 )
         }
 
@@ -107,14 +141,23 @@ class ContentViewModelTests : KoinTest {
         lateinit var vm: ContentViewModel
         composeTestRule.setContent {
             vm =
-                ContentViewModel(
-                    featurePromoUseCase =
-                        FeaturePromoUseCase(
-                            MockCurrentAppVersionRepository(AppVersion(2u, 0u, 0u)),
-                            MockLastLaunchedAppVersionRepository(AppVersion(1u, 0u, 0u)),
-                        ),
-                    onboardingRepository = MockOnboardingRepository(),
-                    tabPreferencesRepository = tabPreferencesRepository,
+                viewModel(
+                    factory =
+                        viewModelFactory {
+                            initializer {
+                                ContentViewModel(
+                                    featurePromoUseCase =
+                                        FeaturePromoUseCase(
+                                            MockCurrentAppVersionRepository(AppVersion(2u, 0u, 0u)),
+                                            MockLastLaunchedAppVersionRepository(
+                                                AppVersion(1u, 0u, 0u)
+                                            ),
+                                        ),
+                                    onboardingRepository = MockOnboardingRepository(),
+                                    tabPreferencesRepository = tabPreferencesRepository,
+                                )
+                            }
+                        }
                 )
         }
 
