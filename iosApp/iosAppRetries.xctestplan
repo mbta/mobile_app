@@ -19,6 +19,7 @@
   },
   "testTargets" : [
     {
+      "parallelizable" : true,
       "skippedTests" : [
         "FavoritesModifierTests\/testLoadsFromRepo()",
         "HomeMapViewTests\/testFollowsPuckWhenUserLocationIsKnown()",
@@ -31,6 +32,7 @@
       }
     },
     {
+      "parallelizable" : true,
       "skippedTests" : [
         "EndToEndOpenStopDetailsTest\/testOpenStopDetails()",
         "HomeMapViewUITests\/testRecentersToUserLocation()",
