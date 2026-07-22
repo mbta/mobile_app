@@ -5,7 +5,6 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.stop
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.Instant
 
 class RouteSegmentTest {
 
@@ -74,7 +73,6 @@ class RouteSegmentTest {
                     listOf(
                         alert {
                             effect = Alert.Effect.Shuttle
-                            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                             informedEntity(
                                 route = "sourceRoute",
                                 routeType = RouteType.HEAVY_RAIL,
@@ -83,7 +81,6 @@ class RouteSegmentTest {
                         },
                         alert {
                             effect = Alert.Effect.Delay
-                            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                             informedEntity(
                                 route = "sourceRoute",
                                 routeType = RouteType.HEAVY_RAIL,
@@ -129,7 +126,6 @@ class RouteSegmentTest {
                             listOf(
                                 alert {
                                     effect = Alert.Effect.Shuttle
-                                    activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                                     informedEntity(
                                         route = "sourceRoute",
                                         routeType = RouteType.HEAVY_RAIL,
@@ -138,7 +134,6 @@ class RouteSegmentTest {
                                 },
                                 alert {
                                     effect = Alert.Effect.Suspension
-                                    activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                                     informedEntity(
                                         route = "sourceRoute",
                                         routeType = RouteType.HEAVY_RAIL,
@@ -218,7 +213,6 @@ class RouteSegmentTest {
                     listOf(
                         alert {
                             effect = Alert.Effect.Shuttle
-                            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                             informedEntity(
                                 route = "sourceRoute",
                                 routeType = RouteType.HEAVY_RAIL,
@@ -251,7 +245,6 @@ class RouteSegmentTest {
 
         val alert = alert {
             effect = Alert.Effect.Shuttle
-            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
             informedEntity(routeType = RouteType.LIGHT_RAIL, route = "Mattapan")
         }
 
@@ -593,7 +586,6 @@ class RouteSegmentTest {
                 listOf(
                     alert {
                         this.effect = effect
-                        activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                         informedEntity(
                             route = routeId.idText,
                             routeType = RouteType.HEAVY_RAIL,

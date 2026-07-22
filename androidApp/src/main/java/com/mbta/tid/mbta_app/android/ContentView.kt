@@ -39,6 +39,7 @@ import com.mbta.tid.mbta_app.android.phoenix.PhoenixSocketWrapper
 import com.mbta.tid.mbta_app.android.promo.PromoPage
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.subscribeToAlerts
+import com.mbta.tid.mbta_app.android.util.ManageErrorBannerBackgrounding
 import com.mbta.tid.mbta_app.android.util.NotificationsBeta
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.fcmToken
@@ -135,6 +136,8 @@ fun ContentView(
         rememberBottomSheetScaffoldState(bottomSheetState = rememberStandardBottomSheetState())
     var navBarVisible by remember { mutableStateOf(true) }
     val scope = rememberCoroutineScope()
+
+    ManageErrorBannerBackgrounding()
 
     LaunchedEffect(Unit) {
         mapViewModel.setViewportManager(viewportProvider)

@@ -295,12 +295,7 @@ final class TripStopRowTests: XCTestCase {
         let stopEntry = TripDetailsStopList.Entry(
             stop: stop, stopSequence: 0, disruption: nil,
             schedule: schedule, prediction: prediction,
-            vehicle: nil, routes: [route], elevatorAlerts: [objects.alert {
-                $0.activePeriod(
-                    start: now.minus(minutes: 20),
-                    end: now.plus(minutes: 20)
-                )
-            }]
+            vehicle: nil, routes: [route], elevatorAlerts: [objects.alert { _ in }]
         )
 
         let row = TripStopRow(

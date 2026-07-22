@@ -18,7 +18,6 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.GreenLineTestHelper
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.runBlocking
 import org.maplibre.spatialk.geojson.LineString
 import org.maplibre.spatialk.turf.misc.slice
@@ -98,7 +97,6 @@ class RouteFeaturesBuilderTest {
         val redAlert = objects.alert {
             id = "a1"
             effect = Alert.Effect.Shuttle
-            activePeriod(start = now - 1.seconds, end = null)
             informedEntity(
                 listOf(Alert.InformedEntity.Activity.Board),
                 route = MapTestDataHelper.routeRed.id.idText,
@@ -196,7 +194,6 @@ class RouteFeaturesBuilderTest {
         val redAlert = objects.alert {
             id = "a1"
             effect = Alert.Effect.Shuttle
-            activePeriod(start = now - 1.seconds, end = null)
             informedEntity(
                 listOf(Alert.InformedEntity.Activity.Board),
                 route = MapTestDataHelper.routeRed.id.idText,

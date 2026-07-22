@@ -44,7 +44,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.fail
 import kotlin.time.Clock
-import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
@@ -382,8 +381,6 @@ internal class MapViewModelTests : KoinTest {
             }
         val alert = objects.alert {
             effect = Alert.Effect.Suspension
-            activePeriod =
-                mutableListOf(Alert.ActivePeriod(EasternTimeInstant.now().minus(5.hours), null))
             informedEntity = informedEntities.toMutableList()
         }
 
@@ -435,8 +432,6 @@ internal class MapViewModelTests : KoinTest {
             }
         val alert = objects.alert {
             effect = Alert.Effect.Suspension
-            activePeriod =
-                mutableListOf(Alert.ActivePeriod(EasternTimeInstant.now().minus(5.hours), null))
             informedEntity = informedEntities.toMutableList()
         }
 
@@ -583,7 +578,7 @@ internal class MapViewModelTests : KoinTest {
         val alertCreationTime = clock.startTime + 1.seconds
         objects.alert {
             effect = Alert.Effect.Suspension
-            activePeriod = mutableListOf(Alert.ActivePeriod(alertCreationTime, null))
+            activePeriod(alertCreationTime, null)
             informedEntity = informedEntities.toMutableList()
         }
 

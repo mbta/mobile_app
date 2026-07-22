@@ -255,23 +255,26 @@ struct OnboardingScreenView: View {
                         Text("now")
                             .font(.system(size: 16))
                     }
-                    let alert = FormattedAlert(alert: nil, alertSummary: .Standard(
-                        effect: .suspension,
-                        location: AlertSummary.LocationSuccessiveStops(
-                            startStopName: "Back Bay",
-                            endStopName: "Wellington"
-                        ),
-                        timeframe: AlertSummary.TimeframeThisWeek(time: .init(
-                            year: 2026,
-                            month: .january,
-                            day: 25,
-                            hour: 12,
-                            minute: 0,
-                            second: 0
-                        )),
-                        recurrence: nil,
-                        isUpdate: false
-                    ))
+                    let alert = FormattedAlert(
+                        alert: ObjectCollectionBuilder.Single.shared.alert { _ in },
+                        alertSummary: .Standard(
+                            effect: .suspension,
+                            location: AlertSummary.LocationSuccessiveStops(
+                                startStopName: "Back Bay",
+                                endStopName: "Wellington"
+                            ),
+                            timeframe: AlertSummary.TimeframeThisWeek(time: .init(
+                                year: 2026,
+                                month: .january,
+                                day: 25,
+                                hour: 12,
+                                minute: 0,
+                                second: 0
+                            )),
+                            recurrence: nil,
+                            isUpdate: false
+                        )
+                    )
                     Text(String(alert.alertCardMajorBody.characters[...]))
                         .font(.system(size: 16))
                         .frame(minHeight: 40) // TODO: fix

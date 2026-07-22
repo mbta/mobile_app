@@ -8,7 +8,6 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Month
 
@@ -84,7 +83,6 @@ class TripDetailsStopListTest {
             block: ObjectCollectionBuilder.AlertBuilder.() -> Unit = {},
         ) = objects.alert {
             this.effect = effect
-            this.activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
             block()
         }
 

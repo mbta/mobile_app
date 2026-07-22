@@ -4,7 +4,6 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.Instant
 
 class AlertAssociatedStopTest {
     @Test
@@ -19,7 +18,6 @@ class AlertAssociatedStopTest {
             platform2 = childStop()
         }
         val alert = objects.alert {
-            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
             effect = Alert.Effect.Shuttle
             informedEntity(
                 listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
@@ -76,7 +74,6 @@ class AlertAssociatedStopTest {
 
         val alert = objects.alert {
             effect = Alert.Effect.Shuttle
-            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
             informedEntity(route = route.id.idText, routeType = route.type)
         }
 
@@ -118,7 +115,6 @@ class AlertAssociatedStopTest {
 
         val alert = objects.alert {
             effect = Alert.Effect.Shuttle
-            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
             informedEntity(route = null, routeType = RouteType.FERRY)
         }
 
@@ -144,7 +140,6 @@ class AlertAssociatedStopTest {
         val stop = objects.stop()
         val trip = objects.trip()
         val alert = objects.alert {
-            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
             effect = Alert.Effect.Cancellation
             informedEntity(
                 listOf(

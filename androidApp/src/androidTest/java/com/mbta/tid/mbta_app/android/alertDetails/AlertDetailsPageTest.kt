@@ -8,8 +8,6 @@ import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import kotlin.time.Duration.Companion.seconds
 import org.junit.Rule
 import org.junit.Test
 
@@ -46,10 +44,7 @@ class AlertDetailsPageTest {
 
         val route = objects.route { longName = "Orange Line" }
 
-        val now = EasternTimeInstant.now()
-
         val alert = objects.alert {
-            activePeriod(now - 5.seconds, now + 5.seconds)
             description = "Long description"
             cause = Alert.Cause.Fire
             effect = Alert.Effect.Suspension

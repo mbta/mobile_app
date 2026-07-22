@@ -94,7 +94,8 @@ private constructor(
 
     public inner class AlertBuilder : ObjectBuilder<Alert> {
         public var id: String = objectId()
-        public var activePeriod: MutableList<Alert.ActivePeriod> = mutableListOf()
+        public var activePeriod: List<Alert.ActivePeriod> =
+            listOf(Alert.ActivePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null))
         public var cause: Alert.Cause? = null
         public var description: String? = null
         public var durationCertainty: Alert.DurationCertainty = Alert.DurationCertainty.Known
@@ -109,7 +110,16 @@ private constructor(
         public var facilities: Map<String, Facility>? = null
 
         public fun activePeriod(start: EasternTimeInstant, end: EasternTimeInstant?) {
-            activePeriod.add(Alert.ActivePeriod(start, end))
+            val newActivePeriod = Alert.ActivePeriod(start, end)
+            if (activePeriod.singleOrNull()?.start?.instant == Instant.DISTANT_PAST) {
+                activePeriod = listOf(newActivePeriod)
+            } else {
+                activePeriod += newActivePeriod
+            }
+        }
+
+        public fun allClear() {
+            activePeriod = emptyList()
         }
 
         @DefaultArgumentInterop.Enabled

@@ -28,7 +28,6 @@ final class AlertDetailsTests: XCTestCase {
         let now = EasternTimeInstant(year: 2025, month: .july, day: 28, hour: 15, minute: 32, second: 0)
 
         let alert = objects.alert { alert in
-            alert.activePeriod(start: now.minus(seconds: 5), end: now.plus(seconds: 5))
             alert.description_ = "Long description"
             alert.cause = .unrulyPassenger
             alert.effect = .stopClosure
@@ -143,10 +142,6 @@ final class AlertDetailsTests: XCTestCase {
         let now = EasternTimeInstant.now()
 
         let alert = objects.alert { alert in
-            alert.activePeriod(
-                start: now.minus(seconds: 5),
-                end: now.plus(seconds: 5)
-            )
             alert.cause = .unrulyPassenger
             alert.effect = .stopClosure
             alert.effectName = "Closure"
@@ -168,10 +163,6 @@ final class AlertDetailsTests: XCTestCase {
         let stop3 = objects.stop { stop in stop.name = "Stop 3" }
 
         let alert = objects.alert { alert in
-            alert.activePeriod(
-                start: now.minus(seconds: 5),
-                end: now.plus(seconds: 5)
-            )
             alert.cause = .unrulyPassenger
             alert.effect = .stopClosure
             alert.effectName = "Closure"
@@ -209,10 +200,6 @@ final class AlertDetailsTests: XCTestCase {
         let now = EasternTimeInstant.now()
 
         let alert = objects.alert { alert in
-            alert.activePeriod(
-                start: now.minus(seconds: 5),
-                end: now.plus(seconds: 5)
-            )
             alert.cause = .maintenance
             alert.effect = .elevatorClosure
             alert.updatedAt = now.minus(seconds: 100)
@@ -230,10 +217,6 @@ final class AlertDetailsTests: XCTestCase {
         let now = EasternTimeInstant.now()
 
         let alert = objects.alert { alert in
-            alert.activePeriod(
-                start: now.minus(seconds: 5),
-                end: now.plus(seconds: 5)
-            )
             alert.cause = .freightTrainInterference
             alert.effect = .serviceChange
             alert.updatedAt = now.minus(seconds: 100)
@@ -255,10 +238,6 @@ final class AlertDetailsTests: XCTestCase {
             alert.effect = .elevatorClosure
             alert.header = "Elevator 123 (Foo to Bar) unavailable due to demonstration"
             alert.cause = .demonstration
-            alert.activePeriod(
-                start: now.minus(hours: 3 * 24),
-                end: nil
-            )
             alert.informedEntity(
                 activities: [.usingWheelchair],
                 directionId: nil,

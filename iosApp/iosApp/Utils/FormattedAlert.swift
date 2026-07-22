@@ -12,7 +12,7 @@ import Shared
 
 // swiftlint:disable:next type_body_length
 struct FormattedAlert: Equatable {
-    let alert: Alert?
+    let alert: Alert
     let alertSummary: AlertSummary?
     let effect: String
     let sentenceCaseEffect: String
@@ -21,17 +21,14 @@ struct FormattedAlert: Equatable {
     /// guarantee that the alert should replace predictions.
     let predictionReplacement: PredictionReplacement
 
-    // swiftlint:disable:next cyclomatic_complexity
-    init(alert: Alert?, alertSummary: AlertSummary? = nil) {
+    init(alert: Alert, alertSummary: AlertSummary? = nil) {
         self.alert = alert
-        let effect = alert?.effect ?? alertSummary?.effect ?? .unknownEffect
-        self.effect = "**\(effect.effectString)**"
-        sentenceCaseEffect = effect.effectSentenceCaseString
-        let cause = alert?.cause ?? (alertSummary as? TripSpecificAlertSummary)?.cause
-        dueToCause = cause?.causeLowercaseString
+        effect = "**\(alert.effect.effectString)**"
+        sentenceCaseEffect = alert.effect.effectSentenceCaseString
+        dueToCause = alert.cause?.causeLowercaseString
 
         // a handful of cases have different text when replacing predictions than in a details title
-        predictionReplacement = switch effect {
+        predictionReplacement = switch alert.effect {
         case .dockClosure: .init(text: NSLocalizedString("Dock Closed", comment: "Possible alert effect"))
         case .shuttle: .init(
                 text: NSLocalizedString("Shuttle Bus", comment: "Possible alert effect"),
@@ -44,7 +41,7 @@ struct FormattedAlert: Equatable {
                 text: NSLocalizedString("Suspension", comment: "Possible alert effect"),
                 accessibilityLabel: NSLocalizedString("Service suspended", comment: "Suspension alert VoiceOver text")
             )
-        default: .init(text: effect.effectString, accessibilityLabel: nil)
+        default: .init(text: alert.effect.effectString, accessibilityLabel: nil)
         }
         self.alertSummary = alertSummary
     }
@@ -464,7 +461,7 @@ struct FormattedAlert: Equatable {
         }
         // Show "Single Tracking" if there is an informational delay alert with that cause
         // (Any other information severity delay alerts are never shown)
-        guard let alert, let cause = alert.cause?.causeString,
+        guard let cause = alert.cause?.causeString,
               alert.cause == .singleTracking,
               alert.severity < 3
         else {
@@ -474,11 +471,11 @@ struct FormattedAlert: Equatable {
     }
 
     var elevatorHeader: AttributedString {
-        let facilities = alert?.informedEntity.compactMap { entity in
-            if let facilityId = entity.facility { alert?.facilities?[facilityId] } else { nil }
+        let facilities = alert.informedEntity.compactMap { entity in
+            if let facilityId = entity.facility { alert.facilities?[facilityId] } else { nil }
         }.filter { $0.type == .elevator }
         let headerString =
-            if let facilities, let facility = Set(facilities).count == 1 ? facilities.first : nil,
+            if let facility = Set(facilities).count == 1 ? facilities.first : nil,
             let facilityName = facility.shortName {
                 String(format:
                     NSLocalizedString(
@@ -489,7 +486,7 @@ struct FormattedAlert: Equatable {
                         ex "Elevator closure (Red Line platforms to lobby)"
                         """
                     ), facilityName)
-            } else if let header = alert?.header {
+            } else if let header = alert.header {
                 header
             } else {
                 effect
@@ -503,7 +500,7 @@ struct FormattedAlert: Equatable {
         case .downstream: summary ?? AttributedString.tryMarkdown(downstreamLabel)
         case .elevator: elevatorHeader
         case .basic: summary ?? AttributedString.tryMarkdown(effect)
-        default: switch (type, alert?.effect ?? alertSummary?.effect) {
+        default: switch (type, alert.effect) {
             case (.bus, .cancellation) where alertSummary is TripSpecificAlertSummary:
                 AttributedString(NSLocalizedString("Bus cancelled", comment: ""))
             case (.ferry, .cancellation) where alertSummary is TripSpecificAlertSummary:
@@ -528,7 +525,7 @@ struct FormattedAlert: Equatable {
     }
 
     var alertCardMajorBody: AttributedString {
-        summary ?? AttributedString(alert?.header ?? "")
+        summary ?? AttributedString(alert.header ?? "")
     }
 
     struct PredictionReplacement: Equatable {

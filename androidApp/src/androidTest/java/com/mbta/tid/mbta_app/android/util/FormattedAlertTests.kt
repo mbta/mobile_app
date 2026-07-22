@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import com.mbta.tid.mbta_app.android.assertMatches
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripShuttleAlertSummary
 import com.mbta.tid.mbta_app.model.TripSpecificAlertSummary
@@ -32,7 +33,8 @@ class FormattedAlertTests {
                 "Porter",
                 "North Station",
             )
-        val format = FormattedAlert(null, summary)
+        val alert = ObjectCollectionBuilder.Single.alert()
+        val format = FormattedAlert(alert, summary)
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
             assertMatches(
@@ -58,7 +60,8 @@ class FormattedAlertTests {
                 "Porter",
                 "North Station",
             )
-        val format = FormattedAlert(null, summary)
+        val alert = ObjectCollectionBuilder.Single.alert()
+        val format = FormattedAlert(alert, summary)
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
             assertMatches(
@@ -79,7 +82,8 @@ class FormattedAlertTests {
                 "Porter",
                 "North Station",
             )
-        val format = FormattedAlert(null, summary)
+        val alert = ObjectCollectionBuilder.Single.alert()
+        val format = FormattedAlert(alert, summary)
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
             assertEquals(
@@ -100,7 +104,8 @@ class FormattedAlertTests {
                 true,
                 Alert.Cause.Weather,
             )
-        val format = FormattedAlert(null, summary)
+        val alert = ObjectCollectionBuilder.Single.alert { cause = Alert.Cause.Weather }
+        val format = FormattedAlert(alert, summary)
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
             assertMatches(
@@ -124,7 +129,8 @@ class FormattedAlertTests {
                 true,
                 Alert.Cause.Weather,
             )
-        val format = FormattedAlert(null, summary)
+        val alert = ObjectCollectionBuilder.Single.alert { cause = Alert.Cause.Weather }
+        val format = FormattedAlert(alert, summary)
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
             assertMatches(
@@ -146,7 +152,8 @@ class FormattedAlertTests {
                 true,
                 Alert.Cause.Weather,
             )
-        val format = FormattedAlert(null, summary)
+        val alert = ObjectCollectionBuilder.Single.alert { cause = Alert.Cause.Weather }
+        val format = FormattedAlert(alert, summary)
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
             assertEquals("This train is suspended today due to weather", summaryString)
@@ -163,7 +170,8 @@ class FormattedAlertTests {
                 true,
                 Alert.Cause.Weather,
             )
-        val format = FormattedAlert(null, summary)
+        val alert = ObjectCollectionBuilder.Single.alert { cause = Alert.Cause.Weather }
+        val format = FormattedAlert(alert, summary)
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
             assertEquals("This train will terminate at Porter today due to weather", summaryString)
@@ -181,7 +189,8 @@ class FormattedAlertTests {
                 true,
                 Alert.Cause.Weather,
             )
-        val format = FormattedAlert(null, summary)
+        val alert = ObjectCollectionBuilder.Single.alert { cause = Alert.Cause.Weather }
+        val format = FormattedAlert(alert, summary)
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
             assertMatches(
@@ -204,7 +213,8 @@ class FormattedAlertTests {
                 true,
                 Alert.Cause.Weather,
             )
-        val format = FormattedAlert(null, summary)
+        val alert = ObjectCollectionBuilder.Single.alert { cause = Alert.Cause.Weather }
+        val format = FormattedAlert(alert, summary)
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
             assertEquals("This train will not stop at Porter today due to weather", summaryString)
@@ -219,7 +229,8 @@ class FormattedAlertTests {
                 AlertSummary.Location.AffectedStops(listOf("Back Bay")),
                 AlertSummary.Timeframe.UntilFurtherNotice,
             )
-        val format = FormattedAlert(null, summary)
+        val alert = ObjectCollectionBuilder.Single.alert()
+        val format = FormattedAlert(alert, summary)
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
             assertMatches(
@@ -237,7 +248,8 @@ class FormattedAlertTests {
                 AlertSummary.Location.AffectedStops(listOf("Back Bay", "Ruggles")),
                 AlertSummary.Timeframe.UntilFurtherNotice,
             )
-        val format = FormattedAlert(null, summary)
+        val alert = ObjectCollectionBuilder.Single.alert()
+        val format = FormattedAlert(alert, summary)
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
             assertMatches(
@@ -255,7 +267,8 @@ class FormattedAlertTests {
                 AlertSummary.Location.AffectedStops(listOf("Back Bay", "Ruggles", "Hyde Park")),
                 AlertSummary.Timeframe.UntilFurtherNotice,
             )
-        val format = FormattedAlert(null, summary)
+        val alert = ObjectCollectionBuilder.Single.alert()
+        val format = FormattedAlert(alert, summary)
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
             assertMatches(
@@ -277,7 +290,8 @@ class FormattedAlertTests {
                 ),
                 AlertSummary.Timeframe.UntilFurtherNotice,
             )
-        val format = FormattedAlert(null, summary)
+        val alert = ObjectCollectionBuilder.Single.alert()
+        val format = FormattedAlert(alert, summary)
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
             assertMatches(

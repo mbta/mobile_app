@@ -79,6 +79,14 @@ and for "No profile for team '...' matching '...' found: Xcode couldn't find any
 
 Run tests
 
+### ios smoke_test
+
+```sh
+[bundle exec] fastlane ios smoke_test
+```
+
+Run smoke tests
+
 ### ios build
 
 ```sh

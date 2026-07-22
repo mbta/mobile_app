@@ -7,7 +7,6 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.Instant
 import org.maplibre.spatialk.geojson.Position
 import org.maplibre.spatialk.turf.measurement.offset
 import org.maplibre.spatialk.units.Bearing
@@ -83,7 +82,6 @@ class NearbyResponseTest {
         }
 
         objects.alert {
-            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), end = null)
             informedEntity(
                 listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Exit),
                 stop = stop1.id,
@@ -113,7 +111,6 @@ class NearbyResponseTest {
         }
 
         objects.alert {
-            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), end = null)
             informedEntity(
                 listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Exit),
                 stop = stop1.id,
@@ -144,7 +141,6 @@ class NearbyResponseTest {
         }
 
         objects.alert {
-            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), end = null)
             informedEntity(
                 listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Exit),
                 stop = stop1.id,

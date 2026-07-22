@@ -676,7 +676,6 @@ internal class FavoritesViewModelTest : KoinTest {
 
         val alert = objects.alert {
             effect = Alert.Effect.Suspension
-            activePeriod(now - 10.minutes, now + 10.minutes)
             informedEntity(stop = stop1.id)
             informedEntity(stop = stop2.id)
         }
