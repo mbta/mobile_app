@@ -30,24 +30,19 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
     let cameraStatePublisher: AnyPublisher<CameraState, Never>
     let cameraStatePublisherThrottled: AnyPublisher<CameraState, Never>
 
-    private let cameraStateSubject: CurrentValueSubject<CameraState, Never>
+    private let cameraStateSubject: CurrentValueSubject<CameraState?, Never>
 
     init(viewport: Viewport? = nil, isManuallyCentering: Bool = false) {
         self.viewport = viewport ?? .camera(center: Defaults.center, zoom: Defaults.zoom)
         isFollowingPuck = viewport?.isFollowing ?? false
         let viewportCamera = viewport?.camera
-        let initialCameraState = CameraState(
-            center: viewportCamera?.center ?? Defaults.center,
-            padding: viewportCamera?.padding ?? .zero,
-            zoom: viewportCamera?.zoom ?? Defaults.zoom,
-            bearing: viewportCamera?.bearing ?? 0.0,
-            pitch: viewportCamera?.pitch ?? 0.0
-        )
-        cameraStateSubject = .init(initialCameraState)
+        // Don't publish the default center so that we don't fetch data for it immediately on load
+        cameraStateSubject = .init(nil)
         self.isManuallyCentering = isManuallyCentering
 
         cameraStatePublisher =
             cameraStateSubject
+                .compactMap { $0 }
                 .removeDuplicates(by: { lhs, rhs in lhs.center.isRoughlyEqualTo(rhs.center) })
                 .receive(on: DispatchQueue.main)
                 .eraseToAnyPublisher()
@@ -63,7 +58,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
         isFollowingPuck = true
         isVehicleOverview = false
         withViewportAnimation(animation) {
-            self.viewport = .followPuck(zoom: cameraStateSubject.value.zoom)
+            self.viewport = .followPuck(zoom: cameraStateSubject.value?.zoom ?? Defaults.zoom)
         }
     }
 
@@ -115,9 +110,9 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
     func saveCurrentViewport() {
         let camera = cameraStateSubject.value
         if viewport.isFollowing {
-            viewport = .followPuck(zoom: camera.zoom)
+            viewport = .followPuck(zoom: camera?.zoom ?? Defaults.zoom)
         } else {
-            viewport = .camera(center: camera.center, zoom: camera.zoom)
+            viewport = .camera(center: camera?.center ?? Defaults.center, zoom: camera?.zoom ?? Defaults.zoom)
         }
     }
 
@@ -137,7 +132,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
         animateTo(
             viewport: .camera(
                 center: coordinates,
-                zoom: zoom == nil ? cameraStateSubject.value.zoom : zoom
+                zoom: zoom == nil ? cameraStateSubject.value?.zoom ?? Defaults.zoom : zoom
             ),
             animation: animation
         )
@@ -182,7 +177,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
     @MainActor func __restoreNearbyTransitViewport() async throws {
         if let saved = savedNearbyTransitViewport {
             withViewportAnimation(Defaults.animation) {
-                let currentZoom = cameraStateSubject.value.zoom
+                let currentZoom = cameraStateSubject.value?.zoom ?? Defaults.zoom
                 self.viewport = if let camera = saved.camera {
                     .camera(center: camera.center, zoom: currentZoom)
                 } else if let _ = saved.followPuck {
@@ -202,7 +197,10 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
         // and to actually restore anything, we need to save the values from the most recent camera state.
         if savedNearbyTransitViewport == .idle {
             let cameraState = cameraStateSubject.value
-            savedNearbyTransitViewport = .camera(center: cameraState.center, zoom: cameraState.zoom)
+            savedNearbyTransitViewport = .camera(
+                center: cameraState?.center ?? Defaults.center,
+                zoom: cameraState?.zoom ?? Defaults.zoom
+            )
         }
     }
 

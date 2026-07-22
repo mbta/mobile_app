@@ -551,6 +551,16 @@ struct ContentView: View {
                     // since we have no map when it's hidden, we need to manually update the camera position.
                     viewportProvider.updateCameraState(locationDataManager.currentLocation)
                 }
+                .onChange(of: locationDataManager
+                    .authorizationStatus) { [oldStatus = locationDataManager.authorizationStatus] status in
+                        if oldStatus == nil, [.denied, .notDetermined, .restricted].contains(status) {
+                            let center = ViewportProvider.Defaults.center
+                            viewportProvider.updateCameraState(CLLocation(
+                                latitude: center.latitude,
+                                longitude: center.longitude
+                            ))
+                        }
+                }
                 .onChange(of: locationDataManager.currentLocation) { location in
                     viewportProvider.updateCameraState(location)
                 }
