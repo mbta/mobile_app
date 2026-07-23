@@ -41,7 +41,7 @@ jobs:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           SENTRY_ENVIRONMENT: staging
           FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
-          GOOGLE_APP_ID_IOS: ${{ secrets.GOOGLE_APP_ID_IOS }}
+          GOOGLE_APP_ID_IOS: ${{ secrets.GOOGLE_APP_ID_IOS_STAGING }}
       - name: Get second latest iOS version
         if: ${{ !inputs.skip-everything }}
         id: ios_versions
@@ -61,4 +61,4 @@ jobs:
         if: failure() && !inputs.skip-everything
         with:
           name: ios-ios-results
-          path: fastlane/smoke_test_output/*
+          path: fastlane/test_output/*
