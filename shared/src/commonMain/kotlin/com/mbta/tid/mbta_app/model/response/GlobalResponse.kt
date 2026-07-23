@@ -14,11 +14,9 @@ import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.Trip
-import com.mbta.tid.mbta_app.model.WorldCupService
 import com.mbta.tid.mbta_app.model.greenRoutes
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.model.silverRoutes
-import kotlinx.datetime.LocalDate
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -69,11 +67,6 @@ internal constructor(
         objects.trips.toMap(),
         stopBlocklist,
     )
-
-    public fun withWorldCupService(today: LocalDate): GlobalResponse =
-        if (WorldCupService.isMatchDay(today) && !this.routes.containsKey(WorldCupService.route.id))
-            this + WorldCupService.globalData
-        else this
 
     private operator fun plus(other: GlobalResponse) =
         GlobalResponse(

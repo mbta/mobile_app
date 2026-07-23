@@ -146,15 +146,9 @@ struct StopDetailsFilteredDepartureDetails: View {
                 }
             }
             alertCards
-            if leaf.lineOrRoute.id == WorldCupService.shared.route.id {
-                WorldCupBlurb(leaf: leaf, routeAccents: routeAccents, offerDetails: true)
-                    .padding(16)
-                    .background(Color.fill3)
-                    .withRoundedBorder()
-                    .padding(.horizontal, 16)
-            } else if isAllServiceDisrupted || displayAlerts.hasTakeover(now: now,
-                                                                         isAllServiceDisrupted: isAllServiceDisrupted,
-                                                                         tripId: tripFilter?.tripId) {
+            if isAllServiceDisrupted || displayAlerts.hasTakeover(now: now,
+                                                                  isAllServiceDisrupted: isAllServiceDisrupted,
+                                                                  tripId: tripFilter?.tripId) {
                 EmptyView()
             } else if let noPredictionsStatus {
                 StopDetailsNoTripCard(

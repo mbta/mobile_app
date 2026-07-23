@@ -90,19 +90,11 @@ struct StopCardDepartures: View {
                             warningAlertIconName: branched.warningAlert?.iconName
                         ).padding(.trailing, 8)
                     }
-                    if leaf.lineOrRoute.id == WorldCupService.shared.route.id {
-                        WorldCupBlurb(
-                            leaf: leaf,
-                            routeAccents: .init(route: leaf.lineOrRoute.sortRoute),
-                            offerDetails: false
-                        )
-                    } else {
-                        StopCardDirection(
-                            direction: leaf.direction,
-                            formatted: formatted,
-                            lineOrRoute: leaf.lineOrRoute
-                        )
-                    }
+                    StopCardDirection(
+                        direction: leaf.direction,
+                        formatted: formatted,
+                        lineOrRoute: leaf.lineOrRoute
+                    )
                 }
                 .tint(.fill3)
                 .padding(.horizontal, 8)

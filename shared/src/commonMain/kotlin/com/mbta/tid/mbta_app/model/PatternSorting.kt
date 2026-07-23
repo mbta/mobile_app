@@ -15,9 +15,8 @@ internal object PatternSorting {
     private fun patternServiceBucket(leafData: RouteCardData.Leaf, now: EasternTimeInstant) =
         when {
             // showing either a trip or an alert (or World Cup service)
-            leafData.hasMajorAlertsAffectingAllTrips(now) ||
-                leafData.upcomingTrips.isNotEmpty() ||
-                leafData.lineOrRoute.id == WorldCupService.route.id -> 1
+            leafData.hasMajorAlertsAffectingAllTrips(now) || leafData.upcomingTrips.isNotEmpty() ->
+                1
             // service ended
             leafData.hasSchedulesToday -> 2
             // no service today
