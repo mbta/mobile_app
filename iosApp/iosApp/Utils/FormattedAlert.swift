@@ -454,9 +454,10 @@ struct FormattedAlert: Equatable {
         }
     }
 
-    var delayHeader: AttributedString {
-        if case let .standard(alertSummary) = onEnum(of: alertSummary),
-           case .startingLaterToday = onEnum(of: alertSummary.timeframe), let summary {
+    func delayHeader(now: EasternTimeInstant) -> AttributedString {
+        let startingLaterToday = alert.currentPeriod(time: now) == nil &&
+            alert.nextPeriod(time: now, within: .init(days: 1))?.startServiceDate == now.serviceDate
+        if startingLaterToday, let summary {
             return summary
         }
         // Show "Single Tracking" if there is an informational delay alert with that cause
@@ -494,30 +495,31 @@ struct FormattedAlert: Equatable {
         return AttributedString.tryMarkdown(headerString)
     }
 
-    func alertCardHeader(spec: AlertCardSpec, type: RouteType) -> AttributedString {
-        switch spec {
-        case .delay: delayHeader
+    func alertCardHeader(spec: AlertCardSpec, type: RouteType, now: EasternTimeInstant) -> AttributedString {
+        let isTripSpecific = alert.informedEntity.contains(where: { $0.trip != nil })
+        return switch spec {
+        case .delay: delayHeader(now: now)
         case .downstream: summary ?? AttributedString.tryMarkdown(downstreamLabel)
         case .elevator: elevatorHeader
         case .basic: summary ?? AttributedString.tryMarkdown(effect)
         default: switch (type, alert.effect) {
-            case (.bus, .cancellation) where alertSummary is TripSpecificAlertSummary:
+            case (.bus, .cancellation) where isTripSpecific:
                 AttributedString(NSLocalizedString("Bus cancelled", comment: ""))
-            case (.ferry, .cancellation) where alertSummary is TripSpecificAlertSummary:
+            case (.ferry, .cancellation) where isTripSpecific:
                 AttributedString(NSLocalizedString("Ferry cancelled", comment: ""))
-            case (_, .cancellation) where alertSummary is TripSpecificAlertSummary:
+            case (_, .cancellation) where isTripSpecific:
                 AttributedString(NSLocalizedString("Train cancelled", comment: ""))
-            case (_, .shuttle) where alertSummary is TripShuttleAlertSummary:
+            case (_, .shuttle) where isTripSpecific:
                 AttributedString(NSLocalizedString("Shuttle bus", comment: ""))
-            case (.bus, .suspension) where alertSummary is TripSpecificAlertSummary:
+            case (.bus, .suspension) where isTripSpecific:
                 AttributedString(NSLocalizedString("Bus suspended", comment: ""))
-            case (.ferry, .suspension) where alertSummary is TripSpecificAlertSummary:
+            case (.ferry, .suspension) where isTripSpecific:
                 AttributedString(NSLocalizedString("Ferry suspended", comment: ""))
-            case (_, .suspension) where alertSummary is TripSpecificAlertSummary:
+            case (_, .suspension) where isTripSpecific:
                 AttributedString(NSLocalizedString("Train suspended", comment: ""))
-            case (_, .stationClosure) where alertSummary is TripSpecificAlertSummary,
-                 (_, .stopClosure) where alertSummary is TripSpecificAlertSummary,
-                 (_, .dockClosure) where alertSummary is TripSpecificAlertSummary:
+            case (_, .stationClosure) where isTripSpecific,
+                 (_, .stopClosure) where isTripSpecific,
+                 (_, .dockClosure) where isTripSpecific:
                 AttributedString(NSLocalizedString("Stop skipped", comment: ""))
             default: AttributedString.tryMarkdown(effect)
             }

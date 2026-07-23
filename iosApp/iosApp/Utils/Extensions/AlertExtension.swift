@@ -9,6 +9,12 @@
 import Foundation
 import Shared
 
+extension Alert {
+    func nextPeriod(time: EasternTimeInstant, within: KotlinDuration = .init(days: 1)) -> Alert.ActivePeriod? {
+        __nextPeriod(time: time, within: within.duration)
+    }
+}
+
 extension Alert.Cause {
     var causeLowercaseString: String? {
         switch self {

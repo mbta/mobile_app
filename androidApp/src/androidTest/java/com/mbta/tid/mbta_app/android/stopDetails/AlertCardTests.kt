@@ -18,6 +18,7 @@ import com.mbta.tid.mbta_app.model.TripShuttleAlertSummary
 import com.mbta.tid.mbta_app.model.TripSpecificAlertSummary
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Month
 import org.junit.Rule
 import org.junit.Test
@@ -171,14 +172,15 @@ class AlertCardTests {
 
     @Test
     fun testUpcomingDelayAlertCard() {
+        val time = EasternTimeInstant(2025, Month.APRIL, 2, 9, 0)
         val alert =
             ObjectCollectionBuilder.Single.alert {
+                activePeriod(time, null)
                 header = "Alert header"
                 effect = Alert.Effect.Delay
                 cause = Alert.Cause.HeavyRidership
             }
 
-        val time = EasternTimeInstant(2025, Month.APRIL, 2, 9, 0)
         composeTestRule.setContent {
             AlertCard(
                 alert,
@@ -190,6 +192,7 @@ class AlertCardTests {
                 AlertCardSpec.Delay,
                 routeAccents,
                 {},
+                now = time - 15.minutes,
             )
         }
 
@@ -344,6 +347,7 @@ class AlertCardTests {
         val alert = objects.alert {
             cause = Alert.Cause.MechanicalIssue
             effect = Alert.Effect.Cancellation
+            informedEntity(trip = "trip")
         }
         composeTestRule.setContent {
             AlertCard(
@@ -382,6 +386,7 @@ class AlertCardTests {
         val alert = objects.alert {
             cause = Alert.Cause.Holiday
             effect = Alert.Effect.Suspension
+            informedEntity(trip = "trip")
         }
         composeTestRule.setContent {
             AlertCard(
@@ -406,7 +411,10 @@ class AlertCardTests {
     @Test
     fun testTripShuttleAlertCard() {
         val objects = ObjectCollectionBuilder()
-        val alert = objects.alert { effect = Alert.Effect.Shuttle }
+        val alert = objects.alert {
+            effect = Alert.Effect.Shuttle
+            informedEntity(trip = "trip")
+        }
         composeTestRule.setContent {
             AlertCard(
                 alert,
@@ -441,7 +449,10 @@ class AlertCardTests {
     @Test
     fun testThisTripShuttleAlertCard() {
         val objects = ObjectCollectionBuilder()
-        val alert = objects.alert { effect = Alert.Effect.Shuttle }
+        val alert = objects.alert {
+            effect = Alert.Effect.Shuttle
+            informedEntity(trip = "trip")
+        }
         composeTestRule.setContent {
             AlertCard(
                 alert,
@@ -476,7 +487,10 @@ class AlertCardTests {
     @Test
     fun testTripStationBypassAlertCard() {
         val objects = ObjectCollectionBuilder()
-        val alert = objects.alert { effect = Alert.Effect.StationClosure }
+        val alert = objects.alert {
+            effect = Alert.Effect.StationClosure
+            informedEntity(trip = "trip")
+        }
         composeTestRule.setContent {
             AlertCard(
                 alert,
@@ -563,6 +577,7 @@ class AlertCardTests {
         val alert = objects.alert {
             cause = Alert.Cause.MechanicalIssue
             effect = Alert.Effect.Cancellation
+            informedEntity(trip = "trip")
         }
         composeTestRule.setContent {
             AlertCard(
@@ -599,7 +614,10 @@ class AlertCardTests {
     @Test
     fun testTripShuttleRecurrence() {
         val objects = ObjectCollectionBuilder()
-        val alert = objects.alert { effect = Alert.Effect.Shuttle }
+        val alert = objects.alert {
+            effect = Alert.Effect.Shuttle
+            informedEntity(trip = "trip")
+        }
         composeTestRule.setContent {
             AlertCard(
                 alert,
@@ -641,7 +659,10 @@ class AlertCardTests {
     @Test
     fun testThisTripShuttleRecurrence() {
         val objects = ObjectCollectionBuilder()
-        val alert = objects.alert { effect = Alert.Effect.Shuttle }
+        val alert = objects.alert {
+            effect = Alert.Effect.Shuttle
+            informedEntity(trip = "trip")
+        }
         composeTestRule.setContent {
             AlertCard(
                 alert,
