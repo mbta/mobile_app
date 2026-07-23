@@ -20,7 +20,7 @@ public abstract class Analytics {
         private set
 
     private fun logEvent(name: String, vararg parameters: Pair<String, String>) {
-        val paramsMap = mutableMapOf(*parameters)
+        val paramsMap = mapOf(*parameters)
         logEvent(name, paramsMap)
     }
 

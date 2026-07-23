@@ -31,7 +31,7 @@ public interface IErrorBannerViewModel {
 
     public fun setIsLoadingWhenPredictionsStale(isLoading: Boolean)
 
-    public fun checkPredictionsStale(
+    public suspend fun checkPredictionsStale(
         predictionsLastUpdated: EasternTimeInstant,
         predictionQuantity: Int,
         checkingSheetRoute: SheetRoutes,
@@ -140,7 +140,7 @@ public class ErrorBannerViewModel(
         this.awaitingPredictionsAfterBackground = isLoading
     }
 
-    override fun checkPredictionsStale(
+    override suspend fun checkPredictionsStale(
         predictionsLastUpdated: EasternTimeInstant,
         predictionQuantity: Int,
         checkingSheetRoute: SheetRoutes,
@@ -174,7 +174,7 @@ constructor(initialState: ErrorBannerViewModel.State = ErrorBannerViewModel.Stat
 
     override fun setIsLoadingWhenPredictionsStale(isLoading: Boolean) {}
 
-    override fun checkPredictionsStale(
+    override suspend fun checkPredictionsStale(
         predictionsLastUpdated: EasternTimeInstant,
         predictionQuantity: Int,
         checkingSheetRoute: SheetRoutes,

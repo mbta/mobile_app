@@ -5,7 +5,7 @@ import com.mapbox.maps.plugin.locationcomponent.LocationConsumer
 import com.mapbox.maps.plugin.locationcomponent.LocationProvider
 
 class PassthroughLocationProvider : LocationProvider {
-    private val consumers = mutableSetOf<LocationConsumer>()
+    private var consumers = setOf<LocationConsumer>()
 
     fun sendLocation(location: Point) {
         for (consumer in consumers) {
@@ -14,10 +14,10 @@ class PassthroughLocationProvider : LocationProvider {
     }
 
     override fun registerLocationConsumer(locationConsumer: LocationConsumer) {
-        consumers.add(locationConsumer)
+        consumers += locationConsumer
     }
 
     override fun unRegisterLocationConsumer(locationConsumer: LocationConsumer) {
-        consumers.remove(locationConsumer)
+        consumers -= locationConsumer
     }
 }
