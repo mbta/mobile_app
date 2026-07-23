@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 set -e
 
-# Generates iosApp.xcodeproj and iosApp.xcworkspace based on project.yml.
+# Generates iosApp.xcodeproj based on project.yml.
 # Use --force to skip the xcodegen cache (useful if overwriting the project).
 
 use_cache_flag="--use-cache"
