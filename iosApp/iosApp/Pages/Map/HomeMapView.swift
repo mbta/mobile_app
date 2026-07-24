@@ -46,7 +46,7 @@ struct HomeMapView: View {
     let log = Logger()
 
     private var shouldShowLoadedLocation: Bool {
-        !viewportProvider.viewport.isFollowing
+        !(viewportProvider.viewport?.isFollowing ?? false)
             && navManager.navigationStack.lastSafe().allowTargeting
             && !viewportProvider.isTargeting
     }
@@ -179,18 +179,14 @@ struct HomeMapView: View {
 
     @ViewBuilder
     var staticResponsiveMap: some View {
-        ProxyModifiedMap(
-            mapContent: AnyView(annotatedMap),
-            handleAppear: handleAppear,
-            handleAccessTokenLoaded: handleAccessTokenLoaded,
-        )
-        .onChange(of: locationDataManager.authorizationStatus) { status in
-            Task {
-                guard status == .authorizedAlways || status == .authorizedWhenInUse,
-                      viewportProvider.isDefault() else { return }
-                mapVM.locationPermissionsChanged(hasPermission: true)
+        annotatedMap
+            .onChange(of: locationDataManager.authorizationStatus) { status in
+                Task {
+                    guard status == .authorizedAlways || status == .authorizedWhenInUse,
+                          viewportProvider.isDefault() else { return }
+                    mapVM.locationPermissionsChanged(hasPermission: true)
+                }
             }
-        }
     }
 
     @ViewBuilder
@@ -204,6 +200,8 @@ struct HomeMapView: View {
             sheetHeight: sheetHeight,
             showPuck: navManager.navigationStack.lastSafe().showCurrentLocation,
             vehicles: vehicles,
+            handleAppear: handleAppear,
+            handleAccessTokenLoaded: handleAccessTokenLoaded,
             handleCameraChange: handleCameraChange,
             handleStyleLoaded: { mapVM.mapStyleLoaded() },
             handleTapStopLayer: handleTapStopLayer,

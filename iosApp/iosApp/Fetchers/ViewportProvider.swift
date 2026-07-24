@@ -25,7 +25,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
     @Published var isTargeting: Bool = false
     @Published var lastLoadedLocation: CLLocationCoordinate2D? = nil
 
-    @Published var viewport: Viewport
+    @Published var viewport: Viewport?
     private var savedNearbyTransitViewport: Viewport?
     let cameraStatePublisher: AnyPublisher<CameraState, Never>
     let cameraStatePublisherThrottled: AnyPublisher<CameraState, Never>
@@ -33,9 +33,8 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
     private let cameraStateSubject: CurrentValueSubject<CameraState?, Never>
 
     init(viewport: Viewport? = nil, isManuallyCentering: Bool = false) {
-        self.viewport = viewport ?? .camera(center: Defaults.center, zoom: Defaults.zoom)
-        isFollowingPuck = viewport?.isFollowing ?? false
-        let viewportCamera = viewport?.camera
+        self.viewport = viewport
+        isFollowingPuck = viewport?.isFollowing ?? true
         // Don't publish the default center so that we don't fetch data for it immediately on load
         cameraStateSubject = .init(nil)
         self.isManuallyCentering = isManuallyCentering
@@ -58,7 +57,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
         isFollowingPuck = true
         isVehicleOverview = false
         withViewportAnimation(animation) {
-            self.viewport = .followPuck(zoom: cameraStateSubject.value?.zoom ?? Defaults.zoom)
+            self.viewport = .followPuck(zoom: currentSubjectZoomSafe())
         }
     }
 
@@ -79,7 +78,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
     }
 
     func isDefault() -> Bool {
-        viewport.camera?.center?.isRoughlyEqualTo(Defaults.center) ?? false
+        viewport?.camera?.center?.isRoughlyEqualTo(Defaults.center) ?? true
     }
 
     @MainActor func stopCenter(stop: Stop) {
@@ -96,6 +95,23 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
         )
     }
 
+    func initViewport(location: CLLocation) {
+        if viewport == nil {
+            let cameraState: CameraState = .init(
+                center: location.coordinate,
+                padding: .zero,
+                zoom: Defaults.zoom,
+                bearing: 0,
+                pitch: 0
+            )
+            viewport = .camera(center: cameraState.center, zoom: cameraState.zoom)
+            updateCameraState(cameraState)
+        }
+    }
+
+    /**
+        For use when map display is turned off and $viewport is never updated directly.
+     */
     func updateCameraState(_ location: CLLocation?) {
         guard let coordinate = location?.coordinate else { return }
         updateCameraState(
@@ -109,10 +125,10 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
 
     func saveCurrentViewport() {
         let camera = cameraStateSubject.value
-        if viewport.isFollowing {
-            viewport = .followPuck(zoom: camera?.zoom ?? Defaults.zoom)
+        if viewport?.isFollowing ?? false {
+            viewport = .followPuck(zoom: currentSubjectZoomSafe())
         } else {
-            viewport = .camera(center: camera?.center ?? Defaults.center, zoom: camera?.zoom ?? Defaults.zoom)
+            viewport = .camera(center: camera?.center ?? Defaults.center, zoom: currentSubjectZoomSafe())
         }
     }
 
@@ -124,6 +140,10 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
         }
     }
 
+    func currentSubjectZoomSafe() -> CGFloat {
+        cameraStateSubject.value?.zoom ?? Defaults.zoom
+    }
+
     @MainActor func animateTo(
         coordinates: CLLocationCoordinate2D,
         animation: ViewportAnimation = Defaults.animation,
@@ -132,7 +152,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
         animateTo(
             viewport: .camera(
                 center: coordinates,
-                zoom: zoom == nil ? cameraStateSubject.value?.zoom ?? Defaults.zoom : zoom
+                zoom: zoom == nil ? currentSubjectZoomSafe() : zoom
             ),
             animation: animation
         )
@@ -170,14 +190,14 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
 
     // swiftlint:disable:next identifier_name
     func __isDefault() async throws -> KotlinBoolean {
-        KotlinBoolean(bool: viewport.camera?.center?.isRoughlyEqualTo(Defaults.center) ?? false)
+        KotlinBoolean(bool: viewport?.camera?.center?.isRoughlyEqualTo(Defaults.center) ?? false)
     }
 
     // swiftlint:disable:next identifier_name
     @MainActor func __restoreNearbyTransitViewport() async throws {
         if let saved = savedNearbyTransitViewport {
             withViewportAnimation(Defaults.animation) {
-                let currentZoom = cameraStateSubject.value?.zoom ?? Defaults.zoom
+                let currentZoom = currentSubjectZoomSafe()
                 self.viewport = if let camera = saved.camera {
                     .camera(center: camera.center, zoom: currentZoom)
                 } else if let _ = saved.followPuck {
@@ -199,7 +219,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
             let cameraState = cameraStateSubject.value
             savedNearbyTransitViewport = .camera(
                 center: cameraState?.center ?? Defaults.center,
-                zoom: cameraState?.zoom ?? Defaults.zoom
+                zoom: currentSubjectZoomSafe()
             )
         }
     }

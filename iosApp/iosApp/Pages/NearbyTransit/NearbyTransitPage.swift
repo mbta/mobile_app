@@ -65,9 +65,7 @@ struct NearbyTransitPage: View {
                     viewportProvider.cameraStatePublisherThrottled
                 ) { newCameraState in
                     guard navManager.isNearbyVisible() else { return }
-                    if !newCameraState.center.isRoughlyEqualTo(location) {
-                        location = newCameraState.center
-                    }
+                    location = newCameraState.center
                 }
                 .onReceive(inspection.notice) { inspection.visit(self, $0) }
             }
