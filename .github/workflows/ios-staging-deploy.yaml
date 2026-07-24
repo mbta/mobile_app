@@ -1,7 +1,9 @@
 name: iOS staging deploy
 
 on:
-  pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
   build-ios:
