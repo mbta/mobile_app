@@ -23,6 +23,8 @@ struct AnnotatedMap: View {
     var sheetHeight: CGFloat
     var showPuck: Bool
     var vehicles: [Vehicle]?
+    var handleAppear: (LocationManager?, MapboxMap?) async throws -> Void
+    var handleAccessTokenLoaded: (MapboxMap?) -> Void
     var handleCameraChange: (CameraChanged) -> Void
     var handleStyleLoaded: () -> Void
     var handleTapStopLayer: (FeaturesetFeature, InteractionContext) -> Bool
@@ -44,6 +46,8 @@ struct AnnotatedMap: View {
         sheetHeight: CGFloat,
         showPuck: Bool,
         vehicles: [Vehicle]? = nil,
+        handleAppear: @escaping (LocationManager?, MapboxMap?) async throws -> Void,
+        handleAccessTokenLoaded: @escaping (MapboxMap?) -> Void,
         handleCameraChange: @escaping (CameraChanged) -> Void,
         handleStyleLoaded: @escaping () -> Void,
         handleTapStopLayer: @escaping (FeaturesetFeature, InteractionContext) -> Bool,
@@ -57,6 +61,8 @@ struct AnnotatedMap: View {
         self.sheetHeight = sheetHeight
         self.showPuck = showPuck
         self.vehicles = vehicles
+        self.handleAppear = handleAppear
+        self.handleAccessTokenLoaded = handleAccessTokenLoaded
         self.handleCameraChange = handleCameraChange
         self.handleStyleLoaded = handleStyleLoaded
         self.handleTapStopLayer = handleTapStopLayer
@@ -69,41 +75,15 @@ struct AnnotatedMap: View {
     }
 
     var body: some View {
-        map
-            .gestureOptions(.init(
-                rotateEnabled: false,
-                pitchEnabled: false,
-                panDecelerationFactor: 0.99
-            ))
-            .mapStyle(.init(uri: appVariant.styleUri(colorScheme: colorScheme)))
-            .debugOptions(settingsCache.get(.devDebugMode) ? .camera : [])
-            .cameraBounds(.init(maxZoom: 18, minZoom: 7.5))
-            .onCameraChanged { change in handleCameraChange(change) }
-            .ornamentOptions(.init(
-                scaleBar: .init(visibility: .hidden),
-                compass: .init(visibility: .hidden),
-                attributionButton: .init(margins: .init(x: -3, y: 6))
-            ))
-            .onStyleLoaded { _ in
-                // The initial run of this happens before any required data is loaded, so it does nothing and
-                // handleTryLayerInit always performs the first layer creation, but once the data is in place,
-                // this handles any time the map is reloaded again, like for a light/dark mode switch.
-                if scenePhase == .active {
-                    // onStyleLoaded was unexpectedly called when app moved to background because the colorScheme
-                    // changes twice while backgrounding. Ensure it is only called when the app is active.
-                    handleStyleLoaded()
-                }
-            }
-            .additionalSafeAreaInsets(.bottom, sheetHeight + bottomSheetInsetPadding)
-            .additionalSafeAreaInsets(.top, 20)
-            .ignoresSafeArea(.all)
-            .onChange(of: showPuck) { _ in handleStyleLoaded() }
-            .accessibilityIdentifier("transitMap")
-            .onReceive(viewportProvider.cameraStatePublisher) { newCameraState in
-                zoomLevel = newCameraState.zoom
-            }
-            .withScenePhaseHandlers(onActive: onActive)
-            .enableInjection()
+        if let loadedViewport = Binding($viewportProvider.viewport) {
+            ProxyModifiedMap(
+                mapContent: AnyView(map(viewport: loadedViewport)),
+                handleAppear: handleAppear,
+                handleAccessTokenLoaded: handleAccessTokenLoaded,
+            )
+        } else {
+            Image(.emptyMapGrid)
+        }
     }
 
     func onActive() {
@@ -121,8 +101,8 @@ struct AnnotatedMap: View {
     }
 
     @ViewBuilder
-    var map: Map {
-        Map(viewport: $viewportProvider.viewport) {
+    func map(viewport: Binding<Viewport>) -> some View {
+        Map(viewport: viewport) {
             TapInteraction(.layer(StopLayerGenerator.shared.stopLayerId), action: handleTapStopLayer)
             TapInteraction(.layer(StopLayerGenerator.shared.stopTouchTargetLayerId), action: handleTapStopLayer)
             if showPuck {
@@ -179,5 +159,39 @@ struct AnnotatedMap: View {
                 }
             }
         ))
+        .gestureOptions(.init(
+            rotateEnabled: false,
+            pitchEnabled: false,
+            panDecelerationFactor: 0.99
+        ))
+        .mapStyle(.init(uri: appVariant.styleUri(colorScheme: colorScheme)))
+        .debugOptions(settingsCache.get(.devDebugMode) ? .camera : [])
+        .cameraBounds(.init(maxZoom: 18, minZoom: 7.5))
+        .onCameraChanged { change in handleCameraChange(change) }
+        .ornamentOptions(.init(
+            scaleBar: .init(visibility: .hidden),
+            compass: .init(visibility: .hidden),
+            attributionButton: .init(margins: .init(x: -3, y: 6))
+        ))
+        .onStyleLoaded { _ in
+            // The initial run of this happens before any required data is loaded, so it does nothing and
+            // handleTryLayerInit always performs the first layer creation, but once the data is in place,
+            // this handles any time the map is reloaded again, like for a light/dark mode switch.
+            if scenePhase == .active {
+                // onStyleLoaded was unexpectedly called when app moved to background because the colorScheme
+                // changes twice while backgrounding. Ensure it is only called when the app is active.
+                handleStyleLoaded()
+            }
+        }
+        .additionalSafeAreaInsets(.bottom, sheetHeight + bottomSheetInsetPadding)
+        .additionalSafeAreaInsets(.top, 20)
+        .ignoresSafeArea(.all)
+        .onChange(of: showPuck) { _ in handleStyleLoaded() }
+        .accessibilityIdentifier("transitMap")
+        .onReceive(viewportProvider.cameraStatePublisher) { newCameraState in
+            zoomLevel = newCameraState.zoom
+        }
+        .withScenePhaseHandlers(onActive: onActive)
+        .enableInjection()
     }
 }
