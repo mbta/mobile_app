@@ -3313,7 +3313,6 @@ class RouteCardDataTest {
                 trip = objects.trip(scheduleLater)
                 departureTime = time + 121.minutes
             }
-            // stop id has to be different to current stop otherwise is considered boarding
             val predictionPastPrediction = objects.prediction {
                 stopId = stop1.id
                 trip = objects.trip(predictionPast)
