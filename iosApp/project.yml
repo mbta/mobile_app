@@ -323,6 +323,7 @@ fileGroups:
   - .swift-version
   - .swiftlint.yml
   - 10 Park Plaza.gpx
+  - ol_in_motion.gpx
   - iosApp.xctestplan
   - iosAppRetries.xctestplan
   - iosAppSmokeTest.xctestplan

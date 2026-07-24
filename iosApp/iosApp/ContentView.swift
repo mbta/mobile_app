@@ -241,7 +241,7 @@ struct ContentView: View {
                                 }
                                 Spacer()
                                 VStack(alignment: .trailing, spacing: 20) {
-                                    if !viewportProvider.viewport.isFollowing,
+                                    if !(viewportProvider.viewport?.isFollowing ?? true),
                                        locationDataManager.currentLocation != nil,
                                        navManager.navigationStack.lastSafe().showCurrentLocation {
                                         RecenterButton(icon: .faLocationArrowSolid, label: Text(
@@ -251,7 +251,7 @@ struct ContentView: View {
                                             mapVM.recenter(type: .currentLocation)
                                         }
                                     }
-                                    if !viewportProvider.viewport.isOverview,
+                                    if !(viewportProvider.viewport?.isOverview ?? true),
                                        let routeType = vehicleRouteType() {
                                         RecenterButton(icon: routeIconResource(routeType), label: Text(
                                             "Recenter map on \(routeType.typeText(isOnly: true))",
@@ -536,68 +536,86 @@ struct ContentView: View {
     @ViewBuilder var mapWithSheets: some View {
         let nav = navManager.navigationStack.lastSafe()
         let sheetRoute = nav.toSheetRoute()
-        if hideMaps {
-            navSheetContents
-                .fullScreenCover(item: .constant(nav.coverItemIdentifiable()), onDismiss: {
-                    // Don't navigate back if hideMaps has been changed and the cover is being switched over
-                    if hideMaps == false { return }
-                    switch navManager.navigationStack.last {
-                    case .alertDetails, .more, .saveFavorite: navManager.goBack()
-                    default: break
-                    }
-                }, content: coverContents)
-                .onAppear {
-                    // The NearbyTransitPageView uses the viewport provider to determine what location to load,
-                    // since we have no map when it's hidden, we need to manually update the camera position.
-                    viewportProvider.updateCameraState(locationDataManager.currentLocation)
-                }
-                .onChange(of: locationDataManager.currentLocation) { location in
-                    viewportProvider.updateCameraState(location)
-                }
-        } else {
-            map.sheet(
-                isPresented: .constant(
-                    !(searchObserver.isSearching && nav.isEntrypoint)
-                        && !showingLocationPermissionAlert
-                        && contentVM.onboardingScreensPending != nil
-                ),
-                content: {
-                    VStack {
-                        navSheetContents
-                            .presentationDetents([.small, .medium, .almostFull], selection: $selectedDetent)
-                            .presentationBackgroundInteraction(.enabled(upThrough: .medium))
-                            .interactiveDismissDisabled()
-                    }
-                    // within the sheet to prevent issues on iOS 16 with two modal views open at once
-                    .fullScreenCover(
-                        item: .constant(nav.coverItemIdentifiable()),
-                        onDismiss: {
-                            // Don't navigate back if hideMaps has been changed and the cover is being switched over
-                            if hideMaps { return }
-                            switch navManager.navigationStack.last {
-                            case .alertDetails, .more, .saveFavorite: navManager.goBack()
-                            default: break
-                            }
-                        },
-                        content: coverContents
-                    )
-                    .onChange(of: sheetRoute) { [oldSheetRoute = sheetRoute] newSheetRoute in
-                        if let oldSheetRoute, let newSheetRoute,
-                           SheetRoutes.companion.shouldResetSheetHeight(
-                               first: oldSheetRoute,
-                               second: newSheetRoute
-                           ) {
-                            selectedDetent = .medium
+        VStack {
+            if hideMaps {
+                navSheetContents
+                    .fullScreenCover(item: .constant(nav.coverItemIdentifiable()), onDismiss: {
+                        // Don't navigate back if hideMaps has been changed and the cover is being switched over
+                        if hideMaps == false { return }
+                        switch navManager.navigationStack.last {
+                        case .alertDetails, .more, .saveFavorite: navManager.goBack()
+                        default: break
                         }
-                        errorBannerVM.setSheetRoute(sheetRoute: newSheetRoute)
+                    }, content: coverContents)
+                    .onAppear {
+                        // The NearbyTransitPageView uses the viewport provider to determine what location to load,
+                        // since we have no map when it's hidden, we need to manually update the camera position.
+                        viewportProvider.updateCameraState(locationDataManager.currentLocation)
                     }
-                    .onGeometryChange(for: CGFloat.self) { proxy in
-                        proxy.frame(in: .global).height
-                    } action: { height in
-                        recordSheetHeight(height)
+                    .onChange(of: locationDataManager.currentLocation) { location in
+                        viewportProvider.updateCameraState(location)
                     }
+            } else {
+                map.sheet(
+                    isPresented: .constant(
+                        !(searchObserver.isSearching && nav.isEntrypoint)
+                            && !showingLocationPermissionAlert
+                            && contentVM.onboardingScreensPending != nil
+                    ),
+                    content: {
+                        VStack {
+                            navSheetContents
+                                .presentationDetents([.small, .medium, .almostFull], selection: $selectedDetent)
+                                .presentationBackgroundInteraction(.enabled(upThrough: .medium))
+                                .interactiveDismissDisabled()
+                        }
+                        // within the sheet to prevent issues on iOS 16 with two modal views open at once
+                        .fullScreenCover(
+                            item: .constant(nav.coverItemIdentifiable()),
+                            onDismiss: {
+                                // Don't navigate back if hideMaps has been changed and the cover is being switched over
+                                if hideMaps { return }
+                                switch navManager.navigationStack.last {
+                                case .alertDetails, .more, .saveFavorite: navManager.goBack()
+                                default: break
+                                }
+                            },
+                            content: coverContents
+                        )
+                        .onChange(of: sheetRoute) { [oldSheetRoute = sheetRoute] newSheetRoute in
+                            if let oldSheetRoute, let newSheetRoute,
+                               SheetRoutes.companion.shouldResetSheetHeight(
+                                   first: oldSheetRoute,
+                                   second: newSheetRoute
+                               ) {
+                                selectedDetent = .medium
+                            }
+                            errorBannerVM.setSheetRoute(sheetRoute: newSheetRoute)
+                        }
+                        .onGeometryChange(for: CGFloat.self) { proxy in
+                            proxy.frame(in: .global).height
+                        } action: { height in
+                            recordSheetHeight(height)
+                        }
+                    }
+                )
+            }
+        }
+        .onChange(of: locationDataManager
+            .authorizationStatus) { [oldStatus = locationDataManager.authorizationStatus] status in
+                if oldStatus == nil, [.denied, .notDetermined, .restricted].contains(status) {
+                    let center = ViewportProvider.Defaults.center
+                    viewportProvider.initViewport(location: CLLocation(
+                        latitude: center.latitude,
+                        longitude: center.longitude
+                    ))
                 }
-            )
+        }
+        .onChange(of: locationDataManager
+            .currentLocation) { [oldLocation = locationDataManager.currentLocation] location in
+                if let location, oldLocation == nil {
+                    viewportProvider.initViewport(location: location)
+                }
         }
     }
 

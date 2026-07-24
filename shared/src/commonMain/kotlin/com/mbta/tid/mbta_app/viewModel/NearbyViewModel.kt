@@ -119,7 +119,7 @@ public class NearbyViewModel(
             val resolvedLocation = location
             if (globalData == null || resolvedLocation == null) return@LaunchedEffect
             nearbyResponse = nearbyRepository.getStopIdsNearby(globalData, resolvedLocation)
-            stopIds = nearbyResponse?.filter(globalData, alerts, now)
+            stopIds = nearbyResponse?.filter(globalData, alerts, now)?.sorted()
         }
 
         LaunchedEffect(stopIds) {

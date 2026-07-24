@@ -62,9 +62,7 @@ struct NearbyTransitPage: View {
                     viewportProvider: viewportProvider,
                 )
                 .onReceive(
-                    viewportProvider.cameraStatePublisher
-                        .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-
+                    viewportProvider.cameraStatePublisherThrottled
                 ) { newCameraState in
                     guard navManager.isNearbyVisible() else { return }
                     location = newCameraState.center

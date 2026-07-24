@@ -125,6 +125,35 @@ final class ContentViewTests: XCTestCase {
         XCTAssertThrowsError(try sut.inspect().find(HomeMapView.self))
     }
 
+    @MainActor func testViewportInitWhenLocationAuthKnown() throws {
+        let cameraExp = expectation(description: "location updates viewport camera when hideMaps is on")
+        let contentVM = FakeContentVM()
+
+        let locationFetcher = MockLocationFetcher()
+
+        let locationDataManager: LocationDataManager = .init(locationFetcher: locationFetcher)
+
+        let sutWithEnv = withDefaultEnvironmentObjects(
+            sut: ContentView(contentVM: contentVM),
+            locationDataManager: locationDataManager,
+            settings: [.hideMaps: true]
+        )
+        let sut = try sutWithEnv.inspect().find(ContentView.self).actualView()
+
+        var cameraUpdate = 0
+        let cancelSink = sut.viewportProvider.cameraStatePublisher.sink { updatedCamera in
+            if cameraUpdate == 0 {
+                XCTAssertEqual(ViewportProvider.Defaults.center, updatedCamera.center)
+                cameraExp.fulfill()
+            }
+        }
+
+        ViewHosting.host(view: sutWithEnv)
+        locationFetcher.authorizationStatus = .denied
+        wait(for: [cameraExp], timeout: 5)
+        cancelSink.cancel()
+    }
+
     @MainActor func testHiddenMapUpdatesLocation() throws {
         let cameraExp = expectation(description: "location updates viewport camera when hideMaps is on")
         let contentVM = FakeContentVM()
@@ -145,8 +174,6 @@ final class ContentViewTests: XCTestCase {
         var cameraUpdate = 0
         let cancelSink = sut.viewportProvider.cameraStatePublisher.sink { updatedCamera in
             if cameraUpdate == 0 {
-                XCTAssert(ViewportProvider.Defaults.center.isRoughlyEqualTo(updatedCamera.center))
-            } else if cameraUpdate == 1 {
                 XCTAssertEqual(newLocation.coordinate, updatedCamera.center)
                 cameraExp.fulfill()
             }
