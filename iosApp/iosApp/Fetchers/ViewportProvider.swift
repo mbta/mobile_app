@@ -34,9 +34,17 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
 
     init(viewport: Viewport? = nil, isManuallyCentering: Bool = false) {
         self.viewport = viewport
+        let viewportCamera = viewport?.camera
+        let initialCameraState = viewport == nil ? nil : CameraState(
+            center: viewportCamera?.center ?? Defaults.center,
+            padding: viewportCamera?.padding ?? .zero,
+            zoom: viewportCamera?.zoom ?? Defaults.zoom,
+            bearing: viewportCamera?.bearing ?? 0.0,
+            pitch: viewportCamera?.pitch ?? 0.0
+        )
+
         isFollowingPuck = viewport?.isFollowing ?? true
-        // Don't publish the default center so that we don't fetch data for it immediately on load
-        cameraStateSubject = .init(nil)
+        cameraStateSubject = .init(initialCameraState)
         self.isManuallyCentering = isManuallyCentering
 
         cameraStatePublisher =
@@ -78,7 +86,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
     }
 
     func isDefault() -> Bool {
-        viewport?.camera?.center?.isRoughlyEqualTo(Defaults.center) ?? true
+        viewport == nil || viewport?.camera?.center?.isRoughlyEqualTo(Defaults.center) ?? false
     }
 
     @MainActor func stopCenter(stop: Stop) {
