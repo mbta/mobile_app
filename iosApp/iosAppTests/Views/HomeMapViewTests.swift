@@ -68,7 +68,7 @@ final class HomeMapViewTests: XCTestCase {
         wait(for: [exp], timeout: 2)
     }
 
-    func testNoLocationDefaultCenter() {
+    func testNoMapWhenLocationAuthNotKnown() {
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
             alerts: .init(alerts: [:]),
@@ -81,37 +81,8 @@ final class HomeMapViewTests: XCTestCase {
             navManager: .init(),
             viewportProvider: ViewportProvider(),
         )
-        XCTAssertEqual(sut.viewportProvider.viewport.camera?.center, ViewportProvider.Defaults.center)
-    }
 
-    /// Test is ignored in the test plan
-    func testFollowsPuckWhenUserLocationIsKnown() {
-        let locationFetcher = MockLocationFetcher()
-        locationFetcher.authorizationStatus = .authorizedAlways
-
-        let locationDataManager: LocationDataManager = .init(locationFetcher: locationFetcher)
-        let newLocation: CLLocation = .init(latitude: 42, longitude: -71)
-
-        var sut = HomeMapView(
-            alerts: .init(alerts: [:]),
-            contentVM: .init(),
-            mapVM: MockMapViewModel(),
-            routeCardDataVM: MockRouteCardDataViewModel(),
-            sheetHeight: .constant(0),
-            selectedVehicle: .constant(nil),
-            locationDataManager: locationDataManager,
-            navManager: .init(),
-            viewportProvider: ViewportProvider(),
-        )
-
-        let hasAppeared = sut.on(\.didAppear) { _ in
-            XCTAssertNotNil(sut.viewportProvider.viewport.followPuck)
-        }
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        locationFetcher.updateLocations(locations: [newLocation])
-        XCTAssertEqual(locationDataManager.currentLocation, newLocation)
-
-        wait(for: [hasAppeared], timeout: 5)
+        XCTAssertNotNil(try sut.withFixedSettings([:]).inspect().find(viewWithAccessibilityIdentifier: "emptyMapGrid"))
     }
 
     @MainActor
@@ -295,11 +266,11 @@ final class HomeMapViewTests: XCTestCase {
             selectedVehicle: .constant(nil),
             locationDataManager: .init(),
             navManager: navManager,
-            viewportProvider: ViewportProvider(),
+            viewportProvider: ViewportProvider(viewport: .camera(center: ViewportProvider.Defaults.center)),
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: ScenePhase.active)
+            try sut.find(AnnotatedMap.self).findAndCallOnChange(relation: .parent, newValue: ScenePhase.active)
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -326,11 +297,11 @@ final class HomeMapViewTests: XCTestCase {
             selectedVehicle: .constant(nil),
             locationDataManager: .init(),
             navManager: navManager,
-            viewportProvider: ViewportProvider(),
+            viewportProvider: ViewportProvider(viewport: .camera(center: ViewportProvider.Defaults.center)),
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: ScenePhase.active)
+            try sut.find(AnnotatedMap.self).findAndCallOnChange(relation: .parent, newValue: ScenePhase.active)
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -359,11 +330,11 @@ final class HomeMapViewTests: XCTestCase {
             selectedVehicle: .constant(nil),
             locationDataManager: .init(),
             navManager: navManager,
-            viewportProvider: ViewportProvider(),
+            viewportProvider: ViewportProvider(viewport: .camera(center: ViewportProvider.Defaults.center)),
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: ScenePhase.active)
+            try sut.find(AnnotatedMap.self).findAndCallOnChange(relation: .parent, newValue: ScenePhase.active)
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -390,11 +361,11 @@ final class HomeMapViewTests: XCTestCase {
             selectedVehicle: .constant(nil),
             locationDataManager: .init(),
             navManager: navManager,
-            viewportProvider: ViewportProvider(),
+            viewportProvider: ViewportProvider(viewport: .camera(center: ViewportProvider.Defaults.center)),
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue:
+            try sut.find(AnnotatedMap.self).findAndCallOnChange(relation: .parent, newValue:
                 ScenePhase.background)
         }
 
@@ -428,11 +399,11 @@ final class HomeMapViewTests: XCTestCase {
             selectedVehicle: .constant(nil),
             locationDataManager: .init(),
             navManager: navManager,
-            viewportProvider: ViewportProvider(),
+            viewportProvider: ViewportProvider(viewport: .camera(center: ViewportProvider.Defaults.center)),
         )
 
         let hasAppeared = sut.on(\.didAppear) { view in
-            try view.find(ProxyModifiedMap.self).findAndCallOnChange(
+            try view.find(AnnotatedMap.self).findAndCallOnChange(
                 relation: .parent,
                 newValue: [SheetNavigationStackEntry]()
             )
@@ -443,6 +414,7 @@ final class HomeMapViewTests: XCTestCase {
         wait(for: [hasAppeared], timeout: 5)
     }
 
+    @MainActor
     func testRequestsLocationAfterLoading() {
         class FakeLocationFetcher: LocationFetcher {
             var didRequestAuthorization = false
@@ -474,14 +446,14 @@ final class HomeMapViewTests: XCTestCase {
             navManager: .init(),
             viewportProvider: .init(),
         )
-        let exp = sut.on(\.didAppear) { view in
+        let exp = sut.inspection.inspect(after: 1) { view in
             XCTAssertFalse(locationFetcher.didRequestAuthorization)
             contentVM.onboardingScreensPending = []
             try view.findAndCallOnChange(newValue: contentVM.onboardingScreensPending)
             XCTAssertTrue(locationFetcher.didRequestAuthorization)
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [exp], timeout: 1)
+        wait(for: [exp], timeout: 2)
     }
 
     class CallbackVehiclesRepo: IVehiclesRepository {

@@ -83,6 +83,7 @@ struct AnnotatedMap: View {
             )
         } else {
             Image(.emptyMapGrid)
+                .accessibilityIdentifier("emptyMapGrid")
         }
     }
 
