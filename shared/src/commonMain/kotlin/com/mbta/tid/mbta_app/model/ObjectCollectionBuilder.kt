@@ -105,6 +105,8 @@ private constructor(
         public var header: String? = null
         public var lifecycle: Alert.Lifecycle = Alert.Lifecycle.New
         public var severity: Int = 0
+
+        public var summaries: List<AlertSummaryEntity>? = null
         public var updatedAt: EasternTimeInstant =
             EasternTimeInstant(Instant.fromEpochMilliseconds(0))
         public var facilities: Map<String, Facility>? = null
@@ -163,6 +165,7 @@ private constructor(
                 informedEntity,
                 lifecycle,
                 severity,
+                summaries,
                 updatedAt,
                 facilities,
             )
