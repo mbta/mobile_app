@@ -117,7 +117,7 @@ class ViewportProvider(
             old.center.isRoughlyEqualTo(new.center)
         }
     @OptIn(FlowPreview::class)
-    override var cameraStateFlowDebounced = cameraStateFlow.sample(2.seconds)
+    override var cameraStateFlowDebounced = cameraStateFlow.sample(0.5.seconds)
 
     private var lastEdgeInsets: EdgeInsets = EdgeInsets(0.0, 0.0, 0.0, 0.0)
 

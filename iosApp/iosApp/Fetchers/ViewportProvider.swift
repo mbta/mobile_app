@@ -55,7 +55,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
                 .eraseToAnyPublisher()
 
         cameraStatePublisherThrottled = cameraStatePublisher.throttle(
-            for: .seconds(2),
+            for: .seconds(0.5),
             scheduler: DispatchQueue.main,
             latest: true
         ).eraseToAnyPublisher()
