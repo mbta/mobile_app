@@ -46,6 +46,8 @@ private fun fetchSchedules(
     }
 }
 
+internal data class LoadedSchedules(val stopIds: Set<String>, val response: ScheduleResponse)
+
 @Composable
 internal fun getSchedules(
     stopIds: Set<String>?,
@@ -53,9 +55,9 @@ internal fun getSchedules(
     schedulesRepository: ISchedulesRepository = koinInject(),
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
     coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
-): ScheduleResponse? {
+): LoadedSchedules? {
     val errorKey = errorKey.withSuffix("getSchedules")
-    var result: ScheduleResponse? by remember { mutableStateOf(null) }
+    var result: LoadedSchedules? by remember { mutableStateOf(null) }
 
     LaunchedEffect(stopIds) {
         result = null
@@ -67,10 +69,8 @@ internal fun getSchedules(
                 schedulesRepository,
                 coroutineDispatcher,
             ) {
-                result = it
+                result = LoadedSchedules(stopIds, it)
             }
-        } else {
-            result = ScheduleResponse(emptyList(), emptyMap())
         }
     }
 

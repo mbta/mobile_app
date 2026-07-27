@@ -168,8 +168,8 @@ public class StopDetailsViewModel(
                     stopIds,
                     globalData,
                     sortByDistanceFrom = null,
-                    schedules,
-                    predictions,
+                    schedules.response,
+                    predictions.response,
                     alerts,
                     now,
                     if (resolvedFilters.stopFilter != null)

@@ -19,13 +19,10 @@ struct FavoritesPage: View {
     @ObservedObject var navManager: NavigationManager
     @ObservedObject var viewportProvider: ViewportProvider
 
-    @State var location: CLLocationCoordinate2D?
-
     var body: some View {
         ZStack {
             Color.sheetBackground.ignoresSafeArea(.all)
             FavoritesView(
-                location: $location,
                 alerts: alerts,
                 errorBannerVM: errorBannerVM,
                 favoritesVM: favoritesVM,
@@ -34,25 +31,6 @@ struct FavoritesPage: View {
                 viewportProvider: viewportProvider,
             )
             .toolbarBackground(.visible, for: .tabBar)
-            .onReceive(
-                viewportProvider.cameraStatePublisherThrottled
-            ) { newCameraState in
-                guard navManager.isFavoritesVisible() else { return }
-                location = newCameraState.center
-            }
-            .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
-                if isManuallyCentering {
-                    // The user is manually moving the map, clear the nearby state and
-                    // reload it once the've stopped manipulating the map
-                    location = nil
-                }
-            }
-            .onChange(of: viewportProvider.isFollowingPuck) { isFollowingPuck in
-                if isFollowingPuck {
-                    // The user just recentered the map, clear the nearby state
-                    location = nil
-                }
-            }
         }
         .enableInjection()
     }

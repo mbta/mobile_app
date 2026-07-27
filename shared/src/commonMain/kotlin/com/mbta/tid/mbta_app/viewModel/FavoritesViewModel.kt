@@ -285,39 +285,67 @@ public class FavoritesViewModel(
             }
         }
 
-        LaunchedEffect(
-            stopIds,
-            globalData,
-            location,
-            schedules,
-            predictions,
-            alerts,
-            now,
-            favorites,
-        ) {
-            if (stopIds == null || globalData == null || location == null) {
-                routeCardData = null
-            } else if (stopIds.isEmpty()) {
-                routeCardData = emptyList()
-            } else {
-                routeCardData =
-                    RouteCardData.routeCardsForStopList(
-                        stopIds,
-                        globalData,
-                        location,
-                        schedules,
-                        predictions,
-                        alerts,
-                        now,
-                        RouteCardData.Context.Favorites,
-                        favorites?.keys,
-                        coroutineDispatcher,
-                    )
-                loadedLocation = location
-            }
-            stopCardData = routeCardData?.let {
-                StopCardData.fromRouteCardData(it, sortByDistanceFrom = location)
-            }
+        data class RouteCardDataParams(
+            val location: Position?,
+            val stopIds: List<String>?,
+            val globalData: GlobalResponse?,
+            val schedules: LoadedSchedules?,
+            val predictions: LoadedPredictions?,
+            val alerts: AlertsStreamDataResponse?,
+            val now: EasternTimeInstant,
+        )
+
+        // Put all route card params into a single debounceable value. If we just put all the params
+        // as keys to a LaunchedEffect, then routeCardData setting can get interrupted by frequent
+        // changes to predictions or now, which can chain and significantly delay updates.
+        var params: RouteCardDataParams? by remember { mutableStateOf(null) }
+        LaunchedEffect(location, stopIds, globalData, schedules, predictions, alerts, now) {
+            params =
+                RouteCardDataParams(
+                    location,
+                    stopIds,
+                    globalData,
+                    schedules,
+                    predictions,
+                    alerts,
+                    now,
+                )
+        }
+
+        LaunchedEffect(Unit) {
+            snapshotFlow { params }
+                .sample(100.milliseconds)
+                .conflate()
+                .collect {
+                    if (it == null) return@collect
+                    if (it.stopIds == null || it.globalData == null) {
+                        routeCardData = null
+                    } else if (it.stopIds.isEmpty()) {
+                        routeCardData = emptyList()
+                    } else if (
+                        it.location != null &&
+                            it.schedules?.stopIds == it.stopIds.toSet() &&
+                            it.predictions?.stopIds == it.stopIds.toSet()
+                    ) {
+                        routeCardData =
+                            RouteCardData.routeCardsForStopList(
+                                it.stopIds,
+                                it.globalData,
+                                it.location,
+                                it.schedules.response,
+                                it.predictions.response,
+                                it.alerts,
+                                it.now,
+                                RouteCardData.Context.Favorites,
+                                favorites?.keys,
+                                coroutineDispatcher,
+                            )
+                        loadedLocation = it.location
+                    }
+                    stopCardData = routeCardData?.let { rcd ->
+                        StopCardData.fromRouteCardData(rcd, sortByDistanceFrom = it.location)
+                    }
+                }
         }
 
         LaunchedEffect(stopIds, globalData, favorites, location) {

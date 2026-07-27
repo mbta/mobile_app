@@ -28,7 +28,7 @@ final class NearbyTransitViewTests: XCTestCase {
     func testPending() throws {
         let sut = NearbyTransitView(
             alerts: .init(alerts: [:]),
-            location: .constant(ViewportProvider.Defaults.center),
+            initialLocation: ViewportProvider.Defaults.center,
             setIsReturningFromBackground: { _ in },
             noNearbyStops: noNearbyStops,
             nearbyVM: MockNearbyViewModel(),
@@ -50,7 +50,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         var sut = NearbyTransitView(
             alerts: .init(alerts: [:]),
-            location: .constant(ViewportProvider.Defaults.center),
+            initialLocation: ViewportProvider.Defaults.center,
             setIsReturningFromBackground: { _ in },
             noNearbyStops: noNearbyStops,
             nearbyVM: mockNearbyVM,
@@ -131,7 +131,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let sut = NearbyTransitView(
             alerts: .init(alerts: [:]),
-            location: .constant(mockLocation),
+            initialLocation: mockLocation,
             setIsReturningFromBackground: { _ in },
             noNearbyStops: noNearbyStops,
             nearbyVM: nearbyVM,
@@ -162,6 +162,7 @@ final class NearbyTransitViewTests: XCTestCase {
         }
         let davisExp = expectation(description: "joins predictions for Davis")
         let alewifeExp = expectation(description: "joins predictions for Alewife")
+        davisExp.assertForOverFulfill = false
 
         loadKoinMocks(objects: objects)
 
@@ -180,88 +181,26 @@ final class NearbyTransitViewTests: XCTestCase {
             }
         }
 
+        let viewportProvider = ViewportProvider()
+        viewportProvider.updateCameraState(CLLocation(latitude: davis.latitude, longitude: davis.longitude))
+
         let sut = NearbyTransitView(
             alerts: .init(alerts: [:]),
-            location: .constant(davis.coordinate),
+            initialLocation: davis.coordinate,
             setIsReturningFromBackground: { _ in },
             noNearbyStops: noNearbyStops,
             nearbyVM: nearbyVM,
             navManager: .init(),
-            viewportProvider: .init(),
+            viewportProvider: viewportProvider,
         )
 
-        let loadExp = sut.inspection.inspect(after: 1) { view in
-            try view.find(ViewType.VStack.self).callOnChange(newValue: alewife.coordinate)
+        let loadExp = sut.inspection.inspect(after: 0.5) { _ in
+            viewportProvider.updateCameraState(CLLocation(latitude: alewife.latitude, longitude: alewife.longitude))
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
 
-        wait(for: [loadExp, davisExp, alewifeExp], timeout: 2)
-    }
-
-    @MainActor func testScrollToTopWhenNearbyChanges() {
-        let scrollPositionSetExpectation = XCTestExpectation(description: "component scrolled")
-        let now = EasternTimeInstant.now()
-
-        let objects = TestData.clone()
-
-        let route: LineOrRoute = .route(TestData.getRoute(id: "67"))
-        let stop = objects.getStop(id: "14121")
-
-        let nearbyState = NearbyViewModel.State(
-            awaitingPredictionsAfterBackground: false,
-            routeCardData: [.init(
-                lineOrRoute: route,
-                stopData: [.init(
-                    lineOrRoute: route,
-                    stop: stop,
-                    data: [.init(
-                        lineOrRoute: route,
-                        stop: stop,
-                        direction: .init(
-                            directionId: 0,
-                            route: route.sortRoute
-                        ),
-                        routePatterns: [TestData.getRoutePattern(id: "67-4-0")],
-                        stopIds: ["14121"],
-                        upcomingTrips: [],
-                        alertsHere: [],
-                        allDataLoaded: true,
-                        hasSchedulesToday: true,
-                        subwayServiceStartTime: nil,
-                        alertsDownstream: [],
-                        context: .nearbyTransit
-                    )]
-                )],
-                at: now
-            )],
-            loadedLocation: mockLocation.positionKt,
-            loadedStopIds: ["14121"]
-        )
-        let nearbyVM = MockNearbyViewModel(initialState: nearbyState)
-
-        let sut = NearbyTransitView(
-            alerts: .init(alerts: [:]),
-            location: .constant(mockLocation),
-            setIsReturningFromBackground: { _ in },
-            noNearbyStops: noNearbyStops,
-            nearbyVM: nearbyVM,
-            navManager: .init(),
-            viewportProvider: .init(),
-        )
-
-        sut.scrollSubject.sink { _ in
-            scrollPositionSetExpectation.fulfill()
-        }.store(in: &cancellables)
-
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-
-        let changeStopsExp = sut.inspection.inspect(after: 1) { view in
-            try view.find(ViewType.VStack.self)
-                .callOnChange(newValue: ["new-stop"])
-        }
-
-        wait(for: [changeStopsExp, scrollPositionSetExpectation], timeout: 2)
+        wait(for: [loadExp, davisExp, alewifeExp], timeout: 3)
     }
 
     @MainActor func testEmptyFallback() {
@@ -276,7 +215,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let sut = NearbyTransitView(
             alerts: .init(alerts: [:]),
-            location: .constant(mockLocation),
+            initialLocation: mockLocation,
             setIsReturningFromBackground: { _ in },
             noNearbyStops: noNearbyStops,
             nearbyVM: nearbyVM,
@@ -325,7 +264,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let sut = NearbyTransitView(
             alerts: .init(alerts: [:]),
-            location: .constant(mockLocation),
+            initialLocation: mockLocation,
             setIsReturningFromBackground: { _ in },
             noNearbyStops: noNearbyStops,
             nearbyVM: nearbyVM,

@@ -21,8 +21,6 @@ struct NearbyTransitPage: View {
     @ObservedObject var navManager: NavigationManager
     let noNearbyStops: () -> NoNearbyStopsView
 
-    @State var location: CLLocationCoordinate2D?
-
     @EnvironmentObject var viewportProvider: ViewportProvider
 
     let inspection = Inspection<Self>()
@@ -54,35 +52,15 @@ struct NearbyTransitPage: View {
                 DebugView { EmptyView() }
                 NearbyTransitView(
                     alerts: alerts,
-                    location: $location,
                     setIsReturningFromBackground: { errorBannerVM.setIsLoadingWhenPredictionsStale(isLoading: $0) },
                     noNearbyStops: noNearbyStops,
                     nearbyVM: nearbyVM,
                     navManager: navManager,
                     viewportProvider: viewportProvider,
                 )
-                .onReceive(
-                    viewportProvider.cameraStatePublisherThrottled
-                ) { newCameraState in
-                    guard navManager.isNearbyVisible() else { return }
-                    location = newCameraState.center
-                }
                 .onReceive(inspection.notice) { inspection.visit(self, $0) }
             }
             .toolbarBackground(.visible, for: .tabBar)
-            .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
-                if isManuallyCentering {
-                    // The user is manually moving the map, clear the nearby state and
-                    // reload it once the've stopped manipulating the map
-                    location = nil
-                }
-            }
-            .onChange(of: viewportProvider.isFollowingPuck) { isFollowingPuck in
-                if isFollowingPuck {
-                    // The user just recentered the map, clear the nearby state
-                    location = nil
-                }
-            }
         }
         .enableInjection()
     }
