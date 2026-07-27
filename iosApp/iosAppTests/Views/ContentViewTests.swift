@@ -82,15 +82,21 @@ final class ContentViewTests: XCTestCase {
         wait(for: [joinAlertsExp], timeout: 5)
     }
 
-    func testFetchesConfig() {
+    func testFetchesMapConfig() {
         let configFetchedExpectation = XCTestExpectation(description: "config fetched")
+
+        let fetcher = MockLocationFetcher()
+
+        let locationDataManager: LocationDataManager = .init(locationFetcher: fetcher)
 
         let fakeVM = FakeContentVM(
             loadConfigCallback: { configFetchedExpectation.fulfill() }
         )
         let sut = ContentView(contentVM: fakeVM)
 
-        ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut))
+        ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut, locationDataManager: locationDataManager))
+
+        fetcher.authorizationStatus = .denied
 
         wait(for: [configFetchedExpectation], timeout: 6)
     }

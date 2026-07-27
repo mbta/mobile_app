@@ -46,7 +46,7 @@ final class NearbyTransitPageTests: XCTestCase {
                 locationChangeExpectation.fulfill()
             }
         }
-        let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
+        let viewportProvider = ViewportProvider()
         let sut = NearbyTransitPage(
             alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
