@@ -484,8 +484,7 @@ tasks.register<CycloneDxBomTransformTask>("bomIosSwiftPM") {
                 gh.standardOutput.asText.get()
             }
             val licenseResponse = GithubLicenseResponse.decode(apiResponse)
-
-            component.licenses.addLicense(
+            val license =
                 License().apply {
                     setLicenseText(
                         AttachmentText().apply {
@@ -501,7 +500,11 @@ tasks.register<CycloneDxBomTransformTask>("bomIosSwiftPM") {
                         }
                     )
                 }
-            )
+            if (component.licenses == null) {
+                component.licenses = LicenseChoice().apply { addLicense(license) }
+            } else {
+                component.licenses.addLicense(license)
+            }
         }
     }
 }
