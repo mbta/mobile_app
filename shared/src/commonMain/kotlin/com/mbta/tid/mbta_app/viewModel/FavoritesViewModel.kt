@@ -40,6 +40,7 @@ internal enum class RemovalReason {
     MissingRoute,
     MissingStop,
     MissingDirection,
+    LastStopForRoute,
 }
 
 @OptIn(ExperimentalObjCRefinement::class)
@@ -174,23 +175,25 @@ public class FavoritesViewModel(
         ): Map<RouteStopDirection, RemovalReason> =
             favorites
                 .mapNotNull { rsd ->
-                    val lineOrRoute = global.getLineOrRoute(rsd.route)
-                    val routeExists = lineOrRoute != null
-                    val stopExists = global.getStop(rsd.stop) != null
-                    val directionExists =
-                        lineOrRoute?.let {
-                            global.getPatternsFor(rsd.stop, it).any { pattern ->
-                                pattern.directionId == rsd.direction
-                            }
-                        } ?: false
-                    val removalReason =
-                        when {
-                            !routeExists -> RemovalReason.MissingRoute
-                            !stopExists -> RemovalReason.MissingStop
-                            !directionExists -> RemovalReason.MissingDirection
-                            else -> null
+                    val lineOrRoute =
+                        global.getLineOrRoute(rsd.route)
+                            ?: return@mapNotNull rsd to RemovalReason.MissingRoute
+                    val stop =
+                        global.getStop(rsd.stop)
+                            ?: return@mapNotNull rsd to RemovalReason.MissingStop
+
+                    val patterns = global.getPatternsFor(rsd.stop, lineOrRoute)
+
+                    if (
+                        patterns.none { pattern ->
+                            pattern.directionId == rsd.direction
                         }
-                    return@mapNotNull removalReason?.let { rsd to removalReason }
+                    )
+                        return@mapNotNull rsd to RemovalReason.MissingDirection
+
+                    if (stop.isLastStopForAllPatterns(rsd.direction, patterns, global))
+                        return@mapNotNull rsd to RemovalReason.LastStopForRoute
+                    return@mapNotNull null
                 }
                 .toMap()
 
