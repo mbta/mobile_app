@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.model.FavoriteSettings
@@ -22,6 +23,8 @@ import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.LoadedPredictions
+import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.LoadedSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
@@ -29,10 +32,14 @@ import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
 import kotlin.experimental.ExperimentalObjCRefinement
 import kotlin.jvm.JvmName
 import kotlin.native.ShouldRefineInSwift
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.sample
 import org.maplibre.spatialk.geojson.Position
 
 // Purely for logging
@@ -130,6 +137,7 @@ public class FavoritesViewModel(
     @set:JvmName("setLocationState") private var location by mutableStateOf<Position?>(null)
     @set:JvmName("setNowState") private var now by mutableStateOf(EasternTimeInstant.now())
 
+    @OptIn(FlowPreview::class)
     @Composable
     override fun runLogic(): State {
         var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
@@ -348,6 +356,8 @@ public class FavoritesViewModel(
                 }
         }
 
+        // Static data doesn't need to be processed in a snapshotFlow because the input params
+        // change very infrequently
         LaunchedEffect(stopIds, globalData, favorites, location) {
             if (stopIds == null || globalData == null) {
                 staticRouteCardData = null

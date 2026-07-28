@@ -179,7 +179,9 @@ public class NearbyViewModel(
                         routeCardData = emptyList()
                         loadedLocationStops = resolvedLocationStops
                     } else if (
-                        it.location == resolvedLocationStops.location &&
+                        resolvedLocationStops.location?.let { loadedStopLocation ->
+                            it.location?.isRoughlyEqualTo(loadedStopLocation)
+                        } == true &&
                             it.schedules?.stopIds == stopIdSet &&
                             it.predictions?.stopIds == stopIdSet
                     ) {

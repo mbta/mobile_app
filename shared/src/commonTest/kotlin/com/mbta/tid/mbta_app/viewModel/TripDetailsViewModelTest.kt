@@ -28,11 +28,13 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.component.get
@@ -273,7 +275,7 @@ class TripDetailsViewModelTest : KoinTest {
             assertEquals(1, predictionLoadCount)
             assertEquals(0, predictionDisconnectCount)
             viewModel.setActive(active = false, wasSentToBackground = false)
-            advanceUntilIdle()
+            advanceTimeBy(100.milliseconds)
             assertEquals(1, predictionLoadCount)
             assertEquals(1, predictionDisconnectCount)
             cancelAndIgnoreRemainingEvents()
