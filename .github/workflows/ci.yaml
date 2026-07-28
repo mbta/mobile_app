@@ -62,6 +62,18 @@ jobs:
       SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
       FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
       GOOGLE_APP_ID_IOS: ${{ secrets.GOOGLE_APP_ID_IOS_STAGING }}
+  test-older-ios:
+    name: tests on older iOS version
+    permissions:
+      contents: read
+    needs: check-changes
+    uses: ./.github/workflows/test-older-ios.yaml
+    with:
+      skip-everything: ${{ github.event_name == 'pull_request' && needs.check-changes.outputs.ios == 'false' }}
+    secrets:
+      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+      FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+      GOOGLE_APP_ID_IOS: ${{ secrets.GOOGLE_APP_ID_IOS_STAGING }}
   build-android:
     name: Build for Android
     permissions:
