@@ -58,6 +58,7 @@ The recommendation for KMM projects is to use Android Studio for editing & runni
 - If your Gradle dependency tree has problems you need to visualize, try `./gradlew :shared:dependencies --configuration iosMainImplementationDependenciesMetadata` or `./gradlew :shared:dependencies --configuration releaseRuntimeClasspath` or `./gradlew :androidApp:dependencies --configuration stagingReleaseRuntimeClasspath`. Gradle sometimes just lies about what dependencies it’ll use, though.
 - For MBTA employees with Zscaler, if you run into an error that looks like `PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target`. Check out the [issue documentation](https://app.notion.com/p/mbta-downtown-crossing/PKIX-Issues-when-building-Java-projects-25ef5d8d11ea80bd81cbd88bf531ac71) on how to solve it.
 - If an Xcode build fails because it can't locate Java Runtime, try defining `$JAVA_HOME` in the .envrc file, if you're using asdf you can add `export JAVA_HOME=$(asdf where java)` at the end of the .envrc file.
+- If an XCode build fails and it isn't using the good `PATH` from your terminal, inspect the gradle processes using `./gradlew --status` and `ps x | grep [gradle pid]` to see if one is using the incorrect version of java. You may need to change `JAVA_HOME` in your terminal (`export JAVA_HOME=$(asdf where java)`) or fix which java Android Studio is using to match.
 
 ## Running Locally
 
