@@ -1,9 +1,20 @@
 name: iOS tests on older iOS version
 
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
+    inputs:
+      skip-everything:
+        description: "Skips all the individual steps so the job passes quickly"
+        required: false
+        default: false
+        type: boolean
+    secrets:
+      SENTRY_DSN:
+        required: true
+      FIREBASE_KEY:
+        required: true
+      GOOGLE_APP_ID_IOS:
+        required: true
 
 jobs:
   test-older-ios:
@@ -28,6 +39,16 @@ jobs:
           bundle exec pod install
           popd
           bundle exec ./gradlew :shared:podInstallSyntheticIos
+      - name: shared checks & unit tests
+        if: ${{ !inputs.skip-everything }}
+        run: ./gradlew shared:iosSimulatorArm64Test
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: failure() && !inputs.skip-everything
+        with:
+          name: ios-shared-reports
+          path: shared/build/reports
       - name: Add build environment variables
         if: ${{ !inputs.skip-everything }}
         run: |
