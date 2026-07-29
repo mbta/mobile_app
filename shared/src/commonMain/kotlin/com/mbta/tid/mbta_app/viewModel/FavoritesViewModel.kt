@@ -154,12 +154,10 @@ public class FavoritesViewModel(
         val stopIds =
             remember(favorites, globalData) {
                 val stops = favorites?.keys?.mapNotNull { globalData?.getStop(it.stop) }
-                stops
-                    ?.flatMap { stop ->
-                        stop.childStopIds.filter { globalData?.stops?.containsKey(it) ?: false } +
-                            stop.id
-                    }
-                    ?.sorted()
+                stops?.flatMap { stop ->
+                    stop.childStopIds.filter { globalData?.stops?.containsKey(it) ?: false } +
+                        stop.id
+                }
             }
         val schedules = getSchedules(stopIds?.toSet(), errorKey)
         val predictions =
