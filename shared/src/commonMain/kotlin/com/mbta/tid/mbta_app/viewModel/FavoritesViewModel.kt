@@ -158,10 +158,10 @@ public class FavoritesViewModel(
                         stop.id
                 }
             }
-        val schedules = getSchedules(stopIds, errorKey)
+        val schedules = getSchedules(stopIds?.toSet(), errorKey)
         val predictions =
             subscribeToPredictions(
-                stopIds,
+                stopIds?.toSet(),
                 SheetRoutes.Favorites,
                 active,
                 errorKey,

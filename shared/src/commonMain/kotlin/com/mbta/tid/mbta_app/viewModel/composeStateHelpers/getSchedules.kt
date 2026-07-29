@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 private fun fetchSchedules(
-    stopIds: List<String>,
+    stopIds: Set<String>,
     errorKey: ErrorKey,
     errorBannerRepository: IErrorBannerStateRepository,
     schedulesRepository: ISchedulesRepository,
@@ -48,7 +48,7 @@ private fun fetchSchedules(
 
 @Composable
 internal fun getSchedules(
-    stopIds: List<String>?,
+    stopIds: Set<String>?,
     errorKey: ErrorKey,
     schedulesRepository: ISchedulesRepository = koinInject(),
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),

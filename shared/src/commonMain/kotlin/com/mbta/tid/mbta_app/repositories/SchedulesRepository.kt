@@ -21,11 +21,11 @@ import org.koin.core.qualifier.named
 
 public interface ISchedulesRepository {
     public suspend fun getSchedule(
-        stopIds: List<String>,
+        stopIds: Set<String>,
         now: EasternTimeInstant,
     ): ApiResult<ScheduleResponse>
 
-    public suspend fun getSchedule(stopIds: List<String>): ApiResult<ScheduleResponse>
+    public suspend fun getSchedule(stopIds: Set<String>): ApiResult<ScheduleResponse>
 
     public suspend fun getNextSchedule(
         route: LineOrRoute,
@@ -42,7 +42,7 @@ internal class CachedSchedulesRepository(private val schedulesRepository: ISched
     private val ioDispatcher: CoroutineDispatcher by inject(named("coroutineDispatcherIO"))
 
     override suspend fun getSchedule(
-        stopIds: List<String>,
+        stopIds: Set<String>,
         now: EasternTimeInstant,
     ): ApiResult<ScheduleResponse> {
         val cachedSchedules: MutableList<ScheduleResponse> = mutableListOf()
@@ -55,7 +55,7 @@ internal class CachedSchedulesRepository(private val schedulesRepository: ISched
         if (requestStopIds.isNotEmpty()) {
             val result =
                 try {
-                    schedulesRepository.getSchedule(requestStopIds, now)
+                    schedulesRepository.getSchedule(requestStopIds.toSet(), now)
                 } catch (e: Exception) {
                     return ApiResult.Error(null, e.toString())
                 }
@@ -87,7 +87,7 @@ internal class CachedSchedulesRepository(private val schedulesRepository: ISched
         return ApiResult.Ok(mergedResponse)
     }
 
-    override suspend fun getSchedule(stopIds: List<String>): ApiResult<ScheduleResponse> =
+    override suspend fun getSchedule(stopIds: Set<String>): ApiResult<ScheduleResponse> =
         getSchedule(stopIds, EasternTimeInstant.now())
 
     override suspend fun getNextSchedule(
@@ -104,7 +104,7 @@ internal class SchedulesRepository : ISchedulesRepository, KoinComponent {
     private val mobileBackendClient: MobileBackendClient by inject()
 
     override suspend fun getSchedule(
-        stopIds: List<String>,
+        stopIds: Set<String>,
         now: EasternTimeInstant,
     ): ApiResult<ScheduleResponse> = ApiResult.runCatching {
         mobileBackendClient
@@ -119,7 +119,7 @@ internal class SchedulesRepository : ISchedulesRepository, KoinComponent {
             .body()
     }
 
-    override suspend fun getSchedule(stopIds: List<String>): ApiResult<ScheduleResponse> {
+    override suspend fun getSchedule(stopIds: Set<String>): ApiResult<ScheduleResponse> {
         return getSchedule(stopIds, EasternTimeInstant.now())
     }
 
@@ -154,14 +154,14 @@ internal class SchedulesRepository : ISchedulesRepository, KoinComponent {
 public class MockScheduleRepository(
     private val response: ApiResult<ScheduleResponse>,
     private val nextResponse: ApiResult<NextScheduleResponse>,
-    private val callback: (stopIds: List<String>) -> Unit = {},
+    private val callback: (stopIds: Set<String>) -> Unit = {},
 ) : ISchedulesRepository {
 
     @DefaultArgumentInterop.Enabled
     public constructor(
         scheduleResponse: ScheduleResponse = ScheduleResponse(listOf(), mapOf()),
         nextScheduleResponse: NextScheduleResponse = NextScheduleResponse(null),
-        callback: (stopIds: List<String>) -> Unit = {},
+        callback: (stopIds: Set<String>) -> Unit = {},
     ) : this(ApiResult.Ok(scheduleResponse), ApiResult.Ok(nextScheduleResponse), callback)
 
     public constructor() :
@@ -171,14 +171,14 @@ public class MockScheduleRepository(
         )
 
     override suspend fun getSchedule(
-        stopIds: List<String>,
+        stopIds: Set<String>,
         now: EasternTimeInstant,
     ): ApiResult<ScheduleResponse> {
         callback(stopIds)
         return response
     }
 
-    override suspend fun getSchedule(stopIds: List<String>): ApiResult<ScheduleResponse> {
+    override suspend fun getSchedule(stopIds: Set<String>): ApiResult<ScheduleResponse> {
         callback(stopIds)
         return response
     }
@@ -195,13 +195,13 @@ public class MockScheduleRepository(
 
 public class IdleScheduleRepository : ISchedulesRepository {
     override suspend fun getSchedule(
-        stopIds: List<String>,
+        stopIds: Set<String>,
         now: EasternTimeInstant,
     ): ApiResult<ScheduleResponse> {
         return suspendCancellableCoroutine {}
     }
 
-    override suspend fun getSchedule(stopIds: List<String>): ApiResult<ScheduleResponse> {
+    override suspend fun getSchedule(stopIds: Set<String>): ApiResult<ScheduleResponse> {
         return suspendCancellableCoroutine {}
     }
 
