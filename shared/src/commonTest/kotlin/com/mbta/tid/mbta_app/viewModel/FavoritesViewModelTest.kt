@@ -194,8 +194,8 @@ internal class FavoritesViewModelTest : KoinTest {
                 FavoritesViewModel.State(
                     awaitingPredictionsAfterBackground = false,
                     favorites = emptyMap(),
-                    routeCardData = emptyList(),
-                    stopCardData = emptyList(),
+                    routeCardData = null,
+                    stopCardData = null,
                     staticRouteCardData = emptyList(),
                     staticStopCardData = emptyList(),
                     loadedLocation = null,

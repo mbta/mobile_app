@@ -10,6 +10,7 @@ import com.mbta.tid.mbta_app.getPlatform
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import kotlin.time.Duration
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.BufferOverflow
@@ -81,11 +82,10 @@ public abstract class MoleculeViewModel<Event, Model> : MoleculeScopeViewModel()
         }
 
     internal fun modelsForUnitTests(scope: CoroutineScope, clock: MonotonicFrameClock) =
-        CoroutineScope(scope.coroutineContext + SupervisorJob() + clock).launchMolecule(
-            RecompositionMode.ContextClock
-        ) {
-            runLogic()
-        }
+        CoroutineScope(scope.coroutineContext + SupervisorJob(scope.coroutineContext[Job]) + clock)
+            .launchMolecule(RecompositionMode.ContextClock) {
+                runLogic()
+            }
 
     protected fun fireEvent(event: Event) {
         if (!events.tryEmit(event)) {

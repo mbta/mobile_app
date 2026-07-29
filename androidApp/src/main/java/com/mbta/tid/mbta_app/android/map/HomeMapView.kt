@@ -396,11 +396,8 @@ fun HomeMapView(
             }
 
             LaunchedEffect(viewportProvider.isManuallyCentering) {
-                if (
-                    viewportProvider.isManuallyCentering && currentNavEntry?.allowTargeting == true
-                ) {
+                if (viewportProvider.isManuallyCentering && currentNavEntry?.allowTargeting == true)
                     isTargeting = true
-                }
             }
 
             if (

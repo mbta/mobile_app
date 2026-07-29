@@ -55,13 +55,12 @@ final class NearbyTransitPageTests: XCTestCase {
             noNearbyStops: noNearbyStops,
         )
         let hasAppeared = sut.inspection.inspect(onReceive: globalDataLoaded) { view in
-            XCTAssertNil(try view.find(NearbyTransitView.self).actualView().location)
+            XCTAssertNil(try view.find(NearbyTransitView.self).actualView().initialLocation)
             try view.find(NearbyTransitView.self).actualView().globalData = .init(
                 objects: .init(),
                 patternIdsByStop: [:]
             )
-            try view.find(NearbyTransitView.self).find(ViewType.VStack.self)
-                .callOnChange(newValue: newCameraState.center)
+            viewportProvider.updateCameraState(newCameraState)
         }
 
         ViewHosting.host(view: sut.environmentObject(viewportProvider).withFixedSettings([:]))
