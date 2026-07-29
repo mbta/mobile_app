@@ -89,10 +89,10 @@ public class NearbyViewModel(
 
         val errorKey = ErrorKey(setOf(SheetRoutes.NearbyTransit::class), "NearbyViewModel")
         val globalData = getGlobalData(errorKey)
-        val schedules = getSchedules(stopIds, errorKey)
+        val schedules = getSchedules(stopIds?.toSet(), errorKey)
         val predictions =
             subscribeToPredictions(
-                stopIds,
+                stopIds?.toSet(),
                 SheetRoutes.NearbyTransit,
                 active,
                 errorKey,
@@ -130,7 +130,15 @@ public class NearbyViewModel(
             }
         }
 
-        LaunchedEffect(stopIds, globalData, location, schedules, predictions, alerts, now) {
+        LaunchedEffect(
+            stopIds?.toSet(),
+            globalData,
+            location,
+            schedules,
+            predictions,
+            alerts,
+            now,
+        ) {
             val resolvedStopIds = stopIds
             if (resolvedStopIds == null || globalData == null || location == null) {
                 routeCardData = null

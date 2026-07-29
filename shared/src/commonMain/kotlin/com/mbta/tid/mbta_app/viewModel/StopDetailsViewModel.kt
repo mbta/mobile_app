@@ -117,7 +117,7 @@ public class StopDetailsViewModel(
 
         val schedules =
             getSchedules(
-                stopIds,
+                stopIds?.toSet(),
                 errorKey,
                 schedulesRepository,
                 errorBannerRepository,
@@ -126,7 +126,7 @@ public class StopDetailsViewModel(
 
         val predictions =
             subscribeToPredictions(
-                stopIds,
+                stopIds?.toSet(),
                 filters?.let { SheetRoutes.StopDetails(it.stopId, it.stopFilter, it.tripFilter) },
                 active,
                 errorKey,

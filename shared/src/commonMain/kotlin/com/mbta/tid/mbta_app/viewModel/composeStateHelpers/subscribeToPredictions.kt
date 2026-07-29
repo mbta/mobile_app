@@ -22,7 +22,7 @@ import org.koin.compose.koinInject
 
 @Composable
 internal fun subscribeToPredictions(
-    stopIds: List<String>?,
+    stopIds: Set<String>?,
     sheetRoute: SheetRoutes?,
     active: Boolean,
     errorKey: ErrorKey,
@@ -35,16 +35,16 @@ internal fun subscribeToPredictions(
     val staleTimer by timer(checkPredictionsStaleInterval)
 
     var predictions: PredictionsByStopJoinResponse? by remember { mutableStateOf(null) }
-    var loadedStopIds: List<String>? by remember { mutableStateOf(null) }
+    var loadedStopIds: Set<String>? by remember { mutableStateOf(null) }
 
     fun connect(
-        stopIds: List<String>?,
+        stopIds: Set<String>?,
         active: Boolean,
         onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
         onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit,
     ) {
         if (stopIds != null && active) {
-            predictionsRepository.connect(stopIds, errorKey, onJoin, onMessage)
+            predictionsRepository.connect(stopIds.toList(), errorKey, onJoin, onMessage)
         }
     }
 

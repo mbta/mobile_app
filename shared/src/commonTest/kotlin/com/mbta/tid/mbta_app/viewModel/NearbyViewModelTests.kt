@@ -11,17 +11,20 @@ import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.NearbyRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.test.fail
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineDispatcher
@@ -42,18 +45,21 @@ internal class NearbyViewModelTests : KoinTest {
     val objects = ObjectCollectionBuilder()
     val stop1 = objects.stop {
         id = "stop1"
-        latitude = 0.0
-        longitude = 0.0
+        latitude = 42.373362
+        longitude = -71.118956
+        vehicleType = RouteType.BUS
     }
     val stop2 = objects.stop {
         id = "stop2"
-        latitude = 1.0
-        longitude = 1.0
+        latitude = 42.373483
+        longitude = -71.119771
+        vehicleType = RouteType.BUS
     }
     val stop3 = objects.stop {
         id = "stop3"
-        latitude = -0.5
-        longitude = -0.5
+        latitude = 42.373414
+        longitude = -71.120134
+        vehicleType = RouteType.BUS
     }
     val route1 = objects.route {
         id = "route1"
@@ -430,6 +436,52 @@ internal class NearbyViewModelTests : KoinTest {
                 listOf(stop2, stop1) == it.routeCardData!!.flatMap { it.stopData }.map { it.stop }
             }
             cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `predictions not refetched when stop list stays the same`() = runTest {
+        val now = EasternTimeInstant.now()
+        val objects = objects.clone()
+        predictionsEverywhere(objects, now)
+
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(objects, dispatcher) {
+            nearby = NearbyRepository()
+            predictions =
+                MockPredictionsRepository(
+                    connectV2Response = PredictionsByStopJoinResponse(objects),
+                    onConnectV2 = { stopIds ->
+                        if (
+                            stopIds != emptyList<String>() && stopIds != listOf(stop1.id, stop2.id)
+                        ) {
+                            fail("Stop list should not have changed. Given $stopIds")
+                        }
+                    },
+                )
+        }
+
+        val viewModel: NearbyViewModel = get()
+        viewModel.setActive(true, false)
+        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+        viewModel.setNow(now)
+        viewModel.setLocation(stop1.position)
+
+        testViewModelFlow(viewModel).test {
+            assertEquals(
+                listOf(stop1, stop2),
+                awaitItemSatisfying { it.routeCardData != null }
+                    .routeCardData!!
+                    .flatMap { it.stopData }
+                    .map { it.stop },
+            )
+            viewModel.setLocation(stop2.position)
+            advanceUntilIdle()
+            awaitItemSatisfying {
+                listOf(stop2, stop1) ==
+                    it.routeCardData!!.flatMap { it.stopData }.map { it.stop } &&
+                    it.loadedLocation == stop2.position
+            }
         }
     }
 
