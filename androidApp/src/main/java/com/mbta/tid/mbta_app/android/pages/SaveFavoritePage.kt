@@ -48,7 +48,7 @@ import com.mbta.tid.mbta_app.android.favorites.NotificationSettingsWidget
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
-import com.mbta.tid.mbta_app.android.util.fcmToken
+import com.mbta.tid.mbta_app.android.util.fcmInstallationId
 import com.mbta.tid.mbta_app.android.util.getLabels
 import com.mbta.tid.mbta_app.android.util.key
 import com.mbta.tid.mbta_app.android.util.notificationPermissionState
@@ -153,7 +153,7 @@ fun SaveFavoritePage(
             update,
             context,
             selectedDirection,
-            fcmToken,
+            fcmInstallationId,
             currentLocale,
         )
     }

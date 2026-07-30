@@ -157,12 +157,16 @@ public class MoreViewModel(
     }
 
     public fun updateAccessibility(
-        fcmToken: String,
+        fcmInstallationId: String,
         includeAccessibility: Boolean,
         locale: String,
     ) {
         CoroutineScope(coroutineDispatcher).launch {
-            subscriptionsRepository.updateAccessibility(fcmToken, includeAccessibility, locale)
+            subscriptionsRepository.updateAccessibility(
+                fcmInstallationId,
+                includeAccessibility,
+                locale,
+            )
         }
     }
 }
