@@ -2,5 +2,7 @@
 --disable trailingCommas
 --disable redundantViewBuilder
 --disable wrapFunctionBodies
+--disable wrapIfExpressionBodies
+--disable wrapIfStatementBodies
 --disable wrapPropertyBodies
 --maxwidth 120
