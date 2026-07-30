@@ -14,13 +14,13 @@ extension FavoritesUsecases {
         newValues: [RouteStopDirection: FavoriteSettings?],
         context: EditFavoritesContext,
         defaultDirection: Int32,
-        fcmToken: String?,
+        fcmInstallationId: String?,
     ) async throws {
         try await __updateRouteStopDirections(
             newValues: newValues as [RouteStopDirection: Any],
             context: context,
             defaultDirection: .init(int: defaultDirection),
-            fcmToken: fcmToken,
+            fcmInstallationId: fcmInstallationId,
             locale: NSLocalizedString("key/current_locale", comment: ""),
         )
     }

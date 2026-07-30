@@ -34,6 +34,10 @@ struct StopDetailsFilteredView: View {
     var favoritesVM: IFavoritesViewModel
     @ObservedObject var navManager: NavigationManager
 
+    @State var inSaveFavoritesFlow = false
+
+    @ObservedObject var fcmInstallationIdContainer = FcmInstallationIdContainer.shared
+
     @EnvironmentObject var settingsCache: SettingsCache
 
     var analytics: Analytics = AnalyticsProvider.shared
@@ -269,6 +273,28 @@ struct StopDetailsFilteredView: View {
         default: nil
         }
         VStack(spacing: 0) {
+            if let stop, let routeStopDirection, inSaveFavoritesFlow {
+                SaveFavoritesFlow(
+                    lineOrRoute: lineOrRoute,
+                    stop: stop,
+                    directions: availableDirections,
+                    selectedDirection: routeStopDirection.direction,
+                    context: .stopDetails,
+                    global: global,
+                    isFavorite: { favorites.isFavorite($0) },
+                    updateFavorites: { updatedValues in
+                        favoritesVM.updateFavorites(
+                            updatedFavorites: updatedValues,
+                            context: .stopDetails,
+                            defaultDirection: routeStopDirection.direction,
+                            fcmInstallationId: fcmInstallationIdContainer.installationId,
+                        )
+                    },
+                    onClose: { inSaveFavoritesFlow = false },
+                    pushNavEntry: { navManager.pushNavEntry($0) },
+                )
+            }
+
             VStack(spacing: 0) {
                 StopDetailsFilteredHeader(
                     route: lineOrRoute.sortRoute,

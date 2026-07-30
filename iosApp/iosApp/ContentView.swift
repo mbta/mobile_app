@@ -18,7 +18,7 @@ struct ContentView: View {
     @EnvironmentObject var viewportProvider: ViewportProvider
 
     @ObservedObject var contentVM: ContentViewModel
-    @ObservedObject var fcmTokenContainer = FcmTokenContainer.shared
+    @ObservedObject var fcmInstallationIdContainer = FcmInstallationIdContainer.shared
     @ObservedObject var notificationDeepLinkOwner = AppDelegate.notificationDeepLinkOwner
 
     @State private var contentHeight: CGFloat = UIScreen.current?.bounds.height ?? 0
@@ -108,10 +108,17 @@ struct ContentView: View {
         }
         .alerts($alerts)
         .global($globalData, errorKey: ErrorKey(sheets: [], id: "ContentView"))
-        .handleFcmTokenSubscriptions(
-            fcmToken: fcmTokenContainer.token,
-            includeAccessibility: includeAccessibility
+        .handleFcmInstallationIdSubscriptions(
+            fcmInstallationId: fcmInstallationIdContainer.installationId,
+            includeAccessibility: includeAccessibility,
+            notificationsEnabled: notificationsFlag
         )
+        .onChange(of: fcmInstallationIdContainer.installationId) { installationId in
+            favoritesVM.clearStaleFavorites(fcmInstallationId: installationId)
+        }
+        .onChange(of: globalData) { _ in
+            favoritesVM.clearStaleFavorites(fcmInstallationId: fcmInstallationIdContainer.installationId)
+        }
         .onChange(of: contentVM.defaultTab) { newTab in
             // if we aren't on an entrypoint, then the default tab may have loaded after
             // we navigated via deeplink. Don't navigate away from the deeplinked location
@@ -658,7 +665,7 @@ struct ContentView: View {
                             updatedFavorites: favorites,
                             context: context,
                             defaultDirection: selectedDirection,
-                            fcmToken: fcmTokenContainer.token,
+                            fcmInstallationId: fcmInstallationIdContainer.installationId,
                         )
                     },
                     navCallbacks: navCallbacks
