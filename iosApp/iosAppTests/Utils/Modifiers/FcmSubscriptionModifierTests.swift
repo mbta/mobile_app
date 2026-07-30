@@ -40,12 +40,12 @@ final class FcmSubscriptionModifierTests: XCTestCase {
             favorites: favorites.routeStopDirection,
             includeAccessibility: true
         )
-        let expectedToken = "token_string"
+        let expectedInstallationId = "installation_id_string"
 
         let mockRepos = MockRepositories()
         mockRepos.subscriptions = MockSubscriptionsRepository(
-            onUpdateSubscriptions: { token, subs, locale in
-                XCTAssertEqual(expectedToken, token)
+            onUpdateSubscriptions: { installationId, subs, locale in
+                XCTAssertEqual(expectedInstallationId, installationId)
                 XCTAssertEqual(expectedSubscriptions, subs)
                 XCTAssertEqual("en", locale)
                 updateExp.fulfill()
@@ -54,8 +54,8 @@ final class FcmSubscriptionModifierTests: XCTestCase {
         )
         loadKoinMocks(repositories: mockRepos)
 
-        let sut = Text("test").handleFcmTokenSubscriptions(
-            fcmToken: expectedToken,
+        let sut = Text("test").handleFcmInstallationIdSubscriptions(
+            fcmInstallationId: expectedInstallationId,
             includeAccessibility: true,
             notificationsEnabled: true,
         )
@@ -65,7 +65,7 @@ final class FcmSubscriptionModifierTests: XCTestCase {
         wait(for: [updateExp], timeout: 1)
     }
 
-    func testDoesNothingWithNoToken() {
+    func testDoesNothingWithNoInstallationId() {
         let updateExp = expectation(description: "subscriptions updated")
         updateExp.isInverted = true
 
@@ -88,15 +88,15 @@ final class FcmSubscriptionModifierTests: XCTestCase {
         let mockRepos = MockRepositories()
         mockRepos.subscriptions = MockSubscriptionsRepository(
             onUpdateSubscriptions: { _, _, _ in
-                XCTFail("Should not update when token is missing")
+                XCTFail("Should not update when installation ID is missing")
                 updateExp.fulfill()
             },
             onUpdateAccessibility: { _, _, _ in }
         )
         loadKoinMocks(repositories: mockRepos)
 
-        let sut = Text("test").handleFcmTokenSubscriptions(
-            fcmToken: nil,
+        let sut = Text("test").handleFcmInstallationIdSubscriptions(
+            fcmInstallationId: nil,
             includeAccessibility: true,
             notificationsEnabled: true,
         )

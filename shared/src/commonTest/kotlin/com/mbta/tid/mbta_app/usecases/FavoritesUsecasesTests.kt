@@ -88,13 +88,13 @@ class FavoritesUsecasesTests : KoinTest {
             MockFavoritesRepository(
                 buildFavorites { routeStopDirection(Route.Id("route_1"), "stop_1", 0) }
             )
-        var token: String? = null
+        var installationId: String? = null
         var subs: List<SubscriptionRequest>? = null
         var locale: String? = null
         val subscriptionsRepository =
             MockSubscriptionsRepository(
-                onUpdateSubscriptions = { fcmToken, subscriptions, l ->
-                    token = fcmToken
+                onUpdateSubscriptions = { fcmInstallationId, subscriptions, l ->
+                    installationId = fcmInstallationId
                     subs = subscriptions
                     locale = l
                 }
@@ -173,13 +173,13 @@ class FavoritesUsecasesTests : KoinTest {
             ),
             EditFavoritesContext.Favorites,
             0,
-            "fake_token",
+            "fake_installation_id",
             "en",
         )
 
         delay(250.milliseconds)
 
-        assertEquals("fake_token", token)
+        assertEquals("fake_installation_id", installationId)
         assertEquals(expectedSubs, subs)
         assertEquals("en", locale)
     }

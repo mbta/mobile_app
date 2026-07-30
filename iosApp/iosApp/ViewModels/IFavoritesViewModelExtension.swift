@@ -14,13 +14,13 @@ extension IFavoritesViewModel {
         updatedFavorites: [RouteStopDirection: FavoriteSettings?],
         context: EditFavoritesContext,
         defaultDirection: Int32,
-        fcmToken: String?,
+        fcmInstallationId: String?,
     ) {
         __updateFavorites(
             updatedFavorites: updatedFavorites,
             context: context,
             defaultDirection: .init(int: defaultDirection),
-            fcmToken: fcmToken,
+            fcmInstallationId: fcmInstallationId,
             locale: NSLocalizedString("key/current_locale", comment: ""),
         )
     }
