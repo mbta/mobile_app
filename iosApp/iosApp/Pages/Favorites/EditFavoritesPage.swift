@@ -23,7 +23,7 @@ struct EditFavoritesPage: View {
     let toastVM: IToastViewModel
     let globalRepository: IGlobalRepository = RepositoryDI().global
 
-    @ObservedObject var fcmTokenContainer = FcmTokenContainer.shared
+    @ObservedObject var fcmInstallationIdContainer = FcmInstallationIdContainer.shared
     @EnvironmentObject var settingsCache: SettingsCache
 
     var groupByStop: Bool { settingsCache.get(.favoritesByStop) }
@@ -36,7 +36,7 @@ struct EditFavoritesPage: View {
             updatedFavorites: [rsd: nil],
             context: .favorites,
             defaultDirection: rsd.direction,
-            fcmToken: fcmTokenContainer.token,
+            fcmInstallationId: fcmInstallationIdContainer.installationId,
         )
 
         let labels = rsd.getLabels(globalResponse)
@@ -70,7 +70,7 @@ struct EditFavoritesPage: View {
                         updatedFavorites: [rsd: settings],
                         context: .favorites,
                         defaultDirection: rsd.direction,
-                        fcmToken: fcmTokenContainer.token,
+                        fcmInstallationId: fcmInstallationIdContainer.installationId,
                     )
                 }
             ),

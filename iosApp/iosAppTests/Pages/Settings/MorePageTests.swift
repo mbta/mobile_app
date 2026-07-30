@@ -60,13 +60,13 @@ final class MorePageTests: XCTestCase {
             }
         )
 
-        let expectedToken = "fcm_token"
-        FcmTokenContainer.shared.token = expectedToken
+        let expectedInstallationId = "fcm_installation_id"
+        FcmInstallationIdContainer.shared.installationId = expectedInstallationId
         let mockRepos = MockRepositories()
         mockRepos.subscriptions = MockSubscriptionsRepository(
             onUpdateSubscriptions: { _, _, _ in },
-            onUpdateAccessibility: { token, accessibility, locale in
-                XCTAssertEqual(expectedToken, token)
+            onUpdateAccessibility: { installationId, accessibility, locale in
+                XCTAssertEqual(expectedInstallationId, installationId)
                 XCTAssertTrue(accessibility.boolValue)
                 XCTAssertEqual("en", locale)
                 updateExp.fulfill()

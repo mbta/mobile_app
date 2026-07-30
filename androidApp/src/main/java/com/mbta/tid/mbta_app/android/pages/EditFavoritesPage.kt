@@ -67,7 +67,7 @@ import com.mbta.tid.mbta_app.android.favorites.NoFavoritesView
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
-import com.mbta.tid.mbta_app.android.util.fcmToken
+import com.mbta.tid.mbta_app.android.util.fcmInstallationId
 import com.mbta.tid.mbta_app.android.util.getLabels
 import com.mbta.tid.mbta_app.android.util.key
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
@@ -157,7 +157,7 @@ fun EditFavoritesPage(
                 mapOf(deletedFavorite to null),
                 EditFavoritesContext.Favorites,
                 deletedFavorite.direction,
-                fcmToken,
+                fcmInstallationId,
                 currentLocale,
             )
 
@@ -173,7 +173,7 @@ fun EditFavoritesPage(
                                     mapOf(deletedFavorite to deletedSettings),
                                     EditFavoritesContext.Favorites,
                                     deletedFavorite.direction,
-                                    fcmToken,
+                                    fcmInstallationId,
                                     currentLocale,
                                 )
                                 toastViewModel.hideToast()

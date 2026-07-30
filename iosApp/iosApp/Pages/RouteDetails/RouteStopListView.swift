@@ -210,7 +210,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
     @State var displayedToast: ToastViewModel.Toast?
     @State var firstTimeToast: ToastViewModel.Toast?
 
-    @ObservedObject var fcmTokenContainer = FcmTokenContainer.shared
+    @ObservedObject var fcmInstallationIdContainer = FcmInstallationIdContainer.shared
     @EnvironmentObject var settingsCache: SettingsCache
 
     let inspection = Inspection<Self>()
@@ -484,7 +484,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                 updatedFavorites: updatedValues,
                 context: editContext,
                 defaultDirection: selectedDirection,
-                fcmToken: fcmTokenContainer.token,
+                fcmInstallationId: fcmInstallationIdContainer.installationId,
             )
         }
     }
