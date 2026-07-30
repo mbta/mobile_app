@@ -1213,7 +1213,8 @@ public data class RouteCardData(
 
             val hasUnseenTypicalPattern =
                 routePatterns?.any {
-                    (patternsNotSeenAtEarlierStops?.contains(it.id) ?: false) && it.isTypical()
+                    (patternsNotSeenAtEarlierStops?.contains(it.id) ?: false) && it.isTypical() ||
+                        it.isCanonicalOnly()
                 } ?: false
 
             // Typical shuttle with no service today
