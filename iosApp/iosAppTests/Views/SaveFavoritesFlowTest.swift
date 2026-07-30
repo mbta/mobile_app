@@ -90,7 +90,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
             pushNavEntry: { _ in },
         )
 
-        let exp = sut.inspection.inspect(after: 0.5) { view in
+        let exp = sut.inspection.inspect(after: 1) { view in
             XCTAssertNotNil(try view.find(FavoriteConfirmationDialog.self))
         }
 
