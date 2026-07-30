@@ -62,6 +62,21 @@ final class ContentViewTests: XCTestCase {
         wait(for: [connectedExpectation], timeout: 1)
     }
 
+    func testSocketConnectsOnAppear() {
+        let connectedExpectation = expectation(description: "Socket has connected")
+        connectedExpectation.expectedFulfillmentCount = 1
+        connectedExpectation.assertForOverFulfill = true
+
+        let fakeSocketWithExpectations = FakeSocket(connectedExpectation: connectedExpectation)
+
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: .init()),
+                                                socketProvider: SocketProvider(socket: fakeSocketWithExpectations))
+
+        ViewHosting.host(view: sut)
+
+        wait(for: [connectedExpectation], timeout: 1)
+    }
+
     func testJoinsAlerts() {
         let joinAlertsExp = expectation(description: "Alerts channel joined")
         // joins in onAppear & on active

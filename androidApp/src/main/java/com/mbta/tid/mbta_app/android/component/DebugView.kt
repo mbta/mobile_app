@@ -106,6 +106,8 @@ fun DebugView(
                             Text("$trimmedKey last updated $duration ago")
                         }
                 }
+
+                Text("socket connected: ${debugState?.socketConnected}")
             }
         }
         details?.let {

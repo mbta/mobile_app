@@ -52,6 +52,7 @@ import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.repositories.DefaultTab
 import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
+import com.mbta.tid.mbta_app.repositories.IDebugRepository
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.ISubscriptionsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
@@ -78,6 +79,7 @@ fun ContentView(
     favoritesUsecases: FavoritesUsecases = koinInject(),
     scheduleCache: ScheduleCache = koinInject(),
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
+    debugRepository: IDebugRepository = koinInject(),
     subscriptionsRepository: ISubscriptionsRepository = koinInject(),
     mapViewModel: MapViewModel = koinInject(),
     accessibilityStatusRepository: IAccessibilityStatusRepository = koinInject(),
@@ -148,10 +150,21 @@ fun ContentView(
         val errorKey = ErrorKey(setOf(), "socket")
         socket.onError { error, response ->
             scope.launch {
+                debugRepository.setSocketConnected(false)
                 errorBannerRepository.setDataError(errorKey, "$error $response") { socket.attach() }
             }
         }
-        socket.onAttach { scope.launch { errorBannerRepository.clearDataError(errorKey) } }
+        socket.onAttach {
+            scope.launch {
+                errorBannerRepository.clearDataError(errorKey)
+                debugRepository.setSocketConnected(true)
+            }
+        }
+        socket.onDetach {
+            scope.launch {
+                debugRepository.setSocketConnected(false)
+            }
+        }
     }
 
     LifecycleResumeEffect(null) {

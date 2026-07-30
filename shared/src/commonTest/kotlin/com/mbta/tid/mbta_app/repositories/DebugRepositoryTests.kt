@@ -5,7 +5,9 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 import kotlin.time.TestTimeSource
 import kotlinx.coroutines.runBlocking
 import org.koin.core.context.stopKoin
@@ -44,5 +46,18 @@ class DebugRepositoryTests {
         repo.clearChannelStatus("topic1")
 
         assertEquals(mapOf("topic2" to now), repo.state.value?.channelUpdates)
+    }
+
+    @Test
+    fun `setSocketConnected toggling`() = runBlocking {
+        val now = EasternTimeInstant.now()
+        val clock = MockClock(now.instant, TestTimeSource())
+        val repo = DebugRepository(clock = clock)
+
+        assertFalse(repo.state.value?.socketConnected!!)
+        repo.setSocketConnected(true)
+        assertTrue(repo.state.value?.socketConnected!!)
+        repo.setSocketConnected(false)
+        assertFalse(repo.state.value?.socketConnected!!)
     }
 }

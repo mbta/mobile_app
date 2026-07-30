@@ -66,6 +66,9 @@ struct ContentView: View {
         } action: { height in
             contentHeight = height
         }
+        .onAppear {
+            socketProvider.socket.attach()
+        }
         .withScenePhaseHandlers(
             onActive: {
                 socketProvider.socket.attach()

@@ -14,7 +14,6 @@ struct ScenePhaseChangeModifier: ViewModifier {
     let onActive: () -> Void
     let onInactive: () -> Void
     let onBackground: () -> Void
-
     func body(content: Content) -> some View {
         content.onChange(of: scenePhase) { @MainActor newPhase in
             if newPhase == .active {
@@ -35,6 +34,10 @@ public extension View {
         onInactive: @escaping () -> Void = {},
         onBackground: @escaping () -> Void = {}
     ) -> some View {
-        modifier(ScenePhaseChangeModifier(onActive: onActive, onInactive: onInactive, onBackground: onBackground))
+        modifier(ScenePhaseChangeModifier(
+            onActive: onActive,
+            onInactive: onInactive,
+            onBackground: onBackground
+        ))
     }
 }

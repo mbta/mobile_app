@@ -355,7 +355,7 @@ struct OnboardingScreenView: View {
             .withScenePhaseHandlers(
                 onActive: animate,
                 onInactive: cancelAnimation,
-                onBackground: cancelAnimation,
+                onBackground: cancelAnimation
             )
     }
 

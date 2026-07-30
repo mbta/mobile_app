@@ -41,7 +41,7 @@ struct StopDetailsManageVMModifier: ViewModifier {
             .withScenePhaseHandlers(
                 onActive: { viewModel.setActive(active: true, wasSentToBackground: false) },
                 onInactive: { viewModel.setActive(active: false, wasSentToBackground: false) },
-                onBackground: { viewModel.setActive(active: false, wasSentToBackground: true) },
+                onBackground: { viewModel.setActive(active: false, wasSentToBackground: true) }
             )
             .onDisappear {
                 // Only set to inactive if the loaded filter matches the current value, this will be true
