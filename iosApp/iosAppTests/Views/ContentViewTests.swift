@@ -43,7 +43,7 @@ final class ContentViewTests: XCTestCase {
     func testReconnectsSocketAfterBackgroundingAndReactivating() throws {
         let disconnectedExpectation = expectation(description: "Socket has disconnected")
         let connectedExpectation = expectation(description: "Socket has connected")
-        connectedExpectation.expectedFulfillmentCount = 1
+        connectedExpectation.expectedFulfillmentCount = 2 // onAppear + active
         connectedExpectation.assertForOverFulfill = true
 
         let fakeSocketWithExpectations = FakeSocket(connectedExpectation: connectedExpectation,
