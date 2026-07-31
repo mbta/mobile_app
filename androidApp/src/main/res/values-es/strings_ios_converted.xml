@@ -288,11 +288,6 @@
     <string name="not_accessible">No accesible</string>
     <string name="not_accessible_stop_card">Esta parada no es accesible</string>
     <string name="notice">Aviso</string>
-    <string name="notifications_beta_dialog_body">¿Podemos comunicarnos con usted para conocer su opinión sobre las notificaciones?</string>
-    <string name="notifications_beta_dialog_header">¡Dependemos de pasajeros como usted para saber cómo podemos mejorar!</string>
-    <string name="notifications_beta_dialog_no">No, gracias</string>
-    <string name="notifications_beta_dialog_yes">Sí</string>
-    <string name="notifications_beta_toast">&lt;u>Obtenga acceso anticipado a las notificaciones&lt;/u> y envíe sus comentarios</string>
     <string name="notifications_beta_toggle_label">Notificaciones sobre interrupciones del servicio</string>
     <string name="notifications_enabled">notificaciones habilitadas</string>
     <string name="notifications_favorites_hint">Ahora &lt;u>edite sus favoritos&lt;/u> para recibir notificaciones de interrupciones del servicio</string>

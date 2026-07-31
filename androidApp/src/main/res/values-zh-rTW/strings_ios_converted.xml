@@ -282,11 +282,6 @@
     <string name="not_accessible">不適合輪椅通行</string>
     <string name="not_accessible_stop_card">此車站不適合輪椅通行</string>
     <string name="notice">通知</string>
-    <string name="notifications_beta_dialog_body">我們可否就「通知」功能與您聯絡，收集您的回饋？</string>
-    <string name="notifications_beta_dialog_header">我們有賴於各位乘客的回饋，才能不斷改進服務！</string>
-    <string name="notifications_beta_dialog_no">不了，謝謝</string>
-    <string name="notifications_beta_dialog_yes">是</string>
-    <string name="notifications_beta_toast">&lt;u>搶先體驗「通知」功能&lt;/u>並提供回饋</string>
     <string name="notifications_beta_toggle_label">營運變動通知</string>
     <string name="notifications_enabled">通知已開啟</string>
     <string name="notifications_favorites_hint">立即&lt;u>編輯您的收藏&lt;/u>以接收營運變動通知</string>

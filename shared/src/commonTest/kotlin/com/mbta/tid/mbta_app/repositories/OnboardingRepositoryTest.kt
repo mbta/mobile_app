@@ -151,25 +151,15 @@ class OnboardingRepositoryTest : KoinTest {
         startKoin(isScreenReaderEnabled = false, storage = storage)
         val repo = OnboardingRepository()
 
-        assertTrue(repo.notificationsBetaFeedbackDialogShouldShow())
-        assertTrue(repo.notificationsBetaPromptShouldShow())
         assertTrue(repo.notificationsFavoritesHintShouldShow())
         assertEquals(emptyPreferences(), storage.preferences)
 
-        repo.notificationsBetaFeedbackDialogSetState(false)
-        repo.notificationsBetaPromptDismissed()
         repo.notificationsFavoriteHintDismissed()
 
-        assertFalse(repo.notificationsBetaFeedbackDialogShouldShow())
-        assertFalse(repo.notificationsBetaPromptShouldShow())
         assertFalse(repo.notificationsFavoritesHintShouldShow())
 
         assertEquals(
-            preferencesOf(
-                booleanPreferencesKey("notificationsBetaFeedbackDialogShouldShow") to false,
-                booleanPreferencesKey("notificationsBetaPromptShouldShow") to false,
-                booleanPreferencesKey("notificationsFavoritesHintShouldShow") to false,
-            ),
+            preferencesOf(booleanPreferencesKey("notificationsFavoritesHintShouldShow") to false),
             storage.preferences,
         )
     }
@@ -179,8 +169,6 @@ class OnboardingRepositoryTest : KoinTest {
         val storage = MockDatastoreStorage()
         storage.preferences =
             preferencesOf(
-                booleanPreferencesKey("notificationsBetaFeedbackDialogShouldShow") to false,
-                booleanPreferencesKey("notificationsBetaPromptShouldShow") to false,
                 booleanPreferencesKey("notificationsFavoritesHintShouldShow") to false,
                 stringSetPreferencesKey("onboardingScreensCompleted") to
                     setOf(OnboardingScreen.NotificationsBeta.name, OnboardingScreen.Location.name),
@@ -188,15 +176,11 @@ class OnboardingRepositoryTest : KoinTest {
         startKoin(isScreenReaderEnabled = false, storage = storage)
         val repo = OnboardingRepository()
 
-        assertFalse(repo.notificationsBetaFeedbackDialogShouldShow())
-        assertFalse(repo.notificationsBetaPromptShouldShow())
         assertFalse(repo.notificationsFavoritesHintShouldShow())
         assertNull(repo.notificationsBetaTargetingOverride())
 
         repo.notificationsBetaResetAndForce()
 
-        assertTrue(repo.notificationsBetaFeedbackDialogShouldShow())
-        assertTrue(repo.notificationsBetaPromptShouldShow())
         assertTrue(repo.notificationsFavoritesHintShouldShow())
         assertTrue(repo.notificationsBetaTargetingOverride() ?: false)
 

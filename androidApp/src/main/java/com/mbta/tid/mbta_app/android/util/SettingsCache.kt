@@ -22,11 +22,14 @@ class SettingsCache(private val settingsRepository: ISettingsRepository) : KoinC
     private val cache = MutableStateFlow<Map<Settings, Boolean>?>(null)
 
     /** Changes the value of a [Settings] both in the cache and in the [settingsRepository]. */
-    fun set(setting: Settings, value: Boolean) {
+    fun set(setting: Settings, value: Boolean, afterWrite: () -> Unit = {}) {
         if (setting.override != null) return
         val newSettings = mapOf(setting to value)
         cache.update { it.orEmpty() + newSettings }
-        CoroutineScope(Dispatchers.IO).launch { settingsRepository.setSettings(newSettings) }
+        CoroutineScope(Dispatchers.IO).launch {
+            settingsRepository.setSettings(newSettings)
+            afterWrite()
+        }
     }
 
     /**

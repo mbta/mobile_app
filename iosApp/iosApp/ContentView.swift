@@ -269,11 +269,6 @@ struct ContentView: View {
                 }
             }
         }
-        .notificationsBeta(
-            navEntry: navManager.navigationStack.lastSafe(),
-            onToastTap: { selectedTab = .more(highlight: .publicBetas) },
-            onDismissDialog: { Task { await contentVM.loadOnboardingScreens() } },
-        )
         .background(Color.sheetBackground)
     }
 
@@ -629,7 +624,7 @@ struct ContentView: View {
                         .tag(SelectedTab.nearby)
                         .tabItem { TabLabel(tab: SelectedTab.nearby) }
 
-                    MorePage(highlight: category)
+                    MorePage(highlight: category, reloadPendingOnboarding: { await contentVM.loadOnboardingScreens() })
                         .toolbar(tabBarVisibility, for: .tabBar)
                         .toolbarBackground(.visible, for: .tabBar)
                         .tag(SelectedTab.more(highlight: nil))
