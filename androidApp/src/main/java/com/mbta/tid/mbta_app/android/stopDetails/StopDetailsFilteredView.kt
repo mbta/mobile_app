@@ -180,7 +180,11 @@ fun StopDetailsFilteredView(
 
         val allPatternsForStop: List<RoutePattern> = global.getPatternsFor(stopId, lineOrRoute)
         val directions: List<Direction> =
-            lineOrRoute.directions(global, stop, allPatternsForStop.filter { it.isTypical() })
+            lineOrRoute.directions(
+                global,
+                stop,
+                allPatternsForStop.filter { it.isTypical() || it.isCanonicalOnly() },
+            )
 
         val availableDirections = directions.filter {
             !stop.isLastStopForAllPatterns(it.id, allPatternsForStop, global)
