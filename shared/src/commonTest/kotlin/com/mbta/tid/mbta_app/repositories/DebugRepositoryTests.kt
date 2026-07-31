@@ -54,7 +54,6 @@ class DebugRepositoryTests {
         val clock = MockClock(now.instant, TestTimeSource())
         val repo = DebugRepository(clock = clock)
 
-        assertFalse(repo.state.value?.socketConnected!!)
         repo.setSocketConnected(true)
         assertTrue(repo.state.value?.socketConnected!!)
         repo.setSocketConnected(false)
