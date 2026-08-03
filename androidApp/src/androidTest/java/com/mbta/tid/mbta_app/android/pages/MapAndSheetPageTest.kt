@@ -20,7 +20,6 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.NearbyRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
@@ -64,7 +63,6 @@ class MapAndSheetPageTest {
         val globalResponse = GlobalResponse(objects)
 
         loadKoinMocks(objects) {
-            nearby = NearbyRepository()
             settings = MockSettingsRepository(mapOf(Settings.HideMaps to true))
         }
 
