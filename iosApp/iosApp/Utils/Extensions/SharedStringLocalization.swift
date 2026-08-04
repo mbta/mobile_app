@@ -38,7 +38,6 @@ extension SharedString {
                 "Fare Information",
                 comment: "Label for a More page link to fare information on MBTA.com"
             )
-        case .favoritesByStop: "Group favorites by stop"
         case .featureFlagsSection:
             NSLocalizedString(
                 "Feature Flags",

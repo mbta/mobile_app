@@ -59,9 +59,7 @@ import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.ScrollSeparatorColumn
 import com.mbta.tid.mbta_app.android.component.ScrollSeparatorLazyColumn
 import com.mbta.tid.mbta_app.android.component.SheetHeader
-import com.mbta.tid.mbta_app.android.component.routeCard.LoadingRouteCard
 import com.mbta.tid.mbta_app.android.component.routeCard.StopSubheader
-import com.mbta.tid.mbta_app.android.component.routeCard.TransitHeader
 import com.mbta.tid.mbta_app.android.component.stopCard.LoadingStopCard
 import com.mbta.tid.mbta_app.android.favorites.NoFavoritesView
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
@@ -100,7 +98,6 @@ fun EditFavoritesPage(
     val state by favoritesViewModel.models.collectAsState()
     val resources = LocalResources.current
     val currentLocale = stringResource(R.string.current_locale)
-    val groupByStop = SettingsCache.get(Settings.FavoritesByStop)
 
     val removeToastText = stringResource(R.string.favorites_toast_remove)
     val removeToastFallbackText = stringResource(R.string.favorites_toast_remove_fallback)
@@ -112,27 +109,15 @@ fun EditFavoritesPage(
             ?: removeToastFallbackText
     }
 
-    // to make deletion animations work nicely, we persist the first staticRouteCardData we saw, and
+    // to make deletion animations work nicely, we persist the first staticStopCardData we saw, and
     // then we visually hide things that are no longer in the favorites
-    var firstStaticRouteCardData by remember { mutableStateOf<List<RouteCardData>?>(null) }
     var firstStaticStopCardData by remember { mutableStateOf<List<StopCardData>?>(null) }
     val firstDataFavorites =
-        if (groupByStop)
-            firstStaticStopCardData.orEmpty().flatMap { it.routeStopDirections }.toSet()
-        else firstStaticRouteCardData.orEmpty().flatMap { it.routeStopDirections }.toSet()
-    val currentDataFavorites =
-        if (groupByStop) state.staticStopCardData.orEmpty().flatMap { it.routeStopDirections }
-        else state.staticRouteCardData.orEmpty().flatMap { it.routeStopDirections }
+        firstStaticStopCardData.orEmpty().flatMap { it.routeStopDirections }.toSet()
+    val currentDataFavorites = state.staticStopCardData.orEmpty().flatMap { it.routeStopDirections }
     val removedFavorites = firstDataFavorites - currentDataFavorites
-    // to avoid breaking creation, we reset the staticRouteCardData if anything appears that we
+    // to avoid breaking creation, we reset the staticStopCardData if anything appears that we
     // didn’t already know about
-    if (
-        state.staticRouteCardData != null &&
-            (firstStaticRouteCardData == null ||
-                !firstDataFavorites.containsAll(currentDataFavorites))
-    ) {
-        firstStaticRouteCardData = state.staticRouteCardData
-    }
     if (
         state.staticStopCardData != null &&
             (firstStaticStopCardData == null ||
@@ -194,97 +179,14 @@ fun EditFavoritesPage(
                 favoritesViewModel.reloadFavorites()
             }
         }
-        if (groupByStop) {
-            EditFavoritesList(
-                state.favorites,
-                firstStaticStopCardData,
-                removedFavorites,
-                global,
-                deleteFavorite = deleteFavorite,
-                editFavorite = editFavorite,
-            )
-        } else {
-            EditFavoritesListGroupedByRoute(
-                state.favorites,
-                firstStaticRouteCardData,
-                removedFavorites,
-                global,
-                deleteFavorite = deleteFavorite,
-                editFavorite = editFavorite,
-            )
-        }
-    }
-}
-
-@Composable
-private fun EditFavoritesListGroupedByRoute(
-    favorites: Map<RouteStopDirection, FavoriteSettings>?,
-    routeCardData: List<RouteCardData>?,
-    removedFavorites: Set<RouteStopDirection>,
-    global: GlobalResponse?,
-    deleteFavorite: (RouteStopDirection) -> Unit,
-    editFavorite: (RouteStopDirection) -> Unit,
-) {
-    val notificationsFlag = SettingsCache.get(Settings.Notifications)
-
-    val displayedFavorites = routeCardData?.filter { data ->
-        !removedFavorites.containsAll(data.routeStopDirections)
-    }
-
-    if (displayedFavorites == null) {
-        CompositionLocalProvider(IsLoadingSheetContents provides true) {
-            ScrollSeparatorLazyColumn(
-                contentPadding =
-                    PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                items(5) { LoadingRouteCard() }
-                item { Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars)) }
-            }
-        }
-    } else if (displayedFavorites.isEmpty()) {
-        ScrollSeparatorColumn(Modifier.padding(8.dp).navigationBarsPadding(), Arrangement.Center) {
-            NoFavoritesView({}, false)
-        }
-    } else {
-        ScrollSeparatorLazyColumn(
-            contentPadding = PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            items(displayedFavorites, key = { it.id.idText }) {
-                Column(Modifier.animateItem().haloContainer(1.dp)) {
-                    TransitHeader(it.lineOrRoute) {}
-
-                    it.stopData.forEach { stopData ->
-                        val visible =
-                            stopData.data.any { leaf ->
-                                !removedFavorites.contains(leaf.routeStopDirection)
-                            }
-                        AnimatedVisibility(visible = visible) {
-                            StopSubheader(stopData, includeIcon = false)
-                        }
-
-                        FavoriteDepartures(
-                            favorites,
-                            stopData.data,
-                            removedFavorites,
-                            global,
-                            { leaf -> deleteFavorite(leaf.routeStopDirection) },
-                        ) { leaf ->
-                            val selectedFavorite = leaf.routeStopDirection
-                            if (notificationsFlag) {
-                                editFavorite(selectedFavorite)
-                            } else {
-                                deleteFavorite(selectedFavorite)
-                            }
-                        }
-                    }
-                }
-            }
-            item { Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars)) }
-        }
+        EditFavoritesList(
+            state.favorites,
+            firstStaticStopCardData,
+            removedFavorites,
+            global,
+            deleteFavorite = deleteFavorite,
+            editFavorite = editFavorite,
+        )
     }
 }
 
@@ -360,7 +262,6 @@ private fun FavoriteDepartures(
     onClick: (RouteCardData.Leaf) -> Unit,
 ) {
     val notificationsFlag = SettingsCache.get(Settings.Notifications)
-    val groupByStop = SettingsCache.get(Settings.FavoritesByStop)
 
     Column {
         leaves.withIndex().forEach { (index, leaf) ->
@@ -424,7 +325,7 @@ private fun FavoriteDepartures(
                             Modifier.background(colorResource(R.color.fill3))
                                 .fillMaxHeight()
                                 .padding(vertical = 10.dp)
-                                .padding(horizontal = if (groupByStop) 8.dp else 16.dp)
+                                .padding(horizontal = 8.dp)
                                 .semantics(mergeDescendants = true) {
                                     role = Role.Button
                                     onClick(overriddenClickLabel) {
@@ -433,14 +334,12 @@ private fun FavoriteDepartures(
                                     }
                                 },
                     ) {
-                        if (groupByStop) {
-                            RoutePill(
-                                (leaf.lineOrRoute as? LineOrRoute.Route)?.route,
-                                (leaf.lineOrRoute as? LineOrRoute.Line)?.line,
-                                type = RoutePillType.Fixed,
-                                modifier = Modifier.padding(end = 8.dp),
-                            )
-                        }
+                        RoutePill(
+                            (leaf.lineOrRoute as? LineOrRoute.Route)?.route,
+                            (leaf.lineOrRoute as? LineOrRoute.Line)?.line,
+                            type = RoutePillType.Fixed,
+                            modifier = Modifier.padding(end = 8.dp),
+                        )
                         when (formatted) {
                             is LeafFormat.Single -> {
                                 Column(
