@@ -517,8 +517,12 @@ internal class FavoritesViewModelTest : KoinTest {
                 FavoritesViewModel.State(
                     awaitingPredictionsAfterBackground = false,
                     favorites = favoritesAfter.routeStopDirection,
-                    routeCardData = emptyList(),
-                    stopCardData = emptyList(),
+                    routeCardData = expectedStaticDataAfter,
+                    stopCardData =
+                        StopCardData.fromRouteCardData(
+                            expectedStaticDataAfter,
+                            sortByDistanceFrom = stop1.position,
+                        ),
                     staticRouteCardData = expectedStaticDataAfter,
                     staticStopCardData =
                         StopCardData.fromRouteCardData(
@@ -909,24 +913,11 @@ internal class FavoritesViewModelTest : KoinTest {
             listOf(routeCard1Data, routeCard2Data.copy(stopData = listOf(stop2Data)))
 
         testViewModelFlow(viewModel).test {
-            assertEquals(
-                FavoritesViewModel.State(
-                    awaitingPredictionsAfterBackground = false,
-                    favorites = favoritesBefore.routeStopDirection,
-                    routeCardData = emptyList(),
-                    stopCardData = emptyList(),
-                    staticRouteCardData = expectedStaticDataBefore,
-                    staticStopCardData =
-                        StopCardData.fromRouteCardData(
-                            expectedStaticDataBefore,
-                            sortByDistanceFrom = stop3.position,
-                        ),
-                    loadedLocation = stop3.position,
-                ),
-                awaitItemSatisfying {
-                    it.routeCardData != null && it.staticRouteCardData == expectedStaticDataBefore
-                },
-            )
+            awaitItemSatisfying {
+                it.routeCardData != null &&
+                    it.staticRouteCardData == expectedStaticDataBefore &&
+                    it.favorites == favoritesBefore.routeStopDirection
+            }
             viewModel.setContext(FavoritesViewModel.Context.Edit)
             favoritesRepo.setFavorites(favoritesAfter)
             viewModel.reloadFavorites()

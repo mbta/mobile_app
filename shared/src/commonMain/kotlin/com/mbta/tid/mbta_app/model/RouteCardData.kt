@@ -1179,7 +1179,19 @@ public data class RouteCardData(
         ): Boolean {
             if (this.allDataLoaded == false && showAllPatternsWhileLoading) return true
             val isBus = lineOrRoute.type == RouteType.BUS
-            val isSubway = lineOrRoute.isSubway
+
+            // If we don’t have any upcoming trips to tell us whether or not service is
+            // arrival-only, trust the typical-last-stop-on-route-pattern state.
+            val isArrivalOnly =
+                this.isLastStopOnRoutePattern(stop, globalData) &&
+                    (this.upcomingTrips?.isArrivalOnly() ?: true)
+
+            // Filter out arrival-only stops when context is different from Nearby
+            // transit to show service ended, closed stops and other leafs on any
+            // of the other contexts.
+            if (context != Context.NearbyTransit) {
+                return !isArrivalOnly
+            }
 
             // Filter out trips in the past unless vehicle is at the stop or prediction has status
             // and only take the next 2 (if bus) or 3 upcoming trips into account, since more than
@@ -1205,12 +1217,6 @@ public data class RouteCardData(
                     } ?: true
                 } ?: false
 
-            // If we don’t have any upcoming trips to tell us whether or not service is
-            // arrival-only, trust the typical-last-stop-on-route-pattern state.
-            val shouldBeFilteredAsArrivalOnly =
-                this.isLastStopOnRoutePattern(stop, globalData) &&
-                    (this.upcomingTrips?.isArrivalOnly() ?: true)
-
             val hasUnseenTypicalPattern =
                 routePatterns?.any {
                     (patternsNotSeenAtEarlierStops?.contains(it.id) ?: false) && it.isTypical()
@@ -1221,7 +1227,7 @@ public data class RouteCardData(
                 upcomingTrips.orEmpty().isEmpty() && lineOrRoute.isShuttle
 
             return (hasUnseenTypicalPattern || hasUnseenUpcomingTrip) &&
-                !(shouldBeFilteredAsArrivalOnly) &&
+                !(isArrivalOnly) &&
                 !(shuttleWithNoServiceToday)
         }
 
