@@ -1180,19 +1180,6 @@ public data class RouteCardData(
             if (this.allDataLoaded == false && showAllPatternsWhileLoading) return true
             val isBus = lineOrRoute.type == RouteType.BUS
 
-            // If we don’t have any upcoming trips to tell us whether or not service is
-            // arrival-only, trust the typical-last-stop-on-route-pattern state.
-            val isArrivalOnly =
-                this.isLastStopOnRoutePattern(stop, globalData) &&
-                    (this.upcomingTrips?.isArrivalOnly() ?: true)
-
-            // Filter out arrival-only stops when context is different from Nearby
-            // transit to show service ended, closed stops and other leafs on any
-            // of the other contexts.
-            if (context != Context.NearbyTransit) {
-                return !isArrivalOnly
-            }
-
             // Filter out trips in the past unless vehicle is at the stop or prediction has status
             // and only take the next 2 (if bus) or 3 upcoming trips into account, since more than
             // that can never be shown in nearby transit.
@@ -1208,6 +1195,23 @@ public data class RouteCardData(
                     }
                     ?.take(if (isBus) TYPICAL_LEAF_ROWS else BRANCHING_LEAF_ROWS)
 
+            // If we don’t have any upcoming trips to tell us whether or not service is
+            // arrival-only, trust the typical-last-stop-on-route-pattern state.
+            val isArrivalOnly =
+                this.isLastStopOnRoutePattern(stop, globalData) &&
+                    (this.upcomingTrips?.isArrivalOnly() ?: true)
+
+            // Typical shuttle with no service today
+            val shuttleWithNoServiceToday =
+                upcomingTripsInCutoff.orEmpty().isEmpty() && lineOrRoute.isShuttle
+
+            // Filter out arrival-only stops when context is different from Nearby
+            // transit to show service ended, closed stops and other leafs on any
+            // of the other contexts.
+            if (context != Context.NearbyTransit) {
+                return !isArrivalOnly && !shuttleWithNoServiceToday
+            }
+
             val hasUnseenUpcomingTrip =
                 upcomingTripsInCutoff?.any { upcomingTrip ->
                     upcomingTrip.trip.routePatternId?.let {
@@ -1221,10 +1225,6 @@ public data class RouteCardData(
                 routePatterns?.any {
                     (patternsNotSeenAtEarlierStops?.contains(it.id) ?: false) && it.isTypical()
                 } ?: false
-
-            // Typical shuttle with no service today
-            val shuttleWithNoServiceToday =
-                upcomingTrips.orEmpty().isEmpty() && lineOrRoute.isShuttle
 
             return (hasUnseenTypicalPattern || hasUnseenUpcomingTrip) &&
                 !(isArrivalOnly) &&
