@@ -14,7 +14,7 @@ struct MoreSectionView: View {
 
     var section: MoreSection
     var highlight: Bool
-    var updateAccessibility: (Bool) -> Void = { _ in }
+    var onChangeSetting: (Settings, Bool) async -> Void = { _, _ in }
 
     @EnvironmentObject var settingsCache: SettingsCache
 
@@ -64,10 +64,11 @@ struct MoreSectionView: View {
                             },
                             set: { _ in
                                 let newSetting = !settingsCache.get(toggle.settings)
-                                settingsCache.set(toggle.settings, newSetting)
-                                if toggle.settings == .stationAccessibility {
-                                    updateAccessibility(newSetting)
-                                }
+                                settingsCache.set(
+                                    toggle.settings,
+                                    newSetting,
+                                    afterWrite: { await onChangeSetting(toggle.settings, newSetting) }
+                                )
                             }
                         )) { Text(toggle.label.value) }
                             .padding(.vertical, 6)

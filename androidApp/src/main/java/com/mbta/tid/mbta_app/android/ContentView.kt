@@ -40,7 +40,6 @@ import com.mbta.tid.mbta_app.android.promo.PromoPage
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.subscribeToAlerts
 import com.mbta.tid.mbta_app.android.util.ManageErrorBannerBackgrounding
-import com.mbta.tid.mbta_app.android.util.NotificationsBeta
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.fcmToken
 import com.mbta.tid.mbta_app.cache.ScheduleCache
@@ -272,12 +271,8 @@ fun ContentView(
                         navigateToMore = {},
                     )
                 },
+                reloadPendingOnboarding = { viewModel.loadPendingOnboarding() },
             )
         }
     }
-
-    NotificationsBeta(
-        { route -> navController.navigate(route) },
-        { viewModel.loadPendingOnboarding() },
-    )
 }

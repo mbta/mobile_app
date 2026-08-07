@@ -14,6 +14,7 @@ struct MorePage: View {
     let inspection = Inspection<Self>()
 
     let highlight: MoreSection.Category?
+    let reloadPendingOnboarding: () async -> Void
 
     let viewModel = ViewModelDI().more
     @State var showingBuildNumber = false
@@ -26,6 +27,11 @@ struct MorePage: View {
 
     var infoPlist: [String: Any]? { Bundle.main.infoDictionary }
     var version: String? { infoPlist?["CFBundleShortVersionString"] as? String }
+
+    init(highlight: MoreSection.Category?, reloadPendingOnboarding: @escaping () async -> Void = {}) {
+        self.highlight = highlight
+        self.reloadPendingOnboarding = reloadPendingOnboarding
+    }
 
     var sections: [MoreSection] {
         viewModel.getSections(
@@ -78,15 +84,22 @@ struct MorePage: View {
                             MoreSectionView(
                                 section: section,
                                 highlight: section.id == highlight,
-                                updateAccessibility: { includeAccessibility in
-                                    if settingsCache.get(.notifications), let fcmToken = fcmTokenContainer.token {
-                                        viewModel.updateAccessibility(
-                                            fcmToken: fcmToken,
-                                            includeAccessibility: includeAccessibility,
-                                            locale: NSLocalizedString("key/current_locale", comment: "")
-                                        )
+                                onChangeSetting: { setting, newValue in
+                                    switch setting {
+                                    case .stationAccessibility:
+                                        if settingsCache.get(.notifications), let fcmToken = fcmTokenContainer.token {
+                                            viewModel.updateAccessibility(
+                                                fcmToken: fcmToken,
+                                                includeAccessibility: newValue,
+                                                locale: NSLocalizedString("key/current_locale", comment: "")
+                                            )
+                                        }
+                                    case .notifications:
+                                        await reloadPendingOnboarding()
+                                    case .devDebugMode, .favoritesByStop, .hideMaps, .searchRouteResults:
+                                        break
                                     }
-                                },
+                                }
                             )
                         }
                         HStack(alignment: .center, spacing: 16) {

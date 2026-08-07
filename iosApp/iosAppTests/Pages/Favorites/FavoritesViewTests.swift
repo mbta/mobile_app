@@ -239,7 +239,7 @@ final class FavoritesViewTests: XCTestCase {
             viewportProvider: .init(),
         )
         let exp = sut.inspection.inspect(after: 0.2) { view in
-            XCTAssertEqual(5, view.findAll(LoadingRouteCard.self).count)
+            XCTAssertEqual(5, view.findAll(LoadingStopCard.self).count)
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 2)

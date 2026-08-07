@@ -106,10 +106,8 @@ import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.INearbyViewModel
-import com.mbta.tid.mbta_app.viewModel.INotificationsBetaViewModel
 import com.mbta.tid.mbta_app.viewModel.IRouteCardDataViewModel
 import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
-import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ITripDetailsViewModel
 import com.mbta.tid.mbta_app.viewModel.TripDetailsViewModel
 import kotlin.time.Clock
@@ -155,10 +153,8 @@ fun MapAndSheetPage(
     clock: Clock = koinInject(),
     favoritesViewModel: IFavoritesViewModel = koinInject(),
     nearbyViewModel: INearbyViewModel = koinInject(),
-    notificationsBetaViewModel: INotificationsBetaViewModel = koinInject(),
     routeCardDataViewModel: IRouteCardDataViewModel = koinInject(),
     stopDetailsViewModel: IStopDetailsViewModel = koinInject(),
-    toastViewModel: IToastViewModel = koinInject(),
     tripDetailsViewModel: ITripDetailsViewModel = koinInject(),
     mapboxConfigManager: IMapboxConfigManager = koinInject(),
 ) {
@@ -318,15 +314,6 @@ fun MapAndSheetPage(
         ) {
             tileScrollState.scrollTo(0)
         }
-
-        if (
-            currentNavEntry?.let { it::class } != previousNavEntry?.let { it::class } &&
-                !notificationsBetaViewModel.models.value.showBetaToast
-        ) {
-            toastViewModel.hideToast()
-        }
-
-        notificationsBetaViewModel.setSheetRoute(currentNavEntry)
     }
 
     val filterUpdates by stopDetailsViewModel.filterUpdates.collectAsStateWithLifecycle()

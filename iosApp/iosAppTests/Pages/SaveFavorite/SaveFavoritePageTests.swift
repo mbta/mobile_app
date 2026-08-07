@@ -92,7 +92,7 @@ final class SaveFavoritePageTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        sut.inspection.inspect(after: 0.5) { view in
+        sut.inspection.inspect(after: 1) { view in
             XCTAssertNotNil(try sut.inspect().find(text: "Alewife"))
             XCTAssertNotNil(try sut.inspect().find(text: "Northbound to"))
 
