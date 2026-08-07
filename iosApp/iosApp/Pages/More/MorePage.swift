@@ -96,7 +96,7 @@ struct MorePage: View {
                                         }
                                     case .notifications:
                                         await reloadPendingOnboarding()
-                                    case .devDebugMode, .favoritesByStop, .hideMaps, .searchRouteResults:
+                                    case .devDebugMode, .hideMaps, .searchRouteResults:
                                         break
                                     }
                                 }

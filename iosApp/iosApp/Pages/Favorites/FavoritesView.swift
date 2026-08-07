@@ -23,7 +23,6 @@ struct FavoritesView: View {
 
     @EnvironmentObject var settingsCache: SettingsCache
     var notificationsEnabled: Bool { settingsCache.get(.notifications) }
-    var groupByStop: Bool { settingsCache.get(.favoritesByStop) }
 
     @State var globalData: GlobalResponse?
     var globalRepository = RepositoryDI().global
@@ -45,9 +44,7 @@ struct FavoritesView: View {
                 title: NSLocalizedString("Favorites", comment: "Header for favorites sheet"),
                 navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
                 rightActionContents: {
-                    if let chosenCardData: [Any] = groupByStop ? favoritesVMState.stopCardData : favoritesVMState
-                        .routeCardData,
-                        !chosenCardData.isEmpty {
+                    if let stopCardData = favoritesVMState.stopCardData, !stopCardData.isEmpty {
                         ActionButton(kind: .plus, circleColor: Color.translucentContrast, action: { onAddStops() })
                         NavTextButton(
                             string: NSLocalizedString("Edit", comment: "Button text to enter edit favorites flow"),
@@ -71,26 +68,14 @@ struct FavoritesView: View {
 
             ErrorBanner(errorBannerVM, padding: .init([.horizontal, .bottom], 16))
             DebugView { EmptyView() }
-            if groupByStop {
-                StopCardList(
-                    stopCardData: favoritesVMState.stopCardData,
-                    emptyView: { emptyView() },
-                    global: globalData,
-                    now: now,
-                    isFavorite: { isFavorite($0) },
-                    pushNavEntry: { navManager.pushNavEntry($0) }
-                )
-            } else {
-                RouteCardList(
-                    routeCardData: favoritesVMState.routeCardData,
-                    emptyView: { emptyView() },
-                    global: globalData,
-                    now: now,
-                    isFavorite: { isFavorite($0) },
-                    pushNavEntry: { navManager.pushNavEntry($0) },
-                    showStopHeader: true
-                )
-            }
+            StopCardList(
+                stopCardData: favoritesVMState.stopCardData,
+                emptyView: { emptyView() },
+                global: globalData,
+                now: now,
+                isFavorite: { isFavorite($0) },
+                pushNavEntry: { navManager.pushNavEntry($0) }
+            )
         }
         .global($globalData, errorKey: .companion.fromSheetTypes(sheetTypes: [.favorites], id: "FavoritesView"))
         .onAppear {

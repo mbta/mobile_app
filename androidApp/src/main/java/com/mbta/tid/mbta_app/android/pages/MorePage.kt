@@ -146,7 +146,6 @@ fun MorePage(
                                                 reloadPendingOnboarding()
                                             }
                                             Settings.DevDebugMode,
-                                            Settings.FavoritesByStop,
                                             Settings.HideMaps,
                                             Settings.SearchRouteResults -> {}
                                         }

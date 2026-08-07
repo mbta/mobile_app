@@ -16,8 +16,6 @@ import org.koin.dsl.module
 import org.koin.test.KoinTest
 
 internal class SettingsRepositoryTest : KoinTest {
-    val defaultSettings = Settings.entries.associateWith { false }
-
     @AfterTest
     fun cleanup() {
         stopKoin()
@@ -38,7 +36,6 @@ internal class SettingsRepositoryTest : KoinTest {
         assertEquals(
             mapOf(
                 Settings.DevDebugMode to true,
-                Settings.FavoritesByStop to false,
                 Settings.HideMaps to false,
                 Settings.Notifications to false,
                 Settings.SearchRouteResults to false,

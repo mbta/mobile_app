@@ -23,7 +23,6 @@ import com.mbta.tid.mbta_app.android.component.DebugView
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.NavTextButton
 import com.mbta.tid.mbta_app.android.component.SheetHeader
-import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardList
 import com.mbta.tid.mbta_app.android.component.stopCard.StopCardList
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.contrastTranslucent
@@ -61,7 +60,6 @@ fun FavoritesView(
     val state by favoritesViewModel.models.collectAsState()
 
     val notificationsEnabled = SettingsCache.get(Settings.Notifications)
-    val groupByStop = SettingsCache.get(Settings.FavoritesByStop)
 
     fun onAddFavorites() {
         favoritesViewModel.setIsFirstExposureToNewFavorites(false)
@@ -122,10 +120,7 @@ fun FavoritesView(
         }
     }
 
-    val routeCardData = state.routeCardData
     val stopCardData = state.stopCardData
-
-    val chosenCardData = if (groupByStop) stopCardData else routeCardData
 
     val emptyView: @Composable ColumnScope.() -> Unit = {
         NoFavoritesView(::onAddFavorites)
@@ -149,7 +144,7 @@ fun FavoritesView(
                 ),
             rightActionContents = {
                 Row(Modifier, Arrangement.spacedBy(8.dp), Alignment.CenterVertically) {
-                    if (!chosenCardData.isNullOrEmpty()) {
+                    if (!stopCardData.isNullOrEmpty()) {
                         ActionButton(
                             ActionButtonKind.Plus,
                             colors = ButtonDefaults.contrastTranslucent(),
@@ -175,24 +170,13 @@ fun FavoritesView(
 
         ErrorBanner(errorBannerViewModel, modifier = Modifier.padding(top = 8.dp))
         DebugView(content = {})
-        if (groupByStop) {
-            StopCardList(
-                stopCardData = stopCardData,
-                emptyView = { emptyView() },
-                global = globalResponse,
-                now = now,
-                isFavorite = isFavorite,
-                onOpenStopDetails = onOpenStopDetails,
-            )
-        } else {
-            RouteCardList(
-                routeCardData = routeCardData,
-                emptyView = { emptyView() },
-                global = globalResponse,
-                now = now,
-                isFavorite = isFavorite,
-                onOpenStopDetails = onOpenStopDetails,
-            )
-        }
+        StopCardList(
+            stopCardData = stopCardData,
+            emptyView = { emptyView() },
+            global = globalResponse,
+            now = now,
+            isFavorite = isFavorite,
+            onOpenStopDetails = onOpenStopDetails,
+        )
     }
 }
