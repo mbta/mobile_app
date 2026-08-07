@@ -47,6 +47,9 @@ struct DebugView<Content: View>: View {
                                 Text(verbatim: "\(trimmedKey) last updated \(updateDuration) ago")
                             }
                         }
+                        if let socketConnected = debugState?.socketConnected {
+                            Text(verbatim: "socket connected: \(socketConnected)")
+                        }
                     }
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)

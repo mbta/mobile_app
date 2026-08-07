@@ -43,7 +43,7 @@ final class ContentViewTests: XCTestCase {
     func testReconnectsSocketAfterBackgroundingAndReactivating() throws {
         let disconnectedExpectation = expectation(description: "Socket has disconnected")
         let connectedExpectation = expectation(description: "Socket has connected")
-        connectedExpectation.expectedFulfillmentCount = 1
+        connectedExpectation.expectedFulfillmentCount = 2 // onAppear + active
         connectedExpectation.assertForOverFulfill = true
 
         let fakeSocketWithExpectations = FakeSocket(connectedExpectation: connectedExpectation,
@@ -59,6 +59,21 @@ final class ContentViewTests: XCTestCase {
         wait(for: [disconnectedExpectation], timeout: 1)
         try sut.inspect().find(ContentView.self).find(ViewType.VStack.self)
             .callOnChange(newValue: ScenePhase.active)
+        wait(for: [connectedExpectation], timeout: 1)
+    }
+
+    func testSocketConnectsOnAppear() {
+        let connectedExpectation = expectation(description: "Socket has connected")
+        connectedExpectation.expectedFulfillmentCount = 1
+        connectedExpectation.assertForOverFulfill = true
+
+        let fakeSocketWithExpectations = FakeSocket(connectedExpectation: connectedExpectation)
+
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: .init()),
+                                                socketProvider: SocketProvider(socket: fakeSocketWithExpectations))
+
+        ViewHosting.host(view: sut)
+
         wait(for: [connectedExpectation], timeout: 1)
     }
 

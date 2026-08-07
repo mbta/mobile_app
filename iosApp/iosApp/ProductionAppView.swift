@@ -49,7 +49,12 @@ struct ProductionAppView: View {
     init(socket: PhoenixSocket) {
         // Can only add error handling once koin is initialized
         var errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner
-        Self.addSocketErrorHandling(socket: socket, errorBannerRepository: errorBannerRepository)
+        var debugRepository: IDebugRepository = RepositoryDI().debug
+        Self.addSocketErrorHandling(
+            socket: socket,
+            errorBannerRepository: errorBannerRepository,
+            debugRepository: debugRepository
+        )
         // ignore updates less than 10m
         _locationDataManager = StateObject(wrappedValue: LocationDataManager(distanceFilter: 10))
         _socketProvider = StateObject(wrappedValue: SocketProvider(socket: socket))
@@ -69,10 +74,12 @@ struct ProductionAppView: View {
 
     private static func addSocketErrorHandling(
         socket: PhoenixSocket,
-        errorBannerRepository: IErrorBannerStateRepository
+        errorBannerRepository: IErrorBannerStateRepository,
+        debugRepository: IDebugRepository
     ) {
         socket.onError { error, response in
             Task {
+                try await debugRepository.setSocketConnected(isConnected: false)
                 try await errorBannerRepository.setDataError(
                     key: errorDataKey,
                     details: "\(error) \(response)",
@@ -91,6 +98,12 @@ struct ProductionAppView: View {
         socket.onAttach {
             Task {
                 try await errorBannerRepository.clearDataError(key: errorDataKey)
+                try await debugRepository.setSocketConnected(isConnected: true)
+            }
+        }
+        socket.onDetach {
+            Task {
+                try await debugRepository.setSocketConnected(isConnected: false)
             }
         }
     }
