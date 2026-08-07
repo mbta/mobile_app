@@ -94,7 +94,7 @@ import org.koin.mp.KoinPlatformTools
 @Composable
 fun OnboardingScreenView(
     screen: OnboardingScreen,
-    advance: () -> Unit,
+    advance: (OnboardingScreen) -> Unit,
     locationDataManager: LocationDataManager,
     skipLocationDialogue: Boolean = false,
     settingsCache: SettingsCache = koinInject(),
@@ -102,17 +102,17 @@ fun OnboardingScreenView(
     var sharingLocation by rememberSaveable { mutableStateOf(false) }
     val permissions =
         locationDataManager.rememberPermissions(
-            onPermissionsResult = {
+            onPermissionsResult = { result ->
                 // This only fires after the permissions state has changed
-                if (sharingLocation) {
-                    advance()
+                if (sharingLocation && result.isNotEmpty()) {
+                    advance(OnboardingScreen.Location)
                 }
             }
         )
 
     fun shareLocation() {
         if (skipLocationDialogue || permissions.permissions.any { it.status.isGranted }) {
-            advance()
+            advance(OnboardingScreen.Location)
         } else {
             sharingLocation = true
             permissions.launchMultiplePermissionRequest()
@@ -169,7 +169,7 @@ fun OnboardingScreenView(
                     Spacer(modifier = Modifier.height(16.dp))
                     OnboardingPieces.KeyButton(
                         R.string.onboarding_feedback_advance,
-                        onClick = advance,
+                        onClick = { advance(OnboardingScreen.Feedback) },
                     )
                 }
             }
@@ -196,7 +196,7 @@ fun OnboardingScreenView(
                         R.string.onboarding_continue,
                         onClick = {
                             settingsCache.set(Settings.HideMaps, localHideMapsSetting)
-                            advance()
+                            advance(OnboardingScreen.HideMaps)
                         },
                     )
                 }
@@ -231,7 +231,7 @@ fun OnboardingScreenView(
             }
         }
         OnboardingScreen.NotificationsBeta -> {
-            NotificationsBetaPage(advance)
+            NotificationsBetaPage({ advance(OnboardingScreen.NotificationsBeta) })
         }
         OnboardingScreen.StationAccessibility -> {
             OnboardingPieces.PageBox(painterResource(R.mipmap.onboarding_background_map)) {
@@ -262,7 +262,7 @@ fun OnboardingScreenView(
 
                     OnboardingPieces.KeyButton(
                         R.string.onboarding_continue,
-                        onClick = { advance() },
+                        onClick = { advance(OnboardingScreen.StationAccessibility) },
                     )
                 }
             }
