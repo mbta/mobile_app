@@ -38,7 +38,6 @@ fun managedTargetLocation(nearbyTransit: NearbyTransit, reset: () -> Unit = {}):
     LaunchedEffect(nearbyTransit.viewportProvider.isManuallyCentering) {
         if (nearbyTransit.viewportProvider.isManuallyCentering) {
             reset()
-            position.value = null
         }
     }
     LaunchedEffect(nearbyTransit.viewportProvider.isFollowingPuck) {

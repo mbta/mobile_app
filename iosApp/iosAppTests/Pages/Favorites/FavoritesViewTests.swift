@@ -87,7 +87,7 @@ final class FavoritesViewTests: XCTestCase {
         ))
 
         let sut = FavoritesView(
-            location: .constant(.init(latitude: 0, longitude: 0)),
+            initialLocation: .init(latitude: 0, longitude: 0),
             alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
@@ -181,7 +181,7 @@ final class FavoritesViewTests: XCTestCase {
 
         let navManager = NavigationManager()
         let sut = FavoritesView(
-            location: .constant(.init(latitude: 0, longitude: 0)),
+            initialLocation: .init(latitude: 0, longitude: 0),
             alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
@@ -211,7 +211,7 @@ final class FavoritesViewTests: XCTestCase {
             loadedLocation: nil,
         ))
         let sut = FavoritesView(
-            location: .constant(.init(latitude: 0, longitude: 0)),
+            initialLocation: .init(latitude: 0, longitude: 0),
             alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
@@ -230,7 +230,7 @@ final class FavoritesViewTests: XCTestCase {
     @MainActor func testShowsLoading() {
         let favoritesVM = MockFavoritesViewModel()
         let sut = FavoritesView(
-            location: .constant(.init(latitude: 0, longitude: 0)),
+            initialLocation: .init(latitude: 0, longitude: 0),
             alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
@@ -250,7 +250,7 @@ final class FavoritesViewTests: XCTestCase {
         let favoritesVM = MockFavoritesViewModel()
         favoritesVM.onReloadFavorites = { exp.fulfill() }
         let sut = FavoritesView(
-            location: .constant(.init(latitude: 0, longitude: 0)),
+            initialLocation: .init(latitude: 0, longitude: 0),
             alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
@@ -278,7 +278,7 @@ final class FavoritesViewTests: XCTestCase {
             }
         }
         let sut = FavoritesView(
-            location: .constant(.init(latitude: 0, longitude: 0)),
+            initialLocation: .init(latitude: 0, longitude: 0),
             alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
@@ -308,7 +308,7 @@ final class FavoritesViewTests: XCTestCase {
             }
         }
         let sut = FavoritesView(
-            location: .constant(.init(latitude: 0, longitude: 0)),
+            initialLocation: .init(latitude: 0, longitude: 0),
             alerts: alertsResponse,
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
@@ -318,37 +318,6 @@ final class FavoritesViewTests: XCTestCase {
         )
         ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [setAlertExp], timeout: 1)
-    }
-
-    @MainActor func testSetsLocation() {
-        let firstLocation = CLLocationCoordinate2D(latitude: 0, longitude: 0)
-        let secondLocation = CLLocationCoordinate2D(latitude: 1, longitude: 1)
-        let locationBinding = Binding<CLLocationCoordinate2D?>(wrappedValue: firstLocation)
-        let setFirstExp = expectation(description: "sets first location")
-        let setSecondExp = expectation(description: "sets second location")
-        let favoritesVM = MockFavoritesViewModel()
-        favoritesVM.onSetLocation = { newLocation in
-            if newLocation == firstLocation.positionKt {
-                setFirstExp.fulfill()
-            } else if newLocation == secondLocation.positionKt {
-                setSecondExp.fulfill()
-            } else {
-                XCTFail("set location to unexpected \(newLocation.debugDescription)")
-            }
-        }
-        let sut = FavoritesView(
-            location: locationBinding,
-            alerts: .init(alerts: [:]),
-            errorBannerVM: MockErrorBannerViewModel(),
-            favoritesVM: favoritesVM,
-            toastVM: MockToastViewModel(),
-            navManager: .init(),
-            viewportProvider: .init(),
-        )
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [setFirstExp], timeout: 1)
-        locationBinding.wrappedValue = secondLocation
-        wait(for: [setSecondExp], timeout: 1)
     }
 
     @MainActor func testSetsNow() {
@@ -367,7 +336,7 @@ final class FavoritesViewTests: XCTestCase {
             }
         }
         let sut = FavoritesView(
-            location: .constant(.init(latitude: 0, longitude: 0)),
+            initialLocation: .init(latitude: 0, longitude: 0),
             alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
@@ -408,7 +377,7 @@ final class FavoritesViewTests: XCTestCase {
         toastVM.onHideToast = { hideToast.fulfill() }
 
         let sut = FavoritesView(
-            location: .constant(.init(latitude: 0, longitude: 0)),
+            initialLocation: .init(latitude: 0, longitude: 0),
             alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
@@ -445,7 +414,7 @@ final class FavoritesViewTests: XCTestCase {
         favoritesVM.onDismissNotificationsHint = { dismissHint.fulfill() }
 
         let sut = FavoritesView(
-            location: .constant(.init(latitude: 0, longitude: 0)),
+            initialLocation: .init(latitude: 0, longitude: 0),
             alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
@@ -484,7 +453,7 @@ final class FavoritesViewTests: XCTestCase {
         favoritesVM.onDismissNotificationsHint = { dismissHint.fulfill() }
 
         let sut = FavoritesView(
-            location: .constant(.init(latitude: 0, longitude: 0)),
+            initialLocation: .init(latitude: 0, longitude: 0),
             alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,

@@ -12,7 +12,7 @@ import SwiftUI
 
 struct FavoritesView: View {
     @ObserveInjection var inject
-    @Binding var location: CLLocationCoordinate2D?
+    var initialLocation: CLLocationCoordinate2D?
     var alerts: AlertsStreamDataResponse?
     var errorBannerVM: IErrorBannerViewModel
     var favoritesVM: IFavoritesViewModel
@@ -20,6 +20,9 @@ struct FavoritesView: View {
     var toastVM: IToastViewModel
     @ObservedObject var navManager: NavigationManager
     @ObservedObject var viewportProvider: ViewportProvider
+
+    @State var location: CLLocationCoordinate2D?
+    @State var locationUnthrottled: CLLocationCoordinate2D?
 
     @EnvironmentObject var settingsCache: SettingsCache
     var notificationsEnabled: Bool { settingsCache.get(.notifications) }
@@ -97,7 +100,7 @@ struct FavoritesView: View {
             favoritesVM.setActive(active: true, wasSentToBackground: false)
             favoritesVM.setAlerts(alerts: alerts)
             favoritesVM.setContext(context: FavoritesViewModel.ContextFavorites())
-            favoritesVM.setLocation(location: location?.positionKt)
+            favoritesVM.setLocation(location: location?.positionKt ?? initialLocation?.positionKt)
             favoritesVM.setNow(now: now.toEasternInstant())
             favoritesVM.reloadFavorites()
             emptyFavoritesNotificationsHintCheck()
@@ -118,7 +121,8 @@ struct FavoritesView: View {
             errorBannerVM.setIsLoadingWhenPredictionsStale(isLoading: $0)
         }
         .onChange(of: favoritesVMState.loadedLocation) { loadedLocation in
-            if let loadedLocation {
+            if let loadedLocation, let currentPosition = locationUnthrottled?.positionKt,
+               loadedLocation.isRoughlyEqualTo(other: currentPosition) {
                 viewportProvider.lastLoadedLocation = loadedLocation.coordinate
                 viewportProvider.isTargeting = false
             }
@@ -142,10 +146,22 @@ struct FavoritesView: View {
         .onChange(of: alerts) { favoritesVM.setAlerts(alerts: $0) }
         .onChange(of: location?.positionKt) { favoritesVM.setLocation(location: $0) }
         .onChange(of: now) { favoritesVM.setNow(now: $0.toEasternInstant()) }
+        .onChange(of: viewportProvider.isManuallyCentering) { isCentering in
+            if let location, !isCentering, navManager.isFavoritesVisible() {
+                favoritesVM.setLocation(location: location.positionKt)
+            }
+        }
+        .onReceive(viewportProvider.cameraStatePublisherThrottled) { newCameraState in
+            location = newCameraState.center
+            guard let location, !viewportProvider.isManuallyCentering, navManager.isFavoritesVisible() else { return }
+            favoritesVM.setLocation(location: location.positionKt)
+        }
+        .onReceive(viewportProvider.cameraStatePublisher) { newCameraState in
+            guard navManager.isFavoritesVisible() else { return }
+            locationUnthrottled = newCameraState.center
+        }
         .withScenePhaseHandlers(
-            onActive: {
-                favoritesVM.setActive(active: true, wasSentToBackground: false)
-            },
+            onActive: { favoritesVM.setActive(active: true, wasSentToBackground: false) },
             onInactive: { favoritesVM.setActive(active: false, wasSentToBackground: false) },
             onBackground: { favoritesVM.setActive(active: false, wasSentToBackground: true) }
         )

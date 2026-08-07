@@ -194,8 +194,8 @@ internal class FavoritesViewModelTest : KoinTest {
                 FavoritesViewModel.State(
                     awaitingPredictionsAfterBackground = false,
                     favorites = emptyMap(),
-                    routeCardData = emptyList(),
-                    stopCardData = emptyList(),
+                    routeCardData = null,
+                    stopCardData = null,
                     staticRouteCardData = emptyList(),
                     staticStopCardData = emptyList(),
                     loadedLocation = null,
@@ -517,12 +517,8 @@ internal class FavoritesViewModelTest : KoinTest {
                 FavoritesViewModel.State(
                     awaitingPredictionsAfterBackground = false,
                     favorites = favoritesAfter.routeStopDirection,
-                    routeCardData = expectedStaticDataAfter,
-                    stopCardData =
-                        StopCardData.fromRouteCardData(
-                            expectedStaticDataAfter,
-                            sortByDistanceFrom = stop1.position,
-                        ),
+                    routeCardData = emptyList(),
+                    stopCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataAfter,
                     staticStopCardData =
                         StopCardData.fromRouteCardData(

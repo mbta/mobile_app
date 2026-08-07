@@ -20,6 +20,11 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import org.koin.compose.koinInject
 
+internal data class LoadedPredictions(
+    val stopIds: Set<String>,
+    val response: PredictionsStreamDataResponse,
+)
+
 @Composable
 internal fun subscribeToPredictions(
     stopIds: Set<String>?,
@@ -30,7 +35,7 @@ internal fun subscribeToPredictions(
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
     predictionsRepository: IPredictionsRepository = koinInject(),
     checkPredictionsStaleInterval: Duration = 5.seconds,
-): PredictionsStreamDataResponse? {
+): LoadedPredictions? {
     val errorKey = errorKey.withSuffix("subscribeToPredictions")
     val staleTimer by timer(checkPredictionsStaleInterval)
 
@@ -52,6 +57,7 @@ internal fun subscribeToPredictions(
         onAnyMessageReceived()
         when (message) {
             is ApiResult.Ok -> predictions = predictions.orEmpty().mergePredictions(message.data)
+
             is ApiResult.Error ->
                 println("Predictions stream failed on message: ${message.message}")
         }
@@ -82,10 +88,6 @@ internal fun subscribeToPredictions(
 
     LaunchedEffect(stopIds, active) {
         if (active) {
-            if (loadedStopIds != stopIds) {
-                predictions = null
-                loadedStopIds = null
-            }
             connect(stopIds, active, ::onJoin, ::onMessage)
         } else predictionsRepository.disconnect()
     }
@@ -102,8 +104,11 @@ internal fun subscribeToPredictions(
                 )
         ) {
             predictions = null
+            loadedStopIds = null
         }
     }
 
-    return predictions?.toPredictionsStreamDataResponse()
+    return loadedStopIds?.let { ids ->
+        predictions?.let { LoadedPredictions(ids, it.toPredictionsStreamDataResponse()) }
+    }
 }

@@ -1,5 +1,8 @@
 package com.mbta.tid.mbta_app.android.favorites
 
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -7,7 +10,13 @@ import androidx.compose.ui.test.performClick
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
+import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.location.LocationDataManager
+import com.mbta.tid.mbta_app.android.location.ViewportProvider
+import com.mbta.tid.mbta_app.android.pages.FavoritesPage
+import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.testUtils.hasTextMatching
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -37,10 +46,11 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
 
-class FavoritesViewTest {
+class FavoritesPageTest {
 
     @get:Rule val composeTestRule = createComposeRule()
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Test
     fun testShowsToast() = runBlocking {
         val favoritesVM =
@@ -63,7 +73,7 @@ class FavoritesViewTest {
         val objects = ObjectCollectionBuilder()
 
         composeTestRule.setContent {
-            FavoritesView(
+            FavoritesPage(
                 openSheetRoute = {},
                 favoritesViewModel = favoritesVM,
                 errorBannerViewModel =
@@ -80,11 +90,16 @@ class FavoritesViewTest {
                             }
                     ),
                 toastViewModel = toastVM,
-                alertData = AlertsStreamDataResponse(objects),
-                globalResponse = GlobalResponse(objects),
-                targetLocation = null,
-                setLastLocation = { _ -> },
-                setIsTargeting = { _ -> },
+                nearbyTransit =
+                    NearbyTransit(
+                        alertData = AlertsStreamDataResponse(objects),
+                        globalResponse = GlobalResponse(objects),
+                        lastLoadedLocationState = remember { mutableStateOf(null) },
+                        isTargetingState = remember { mutableStateOf(false) },
+                        scaffoldState = rememberBottomSheetScaffoldState(),
+                        locationDataManager = LocationDataManager(),
+                        viewportProvider = ViewportProvider(MapViewportState()),
+                    ),
             )
         }
 
@@ -99,7 +114,7 @@ class FavoritesViewTest {
         verify(VerifyMode.exhaustiveOrder) { toastVM.hideToast() }
     }
 
-    @OptIn(ExperimentalTestApi::class)
+    @OptIn(ExperimentalTestApi::class, ExperimentalMaterial3Api::class)
     @Test
     fun testShowsHint() = runBlocking {
         loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to true)) }
@@ -126,7 +141,7 @@ class FavoritesViewTest {
         val objects = ObjectCollectionBuilder()
 
         composeTestRule.setContent {
-            FavoritesView(
+            FavoritesPage(
                 openSheetRoute = {},
                 favoritesViewModel = favoritesVM,
                 errorBannerViewModel =
@@ -143,11 +158,16 @@ class FavoritesViewTest {
                             }
                     ),
                 toastViewModel = MockToastViewModel(),
-                alertData = AlertsStreamDataResponse(objects),
-                globalResponse = GlobalResponse(objects),
-                targetLocation = null,
-                setLastLocation = { _ -> },
-                setIsTargeting = { _ -> },
+                nearbyTransit =
+                    NearbyTransit(
+                        alertData = AlertsStreamDataResponse(objects),
+                        globalResponse = GlobalResponse(objects),
+                        lastLoadedLocationState = remember { mutableStateOf(null) },
+                        isTargetingState = remember { mutableStateOf(false) },
+                        scaffoldState = rememberBottomSheetScaffoldState(),
+                        locationDataManager = LocationDataManager(),
+                        viewportProvider = ViewportProvider(MapViewportState()),
+                    ),
             )
         }
 
@@ -158,7 +178,7 @@ class FavoritesViewTest {
         assert(hintDismissed)
     }
 
-    @OptIn(ExperimentalTestApi::class)
+    @OptIn(ExperimentalTestApi::class, ExperimentalMaterial3Api::class)
     @Test
     fun testEmptyFavoritesDismissHint() = runBlocking {
         loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to true)) }
@@ -185,7 +205,7 @@ class FavoritesViewTest {
         val objects = ObjectCollectionBuilder()
 
         composeTestRule.setContent {
-            FavoritesView(
+            FavoritesPage(
                 openSheetRoute = {},
                 favoritesViewModel = favoritesVM,
                 errorBannerViewModel =
@@ -202,11 +222,16 @@ class FavoritesViewTest {
                             }
                     ),
                 toastViewModel = MockToastViewModel(),
-                alertData = AlertsStreamDataResponse(objects),
-                globalResponse = GlobalResponse(objects),
-                targetLocation = null,
-                setLastLocation = { _ -> },
-                setIsTargeting = { _ -> },
+                nearbyTransit =
+                    NearbyTransit(
+                        alertData = AlertsStreamDataResponse(objects),
+                        globalResponse = GlobalResponse(objects),
+                        lastLoadedLocationState = remember { mutableStateOf(null) },
+                        isTargetingState = remember { mutableStateOf(false) },
+                        scaffoldState = rememberBottomSheetScaffoldState(),
+                        locationDataManager = LocationDataManager(),
+                        viewportProvider = ViewportProvider(MapViewportState()),
+                    ),
             )
         }
 

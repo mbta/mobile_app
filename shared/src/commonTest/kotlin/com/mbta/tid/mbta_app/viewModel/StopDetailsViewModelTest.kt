@@ -26,13 +26,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.component.get
 import org.koin.core.context.startKoin
@@ -185,7 +185,7 @@ class StopDetailsViewModelTest : KoinTest {
             assertEquals(1, predictionLoadCount)
             assertEquals(0, predictionDisconnectCount)
             viewModel.setActive(active = false, wasSentToBackground = false)
-            advanceUntilIdle()
+            advanceTimeBy(100.milliseconds)
             assertEquals(1, predictionLoadCount)
             assertEquals(1, predictionDisconnectCount)
         }
