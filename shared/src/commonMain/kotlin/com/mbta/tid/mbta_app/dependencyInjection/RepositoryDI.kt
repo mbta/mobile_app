@@ -5,7 +5,7 @@ import com.mbta.tid.mbta_app.cache.MockKeyedCache
 import com.mbta.tid.mbta_app.cache.ScheduleCache
 import com.mbta.tid.mbta_app.model.AppVersion
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.AlertsStreamUpdateResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
@@ -230,7 +230,7 @@ public class MockRepositories : IRepositories {
         selectedTripId: String? = null,
         selectedVehicleId: String? = null,
     ) {
-        alerts = MockAlertsRepository(AlertsStreamDataResponse(objects))
+        alerts = MockAlertsRepository(AlertsStreamUpdateResponse(objects))
         global = MockGlobalRepository(GlobalResponse(objects))
         nearby = NearbyRepository() // Use real nearby, will calculate based on stops in global
         predictions =

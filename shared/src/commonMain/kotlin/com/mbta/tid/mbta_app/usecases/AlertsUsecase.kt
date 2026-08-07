@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.usecases
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.AlertsStreamUpdateResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
@@ -21,17 +22,22 @@ constructor(
     private val globalUpdateDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : KoinComponent {
 
-    private var lastOkResult: ApiResult.Ok<AlertsStreamDataResponse>? = null
+    private var currentAlerts: AlertsStreamDataResponse? = null
+
     private var globalState = globalRepository.state
     private var globalUpdateJob: Job? = null
 
     public fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit) {
-        fun injectAndReceive(result: ApiResult<AlertsStreamDataResponse>) {
+        fun injectAndReceive(result: ApiResult<AlertsStreamUpdateResponse>) {
             val injectedResult =
-                if (result is ApiResult.Ok) {
-                    lastOkResult = result
-                    result.copy(result.data.injectFacilities(globalState.value))
-                } else result
+                when (result) {
+                    is ApiResult.Ok ->
+                        ApiResult.Ok(
+                            result.data.mergeInto(currentAlerts).injectFacilities(globalState.value)
+                        )
+
+                    is ApiResult.Error -> ApiResult.Error(result.code, result.message)
+                }
             onReceive(injectedResult)
         }
         alertsRepository.connect(::injectAndReceive)
@@ -40,8 +46,8 @@ constructor(
         globalUpdateJob =
             CoroutineScope(globalUpdateDispatcher).launch {
                 globalState.collect { global ->
-                    lastOkResult?.let { result ->
-                        onReceive(result.copy(result.data.injectFacilities(global)))
+                    currentAlerts?.let { alerts ->
+                        onReceive(ApiResult.Ok(alerts.injectFacilities(global)))
                     }
                 }
             }
