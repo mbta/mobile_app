@@ -15,7 +15,6 @@ import com.google.firebase.analytics.analytics
 import com.google.firebase.messaging.FirebaseMessaging
 import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
-import com.mbta.tid.mbta_app.android.util.fcmToken
 import com.mbta.tid.mbta_app.initializeSentry
 import com.mbta.tid.mbta_app.routes.DeepLinkState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,7 +53,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initSentry()
-        getFCMToken()
+        getFCMInstallationId()
         handleIntent(intent)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         enableEdgeToEdge()
@@ -83,7 +82,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun getFCMToken() {
-        FirebaseMessaging.getInstance().token.addOnSuccessListener { fcmToken = it }
+    private fun getFCMInstallationId() {
+        FirebaseMessaging.getInstance().register()
     }
 }
