@@ -69,7 +69,10 @@ public object StopIcons {
                     Exp("-"),
                     Exp.at(
                         Exp(0),
-                        Exp.get(MapExp.topRouteExp, Exp.get(StopFeaturesBuilder.propRouteIdsKey)),
+                        Exp.get(
+                            MapExp.topRouteExp,
+                            Exp.get(StopFeaturesBuilder.propRouteIdsByTypeKey),
+                        ),
                     ),
                 ),
             Exp(""),
