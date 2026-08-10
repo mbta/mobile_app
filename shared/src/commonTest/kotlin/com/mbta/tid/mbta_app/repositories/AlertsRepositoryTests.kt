@@ -2,7 +2,7 @@ package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.mocks.MockMessage
 import com.mbta.tid.mbta_app.model.SocketError
-import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.AlertsStreamUpdateResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
@@ -113,7 +113,12 @@ class AlertsRepositoryTests {
         class MockChannel : PhoenixChannel {
             override fun onEvent(event: String, callback: (PhoenixMessage) -> Unit) {
                 /* no-op */
-                callback(MockMessage(subject = AlertsChannel.topic, jsonBody = "{\"alerts\": {}}"))
+                callback(
+                    MockMessage(
+                        subject = AlertsChannel.topic,
+                        jsonBody = "{\"remove\": [], \"update\": {}}",
+                    )
+                )
             }
 
             override fun onFailure(callback: (message: PhoenixMessage) -> Unit) {
@@ -137,7 +142,8 @@ class AlertsRepositoryTests {
             onReceive = { outcome ->
                 val data = outcome.dataOrThrow()
                 assertNotNull(data)
-                val expectedResponse = AlertsStreamDataResponse(alerts = emptyMap())
+                val expectedResponse =
+                    AlertsStreamUpdateResponse(remove = emptyList(), update = emptyMap())
                 assertEquals(expectedResponse, data)
             }
         )
