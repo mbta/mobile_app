@@ -184,7 +184,11 @@ public object RouteFeaturesBuilder {
         val firstStop = stopsById?.get(firstStopId) ?: return null
         val lastStopId = segment.stopIds.lastOrNull() ?: return null
         val lastStop = stopsById.get(lastStopId) ?: return null
-        val lineSegment = fullLineString.slice(start = firstStop.position, stop = lastStop.position)
+        // Loop routes can begin and end at the same stop, but slicing by identical positions
+        // produces an empty line, so if there's a loop, always draw the full shape
+        val lineSegment =
+            if (firstStopId == lastStopId) fullLineString
+            else fullLineString.slice(start = firstStop.position, stop = lastStop.position)
         return RouteLineData(
             id = segment.id,
             sourceRoutePatternId = segment.sourceRoutePatternId,
