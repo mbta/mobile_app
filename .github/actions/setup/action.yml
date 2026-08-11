@@ -136,17 +136,9 @@ runs:
         curl --location --output xcodegen.zip https://github.com/yonaskolb/XcodeGen/releases/download/${VERSION}/xcodegen.zip
         unzip -q xcodegen.zip
         popd
-        ./gradlew :shared:generateDummyFramework
         cd iosApp
         ${OUT}/xcodegen/bin/xcodegen generate
         rm -r ${OUT}
-    - name: Cache CocoaPods dependencies
-      if: steps.settings.outputs.xcode == 'true'
-      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-      with:
-        path: iosApp/Pods
-        key: cocoapods-${{ hashFiles('iosApp/Podfile.lock') }}
-        restore-keys: cocoapods-
     - name: Install SwiftLint and xcbeautify
       if: steps.settings.outputs.xcode == 'true'
       shell: bash
