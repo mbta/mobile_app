@@ -33,6 +33,14 @@ internal constructor(
      */
     public fun isTypical(): Boolean = typicality == null || typicality == Typicality.Typical
 
+    /**
+     * Checks if this pattern is [Typicality.CanonicalOnly].
+     *
+     * If any typicality is unknown, the route should be shown, and so this will return true.
+     */
+    public fun isCanonicalOnly(): Boolean =
+        typicality == null || typicality == Typicality.CanonicalOnly
+
     override fun compareTo(other: RoutePattern): Int = sortOrder.compareTo(other.sortOrder)
 
     internal data class PatternsForStop(

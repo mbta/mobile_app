@@ -194,8 +194,8 @@ internal class FavoritesViewModelTest : KoinTest {
                 FavoritesViewModel.State(
                     awaitingPredictionsAfterBackground = false,
                     favorites = emptyMap(),
-                    routeCardData = emptyList(),
-                    stopCardData = emptyList(),
+                    routeCardData = null,
+                    stopCardData = null,
                     staticRouteCardData = emptyList(),
                     staticStopCardData = emptyList(),
                     loadedLocation = null,
@@ -909,24 +909,11 @@ internal class FavoritesViewModelTest : KoinTest {
             listOf(routeCard1Data, routeCard2Data.copy(stopData = listOf(stop2Data)))
 
         testViewModelFlow(viewModel).test {
-            assertEquals(
-                FavoritesViewModel.State(
-                    awaitingPredictionsAfterBackground = false,
-                    favorites = favoritesBefore.routeStopDirection,
-                    routeCardData = emptyList(),
-                    stopCardData = emptyList(),
-                    staticRouteCardData = expectedStaticDataBefore,
-                    staticStopCardData =
-                        StopCardData.fromRouteCardData(
-                            expectedStaticDataBefore,
-                            sortByDistanceFrom = stop3.position,
-                        ),
-                    loadedLocation = stop3.position,
-                ),
-                awaitItemSatisfying {
-                    it.routeCardData != null && it.staticRouteCardData == expectedStaticDataBefore
-                },
-            )
+            awaitItemSatisfying {
+                it.routeCardData != null &&
+                    it.staticRouteCardData == expectedStaticDataBefore &&
+                    it.favorites == favoritesBefore.routeStopDirection
+            }
             viewModel.setContext(FavoritesViewModel.Context.Edit)
             favoritesRepo.setFavorites(favoritesAfter)
             viewModel.reloadFavorites()
@@ -958,6 +945,12 @@ internal class FavoritesViewModelTest : KoinTest {
     @Test
     fun `clears stale favorites when stop is missing`() = runTest {
         val now = EasternTimeInstant.now()
+        objects.routePattern(route1) {
+            directionId = 0
+            representativeTrip {
+                stopIds = listOf(stop1.id, stop2.id)
+            }
+        }
 
         val favoritesBefore = buildFavorites {
             routeStopDirection(route1.id, stop1.id, 0)
@@ -993,6 +986,12 @@ internal class FavoritesViewModelTest : KoinTest {
     @Test
     fun `clears stale favorites when route is missing`() = runTest {
         val now = EasternTimeInstant.now()
+        objects.routePattern(route1) {
+            directionId = 0
+            representativeTrip {
+                stopIds = listOf(stop1.id, stop2.id)
+            }
+        }
 
         val favoritesBefore = buildFavorites {
             routeStopDirection(route1.id, stop1.id, 0)
@@ -1032,9 +1031,12 @@ internal class FavoritesViewModelTest : KoinTest {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val stop = objects.stop()
+        val lastStop = objects.stop()
         objects.routePattern(route) {
             directionId = 0
-            representativeTrip { stopIds = listOf(stop.id) }
+            representativeTrip {
+                stopIds = listOf(stop.id, lastStop.id)
+            }
         }
 
         val favoritesBefore = buildFavorites {
@@ -1063,6 +1065,55 @@ internal class FavoritesViewModelTest : KoinTest {
             awaitItemSatisfying { it.favorites == favoritesBefore.routeStopDirection }
             viewModel.clearStaleFavorites("")
             awaitItemSatisfying { it.favorites == favoritesAfter.routeStopDirection }
+            advanceUntilIdle()
+            assertEquals("Clearing stale favorites", sentryMessage)
+        }
+    }
+
+    @Test
+    fun `clears stale favorites when stop the last one`() = runTest {
+        val now = EasternTimeInstant.now()
+
+        objects.routePattern(route1) {
+            directionId = 0
+            representativeTrip {
+                stopIds = listOf(stop1.id, stop2.id)
+            }
+        }
+
+        val favoritesBefore = buildFavorites {
+            routeStopDirection(route1.id, stop1.id, 0)
+            routeStopDirection(route1.id, stop2.id, 0)
+        }
+        val favoritesAfter = buildFavorites { routeStopDirection(route1.id, stop1.id, 0) }
+
+        val favoritesRepo = MockFavoritesRepository(favorites = favoritesBefore)
+
+        val dispatcher = StandardTestDispatcher(testScheduler)
+
+        var sentryMessage: String? = null
+        val sentryRepo = MockSentryRepository(onCaptureMessageWithDetails = { sentryMessage = it })
+        setUpKoin(objects, dispatcher) {
+            favorites = favoritesRepo
+            sentry = sentryRepo
+        }
+
+        val viewModel: FavoritesViewModel = get()
+        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+        viewModel.setNow(now)
+        viewModel.setLocation(stop1.position)
+
+        testViewModelFlow(viewModel).test {
+            awaitItemSatisfying { it.favorites == favoritesBefore.routeStopDirection }
+            viewModel.clearStaleFavorites("")
+            awaitItemSatisfying {
+                it.favorites == favoritesAfter.routeStopDirection &&
+                    it.staticStopCardData?.size == 2
+            }
+            awaitItemSatisfying {
+                it.favorites == favoritesAfter.routeStopDirection &&
+                    it.staticStopCardData?.size == 1
+            }
             advanceUntilIdle()
             assertEquals("Clearing stale favorites", sentryMessage)
         }

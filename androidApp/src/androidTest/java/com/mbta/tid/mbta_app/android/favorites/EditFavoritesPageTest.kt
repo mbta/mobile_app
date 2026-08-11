@@ -62,7 +62,7 @@ class EditFavoritesPageTest : KoinTest {
         directionNames = listOf("North", "South")
         directionDestinations = listOf("Downtown", "Uptown")
         longName = "Sample Route Long Name"
-        shortName = "Sample Route"
+        shortName = "66"
         textColor = "000000"
         lineId = line.id.idText
         routePatternIds = mutableListOf("pattern_1", "pattern_2")
@@ -134,13 +134,13 @@ class EditFavoritesPageTest : KoinTest {
         textColor = "FFFFFF"
     }
     val greenLineRoute = builder.route {
-        id = "route_gl"
+        id = "Green-B"
         type = RouteType.LIGHT_RAIL
         color = "008000"
         directionNames = listOf("Inbound", "Outbound")
         directionDestinations = listOf("Park Street", "Lechmere")
         longName = "Green Line Long Name"
-        shortName = "Green Line"
+        shortName = "B"
         textColor = "FFFFFF"
         lineId = greenLine.id.idText
         routePatternIds = mutableListOf("pattern_gl")
@@ -283,12 +283,12 @@ class EditFavoritesPageTest : KoinTest {
             )
         }
 
-        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
-        composeTestRule.onNodeWithText("Sample Route").assertCanBeDisplayed()
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("66"))
+        composeTestRule.onNodeWithText("66").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Downtown").assertCanBeDisplayed()
 
         // Shouldn't be shown because it is not a favorite
-        composeTestRule.onNodeWithText("Green Line Long Name").assertIsNotDisplayed()
+        composeTestRule.onNodeWithText("GL").assertIsNotDisplayed()
         composeTestRule.onNodeWithText("Green Line Stop").assertIsNotDisplayed()
     }
 
@@ -377,11 +377,11 @@ class EditFavoritesPageTest : KoinTest {
             )
         }
 
-        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
-        composeTestRule.onNodeWithText("Sample Route").assertCanBeDisplayed()
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("66"))
+        composeTestRule.onNodeWithText("66").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Downtown").assertCanBeDisplayed()
 
-        composeTestRule.onNodeWithText("Green Line Long Name").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("GL").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Green Line Stop").assertCanBeDisplayed()
 
         composeTestRule.onAllNodesWithTag("trashCan")[0].performClick()
@@ -395,11 +395,11 @@ class EditFavoritesPageTest : KoinTest {
         composeTestRule.waitUntilDefaultTimeout { update == updatedWith }
 
         // Should be deleted
-        composeTestRule.onNodeWithText("Sample Route").assertIsNotDisplayed()
+        composeTestRule.onNodeWithText("66").assertIsNotDisplayed()
         composeTestRule.onNodeWithText("Downtown").assertIsNotDisplayed()
 
         // Should remain
-        composeTestRule.onNodeWithText("Green Line Long Name").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("GL").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Green Line Stop").assertCanBeDisplayed()
     }
 
@@ -465,8 +465,8 @@ class EditFavoritesPageTest : KoinTest {
             )
         }
 
-        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
-        composeTestRule.onNodeWithText("Green Line Long Name").assertCanBeDisplayed()
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("66"))
+        composeTestRule.onNodeWithText("GL").assertCanBeDisplayed()
 
         composeTestRule.onAllNodesWithTag("trashCan")[0].performClick()
         composeTestRule.awaitIdle()
@@ -478,10 +478,10 @@ class EditFavoritesPageTest : KoinTest {
 
         composeTestRule.waitUntilDefaultTimeout { update == updatedWith }
 
-        composeTestRule.onNodeWithText("Sample Route").assertIsNotDisplayed()
-        composeTestRule.onNodeWithText("Green Line Long Name").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("66").assertIsNotDisplayed()
+        composeTestRule.onNodeWithText("GL").assertCanBeDisplayed()
         assertEquals(
-            "<b>Northbound Sample Route bus</b> at <b>Sample Stop 1</b> removed from Favorites",
+            "<b>Northbound 66 bus</b> at <b>Sample Stop 1</b> removed from Favorites",
             displayedToast?.message,
         )
 
@@ -495,8 +495,8 @@ class EditFavoritesPageTest : KoinTest {
         }
         composeTestRule.waitUntilDefaultTimeout { undo == updatedWith }
 
-        composeTestRule.onNodeWithText("Sample Route").assertCanBeDisplayed()
-        composeTestRule.onNodeWithText("Green Line Long Name").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("66").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("GL").assertCanBeDisplayed()
         assertNull(displayedToast)
     }
 
@@ -536,11 +536,12 @@ class EditFavoritesPageTest : KoinTest {
             )
         }
 
-        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
-        composeTestRule.onNodeWithText("Sample Route").assertCanBeDisplayed()
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("66"))
+        composeTestRule.onNodeWithText("66").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Downtown").assertCanBeDisplayed()
 
-        composeTestRule.onNodeWithText("Green Line Long Name").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("GL").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Park Street").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Green Line Stop").assertCanBeDisplayed()
 
         composeTestRule.onAllNodesWithTag("editIcon")[0].performClick()
@@ -606,7 +607,7 @@ class EditFavoritesPageTest : KoinTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
             hasContentDescription("notifications enabled")
         )
-        composeTestRule.onNodeWithText("Sample Route").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("66").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Downtown").assertCanBeDisplayed()
     }
 }

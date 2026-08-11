@@ -282,11 +282,6 @@
     <string name="not_accessible">Không thể tiếp cận</string>
     <string name="not_accessible_stop_card">Điểm dừng này không có lối vào cho người khuyết tật</string>
     <string name="notice">Thông báo</string>
-    <string name="notifications_beta_dialog_body">Chúng tôi có thể liên hệ với bạn để chia sẻ phản hồi về tính năng Thông báo không?</string>
-    <string name="notifications_beta_dialog_header">Chúng tôi phụ thuộc vào những người dùng như bạn để học hỏi và tìm cách cải thiện!</string>
-    <string name="notifications_beta_dialog_no">Không, cảm ơn</string>
-    <string name="notifications_beta_dialog_yes">Đúng</string>
-    <string name="notifications_beta_toast">&lt;u>Nhận thông báo sớm&lt;/u> và cung cấp phản hồi</string>
     <string name="notifications_beta_toggle_label">Thông báo về sự gián đoạn</string>
     <string name="notifications_enabled">thông báo đã được bật</string>
     <string name="notifications_favorites_hint">Giờ &lt;u>hãy chỉnh sửa mục yêu thích&lt;/u> để nhận thông báo về sự gián đoạn</string>

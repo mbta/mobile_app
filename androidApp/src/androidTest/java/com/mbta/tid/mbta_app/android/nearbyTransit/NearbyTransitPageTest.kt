@@ -1,18 +1,30 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
-import androidx.compose.material3.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraState
+import com.mapbox.maps.EdgeInsets
+import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
+import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.location.LocationDataManager
+import com.mbta.tid.mbta_app.android.location.ViewportProvider
+import com.mbta.tid.mbta_app.android.location.ViewportProvider.Companion.Defaults
+import com.mbta.tid.mbta_app.android.pages.NearbyTransit
+import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
+import com.mbta.tid.mbta_app.android.util.toPoint
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LineOrRoute
@@ -42,7 +54,7 @@ import org.koin.compose.koinInject
 import org.koin.test.KoinTest
 import org.maplibre.spatialk.geojson.Position
 
-class NearbyTransitViewTest : KoinTest {
+class NearbyTransitPageTest : KoinTest {
     val builder = ObjectCollectionBuilder()
     val now = EasternTimeInstant.now()
     val route = builder.route {
@@ -163,6 +175,15 @@ class NearbyTransitViewTest : KoinTest {
 
     val globalResponse = GlobalResponse(builder)
 
+    fun cameraState(point: Point = Defaults.center): CameraState =
+        CameraState(
+            point,
+            EdgeInsets(0.0, 0.0, 0.0, 0.0),
+            Defaults.zoom,
+            0.0,
+            0.0,
+        )
+
     fun routeCardData(stop: Stop = sampleStop): RouteCardData =
         RouteCardData(
             LineOrRoute.Route(route),
@@ -239,9 +260,9 @@ class NearbyTransitViewTest : KoinTest {
 
     @get:Rule val composeTestRule = createComposeRule()
 
-    @OptIn(ExperimentalTestApi::class)
+    @OptIn(ExperimentalTestApi::class, ExperimentalMaterial3Api::class)
     @Test
-    fun testNearbyTransitViewDisplaysCorrectly() {
+    fun testNearbyTransitPageDisplaysCorrectly() {
         loadKoinMocks(
             builder,
             repositoryOverrides = {
@@ -262,14 +283,19 @@ class NearbyTransitViewTest : KoinTest {
             )
 
         composeTestRule.setContent {
-            NearbyTransitView(
-                alertData = AlertsStreamDataResponse(emptyMap()),
-                globalResponse = globalResponse,
-                targetLocation = Position(0.0, 0.0),
-                setLastLocation = {},
-                setIsTargeting = {},
+            NearbyTransitPage(
+                nearbyTransit =
+                    NearbyTransit(
+                        alertData = AlertsStreamDataResponse(emptyMap()),
+                        globalResponse = globalResponse,
+                        lastLoadedLocationState = remember { mutableStateOf(null) },
+                        isTargetingState = remember { mutableStateOf(false) },
+                        scaffoldState = rememberBottomSheetScaffoldState(),
+                        locationDataManager = LocationDataManager(),
+                        viewportProvider = ViewportProvider(MapViewportState(cameraState())),
+                    ),
                 onOpenStopDetails = { _, _ -> },
-                noNearbyStopsView = {},
+                openSearch = {},
                 nearbyViewModel = nearbyVM,
                 errorBannerViewModel = koinInject(),
             )
@@ -287,7 +313,7 @@ class NearbyTransitViewTest : KoinTest {
         composeTestRule.onNodeWithText("5 min").assertCanBeDisplayed()
     }
 
-    @OptIn(ExperimentalTestApi::class)
+    @OptIn(ExperimentalTestApi::class, ExperimentalMaterial3Api::class)
     @Test
     fun testRouteCardAnalyticsPinnedWithEnhanced() {
         var analyticsLoggedProps: Map<String, String> = mapOf()
@@ -321,14 +347,19 @@ class NearbyTransitViewTest : KoinTest {
             )
 
         composeTestRule.setContent {
-            NearbyTransitView(
-                alertData = AlertsStreamDataResponse(emptyMap()),
-                globalResponse = globalResponse,
-                targetLocation = Position(0.0, 0.0),
-                setLastLocation = {},
-                setIsTargeting = {},
+            NearbyTransitPage(
+                nearbyTransit =
+                    NearbyTransit(
+                        alertData = AlertsStreamDataResponse(emptyMap()),
+                        globalResponse = globalResponse,
+                        lastLoadedLocationState = remember { mutableStateOf(null) },
+                        isTargetingState = remember { mutableStateOf(false) },
+                        scaffoldState = rememberBottomSheetScaffoldState(),
+                        locationDataManager = LocationDataManager(),
+                        viewportProvider = ViewportProvider(MapViewportState(cameraState())),
+                    ),
                 onOpenStopDetails = { _, _ -> },
-                noNearbyStopsView = {},
+                openSearch = {},
                 nearbyViewModel = nearbyVM,
                 errorBannerViewModel = koinInject(),
             )
@@ -341,34 +372,35 @@ class NearbyTransitViewTest : KoinTest {
         assertEquals(analyticsLoggedProps.getValue("pinned"), "true")
     }
 
-    @OptIn(ExperimentalTestApi::class)
+    @OptIn(ExperimentalTestApi::class, ExperimentalMaterial3Api::class)
     @Test
-    fun testNearbyTransitViewNoNearbyStops() {
+    fun testNearbyTransitPageNoNearbyStops() {
         loadKoinMocks()
         composeTestRule.setContent {
-            NearbyTransitView(
-                alertData = AlertsStreamDataResponse(emptyMap()),
-                globalResponse = globalResponse,
-                targetLocation = Position(0.0, 0.0),
-                setLastLocation = {},
-                setIsTargeting = {},
+            NearbyTransitPage(
+                nearbyTransit =
+                    NearbyTransit(
+                        alertData = AlertsStreamDataResponse(emptyMap()),
+                        globalResponse = globalResponse,
+                        lastLoadedLocationState = remember { mutableStateOf(null) },
+                        isTargetingState = remember { mutableStateOf(false) },
+                        scaffoldState = rememberBottomSheetScaffoldState(),
+                        locationDataManager = LocationDataManager(),
+                        viewportProvider = ViewportProvider(MapViewportState(cameraState())),
+                    ),
                 onOpenStopDetails = { _, _ -> },
-                noNearbyStopsView = { Text("This would be the no nearby stops view") },
+                openSearch = {},
                 nearbyViewModel = koinInject(),
                 errorBannerViewModel = koinInject(),
             )
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasText("This would be the no nearby stops view")
-        )
-        composeTestRule
-            .onNodeWithText("This would be the no nearby stops view")
-            .assertCanBeDisplayed()
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("No nearby stops"))
+        composeTestRule.onNodeWithText("No nearby stops").assertCanBeDisplayed()
     }
 
-    @OptIn(ExperimentalTestApi::class)
+    @OptIn(ExperimentalTestApi::class, ExperimentalMaterial3Api::class)
     @Test
     fun testAlertsSetOnChange() {
         val objects = TestData.clone()
@@ -420,14 +452,22 @@ class NearbyTransitViewTest : KoinTest {
         var alerts by mutableStateOf(AlertsStreamDataResponse(emptyMap()))
 
         composeTestRule.setContent {
-            NearbyTransitView(
-                alertData = alerts,
-                globalResponse = GlobalResponse(objects),
-                targetLocation = harvardNorthbound.position,
-                setLastLocation = {},
-                setIsTargeting = {},
+            NearbyTransitPage(
+                nearbyTransit =
+                    NearbyTransit(
+                        alertData = AlertsStreamDataResponse(emptyMap()),
+                        globalResponse = globalResponse,
+                        lastLoadedLocationState = remember { mutableStateOf(null) },
+                        isTargetingState = remember { mutableStateOf(false) },
+                        scaffoldState = rememberBottomSheetScaffoldState(),
+                        locationDataManager = LocationDataManager(),
+                        viewportProvider =
+                            ViewportProvider(
+                                MapViewportState(cameraState(harvardNorthbound.position.toPoint()))
+                            ),
+                    ),
                 onOpenStopDetails = { _, _ -> },
-                noNearbyStopsView = {},
+                openSearch = {},
                 nearbyViewModel = nearbyVM,
                 errorBannerViewModel = koinInject(),
             )

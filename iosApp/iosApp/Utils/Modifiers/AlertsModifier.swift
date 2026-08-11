@@ -33,7 +33,7 @@ struct AlertsModifier: ViewModifier {
             .withScenePhaseHandlers(
                 onActive: { joinAlertsChannel() },
                 onInactive: { leaveAlertsChannel() },
-                onBackground: { leaveAlertsChannel() },
+                onBackground: { leaveAlertsChannel() }
             )
             .onDisappear {
                 leaveAlertsChannel()

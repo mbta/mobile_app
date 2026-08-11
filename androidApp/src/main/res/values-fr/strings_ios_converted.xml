@@ -288,11 +288,6 @@
     <string name="not_accessible">Non accessible</string>
     <string name="not_accessible_stop_card">Cet arrêt n’est pas accessible</string>
     <string name="notice">Avertissement</string>
-    <string name="notifications_beta_dialog_body">Pouvons-nous vous contacter pour recueillir vos commentaires sur les notifications ?</string>
-    <string name="notifications_beta_dialog_header">Nous comptons sur des usagers comme vous pour nous aider à nous améliorer !</string>
-    <string name="notifications_beta_dialog_no">Non merci</string>
-    <string name="notifications_beta_dialog_yes">Oui</string>
-    <string name="notifications_beta_toast">&lt;u>Accédez en avant-première aux notifications&lt;/u> et donnez votre avis</string>
     <string name="notifications_beta_toggle_label">Notifications de perturbation</string>
     <string name="notifications_enabled">notifications activées</string>
     <string name="notifications_favorites_hint">Désormais, &lt;u>modifiez vos favoris&lt;/u> pour recevoir des notifications de perturbation</string>

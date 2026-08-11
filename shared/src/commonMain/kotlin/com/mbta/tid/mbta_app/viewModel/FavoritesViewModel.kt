@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.model.FavoriteSettings
@@ -22,6 +23,8 @@ import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.LoadedPredictions
+import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.LoadedSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
@@ -29,10 +32,14 @@ import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
 import kotlin.experimental.ExperimentalObjCRefinement
 import kotlin.jvm.JvmName
 import kotlin.native.ShouldRefineInSwift
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.sample
 import org.maplibre.spatialk.geojson.Position
 
 // Purely for logging
@@ -40,6 +47,7 @@ internal enum class RemovalReason {
     MissingRoute,
     MissingStop,
     MissingDirection,
+    LastStopForRoute,
 }
 
 @OptIn(ExperimentalObjCRefinement::class)
@@ -129,6 +137,7 @@ public class FavoritesViewModel(
     @set:JvmName("setLocationState") private var location by mutableStateOf<Position?>(null)
     @set:JvmName("setNowState") private var now by mutableStateOf(EasternTimeInstant.now())
 
+    @OptIn(FlowPreview::class)
     @Composable
     override fun runLogic(): State {
         var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
@@ -158,10 +167,10 @@ public class FavoritesViewModel(
                         stop.id
                 }
             }
-        val schedules = getSchedules(stopIds, errorKey)
+        val schedules = getSchedules(stopIds?.toSet(), errorKey)
         val predictions =
             subscribeToPredictions(
-                stopIds,
+                stopIds?.toSet(),
                 SheetRoutes.Favorites,
                 active,
                 errorKey,
@@ -174,23 +183,25 @@ public class FavoritesViewModel(
         ): Map<RouteStopDirection, RemovalReason> =
             favorites
                 .mapNotNull { rsd ->
-                    val lineOrRoute = global.getLineOrRoute(rsd.route)
-                    val routeExists = lineOrRoute != null
-                    val stopExists = global.getStop(rsd.stop) != null
-                    val directionExists =
-                        lineOrRoute?.let {
-                            global.getPatternsFor(rsd.stop, it).any { pattern ->
-                                pattern.directionId == rsd.direction
-                            }
-                        } ?: false
-                    val removalReason =
-                        when {
-                            !routeExists -> RemovalReason.MissingRoute
-                            !stopExists -> RemovalReason.MissingStop
-                            !directionExists -> RemovalReason.MissingDirection
-                            else -> null
+                    val lineOrRoute =
+                        global.getLineOrRoute(rsd.route)
+                            ?: return@mapNotNull rsd to RemovalReason.MissingRoute
+                    val stop =
+                        global.getStop(rsd.stop)
+                            ?: return@mapNotNull rsd to RemovalReason.MissingStop
+
+                    val patterns = global.getPatternsFor(rsd.stop, lineOrRoute)
+
+                    if (
+                        patterns.none { pattern ->
+                            pattern.directionId == rsd.direction
                         }
-                    return@mapNotNull removalReason?.let { rsd to removalReason }
+                    )
+                        return@mapNotNull rsd to RemovalReason.MissingDirection
+
+                    if (stop.isLastStopForAllPatterns(rsd.direction, patterns, global))
+                        return@mapNotNull rsd to RemovalReason.LastStopForRoute
+                    return@mapNotNull null
                 }
                 .toMap()
 
@@ -282,41 +293,71 @@ public class FavoritesViewModel(
             }
         }
 
-        LaunchedEffect(
-            stopIds,
-            globalData,
-            location,
-            schedules,
-            predictions,
-            alerts,
-            now,
-            favorites,
-        ) {
-            if (stopIds == null || globalData == null || location == null) {
-                routeCardData = null
-            } else if (stopIds.isEmpty()) {
-                routeCardData = emptyList()
-            } else {
-                routeCardData =
-                    RouteCardData.routeCardsForStopList(
-                        stopIds,
-                        globalData,
-                        location,
-                        schedules,
-                        predictions,
-                        alerts,
-                        now,
-                        RouteCardData.Context.Favorites,
-                        favorites?.keys,
-                        coroutineDispatcher,
-                    )
-                loadedLocation = location
-            }
-            stopCardData = routeCardData?.let {
-                StopCardData.fromRouteCardData(it, sortByDistanceFrom = location)
-            }
+        data class RouteCardDataParams(
+            val location: Position?,
+            val stopIds: List<String>?,
+            val globalData: GlobalResponse?,
+            val schedules: LoadedSchedules?,
+            val predictions: LoadedPredictions?,
+            val alerts: AlertsStreamDataResponse?,
+            val now: EasternTimeInstant,
+        )
+
+        // Put all route card params into a single debounceable value. If we just put all the params
+        // as keys to a LaunchedEffect, then routeCardData setting can get interrupted by frequent
+        // changes to predictions or now, which can chain and significantly delay updates.
+        var params: RouteCardDataParams? by remember { mutableStateOf(null) }
+        LaunchedEffect(location, stopIds, globalData, schedules, predictions, alerts, now) {
+            params =
+                RouteCardDataParams(
+                    location,
+                    stopIds,
+                    globalData,
+                    schedules,
+                    predictions,
+                    alerts,
+                    now,
+                )
         }
 
+        LaunchedEffect(Unit) {
+            snapshotFlow { params }
+                .sample(100.milliseconds)
+                .conflate()
+                .collect {
+                    if (it == null) return@collect
+                    if (it.stopIds == null || it.globalData == null) {
+                        routeCardData = null
+                    } else if (it.stopIds.isEmpty()) {
+                        routeCardData = emptyList()
+                    } else if (
+                        it.location != null &&
+                            it.schedules?.stopIds == it.stopIds.toSet() &&
+                            it.predictions?.stopIds == it.stopIds.toSet()
+                    ) {
+                        routeCardData =
+                            RouteCardData.routeCardsForStopList(
+                                it.stopIds,
+                                it.globalData,
+                                it.location,
+                                it.schedules.response,
+                                it.predictions.response,
+                                it.alerts,
+                                it.now,
+                                RouteCardData.Context.Favorites,
+                                favorites?.keys,
+                                coroutineDispatcher,
+                            )
+                        loadedLocation = it.location
+                    }
+                    stopCardData = routeCardData?.let { rcd ->
+                        StopCardData.fromRouteCardData(rcd, sortByDistanceFrom = it.location)
+                    }
+                }
+        }
+
+        // Static data doesn't need to be processed in a snapshotFlow because the input params
+        // change very infrequently
         LaunchedEffect(stopIds, globalData, favorites, location) {
             if (stopIds == null || globalData == null) {
                 staticRouteCardData = null

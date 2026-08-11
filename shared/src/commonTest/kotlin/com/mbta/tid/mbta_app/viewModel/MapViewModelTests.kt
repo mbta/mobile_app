@@ -348,7 +348,7 @@ internal class MapViewModelTests : KoinTest {
                 ),
                 awaitItem(),
             )
-            advanceUntilIdle()
+            advanceTimeBy(100.milliseconds)
             assertEquals(tripDetailsFilter.tripId, loadedTripShapeId)
         }
     }
@@ -496,7 +496,7 @@ internal class MapViewModelTests : KoinTest {
         testViewModelFlow(viewModel).test {
             viewModel.layerManagerInitialized(layerManager1)
             awaitItem()
-            advanceUntilIdle()
+            advanceTimeBy(100.milliseconds)
             verifySuspend {
                 layerManager1.addLayers(
                     any<List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>>(),
@@ -506,7 +506,7 @@ internal class MapViewModelTests : KoinTest {
                 )
             }
             viewModel.layerManagerInitialized(layerManager2)
-            advanceUntilIdle()
+            advanceTimeBy(100.milliseconds)
             verifySuspend {
                 layerManager2.addLayers(
                     any<List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>>(),
@@ -534,7 +534,7 @@ internal class MapViewModelTests : KoinTest {
         testViewModelFlow(viewModel).test {
             viewModel.setViewportManager(viewportManager)
             viewModel.locationPermissionsChanged(true)
-            advanceUntilIdle()
+            advanceTimeBy(11.seconds)
             verify {
                 sentryRepository.captureException(
                     matches<MoleculeViewModel.TimeoutException> {
@@ -590,7 +590,7 @@ internal class MapViewModelTests : KoinTest {
             awaitItemSatisfying {
                 it == MapViewModel.State(MapViewModel.LayerState.Overview, false)
             }
-            advanceUntilIdle()
+            advanceTimeBy(100.milliseconds)
             verifySuspend {
                 layerManger.updateRouteSourceData(
                     matches(
@@ -604,7 +604,7 @@ internal class MapViewModelTests : KoinTest {
             resetCalls(layerManger)
             advanceTimeBy(2.seconds)
             viewModel.alertsChanged(AlertsStreamDataResponse(objects))
-            advanceUntilIdle()
+            advanceTimeBy(100.milliseconds)
             verifySuspend {
                 layerManger.updateRouteSourceData(
                     matches(

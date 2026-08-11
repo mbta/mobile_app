@@ -87,7 +87,7 @@ class SchedulesRepositoryTest : KoinTest {
             modules(module { single { MobileBackendClient(mockEngine, AppVariant.Staging) } })
         }
         runBlocking {
-            val response = SchedulesRepository().getSchedule(stopIds = listOf("place-davis"))
+            val response = SchedulesRepository().getSchedule(stopIds = setOf("place-davis"))
             assertEquals(
                 ApiResult.Ok(
                     ScheduleResponse(
@@ -303,7 +303,7 @@ class SchedulesRepositoryTest : KoinTest {
 
         val response =
             cachedRepository.getSchedule(
-                stopIds = listOf(loadedSchedule.stopId, cachedSchedule.stopId)
+                stopIds = setOf(loadedSchedule.stopId, cachedSchedule.stopId)
             )
 
         assertEquals(
@@ -359,7 +359,7 @@ class SchedulesRepositoryTest : KoinTest {
 
         val cachedRepository = CachedSchedulesRepository(SchedulesRepository())
 
-        val response = cachedRepository.getSchedule(stopIds = listOf(cachedSchedule.stopId))
+        val response = cachedRepository.getSchedule(stopIds = setOf(cachedSchedule.stopId))
 
         assertEquals(
             ApiResult.Ok(
@@ -391,7 +391,7 @@ class SchedulesRepositoryTest : KoinTest {
 
         val cachedRepository = CachedSchedulesRepository(SchedulesRepository())
 
-        val response = cachedRepository.getSchedule(stopIds = listOf("stopId"))
+        val response = cachedRepository.getSchedule(stopIds = setOf("stopId"))
 
         assertEquals(HttpStatusCode.BadGateway.value, (response as? ApiResult.Error)?.code)
         stopKoin()

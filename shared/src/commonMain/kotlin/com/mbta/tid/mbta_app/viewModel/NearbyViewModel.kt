@@ -6,11 +6,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
@@ -18,16 +20,22 @@ import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.isRoughlyEqualTo
+import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.LoadedPredictions
+import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.LoadedSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
 import kotlin.experimental.ExperimentalObjCRefinement
 import kotlin.jvm.JvmName
 import kotlin.native.ShouldRefineInSwift
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.sample
 import org.maplibre.spatialk.geojson.Position
 
 @OptIn(ExperimentalObjCRefinement::class)
@@ -71,28 +79,31 @@ public class NearbyViewModel(
         public constructor() : this(false, null, null, null)
     }
 
+    internal data class StopsAtLocation(val stopIds: List<String>, val location: Position?)
+
     @set:JvmName("setAlertsState")
     private var alerts by mutableStateOf<AlertsStreamDataResponse?>(null)
     @set:JvmName("setLocationState") private var location by mutableStateOf<Position?>(null)
     @set:JvmName("setNowState") private var now by mutableStateOf(EasternTimeInstant.now())
 
+    @OptIn(FlowPreview::class)
     @Composable
     override fun runLogic(): State {
         var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
         var routeCardData: List<RouteCardData>? by remember { mutableStateOf(null) }
         var loadedLocation: Position? by remember { mutableStateOf(null) }
         var nearbyResponse: NearbyResponse? by remember { mutableStateOf(null) }
-        var stopIds: List<String>? by remember { mutableStateOf(null) }
-        var loadedStopIds: List<String>? by remember { mutableStateOf(null) }
+        var locationStops: StopsAtLocation? by remember { mutableStateOf(null) }
+        var loadedLocationStops: StopsAtLocation? by remember { mutableStateOf(null) }
 
         var active: Boolean by remember { mutableStateOf(false) }
 
         val errorKey = ErrorKey(setOf(SheetRoutes.NearbyTransit::class), "NearbyViewModel")
         val globalData = getGlobalData(errorKey)
-        val schedules = getSchedules(stopIds, errorKey)
+        val schedules = getSchedules(locationStops?.stopIds?.toSet(), errorKey)
         val predictions =
             subscribeToPredictions(
-                stopIds,
+                locationStops?.stopIds?.toSet(),
                 SheetRoutes.NearbyTransit,
                 active,
                 errorKey,
@@ -119,51 +130,84 @@ public class NearbyViewModel(
             val resolvedLocation = location
             if (globalData == null || resolvedLocation == null) return@LaunchedEffect
             nearbyResponse = nearbyRepository.getStopIdsNearby(globalData, resolvedLocation)
-            stopIds = nearbyResponse?.filter(globalData, alerts, now)
+            locationStops =
+                nearbyResponse?.filter(globalData, alerts, now)?.let {
+                    StopsAtLocation(it, resolvedLocation)
+                }
         }
 
-        LaunchedEffect(stopIds) {
-            if (stopIds?.toSet() != loadedStopIds?.toSet()) {
-                routeCardData = null
-                loadedLocation = null
-                loadedStopIds = null
-            }
+        data class RouteCardDataParams(
+            val location: Position?,
+            val locationStops: StopsAtLocation?,
+            val globalData: GlobalResponse?,
+            val schedules: LoadedSchedules?,
+            val predictions: LoadedPredictions?,
+            val alerts: AlertsStreamDataResponse?,
+            val now: EasternTimeInstant,
+        )
+
+        // Put all route card params into a single debounceable value. If we just put all the params
+        // as keys to a LaunchedEffect, then routeCardData setting can get interrupted by frequent
+        // changes to predictions or now, which can chain and significantly delay updates.
+        var params: RouteCardDataParams? by remember { mutableStateOf(null) }
+        LaunchedEffect(location, locationStops, globalData, schedules, predictions, alerts, now) {
+            params =
+                RouteCardDataParams(
+                    location,
+                    locationStops,
+                    globalData,
+                    schedules,
+                    predictions,
+                    alerts,
+                    now,
+                )
         }
 
-        LaunchedEffect(stopIds, globalData, location, schedules, predictions, alerts, now) {
-            val resolvedStopIds = stopIds
-            if (resolvedStopIds == null || globalData == null || location == null) {
-                routeCardData = null
-                loadedLocation = null
-                loadedStopIds = null
-            } else if (resolvedStopIds.isEmpty()) {
-                routeCardData = emptyList()
-                loadedLocation = location
-                loadedStopIds = emptyList()
-            } else {
-                routeCardData =
-                    RouteCardData.routeCardsForStopList(
-                        resolvedStopIds,
-                        globalData,
-                        location,
-                        schedules,
-                        predictions,
-                        alerts,
-                        now,
-                        RouteCardData.Context.NearbyTransit,
-                        null,
-                        coroutineDispatcher,
-                    )
-                loadedLocation = location
-                loadedStopIds = resolvedStopIds
-            }
+        LaunchedEffect(Unit) {
+            snapshotFlow { params }
+                .sample(100.milliseconds)
+                .conflate()
+                .collect {
+                    if (it == null) return@collect
+                    val resolvedLocationStops = it.locationStops
+                    val resolvedStopIds = resolvedLocationStops?.stopIds
+                    val stopIdSet = resolvedStopIds?.toSet()
+                    if (stopIdSet == null || it.globalData == null) {
+                        routeCardData = null
+                        loadedLocationStops = null
+                    } else if (stopIdSet.isEmpty()) {
+                        routeCardData = emptyList()
+                        loadedLocationStops = resolvedLocationStops
+                    } else if (
+                        resolvedLocationStops.location?.let { loadedStopLocation ->
+                            it.location?.isRoughlyEqualTo(loadedStopLocation)
+                        } == true &&
+                            it.schedules?.stopIds == stopIdSet &&
+                            it.predictions?.stopIds == stopIdSet
+                    ) {
+                        routeCardData =
+                            RouteCardData.routeCardsForStopList(
+                                resolvedLocationStops.stopIds,
+                                it.globalData,
+                                resolvedLocationStops.location,
+                                it.schedules.response,
+                                it.predictions.response,
+                                it.alerts,
+                                it.now,
+                                RouteCardData.Context.NearbyTransit,
+                                null,
+                                coroutineDispatcher,
+                            )
+                        loadedLocationStops = resolvedLocationStops
+                    }
+                }
         }
 
         return State(
             awaitingPredictionsAfterBackground,
             routeCardData,
-            loadedLocation,
-            loadedStopIds,
+            loadedLocationStops?.location,
+            loadedLocationStops?.stopIds,
         )
     }
 

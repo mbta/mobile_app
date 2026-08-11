@@ -32,7 +32,7 @@ fun MoreSectionView(
     section: MoreSection,
     highlighted: Boolean,
     settingsCache: SettingsCache = koinInject(),
-    updateAccessibility: (Boolean) -> Unit = {},
+    onChangeSetting: (Settings, Boolean) -> Unit = { _, _ -> },
 ) {
 
     val noteAbove = section.noteAbove?.value
@@ -81,10 +81,12 @@ fun MoreSectionView(
                                     if (item.settings == Settings.HideMaps) !settingValue
                                     else settingValue,
                             ) {
-                                settingsCache.set(item.settings, !settingValue)
-                                if (item.settings == Settings.StationAccessibility) {
-                                    updateAccessibility(!settingValue)
-                                }
+                                val newValue = !settingValue
+                                settingsCache.set(
+                                    item.settings,
+                                    newValue,
+                                    afterWrite = { onChangeSetting(item.settings, newValue) },
+                                )
                             }
                         }
                         is MoreItem.Link ->
