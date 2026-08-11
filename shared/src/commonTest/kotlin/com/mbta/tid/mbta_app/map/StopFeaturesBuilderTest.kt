@@ -4,6 +4,7 @@ import com.mbta.tid.mbta_app.model.MapStop
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.StopAlertState
 import com.mbta.tid.mbta_app.utils.TestData
+import io.ktor.client.request.invoke
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -108,7 +109,7 @@ class StopFeaturesBuilderTest {
         val routeLines =
             RouteFeaturesBuilder.generateRouteSources(
                 routeData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
-                stopsById = stops.mapValues { it.value.stop },
+                globalData = MapTestDataHelper.global,
                 alertsByStop = emptyMap(),
             )
         val collection =
@@ -203,7 +204,7 @@ class StopFeaturesBuilderTest {
         val routeLines =
             RouteFeaturesBuilder.generateRouteSources(
                 routeData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
-                stopsById = stops.mapValues { it.value.stop },
+                globalData = MapTestDataHelper.global,
                 alertsByStop = emptyMap(),
             )
         val collection =

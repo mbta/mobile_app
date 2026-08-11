@@ -28,7 +28,11 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.maplibre.spatialk.geojson.LineString
+import org.maplibre.spatialk.geojson.Position
+import org.maplibre.spatialk.turf.measurement.length
+import org.maplibre.spatialk.turf.misc.nearestPointTo
 import org.maplibre.spatialk.turf.misc.slice
+import org.maplibre.spatialk.units.Length
 
 public data class RouteLineData
 internal constructor(
@@ -62,7 +66,7 @@ public object RouteFeaturesBuilder {
     ): List<RouteSourceData> =
         generateRouteSources(
             routeData,
-            globalData.stops,
+            globalData,
             globalMapData?.alertsByStop.orEmpty(),
             coroutineDispatcher,
         )
@@ -70,28 +74,38 @@ public object RouteFeaturesBuilder {
     @DefaultArgumentInterop.Enabled
     internal suspend fun generateRouteSources(
         routeData: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
-        stopsById: Map<String, Stop>,
+        globalData: GlobalResponse,
         alertsByStop: Map<String, AlertAssociatedStop>,
         coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
     ): List<RouteSourceData> =
         withContext(coroutineDispatcher) {
-            routeData.map {
-                generateRouteSource(
-                    routeId = it.routeId,
-                    routeShapes = it.segmentedShapes,
-                    stopsById,
-                    alertsByStop,
-                )
+            routeData.mapNotNull {
+                // We can't use getLineOrRoute for Route.Ids, because for the Green Line that will
+                // fetch the Line object even when a Route.Id is passed in
+                val route =
+                    when (it.routeId) {
+                        is Line.Id -> globalData.getLineOrRoute(it.routeId)
+                        is Route.Id ->
+                            globalData.getRoute(it.routeId)?.let { id -> LineOrRoute.Route(id) }
+                    }
+                route?.let { route ->
+                    generateRouteSource(
+                        route,
+                        routeShapes = it.segmentedShapes,
+                        stopsById = globalData.stops,
+                        alertsByStop,
+                    )
+                }
             }
         }
 
     private fun generateRouteSource(
-        routeId: LineOrRoute.Id,
+        route: LineOrRoute,
         routeShapes: List<SegmentedRouteShape>,
         stopsById: Map<String, Stop>,
         alertsByStop: Map<String, AlertAssociatedStop>,
     ): RouteSourceData {
-        val routeLines = generateRouteLines(routeId, routeShapes, stopsById, alertsByStop)
+        val routeLines = generateRouteLines(route.type, routeShapes, stopsById, alertsByStop)
         val routeFeatures = routeLines.map { lineData ->
             Feature(
                 geometry = lineData.line,
@@ -100,7 +114,7 @@ public object RouteFeaturesBuilder {
             )
         }
         val featureCollection = FeatureCollection(routeFeatures)
-        return RouteSourceData(routeId, routeLines, featureCollection)
+        return RouteSourceData(route.id, routeLines, featureCollection)
     }
 
     internal fun shapesWithStopsToMapFriendly(
@@ -143,18 +157,19 @@ public object RouteFeaturesBuilder {
     }
 
     private fun generateRouteLines(
-        routeId: LineOrRoute.Id,
+        routeType: RouteType,
         routeShapes: List<SegmentedRouteShape>,
         stopsById: Map<String, Stop>,
         alertsByStop: Map<String, AlertAssociatedStop>,
     ): List<RouteLineData> {
         return routeShapes.flatMap { routePatternShape ->
-            routeShapeToLineData(routePatternShape, stopsById, alertsByStop)
+            routeShapeToLineData(routePatternShape, routeType, stopsById, alertsByStop)
         }
     }
 
     private fun routeShapeToLineData(
         routePatternShape: SegmentedRouteShape,
+        routeType: RouteType,
         stopsById: Map<String, Stop>?,
         alertsByStop: Map<String, AlertAssociatedStop>?,
     ): List<RouteLineData> {
@@ -168,9 +183,10 @@ public object RouteFeaturesBuilder {
             }
         return alertAwareSegments.mapNotNull { segment ->
             routeSegmentToRouteLineData(
-                segment = segment,
-                fullLineString = fullLineString,
-                stopsById = stopsById,
+                segment,
+                fullLineString,
+                routeType,
+                stopsById,
             )
         }
     }
@@ -178,17 +194,23 @@ public object RouteFeaturesBuilder {
     private fun routeSegmentToRouteLineData(
         segment: AlertAwareRouteSegment,
         fullLineString: LineString,
+        routeType: RouteType,
         stopsById: Map<String, Stop>?,
     ): RouteLineData? {
         val firstStopId = segment.stopIds.firstOrNull() ?: return null
         val firstStop = stopsById?.get(firstStopId) ?: return null
         val lastStopId = segment.stopIds.lastOrNull() ?: return null
         val lastStop = stopsById.get(lastStopId) ?: return null
-        // Loop routes can begin and end at the same stop, but slicing by identical positions
-        // produces an empty line, so if there's a loop, always draw the full shape
         val lineSegment =
-            if (firstStopId == lastStopId) fullLineString
-            else fullLineString.slice(start = firstStop.position, stop = lastStop.position)
+            when {
+                routeType.isSubway() || routeType == RouteType.COMMUTER_RAIL ->
+                    fullLineString.slice(start = firstStop.position, stop = lastStop.position)
+                // For bus and ferry, we want to draw the full shape at the ends of the route
+                segment.isFirst && segment.isLast -> fullLineString
+                segment.isFirst -> firstSlice(fullLineString, lastStop.position)
+                segment.isLast -> lastSlice(fullLineString, firstStop.position)
+                else -> fullLineString.slice(start = firstStop.position, stop = lastStop.position)
+            }
         return RouteLineData(
             id = segment.id,
             sourceRoutePatternId = segment.sourceRoutePatternId,
@@ -197,6 +219,18 @@ public object RouteFeaturesBuilder {
             alertState = segment.alertState,
         )
     }
+
+    private fun lengthAtPosition(lineString: LineString, position: Position): Length =
+        lineString.nearestPointTo(position).properties.location
+
+    private fun firstSlice(lineString: LineString, stopPosition: Position): LineString =
+        lineString.slice(start = Length.Zero, stop = lengthAtPosition(lineString, stopPosition))
+
+    private fun lastSlice(lineString: LineString, startPosition: Position): LineString =
+        lineString.slice(
+            start = lengthAtPosition(lineString, startPosition),
+            stop = lineString.length(),
+        )
 
     public fun forRailAtStop(
         stopShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
