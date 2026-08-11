@@ -14,20 +14,13 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.mbta.tid.mbta_app.android.MainActivity
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.util.fcmToken
+import com.mbta.tid.mbta_app.android.util.fcmInstallationId
 import kotlin.random.Random
 
 class MBTAGoMessagingService : FirebaseMessagingService() {
-
-    /**
-     * If you want to target single devices or create device groups, you'll need this token. Because
-     * the token could be rotated after initial startup, it is strongly recommended to retrieve the
-     * latest updated registration token. If you need it any other time:
-     * `FirebaseMessaging.getInstance().token.addOnCompleteListener {...}`
-     */
-    override fun onNewToken(token: String) {
-        super.onNewToken(token)
-        fcmToken = token
+    override fun onRegistered(installationId: String) {
+        super.onRegistered(installationId)
+        fcmInstallationId = installationId
     }
 
     // if a notification is sent when the app is in the foreground, we have to create the
