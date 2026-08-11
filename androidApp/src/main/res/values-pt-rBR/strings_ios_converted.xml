@@ -288,11 +288,6 @@
     <string name="not_accessible">Não acessível</string>
     <string name="not_accessible_stop_card">Esta parada não é acessível</string>
     <string name="notice">Aviso</string>
-    <string name="notifications_beta_dialog_body">Podemos entrar em contato com você para saber sua opinião sobre as notificações?</string>
-    <string name="notifications_beta_dialog_header">Contamos com usuários como você para saber como podemos melhorar!</string>
-    <string name="notifications_beta_dialog_no">Não</string>
-    <string name="notifications_beta_dialog_yes">Sim</string>
-    <string name="notifications_beta_toast">&lt;u>Tenha acesso antecipado às notificações&lt;/u> e envie seu feedback</string>
     <string name="notifications_beta_toggle_label">Notificações de interrupções</string>
     <string name="notifications_enabled">notificações ativadas</string>
     <string name="notifications_favorites_hint">Agora &lt;u>edite seus favoritos&lt;/u> para receber notificações de interrupções</string>

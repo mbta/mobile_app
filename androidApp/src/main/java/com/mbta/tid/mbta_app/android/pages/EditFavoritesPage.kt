@@ -458,7 +458,7 @@ private fun FavoriteDepartures(
                                             modifier = Modifier.weight(1f),
                                             pillDecoration =
                                                 formatted.route?.let {
-                                                    PillDecoration.OnDirectionDestination(it)
+                                                    PillDecoration.OnRow(it)
                                                 },
                                         )
                                         rightContent()

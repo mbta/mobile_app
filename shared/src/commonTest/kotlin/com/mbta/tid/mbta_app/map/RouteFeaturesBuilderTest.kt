@@ -186,6 +186,55 @@ class RouteFeaturesBuilderTest {
     }
 
     @Test
+    fun `uses full shape for loop segment`() = runBlocking {
+        val loopRouteData =
+            listOf(
+                MapFriendlyRouteResponse.RouteWithSegmentedShapes(
+                    routeId = MapTestDataHelper.routeRed.id,
+                    segmentedShapes =
+                        listOf(
+                            SegmentedRouteShape(
+                                sourceRoutePatternId = MapTestDataHelper.patternRed10.id,
+                                sourceRouteId = MapTestDataHelper.patternRed10.routeId,
+                                directionId = MapTestDataHelper.patternRed10.directionId,
+                                routeSegments =
+                                    listOf(
+                                        RouteSegment(
+                                            id = "loop-segment",
+                                            sourceRoutePatternId =
+                                                MapTestDataHelper.patternRed10.id,
+                                            sourceRouteId = MapTestDataHelper.patternRed10.routeId,
+                                            stopIds =
+                                                listOf(
+                                                    MapTestDataHelper.stopAlewife.id,
+                                                    MapTestDataHelper.stopDavis.id,
+                                                    MapTestDataHelper.stopAlewife.id,
+                                                ),
+                                            otherPatternsByStopId = emptyMap(),
+                                        )
+                                    ),
+                                shape = MapTestDataHelper.shapeRedC1,
+                            )
+                        ),
+                )
+            )
+
+        val routeSources =
+            RouteFeaturesBuilder.generateRouteSources(
+                routeData = loopRouteData,
+                stopsById =
+                    mapOf(
+                        MapTestDataHelper.stopAlewife.id to MapTestDataHelper.stopAlewife,
+                        MapTestDataHelper.stopDavis.id to MapTestDataHelper.stopDavis,
+                    ),
+                alertsByStop = emptyMap(),
+            )
+
+        val geometry = routeSources.single().features.features.single().geometry
+        assertEquals(LineString(Polyline.decode(MapTestDataHelper.shapeRedC1.polyline!!)), geometry)
+    }
+
+    @Test
     fun `transforms shapes with stops`() {
         val now = EasternTimeInstant.now()
 

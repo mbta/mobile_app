@@ -17,7 +17,7 @@ struct NearbyTransitView: View {
     @ObserveInjection var inject
 
     var alerts: AlertsStreamDataResponse?
-    @Binding var location: CLLocationCoordinate2D?
+    var initialLocation: CLLocationCoordinate2D?
     let setIsReturningFromBackground: (Bool) -> Void
     let noNearbyStops: () -> NoNearbyStopsView
     var nearbyVM: INearbyViewModel
@@ -30,6 +30,9 @@ struct NearbyTransitView: View {
     @State var globalData: GlobalResponse?
     @State var now = EasternTimeInstant.now()
     @State var nearbyTransitState: Shared.NearbyViewModel.State?
+
+    @State var location: CLLocationCoordinate2D?
+    @State var locationUnthrottled: CLLocationCoordinate2D?
 
     private let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
@@ -51,7 +54,7 @@ struct NearbyTransitView: View {
         .onAppear {
             nearbyVM.setActive(active: true, wasSentToBackground: false)
             nearbyVM.setAlerts(alerts: alerts)
-            nearbyVM.setLocation(location: location?.positionKt)
+            nearbyVM.setLocation(location: location?.positionKt ?? initialLocation?.positionKt)
             nearbyVM.setNow(now: now)
             didAppear?(self)
         }
@@ -59,32 +62,36 @@ struct NearbyTransitView: View {
             nearbyTransitState = state
         } }
         .onChange(of: alerts) { alerts in nearbyVM.setAlerts(alerts: alerts) }
-        .onChange(of: location) { newLocation in nearbyVM.setLocation(location: newLocation?.positionKt) }
         .onChange(of: now) { now in nearbyVM.setNow(now: now) }
-        .onChange(of: nearbyTransitState?
-            .loadedStopIds) { [oldValue = nearbyTransitState?.loadedStopIds] newNearbyStops in
-                let oldSet = oldValue != nil ? Set(oldValue ?? []) : nil
-                let newSet = newNearbyStops != nil ? Set(newNearbyStops ?? []) : nil
-                if oldSet != newSet { scrollToTop() }
-        }
         .onChange(of: nearbyTransitState?.loadedLocation) { loadedLocation in
-            if let loadedLocation {
+            if let loadedLocation, let currentPosition = locationUnthrottled?.positionKt,
+               loadedLocation.isRoughlyEqualTo(other: currentPosition) {
                 viewportProvider.lastLoadedLocation = loadedLocation.coordinate
                 viewportProvider.isTargeting = false
             }
         }
         .onChange(of: nearbyTransitState?.awaitingPredictionsAfterBackground) { awaitingPredictions in
-            if let awaitingPredictions {
-                setIsReturningFromBackground(awaitingPredictions)
+            if let awaitingPredictions { setIsReturningFromBackground(awaitingPredictions) }
+        }
+        .onChange(of: viewportProvider.isManuallyCentering) { isCentering in
+            if let location, !isCentering, navManager.isNearbyVisible() {
+                nearbyVM.setLocation(location: location.positionKt)
             }
+        }
+        .onReceive(viewportProvider.cameraStatePublisherThrottled) { newCameraState in
+            location = newCameraState.center
+            guard navManager.isNearbyVisible(), !viewportProvider.isManuallyCentering, let location else { return }
+            nearbyVM.setLocation(location: location.positionKt)
+        }
+        .onReceive(viewportProvider.cameraStatePublisher) { newCameraState in
+            guard navManager.isNearbyVisible() else { return }
+            locationUnthrottled = newCameraState.center
         }
         .onReceive(timer) { input in now = input.toEasternInstant() }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onDisappear { nearbyVM.setActive(active: false, wasSentToBackground: false) }
         .withScenePhaseHandlers(
-            onActive: {
-                nearbyVM.setActive(active: true, wasSentToBackground: false)
-            },
+            onActive: { nearbyVM.setActive(active: true, wasSentToBackground: false) },
             onInactive: { nearbyVM.setActive(active: false, wasSentToBackground: false) },
             onBackground: { nearbyVM.setActive(active: false, wasSentToBackground: true) }
         )

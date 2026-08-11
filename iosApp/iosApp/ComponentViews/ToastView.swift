@@ -11,8 +11,6 @@ import SwiftUI
 
 typealias ToastState = ToastViewModel.Toast
 
-let notificationsBetaToastKey = "notifications_beta_toast_message_key"
-
 struct ToastView: View {
     @ObserveInjection var inject
     @Environment(\.colorScheme) var colorScheme
@@ -23,11 +21,7 @@ struct ToastView: View {
     var onDismiss: () -> Void
 
     var body: some View {
-        let text = if state.message == notificationsBetaToastKey {
-            Text("\(Text("Get early access to Notifications").underline()) and provide feedback")
-        } else {
-            Text(AttributedString.tryMarkdown(state.message))
-        }
+        let text = Text(AttributedString.tryMarkdown(state.message))
 
         let resolvedLabel = if let accessibilityLabel { accessibilityLabel } else { text }
 

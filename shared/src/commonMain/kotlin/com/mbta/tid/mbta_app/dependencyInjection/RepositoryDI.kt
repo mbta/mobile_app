@@ -5,10 +5,9 @@ import com.mbta.tid.mbta_app.cache.MockKeyedCache
 import com.mbta.tid.mbta_app.cache.ScheduleCache
 import com.mbta.tid.mbta_app.model.AppVersion
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.AlertsStreamUpdateResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
@@ -65,7 +64,6 @@ import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockLastLaunchedAppVersionRepository
-import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
@@ -232,9 +230,9 @@ public class MockRepositories : IRepositories {
         selectedTripId: String? = null,
         selectedVehicleId: String? = null,
     ) {
-        alerts = MockAlertsRepository(AlertsStreamDataResponse(objects))
+        alerts = MockAlertsRepository(AlertsStreamUpdateResponse(objects))
         global = MockGlobalRepository(GlobalResponse(objects))
-        nearby = MockNearbyRepository(NearbyResponse(objects))
+        nearby = NearbyRepository() // Use real nearby, will calculate based on stops in global
         predictions =
             MockPredictionsRepository(connectV2Response = PredictionsByStopJoinResponse(objects))
         railRouteShapes = MockRailRouteShapeRepository(objects)

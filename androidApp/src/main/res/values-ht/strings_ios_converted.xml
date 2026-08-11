@@ -297,11 +297,6 @@
     <string name="not_accessible">Pa aksesib</string>
     <string name="not_accessible_stop_card">Estasyon sa a pa aksesib</string>
     <string name="notice">Avi</string>
-    <string name="notifications_beta_dialog_body">Èske nou ka kontakte ou pou pataje fidbak ou sou Notifikasyon yo?</string>
-    <string name="notifications_beta_dialog_header">Nou konte sou pasaje tankou ou pou aprann kijan nou ka amelyore!</string>
-    <string name="notifications_beta_dialog_no">Non mèsi</string>
-    <string name="notifications_beta_dialog_yes">Wi</string>
-    <string name="notifications_beta_toast">&lt;u>Jwenn avi otifikasyon yo bonè&lt;/u> epi bay fidbak</string>
     <string name="notifications_beta_toggle_label">Notifikasyon Entèripsyon</string>
     <string name="notifications_enabled">notifikasyon yo pèmèt</string>
     <string name="notifications_favorites_hint">Kounye a, &lt;u>modifye favori ou yo&lt;/u> pou resevwa notifikasyon entèripsyon yo</string>

@@ -34,13 +34,14 @@ class SettingsCache: ObservableObject {
     }
 
     /// Edits the value of a single `setting` in both the cache and the settings repository.
-    func set(_ setting: Settings, _ value: Bool) {
+    func set(_ setting: Settings, _ value: Bool, afterWrite: @escaping () async -> Void = {}) {
         if setting.override != nil { return }
         let newSettings = [setting: value]
         cache = newSettings.merging(cache ?? [:]) { newValue, _ in newValue }
         Task {
             do {
                 try await settingsRepo.setSettings(settings: [setting: KotlinBoolean(bool: value)])
+                await afterWrite()
             } catch {
                 debugPrint(error)
                 Sentry.shared.captureError(error: error)

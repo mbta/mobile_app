@@ -1900,53 +1900,6 @@
         }
       }
     },
-    "%@ and provide feedback" : {
-      "comment" : "Part of a longer piece of text used in a toast message, “Get early access to Notifications and provide feedback”. This portion is not underlined, but it will always be presented in the full sentence.",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ y envíe sus comentarios"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ et envoyez des commentaires"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ epi bay fidbak"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ e compartilhe seu feedback"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ và cung cấp phản hồi"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@并提供反馈"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@並提供回饋"
-          }
-        }
-      }
-    },
     "%@ arriving at %@ cancelled" : {
       "comment" : "Describe the time at which a cancelled vehicle was scheduled to arrive, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.\nFor example, 'bus arriving at 10:30AM cancelled'",
       "localizations" : {
@@ -3939,54 +3892,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "<u>Get early access to Notifications</u> and provide feedback" : {
-      "comment" : "Notifications beta toast text, preserve the underline HTML tags around the corresponding section of the translation. Only used in Android, split into two parts for underlined and not underlined in iOS.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "<u>Obtenga acceso anticipado a las notificaciones</u> y envíe sus comentarios"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "<u>Accédez en avant-première aux notifications</u> et donnez votre avis"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "<u>Jwenn avi otifikasyon yo bonè</u> epi bay fidbak"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "<u>Tenha acesso antecipado às notificações</u> e envie seu feedback"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "<u>Nhận thông báo sớm</u> và cung cấp phản hồi"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "<u>抢先体验“通知”功能</u>并提供反馈"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "<u>搶先體驗「通知」功能</u>並提供回饋"
           }
         }
       }
@@ -12708,53 +12613,6 @@
         }
       }
     },
-    "Get early access to Notifications" : {
-      "comment" : "Part of a longer piece of text used in a toast message, “Get early access to Notifications and provide feedback”. This portion is underlined, but it will always be presented in the full sentence.",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Obtenga acceso anticipado a las notificaciones"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Accédez en avant-première aux notifications"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jwenn avi Notifikasyon yo bonè"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tenha acesso antecipado às notificações"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nhận thông báo sớm"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "抢先体验“通知”功能"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "搶先體驗「通知」功能"
-          }
-        }
-      }
-    },
     "Get early access to test new features and provide feedback" : {
       "comment" : "A note within the \"Test New Features\" section explaining its purpose",
       "localizations" : {
@@ -14865,52 +14723,6 @@
         }
       }
     },
-    "May we contact you to share your feedback on Notifications?" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Podemos comunicarnos con usted para conocer su opinión sobre las notificaciones?"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pouvons-nous vous contacter pour recueillir vos commentaires sur les notifications ?"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Èske nou ka kontakte ou pou pataje fidbak ou sou Notifikasyon yo?"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Podemos entrar em contato com você para saber sua opinião sobre as notificações?"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chúng tôi có thể liên hệ với bạn để chia sẻ phản hồi về tính năng Thông báo không?"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "我们可否就“通知”功能与您联系，收集您的反馈？"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "我們可否就「通知」功能與您聯絡，收集您的回饋？"
-          }
-        }
-      }
-    },
     "MBTA Go" : {
       "localizations" : {
         "es" : {
@@ -16456,52 +16268,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未新增網站"
-          }
-        }
-      }
-    },
-    "No thanks" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No, gracias"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non merci"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non mèsi"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Không, cảm ơn"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "不了，谢谢"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "不了，謝謝"
           }
         }
       }
@@ -26544,52 +26310,6 @@
         }
       }
     },
-    "We depend on riders like you to learn how we can improve!" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¡Dependemos de pasajeros como usted para saber cómo podemos mejorar!"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nous comptons sur des usagers comme vous pour nous aider à nous améliorer !"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nou konte sou pasaje tankou ou pou aprann kijan nou ka amelyore!"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Contamos com usuários como você para saber como podemos melhorar!"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chúng tôi phụ thuộc vào những người dùng như bạn để học hỏi và tìm cách cải thiện!"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "我们有赖于各位乘客的反馈，才能不断改进服务！"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "我們有賴於各位乘客的回饋，才能不斷改進服務！"
-          }
-        }
-      }
-    },
     "We don’t have live predictions for this trip yet, but they will appear closer to the scheduled time. If the trip is delayed or cancelled, we’ll let you know here." : {
       "localizations" : {
         "es" : {
@@ -27199,52 +26919,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "將在%1$@%2$@終止營運"
-          }
-        }
-      }
-    },
-    "Yes" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sí"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oui"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wi"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sim"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Đúng"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "是"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "是"
           }
         }
       }
