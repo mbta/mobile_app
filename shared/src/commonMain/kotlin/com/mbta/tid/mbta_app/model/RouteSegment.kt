@@ -49,6 +49,8 @@ public data class RouteSegment(
                 sourceRoutePatternId = sourceRoutePatternId,
                 sourceRouteId = sourceRouteId,
                 stopIds = segmentStops,
+                isFirst = index == 0,
+                isLast = index == alertingSegments.lastIndex,
                 alertState = alertState,
                 otherPatternsByStopId = otherPatternsByStopId.filter { stopIdSet.contains(it.key) },
             )
@@ -177,6 +179,8 @@ internal data class AlertAwareRouteSegment(
     override val sourceRouteId: Route.Id,
     override val stopIds: List<String>,
     override val otherPatternsByStopId: Map<String, List<RoutePatternKey>>,
+    val isFirst: Boolean = false,
+    val isLast: Boolean = false,
     val alertState: SegmentAlertState,
 ) : IRouteSegment
 
