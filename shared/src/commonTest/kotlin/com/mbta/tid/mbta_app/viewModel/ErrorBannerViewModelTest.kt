@@ -18,6 +18,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -160,7 +161,7 @@ internal class ErrorBannerViewModelTest : KoinTest {
         testViewModelFlow(viewModel).test {
             assertEquals(ErrorBannerViewModel.State(false, false, null), awaitItem())
             viewModel.setSheetRoute(SheetRoutes.Favorites)
-            advanceUntilIdle()
+            advanceTimeBy(100.milliseconds)
             errorRepo.setDataError(ErrorKey(setOf(), "FakeError"), "FakeDetails", action)
             val nextState = awaitItem().errorState
             assertEquals(setOf("FakeError"), (nextState as ErrorBannerState.DataError).messages)
@@ -185,7 +186,7 @@ internal class ErrorBannerViewModelTest : KoinTest {
         testViewModelFlow(viewModel).test {
             assertEquals(ErrorBannerViewModel.State(false, false, null), awaitItem())
             viewModel.setSheetRoute(SheetRoutes.NearbyTransit)
-            advanceUntilIdle()
+            advanceTimeBy(100.milliseconds)
             viewModel.checkPredictionsStale(lastUpdated, 2, SheetRoutes.NearbyTransit, action)
             awaitItemSatisfying {
                 it ==

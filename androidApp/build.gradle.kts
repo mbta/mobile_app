@@ -59,7 +59,7 @@ android {
     defaultConfig {
         applicationId = "com.mbta.tid.mbta_app"
         minSdk = 28
-        targetSdk = 35
+        targetSdk = 36
         versionCode =
             Integer.parseInt((findProperty("android.injected.version.code") ?: "1") as String)
         versionName = "2.1.3"

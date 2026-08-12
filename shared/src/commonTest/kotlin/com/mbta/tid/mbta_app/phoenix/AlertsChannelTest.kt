@@ -2,9 +2,10 @@ package com.mbta.tid.mbta_app.phoenix
 
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.AlertSummaryEntity
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.AlertsStreamUpdateResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -24,7 +25,8 @@ class AlertsChannelTest {
         val payload =
             json.encodeToString(
                 buildJsonObject {
-                    putJsonObject("alerts") {
+                    putJsonArray("remove") {}
+                    putJsonObject("update") {
                         putJsonObject("501047") {
                             put("id", "501047")
                             putJsonArray("active_period") {
@@ -55,7 +57,15 @@ class AlertsChannelTest {
                             }
                             put("lifecycle", "ongoing")
                             put("severity", 10)
-
+                            putJsonArray("summaries") {
+                                addJsonObject {
+                                    put("route_id", null)
+                                    put("stop_id", null)
+                                    put("direction_id", null)
+                                    put("trip_id", null)
+                                    put("summary", "Ceci n’est pas un alert")
+                                }
+                            }
                             put("updated_at", "2023-05-26T16:46:13-04:00")
                         }
                     }
@@ -65,7 +75,8 @@ class AlertsChannelTest {
         val parsed = AlertsChannel.parseMessage(payload)
 
         assertEquals(
-            AlertsStreamDataResponse(
+            AlertsStreamUpdateResponse(
+                emptyList(),
                 mapOf(
                     "501047" to
                         Alert(
@@ -98,9 +109,18 @@ class AlertsChannelTest {
                             ),
                             Alert.Lifecycle.Ongoing,
                             10,
+                            listOf(
+                                AlertSummaryEntity(
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    "Ceci n’est pas un alert",
+                                )
+                            ),
                             EasternTimeInstant(2023, Month.MAY, 26, 16, 46, 13),
                         )
-                )
+                ),
             ),
             parsed,
         )
@@ -111,7 +131,8 @@ class AlertsChannelTest {
         val payload =
             json.encodeToString(
                 buildJsonObject {
-                    putJsonObject("alerts") {
+                    putJsonArray("remove") {}
+                    putJsonObject("update") {
                         putJsonObject("501047") {
                             put("id", "501047")
                             putJsonArray("active_period") {
@@ -136,6 +157,15 @@ class AlertsChannelTest {
                             }
                             put("lifecycle", "ongoing")
                             put("severity", 10)
+                            putJsonArray("summaries") {
+                                addJsonObject {
+                                    put("route_id", null)
+                                    put("stop_id", null)
+                                    put("direction_id", null)
+                                    put("trip_id", null)
+                                    put("summary", "Ceci n’est pas un alert")
+                                }
+                            }
                             put("updated_at", "2023-05-26T16:46:13-04:00")
                         }
                     }
@@ -145,7 +175,8 @@ class AlertsChannelTest {
         val parsed = AlertsChannel.parseMessage(payload)
 
         assertEquals(
-            AlertsStreamDataResponse(
+            AlertsStreamUpdateResponse(
+                emptyList(),
                 mapOf(
                     "501047" to
                         Alert(
@@ -172,9 +203,18 @@ class AlertsChannelTest {
                             ),
                             Alert.Lifecycle.Ongoing,
                             10,
+                            listOf(
+                                AlertSummaryEntity(
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    "Ceci n’est pas un alert",
+                                )
+                            ),
                             EasternTimeInstant(2023, Month.MAY, 26, 16, 46, 13),
                         )
-                )
+                ),
             ),
             parsed,
         )

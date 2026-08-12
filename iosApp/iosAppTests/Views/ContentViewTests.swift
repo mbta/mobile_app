@@ -43,7 +43,7 @@ final class ContentViewTests: XCTestCase {
     func testReconnectsSocketAfterBackgroundingAndReactivating() throws {
         let disconnectedExpectation = expectation(description: "Socket has disconnected")
         let connectedExpectation = expectation(description: "Socket has connected")
-        connectedExpectation.expectedFulfillmentCount = 1
+        connectedExpectation.expectedFulfillmentCount = 2 // onAppear + active
         connectedExpectation.assertForOverFulfill = true
 
         let fakeSocketWithExpectations = FakeSocket(connectedExpectation: connectedExpectation,
@@ -59,6 +59,21 @@ final class ContentViewTests: XCTestCase {
         wait(for: [disconnectedExpectation], timeout: 1)
         try sut.inspect().find(ContentView.self).find(ViewType.VStack.self)
             .callOnChange(newValue: ScenePhase.active)
+        wait(for: [connectedExpectation], timeout: 1)
+    }
+
+    func testSocketConnectsOnAppear() {
+        let connectedExpectation = expectation(description: "Socket has connected")
+        connectedExpectation.expectedFulfillmentCount = 1
+        connectedExpectation.assertForOverFulfill = true
+
+        let fakeSocketWithExpectations = FakeSocket(connectedExpectation: connectedExpectation)
+
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: .init()),
+                                                socketProvider: SocketProvider(socket: fakeSocketWithExpectations))
+
+        ViewHosting.host(view: sut)
+
         wait(for: [connectedExpectation], timeout: 1)
     }
 
@@ -82,15 +97,21 @@ final class ContentViewTests: XCTestCase {
         wait(for: [joinAlertsExp], timeout: 5)
     }
 
-    func testFetchesConfig() {
+    func testFetchesMapConfig() {
         let configFetchedExpectation = XCTestExpectation(description: "config fetched")
+
+        let fetcher = MockLocationFetcher()
+
+        let locationDataManager: LocationDataManager = .init(locationFetcher: fetcher)
 
         let fakeVM = FakeContentVM(
             loadConfigCallback: { configFetchedExpectation.fulfill() }
         )
         let sut = ContentView(contentVM: fakeVM)
 
-        ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut))
+        ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut, locationDataManager: locationDataManager))
+
+        fetcher.authorizationStatus = .denied
 
         wait(for: [configFetchedExpectation], timeout: 6)
     }
@@ -125,6 +146,35 @@ final class ContentViewTests: XCTestCase {
         XCTAssertThrowsError(try sut.inspect().find(HomeMapView.self))
     }
 
+    @MainActor func testViewportInitWhenLocationAuthKnown() throws {
+        let cameraExp = expectation(description: "location updates viewport camera when hideMaps is on")
+        let contentVM = FakeContentVM()
+
+        let locationFetcher = MockLocationFetcher()
+
+        let locationDataManager: LocationDataManager = .init(locationFetcher: locationFetcher)
+
+        let sutWithEnv = withDefaultEnvironmentObjects(
+            sut: ContentView(contentVM: contentVM),
+            locationDataManager: locationDataManager,
+            settings: [.hideMaps: true]
+        )
+        let sut = try sutWithEnv.inspect().find(ContentView.self).actualView()
+
+        var cameraUpdate = 0
+        let cancelSink = sut.viewportProvider.cameraStatePublisher.sink { updatedCamera in
+            if cameraUpdate == 0 {
+                XCTAssertEqual(ViewportProvider.Defaults.center, updatedCamera.center)
+                cameraExp.fulfill()
+            }
+        }
+
+        ViewHosting.host(view: sutWithEnv)
+        locationFetcher.authorizationStatus = .denied
+        wait(for: [cameraExp], timeout: 5)
+        cancelSink.cancel()
+    }
+
     @MainActor func testHiddenMapUpdatesLocation() throws {
         let cameraExp = expectation(description: "location updates viewport camera when hideMaps is on")
         let contentVM = FakeContentVM()
@@ -145,8 +195,6 @@ final class ContentViewTests: XCTestCase {
         var cameraUpdate = 0
         let cancelSink = sut.viewportProvider.cameraStatePublisher.sink { updatedCamera in
             if cameraUpdate == 0 {
-                XCTAssert(ViewportProvider.Defaults.center.isRoughlyEqualTo(updatedCamera.center))
-            } else if cameraUpdate == 1 {
                 XCTAssertEqual(newLocation.coordinate, updatedCamera.center)
                 cameraExp.fulfill()
             }
@@ -293,7 +341,7 @@ final class ContentViewTests: XCTestCase {
             self.disconnectExp = disconnectExp
         }
 
-        func connect(onReceive _: @escaping (ApiResult<AlertsStreamDataResponse>) -> Void) {
+        func connect(onReceive _: @escaping (ApiResult<AlertsStreamUpdateResponse>) -> Void) {
             connectExp?.fulfill()
         }
 

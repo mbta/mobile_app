@@ -156,7 +156,7 @@ struct StopDetailsFilteredView: View {
             globalData: global,
             stop: stop,
             patterns: allPatternsForStop.filter { pattern in
-                pattern.isTypical()
+                pattern.isTypical() || pattern.isCanonicalOnly()
             }
         )
 
