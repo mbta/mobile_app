@@ -25,8 +25,9 @@ public object StopFeaturesBuilder {
     // Map routes is an array of MapStopRoute enum names
     internal val propMapRoutesKey = FeatureProperty<List<String>>("mapRoutes")
     internal val propNameKey = FeatureProperty<String>("name")
-    // Route IDs are in a map keyed by MapStopRoute enum names, each with a list of IDs
-    internal val propRouteIdsKey = FeatureProperty<Map<String, List<String>>>("routeIds")
+    internal val propRouteIdsKey = FeatureProperty<List<String>>("routeIds")
+    internal val propRouteIdsByTypeKey =
+        FeatureProperty<Map<String, List<String>>>("routeIdsByType")
     internal val propServiceStatusKey = FeatureProperty<Map<String, String>>("serviceStatus")
     internal val propSortOrderKey = FeatureProperty<Number>("sortOrder")
 
@@ -131,8 +132,9 @@ public object StopFeaturesBuilder {
         put(propNameKey, stop.name)
         put(propIsTerminalKey, mapStop.isTerminal)
         put(propMapRoutesKey, mapStop.routeTypes.map { it.name })
+        put(propRouteIdsKey, mapStop.routes.flatMap { it.value.map { it.id.idText } })
         put(
-            propRouteIdsKey,
+            propRouteIdsByTypeKey,
             mapStop.routes
                 .map { (routeType, routes) -> Pair(routeType.name, routes.map { it.id.idText }) }
                 .toMap(),

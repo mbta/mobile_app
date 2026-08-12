@@ -220,7 +220,8 @@ class StopFeaturesBuilderTest {
 
         val alewifeRoutes = alewifeFeature?.properties?.get(StopFeaturesBuilder.propMapRoutesKey)
         assertEquals(listOf(MapStopRoute.RED.name, MapStopRoute.BUS.name), alewifeRoutes)
-        val alewifeRouteIds = alewifeFeature?.properties?.get(StopFeaturesBuilder.propRouteIdsKey)
+        val alewifeRouteIds =
+            alewifeFeature?.properties?.get(StopFeaturesBuilder.propRouteIdsByTypeKey)
         assertEquals(
             mapOf(
                 MapStopRoute.RED.name to listOf(MapTestDataHelper.routeRed.id.idText),
