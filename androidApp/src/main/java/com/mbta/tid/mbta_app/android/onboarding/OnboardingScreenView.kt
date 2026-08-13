@@ -73,8 +73,10 @@ import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.formattedServiceDay
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.AlertSummaryEntity
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single
 import com.mbta.tid.mbta_app.model.OnboardingScreen
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
@@ -387,6 +389,34 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
                                         AlertSummary.Timeframe.ThisWeek(
                                             EasternTimeInstant(2026, Month.JANUARY, 25, 12, 0)
                                         ),
+                                ),
+                            alertSummaryEntity =
+                                AlertSummaryEntity(
+                                    stringResource(
+                                            R.string.alert_summary,
+                                            stringResource(R.string.service_suspended),
+                                            stringResource(
+                                                R.string.alert_summary_location_successive,
+                                                "Back Bay",
+                                                "Wellington",
+                                            ),
+                                            stringResource(
+                                                R.string.alert_summary_timeframe_this_week,
+                                                EasternTimeInstant(
+                                                        2026,
+                                                        Month.JANUARY,
+                                                        25,
+                                                        12,
+                                                        0,
+                                                    )
+                                                    .formattedServiceDay(
+                                                        EasternTimeInstant.ServiceDateRounding
+                                                            .BACKWARDS
+                                                    ),
+                                            ),
+                                            "",
+                                        )
+                                        .replace(Regex("</?b>"), "**")
                                 ),
                         )
                     Text(

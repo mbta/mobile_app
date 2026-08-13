@@ -18,12 +18,16 @@ struct StopListDisclosureGroup: DisclosureGroupStyle {
     @State var twistFactor: Float = 1
 
     func makeBody(configuration: Configuration) -> some View {
+        let haloPaddingAxis: Edge.Set = switch stopListContext {
+        case .trip: .horizontal
+        case .routeDetails: .leading
+        }
         VStack(spacing: 0) {
             Button(
                 action: { withAnimation { configuration.isExpanded.toggle() } },
                 label: {
                     ZStack(alignment: .bottom) {
-                        HaloSeparator().padding(stopListContext == .trip ? .horizontal : .leading, 7)
+                        HaloSeparator().padding(haloPaddingAxis, 7)
                         HStack(spacing: 0) {
                             if let stickConnections {
                                 RouteLineTwist(
