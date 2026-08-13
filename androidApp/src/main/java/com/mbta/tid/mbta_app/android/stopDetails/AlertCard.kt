@@ -251,7 +251,7 @@ fun AlertCardPreview() {
         AlertCard(
             ObjectCollectionBuilder.Single.alert({ effect = Alert.Effect.ServiceChange }),
             null,
-            AlertSummaryEntity("**Service Change**"),
+            null,
             AlertCardSpec.Basic,
             routeAccents =
                 TripRouteAccents(

@@ -233,7 +233,9 @@ struct AlertCard: View {
                     recurrence: nil,
                     isUpdate: false
                 ),
-                alertSummaryEntity: .init(summary: "Shuttle buses replace service from Start to End through 4:00 PM"),
+                alertSummaryEntity: .init(
+                    summary: "**Shuttle buses** from **Start** to **End** through 4:00\u{202F}PM"
+                ),
                 spec: .takeover,
                 routeAccents: .init(color: .pink, textColor: .orange, type: .ferry),
                 onViewDetails: {}
@@ -252,7 +254,7 @@ struct AlertCard: View {
                     isUpdate: true
                 ),
                 alertSummaryEntity: .init(
-                    summary: "Update: Shuttle buses replace service from Start to End through 4:00 PM"
+                    summary: "**Update:** Shuttle buses from **Start** to **End** through 4:00\u{202F}PM"
                 ),
                 spec: .basic,
                 routeAccents: .init(color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), type: .heavyRail),
@@ -265,7 +267,7 @@ struct AlertCard: View {
                 alertSummary: AlertSummary.AllClear(
                     location: .some(AlertSummary.LocationSuccessiveStops(startStopName: "Start", endStopName: "End")),
                 ),
-                alertSummaryEntity: .init(summary: "All clear: Regular service from Start to End"),
+                alertSummaryEntity: .init(summary: "**All clear:** Regular service from **Start** to **End**"),
                 spec: .basic,
                 routeAccents: .init(color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), type: .heavyRail),
                 onViewDetails: {}
@@ -284,7 +286,9 @@ struct AlertCard: View {
                         stopName: "Ruggles"
                     ), effect: .cancellation, cause: .mechanicalIssue
                 ),
-                alertSummaryEntity: .init(summary: "1:00 PM trip from Ruggles cancelled today due to mechanical issue"),
+                alertSummaryEntity: .init(
+                    summary: "**12:13\u{202F}PM** train from **Ruggles** is cancelled today due to mechanical issue"
+                ),
                 spec: .takeover,
                 routeAccents: .init(color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), type: .heavyRail),
                 onViewDetails: {}
