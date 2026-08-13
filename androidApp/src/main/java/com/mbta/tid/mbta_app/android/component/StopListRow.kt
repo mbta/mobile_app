@@ -59,21 +59,23 @@ class StopPlacement(val isFirst: Boolean = false, val isLast: Boolean = false)
 @Serializable
 sealed class StopListContext {
     abstract val routeIdMatcher: Matcher<Route.Id>
-    abstract val directionId: Int
+    abstract val directionIdMatcher: Matcher<Int>
     abstract val tripIdMatcher: Matcher<String>
 
     data class Trip(
         override val routeIdMatcher: Matcher<Route.Id>,
-        override val directionId: Int,
+        val directionId: Int,
         val tripId: String,
     ) : StopListContext() {
+        override val directionIdMatcher: Matcher<Int> = Matcher.Data(directionId)
         override val tripIdMatcher: Matcher<String> = Matcher.Data(tripId)
     }
 
     data class RouteDetails(
         override val routeIdMatcher: Matcher<Route.Id>,
-        override val directionId: Int,
+        val directionId: Int,
     ) : StopListContext() {
+        override val directionIdMatcher: Matcher<Int> = Matcher.Data(directionId)
         override val tripIdMatcher: Matcher<String> = Matcher.Wildcard()
     }
 }
@@ -252,7 +254,7 @@ fun StopListRow(
                     disruption.alert.summary(
                         routeId = stopListContext.routeIdMatcher,
                         stopId = Matcher.Data(stop.id),
-                        directionId = Matcher.Data(stopListContext.directionId),
+                        directionId = stopListContext.directionIdMatcher,
                         tripId = stopListContext.tripIdMatcher,
                     ),
                     AlertCardSpec.Downstream,

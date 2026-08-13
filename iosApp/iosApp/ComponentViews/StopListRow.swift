@@ -30,10 +30,10 @@ enum StopListContext {
         }
     }
 
-    func directionId() -> Int32 {
+    func directionIdMatcher() -> Matcher<KotlinInt> {
         switch self {
-        case let .trip(_, directionId, _): directionId
-        case let .routeDetails(_, directionId): directionId
+        case let .trip(_, directionId, _): MatcherData(value: KotlinInt(value: directionId))
+        case let .routeDetails(_, directionId): MatcherData(value: KotlinInt(value: directionId))
         }
     }
 
@@ -134,7 +134,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
                         alertSummaryEntity: disruption.alert.summary(
                             routeId: stopListContext.routeIdMatcher(),
                             stopId: MatcherData(value: stop.id as NSString),
-                            directionId: MatcherData(value: KotlinInt(value: stopListContext.directionId())),
+                            directionId: stopListContext.directionIdMatcher(),
                             tripId: stopListContext.tripIdMatcher()
                         ),
                         spec: .downstream,
