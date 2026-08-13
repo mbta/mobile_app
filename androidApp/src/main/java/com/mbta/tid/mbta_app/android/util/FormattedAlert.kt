@@ -198,11 +198,7 @@ data class FormattedAlert(
         alertSummaryEntity?.summary?.let { AnnotatedString.fromMarkdown(it) }
 
     private fun summary(resources: Resources): AnnotatedString? {
-        val calculated = summaryCalculated(resources)
         val provided = summaryProvided()
-        check(calculated == provided) {
-            "summary mismatch: ${calculated?.toHtml()} vs ${provided?.toHtml()}"
-        }
         return provided
     }
 

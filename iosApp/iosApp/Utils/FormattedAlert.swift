@@ -390,13 +390,7 @@ struct FormattedAlert: Equatable {
     }
 
     var summary: AttributedString? {
-        let summaryCalculated = summary(alertSummary: alertSummary)
-        let summaryProvided = AttributedString.tryMarkdown(alertSummaryEntity?.summary)
-        if summaryCalculated != summaryProvided {
-            debugPrint("summary mismatch", summaryCalculated, summaryProvided)
-            abort()
-        }
-        return summaryProvided ?? summaryCalculated
+        AttributedString.tryMarkdown(alertSummaryEntity?.summary)
     }
 
     func summary(alertSummary: AlertSummary?) -> AttributedString? {
