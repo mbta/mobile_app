@@ -67,6 +67,7 @@ import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
+import com.mbta.tid.mbta_app.model.Matcher
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
@@ -398,6 +399,11 @@ private fun RouteStops(
         return
     }
 
+    val stopListContext =
+        StopListContext.RouteDetails(
+            Matcher.AnyOf(lineOrRoute.allRoutes.map { it.id }),
+            selectedDirection,
+        )
     val haloColor =
         if (lineOrRoute.type == RouteType.BUS && !silverRoutes.contains(lineOrRoute.id))
             colorResource(R.color.halo_light)
@@ -438,7 +444,7 @@ private fun RouteStops(
                         stop.stickConnections,
                         onClick = { onTapStop(stopRowContext) },
                         routeAccents = TripRouteAccents(lineOrRoute.sortRoute),
-                        stopListContext = StopListContext.RouteDetails,
+                        stopListContext = stopListContext,
                         modifier = Modifier.minimumInteractiveComponentSize().fillMaxWidth(),
                         connectingRoutes = stop.connectingRoutes,
                         onClickLabel = onClickLabel(stopRowContext),
@@ -451,6 +457,7 @@ private fun RouteStops(
             } else {
                 CollapsableStopList(
                     lineOrRoute,
+                    stopListContext,
                     segment,
                     onClick = { onTapStop(stopRowContext(it.stop)) },
                     onClickLabel = { onClickLabel(stopRowContext(it.stop)) },

@@ -71,6 +71,10 @@ struct TripStops: View {
         }
     }
 
+    var stopListContext: StopListContext {
+        .trip(MatcherData(value: route.id), stops.trip.directionId, stops.trip.id)
+    }
+
     @ViewBuilder
     func stopList(list: [TripDetailsStopList.Entry], showDownstreamAlerts: Bool = false) -> some View {
         ForEach(list, id: \.stopSequence) { stop in
@@ -83,6 +87,7 @@ struct TripStops: View {
                 route: route,
                 routeAccents: routeAccents,
                 alertSummaries: alertSummaries,
+                stopListContext: stopListContext,
                 showDownstreamAlert: showDownstreamAlerts,
                 lastStop: stop.stopSequence == stops.stops.last?.stopSequence,
                 background: Color.fill2
@@ -110,6 +115,7 @@ struct TripStops: View {
                         route: route,
                         routeAccents: routeAccents,
                         alertSummaries: alertSummaries,
+                        stopListContext: stopListContext,
                         firstStop: true,
                         background: .fill2
                     )
@@ -157,7 +163,7 @@ struct TripStops: View {
                             .frame(maxWidth: .infinity, minHeight: 56)
                         }
                     )
-                    .disclosureGroupStyle(.stopList(routeAccents: routeAccents, context: .trip))
+                    .disclosureGroupStyle(.stopList(routeAccents: routeAccents, context: stopListContext))
                 }
                 if let target, !hideTarget {
                     // If the target is the first stop and there's no vehicle,
@@ -171,6 +177,7 @@ struct TripStops: View {
                         route: route,
                         routeAccents: routeAccents,
                         alertSummaries: alertSummaries,
+                        stopListContext: stopListContext,
                         targeted: true,
                         firstStop: showFirstStopSeparately && target == stops.startTerminalEntry,
                         background: Color.fill3

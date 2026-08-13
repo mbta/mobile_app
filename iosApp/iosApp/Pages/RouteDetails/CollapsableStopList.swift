@@ -13,6 +13,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
     @ObserveInjection var inject
 
     let lineOrRoute: LineOrRoute
+    let stopListContext: StopListContext
     let segment: RouteDetailsStopList.Segment
     let onClick: (RouteDetailsStopList.Entry) -> Void
     let isFirstSegment: Bool
@@ -25,6 +26,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
 
     init(
         lineOrRoute: LineOrRoute,
+        stopListContext: StopListContext,
         segment: RouteDetailsStopList.Segment,
         onClick: @escaping (RouteDetailsStopList.Entry) -> Void,
         isFirstSegment: Bool = false,
@@ -32,6 +34,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
         rightSideContent: @escaping (RouteDetailsStopList.Entry) -> RightSideContent
     ) {
         self.lineOrRoute = lineOrRoute
+        self.stopListContext = stopListContext
         self.segment = segment
         self.onClick = onClick
         self.isFirstSegment = isFirstSegment
@@ -47,7 +50,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
                 stickConnections: stop.stickConnections,
                 onClick: { onClick(stop) },
                 routeAccents: .init(route: lineOrRoute.sortRoute),
-                stopListContext: .routeDetails,
+                stopListContext: stopListContext,
                 connectingRoutes: stop.connectingRoutes,
                 stopPlacement: .init(isFirst: isFirstSegment, isLast: isLastSegment),
                 descriptor: { Text("Less common stop").font(Typography.footnote).foregroundStyle(Color.text) },
@@ -65,7 +68,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
                             stickConnections: stop.stickConnections,
                             onClick: { onClick(stop) },
                             routeAccents: .init(route: lineOrRoute.sortRoute),
-                            stopListContext: .routeDetails,
+                            stopListContext: stopListContext,
                             connectingRoutes: stop.connectingRoutes,
                             stopPlacement: .init(
                                 isFirst: isFirstSegment && index == segment.stops.startIndex,
@@ -106,7 +109,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
                     guard let connection = $0.first, let isTwisted = $0.second else { return nil }
                     return (connection, isTwisted.boolValue)
                 },
-                context: .routeDetails,
+                context: stopListContext,
             ))
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .enableInjection()

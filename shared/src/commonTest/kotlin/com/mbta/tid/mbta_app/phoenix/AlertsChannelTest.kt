@@ -109,15 +109,7 @@ class AlertsChannelTest {
                             ),
                             Alert.Lifecycle.Ongoing,
                             10,
-                            listOf(
-                                AlertSummaryEntity(
-                                    null,
-                                    null,
-                                    null,
-                                    null,
-                                    "Ceci n’est pas un alert",
-                                )
-                            ),
+                            listOf(AlertSummaryEntity("Ceci n’est pas un alert")),
                             EasternTimeInstant(2023, Month.MAY, 26, 16, 46, 13),
                         )
                 ),
@@ -203,15 +195,7 @@ class AlertsChannelTest {
                             ),
                             Alert.Lifecycle.Ongoing,
                             10,
-                            listOf(
-                                AlertSummaryEntity(
-                                    null,
-                                    null,
-                                    null,
-                                    null,
-                                    "Ceci n’est pas un alert",
-                                )
-                            ),
+                            listOf(AlertSummaryEntity("Ceci n’est pas un alert")),
                             EasternTimeInstant(2023, Month.MAY, 26, 16, 46, 13),
                         )
                 ),

@@ -19,6 +19,7 @@ struct TripStopRow: View {
     var route: Route
     var routeAccents: TripRouteAccents
     var alertSummaries: [String: AlertSummary?]
+    var stopListContext: StopListContext
     var showDownstreamAlert: Bool = false
     var targeted: Bool = false
     var firstStop: Bool = false
@@ -54,7 +55,7 @@ struct TripStopRow: View {
             stickConnections: stickConnections,
             onClick: { onTapLink(stop) },
             routeAccents: routeAccents,
-            stopListContext: .trip,
+            stopListContext: stopListContext,
             activeElevatorAlerts: activeElevatorAlerts.count,
             alertSummaries: alertSummaries,
             background: background,
@@ -111,6 +112,7 @@ struct TripStopRow: View {
         route.textColor = "FFFFFF"
         route.type = .heavyRail
     }
+    let stopListContext = StopListContext.trip(MatcherData(value: red.id), trip.directionId, trip.id)
     VStack(spacing: 0) {
         TripStopRow(
             stop: .init(
@@ -138,7 +140,8 @@ struct TripStopRow: View {
             onOpenAlertDetails: { _ in },
             route: red,
             routeAccents: .init(route: red),
-            alertSummaries: [:]
+            alertSummaries: [:],
+            stopListContext: stopListContext,
         )
         TripStopRow(
             stop: .init(
@@ -163,7 +166,8 @@ struct TripStopRow: View {
             onOpenAlertDetails: { _ in },
             route: red,
             routeAccents: .init(route: red),
-            alertSummaries: [:]
+            alertSummaries: [:],
+            stopListContext: stopListContext
         )
         TripStopRow(
             stop: .init(
@@ -183,7 +187,8 @@ struct TripStopRow: View {
             onOpenAlertDetails: { _ in },
             route: red,
             routeAccents: .init(route: red),
-            alertSummaries: [:]
+            alertSummaries: [:],
+            stopListContext: stopListContext
         )
     }
     .withFixedSettings([.stationAccessibility: true])
@@ -201,6 +206,7 @@ struct TripStopRow: View {
         route.textColor = "FFFFFF"
         route.type = .heavyRail
     }
+    let stopListContext = StopListContext.trip(MatcherData(value: red.id), trip.directionId, trip.id)
     ZStack {
         Color.fill3.padding(6)
         VStack(spacing: 0) {
@@ -231,7 +237,8 @@ struct TripStopRow: View {
                 onOpenAlertDetails: { _ in },
                 route: red,
                 routeAccents: .init(route: red),
-                alertSummaries: [:]
+                alertSummaries: [:],
+                stopListContext: stopListContext
             )
             TripStopRow(
                 stop:
@@ -257,7 +264,8 @@ struct TripStopRow: View {
                 onOpenAlertDetails: { _ in },
                 route: red,
                 routeAccents: .init(route: red),
-                alertSummaries: [:]
+                alertSummaries: [:],
+                stopListContext: stopListContext
             )
             TripStopRow(
                 stop:
@@ -280,6 +288,7 @@ struct TripStopRow: View {
                 route: red,
                 routeAccents: .init(route: red),
                 alertSummaries: [:],
+                stopListContext: stopListContext,
                 showDownstreamAlert: true
             )
         }
