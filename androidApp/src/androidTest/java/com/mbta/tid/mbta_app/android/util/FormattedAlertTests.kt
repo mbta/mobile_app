@@ -40,11 +40,7 @@ class FormattedAlertTests {
                 alert,
                 summary,
                 AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "Shuttle buses replace the **4:00\u202FPM** train from **Porter** to **North Station**",
+                    "Shuttle buses replace the **4:00\u202FPM** train from **Porter** to **North Station**"
                 ),
             )
         composeTestRule.setContent {
@@ -78,11 +74,7 @@ class FormattedAlertTests {
                 alert,
                 summary,
                 AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "**4:00\u202FPM** train from **Concord** is replaced by shuttle buses from **Porter** to **North Station**",
+                    "**4:00\u202FPM** train from **Concord** is replaced by shuttle buses from **Porter** to **North Station**"
                 ),
             )
         composeTestRule.setContent {
@@ -111,11 +103,7 @@ class FormattedAlertTests {
                 alert,
                 summary,
                 AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "Shuttle buses replace this train from **Porter** to **North Station**",
+                    "Shuttle buses replace this train from **Porter** to **North Station**"
                 ),
             )
         composeTestRule.setContent {
@@ -144,11 +132,7 @@ class FormattedAlertTests {
                 alert,
                 summary,
                 AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "**12:13\u202FPM** train from **Ruggles** is suspended today due to weather",
+                    "**12:13\u202FPM** train from **Ruggles** is suspended today due to weather"
                 ),
             )
         composeTestRule.setContent {
@@ -180,11 +164,7 @@ class FormattedAlertTests {
                 alert,
                 summary,
                 AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "**11:15\u202FAM** train from **Concord** will terminate at Porter today due to weather",
+                    "**11:15\u202FAM** train from **Concord** will terminate at Porter today due to weather"
                 ),
             )
         composeTestRule.setContent {
@@ -213,13 +193,7 @@ class FormattedAlertTests {
             FormattedAlert(
                 alert,
                 summary,
-                AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "This train is suspended today due to weather",
-                ),
+                AlertSummaryEntity("This train is suspended today due to weather"),
             )
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
@@ -242,13 +216,7 @@ class FormattedAlertTests {
             FormattedAlert(
                 alert,
                 summary,
-                AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "This train will terminate at Porter today due to weather",
-                ),
+                AlertSummaryEntity("This train will terminate at Porter today due to weather"),
             )
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
@@ -273,11 +241,7 @@ class FormattedAlertTests {
                 alert,
                 summary,
                 AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "**12:13\u202FPM** train to **Stoughton** will not stop at **Back Bay** and **Ruggles** today due to weather",
+                    "**12:13\u202FPM** train to **Stoughton** will not stop at **Back Bay** and **Ruggles** today due to weather"
                 ),
             )
         composeTestRule.setContent {
@@ -307,13 +271,7 @@ class FormattedAlertTests {
             FormattedAlert(
                 alert,
                 summary,
-                AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "This train will not stop at **Porter** today due to weather",
-                ),
+                AlertSummaryEntity("This train will not stop at **Porter** today due to weather"),
             )
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
@@ -334,13 +292,7 @@ class FormattedAlertTests {
             FormattedAlert(
                 alert,
                 summary,
-                AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "Trains will not stop at **Back Bay** until further notice",
-                ),
+                AlertSummaryEntity("Trains will not stop at **Back Bay** until further notice"),
             )
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
@@ -365,11 +317,7 @@ class FormattedAlertTests {
                 alert,
                 summary,
                 AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "Trains will not stop at **Back Bay** and **Ruggles** until further notice",
+                    "Trains will not stop at **Back Bay** and **Ruggles** until further notice"
                 ),
             )
         composeTestRule.setContent {
@@ -395,11 +343,7 @@ class FormattedAlertTests {
                 alert,
                 summary,
                 AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "Trains will not stop at **Back Bay**, **Ruggles**, and **Hyde Park** until further notice",
+                    "Trains will not stop at **Back Bay**, **Ruggles**, and **Hyde Park** until further notice"
                 ),
             )
         composeTestRule.setContent {
@@ -429,11 +373,7 @@ class FormattedAlertTests {
                 alert,
                 summary,
                 AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "Trains will not stop at **multiple stops** until further notice",
+                    "Trains will not stop at **multiple stops** until further notice"
                 ),
             )
         composeTestRule.setContent {

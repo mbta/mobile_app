@@ -441,15 +441,7 @@ class TripStopsTest {
         val alert = objects.alert {
             effect = Alert.Effect.Shuttle
             summaries =
-                listOf(
-                    AlertSummaryEntity(
-                        null,
-                        null,
-                        null,
-                        null,
-                        "**Shuttle buses** at **Stop C** through end of service",
-                    )
-                )
+                listOf(AlertSummaryEntity("**Shuttle buses** at **Stop C** through end of service"))
         }
 
         val vehicle = objects.vehicle {

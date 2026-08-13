@@ -331,13 +331,9 @@ final class TripStopRowTests: XCTestCase {
         let route = objects.route { _ in }
         let alert = objects.alert {
             $0.effect = .shuttle
-            $0.summaries = [.init(
-                routeId: nil,
-                stopId: nil,
-                tripId: nil,
-                directionId: nil,
-                summary: "**Shuttle buses** from **Roxbury Crossing** to **Green Street** through tomorrow"
-            )]
+            $0
+                .summaries =
+                [.init(summary: "**Shuttle buses** from **Roxbury Crossing** to **Green Street** through tomorrow")]
         }
         let summary = AlertSummary.Standard(
             effect: alert.effect,

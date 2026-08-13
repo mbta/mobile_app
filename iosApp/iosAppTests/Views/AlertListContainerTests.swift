@@ -24,13 +24,7 @@ final class AlertListContainerTests: XCTestCase {
         let highAlert = objects.alert { alert in
             alert.effect = .shuttle
             alert.header = "Test header"
-            alert.summaries = [.init(
-                routeId: nil,
-                stopId: nil,
-                tripId: nil,
-                directionId: nil,
-                summary: "**Shuttle buses** from **Start Stop** to **End Stop** through tomorrow"
-            )]
+            alert.summaries = [.init(summary: "**Shuttle buses** from **Start Stop** to **End Stop** through tomorrow")]
         }
 
         let highAlertSummary = AlertSummary.Standard(effect: .shuttle,

@@ -233,13 +233,7 @@ struct AlertCard: View {
                     recurrence: nil,
                     isUpdate: false
                 ),
-                alertSummaryEntity: .init(
-                    routeId: nil,
-                    stopId: nil,
-                    tripId: nil,
-                    directionId: nil,
-                    summary: "Shuttle buses replace service from Start to End through 4:00 PM"
-                ),
+                alertSummaryEntity: .init(summary: "Shuttle buses replace service from Start to End through 4:00 PM"),
                 spec: .takeover,
                 routeAccents: .init(color: .pink, textColor: .orange, type: .ferry),
                 onViewDetails: {}
@@ -258,10 +252,6 @@ struct AlertCard: View {
                     isUpdate: true
                 ),
                 alertSummaryEntity: .init(
-                    routeId: nil,
-                    stopId: nil,
-                    tripId: nil,
-                    directionId: nil,
                     summary: "Update: Shuttle buses replace service from Start to End through 4:00 PM"
                 ),
                 spec: .basic,
@@ -275,13 +265,7 @@ struct AlertCard: View {
                 alertSummary: AlertSummary.AllClear(
                     location: .some(AlertSummary.LocationSuccessiveStops(startStopName: "Start", endStopName: "End")),
                 ),
-                alertSummaryEntity: .init(
-                    routeId: nil,
-                    stopId: nil,
-                    tripId: nil,
-                    directionId: nil,
-                    summary: "All clear: Regular service from Start to End"
-                ),
+                alertSummaryEntity: .init(summary: "All clear: Regular service from Start to End"),
                 spec: .basic,
                 routeAccents: .init(color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), type: .heavyRail),
                 onViewDetails: {}
@@ -300,13 +284,7 @@ struct AlertCard: View {
                         stopName: "Ruggles"
                     ), effect: .cancellation, cause: .mechanicalIssue
                 ),
-                alertSummaryEntity: .init(
-                    routeId: nil,
-                    stopId: nil,
-                    tripId: nil,
-                    directionId: nil,
-                    summary: "1:00 PM trip from Ruggles cancelled today due to mechanical issue"
-                ),
+                alertSummaryEntity: .init(summary: "1:00 PM trip from Ruggles cancelled today due to mechanical issue"),
                 spec: .takeover,
                 routeAccents: .init(color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), type: .heavyRail),
                 onViewDetails: {}

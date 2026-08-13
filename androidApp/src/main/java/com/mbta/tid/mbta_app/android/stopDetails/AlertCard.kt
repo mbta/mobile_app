@@ -236,11 +236,7 @@ fun AlertCardPreview() {
                 cause = Alert.Cause.Holiday,
             ),
             AlertSummaryEntity(
-                null,
-                null,
-                null,
-                null,
-                "**10:17\u202FPM** train from **Mansfield** is cancelled today due to holiday",
+                "**10:17\u202FPM** train from **Mansfield** is cancelled today due to holiday"
             ),
             AlertCardSpec.Takeover,
             routeAccents =
@@ -255,7 +251,7 @@ fun AlertCardPreview() {
         AlertCard(
             ObjectCollectionBuilder.Single.alert({ effect = Alert.Effect.ServiceChange }),
             null,
-            AlertSummaryEntity(null, null, null, null, "**Service Change**"),
+            AlertSummaryEntity("**Service Change**"),
             AlertCardSpec.Basic,
             routeAccents =
                 TripRouteAccents(
@@ -293,13 +289,7 @@ fun AlertCardPreview() {
                             cause = Alert.Cause.DrawbridgeIssue
                         }),
                         AlertSummary.Standard(effect = Alert.Effect.Delay),
-                        AlertSummaryEntity(
-                            null,
-                            null,
-                            null,
-                            null,
-                            "Delays due to drawbridge issue",
-                        ),
+                        AlertSummaryEntity("Delays due to drawbridge issue"),
                         AlertCardSpec.Delay,
                         routeAccents =
                             TripRouteAccents(

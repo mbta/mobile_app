@@ -367,13 +367,7 @@ final class TripStopsTests: XCTestCase {
 
         let alert = objects.alert {
             $0.effect = .shuttle
-            $0.summaries = [.init(
-                routeId: nil,
-                stopId: nil,
-                tripId: nil,
-                directionId: nil,
-                summary: "**Shuttle buses** at **Stop C** through end of service"
-            )]
+            $0.summaries = [.init(summary: "**Shuttle buses** at **Stop C** through end of service")]
         }
 
         let vehicle = objects.vehicle { vehicle in
@@ -474,13 +468,7 @@ final class TripStopsTests: XCTestCase {
 
         let alert = objects.alert {
             $0.effect = .stopClosure
-            $0.summaries = [.init(
-                routeId: nil,
-                stopId: nil,
-                tripId: nil,
-                directionId: nil,
-                summary: "Stop closed at Stop C through end of service"
-            )]
+            $0.summaries = [.init(summary: "Stop closed at Stop C through end of service")]
         }
 
         let vehicle = objects.vehicle { vehicle in
@@ -581,13 +569,7 @@ final class TripStopsTests: XCTestCase {
 
         let alert = objects.alert {
             $0.effect = .stopClosure
-            $0.summaries = [.init(
-                routeId: nil,
-                stopId: nil,
-                tripId: nil,
-                directionId: nil,
-                summary: "Stop closed at Stop B"
-            )]
+            $0.summaries = [.init(summary: "Stop closed at Stop B")]
         }
 
         let vehicle = objects.vehicle { vehicle in

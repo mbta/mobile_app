@@ -34,10 +34,6 @@ final class FormattedAlertTests: XCTestCase {
                 recurrence: nil
             ),
             alertSummaryEntity: .init(
-                routeId: nil,
-                stopId: nil,
-                tripId: nil,
-                directionId: nil,
                 summary: "Shuttle buses replace the **12:13\u{202F}PM** train from **Oak Grove** to **Forest Hills**"
             )
         )
@@ -68,10 +64,6 @@ final class FormattedAlertTests: XCTestCase {
                 recurrence: nil
             ),
             alertSummaryEntity: .init(
-                routeId: nil,
-                stopId: nil,
-                tripId: nil,
-                directionId: nil,
                 summary: "**12:13\u{202F}PM** train from **Oak Grove** is replaced by shuttle buses from **Ruggles** to **Forest Hills**"
             )
         )
@@ -92,13 +84,7 @@ final class FormattedAlertTests: XCTestCase {
                 endStopName: "North Station",
                 recurrence: nil
             ),
-            alertSummaryEntity: .init(
-                routeId: nil,
-                stopId: nil,
-                tripId: nil,
-                directionId: nil,
-                summary: "Shuttle buses replace this train from **Porter** to **North Station**"
-            )
+            alertSummaryEntity: .init(summary: "Shuttle buses replace this train from **Porter** to **North Station**")
         )
         XCTAssertEqual(
             "Shuttle buses replace this train from Porter to North Station",
@@ -138,10 +124,6 @@ final class FormattedAlertTests: XCTestCase {
                 )
             ),
             alertSummaryEntity: .init(
-                routeId: nil,
-                stopId: nil,
-                tripId: nil,
-                directionId: nil,
                 summary: "**12:13\u{202F}PM** train from **Oak Grove** is replaced by shuttle buses from **Ruggles** to **Forest Hills** daily until Thursday"
             )
         )
@@ -174,10 +156,6 @@ final class FormattedAlertTests: XCTestCase {
                 )
             ),
             alertSummaryEntity: .init(
-                routeId: nil,
-                stopId: nil,
-                tripId: nil,
-                directionId: nil,
                 summary: "Shuttle buses replace this train from **Porter** to **North Station** daily until Thursday"
             )
         )
@@ -209,10 +187,6 @@ final class FormattedAlertTests: XCTestCase {
                 cause: .weather
             ),
             alertSummaryEntity: .init(
-                routeId: nil,
-                stopId: nil,
-                tripId: nil,
-                directionId: nil,
                 summary: "**12:13\u{202F}PM** train from **Ruggles** is suspended today due to weather"
             )
         )
@@ -234,13 +208,7 @@ final class FormattedAlertTests: XCTestCase {
                 isToday: true,
                 cause: .weather
             ),
-            alertSummaryEntity: .init(
-                routeId: nil,
-                stopId: nil,
-                tripId: nil,
-                directionId: nil,
-                summary: "This train is suspended today due to weather"
-            )
+            alertSummaryEntity: .init(summary: "This train is suspended today due to weather")
         )
         XCTAssertEqual(
             "This train is suspended today due to weather",
@@ -270,10 +238,6 @@ final class FormattedAlertTests: XCTestCase {
                 cause: .weather
             ),
             alertSummaryEntity: .init(
-                routeId: nil,
-                stopId: nil,
-                tripId: nil,
-                directionId: nil,
                 summary: "**12:13\u{202F}PM** train from **Ruggles** will terminate at South Station today due to weather"
             )
         )
@@ -295,13 +259,7 @@ final class FormattedAlertTests: XCTestCase {
                 isToday: true,
                 cause: .weather
             ),
-            alertSummaryEntity: .init(
-                routeId: nil,
-                stopId: nil,
-                tripId: nil,
-                directionId: nil,
-                summary: "This train will terminate at South Station today due to weather"
-            )
+            alertSummaryEntity: .init(summary: "This train will terminate at South Station today due to weather")
         )
         XCTAssertEqual(
             "This train will terminate at South Station today due to weather",
@@ -331,10 +289,6 @@ final class FormattedAlertTests: XCTestCase {
                 cause: .weather
             ),
             alertSummaryEntity: .init(
-                routeId: nil,
-                stopId: nil,
-                tripId: nil,
-                directionId: nil,
                 summary: "**12:13\u{202F}PM** train to **South Station** will not stop at **Back Bay** and **Ruggles** today due to weather"
             )
         )
@@ -356,13 +310,7 @@ final class FormattedAlertTests: XCTestCase {
                 isToday: true,
                 cause: .weather
             ),
-            alertSummaryEntity: .init(
-                routeId: nil,
-                stopId: nil,
-                tripId: nil,
-                directionId: nil,
-                summary: "This ferry will not stop at **Rowes Wharf** today due to weather"
-            )
+            alertSummaryEntity: .init(summary: "This ferry will not stop at **Rowes Wharf** today due to weather")
         )
 
         XCTAssertEqual(
@@ -381,13 +329,7 @@ final class FormattedAlertTests: XCTestCase {
                 recurrence: nil,
                 isUpdate: false
             ),
-            alertSummaryEntity: .init(
-                routeId: nil,
-                stopId: nil,
-                tripId: nil,
-                directionId: nil,
-                summary: "Trains will not stop at **Back Bay** until further notice"
-            )
+            alertSummaryEntity: .init(summary: "Trains will not stop at **Back Bay** until further notice")
         )
         XCTAssertEqual(
             "Trains will not stop at Back Bay until further notice",
@@ -406,10 +348,6 @@ final class FormattedAlertTests: XCTestCase {
                 isUpdate: false
             ),
             alertSummaryEntity: .init(
-                routeId: nil,
-                stopId: nil,
-                tripId: nil,
-                directionId: nil,
                 summary: "Trains will not stop at **Back Bay** and **Ruggles** until further notice"
             )
         )
@@ -430,10 +368,6 @@ final class FormattedAlertTests: XCTestCase {
                 isUpdate: false
             ),
             alertSummaryEntity: .init(
-                routeId: nil,
-                stopId: nil,
-                tripId: nil,
-                directionId: nil,
                 summary: "Trains will not stop at **Back Bay**, **Ruggles**, and **Hyde Park** until further notice"
             )
         )
@@ -453,13 +387,7 @@ final class FormattedAlertTests: XCTestCase {
                 recurrence: nil,
                 isUpdate: false
             ),
-            alertSummaryEntity: .init(
-                routeId: nil,
-                stopId: nil,
-                tripId: nil,
-                directionId: nil,
-                summary: "Trains will not stop at **multiple stops** until further notice"
-            )
+            alertSummaryEntity: .init(summary: "Trains will not stop at **multiple stops** until further notice")
         )
         XCTAssertEqual(
             "Trains will not stop at multiple stops until further notice",

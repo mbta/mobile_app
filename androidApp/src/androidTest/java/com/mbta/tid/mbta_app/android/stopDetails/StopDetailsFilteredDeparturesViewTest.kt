@@ -401,8 +401,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 stop = stop.id,
                 trip = trip.id,
             )
-            summaries =
-                listOf(AlertSummaryEntity(null, null, null, null, "This bus is cancelled today"))
+            summaries = listOf(AlertSummaryEntity("This bus is cancelled today"))
         }
 
         val globalResponse =
@@ -539,11 +538,7 @@ class StopDetailsFilteredDeparturesViewTest {
             summaries =
                 listOf(
                     AlertSummaryEntity(
-                        null,
-                        null,
-                        null,
-                        null,
-                        "**Service suspended** at **${stop.name}** through 6:45\u202FPM",
+                        "**Service suspended** at **${stop.name}** through 6:45\u202FPM"
                     )
                 )
         }
@@ -633,13 +628,7 @@ class StopDetailsFilteredDeparturesViewTest {
             informedEntity(directionId = 0, route = routeC.id.idText, stop = "70151")
             summaries =
                 listOf(
-                    AlertSummaryEntity(
-                        null,
-                        null,
-                        null,
-                        null,
-                        "**Shuttle buses** at **${stop.name}** through 6:45\u202FPM",
-                    )
+                    AlertSummaryEntity("**Shuttle buses** at **${stop.name}** through 6:45\u202FPM")
                 )
         }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
@@ -721,11 +710,7 @@ class StopDetailsFilteredDeparturesViewTest {
             summaries =
                 listOf(
                     AlertSummaryEntity(
-                        null,
-                        null,
-                        null,
-                        null,
-                        "**Service suspended** at **Sample Stop 2** through 6:25\u202FPM",
+                        "**Service suspended** at **Sample Stop 2** through 6:25\u202FPM"
                     )
                 )
         }

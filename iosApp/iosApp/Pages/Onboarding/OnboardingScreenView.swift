@@ -323,13 +323,7 @@ struct OnboardingScreenView: View {
                             recurrence: nil,
                             isUpdate: false
                         ),
-                        alertSummaryEntity: .init(
-                            routeId: nil,
-                            stopId: nil,
-                            tripId: nil,
-                            directionId: nil,
-                            summary: alertSummary
-                        )
+                        alertSummaryEntity: .init(summary: alertSummary)
                     )
                     Text(String(alert.alertCardMajorBody.characters[...]))
                         .font(.system(size: 16))

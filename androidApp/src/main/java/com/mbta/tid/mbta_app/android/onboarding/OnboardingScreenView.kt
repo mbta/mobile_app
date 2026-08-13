@@ -392,36 +392,31 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
                                 ),
                             alertSummaryEntity =
                                 AlertSummaryEntity(
-                                    routeId = null,
-                                    stopId = null,
-                                    directionId = null,
-                                    tripId = null,
-                                    summary =
-                                        stringResource(
-                                                R.string.alert_summary,
-                                                stringResource(R.string.service_suspended),
-                                                stringResource(
-                                                    R.string.alert_summary_location_successive,
-                                                    "Back Bay",
-                                                    "Wellington",
-                                                ),
-                                                stringResource(
-                                                    R.string.alert_summary_timeframe_this_week,
-                                                    EasternTimeInstant(
-                                                            2026,
-                                                            Month.JANUARY,
-                                                            25,
-                                                            12,
-                                                            0,
-                                                        )
-                                                        .formattedServiceDay(
-                                                            EasternTimeInstant.ServiceDateRounding
-                                                                .BACKWARDS
-                                                        ),
-                                                ),
-                                                "",
-                                            )
-                                            .replace(Regex("</?b>"), "**"),
+                                    stringResource(
+                                            R.string.alert_summary,
+                                            stringResource(R.string.service_suspended),
+                                            stringResource(
+                                                R.string.alert_summary_location_successive,
+                                                "Back Bay",
+                                                "Wellington",
+                                            ),
+                                            stringResource(
+                                                R.string.alert_summary_timeframe_this_week,
+                                                EasternTimeInstant(
+                                                        2026,
+                                                        Month.JANUARY,
+                                                        25,
+                                                        12,
+                                                        0,
+                                                    )
+                                                    .formattedServiceDay(
+                                                        EasternTimeInstant.ServiceDateRounding
+                                                            .BACKWARDS
+                                                    ),
+                                            ),
+                                            "",
+                                        )
+                                        .replace(Regex("</?b>"), "**")
                                 ),
                         )
                     Text(

@@ -197,13 +197,7 @@ class AlertCardTests {
                     AlertSummary.Location.WholeRoute("Red Line", RouteType.HEAVY_RAIL),
                     timeframe = AlertSummary.Timeframe.StartingLaterToday(time),
                 ),
-                AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "**Delay** on **Red Line** starting **9:00\u202FAM** today",
-                ),
+                AlertSummaryEntity("**Delay** on **Red Line** starting **9:00\u202FAM** today"),
                 AlertCardSpec.Delay,
                 routeAccents,
                 {},
@@ -265,13 +259,7 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.ThisWeek(endTime)),
-                AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "**Service suspended** through Saturday",
-                ),
+                AlertSummaryEntity("**Service suspended** through Saturday"),
                 AlertCardSpec.Takeover,
                 routeAccents,
                 {},
@@ -296,7 +284,7 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.Time(endTime)),
-                AlertSummaryEntity(null, null, null, null, "**Detour** through 9:00\u202FAM"),
+                AlertSummaryEntity("**Detour** through 9:00\u202FAM"),
                 AlertCardSpec.Basic,
                 routeAccents,
                 {},
@@ -327,11 +315,7 @@ class AlertCardTests {
                         )
                 ),
                 AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "**All clear:** Regular service from **Start Stop** to **End Stop**",
+                    "**All clear:** Regular service from **Start Stop** to **End Stop**"
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents,
@@ -365,11 +349,7 @@ class AlertCardTests {
                     isUpdate = true,
                 ),
                 AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "**Update:** Shuttle buses from **Start Stop** to **End Stop** through tomorrow",
+                    "**Update:** Shuttle buses from **Start Stop** to **End Stop** through tomorrow"
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents,
@@ -403,11 +383,7 @@ class AlertCardTests {
                     cause = Alert.Cause.MechanicalIssue,
                 ),
                 AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "**12:13\u202FPM** train from **Ruggles** is cancelled today due to mechanical issue",
+                    "**12:13\u202FPM** train from **Ruggles** is cancelled today due to mechanical issue"
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
@@ -444,13 +420,7 @@ class AlertCardTests {
                     Alert.Effect.Suspension,
                     cause = Alert.Cause.Holiday,
                 ),
-                AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "Multiple trips are suspended today due to holiday",
-                ),
+                AlertSummaryEntity("Multiple trips are suspended today due to holiday"),
                 AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
                 onViewDetails = {},
@@ -483,11 +453,7 @@ class AlertCardTests {
                     "Forest Hills",
                 ),
                 AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "**12:13\u202FPM** train from **Oak Grove** is replaced by shuttle buses from **Ruggles** to **Forest Hills**",
+                    "**12:13\u202FPM** train from **Oak Grove** is replaced by shuttle buses from **Ruggles** to **Forest Hills**"
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
@@ -528,11 +494,7 @@ class AlertCardTests {
                     "Forest Hills",
                 ),
                 AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "Shuttle buses replace the **12:13\u202FPM** train from **Ruggles** to **Forest Hills**",
+                    "Shuttle buses replace the **12:13\u202FPM** train from **Ruggles** to **Forest Hills**"
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
@@ -574,11 +536,7 @@ class AlertCardTests {
                     cause = null,
                 ),
                 AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "**12:13\u202FPM** train to **Stoughton** will not stop at **Back Bay** and **Ruggles** today",
+                    "**12:13\u202FPM** train to **Stoughton** will not stop at **Back Bay** and **Ruggles** today"
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
@@ -612,11 +570,7 @@ class AlertCardTests {
                     AlertSummary.Timeframe.UntilFurtherNotice,
                 ),
                 AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "Trains will not stop at **Back Bay** and **Ruggles** until further notice",
+                    "Trains will not stop at **Back Bay** and **Ruggles** until further notice"
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
@@ -643,11 +597,7 @@ class AlertCardTests {
                     AlertSummary.Timeframe.UntilFurtherNotice,
                 ),
                 AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "Buses will not stop at **Back Bay** and **Ruggles** until further notice",
+                    "Buses will not stop at **Back Bay** and **Ruggles** until further notice"
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.BUS),
@@ -683,11 +633,7 @@ class AlertCardTests {
                     cause = Alert.Cause.MechanicalIssue,
                 ),
                 AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "**12:13\u202FPM** train from **Ruggles** is cancelled tomorrow due to mechanical issue",
+                    "**12:13\u202FPM** train from **Ruggles** is cancelled tomorrow due to mechanical issue"
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
@@ -735,11 +681,7 @@ class AlertCardTests {
                         ),
                 ),
                 AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "**12:13\u202FPM** train from **Oak Grove** is replaced by shuttle buses from **Ruggles** to **Forest Hills** daily until Thursday",
+                    "**12:13\u202FPM** train from **Oak Grove** is replaced by shuttle buses from **Ruggles** to **Forest Hills** daily until Thursday"
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
@@ -783,11 +725,7 @@ class AlertCardTests {
                         ),
                 ),
                 AlertSummaryEntity(
-                    null,
-                    null,
-                    null,
-                    null,
-                    "Shuttle buses replace this train from **Ruggles** to **Forest Hills** daily until Thursday",
+                    "Shuttle buses replace this train from **Ruggles** to **Forest Hills** daily until Thursday"
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),

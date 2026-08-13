@@ -327,11 +327,7 @@ class TripStopRowTest {
             summaries =
                 listOf(
                     AlertSummaryEntity(
-                        null,
-                        null,
-                        null,
-                        null,
-                        "**Shuttle buses** from **Roxbury Crossing** to **Green Street** through tomorrow",
+                        "**Shuttle buses** from **Roxbury Crossing** to **Green Street** through tomorrow"
                     )
                 )
         }
