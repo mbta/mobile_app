@@ -28,7 +28,6 @@ final class AlertCardTests: XCTestCase {
         let exp = XCTestExpectation(description: "Detail button pressed")
         let sut = AlertCard(
             alert: alert,
-            alertSummary: nil,
             alertSummaryEntity: nil,
             spec: .takeover,
             routeAccents: .init(),
@@ -56,18 +55,6 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary.Standard(
-                effect: .shuttle,
-                location: .some(
-                    AlertSummary.LocationSuccessiveStops(
-                        startStopName: "Start Stop",
-                        endStopName: "End Stop"
-                    )
-                ),
-                timeframe: .some(AlertSummary.TimeframeTomorrow()),
-                recurrence: nil,
-                isUpdate: false
-            ),
             alertSummaryEntity: .init(
                 summary: "**Shuttle buses** from **Start Stop** to **End Stop** through tomorrow"
             ),
@@ -92,16 +79,6 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary.Standard(
-                effect: .noService,
-                location: .some(
-                    AlertSummary
-                        .LocationSingleStop(stopName: "Single Stop")
-                ),
-                timeframe: .some(AlertSummary.TimeframeEndOfService()),
-                recurrence: nil,
-                isUpdate: false
-            ),
             alertSummaryEntity: .init(summary: "**No service** at **Single Stop** through end of service"),
             spec: .takeover,
             routeAccents: .init(),
@@ -124,33 +101,6 @@ final class AlertCardTests: XCTestCase {
         let exp = XCTestExpectation(description: "Detail button pressed")
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary.Standard(
-                effect: .shuttle,
-                location: .some(
-                    AlertSummary.LocationStopToDirection(
-                        startStopName: "Start Stop",
-                        direction: Direction(
-                            name: "West",
-                            destination: "Destination",
-                            id: 0
-                        )
-                    )
-                ),
-                timeframe: .some(
-                    AlertSummary.TimeframeLaterDate(
-                        time: EasternTimeInstant(
-                            year: 2025,
-                            month: .april,
-                            day: 16,
-                            hour: 16,
-                            minute: 0,
-                            second: 0
-                        )
-                    )
-                ),
-                recurrence: nil,
-                isUpdate: false
-            ),
             alertSummaryEntity: .init(
                 summary: "**Shuttle buses** from **Start Stop** to **Westbound** stops through Apr 16"
             ),
@@ -176,33 +126,6 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary.Standard(
-                effect: .shuttle,
-                location: .some(
-                    AlertSummary.LocationDirectionToStop(
-                        direction: Direction(
-                            name: "West",
-                            destination: "Destination",
-                            id: 0
-                        ),
-                        endStopName: "End Stop"
-                    )
-                ),
-                timeframe: .some(
-                    AlertSummary.TimeframeThisWeek(
-                        time: EasternTimeInstant(
-                            year: 2025,
-                            month: .april,
-                            day: 16,
-                            hour: 16,
-                            minute: 0,
-                            second: 0
-                        )
-                    )
-                ),
-                recurrence: nil,
-                isUpdate: false
-            ),
             alertSummaryEntity: .init(
                 summary: "**Shuttle buses** from **Westbound** stops to **End Stop** through Wednesday"
             ),
@@ -237,18 +160,6 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary.Standard(
-                effect: .shuttle,
-                location: .some(
-                    AlertSummary.LocationSuccessiveStops(
-                        startStopName: "Start Stop",
-                        endStopName: "End Stop"
-                    )
-                ),
-                timeframe: .some(AlertSummary.TimeframeTime(time: time)),
-                recurrence: nil,
-                isUpdate: false
-            ),
             alertSummaryEntity: .init(
                 summary: "**Shuttle buses** from **Start Stop** to **End Stop** through 4:00\u{202F}PM"
             ),
@@ -276,7 +187,6 @@ final class AlertCardTests: XCTestCase {
         let exp = XCTestExpectation(description: "Card pressed")
         let sut = AlertCard(
             alert: alert,
-            alertSummary: nil,
             alertSummaryEntity: nil,
             spec: .basic,
             routeAccents: .init(),
@@ -301,13 +211,6 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary.Standard(
-                effect: alert.effect,
-                location: nil,
-                timeframe: AlertSummary.TimeframeTomorrow(),
-                recurrence: nil,
-                isUpdate: false
-            ),
             alertSummaryEntity: .init(summary: "**Detour** through tomorrow"),
             spec: .basic,
             routeAccents: .init(),
@@ -326,7 +229,6 @@ final class AlertCardTests: XCTestCase {
         let exp = XCTestExpectation(description: "Card pressed")
         let sut = AlertCard(
             alert: alert,
-            alertSummary: nil,
             alertSummaryEntity: nil,
             spec: .downstream,
             routeAccents: .init(),
@@ -354,7 +256,6 @@ final class AlertCardTests: XCTestCase {
         let exp = XCTestExpectation(description: "Card pressed")
         let sut = AlertCard(
             alert: alert,
-            alertSummary: nil,
             alertSummaryEntity: nil,
             spec: .elevator,
             routeAccents: .init(),
@@ -391,7 +292,6 @@ final class AlertCardTests: XCTestCase {
         let exp = XCTestExpectation(description: "Card pressed")
         let sut = AlertCard(
             alert: alert,
-            alertSummary: nil,
             alertSummaryEntity: nil,
             spec: .elevator,
             routeAccents: .init(),
@@ -420,7 +320,6 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: nil,
             alertSummaryEntity: nil,
             spec: .delay,
             routeAccents: .init(),
@@ -454,16 +353,6 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary.Standard(
-                effect: .delay,
-                location: AlertSummary.LocationWholeRoute(
-                    routeLabel: "Red Line",
-                    routeType: .heavyRail
-                ),
-                timeframe: AlertSummary.TimeframeStartingLaterToday(time: time),
-                recurrence: nil,
-                isUpdate: false
-            ),
             alertSummaryEntity: .init(summary: "**Delay** on **Red Line** starting **9:00\u{202F}PM** today"),
             spec: .delay,
             now: time.minus(minutes: 15),
@@ -487,7 +376,6 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: nil,
             alertSummaryEntity: nil,
             spec: .delay,
             routeAccents: .init(),
@@ -509,7 +397,6 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: nil,
             alertSummaryEntity: nil,
             spec: .delay,
             routeAccents: .init(),
@@ -530,14 +417,6 @@ final class AlertCardTests: XCTestCase {
         let exp = XCTestExpectation(description: "Card pressed")
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary.AllClear(
-                location: .some(
-                    AlertSummary.LocationSuccessiveStops(
-                        startStopName: "Start Stop",
-                        endStopName: "End Stop"
-                    )
-                )
-            ),
             alertSummaryEntity: .init(summary: "**All clear:** Regular service from **Start Stop** to **End Stop**"),
             spec: .takeover,
             routeAccents: .init(),
@@ -567,18 +446,6 @@ final class AlertCardTests: XCTestCase {
         let exp = XCTestExpectation(description: "Card pressed")
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary.Standard(
-                effect: .shuttle,
-                location: .some(
-                    AlertSummary.LocationSuccessiveStops(
-                        startStopName: "Start Stop",
-                        endStopName: "End Stop"
-                    )
-                ),
-                timeframe: AlertSummary.TimeframeTomorrow(),
-                recurrence: nil,
-                isUpdate: true
-            ),
             alertSummaryEntity: .init(
                 summary: "**Update:** Shuttle buses from **Start Stop** to **End Stop** through tomorrow"
             ),
@@ -611,22 +478,6 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: TripSpecificAlertSummary(
-                tripIdentity: TripSpecificAlertSummary.TripFrom(
-                    tripTime: .init(
-                        year: 2026,
-                        month: .march,
-                        day: 9,
-                        hour: 12,
-                        minute: 13,
-                        second: 0
-                    ),
-                    routeType: .commuterRail,
-                    stopName: "Ruggles"
-                ),
-                effect: .cancellation,
-                cause: .mechanicalIssue
-            ),
             alertSummaryEntity: .init(
                 summary: "**12:13\u{202F}PM** train from **Ruggles** is cancelled today due to mechanical issue"
             ),
@@ -656,11 +507,6 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: TripSpecificAlertSummary(
-                tripIdentity: TripSpecificAlertSummary.MultipleTrips.shared,
-                effect: .suspension,
-                cause: .holiday
-            ),
             alertSummaryEntity: .init(summary: "Multiple trips are suspended today due to holiday"),
             spec: .takeover,
             routeAccents: .init(type: .commuterRail),
@@ -686,22 +532,6 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: TripShuttleAlertSummary(
-                tripIdentity: TripShuttleAlertSummary.SingleTrip(
-                    tripTime: .init(
-                        year: 2026,
-                        month: .march,
-                        day: 9,
-                        hour: 12,
-                        minute: 13,
-                        second: 0
-                    ),
-                    routeType: .commuterRail,
-                    fromStopName: "Oak Grove"
-                ),
-                startStopName: "Ruggles",
-                endStopName: "Forest Hills"
-            ),
             alertSummaryEntity: .init(
                 summary: "**12:13\u{202F}PM** train from **Oak Grove** is replaced by shuttle buses from **Ruggles** to **Forest Hills**"
             ),
@@ -737,22 +567,6 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: TripSpecificAlertSummary(
-                tripIdentity: TripSpecificAlertSummary.TripTo(
-                    tripTime: .init(
-                        year: 2026,
-                        month: .march,
-                        day: 9,
-                        hour: 12,
-                        minute: 13,
-                        second: 0
-                    ),
-                    routeType: .commuterRail,
-                    headsign: "Stoughton"
-                ),
-                effect: .stationClosure,
-                effectStops: ["Back Bay", "Ruggles"]
-            ),
             alertSummaryEntity: .init(
                 summary: "**12:13\u{202F}PM** train to **Stoughton** will not stop at **Back Bay** and **Ruggles** today"
             ),
@@ -784,23 +598,6 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: TripSpecificAlertSummary(
-                tripIdentity: TripSpecificAlertSummary.TripFrom(
-                    tripTime: .init(
-                        year: 2026,
-                        month: .march,
-                        day: 9,
-                        hour: 12,
-                        minute: 13,
-                        second: 0
-                    ),
-                    routeType: .commuterRail,
-                    stopName: "Ruggles"
-                ),
-                effect: .cancellation,
-                isToday: false,
-                cause: .mechanicalIssue
-            ),
             alertSummaryEntity: .init(
                 summary: "**12:13\u{202F}PM** train from **Ruggles** is cancelled tomorrow due to mechanical issue"
             ),
@@ -829,34 +626,6 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: TripShuttleAlertSummary(
-                tripIdentity: TripShuttleAlertSummary.SingleTrip(
-                    tripTime: .init(
-                        year: 2026,
-                        month: .march,
-                        day: 9,
-                        hour: 12,
-                        minute: 13,
-                        second: 0
-                    ),
-                    routeType: .commuterRail,
-                    fromStopName: "Oak Grove"
-                ),
-                startStopName: "Ruggles",
-                endStopName: "Forest Hills",
-                recurrence: AlertSummary.RecurrenceDaily(
-                    ending: AlertSummary.TimeframeThisWeek(
-                        time: .init(
-                            year: 2026,
-                            month: .march,
-                            day: 12,
-                            hour: 9,
-                            minute: 6,
-                            second: 0
-                        )
-                    )
-                )
-            ),
             alertSummaryEntity: .init(
                 summary: "**12:13\u{202F}PM** train from **Oak Grove** is replaced by shuttle buses from **Ruggles** to **Forest Hills** daily until Thursday"
             ),
@@ -888,16 +657,6 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary.Standard(
-                effect: .stationClosure,
-                location: .some(
-                    AlertSummary
-                        .LocationAffectedStops(stops: ["Stop 1"])
-                ),
-                timeframe: .some(AlertSummary.TimeframeUntilFurtherNotice()),
-                recurrence: nil,
-                isUpdate: false
-            ),
             alertSummaryEntity: .init(summary: "Trains will not stop at **Stop 1** until further notice"),
             spec: .takeover,
             routeAccents: .init(),
@@ -919,16 +678,6 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary.Standard(
-                effect: .stopClosure,
-                location: .some(
-                    AlertSummary
-                        .LocationAffectedStops(stops: ["Stop 1", "Stop 2"])
-                ),
-                timeframe: .some(AlertSummary.TimeframeUntilFurtherNotice()),
-                recurrence: nil,
-                isUpdate: false
-            ),
             alertSummaryEntity: .init(summary: "Buses will not stop at **Stop 1** and **Stop 2** until further notice"),
             spec: .takeover,
             routeAccents: .init(),

@@ -18,7 +18,6 @@ struct TripStopRow: View {
     var onOpenAlertDetails: (Shared.Alert) -> Void
     var route: Route
     var routeAccents: TripRouteAccents
-    var alertSummaries: [String: AlertSummary?]
     var stopListContext: StopListContext
     var showDownstreamAlert: Bool = false
     var targeted: Bool = false
@@ -57,7 +56,6 @@ struct TripStopRow: View {
             routeAccents: routeAccents,
             stopListContext: stopListContext,
             activeElevatorAlerts: activeElevatorAlerts.count,
-            alertSummaries: alertSummaries,
             background: background,
             connectingRoutes: stop.routes,
             disruption: disruption,
@@ -140,7 +138,6 @@ struct TripStopRow: View {
             onOpenAlertDetails: { _ in },
             route: red,
             routeAccents: .init(route: red),
-            alertSummaries: [:],
             stopListContext: stopListContext,
         )
         TripStopRow(
@@ -166,7 +163,6 @@ struct TripStopRow: View {
             onOpenAlertDetails: { _ in },
             route: red,
             routeAccents: .init(route: red),
-            alertSummaries: [:],
             stopListContext: stopListContext
         )
         TripStopRow(
@@ -187,7 +183,6 @@ struct TripStopRow: View {
             onOpenAlertDetails: { _ in },
             route: red,
             routeAccents: .init(route: red),
-            alertSummaries: [:],
             stopListContext: stopListContext
         )
     }
@@ -237,7 +232,6 @@ struct TripStopRow: View {
                 onOpenAlertDetails: { _ in },
                 route: red,
                 routeAccents: .init(route: red),
-                alertSummaries: [:],
                 stopListContext: stopListContext
             )
             TripStopRow(
@@ -264,7 +258,6 @@ struct TripStopRow: View {
                 onOpenAlertDetails: { _ in },
                 route: red,
                 routeAccents: .init(route: red),
-                alertSummaries: [:],
                 stopListContext: stopListContext
             )
             TripStopRow(
@@ -287,7 +280,6 @@ struct TripStopRow: View {
                 onOpenAlertDetails: { _ in },
                 route: red,
                 routeAccents: .init(route: red),
-                alertSummaries: [:],
                 stopListContext: stopListContext,
                 showDownstreamAlert: true
             )

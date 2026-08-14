@@ -16,7 +16,6 @@ struct TripStops: View {
     let stopSequence: Int?
     let headerSpec: TripHeaderSpec?
     let now: EasternTimeInstant
-    let alertSummaries: [String: AlertSummary?]
     let onTapLink: (TripDetailsStopList.Entry) -> Void
     let onOpenAlertDetails: (Shared.Alert) -> Void
     let route: Route
@@ -39,7 +38,6 @@ struct TripStops: View {
         stopSequence: Int?,
         headerSpec: TripHeaderSpec?,
         now: EasternTimeInstant,
-        alertSummaries: [String: AlertSummary?],
         onTapLink: @escaping (TripDetailsStopList.Entry) -> Void,
         onOpenAlertDetails: @escaping (Shared.Alert) -> Void,
         route: Route,
@@ -51,7 +49,6 @@ struct TripStops: View {
         self.stopSequence = stopSequence
         self.headerSpec = headerSpec
         self.now = now
-        self.alertSummaries = alertSummaries
         self.onTapLink = onTapLink
         self.onOpenAlertDetails = onOpenAlertDetails
         self.route = route
@@ -86,7 +83,6 @@ struct TripStops: View {
                 onOpenAlertDetails: onOpenAlertDetails,
                 route: route,
                 routeAccents: routeAccents,
-                alertSummaries: alertSummaries,
                 stopListContext: stopListContext,
                 showDownstreamAlert: showDownstreamAlerts,
                 lastStop: stop.stopSequence == stops.stops.last?.stopSequence,
@@ -114,7 +110,6 @@ struct TripStops: View {
                         onOpenAlertDetails: onOpenAlertDetails,
                         route: route,
                         routeAccents: routeAccents,
-                        alertSummaries: alertSummaries,
                         stopListContext: stopListContext,
                         firstStop: true,
                         background: .fill2
@@ -176,7 +171,6 @@ struct TripStops: View {
                         onOpenAlertDetails: onOpenAlertDetails,
                         route: route,
                         routeAccents: routeAccents,
-                        alertSummaries: alertSummaries,
                         stopListContext: stopListContext,
                         targeted: true,
                         firstStop: showFirstStopSeparately && target == stops.startTerminalEntry,
@@ -258,7 +252,6 @@ struct TripStops: View {
             stopSequence: 4,
             headerSpec: .noVehicle,
             now: now,
-            alertSummaries: [:],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
             route: route,

@@ -9,11 +9,6 @@
 import SwiftUI
 
 extension AttributedString {
-    static func tryMarkdown(_ optionalString: String?) -> AttributedString? {
-        guard let optionalString else { return nil }
-        return tryMarkdown(optionalString)
-    }
-
     static func tryMarkdown(_ stringWithMarkdown: String) -> AttributedString {
         do {
             return try AttributedString(markdown: stringWithMarkdown)
