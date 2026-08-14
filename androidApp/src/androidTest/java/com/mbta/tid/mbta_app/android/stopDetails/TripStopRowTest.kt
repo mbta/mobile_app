@@ -12,7 +12,7 @@ import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.hasTextMatching
 import com.mbta.tid.mbta_app.model.Alert
-import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.AlertSummaryEntity
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
@@ -59,7 +59,6 @@ class TripStopRowTest {
                 onOpenAlertDetails = {},
                 route,
                 TripRouteAccents(route),
-                alertSummaries = emptyMap(),
             )
         }
 
@@ -93,7 +92,6 @@ class TripStopRowTest {
                 onOpenAlertDetails = {},
                 route,
                 TripRouteAccents(route),
-                alertSummaries = emptyMap(),
             )
         }
 
@@ -135,7 +133,6 @@ class TripStopRowTest {
                 onOpenAlertDetails = {},
                 route,
                 TripRouteAccents(route),
-                alertSummaries = emptyMap(),
             )
         }
 
@@ -176,7 +173,6 @@ class TripStopRowTest {
                 onOpenAlertDetails = {},
                 route,
                 TripRouteAccents(route),
-                alertSummaries = emptyMap(),
                 targeted = selected,
                 firstStop = first,
             )
@@ -229,7 +225,6 @@ class TripStopRowTest {
                 onOpenAlertDetails = {},
                 route,
                 TripRouteAccents(route),
-                alertSummaries = emptyMap(),
             )
         }
 
@@ -280,7 +275,6 @@ class TripStopRowTest {
                 onOpenAlertDetails = {},
                 route,
                 TripRouteAccents(route),
-                alertSummaries = emptyMap(),
             )
         }
 
@@ -321,13 +315,15 @@ class TripStopRowTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route = objects.route()
-        val alert = objects.alert { effect = Alert.Effect.Shuttle }
-        val summary =
-            AlertSummary.Standard(
-                alert.effect,
-                AlertSummary.Location.SuccessiveStops("Roxbury Crossing", "Green Street"),
-                AlertSummary.Timeframe.Tomorrow,
-            )
+        val alert = objects.alert {
+            effect = Alert.Effect.Shuttle
+            summaries =
+                listOf(
+                    AlertSummaryEntity(
+                        "**Shuttle buses** from **Roxbury Crossing** to **Green Street** through tomorrow"
+                    )
+                )
+        }
 
         val trip = objects.trip()
         val entry =
@@ -350,7 +346,6 @@ class TripStopRowTest {
                 {},
                 route,
                 TripRouteAccents(route),
-                mapOf(alert.id to summary),
                 showDownstreamAlert = true,
             )
         }

@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.model.RoutePattern.Typicality
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -113,7 +112,7 @@ public data class GlobalMapData(
                         }
 
                 fun typical(pattern: RoutePattern) =
-                    pattern.isTypical() || pattern.typicality == Typicality.CanonicalOnly
+                    pattern.isTypical() || pattern.isCanonicalOnly()
 
                 val isTerminal =
                     patterns
@@ -151,6 +150,9 @@ public data class GlobalMapData(
                     allRoutes.add(route)
                 }
 
+                val categorizedAlerts: MutableMap<MapStopRoute, StopAlertState> =
+                    alertsByStop?.get(stop.id)?.stateByRoute?.toMutableMap() ?: mutableMapOf()
+
                 val mapRouteList = mutableListOf<MapStopRoute>()
                 val categorizedRoutes = mutableMapOf<MapStopRoute, List<Route>>()
 
@@ -160,12 +162,13 @@ public data class GlobalMapData(
                         mapRouteList += category
                     }
                     categorizedRoutes[category] = (categorizedRoutes[category] ?: listOf()) + route
-                }
-
-                var categorizedAlerts: Map<MapStopRoute, StopAlertState>? = null
-                if (alertsByStop != null) {
-                    val alertsHere = alertsByStop[stop.id]
-                    categorizedAlerts = alertsHere?.stateByRoute ?: emptyMap()
+                    if (
+                        globalData.getPatternsFor(stop.id).all { pattern ->
+                            pattern.isCanonicalOnly()
+                        }
+                    ) {
+                        categorizedAlerts[category] = StopAlertState.Suspension
+                    }
                 }
 
                 if (mapRouteList == listOf(MapStopRoute.SILVER, MapStopRoute.BUS)) {

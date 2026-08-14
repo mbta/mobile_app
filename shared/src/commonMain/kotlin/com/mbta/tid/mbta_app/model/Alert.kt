@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.RoutePattern.Typicality
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.experimental.ExperimentalObjCRefinement
 import kotlin.native.ShouldRefineInSwift
@@ -28,6 +27,7 @@ internal constructor(
     @SerialName("informed_entity") val informedEntity: List<InformedEntity>,
     val lifecycle: Lifecycle,
     val severity: Int,
+    val summaries: List<AlertSummaryEntity>? = null,
     @SerialName("updated_at") val updatedAt: EasternTimeInstant,
     // This field is not parsed from the Alert object from the backend, it is injected from
     // global data in the AlertsUsecase if any informed entities apply to a facility.
@@ -127,15 +127,13 @@ internal constructor(
 
     val hasNoThroughService: Boolean = effect in setOf(Effect.Shuttle, Effect.Suspension)
 
-    public suspend fun summary(
-        stopId: String,
-        directionId: Int,
-        patterns: List<RoutePattern>,
-        atTime: EasternTimeInstant,
-        upcomingTrips: List<UpcomingTrip>?,
-        global: GlobalResponse,
-    ): AlertSummary? =
-        AlertSummary.summarizing(this, stopId, directionId, patterns, atTime, upcomingTrips, global)
+    public fun summary(
+        routeId: Matcher<Route.Id>,
+        stopId: Matcher<String>,
+        directionId: Matcher<Int>,
+        tripId: Matcher<String>,
+    ): AlertSummaryEntity? =
+        AlertSummaryEntity.matching(summaries.orEmpty(), routeId, stopId, directionId, tripId)
 
     @Serializable
     public data class ActivePeriod

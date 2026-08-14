@@ -438,6 +438,7 @@ class RouteSegmentTest {
                     sourceRoutePatternId = routeSegment.sourceRoutePatternId,
                     sourceRouteId = routeSegment.sourceRouteId,
                     stopIds = listOf("alewife", "davis"),
+                    isFirst = true,
                     otherPatternsByStopId =
                         mapOf(
                             "alewife" to
@@ -463,6 +464,7 @@ class RouteSegmentTest {
                     sourceRoutePatternId = routeSegment.sourceRoutePatternId,
                     sourceRouteId = routeSegment.sourceRouteId,
                     stopIds = listOf("porter", "harvard", "central"),
+                    isLast = true,
                     otherPatternsByStopId = mapOf(),
                     alertState = SegmentAlertState.Normal,
                 ),
@@ -508,6 +510,8 @@ class RouteSegmentTest {
                     sourceRoutePatternId = routeSegment.sourceRoutePatternId,
                     sourceRouteId = routeSegment.sourceRouteId,
                     stopIds = listOf("alewife", "davis", "porter"),
+                    isFirst = true,
+                    isLast = true,
                     otherPatternsByStopId =
                         mapOf(
                             "alewife" to
@@ -555,6 +559,8 @@ class RouteSegmentTest {
                     sourceRoutePatternId = routeSegment.sourceRoutePatternId,
                     sourceRouteId = routeSegment.sourceRouteId,
                     stopIds = listOf("alewife", "davis", "porter"),
+                    isFirst = true,
+                    isLast = true,
                     otherPatternsByStopId =
                         mapOf(
                             "alewife" to

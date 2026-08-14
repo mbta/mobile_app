@@ -32,7 +32,6 @@ import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
 import com.mbta.tid.mbta_app.viewModel.MockStopDetailsViewModel
 import com.mbta.tid.mbta_app.viewModel.StopDetailsViewModel
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -303,20 +302,7 @@ class StopDetailsViewTest {
                                 now,
                             )
                         ),
-                    ),
-                    mapOf(
-                        alert.id to
-                            runBlocking {
-                                alert.summary(
-                                    stop.id,
-                                    0,
-                                    listOf(routePatternOne),
-                                    now,
-                                    null,
-                                    global,
-                                )
-                            }
-                    ),
+                    )
                 )
             )
 
@@ -379,20 +365,7 @@ class StopDetailsViewTest {
                                 )
                             ),
                         ),
-                    ),
-                    mapOf(
-                        alert.id to
-                            runBlocking {
-                                alert.summary(
-                                    stop.id,
-                                    0,
-                                    listOf(routePatternOne),
-                                    now,
-                                    null,
-                                    global,
-                                )
-                            }
-                    ),
+                    )
                 )
             )
         loadKoinModules(module { single { filteredVM }.bind(IStopDetailsViewModel::class) })

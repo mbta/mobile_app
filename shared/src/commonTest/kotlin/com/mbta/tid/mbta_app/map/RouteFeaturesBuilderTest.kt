@@ -16,10 +16,13 @@ import com.mbta.tid.mbta_app.model.response.ShapeWithStops
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.GreenLineTestHelper
+import com.mbta.tid.mbta_app.utils.isRoughlyEqualTo
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import kotlinx.coroutines.runBlocking
 import org.maplibre.spatialk.geojson.LineString
+import org.maplibre.spatialk.turf.misc.nearestPointTo
 import org.maplibre.spatialk.turf.misc.slice
 
 class RouteFeaturesBuilderTest {
@@ -28,16 +31,7 @@ class RouteFeaturesBuilderTest {
         val routeSources =
             RouteFeaturesBuilder.generateRouteSources(
                 routeData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
-                stopsById =
-                    mapOf(
-                        MapTestDataHelper.stopAlewife.id to MapTestDataHelper.stopAlewife,
-                        MapTestDataHelper.stopDavis.id to MapTestDataHelper.stopDavis,
-                        MapTestDataHelper.stopPorter.id to MapTestDataHelper.stopPorter,
-                        MapTestDataHelper.stopHarvard.id to MapTestDataHelper.stopHarvard,
-                        MapTestDataHelper.stopCentral.id to MapTestDataHelper.stopCentral,
-                        MapTestDataHelper.stopAssembly.id to MapTestDataHelper.stopAssembly,
-                        MapTestDataHelper.stopSullivan.id to MapTestDataHelper.stopSullivan,
-                    ),
+                globalData = MapTestDataHelper.global,
                 alertsByStop = emptyMap(),
             )
 
@@ -131,14 +125,7 @@ class RouteFeaturesBuilderTest {
         val routeSources =
             RouteFeaturesBuilder.generateRouteSources(
                 routeData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
-                stopsById =
-                    mapOf(
-                        MapTestDataHelper.stopAlewife.id to MapTestDataHelper.stopAlewife,
-                        MapTestDataHelper.stopDavis.id to MapTestDataHelper.stopDavis,
-                        MapTestDataHelper.stopPorter.id to MapTestDataHelper.stopPorter,
-                        MapTestDataHelper.stopHarvard.id to MapTestDataHelper.stopHarvard,
-                        MapTestDataHelper.stopCentral.id to MapTestDataHelper.stopCentral,
-                    ),
+                globalData = MapTestDataHelper.global,
                 alertsByStop = alertsByStop,
             )
 
@@ -186,45 +173,209 @@ class RouteFeaturesBuilderTest {
     }
 
     @Test
-    fun `transforms shapes with stops`() {
-        val now = EasternTimeInstant.now()
+    fun `uses full shape for loop segment`() = runBlocking {
+        val loopRouteData =
+            listOf(
+                MapFriendlyRouteResponse.RouteWithSegmentedShapes(
+                    routeId = MapTestDataHelper.route67.id,
+                    segmentedShapes =
+                        listOf(
+                            SegmentedRouteShape(
+                                sourceRoutePatternId = MapTestDataHelper.pattern67.id,
+                                sourceRouteId = MapTestDataHelper.pattern67.routeId,
+                                directionId = MapTestDataHelper.pattern67.directionId,
+                                routeSegments =
+                                    listOf(
+                                        RouteSegment(
+                                            id = "loop-segment",
+                                            sourceRoutePatternId = MapTestDataHelper.pattern67.id,
+                                            sourceRouteId = MapTestDataHelper.pattern67.routeId,
+                                            stopIds =
+                                                listOf(
+                                                    MapTestDataHelper.stopAlewife.id,
+                                                    MapTestDataHelper.stopDavis.id,
+                                                    MapTestDataHelper.stopAlewife.id,
+                                                ),
+                                            otherPatternsByStopId = emptyMap(),
+                                        )
+                                    ),
+                                shape = MapTestDataHelper.shapeRedC1,
+                            )
+                        ),
+                )
+            )
 
+        val routeSources =
+            RouteFeaturesBuilder.generateRouteSources(
+                routeData = loopRouteData,
+                globalData = MapTestDataHelper.global,
+                alertsByStop = emptyMap(),
+            )
+
+        val geometry = routeSources.single().features.features.single().geometry
+        assertEquals(LineString(Polyline.decode(MapTestDataHelper.shapeRedC1.polyline!!)), geometry)
+    }
+
+    @Test
+    fun `uses full shape for bus route`() = runBlocking {
+        val busRouteData =
+            listOf(
+                MapFriendlyRouteResponse.RouteWithSegmentedShapes(
+                    routeId = MapTestDataHelper.route67.id,
+                    segmentedShapes =
+                        listOf(
+                            SegmentedRouteShape(
+                                sourceRoutePatternId = MapTestDataHelper.pattern67.id,
+                                sourceRouteId = MapTestDataHelper.pattern67.routeId,
+                                directionId = MapTestDataHelper.pattern67.directionId,
+                                routeSegments =
+                                    listOf(
+                                        RouteSegment(
+                                            id = "bus-segment",
+                                            sourceRoutePatternId = MapTestDataHelper.pattern67.id,
+                                            sourceRouteId = MapTestDataHelper.pattern67.routeId,
+                                            stopIds =
+                                                listOf(
+                                                    MapTestDataHelper.stopAlewife.id,
+                                                    MapTestDataHelper.stopDavis.id,
+                                                ),
+                                            otherPatternsByStopId = emptyMap(),
+                                        )
+                                    ),
+                                shape = MapTestDataHelper.shapeRedC1,
+                            )
+                        ),
+                )
+            )
+
+        val routeSources =
+            RouteFeaturesBuilder.generateRouteSources(
+                routeData = busRouteData,
+                globalData = MapTestDataHelper.global,
+                alertsByStop = emptyMap(),
+            )
+
+        val geometry = routeSources.single().features.features.single().geometry
+        assertEquals(LineString(Polyline.decode(MapTestDataHelper.shapeRedC1.polyline!!)), geometry)
+    }
+
+    @Test
+    fun `bus alert segments preserve leading and trailing shape tails`() = runBlocking {
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
 
-        val redAlert = objects.alert {
-            id = "a1"
+        val busAlert = objects.alert {
+            id = "bus-a1"
             effect = Alert.Effect.Shuttle
             informedEntity(
                 listOf(Alert.InformedEntity.Activity.Board),
-                route = MapTestDataHelper.routeRed.id.idText,
-                routeType = RouteType.HEAVY_RAIL,
-                stop = MapTestDataHelper.stopAlewife.id,
+                route = MapTestDataHelper.route67.id.idText,
+                routeType = RouteType.BUS,
+                stop = MapTestDataHelper.stopPorter.id,
             )
             informedEntity(
                 listOf(Alert.InformedEntity.Activity.Board),
-                route = MapTestDataHelper.routeRed.id.idText,
-                routeType = RouteType.HEAVY_RAIL,
-                stop = MapTestDataHelper.stopDavis.id,
+                route = MapTestDataHelper.route67.id.idText,
+                routeType = RouteType.BUS,
+                stop = MapTestDataHelper.stopHarvard.id,
             )
         }
+
         val alertsByStop =
-            listOf(
-                MapTestDataHelper.stopAlewife.id to
+            mapOf(
+                MapTestDataHelper.stopPorter.id to
                     AlertAssociatedStop(
-                        stop = MapTestDataHelper.stopAlewife,
-                        relevantAlerts = listOf(redAlert),
-                        stateByRoute = mapOf(MapStopRoute.RED to StopAlertState.Shuttle),
+                        stop = MapTestDataHelper.stopPorter,
+                        relevantAlerts = listOf(busAlert),
+                        stateByRoute = mapOf(MapStopRoute.BUS to StopAlertState.Shuttle),
                         now = now,
                     ),
-                MapTestDataHelper.stopDavis.id to
+                MapTestDataHelper.stopHarvard.id to
                     AlertAssociatedStop(
-                        stop = MapTestDataHelper.stopDavis,
-                        relevantAlerts = listOf(redAlert),
-                        stateByRoute = mapOf(MapStopRoute.RED to StopAlertState.Shuttle),
+                        stop = MapTestDataHelper.stopHarvard,
+                        relevantAlerts = listOf(busAlert),
+                        stateByRoute = mapOf(MapStopRoute.BUS to StopAlertState.Shuttle),
                         now = now,
                     ),
             )
 
+        val busRouteData =
+            listOf(
+                MapFriendlyRouteResponse.RouteWithSegmentedShapes(
+                    routeId = MapTestDataHelper.route67.id,
+                    segmentedShapes =
+                        listOf(
+                            SegmentedRouteShape(
+                                sourceRoutePatternId = MapTestDataHelper.pattern67.id,
+                                sourceRouteId = MapTestDataHelper.pattern67.routeId,
+                                directionId = MapTestDataHelper.pattern67.directionId,
+                                routeSegments =
+                                    listOf(
+                                        RouteSegment(
+                                            id = "bus-alert-segment",
+                                            sourceRoutePatternId = MapTestDataHelper.pattern67.id,
+                                            sourceRouteId = MapTestDataHelper.pattern67.routeId,
+                                            stopIds =
+                                                listOf(
+                                                    MapTestDataHelper.stopAlewife.id,
+                                                    MapTestDataHelper.stopDavis.id,
+                                                    MapTestDataHelper.stopPorter.id,
+                                                    MapTestDataHelper.stopHarvard.id,
+                                                    MapTestDataHelper.stopCentral.id,
+                                                ),
+                                            otherPatternsByStopId = emptyMap(),
+                                        )
+                                    ),
+                                shape = MapTestDataHelper.shapeRedC1,
+                            )
+                        ),
+                )
+            )
+
+        val routeSources =
+            RouteFeaturesBuilder.generateRouteSources(
+                routeData = busRouteData,
+                globalData = MapTestDataHelper.global,
+                alertsByStop = alertsByStop,
+            )
+
+        val busFeatures = routeSources.single().features.features
+        val fullCoordinates =
+            LineString(Polyline.decode(MapTestDataHelper.shapeRedC1.polyline!!)).coordinates
+        assertEquals(3, busFeatures.size)
+        assertEquals(
+            SegmentAlertState.Normal.name,
+            busFeatures[0].properties[RouteFeaturesBuilder.propAlertStateKey],
+        )
+        assertEquals(
+            SegmentAlertState.Shuttle.name,
+            busFeatures[1].properties[RouteFeaturesBuilder.propAlertStateKey],
+        )
+        assertEquals(
+            SegmentAlertState.Normal.name,
+            busFeatures[2].properties[RouteFeaturesBuilder.propAlertStateKey],
+        )
+
+        val firstSegmentCoordinates = (busFeatures[0].geometry as LineString).coordinates
+        val middleSegmentCoordinates = (busFeatures[1].geometry as LineString).coordinates
+        val lastSegmentCoordinates = (busFeatures[2].geometry as LineString).coordinates
+
+        val shape = LineString(Polyline.decode(MapTestDataHelper.shapeRedC1.polyline))
+        val porterPositionOnLine =
+            shape.nearestPointTo(MapTestDataHelper.stopPorter.position).geometry.coordinates
+        val harvardPositionOnLine =
+            shape.nearestPointTo(MapTestDataHelper.stopHarvard.position).geometry.coordinates
+
+        assertEquals(firstSegmentCoordinates.first(), fullCoordinates.first())
+        assertTrue(firstSegmentCoordinates.last().isRoughlyEqualTo(porterPositionOnLine))
+        assertTrue(middleSegmentCoordinates.first().isRoughlyEqualTo(porterPositionOnLine))
+        assertTrue(middleSegmentCoordinates.last().isRoughlyEqualTo(harvardPositionOnLine))
+        assertTrue(lastSegmentCoordinates.first().isRoughlyEqualTo(harvardPositionOnLine))
+        assertEquals(lastSegmentCoordinates.last(), fullCoordinates.last())
+    }
+
+    @Test
+    fun `transforms shapes with stops`() {
         val shapeWithStops =
             ShapeWithStops(
                 directionId = MapTestDataHelper.patternRed10.directionId,

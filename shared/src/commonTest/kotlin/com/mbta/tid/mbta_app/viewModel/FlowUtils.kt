@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.TestScope
 /** Gets a state flow from a [MoleculeViewModel] in the context of a [TestScope] from `runTest`. */
 internal fun <Event, Model> TestScope.testViewModelFlow(
     viewModel: MoleculeViewModel<Event, Model>
-) = viewModel.modelsForUnitTests(this, TestFrameClock(this.testScheduler))
+) = viewModel.modelsForUnitTests(this.backgroundScope, TestFrameClock(this.testScheduler))
 
 private class TestFrameClock(private val scheduler: TestCoroutineScheduler) : MonotonicFrameClock {
     @OptIn(ExperimentalCoroutinesApi::class)

@@ -10,7 +10,10 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.koin.core.component.KoinComponent
 
-public class DebugState(public val channelUpdates: Map<String, EasternTimeInstant> = emptyMap())
+public class DebugState(
+    public val channelUpdates: Map<String, EasternTimeInstant> = emptyMap(),
+    public val socketConnected: Boolean = false,
+)
 
 public abstract class IDebugRepository
 internal constructor(initialState: DebugState? = null, private val clock: Clock = Clock.System) :
@@ -20,6 +23,7 @@ internal constructor(initialState: DebugState? = null, private val clock: Clock 
     public val state: StateFlow<DebugState?> = flow.asStateFlow()
 
     private val channelUpdates = mutableMapOf<String, EasternTimeInstant>()
+    private var socketConnected = false
     private val mutex = Mutex()
 
     public open suspend fun setChannelSuccess(topic: String) {
@@ -36,9 +40,16 @@ internal constructor(initialState: DebugState? = null, private val clock: Clock 
         }
     }
 
+    public open suspend fun setSocketConnected(isConnected: Boolean) {
+        mutex.withLock {
+            socketConnected = isConnected
+            updateState()
+        }
+    }
+
     private fun updateState() {
         // Updates must be copied with .toMap to avoid concurrent modification exceptions in the UI
-        flow.value = DebugState(channelUpdates.toMap())
+        flow.value = DebugState(channelUpdates.toMap(), socketConnected)
     }
 }
 

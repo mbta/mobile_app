@@ -121,7 +121,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
-            alertSummaries: [:],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
@@ -190,7 +189,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
-            alertSummaries: [:],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
@@ -249,7 +247,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
-            alertSummaries: [:],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
@@ -306,7 +303,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
-            alertSummaries: [:],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
@@ -360,6 +356,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
                 stop: stop.id,
                 trip: trip1.id
             )
+            alert.summaries = [.init(summary: "This bus is cancelled today")]
         }
         let leaf = makeLeaf(
             route: route,
@@ -376,10 +373,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
-            alertSummaries: [alert.id: TripSpecificAlertSummary(
-                tripIdentity: TripSpecificAlertSummary.ThisTrip(routeType: route.type),
-                effect: .cancellation,
-            )],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
@@ -410,7 +403,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
-            alertSummaries: [:],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: .now(),
@@ -423,62 +415,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         XCTAssertThrowsError(try sut.inspect().find(TripDetailsView.self))
         XCTAssertThrowsError(try sut.inspect().find(DepartureTile.self))
         XCTAssertNotNil(try sut.inspect().find(StopDetailsNoTripCard.self))
-    }
-
-    @MainActor
-    func testSetsAlertSummaries() {
-        let objects = ObjectCollectionBuilder()
-        let now = EasternTimeInstant.now()
-        let stop = objects.stop { _ in }
-        let route = objects.route { _ in }
-        let alert = objects.alert { alert in
-            alert.effect = .suspension
-            alert.header = "Fuchsia Line suspended from Here to There"
-            alert.informedEntity(stop: stop.id)
-        }
-
-        // in practice any trips should be skipped but for major alerts we want to hide trips if they somehow aren't
-        // skipped
-        let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
-            prediction.trip = objects.trip { _ in }
-            prediction.departureTime = now.plus(seconds: 15)
-        })
-
-        let stopFilter = StopDetailsFilter(routeId: route.id, directionId: 0)
-
-        let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip], alerts: [alert], objects: objects)
-
-        loadKoinMocks(objects: objects)
-
-        let stopDetailsVM = MockStopDetailsViewModel()
-
-        let summarySetExp = expectation(description: "summaries set with expected value")
-
-        stopDetailsVM.onSetAlertSummaries = { summaries in
-            if summaries.keys.contains(alert.id) {
-                summarySetExp.fulfill()
-            }
-        }
-
-        let sut = StopDetailsFilteredDepartureDetails(
-            stopId: stop.id,
-            stopFilter: stopFilter,
-            tripFilter: nil,
-            setStopFilter: { _ in },
-            setTripFilter: { _ in },
-            leaf: leaf,
-            alertSummaries: [:],
-            selectedDirection: .init(name: nil, destination: nil, id: 0),
-            favorite: false,
-            now: now,
-            errorBannerVM: MockErrorBannerViewModel(),
-            mapVM: MockMapViewModel(),
-            stopDetailsVM: stopDetailsVM,
-            navManager: .init(),
-        )
-
-        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
-        wait(for: [summarySetExp], timeout: 1)
     }
 
     @MainActor
@@ -515,7 +451,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
-            alertSummaries: [alert.id: nil],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
@@ -575,7 +510,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
-            alertSummaries: [alert.id: nil],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
@@ -645,7 +579,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
-            alertSummaries: [alert.id: nil],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
@@ -687,7 +620,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
-            alertSummaries: [:],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
@@ -734,7 +666,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
-            alertSummaries: [alert.id: nil],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
@@ -785,6 +716,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
                     route: routeC.id.idText, routeType: nil,
                     stop: "70151", trip: nil
                 )
+                alert.summaries = [.init(summary: "**Shuttle buses** at **\(stop.name)**")]
             }
         let alertResponse = AlertsStreamDataResponse(alerts: [alert.id: alert])
 
@@ -821,13 +753,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
-            alertSummaries: [alert.id: AlertSummary.Standard(
-                effect: .shuttle,
-                location: AlertSummary.LocationSingleStop(stopName: stop.name),
-                timeframe: nil,
-                recurrence: nil,
-                isUpdate: false
-            )],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
@@ -875,7 +800,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
-            alertSummaries: [:],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: .now(),
@@ -948,7 +872,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
-            alertSummaries: [:],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
@@ -1003,7 +926,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
-            alertSummaries: [:],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,

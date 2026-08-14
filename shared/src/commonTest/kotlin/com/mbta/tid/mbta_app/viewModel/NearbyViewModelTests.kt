@@ -28,10 +28,14 @@ import kotlin.test.fail
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.koin.core.component.get
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
@@ -87,6 +91,7 @@ internal class NearbyViewModelTests : KoinTest {
         analytics: Analytics = MockAnalytics(),
         repositoriesBlock: MockRepositories.() -> Unit = {},
     ) {
+        Dispatchers.setMain(coroutineDispatcher)
         startKoin {
             modules(
                 repositoriesModule(
@@ -123,17 +128,16 @@ internal class NearbyViewModelTests : KoinTest {
 
     @AfterTest
     fun cleanup() {
+        Dispatchers.resetMain()
         stopKoin()
     }
 
     @Test
     fun `loads empty nearby data`() = runTest {
-        try {
-            val dispatcher = StandardTestDispatcher(testScheduler)
-            setUpKoin(objects, dispatcher) {
-                favorites = MockFavoritesRepository(Favorites(emptyMap()))
-            }
-        } catch (e: Exception) {}
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(objects, dispatcher) {
+            favorites = MockFavoritesRepository(Favorites(emptyMap()))
+        }
         val viewModel: NearbyViewModel = get()
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(EasternTimeInstant.now())
@@ -153,7 +157,7 @@ internal class NearbyViewModelTests : KoinTest {
             assertEquals(
                 NearbyViewModel.State(
                     awaitingPredictionsAfterBackground = false,
-                    routeCardData = null,
+                    routeCardData = emptyList(),
                     loadedLocation = stop1.position,
                     loadedStopIds = listOf(stop1.id, stop2.id),
                 ),
@@ -169,7 +173,7 @@ internal class NearbyViewModelTests : KoinTest {
         val predictions = predictionsEverywhere(objects, now)
 
         val globalData = GlobalResponse(objects)
-        val dispatcher = StandardTestDispatcher(testScheduler)
+        val dispatcher = UnconfinedTestDispatcher(testScheduler)
         setUpKoin(objects, dispatcher)
 
         val viewModel: NearbyViewModel = get()
@@ -304,15 +308,6 @@ internal class NearbyViewModelTests : KoinTest {
                 ),
                 awaitItem(),
             )
-            assertEquals(
-                NearbyViewModel.State(
-                    awaitingPredictionsAfterBackground = false,
-                    routeCardData = null,
-                    loadedLocation = stop1.position,
-                    loadedStopIds = listOf(stop1.id, stop2.id),
-                ),
-                awaitItem(),
-            )
             awaitItemSatisfying {
                 it ==
                     NearbyViewModel.State(
@@ -329,7 +324,7 @@ internal class NearbyViewModelTests : KoinTest {
     fun `disconnects when inactive and awaits predictions in background`() = runTest {
         var predictionsConnected = false
 
-        val dispatcher = StandardTestDispatcher(testScheduler)
+        val dispatcher = UnconfinedTestDispatcher(testScheduler)
 
         setUpKoin(objects, dispatcher) {
             predictions =
@@ -378,7 +373,7 @@ internal class NearbyViewModelTests : KoinTest {
             informedEntity(stop = stop2.id)
         }
 
-        val dispatcher = StandardTestDispatcher(testScheduler)
+        val dispatcher = UnconfinedTestDispatcher(testScheduler)
         setUpKoin(objects, dispatcher)
 
         val viewModel: NearbyViewModel = get()
@@ -413,7 +408,7 @@ internal class NearbyViewModelTests : KoinTest {
         val objects = objects.clone()
         predictionsEverywhere(objects, now)
 
-        val dispatcher = StandardTestDispatcher(testScheduler)
+        val dispatcher = UnconfinedTestDispatcher(testScheduler)
         setUpKoin(objects, dispatcher)
 
         val viewModel: NearbyViewModel = get()
@@ -445,7 +440,7 @@ internal class NearbyViewModelTests : KoinTest {
         val objects = objects.clone()
         predictionsEverywhere(objects, now)
 
-        val dispatcher = StandardTestDispatcher(testScheduler)
+        val dispatcher = UnconfinedTestDispatcher(testScheduler)
         setUpKoin(objects, dispatcher) {
             nearby = NearbyRepository()
             predictions =
@@ -492,7 +487,7 @@ internal class NearbyViewModelTests : KoinTest {
         val objects = objects.clone()
         predictionsEverywhere(objects, now)
 
-        val dispatcher = StandardTestDispatcher(testScheduler)
+        val dispatcher = UnconfinedTestDispatcher(testScheduler)
         setUpKoin(objects, dispatcher)
 
         val viewModel: NearbyViewModel = get()

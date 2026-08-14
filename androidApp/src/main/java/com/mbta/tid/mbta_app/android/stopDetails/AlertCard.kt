@@ -35,18 +35,16 @@ import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertCardSpec
-import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.AlertSummaryEntity
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopAlertState
-import com.mbta.tid.mbta_app.model.TripSpecificAlertSummary
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import kotlinx.datetime.Month
 
 @Composable
 private fun TakeoverAlertCard(
     alert: Alert,
-    alertSummary: AlertSummary?,
+    alertSummaryEntity: AlertSummaryEntity?,
     now: EasternTimeInstant,
     routeAccents: TripRouteAccents,
     onViewDetails: (() -> Unit)?,
@@ -56,7 +54,7 @@ private fun TakeoverAlertCard(
 
     val alertState = alert.alertState
     val iconSize = 48.dp
-    val formattedAlert = FormattedAlert(alert, alertSummary)
+    val formattedAlert = FormattedAlert(alert, alertSummaryEntity)
 
     Column(
         modifier =
@@ -117,7 +115,7 @@ private fun TakeoverAlertCard(
 @Composable
 fun AlertCard(
     alert: Alert,
-    alertSummary: AlertSummary?,
+    alertSummaryEntity: AlertSummaryEntity?,
     cardSpec: AlertCardSpec,
     routeAccents: TripRouteAccents,
     onViewDetails: (() -> Unit)?,
@@ -129,7 +127,7 @@ fun AlertCard(
     if (cardSpec == AlertCardSpec.Takeover) {
         TakeoverAlertCard(
             alert,
-            alertSummary,
+            alertSummaryEntity,
             now,
             routeAccents,
             onViewDetails,
@@ -137,7 +135,7 @@ fun AlertCard(
             interiorPadding,
         )
     } else {
-        val formattedAlert = FormattedAlert(alert, alertSummary)
+        val formattedAlert = FormattedAlert(alert, alertSummaryEntity)
 
         val iconSize =
             when (cardSpec) {
@@ -221,14 +219,8 @@ fun AlertCardPreview() {
                 effect = Alert.Effect.Cancellation
                 informedEntity(trip = "trip")
             },
-            TripSpecificAlertSummary(
-                TripSpecificAlertSummary.TripFrom(
-                    EasternTimeInstant(2026, Month.MARCH, 10, 22, 17),
-                    RouteType.COMMUTER_RAIL,
-                    "Mansfield",
-                ),
-                Alert.Effect.Cancellation,
-                cause = Alert.Cause.Holiday,
+            AlertSummaryEntity(
+                "**10:17\u202FPM** train from **Mansfield** is cancelled today due to holiday"
             ),
             AlertCardSpec.Takeover,
             routeAccents =
@@ -278,7 +270,7 @@ fun AlertCardPreview() {
                             effect = Alert.Effect.Delay
                             cause = Alert.Cause.DrawbridgeIssue
                         }),
-                        AlertSummary.Standard(effect = Alert.Effect.Delay),
+                        AlertSummaryEntity("Delays due to drawbridge issue"),
                         AlertCardSpec.Delay,
                         routeAccents =
                             TripRouteAccents(

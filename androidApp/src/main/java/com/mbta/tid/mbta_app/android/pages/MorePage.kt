@@ -59,6 +59,7 @@ import org.koin.compose.koinInject
 fun MorePage(
     highlightSection: MoreSection.Category? = null,
     bottomBar: @Composable () -> Unit,
+    reloadPendingOnboarding: () -> Unit = {},
     viewModel: MoreViewModel = koinInject(),
 ) {
     val translation = stringResource(R.string.current_locale)
@@ -128,15 +129,26 @@ fun MorePage(
                                 MoreSectionView(
                                     section = section,
                                     highlighted = section.id == highlightSection,
-                                    updateAccessibility = { includeAccessibility ->
-                                        if (notificationsEnabled) {
-                                            fcmToken?.let {
-                                                viewModel.updateAccessibility(
-                                                    it,
-                                                    includeAccessibility,
-                                                    currentLocale,
-                                                )
+                                    onChangeSetting = { setting, newValue ->
+                                        when (setting) {
+                                            Settings.StationAccessibility -> {
+                                                if (notificationsEnabled) {
+                                                    fcmToken?.let {
+                                                        viewModel.updateAccessibility(
+                                                            it,
+                                                            newValue,
+                                                            currentLocale,
+                                                        )
+                                                    }
+                                                }
                                             }
+                                            Settings.Notifications -> {
+                                                reloadPendingOnboarding()
+                                            }
+                                            Settings.DevDebugMode,
+                                            Settings.FavoritesByStop,
+                                            Settings.HideMaps,
+                                            Settings.SearchRouteResults -> {}
                                         }
                                     },
                                 )

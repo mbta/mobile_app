@@ -37,7 +37,6 @@ import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSignificance
-import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
@@ -61,7 +60,6 @@ fun TripStops(
     stopSequence: Int?,
     headerSpec: TripHeaderSpec?,
     now: EasternTimeInstant,
-    alertSummaries: Map<String, AlertSummary?>,
     global: GlobalResponse?,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
     onOpenAlertDetails: (Alert) -> Unit,
@@ -130,7 +128,6 @@ fun TripStops(
                         onOpenAlertDetails,
                         route,
                         routeAccents,
-                        alertSummaries,
                         firstStop = true,
                     )
                 }
@@ -171,7 +168,6 @@ fun TripStops(
                         onOpenAlertDetails,
                         route,
                         routeAccents,
-                        alertSummaries,
                     )
                 }
             }
@@ -197,7 +193,6 @@ fun TripStops(
                     onOpenAlertDetails,
                     route,
                     routeAccents,
-                    alertSummaries,
                     targeted = true,
                     firstStop = showFirstStopSeparately && target == stops.startTerminalEntry,
                     modifier = Modifier.background(colorResource(R.color.fill3)),
@@ -215,7 +210,6 @@ fun TripStops(
                 onOpenAlertDetails,
                 route,
                 routeAccents,
-                alertSummaries,
                 showDownstreamAlerts = true,
             )
         }
@@ -251,7 +245,6 @@ private fun StopList(
     onOpenAlertDetails: (Alert) -> Unit,
     route: Route,
     routeAccents: TripRouteAccents,
-    alertSummaries: Map<String, AlertSummary?>,
     showDownstreamAlerts: Boolean = false,
 ) {
     for (stop in list) {
@@ -263,7 +256,6 @@ private fun StopList(
             onOpenAlertDetails,
             route,
             routeAccents,
-            alertSummaries,
             showDownstreamAlert = showDownstreamAlerts,
             lastStop = stop.stopSequence == lastStopSequence,
         )
@@ -318,7 +310,6 @@ private fun TripStopsPreview() {
                 4,
                 TripHeaderSpec.NoVehicle,
                 EasternTimeInstant.now(),
-                emptyMap(),
                 GlobalResponse(objects),
                 onTapLink = {},
                 onOpenAlertDetails = {},

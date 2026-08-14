@@ -145,7 +145,6 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         )
 
         let stopDetailsVM = MockStopDetailsViewModel(initialState: .init(routeData: routeData,
-                                                                         alertSummaries: [:],
                                                                          awaitingPredictionsAfterBackground: false))
 
         let sut = StopDetailsFilteredView(
@@ -231,7 +230,6 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         let favoritesRepository = MockFavoritesRepository()
 
         let stopDetailsVM = MockStopDetailsViewModel(initialState: .init(routeData: nil,
-                                                                         alertSummaries: [:],
                                                                          awaitingPredictionsAfterBackground: false))
 
         let sut = StopDetailsFilteredView(
@@ -327,7 +325,6 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         )
 
         let stopDetailsVM = MockStopDetailsViewModel(initialState: .init(routeData: routeData,
-                                                                         alertSummaries: [:],
                                                                          awaitingPredictionsAfterBackground: false))
 
         let setStopFilterExp = XCTestExpectation(description: "setStopFilter called for GL direction 1")

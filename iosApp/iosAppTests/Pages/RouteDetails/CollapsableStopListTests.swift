@@ -37,6 +37,7 @@ final class CollapsableStopListTests: XCTestCase {
 
         let sut = CollapsableStopList(
             lineOrRoute: .route(mainRoute),
+            stopListContext: .routeDetails(MatcherWildcard(), 0),
             segment: .init(
                 stops: [.init(stop: stop1, stopLane: .center, stickConnections: [], connectingRoutes: [])],
                 isTypical: false
@@ -73,6 +74,7 @@ final class CollapsableStopListTests: XCTestCase {
 
         let sut = CollapsableStopList(
             lineOrRoute: .route(mainRoute),
+            stopListContext: .routeDetails(MatcherWildcard(), 0),
             segment: .init(
                 stops: [.init(stop: stop1, stopLane: .center, stickConnections: [], connectingRoutes: []), .init(
                     stop: stop2,

@@ -32,7 +32,10 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
                     .flatMap { (key, translations) ->
                         val androidIds =
                             when (key) {
-                                is IosKey.AndroidKey -> listOf(key.key)
+                                is IosKey.AndroidKey ->
+                                    listOf(key.key).takeIf {
+                                        androidResourcesById.containsKey(key.key)
+                                    }
                                 is IosKey.English -> androidIdsByEnglishKey[key.text]
                             }
                         if (androidIds == null || translations == null) return@flatMap emptyList()
