@@ -1666,6 +1666,60 @@
         }
       }
     },
+    "**Delays**%@%@%@%@%@" : {
+      "comment" : "Assemble a summary of an alert with the structure: \n**Delays**[ of about 15 minutes][ due to weather][ from Porter to Havard][ starting today][ daily until Friday][ due to maintenance]",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Delays**%1$@%2$@%3$@%4$@%5$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**Retrasos**%1$@%2$@%3$@%4$@%5$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**Retards**%1$@%2$@%3$@%4$@%5$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**Reta**%1$@%2$@%3$@%4$@%5$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**Atrasos**%1$@%2$@%3$@%4$@%5$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**Trì hoãn**%1$@%2$@%3$@%4$@%5$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**延误**%1$@%2$@%3$@%4$@%5$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**延誤**%1$@%2$@%3$@%4$@%5$@"
+          }
+        }
+      }
+    },
     "**multiple stops**" : {
       "comment" : "Used when more than 3 stops are affected",
       "extractionState" : "manual",
@@ -1916,6 +1970,222 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ %2$@於%3$@"
+          }
+        }
+      }
+    },
+    "%@ %@%@%@" : {
+      "comment" : "Assemble a summary of an alert with the structure: \n[This trip] [will not stop at][ stop A][ due to maintenance][ daily until friday]",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@%3$@%4$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@%3$@%4$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@%3$@%4$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@%3$@%4$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@%3$@%4$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@%3$@%4$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@%3$@%4$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@%3$@%4$@"
+          }
+        }
+      }
+    },
+    "%@ affected by %@ %@%@%@" : {
+      "comment" : "Assemble a summary of an alert with the structure: \n[This trip] affected by [detour] [today][ due to maintenance][ daily until friday]",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ affected by %2$@ %3$@%4$@%5$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ afectado por %2$@ %3$@%4$@%5$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ affecté par %2$@ %3$@%4$@%5$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ afekte pa %2$@ %3$@%4$@%5$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ afetado por %2$@ %3$@%4$@%5$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ bị ảnh hưởng bởi %2$@ %3$@%4$@%5$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 受 %2$@ %3$@%4$@%5$@ 影响"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 受 %2$@ %3$@%4$@%5$@ 影響"
+          }
+        }
+      }
+    },
+    "%@ are cancelled %@%@%@" : {
+      "comment" : "Assemble a summary of an alert with the structure: \n[These trips] are cancelled [today][ due to maintenance][ daily until friday]",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ are cancelled %2$@%3$@%4$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ se cancelan %2$@%3$@%4$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ sont annulés %2$@%3$@%4$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ yo anile %2$@%3$@%4$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ são cancelados %2$@%3$@%4$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ bị hủy %2$@%3$@%4$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 已取消 %2$@%3$@%4$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 已取消 %2$@%3$@%4$@"
+          }
+        }
+      }
+    },
+    "%@ are suspended %@%@%@" : {
+      "comment" : "Assemble a summary of an alert with the structure: \n[These trips] are suspended [today][ due to maintenance][ daily until friday]",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ are suspended %2$@%3$@%4$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ están suspendidos %2$@%3$@%4$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ sont suspendus %2$@%3$@%4$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ yo sispann %2$@%3$@%4$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ estão suspensos %2$@%3$@%4$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ bị đình chỉ %2$@%3$@%4$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 已暂停 %2$@%3$@%4$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 已暫停 %2$@%3$@%4$@"
           }
         }
       }
@@ -2544,6 +2814,60 @@
         }
       }
     },
+    "%@ experiencing delays%@ %@%@%@" : {
+      "comment" : "Assemble a summary of an alert with the structure: \n[Trip 101] experiencing delays[ of about 10 minutes][ today][ due to maintenance][ daily until Friday]",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ experiencing delays%2$@ %3$@%4$@%5$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ experimentando retrasos%2$@ %3$@%4$@%5$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ rencontre des retards%2$@ %3$@%4$@%5$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ ap fè fas ak reta%2$@ %3$@%4$@%5$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ enfrentando atrasos%2$@ %3$@%4$@%5$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ đang gặp sự chậm trễ%2$@ %3$@%4$@%5$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 遇到延误%2$@ %3$@%4$@%5$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 遇到延誤%2$@ %3$@%4$@%5$@"
+          }
+        }
+      }
+    },
     "%@ is %ld stops away from %@" : {
       "comment" : "VoiceOver label for how many stops away a vehicle is from a stop,\nex 'bus is 4 stops away from Harvard'",
       "localizations" : {
@@ -2593,6 +2917,114 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@距離%3$@還有%2$ld站"
+          }
+        }
+      }
+    },
+    "%@ is cancelled %@%@%@" : {
+      "comment" : "Assemble a summary of an alert with the structure: \n[This trip] is cancelled [today][ due to maintenance][ daily until friday]",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ is cancelled %2$@%3$@%4$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ se cancela %2$@%3$@%4$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ est annulé %2$@%3$@%4$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ anile %2$@%3$@%4$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ foi cancelado %2$@%3$@%4$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ đã bị hủy %2$@%3$@%4$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 已取消 %2$@%3$@%4$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 已取消 %2$@%3$@%4$@"
+          }
+        }
+      }
+    },
+    "%@ is suspended %@%@%@" : {
+      "comment" : "Assemble a summary of an alert with the structure: \n[This trip] is suspended [today][ due to maintenance][ daily until friday]",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ is suspended %2$@%3$@%4$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ está suspendido %2$@%3$@%4$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ est suspendu %2$@%3$@%4$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ sispann %2$@%3$@%4$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ está suspenso %2$@%3$@%4$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ bị tạm ngưng %2$@%3$@%4$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 已暂停 %2$@%3$@%4$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 已暫停 %2$@%3$@%4$@"
           }
         }
       }
@@ -2740,6 +3172,60 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@至"
+          }
+        }
+      }
+    },
+    "%@ will terminate at %@ %@%@%@" : {
+      "comment" : "Assemble a summary of an alert with the structure: \n[This trip] will terminate at [Porter][ today][ due to maintenance][ daily until friday]",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ will terminate at %2$@ %3$@%4$@%5$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ terminará en %2$@ %3$@%4$@%5$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ se terminera à %2$@ %3$@%4$@%5$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ ap fini nan %2$@ %3$@%4$@%5$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ será encerrado em %2$@ %3$@%4$@%5$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ sẽ kết thúc tại %2$@ %3$@%4$@%5$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 将在 %2$@ %3$@%4$@%5$@ 处终止"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 將在 %2$@ %3$@%4$@%5$@ 處終止"
           }
         }
       }
@@ -16915,6 +17401,342 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "現在將您常用的網站儲存到**一個便捷位置**。"
+          }
+        }
+      }
+    },
+    "of about 10 minutes" : {
+      "comment" : "Ex: delays [of about 10 minutes]",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "de unos 10 minutos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "d’environ 10 minutes"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "apeprè 10 minit"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "de cerca de 10 minutos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "khoảng 10 phút"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "大约10分钟"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "大約10分鐘"
+          }
+        }
+      }
+    },
+    "of about 15 minutes" : {
+      "comment" : "Ex: delays [of about 15 minutes]",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "de unos 15 minutos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "d’environ 15 minutes"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "apeprè 15 minit"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "de cerca de 15 minutos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "khoảng 15 phút"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "大约15分钟"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "大約15分鐘"
+          }
+        }
+      }
+    },
+    "of about 20 minutes" : {
+      "comment" : "Ex: delays [of about 20 minutes]",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "de unos 20 minutos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "d’environ 20 minutes"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "apeprè 20 minit"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "de cerca de 20 minutos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "khoảng 20 phút"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "大约20分钟"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "大約20分鐘"
+          }
+        }
+      }
+    },
+    "of about 25 minutes" : {
+      "comment" : "Ex: delays [of about 25 minutes]",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "de unos 25 minutos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "d’environ 25 minutes"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "apeprè 25 minit"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "de cerca de 25 minutos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "khoảng 25 phút"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "大约25分钟"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "大約25分鐘"
+          }
+        }
+      }
+    },
+    "of about 30 minutes" : {
+      "comment" : "Ex: delays [of about 30 minutes]",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "de unos 30 minutos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "d’environ 30 minutes"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "apeprè 30 minit"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "de cerca de 30 minutos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "khoảng 30 phút"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "大约30分钟"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "大約30分鐘"
+          }
+        }
+      }
+    },
+    "of more than 30 minutes" : {
+      "comment" : "Ex: delays [of more than 30 minutes]",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "de más de 30 minutos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "de plus de 30 minutes"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "plis pase 30 minit"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "de mais de 30 minutos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "hơn 30 phút"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "超过30分钟"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "超過30分鐘"
+          }
+        }
+      }
+    },
+    "of more than an hour" : {
+      "comment" : "Ex: delays [of more than an hour]",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "de más de una hora"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "de plus d’une heure"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "plis pase yon èdtan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "de mais de uma hora"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "hơn một giờ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "超过一个小时"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "超過一個小時"
           }
         }
       }
