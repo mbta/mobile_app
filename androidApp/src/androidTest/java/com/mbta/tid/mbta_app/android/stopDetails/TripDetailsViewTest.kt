@@ -106,7 +106,6 @@ class TripDetailsViewTest {
             TripDetailsView(
                 tripFilter,
                 allAlerts = alertData,
-                alertSummaries = emptyMap(),
                 onOpenAlertDetails = {},
                 openSheetRoute = openedSheetRoutes::add,
                 openModal = {},
@@ -174,7 +173,6 @@ class TripDetailsViewTest {
             TripDetailsView(
                 tripFilter,
                 allAlerts = alerts,
-                alertSummaries = emptyMap(),
                 onOpenAlertDetails = {},
                 openSheetRoute = openedSheetRoutes::add,
                 openModal = {},
@@ -209,7 +207,6 @@ class TripDetailsViewTest {
                 stopList = TripDetailsStopList(trip, emptyList()),
                 now = now,
                 isTripDetailsPage = false,
-                alertSummaries = emptyMap(),
                 globalResponse = GlobalResponse(objects),
             )
         }
@@ -236,7 +233,6 @@ class TripDetailsViewTest {
                 stopList = TripDetailsStopList(trip, emptyList()),
                 now = now,
                 isTripDetailsPage = true,
-                alertSummaries = emptyMap(),
                 globalResponse = GlobalResponse(objects),
             )
         }
@@ -261,7 +257,6 @@ class TripDetailsViewTest {
                 stopList = TripDetailsStopList(trip, emptyList()),
                 now = now,
                 isTripDetailsPage = true,
-                alertSummaries = emptyMap(),
                 globalResponse = GlobalResponse(objects),
             )
         }
@@ -289,7 +284,6 @@ class TripDetailsViewTest {
             TripDetailsView(
                 tripFilter,
                 allAlerts = AlertsStreamDataResponse(objects),
-                alertSummaries = emptyMap(),
                 onOpenAlertDetails = {},
                 openSheetRoute = openedSheetRoutes::add,
                 openModal = {},

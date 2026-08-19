@@ -16,7 +16,6 @@ struct TripStops: View {
     let stopSequence: Int?
     let headerSpec: TripHeaderSpec?
     let now: EasternTimeInstant
-    let alertSummaries: [String: AlertSummary?]
     let onTapLink: (TripDetailsStopList.Entry) -> Void
     let onOpenAlertDetails: (Shared.Alert) -> Void
     let route: Route
@@ -39,7 +38,6 @@ struct TripStops: View {
         stopSequence: Int?,
         headerSpec: TripHeaderSpec?,
         now: EasternTimeInstant,
-        alertSummaries: [String: AlertSummary?],
         onTapLink: @escaping (TripDetailsStopList.Entry) -> Void,
         onOpenAlertDetails: @escaping (Shared.Alert) -> Void,
         route: Route,
@@ -51,7 +49,6 @@ struct TripStops: View {
         self.stopSequence = stopSequence
         self.headerSpec = headerSpec
         self.now = now
-        self.alertSummaries = alertSummaries
         self.onTapLink = onTapLink
         self.onOpenAlertDetails = onOpenAlertDetails
         self.route = route
@@ -71,6 +68,10 @@ struct TripStops: View {
         }
     }
 
+    var stopListContext: StopListContext {
+        .trip(MatcherData(value: route.id), stops.trip.directionId, stops.trip.id)
+    }
+
     @ViewBuilder
     func stopList(list: [TripDetailsStopList.Entry], showDownstreamAlerts: Bool = false) -> some View {
         ForEach(list, id: \.stopSequence) { stop in
@@ -82,7 +83,7 @@ struct TripStops: View {
                 onOpenAlertDetails: onOpenAlertDetails,
                 route: route,
                 routeAccents: routeAccents,
-                alertSummaries: alertSummaries,
+                stopListContext: stopListContext,
                 showDownstreamAlert: showDownstreamAlerts,
                 lastStop: stop.stopSequence == stops.stops.last?.stopSequence,
                 background: Color.fill2
@@ -109,7 +110,7 @@ struct TripStops: View {
                         onOpenAlertDetails: onOpenAlertDetails,
                         route: route,
                         routeAccents: routeAccents,
-                        alertSummaries: alertSummaries,
+                        stopListContext: stopListContext,
                         firstStop: true,
                         background: .fill2
                     )
@@ -157,7 +158,7 @@ struct TripStops: View {
                             .frame(maxWidth: .infinity, minHeight: 56)
                         }
                     )
-                    .disclosureGroupStyle(.stopList(routeAccents: routeAccents, context: .trip))
+                    .disclosureGroupStyle(.stopList(routeAccents: routeAccents, context: stopListContext))
                 }
                 if let target, !hideTarget {
                     // If the target is the first stop and there's no vehicle,
@@ -170,7 +171,7 @@ struct TripStops: View {
                         onOpenAlertDetails: onOpenAlertDetails,
                         route: route,
                         routeAccents: routeAccents,
-                        alertSummaries: alertSummaries,
+                        stopListContext: stopListContext,
                         targeted: true,
                         firstStop: showFirstStopSeparately && target == stops.startTerminalEntry,
                         background: Color.fill3
@@ -251,7 +252,6 @@ struct TripStops: View {
             stopSequence: 4,
             headerSpec: .noVehicle,
             now: now,
-            alertSummaries: [:],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
             route: route,

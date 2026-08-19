@@ -11,6 +11,8 @@ public data class AlertSummaryEntity(
     @SerialName("direction_id") val directionId: Int?,
     val summary: String?,
 ) {
+    public constructor(summary: String?) : this(null, null, null, null, summary)
+
     internal companion object {
         fun matching(
             summaries: List<AlertSummaryEntity>,

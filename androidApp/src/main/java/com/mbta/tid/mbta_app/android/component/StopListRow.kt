@@ -44,7 +44,7 @@ import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.routeModeLabel
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertCardSpec
-import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.Matcher
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.SegmentAlertState
@@ -57,9 +57,26 @@ class StopPlacement(val isFirst: Boolean = false, val isLast: Boolean = false)
 
 @Serializable
 sealed class StopListContext {
-    data object Trip : StopListContext()
+    abstract val routeIdMatcher: Matcher<Route.Id>
+    abstract val directionIdMatcher: Matcher<Int>
+    abstract val tripIdMatcher: Matcher<String>
 
-    data object RouteDetails : StopListContext()
+    data class Trip(
+        override val routeIdMatcher: Matcher<Route.Id>,
+        val directionId: Int,
+        val tripId: String,
+    ) : StopListContext() {
+        override val directionIdMatcher: Matcher<Int> = Matcher.Data(directionId)
+        override val tripIdMatcher: Matcher<String> = Matcher.Data(tripId)
+    }
+
+    data class RouteDetails(
+        override val routeIdMatcher: Matcher<Route.Id>,
+        val directionId: Int,
+    ) : StopListContext() {
+        override val directionIdMatcher: Matcher<Int> = Matcher.Data(directionId)
+        override val tripIdMatcher: Matcher<String> = Matcher.Wildcard()
+    }
 }
 
 @Composable
@@ -72,7 +89,6 @@ fun StopListRow(
     stopListContext: StopListContext,
     modifier: Modifier = Modifier,
     activeElevatorAlerts: Int = 0,
-    alertSummaries: Map<String, AlertSummary?> = emptyMap(),
     connectingRoutes: List<Route>? = null,
     disruption: UpcomingFormat.Disruption? = null,
     getAlertState: (fromStop: String, toStop: String) -> SegmentAlertState = { _, _ ->
@@ -232,7 +248,12 @@ fun StopListRow(
             Box(Modifier.height(IntrinsicSize.Min)) {
                 AlertCard(
                     disruption.alert,
-                    alertSummaries[disruption.alert.id],
+                    disruption.alert.summary(
+                        routeId = stopListContext.routeIdMatcher,
+                        stopId = Matcher.Data(stop.id),
+                        directionId = stopListContext.directionIdMatcher,
+                        tripId = stopListContext.tripIdMatcher,
+                    ),
                     AlertCardSpec.Downstream,
                     routeAccents,
                     onViewDetails = { onOpenAlertDetails(disruption.alert) },

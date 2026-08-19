@@ -5,7 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.Alert
-import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.AlertSummaryEntity
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Prediction
 import com.mbta.tid.mbta_app.model.Schedule
@@ -133,7 +133,6 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 route = route,
                 routeAccents = TripRouteAccents(route),
-                alertSummaries = emptyMap(),
                 global = GlobalResponse(objects),
             )
         }
@@ -232,7 +231,6 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 route = route,
                 routeAccents = TripRouteAccents(route),
-                alertSummaries = emptyMap(),
                 global = GlobalResponse(objects),
             )
         }
@@ -319,7 +317,6 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 route = route,
                 routeAccents = TripRouteAccents(route),
-                alertSummaries = emptyMap(),
                 global = GlobalResponse(objects),
             )
         }
@@ -416,7 +413,6 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 route = route,
                 routeAccents = TripRouteAccents(route),
-                alertSummaries = emptyMap(),
                 global = GlobalResponse(objects),
             )
         }
@@ -437,7 +433,11 @@ class TripStopsTest {
         val stop2Target = objects.stop { name = "Stop B" }
         val stop3 = objects.stop { name = "Stop C" }
 
-        val alert = objects.alert { effect = Alert.Effect.Shuttle }
+        val alert = objects.alert {
+            effect = Alert.Effect.Shuttle
+            summaries =
+                listOf(AlertSummaryEntity("**Shuttle buses** at **Stop C** through end of service"))
+        }
 
         val vehicle = objects.vehicle {
             tripId = trip.id
@@ -513,15 +513,6 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 route = route,
                 routeAccents = TripRouteAccents(route),
-                alertSummaries =
-                    mapOf(
-                        alert.id to
-                            AlertSummary.Standard(
-                                alert.effect,
-                                AlertSummary.Location.SingleStop(stop3.name),
-                                AlertSummary.Timeframe.EndOfService,
-                            )
-                    ),
                 global = GlobalResponse(objects),
             )
         }
@@ -619,15 +610,6 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 route = route,
                 routeAccents = TripRouteAccents(route),
-                alertSummaries =
-                    mapOf(
-                        alert.id to
-                            AlertSummary.Standard(
-                                alert.effect,
-                                AlertSummary.Location.SingleStop(stop3.name),
-                                AlertSummary.Timeframe.EndOfService,
-                            )
-                    ),
                 global = GlobalResponse(objects),
             )
         }
@@ -725,15 +707,6 @@ class TripStopsTest {
                 onOpenAlertDetails = {},
                 route = route,
                 routeAccents = TripRouteAccents(route),
-                alertSummaries =
-                    mapOf(
-                        alert.id to
-                            AlertSummary.Standard(
-                                alert.effect,
-                                AlertSummary.Location.SingleStop(stop1.name),
-                                AlertSummary.Timeframe.EndOfService,
-                            )
-                    ),
                 global = GlobalResponse(objects),
             )
         }

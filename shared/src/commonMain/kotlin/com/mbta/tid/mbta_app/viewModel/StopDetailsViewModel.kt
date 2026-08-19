@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
-import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
@@ -41,8 +40,6 @@ public interface IStopDetailsViewModel {
 
     public fun setAlerts(alerts: AlertsStreamDataResponse?)
 
-    public fun setAlertSummaries(alertSummaries: Map<String, AlertSummary?>)
-
     public fun setFilters(filters: StopDetailsPageFilters)
 
     public fun setNow(now: EasternTimeInstant)
@@ -64,7 +61,6 @@ public class StopDetailsViewModel(
 
     public data class State(
         val routeData: RouteData? = null,
-        val alertSummaries: Map<String, AlertSummary?> = emptyMap(),
         val awaitingPredictionsAfterBackground: Boolean = false,
     )
 
@@ -89,8 +85,6 @@ public class StopDetailsViewModel(
 
     @set:JvmName("setAlertsState")
     private var alerts by mutableStateOf<AlertsStreamDataResponse?>(null)
-    @set:JvmName("setAlertSummariesState")
-    private var alertSummaries by mutableStateOf<Map<String, AlertSummary?>>(emptyMap())
     @set:JvmName("setFiltersState")
     private var filters by mutableStateOf<StopDetailsPageFilters?>(null)
     @set:JvmName("setNowState") private var now by mutableStateOf(EasternTimeInstant.now())
@@ -241,8 +235,8 @@ public class StopDetailsViewModel(
         }
 
         val state =
-            remember(filters, routeData, alertSummaries, awaitingPredictionsAfterBackground) {
-                State(routeData, alertSummaries, awaitingPredictionsAfterBackground)
+            remember(filters, routeData, awaitingPredictionsAfterBackground) {
+                State(routeData, awaitingPredictionsAfterBackground)
             }
 
         return state
@@ -259,10 +253,6 @@ public class StopDetailsViewModel(
 
     override fun setAlerts(alerts: AlertsStreamDataResponse?) {
         this.alerts = alerts
-    }
-
-    override fun setAlertSummaries(alertSummaries: Map<String, AlertSummary?>): Unit {
-        this.alertSummaries = alertSummaries
     }
 
     override fun setFilters(filters: StopDetailsPageFilters): Unit {
@@ -283,7 +273,6 @@ constructor(initialState: StopDetailsViewModel.State = StopDetailsViewModel.Stat
 
     public var onSetActive: (active: Boolean, wasSentToBackground: Boolean) -> Unit = { _, _ -> }
     public var onSetAlerts: (alerts: AlertsStreamDataResponse?) -> Unit = {}
-    public var onSetAlertSummaries: (alertSummaries: Map<String, AlertSummary?>) -> Unit = {}
     public var onSetFilters: (filters: StopDetailsPageFilters) -> Unit = {}
     public var onSetNow: (now: EasternTimeInstant) -> Unit = {}
 
@@ -295,9 +284,6 @@ constructor(initialState: StopDetailsViewModel.State = StopDetailsViewModel.Stat
         onSetActive(active, wasSentToBackground)
 
     override fun setAlerts(alerts: AlertsStreamDataResponse?): Unit = onSetAlerts(alerts)
-
-    override fun setAlertSummaries(alertSummaries: Map<String, AlertSummary?>): Unit =
-        onSetAlertSummaries(alertSummaries)
 
     override fun setFilters(filters: StopDetailsPageFilters): Unit = onSetFilters(filters)
 
