@@ -885,6 +885,60 @@
         }
       }
     },
+    "**%@**%@%@%@%@" : {
+      "comment" : "Assemble a summary of an alert with the structure: \n**[Modified service]**[ from Porter to Havard][ starting today][ daily until Friday][ due to maintenance]",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
+          }
+        }
+      }
+    },
     "**%1$@ %2$@** at **%3$@** added to Favorites" : {
       "comment" : "Favorite added toast text, the first value is the direction (southbound, inbound, etc),\nthe second is the route name (Red Line, 1 bus), and the third is a stop name (Ruggles, Alewife).\nThe asterisks surround bolded text. ex. \"[Southbound] [Red Line] at [Alewife] added to Favorites\"",
       "localizations" : {
