@@ -743,6 +743,9 @@
         }
       }
     },
+    " until later today" : {
+      "extractionState" : "manual"
+    },
     " until tomorrow" : {
       "comment" : "Alert summary recurrence ending tomorrow. The leading space should be retained.",
       "extractionState" : "manual",
@@ -3427,6 +3430,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@，選定站點，第一站"
+          }
+        }
+      }
+    },
+    "%@. See alert details." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text in a notification prompting users to click to learn more"
           }
         }
       }
