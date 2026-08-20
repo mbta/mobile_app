@@ -77,17 +77,17 @@ class MBTAGoMessagingService : FirebaseMessagingService() {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
         // A message having alert_id in the body means it is a data only notification to help
-        // Android notifications group together. It will update the previous notification with the
+        // Android notifications group together. It will update the ungrouped notification with the
         // same tag
         if (message.data.containsKey("alert_id")) {
             val alertId = message.data["alert_id"]
-            val prevNotification =
-                findPreviousNotification(notificationManager, message.data["tag"]) ?: return
+            val ungroupedNotification =
+                findUngroupedNotification(notificationManager, message.data["tag"]) ?: return
 
             updateNotification(
                 notificationManager,
                 notificationBuilder,
-                prevNotification,
+                ungroupedNotification,
                 alertId,
                 channelId,
                 message,
@@ -108,7 +108,7 @@ class MBTAGoMessagingService : FirebaseMessagingService() {
     private fun updateNotification(
         notificationManager: NotificationManagerCompat,
         notificationBuilder: NotificationCompat.Builder,
-        prevNotification: StatusBarNotification,
+        ungroupedNotification: StatusBarNotification,
         alertId: String?,
         channelId: String,
         message: RemoteMessage,
@@ -116,10 +116,10 @@ class MBTAGoMessagingService : FirebaseMessagingService() {
         // Try using the title and body from the previous notification, if they exist.
         // Otherwise, use the title and body from the new message.
         val title =
-            prevNotification.notification.extras.getString(Notification.EXTRA_TITLE)
+            ungroupedNotification.notification.extras.getString(Notification.EXTRA_TITLE)
                 ?: message.data.getOrDefault("title", null)
         val body =
-            prevNotification.notification.extras.getString(Notification.EXTRA_TEXT)
+            ungroupedNotification.notification.extras.getString(Notification.EXTRA_TEXT)
                 ?: message.data.getOrDefault("body", null)
         notificationBuilder
             .setContentTitle(title)
@@ -128,8 +128,8 @@ class MBTAGoMessagingService : FirebaseMessagingService() {
             .setGroup(alertId)
 
         notificationManager.notify(
-            prevNotification.tag,
-            prevNotification.id,
+            ungroupedNotification.tag,
+            ungroupedNotification.id,
             notificationBuilder.build(),
         )
 
@@ -145,12 +145,12 @@ class MBTAGoMessagingService : FirebaseMessagingService() {
 
         notificationManager.notify(
             "summary-${alertId}",
-            prevNotification.id,
+            ungroupedNotification.id,
             summaryNotification,
         )
     }
 
-    private fun findPreviousNotification(
+    private fun findUngroupedNotification(
         notificationManager: NotificationManagerCompat,
         tag: String?,
     ): StatusBarNotification? {
