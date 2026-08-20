@@ -67,7 +67,6 @@ final class StopDetailsPageTests: XCTestCase {
                     )]
                 )
             ),
-            alertSummaries: [:],
             awaitingPredictionsAfterBackground: false
         ))
 

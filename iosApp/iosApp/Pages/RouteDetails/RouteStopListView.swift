@@ -274,6 +274,10 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         }
     }
 
+    private var stopListContext: StopListContext {
+        .routeDetails(MatcherAnyOf(values: lineOrRoute.allRoutes.map(\.id)), selectedDirection)
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             SheetHeader(
@@ -367,7 +371,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                                     stickConnections: stop.stickConnections,
                                     onClick: { onTapStop(stopRowContext) },
                                     routeAccents: .init(route: lineOrRoute.sortRoute),
-                                    stopListContext: .routeDetails,
+                                    stopListContext: stopListContext,
                                     connectingRoutes: stop.connectingRoutes,
                                     stopPlacement: stopPlacement,
                                     descriptor: { EmptyView() },
@@ -377,6 +381,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                         } else {
                             CollapsableStopList(
                                 lineOrRoute: lineOrRoute,
+                                stopListContext: stopListContext,
                                 segment: segment,
                                 onClick: { onTapStop(stopRowContext($0.stop)) },
                                 isFirstSegment: segmentIndex == stopList.segments.startIndex,

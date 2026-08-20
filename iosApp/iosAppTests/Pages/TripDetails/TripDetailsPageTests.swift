@@ -74,7 +74,6 @@ final class TripDetailsPageTests: XCTestCase {
 
         let tripDetailsPageVM = MockTripDetailsPageViewModel(initialState: .init(
             direction: Direction(name: "Outbound", destination: "Trip Headsign", id: 0),
-            alertSummaries: [:],
             trip: nil,
         ))
 
