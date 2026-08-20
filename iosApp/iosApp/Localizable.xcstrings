@@ -1822,50 +1822,56 @@
         }
       }
     },
-    "**Update:** %1$@%2$@%3$@%4$@" : {
-      "comment" : "Alert summary in the format of \"Update: [Alert effect][at location][through timeframe][until recurrence]\", ex \"[Update][Stop closed][ at Haymarket][ through this Friday][]\" or \"[Update][Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday]\"",
+    "**Update:** %1$@%2$@%3$@%4$@%5$@" : {
+      "comment" : "Alert summary in the format of \"Update: [Alert effect][at location][through timeframe][until recurrence][ due to cause], ex \"[Update][Stop closed][ at Haymarket][ through this Friday][]\" or \"[Update][Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday][due “to maintenance]",
       "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**Update:** %1$@%2$@%3$@%4$@%5$@"
+          }
+        },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Actualización:** %1$@%2$@%3$@%4$@"
+            "state" : "needs_review",
+            "value" : "**Actualización:** %1$@%2$@%3$@%4$@%5$@"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Mise à jour :** %1$@%2$@%3$@%4$@"
+            "state" : "needs_review",
+            "value" : "**Mise à jour :** %1$@%2$@%3$@%4$@%5$@"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Mizajou:** %1$@%2$@%3$@%4$@"
+            "state" : "needs_review",
+            "value" : "**Mizajou:** %1$@%2$@%3$@%4$@%5$@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Atualização:** %1$@%2$@%3$@%4$@"
+            "state" : "needs_review",
+            "value" : "**Atualização:** %1$@%2$@%3$@%4$@%5$@"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Cập nhật:** %1$@%2$@%3$@%4$@"
+            "state" : "needs_review",
+            "value" : "**Cập nhật:** %1$@%2$@%3$@%4$@%5$@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "**最新消息：**%1$@%2$@%3$@%4$@"
+            "state" : "needs_review",
+            "value" : "**更新：** %1$@%2$@%3$@%4$@%5$@"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "**最新訊息：**%1$@%2$@%3$@%4$@"
+            "state" : "needs_review",
+            "value" : "**更新：** %1$@%2$@%3$@%4$@%5$@"
           }
         }
       }
