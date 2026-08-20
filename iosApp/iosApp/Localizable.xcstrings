@@ -744,7 +744,51 @@
       }
     },
     " until later today" : {
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " hasta más tarde hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jusqu’à plus tard aujourd’hui"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jiska pita jodi a"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " até mais tarde hoje"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " cho đến cuối ngày hôm nay"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "直到今天晚些时候"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "直到今天晚些時候"
+          }
+        }
+      }
     },
     " until tomorrow" : {
       "comment" : "Alert summary recurrence ending tomorrow. The leading space should be retained.",
@@ -3441,6 +3485,48 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Text in a notification prompting users to click to learn more"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Texto en una notificación que invita a los usuarios a hacer clic para obtener más información."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Texte d’une notification invitant les utilisateurs à cliquer pour en savoir plus"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tèks nan yon notifikasyon k ap mande itilizatè yo pou klike pou aprann plis"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Texto em uma notificação incentivando os usuários a clicarem para saber mais."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Văn bản trong thông báo yêu cầu người dùng nhấp chuột để tìm hiểu thêm."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "通知中的文本提示用户点击了解更多信息"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "通知中的文字提示用戶點擊了解更多信息"
           }
         }
       }
