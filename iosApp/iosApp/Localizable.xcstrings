@@ -3479,54 +3479,49 @@
       }
     },
     "%@. See alert details." : {
+      "comment" : "Text in a notification prompting users to click to learn more",
       "extractionState" : "manual",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Text in a notification prompting users to click to learn more"
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Texto en una notificación que invita a los usuarios a hacer clic para obtener más información."
+            "value" : "%@. Ver detalles de la alerta."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Texte d’une notification invitant les utilisateurs à cliquer pour en savoir plus"
+            "value" : "%@. Voir les détails de l’alerte."
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Tèks nan yon notifikasyon k ap mande itilizatè yo pou klike pou aprann plis"
+            "value" : "%@. Gade detay alèt yo."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Texto em uma notificação incentivando os usuários a clicarem para saber mais."
+            "value" : "%@. Veja os detalhes do alerta."
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Văn bản trong thông báo yêu cầu người dùng nhấp chuột để tìm hiểu thêm."
+            "value" : "%@. Xem chi tiết cảnh báo."
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "通知中的文本提示用户点击了解更多信息"
+            "value" : "%@。查看警报详情。"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "通知中的文字提示用戶點擊了解更多信息"
+            "value" : "%@。查看警報詳情。"
           }
         }
       }
