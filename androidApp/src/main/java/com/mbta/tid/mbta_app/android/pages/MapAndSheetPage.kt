@@ -497,11 +497,6 @@ fun MapAndSheetPage(
         onPauseOrDispose { backgroundTimestamp = clock.now().toEpochMilliseconds() }
     }
 
-    LaunchedEffect(
-        mapboxConfigManager.lastMapboxErrorTimestamp.collectAsStateWithLifecycle(null).value
-    ) {
-        mapboxConfigManager.loadConfig()
-    }
     LaunchedEffect(nearbyTransit.alertData) { mapViewModel.alertsChanged(nearbyTransit.alertData) }
 
     LaunchedEffect(sheetNavEntrypoint) {

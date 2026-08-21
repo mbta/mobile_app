@@ -32,6 +32,7 @@ import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.IMapboxConfigManager
+import com.mbta.tid.mbta_app.android.map.ManageMapboxConfig
 import com.mbta.tid.mbta_app.android.pages.MapAndSheetPage
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
@@ -315,6 +316,7 @@ class MapAndSheetPageTest : KoinTest {
             CompositionLocalProvider(
                 LocalLocationClient provides MockFusedLocationProviderClient()
             ) {
+                ManageMapboxConfig()
                 MapAndSheetPage(
                     Modifier,
                     NearbyTransit(
@@ -442,6 +444,7 @@ class MapAndSheetPageTest : KoinTest {
             CompositionLocalProvider(
                 LocalLocationClient provides MockFusedLocationProviderClient()
             ) {
+                ManageMapboxConfig(mapboxConfigManager = mockConfigManager)
                 MapAndSheetPage(
                     Modifier,
                     NearbyTransit(
@@ -471,7 +474,7 @@ class MapAndSheetPageTest : KoinTest {
         )
 
         composeTestRule.waitUntilDefaultTimeout { mockConfigManager.loadConfigCalledCount == 1 }
-        mockConfigManager.mutableLastErrorTimestamp.value = EasternTimeInstant.now()
+        mockConfigManager.mutableLastErrorTimestamp.tryEmit(EasternTimeInstant.now())
 
         composeTestRule.waitUntilDefaultTimeout { mockConfigManager.loadConfigCalledCount == 2 }
     }
