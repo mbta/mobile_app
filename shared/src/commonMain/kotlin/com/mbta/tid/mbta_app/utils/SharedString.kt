@@ -7,7 +7,6 @@ public enum class SharedString {
     Crash,
     DebugMode,
     FareInformation,
-    FavoritesByStop,
     FeatureFlagsSection,
     ForceNotificationsBeta,
     MapDisplay,
