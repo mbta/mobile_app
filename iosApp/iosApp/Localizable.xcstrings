@@ -2082,7 +2082,7 @@
       }
     },
     "%@ %@%@%@" : {
-      "comment" : "Assemble a summary of an alert with the structure: \n[This trip] [will not stop at][ stop A][ due to maintenance][ daily until friday]",
+      "comment" : "Assemble a summary of an alert with the structure: \n[This trip] [will not stop at  stop A][ due to maintenance][ daily until friday]",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
