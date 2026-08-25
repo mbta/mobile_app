@@ -9,6 +9,11 @@
 import Shared
 import SwiftUI
 
+struct NextScheduleKeys: Equatable {
+    var stopFilter: StopDetailsFilter
+    var noPredictionStatus: UpcomingFormat.NoTripsFormat?
+}
+
 // swiftlint:disable:next type_body_length
 struct StopDetailsFilteredDepartureDetails: View {
     @ObserveInjection var inject
@@ -176,9 +181,9 @@ struct StopDetailsFilteredDepartureDetails: View {
             handleViewportForStatus(noPredictionsStatus)
             loadNextScheduleForStatus(noPredictionsStatus)
         }
-        .onChange(of: noPredictionsStatus) { status in
-            handleViewportForStatus(status)
-            loadNextScheduleForStatus(status)
+        .onChange(of: NextScheduleKeys(stopFilter: stopFilter, noPredictionStatus: noPredictionsStatus)) { keys in
+            handleViewportForStatus(keys.noPredictionStatus)
+            loadNextScheduleForStatus(keys.noPredictionStatus)
         }
         .onChange(of: selectedTripIsCancelled) { if $0 { setViewportToStop() } }
         .onChange(of: tripFilter) { tripFilter in
