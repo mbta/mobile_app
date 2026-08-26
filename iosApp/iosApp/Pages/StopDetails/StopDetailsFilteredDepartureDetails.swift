@@ -10,7 +10,7 @@ import Shared
 import SwiftUI
 
 struct NextScheduleKeys: Equatable {
-    var stopFilter: StopDetailsFilter
+    var selectedDirection: Direction
     var noPredictionStatus: UpcomingFormat.NoTripsFormat?
 }
 
@@ -179,11 +179,15 @@ struct StopDetailsFilteredDepartureDetails: View {
         )
         .onAppear {
             handleViewportForStatus(noPredictionsStatus)
-            loadNextScheduleForStatus(noPredictionsStatus)
+            loadNextScheduleForStatus(noPredictionsStatus, selectedDirection)
         }
-        .onChange(of: NextScheduleKeys(stopFilter: stopFilter, noPredictionStatus: noPredictionsStatus)) { keys in
+        .onChange(of: NextScheduleKeys(
+            selectedDirection: selectedDirection,
+            noPredictionStatus: noPredictionsStatus
+        )) { keys in
+            print(selectedDirection)
             handleViewportForStatus(keys.noPredictionStatus)
-            loadNextScheduleForStatus(keys.noPredictionStatus)
+            loadNextScheduleForStatus(keys.noPredictionStatus, keys.selectedDirection)
         }
         .onChange(of: selectedTripIsCancelled) { if $0 { setViewportToStop() } }
         .onChange(of: tripFilter) { tripFilter in
@@ -203,7 +207,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
     }
 
-    func loadNextScheduleForStatus(_ status: UpcomingFormat.NoTripsFormat?) {
+    func loadNextScheduleForStatus(_ status: UpcomingFormat.NoTripsFormat?, _ selectedDirection: Direction) {
         Task {
             switch onEnum(of: status) {
             case .serviceEndedToday, .noSchedulesToday:
