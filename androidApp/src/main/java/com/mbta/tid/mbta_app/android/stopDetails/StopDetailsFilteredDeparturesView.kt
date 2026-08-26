@@ -217,7 +217,7 @@ fun StopDetailsFilteredDeparturesView(
             Box(modifier = Modifier.padding(horizontal = 10.dp).padding(bottom = 12.dp)) {
                 val schedulesRepository: ISchedulesRepository = koinInject()
                 var nextScheduleResponse: NextScheduleResponse? by remember { mutableStateOf(null) }
-                LaunchedEffect(noPredictionsStatus) {
+                LaunchedEffect(noPredictionsStatus, selectedDirection) {
                     nextScheduleResponse =
                         if (
                             noPredictionsStatus == UpcomingFormat.NoTripsFormat.NoSchedulesToday ||

@@ -1,6 +1,9 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsNotDisplayed
@@ -853,6 +856,71 @@ class StopDetailsFilteredDeparturesViewTest {
         composeTestRule
             .onNode(hasTextMatching(Regex("^Next trip on \\w+, (Dec 8|8 Dec)$")))
             .assertCanBeDisplayed()
+    }
+
+    @Test
+    fun testLoadsNextTripAgainWhenSelectedDirectionChanges(): Unit = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop {}
+        val route = objects.route { id = "Red" }
+
+        val lineOrRoute = LineOrRoute.Route(route)
+        val leaf =
+            RouteCardData.Leaf(
+                lineOrRoute,
+                stop,
+                Direction(0, route),
+                emptyList(),
+                setOf(stop.id),
+                emptyList(),
+                emptyList(),
+                true,
+                true,
+                null,
+                emptyList(),
+                RouteCardData.Context.StopDetailsFiltered,
+            )
+
+        val now = EasternTimeInstant.now()
+        val nextSchedule = objects.schedule {
+            departureTime = EasternTimeInstant(now.local.year + 1, Month.DECEMBER, 8, 8, 0)
+        }
+
+        var loadedNextTripForDirection: Int? = null
+
+        loadKoinMocks {
+            schedules =
+                MockScheduleRepository(
+                    nextScheduleResponse = NextScheduleResponse(nextSchedule),
+                    nextScheduleCallback = { _, directionId ->
+                        loadedNextTripForDirection = directionId
+                    },
+                )
+        }
+
+        var selectedDirection by mutableStateOf(Direction(0, route))
+
+        composeTestRule.setContent {
+            StopDetailsFilteredDeparturesView(
+                stopId = stop.id,
+                stopFilter = StopDetailsFilter(route.id, 0),
+                tripFilter = null,
+                leaf = leaf,
+                selectedDirection = selectedDirection,
+                allAlerts = null,
+                now = now,
+                updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
+                isFavorite = false,
+                openModal = {},
+                openSheetRoute = {},
+            )
+        }
+
+        composeTestRule.runOnIdle { selectedDirection = Direction(1, route) }
+        composeTestRule.waitUntilDefaultTimeout { loadedNextTripForDirection == 1 }
+
+        assert(loadedNextTripForDirection == 1)
     }
 
     @Test

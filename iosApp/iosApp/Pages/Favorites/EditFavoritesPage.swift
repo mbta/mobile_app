@@ -26,8 +26,6 @@ struct EditFavoritesPage: View {
     @ObservedObject var fcmTokenContainer = FcmTokenContainer.shared
     @EnvironmentObject var settingsCache: SettingsCache
 
-    var groupByStop: Bool { settingsCache.get(.favoritesByStop) }
-
     let inspection = Inspection<Self>()
 
     func deleteAndToast(_ rsd: RouteStopDirection) {
@@ -88,23 +86,13 @@ struct EditFavoritesPage: View {
                     navCallbacks: navCallbacks,
                     closeText: NSLocalizedString("Done", comment: "Button text for closing flow")
                 )
-                if groupByStop {
-                    EditFavoritesList(
-                        favorites: favoritesState,
-                        stopCardData: favoritesVMState.staticStopCardData,
-                        global: globalResponse,
-                        deleteFavorite: deleteAndToast,
-                        onOpenEditModal: onOpenEditModal,
-                    )
-                } else {
-                    EditFavoritesListGroupedByRoute(
-                        favorites: favoritesState,
-                        routeCardData: favoritesVMState.staticRouteCardData,
-                        global: globalResponse,
-                        deleteFavorite: deleteAndToast,
-                        onOpenEditModal: onOpenEditModal,
-                    )
-                }
+                EditFavoritesList(
+                    favorites: favoritesState,
+                    stopCardData: favoritesVMState.staticStopCardData,
+                    global: globalResponse,
+                    deleteFavorite: deleteAndToast,
+                    onOpenEditModal: onOpenEditModal,
+                )
             }
             .onAppear {
                 viewModel.setContext(context: FavoritesViewModel.ContextEdit())
@@ -129,68 +117,6 @@ struct EditFavoritesPage: View {
             }
         }
         .enableInjection()
-    }
-}
-
-struct EditFavoritesListGroupedByRoute: View {
-    @ObserveInjection var inject
-    let favorites: [RouteStopDirection: FavoriteSettings?]
-    let routeCardData: [RouteCardData]?
-    let global: GlobalResponse?
-    let deleteFavorite: (RouteStopDirection) -> Void
-    let onOpenEditModal: (RouteStopDirection) -> Void
-
-    @EnvironmentObject var settingsCache: SettingsCache
-
-    var body: some View {
-        if let routeCardData, !routeCardData.isEmpty {
-            HaloScrollView {
-                LazyVStack(alignment: .center, spacing: 14) {
-                    ForEach(routeCardData) { cardData in
-                        RouteCardContainer(
-                            cardData: cardData,
-                            showStopHeader: true
-                        ) { stopData in
-                            FavoriteDepartures(
-                                favorites: favorites,
-                                leaves: stopData.data,
-                                globalData: global
-                            ) { leaf in
-                                if settingsCache.get(.notifications) {
-                                    onOpenEditModal(leaf.routeStopDirection)
-                                } else {
-                                    deleteFavorite(leaf.routeStopDirection)
-                                }
-                            }
-                        }
-                    }
-                }
-                .padding(.vertical, 4)
-                .padding(.horizontal, 16)
-                .frame(maxHeight: .infinity, alignment: .top)
-            }
-        }
-
-        else if routeCardData != nil {
-            HaloScrollView {
-                NoFavoritesView()
-                    .frame(maxWidth: .infinity)
-                    .padding(.top, 16)
-            }
-        }
-
-        else {
-            ScrollView([]) {
-                LazyVStack(alignment: .center, spacing: 14) {
-                    ForEach(0 ..< 5) { _ in
-                        LoadingRouteCard()
-                    }
-                }
-                .padding(.vertical, 4)
-                .padding(.horizontal, 16)
-                .loadingPlaceholder()
-            }
-        }
     }
 }
 
@@ -263,7 +189,6 @@ struct FavoriteDepartures: View {
     let onClick: (RouteCardData.Leaf) -> Void
 
     @EnvironmentObject var settingsCache: SettingsCache
-    var groupByStop: Bool { settingsCache.get(.favoritesByStop) }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -273,13 +198,11 @@ struct FavoriteDepartures: View {
                 let favoriteSettings: FavoriteSettings? = favorites[leaf.routeStopDirection] ?? nil
 
                 HStack(alignment: .center, spacing: 0) {
-                    if groupByStop {
-                        RoutePill(
-                            route: (leaf.lineOrRoute as? LineOrRoute.Route)?.route,
-                            line: (leaf.lineOrRoute as? LineOrRoute.Line)?.line,
-                            type: .fixed
-                        ).padding(.trailing, 8)
-                    }
+                    RoutePill(
+                        route: (leaf.lineOrRoute as? LineOrRoute.Route)?.route,
+                        line: (leaf.lineOrRoute as? LineOrRoute.Line)?.line,
+                        type: .fixed
+                    ).padding(.trailing, 8)
                     switch onEnum(of: formatted) {
                     case let .single(single):
                         HStack(alignment: .center, spacing: 8) {
@@ -312,7 +235,7 @@ struct FavoriteDepartures: View {
                         }
                     }
                 }
-                .padding(.horizontal, groupByStop ? 8 : 16)
+                .padding(.horizontal, 8)
                 .padding(.vertical, 10)
 
                 if index < leaves.endIndex {

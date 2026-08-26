@@ -35,6 +35,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mapbox.common.MapboxOptions
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraBoundsOptions
 import com.mapbox.maps.ViewAnnotationAnchor
@@ -161,7 +162,7 @@ fun HomeMapView(
         /* Whether loading the config succeeds or not we show the Mapbox Map in case
          * the user has cached tiles on their device.
          */
-        if (!configLoadAttempted) {
+        if (!configLoadAttempted || MapboxOptions.accessToken.isBlank()) {
             Image(
                 painterResource(R.drawable.empty_map_grid),
                 null,

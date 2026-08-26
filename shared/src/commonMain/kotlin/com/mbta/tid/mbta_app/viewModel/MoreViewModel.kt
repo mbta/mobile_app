@@ -118,9 +118,11 @@ public class MoreViewModel(
                                 }
                             },
                         ),
-                        MoreItem.Toggle(
-                            label = SharedString.FavoritesByStop,
-                            settings = Settings.FavoritesByStop,
+                        MoreItem.Action(
+                            label = SharedString.Crash,
+                            action = {
+                                throw RuntimeException("Crash button pressed")
+                            },
                         ),
                     ),
             ),
