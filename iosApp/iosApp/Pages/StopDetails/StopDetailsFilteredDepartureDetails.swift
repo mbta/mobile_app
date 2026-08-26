@@ -185,7 +185,6 @@ struct StopDetailsFilteredDepartureDetails: View {
             selectedDirection: selectedDirection,
             noPredictionStatus: noPredictionsStatus
         )) { keys in
-            print(selectedDirection)
             handleViewportForStatus(keys.noPredictionStatus)
             loadNextScheduleForStatus(keys.noPredictionStatus, keys.selectedDirection)
         }
