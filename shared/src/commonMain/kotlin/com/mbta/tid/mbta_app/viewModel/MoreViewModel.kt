@@ -118,6 +118,10 @@ public class MoreViewModel(
                                 }
                             },
                         ),
+                        MoreItem.Toggle(
+                            label = SharedString.NotificationPresetWindows,
+                            settings = Settings.NotificationPresetWindows,
+                        ),
                         MoreItem.Action(
                             label = SharedString.Crash,
                             action = {

@@ -72,12 +72,14 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.component.LabeledSwitch
 import com.mbta.tid.mbta_app.android.util.ConstantPermissionState
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.formattedAbbr
 import com.mbta.tid.mbta_app.android.util.formattedFull
 import com.mbta.tid.mbta_app.android.util.formattedTime
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.FavoriteSettings
+import com.mbta.tid.mbta_app.repositories.Settings as UserSettings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.uuid.ExperimentalUuidApi
 import kotlinx.datetime.DayOfWeek
@@ -103,6 +105,8 @@ fun NotificationSettingsWidget(
             setSettings(FavoriteSettings.Notifications.disabled)
         }
     }
+
+    val presetWindowsEnabled = SettingsCache.get(UserSettings.NotificationPresetWindows)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Column(
@@ -235,32 +239,38 @@ private fun WindowWidget(
             }
         }
         Column(Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))) {
-            LabeledTimeInput(
-                stringResource(R.string.from),
-                stringResource(R.string.select_start_time),
-                window.startTime,
-                setTime = {
-                    setWindow(
-                        window.copy(
-                            startTime = it,
-                            endTime =
-                                if (window.endTime > it) window.endTime
-                                else
-                                    LocalTime.fromSecondOfDay(
-                                        minOf(it.toSecondOfDay() + 60 * 60, (24 * 60 - 1) * 60)
-                                    ),
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                TimeInput(
+                    stringResource(R.string.from),
+                    window.startTime,
+                    setTime = {
+                        setWindow(
+                            window.copy(
+                                startTime = it,
+                                endTime =
+                                    if (window.endTime > it) window.endTime
+                                    else
+                                        LocalTime.fromSecondOfDay(
+                                            minOf(it.toSecondOfDay() + 60 * 60, (24 * 60 - 1) * 60)
+                                        ),
+                            )
                         )
-                    )
-                },
-            )
-            HaloSeparator()
-            LabeledTimeInput(
-                stringResource(R.string.to),
-                stringResource(R.string.select_end_time),
-                window.endTime,
-                setTime = { setWindow(window.copy(endTime = it)) },
-                minimumTime = window.startTime,
-            )
+                    },
+                    modifier = Modifier.weight(1f),
+                )
+                Text(stringResource(R.string.to_lowercase))
+                TimeInput(
+                    stringResource(R.string.select_end_time),
+                    window.endTime,
+                    setTime = { setWindow(window.copy(endTime = it)) },
+                    minimumTime = window.startTime,
+                    modifier = Modifier.weight(1f),
+                )
+            }
             DaysOfWeekInput(
                 window.daysOfWeek,
                 setDaysOfWeek = { setWindow(window.copy(daysOfWeek = it)) },
@@ -312,20 +322,19 @@ fun AdvancedTimePickerDialog(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun LabeledTimeInput(
-    label: String,
+private fun TimeInput(
     modalTitle: String,
     time: LocalTime,
     setTime: (LocalTime) -> Unit,
     minimumTime: LocalTime? = null,
+    modifier: Modifier = Modifier,
 ) {
     var isPicking by rememberSaveable { mutableStateOf(false) }
     Row(
-        Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+        modifier.padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(label, Modifier.weight(1f))
         Button(
             onClick = { isPicking = true },
             shape = RoundedCornerShape(6.dp),
@@ -335,6 +344,7 @@ private fun LabeledTimeInput(
                     contentColor = colorResource(R.color.text),
                 ),
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
                 EasternTimeInstant(EasternTimeInstant.now().local.date, time).formattedTime(),

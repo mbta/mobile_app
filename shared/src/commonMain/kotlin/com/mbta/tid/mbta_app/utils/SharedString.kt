@@ -12,6 +12,7 @@ public enum class SharedString {
     MapDisplay,
     MTicketApp,
     Notifications,
+    NotificationPresetWindows,
     PrivacyPolicy,
     ResourcesSection,
     RouteSearch,

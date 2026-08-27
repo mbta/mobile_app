@@ -147,6 +147,7 @@ fun MorePage(
                                             }
                                             Settings.DevDebugMode,
                                             Settings.HideMaps,
+                                            Settings.NotificationPresetWindows,
                                             Settings.SearchRouteResults -> {}
                                         }
                                     },
