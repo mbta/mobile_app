@@ -1386,13 +1386,13 @@
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "**%ld** arè ki afekte yo"
+                  "value" : "**%1$ld** arè ki afekte yo"
                 }
               },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "**%ld** arè ki afekte yo"
+                  "value" : "**%1$ld** arè ki afekte yo"
                 }
               },
               "one" : {
@@ -1410,13 +1410,13 @@
               "two" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "**%ld** arè ki afekte yo"
+                  "value" : "**%1$ld** arè ki afekte yo"
                 }
               },
               "zero" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "**%ld** arè ki afekte yo"
+                  "value" : "**%1$ld** arè ki afekte yo"
                 }
               }
             }
@@ -4111,13 +4111,13 @@
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%ld asansè yo fèmen"
+                  "value" : "%1$ld asansè fèmen"
                 }
               },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%ld asansè yo fèmen"
+                  "value" : "%1$ld asansè fèmen"
                 }
               },
               "one" : {
@@ -4135,13 +4135,13 @@
               "two" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%ld asansè yo fèmen"
+                  "value" : "%1$ld asansè fèmen"
                 }
               },
               "zero" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%ld asansè yo fèmen"
+                  "value" : "%1$ld asansè fèmen"
                 }
               }
             }
@@ -4313,13 +4313,13 @@
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%ld kanpe lwen"
+                  "value" : "%1$ld arè lwen"
                 }
               },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%ld kanpe lwen"
+                  "value" : "%1$ld arè lwen"
                 }
               },
               "one" : {
@@ -4337,13 +4337,13 @@
               "two" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%ld kanpe lwen"
+                  "value" : "%1$ld arè lwen"
                 }
               },
               "zero" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%ld kanpe lwen"
+                  "value" : "%1$ld arè lwen"
                 }
               }
             }
@@ -4355,7 +4355,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "a apenas uma parada de distância"
+                  "value" : "a %1$ld parada de distância"
                 }
               },
               "other" : {
@@ -4432,13 +4432,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld atajada"
+                  "value" : "%1$ldatajada de distancia"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld atajada de distancia"
+                  "value" : "%1$ldatajada de distancia"
                 }
               }
             }
@@ -4450,13 +4450,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld arrêt de route"
+                  "value" : "%1$ldarrêt de route"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld arrêts de route"
+                  "value" : "%1$ldarrêts de route"
                 }
               }
             }
@@ -4468,37 +4468,37 @@
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "nan%ldarè"
+                  "value" : "%1$ldarè lwen"
                 }
               },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "nan%ldarè"
+                  "value" : "%1$ldarè lwen"
                 }
               },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld arè lwen"
+                  "value" : "%1$ldarè lwen"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld arè lwen"
+                  "value" : "%1$ldarè lwen"
                 }
               },
               "two" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "nan%ldarè"
+                  "value" : "%1$ldarè lwen"
                 }
               },
               "zero" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "nan%ldarè"
+                  "value" : "%1$ldarè lwen"
                 }
               }
             }
@@ -4510,13 +4510,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "a apenas uma parada de distância."
+                  "value" : "a %1$ldparada de distância"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "A %1$ld paradas de distância"
+                  "value" : "a %1$ldparadas de distância"
                 }
               }
             }
@@ -4528,7 +4528,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Cách %1$ld trạm dừng"
+                  "value" : "Cách %1$ldtrạm dừng"
                 }
               }
             }
@@ -4566,7 +4566,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "711 para usuarios de TTY; VRS para usuarios de ASL."
+            "value" : "711 para usuarios de TTY; VRS para usuarios de ASL"
           }
         },
         "fr" : {
@@ -4584,7 +4584,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "711 para usuários de TTY e VRS para usuários de ASL."
+            "value" : "711 para usuários de TTY e VRS para usuários de ASL"
           }
         },
         "vi" : {
@@ -6954,7 +6954,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "y en %1$d min."
+            "value" : "y en %1$d min"
           }
         },
         "fr" : {
@@ -24708,7 +24708,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Cet arrêt a un ascenseur fermé"
+                  "value" : "Cet arrêt %1$ld ascenseur fermé"
                 }
               },
               "other" : {
@@ -24726,37 +24726,37 @@
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Asansè yo fèmen %ld nan arè sa a"
+                  "value" : "Arè sa a gen %1$ld asansè ki fèmen"
                 }
               },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Asansè yo fèmen %ld nan arè sa a"
+                  "value" : "Arè sa a gen %1$ld asansè ki fèmen"
                 }
               },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Arè sa a gen %1$ld asansè fèmen."
+                  "value" : "Arè sa a gen %1$ld asansè fèmen"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Arè sa a gen %1$ld asansè ki fèmen."
+                  "value" : "Arè sa a gen %1$ld asansè ki fèmen"
                 }
               },
               "two" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Asansè yo fèmen %ld nan arè sa a"
+                  "value" : "Arè sa a gen %1$ld asansè ki fèmen"
                 }
               },
               "zero" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Asansè yo fèmen %ld nan arè sa a"
+                  "value" : "Arè sa a gen %1$ld asansè ki fèmen"
                 }
               }
             }
@@ -24768,7 +24768,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Esta parada tem %1$ld elevador fechado."
+                  "value" : "Esta parada tem %1$ld elevador fechado"
                 }
               },
               "other" : {
@@ -26857,13 +26857,13 @@
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Mete ajou %ld minit de sa"
+                  "value" : "Mizajou %1$ld minit de sa"
                 }
               },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Mete ajou %ld minit de sa"
+                  "value" : "Mizajou %1$ld minit de sa"
                 }
               },
               "one" : {
@@ -26881,13 +26881,13 @@
               "two" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Mete ajou %ld minit de sa"
+                  "value" : "Mizajou %1$ld minit de sa"
                 }
               },
               "zero" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Mizajou %ld minit de sa"
+                  "value" : "Mizajou %1$ld minit de sa"
                 }
               }
             }
