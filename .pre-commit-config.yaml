@@ -7,6 +7,7 @@ repos:
         stages: [pre-commit]
       - id: end-of-file-fixer
         stages: [pre-commit]
+        exclude: \.xcstrings$
       - id: trailing-whitespace
         stages: [pre-commit]
       - id: pretty-format-json
