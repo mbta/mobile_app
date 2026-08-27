@@ -120,20 +120,20 @@
     <string name="elevator_closed_sentence_case">Asansè a fèmen</string>
     <string name="elevator_closure">Fèmti Asansè</string>
     <plurals name="elevator_closure_count">
-        <item quantity="zero">%1$d asansè yo fèmen</item>
-        <item quantity="one">%1$d asansè a fèmen</item>
-        <item quantity="two">%1$d asansè yo fèmen</item>
-        <item quantity="few">%1$d asansè yo fèmen</item>
-        <item quantity="many">%1$d asansè yo fèmen</item>
-        <item quantity="other">%1$d asansè yo fèmen</item>
+        <item quantity="zero">%1$d asansè fèmen</item>
+        <item quantity="one">%1$d asansè fèmen</item>
+        <item quantity="two">%1$d asansè fèmen</item>
+        <item quantity="few">%1$d asansè fèmen</item>
+        <item quantity="many">%1$d asansè fèmen</item>
+        <item quantity="other">%1$d asansè fèmen</item>
     </plurals>
     <plurals name="elevator_closure_count_accessibility_description">
-        <item quantity="zero">Asansè yo fèmen %1$d nan arè sa a</item>
-        <item quantity="one">Asansè yo fèmen %1$d nan arè sa a</item>
-        <item quantity="two">Asansè yo fèmen %1$d nan arè sa a</item>
-        <item quantity="few">Asansè yo fèmen %1$d nan arè sa a</item>
-        <item quantity="many">Asansè yo fèmen %1$d nan arè sa a</item>
-        <item quantity="other">Asansè yo fèmen %1$d nan arè sa a</item>
+        <item quantity="zero">Arè sa a gen %1$d asansè ki fèmen</item>
+        <item quantity="one">Arè sa a gen %1$d asansè fèmen</item>
+        <item quantity="two">Arè sa a gen %1$d asansè ki fèmen</item>
+        <item quantity="few">Arè sa a gen %1$d asansè ki fèmen</item>
+        <item quantity="many">Arè sa a gen %1$d asansè ki fèmen</item>
+        <item quantity="other">Arè sa a gen %1$d asansè ki fèmen</item>
     </plurals>
     <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">Fen</string>
@@ -401,12 +401,12 @@
     <string name="stop_skipped_sentence_case">Arè sote</string>
     <string name="stops">Arè</string>
     <plurals name="stops_away">
-        <item quantity="zero">%1$d kanpe lwen</item>
-        <item quantity="one">%1$d kanpe lwen</item>
-        <item quantity="two">%1$d kanpe lwen</item>
-        <item quantity="few">%1$d kanpe lwen</item>
-        <item quantity="many">%1$d kanpe lwen</item>
-        <item quantity="other">%1$d kanpe lwen</item>
+        <item quantity="zero">%1$d arè lwen</item>
+        <item quantity="one">%1$d arè lwen</item>
+        <item quantity="two">%1$d arè lwen</item>
+        <item quantity="few">%1$d arè lwen</item>
+        <item quantity="many">%1$d arè lwen</item>
+        <item quantity="other">%1$d arè lwen</item>
     </plurals>
     <string name="strike">Grèv</string>
     <string name="strike_lowercase">grèv</string>
@@ -462,11 +462,11 @@
     <string name="updated_at">Mizajou: %1$s</string>
     <plurals name="updated_mins_ago">
         <item quantity="zero">Mizajou %1$d minit de sa</item>
-        <item quantity="one">Mete ajou %1$d minit de sa</item>
-        <item quantity="two">Mete ajou %1$d minit de sa</item>
-        <item quantity="few">Mete ajou %1$d minit de sa</item>
-        <item quantity="many">Mete ajou %1$d minit de sa</item>
-        <item quantity="other">Mete ajou %1$d minit de sa</item>
+        <item quantity="one">Mizajou %1$d minit de sa</item>
+        <item quantity="two">Mizajou %1$d minit de sa</item>
+        <item quantity="few">Mizajou %1$d minit de sa</item>
+        <item quantity="many">Mizajou %1$d minit de sa</item>
+        <item quantity="other">Mizajou %1$d minit de sa</item>
     </plurals>
     <string name="vehicle_arriving_first">%1$s ap rive kounye a</string>
     <string name="vehicle_arriving_other">ap rive kounye a</string>
