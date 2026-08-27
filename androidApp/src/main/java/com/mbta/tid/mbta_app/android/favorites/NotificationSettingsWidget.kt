@@ -1,5 +1,7 @@
 package com.mbta.tid.mbta_app.android.favorites
 
+import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
@@ -21,6 +23,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialogDefaults
@@ -79,6 +82,7 @@ import com.mbta.tid.mbta_app.android.util.formattedFull
 import com.mbta.tid.mbta_app.android.util.formattedTime
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.FavoriteSettings
+import com.mbta.tid.mbta_app.model.FavoriteSettings.Notifications.Window
 import com.mbta.tid.mbta_app.repositories.Settings as UserSettings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.uuid.ExperimentalUuidApi
@@ -106,6 +110,35 @@ fun NotificationSettingsWidget(
         }
     }
 
+    val presetOptions =
+        listOf(
+            listOf(morningPreset(context), middayPreset(context), eveningPreset(context)),
+            listOf(allDayPreset(context)),
+        )
+    val selectedPreset =
+        remember(settings) {
+            when {
+                settings.windows.isEmpty() -> PresetSelection.Preset(1, 0)
+                settings.windows.size == 1 -> {
+                    val targetWindow: Window = settings.windows[0]
+                    presetOptions
+                        .asSequence()
+                        .mapIndexedNotNull { rowIndex, presets ->
+                            val presetMatchIndex = presets.indexOfFirst {
+                                it.window == targetWindow
+                            }
+                            if (presetMatchIndex != -1) {
+                                PresetSelection.Preset(rowIndex, presetMatchIndex)
+                            } else {
+                                null
+                            }
+                        }
+                        .firstOrNull() ?: PresetSelection.Custom
+                }
+                else -> PresetSelection.Custom
+            }
+        }
+
     val presetWindowsEnabled = SettingsCache.get(UserSettings.NotificationPresetWindows)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -132,6 +165,26 @@ fun NotificationSettingsWidget(
         }
         AnimatedVisibility(settings.enabled && !permissionDenied) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (presetWindowsEnabled) {
+
+                    PresetWindowWidget(
+                        presetRows =
+                            listOf(
+                                listOf(
+                                    morningPreset(context),
+                                    middayPreset(context),
+                                    eveningPreset(context),
+                                ),
+                                listOf(allDayPreset(context)),
+                            ),
+                        selectedPreset = selectedPreset,
+                        presetsEnabled = settings.windows.size <= 1,
+                        onSelect = { window ->
+                            val otherWindows = settings.windows.drop(1)
+                            setSettings(settings.copy(windows = listOf(window) + otherWindows))
+                        },
+                    )
+                }
                 for (window in settings.windows.ifEmpty { setOf(defaultWindow()) }) {
                     WindowWidget(
                         window,
@@ -186,11 +239,100 @@ fun NotificationSettingsWidget(
     }
 }
 
-private fun defaultWindow(
-    existingWindows: List<FavoriteSettings.Notifications.Window> = emptyList()
-): FavoriteSettings.Notifications.Window {
+sealed class PresetSelection {
+    data class Preset(val rowIndex: Int, val columnIndex: Int) : PresetSelection()
+
+    object Custom : PresetSelection()
+}
+
+@Composable
+fun PresetWindowWidget(
+    presetRows: List<List<PresetWindow>>,
+    selectedPreset: PresetSelection,
+    presetsEnabled: Boolean,
+    onSelect: (Window) -> Unit,
+) {
+
+    // TODO: Accessibility of this segmented control
+
+    Column() {
+        presetRows.forEachIndexed { rowIndex, windows ->
+            Row() {
+                windows.forEachIndexed { presetIndex, preset ->
+                    val isSelected =
+                        selectedPreset is PresetSelection.Preset &&
+                            rowIndex == selectedPreset.rowIndex &&
+                            presetIndex == selectedPreset.columnIndex
+                    Button(
+                        onClick = { onSelect(preset.window) },
+                        enabled = presetsEnabled,
+                        modifier =
+                            Modifier.selectable(
+                                    enabled = presetsEnabled,
+                                    selected = isSelected,
+                                    onClick = { onSelect(preset.window) },
+                                )
+                                .weight(1f),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor =
+                                    if (isSelected) colorResource(R.color.key)
+                                    else colorResource(R.color.fill1),
+                                contentColor =
+                                    if (isSelected) colorResource(R.color.fill3)
+                                    else colorResource(R.color.text).copy(alpha = 0.6f),
+                            ),
+                        shape = RoundedCornerShape(8.dp),
+                    ) {
+                        Text(preset.label)
+                    }
+                }
+            }
+        }
+        Row() {
+            val isSelected = selectedPreset is PresetSelection.Custom
+            // TODO: Base selection on current time
+            val window =
+                Window(
+                    startTime = LocalTime(8, 0),
+                    endTime = LocalTime(9, 0),
+                    daysOfWeek =
+                        setOf(
+                            DayOfWeek.MONDAY,
+                            DayOfWeek.TUESDAY,
+                            DayOfWeek.WEDNESDAY,
+                            DayOfWeek.THURSDAY,
+                            DayOfWeek.FRIDAY,
+                        ),
+                )
+            Button(
+                modifier =
+                    Modifier.selectable(
+                            selected = isSelected,
+                            onClick = { onSelect(window) },
+                        )
+                        .weight(1f),
+                onClick = { onSelect(window) },
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor =
+                            if (isSelected) colorResource(R.color.key)
+                            else colorResource(R.color.fill1),
+                        contentColor =
+                            if (isSelected) colorResource(R.color.fill3)
+                            else colorResource(R.color.text).copy(alpha = 0.6f),
+                    ),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Text(stringResource(R.string.custom))
+            }
+        }
+    }
+}
+
+private fun defaultWindow(existingWindows: List<Window> = emptyList()): Window {
     if (existingWindows.isEmpty()) {
-        return FavoriteSettings.Notifications.Window(
+        return Window(
             startTime = LocalTime(8, 0),
             endTime = LocalTime(9, 0),
             daysOfWeek =
@@ -203,17 +345,96 @@ private fun defaultWindow(
                 ),
         )
     }
-    return FavoriteSettings.Notifications.Window(
+    return Window(
         startTime = LocalTime(12, 0),
         endTime = LocalTime(13, 0),
         setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY),
     )
 }
 
+class PresetWindow(
+    val label: String,
+    val window: Window,
+    val selected: Boolean = false,
+)
+
+fun morningPreset(context: Context) =
+    PresetWindow(
+        label = context.getString(R.string.morning),
+        window =
+            Window(
+                startTime = LocalTime(6, 0),
+                endTime = LocalTime(10, 0),
+                daysOfWeek =
+                    setOf(
+                        DayOfWeek.MONDAY,
+                        DayOfWeek.TUESDAY,
+                        DayOfWeek.WEDNESDAY,
+                        DayOfWeek.THURSDAY,
+                        DayOfWeek.FRIDAY,
+                    ),
+            ),
+    )
+
+fun middayPreset(context: Context) =
+    PresetWindow(
+        label = context.getString(R.string.midday),
+        window =
+            Window(
+                startTime = LocalTime(10, 0),
+                endTime = LocalTime(16, 0),
+                daysOfWeek =
+                    setOf(
+                        DayOfWeek.MONDAY,
+                        DayOfWeek.TUESDAY,
+                        DayOfWeek.WEDNESDAY,
+                        DayOfWeek.THURSDAY,
+                        DayOfWeek.FRIDAY,
+                    ),
+            ),
+    )
+
+fun eveningPreset(context: Context) =
+    PresetWindow(
+        label = context.getString(R.string.evening),
+        window =
+            Window(
+                startTime = LocalTime(16, 0),
+                endTime = LocalTime(20, 0),
+                daysOfWeek =
+                    setOf(
+                        DayOfWeek.MONDAY,
+                        DayOfWeek.TUESDAY,
+                        DayOfWeek.WEDNESDAY,
+                        DayOfWeek.THURSDAY,
+                        DayOfWeek.FRIDAY,
+                    ),
+            ),
+    )
+
+fun allDayPreset(context: Context) =
+    PresetWindow(
+        label = context.getString(R.string.all_day),
+        window =
+            // TODO: Handle default that crosses midnight boundary
+            Window(
+                startTime = LocalTime(0, 0),
+                endTime = LocalTime(23, 59),
+                daysOfWeek =
+                    setOf(
+                        DayOfWeek.MONDAY,
+                        DayOfWeek.TUESDAY,
+                        DayOfWeek.WEDNESDAY,
+                        DayOfWeek.THURSDAY,
+                        DayOfWeek.FRIDAY,
+                    ),
+            ),
+    )
+
 @Composable
 private fun WindowWidget(
-    window: FavoriteSettings.Notifications.Window,
-    setWindow: (FavoriteSettings.Notifications.Window) -> Unit,
+    window: Window,
+    setWindow: (Window) -> Unit,
     deleteWindow: (() -> Unit)?,
 ) {
     Row(
@@ -326,8 +547,8 @@ private fun TimeInput(
     modalTitle: String,
     time: LocalTime,
     setTime: (LocalTime) -> Unit,
-    minimumTime: LocalTime? = null,
     modifier: Modifier = Modifier,
+    minimumTime: LocalTime? = null,
 ) {
     var isPicking by rememberSaveable { mutableStateOf(false) }
     Row(
@@ -546,7 +767,7 @@ private fun NotificationSettingsWidgetPreview() {
                 settings,
                 { settings = it },
                 ConstantPermissionState(
-                    android.Manifest.permission.POST_NOTIFICATIONS,
+                    Manifest.permission.POST_NOTIFICATIONS,
                     PermissionStatus.Granted,
                 ),
                 true,
@@ -556,7 +777,7 @@ private fun NotificationSettingsWidgetPreview() {
                 FavoriteSettings.Notifications.disabled,
                 {},
                 ConstantPermissionState(
-                    android.Manifest.permission.POST_NOTIFICATIONS,
+                    Manifest.permission.POST_NOTIFICATIONS,
                     PermissionStatus.Denied(false),
                 ),
                 true,

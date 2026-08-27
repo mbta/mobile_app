@@ -493,4 +493,9 @@
     <string name="weekends">Weekends</string>
     <string name="westbound">Westbound</string>
     <string name="x_and_y">%1$s and %2$s</string>
+    <string name="morning">Morning</string>
+    <string name="midday">Midday</string>
+    <string name="evening">Evening</string>
+    <string name="all_day">All day</string>
+    <string name="custom">Custom</string>
 </resources>
