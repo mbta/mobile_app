@@ -157,11 +157,19 @@ struct NotificationSettingsWidget: View {
                         } : nil
                     )
                 }
-                Button(action: { settings.windows += [.init(FavoriteSettings.NotificationsWindow.companion.default(
-                    existingWindows: settings.windows.map { $0.toShared() },
-                    presetsEnabled: presetWindowsEnabled,
-                    now: now
-                ))] }) {
+
+                let customWindow =
+                    if presetWindowsEnabled {
+                        FavoriteSettings.NotificationsWindow.companion.customFromCurrentTime(now: now)
+                    } else {
+                        FavoriteSettings.NotificationsWindow.companion.default(
+                            existingWindows: settings.windows.map { $0.toShared() },
+                            presetsEnabled: presetWindowsEnabled,
+                            now: now
+                        )
+                    }
+
+                Button(action: { settings.windows += [.init(customWindow)] }) {
                     HStack(spacing: 12) {
                         Image(.plus)
                             .resizable()
@@ -197,21 +205,23 @@ struct NotificationSettingsWidget: View {
                     .foregroundStyle(Color.error)
                     .frame(minWidth: 44)
                 }
-                VStack(spacing: 0) {
-                    LabeledTimeInput(
-                        label: Text("From"),
-                        time: $window.startTime,
-                        minimumTime: nil
-                    )
-                    .onChange(of: window.startTime) { startTime in
-                        window.setSafeEndTime(startTime: startTime)
+                VStack {
+                    HStack(spacing: 0) {
+                        TimeInput(
+                            label: Text("Select start time"),
+                            time: $window.startTime,
+                            minimumTime: nil
+                        ).frame(maxWidth: .infinity)
+                            .onChange(of: window.startTime) { startTime in
+                                window.setSafeEndTime(startTime: startTime)
+                            }
+                        Text("to")
+                        TimeInput(
+                            label: Text("Select end time"),
+                            time: $window.endTime,
+                            minimumTime: window.minimumEndTime()
+                        ).frame(maxWidth: .infinity)
                     }
-                    HaloSeparator()
-                    LabeledTimeInput(
-                        label: Text("To"),
-                        time: $window.endTime,
-                        minimumTime: window.minimumEndTime()
-                    )
                     DaysOfWeekInput(daysOfWeek: $window.daysOfWeek)
                 }
                 .background(Color.fill3)
@@ -224,7 +234,7 @@ struct NotificationSettingsWidget: View {
         }
     }
 
-    struct LabeledTimeInput: View {
+    struct TimeInput: View {
         @ObserveInjection var inject
         let label: Text
         @Binding var time: DateComponents
@@ -258,13 +268,12 @@ struct NotificationSettingsWidget: View {
         }
 
         var body: some View {
-            DatePicker(selection: $time.nextDate, in: dateRange, displayedComponents: [.hourAndMinute]) {
-                label
-            }
-            .datePickerStyle(.compact)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .enableInjection()
+            DatePicker(selection: $time.nextDate, in: dateRange, displayedComponents: [.hourAndMinute]) { label }
+                .labelsHidden()
+                .datePickerStyle(.compact)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .enableInjection()
         }
     }
 

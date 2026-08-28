@@ -25433,6 +25433,7 @@
     },
     "To" : {
       "comment" : "End time of a notification window",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
