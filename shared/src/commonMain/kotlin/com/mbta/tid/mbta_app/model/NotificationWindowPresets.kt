@@ -5,7 +5,6 @@ import com.mbta.tid.mbta_app.model.FavoriteSettings.Notifications.Window
 public class PresetWindow(
     public val label: String,
     public val window: Window,
-    public val selected: Boolean = false,
 ) {
     public companion object {
 

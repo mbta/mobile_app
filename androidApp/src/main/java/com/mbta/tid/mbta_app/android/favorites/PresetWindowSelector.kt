@@ -24,6 +24,7 @@ fun PresetWindowSelector(
     presetRows: List<List<PresetWindow>>,
     selectedPreset: PresetSelection,
     presetsEnabled: Boolean,
+    now: EasternTimeInstant = EasternTimeInstant.now(),
     onSelect: (Window) -> Unit,
 ) {
 
@@ -48,7 +49,7 @@ fun PresetWindowSelector(
         }
         Row() {
             val isSelected = selectedPreset is PresetSelection.Custom
-            val customWindow = Window.customFromCurrentTime(EasternTimeInstant.now())
+            val customWindow = Window.customFromCurrentTime(now)
             PresetButton(
                 enabled = true,
                 isSelected = isSelected,

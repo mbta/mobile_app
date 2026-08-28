@@ -100,6 +100,7 @@ fun NotificationSettingsWidget(
     setSettings: (FavoriteSettings.Notifications) -> Unit,
     notificationPermissionState: PermissionState,
     hasRequestedPermission: Boolean,
+    now: EasternTimeInstant = EasternTimeInstant.now(),
 ) {
     val permissionStatus = notificationPermissionState.status
     val permissionDenied = !permissionStatus.isGranted
@@ -150,6 +151,7 @@ fun NotificationSettingsWidget(
                 notificationPermissionState = notificationPermissionState,
                 enabled = !showPermissionSettingsLink,
                 presetWindowsEnabled = presetWindowsEnabled,
+                now = now,
             )
             AnimatedVisibility(showPermissionSettingsLink) { PermissionSettingsLink() }
         }
@@ -169,7 +171,7 @@ fun NotificationSettingsWidget(
 
                 for (window in
                     settings.windows.ifEmpty {
-                        setOf(defaultWindow(emptyList(), presetWindowsEnabled))
+                        setOf(defaultWindow(emptyList(), presetWindowsEnabled, now))
                     }) {
                     WindowWidget(
                         window,
@@ -189,9 +191,9 @@ fun NotificationSettingsWidget(
 
                 val customWindow =
                     if (presetWindowsEnabled) {
-                        Window.customFromCurrentTime(EasternTimeInstant.now())
+                        Window.customFromCurrentTime(now)
                     } else {
-                        Window.customFromCurrentTime(EasternTimeInstant.now())
+                        defaultWindow(settings.windows, presetWindowsEnabled, now)
                     }
                 Surface(
                     onClick = {
@@ -230,9 +232,10 @@ fun NotificationSettingsWidget(
 private fun defaultWindow(
     existingWindows: List<Window> = emptyList(),
     presetsEnabled: Boolean,
+    now: EasternTimeInstant,
 ): Window {
     if (presetsEnabled) {
-        return Window.customFromCurrentTime(EasternTimeInstant.now())
+        return Window.defaultFromCurrentTime(now)
     } else {
         if (existingWindows.isEmpty()) {
             return Window(
@@ -291,7 +294,7 @@ private fun WindowWidget(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 TimeInput(
-                    stringResource(R.string.from),
+                    stringResource(R.string.select_start_time),
                     window.startTime,
                     setTime = {
                         setWindow(
@@ -502,6 +505,7 @@ private fun NotificationSwitch(
     notificationPermissionState: PermissionState,
     enabled: Boolean,
     presetWindowsEnabled: Boolean,
+    now: EasternTimeInstant = EasternTimeInstant.now(),
 ) {
 
     LabeledSwitch(
@@ -534,7 +538,7 @@ private fun NotificationSwitch(
                     enabled = it,
                     windows =
                         settings.windows.ifEmpty {
-                            listOf(defaultWindow(emptyList(), presetWindowsEnabled))
+                            listOf(defaultWindow(emptyList(), presetWindowsEnabled, now))
                         },
                 )
             )
@@ -599,7 +603,7 @@ private fun NotificationSettingsWidgetPreview() {
         mutableStateOf(
             FavoriteSettings.Notifications(
                 enabled = true,
-                windows = listOf(defaultWindow(emptyList(), true)),
+                windows = listOf(defaultWindow(emptyList(), true, EasternTimeInstant.now())),
             )
         )
     }
