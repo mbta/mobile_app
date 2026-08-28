@@ -34,7 +34,6 @@ fun PresetWindowSelector(
 ) {
     val maxColumnCount = presetRows.firstOrNull()?.size ?: 0
 
-    // TODO: Accessibility of this segmented control
     Column(
         modifier =
             Modifier.semantics {

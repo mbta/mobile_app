@@ -45,7 +45,6 @@ public sealed class PresetSelection {
             presetOptions: List<List<PresetWindow>>,
         ): PresetSelection =
             when {
-                settings.windows.isEmpty() -> Preset(1, 0)
                 settings.windows.size == 1 -> {
                     val targetWindow: Window = settings.windows[0]
                     presetOptions
