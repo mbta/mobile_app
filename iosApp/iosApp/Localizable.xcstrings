@@ -4171,7 +4171,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld elevators đã đóng"
+                  "value" : "%1$ld thang máy đã đóng"
                 }
               }
             }
