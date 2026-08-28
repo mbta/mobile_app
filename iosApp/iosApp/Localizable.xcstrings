@@ -5761,6 +5761,53 @@
         }
       }
     },
+    "All day" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"All day\", \"en\", \"es\")"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"All day\", \"en\", \"fr\")"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"All day\", \"en\", \"ht\")"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"All day\", \"en\", \"pt-BR\")"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"All day\", \"en\", \"vi\")"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"All day\", \"en\", \"zh-CN\")"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"All day\", \"en\", \"zh-TW\")"
+          }
+        }
+      }
+    },
     "All routes" : {
       "comment" : "VoiceOver label for the button to clear\nselected route to display all routes at a station\"",
       "localizations" : {
@@ -9414,6 +9461,54 @@
         }
       }
     },
+    "Custom" : {
+      "comment" : "Button text for selecting custom time range for notifications",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Custom\", \"en\", \"es\")"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Custom\", \"en\", \"fr\")"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Custom\", \"en\", \"ht\")"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Custom\", \"en\", \"pt-BR\")"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Custom\", \"en\", \"vi\")"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Custom\", \"en\", \"zh-CN\")"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Custom\", \"en\", \"zh-TW\")"
+          }
+        }
+      }
+    },
     "Daily" : {
       "comment" : "Label for the days of a recurring alert",
       "localizations" : {
@@ -11577,6 +11672,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "自動扶梯關閉"
+          }
+        }
+      }
+    },
+    "Evening" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Evening\", \"en\", \"es\")"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Evening\", \"en\", \"fr\")"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Evening\", \"en\", \"ht\")"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Evening\", \"en\", \"pt-BR\")"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Evening\", \"en\", \"vi\")"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Evening\", \"en\", \"zh-CN\")"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Evening\", \"en\", \"zh-TW\")"
           }
         }
       }
@@ -15864,6 +16006,53 @@
         }
       }
     },
+    "Midday" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Midday\", \"en\", \"es\")"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Midday\", \"en\", \"fr\")"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Midday\", \"en\", \"ht\")"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Midday\", \"en\", \"pt-BR\")"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Midday\", \"en\", \"vi\")"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Midday\", \"en\", \"zh-CN\")"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Midday\", \"en\", \"zh-TW\")"
+          }
+        }
+      }
+    },
     "Modified service" : {
       "comment" : "Possible alert effect",
       "localizations" : {
@@ -16048,6 +16237,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "更多"
+          }
+        }
+      }
+    },
+    "Morning" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Morning\", \"en\", \"es\")"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Morning\", \"en\", \"fr\")"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Morning\", \"en\", \"ht\")"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Morning\", \"en\", \"pt-BR\")"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Morning\", \"en\", \"vi\")"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Morning\", \"en\", \"zh-CN\")"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"Morning\", \"en\", \"zh-TW\")"
           }
         }
       }
@@ -25143,6 +25379,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "提示：%1$@"
+          }
+        }
+      }
+    },
+    "to" : {
+      "comment" : "Displayed between two time pickers. Ex: [8:00AM] to [9:00AM]",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"to\", \"en\", \"es\")"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"to\", \"en\", \"fr\")"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"to\", \"en\", \"ht\")"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"to\", \"en\", \"pt-BR\")"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"to\", \"en\", \"vi\")"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"to\", \"en\", \"zh-CN\")"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "=GOOGLETRANSLATE(\"to\", \"en\", \"zh-TW\")"
           }
         }
       }
