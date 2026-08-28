@@ -29,7 +29,7 @@ struct PresetWindowSelector: View {
     }
 
     var body: some View {
-        VStack {
+        let presetGrid = VStack {
             ForEach(Array(presetRows.enumerated()), id: \.offset) { rowIndex, windows in
                 HStack {
                     ForEach(Array(windows.enumerated()), id: \.element.label) { presetIndex, preset in
@@ -66,6 +66,13 @@ struct PresetWindowSelector: View {
             }
         }
         .accessibilityElement(children: .contain)
+
+        if #available(iOS 17.0, *) {
+            presetGrid
+                .accessibilityAddTraits(.isTabBar)
+        } else {
+            presetGrid
+        }
     }
 }
 
