@@ -31,6 +31,10 @@ struct NotificationSettingsWidget: View {
 
     var notificationPermissionManager: INotificationPermissionManager
     var authorizationStatus: UNAuthorizationStatus? { notificationPermissionManager.authorizationStatus }
+    var now: EasternTimeInstant = .now()
+
+    @EnvironmentObject var settingsCache: SettingsCache
+    var presetWindowsEnabled: Bool { settingsCache.get(.notificationPresetWindows) }
 
     var body: some View {
         let permissionDenied = authorizationStatus == .denied
@@ -92,13 +96,21 @@ struct NotificationSettingsWidget: View {
                             return
                         }
                         if settings.windows.count == 0 {
-                            settings.windows = [Self.defaultWindow()]
+                            settings.windows = [.init(FavoriteSettings.NotificationsWindow.companion.default(
+                                existingWindows: [],
+                                presetsEnabled: presetWindowsEnabled,
+                                now: now
+                            ))]
                         }
                     }
                 }
             }
 
             if settings.enabled {
+                if presetWindowsEnabled {
+                    Text("Preset Window Selector Here")
+                }
+
                 ForEach(settings.windows) { window in
                     WindowWidget(
                         window: window, deleteWindow: settings.windows.count > 1 ? {
@@ -106,7 +118,11 @@ struct NotificationSettingsWidget: View {
                         } : nil
                     )
                 }
-                Button(action: { settings.windows += [Self.defaultWindow(existingWindows: settings.windows)] }) {
+                Button(action: { settings.windows += [.init(FavoriteSettings.NotificationsWindow.companion.default(
+                    existingWindows: settings.windows.map { $0.toShared() },
+                    presetsEnabled: presetWindowsEnabled,
+                    now: now
+                ))] }) {
                     HStack(spacing: 12) {
                         Image(.plus)
                             .resizable()
@@ -126,24 +142,6 @@ struct NotificationSettingsWidget: View {
             }
         }
         .enableInjection()
-    }
-
-    static func defaultWindow(existingWindows: [MutableFavoriteSettings.Notifications.Window] = [])
-        -> MutableFavoriteSettings
-        .Notifications.Window {
-        if existingWindows.isEmpty {
-            .init(
-                startTime: .init(hour: 8, minute: 0, second: 0),
-                endTime: .init(hour: 9, minute: 0, second: 0),
-                daysOfWeek: [.monday, .tuesday, .wednesday, .thursday, .friday]
-            )
-        } else {
-            .init(
-                startTime: .init(hour: 12, minute: 0, second: 0),
-                endTime: .init(hour: 13, minute: 0, second: 0),
-                daysOfWeek: [.saturday, .sunday]
-            )
-        }
     }
 
     struct WindowWidget: View {
@@ -295,10 +293,11 @@ struct NotificationSettingsWidget_Previews: PreviewProvider {
         @ObserveInjection var inject
         @State var settings = MutableFavoriteSettings.Notifications(
             enabled: true,
-            windows: [
-                NotificationSettingsWidget.defaultWindow(),
-                NotificationSettingsWidget.defaultWindow(existingWindows: [NotificationSettingsWidget.defaultWindow()]),
-            ]
+            windows: [.init(FavoriteSettings.NotificationsWindow.companion.default(
+                existingWindows: [],
+                presetsEnabled: false,
+                now: EasternTimeInstant.now()
+            ))]
         )
 
         var body: some View {

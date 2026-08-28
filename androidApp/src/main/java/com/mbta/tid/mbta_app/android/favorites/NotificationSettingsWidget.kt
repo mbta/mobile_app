@@ -171,7 +171,7 @@ fun NotificationSettingsWidget(
 
                 for (window in
                     settings.windows.ifEmpty {
-                        setOf(defaultWindow(emptyList(), presetWindowsEnabled, now))
+                        setOf(Window.default(emptyList(), presetWindowsEnabled, now))
                     }) {
                     WindowWidget(
                         window,
@@ -193,7 +193,7 @@ fun NotificationSettingsWidget(
                     if (presetWindowsEnabled) {
                         Window.customFromCurrentTime(now)
                     } else {
-                        defaultWindow(settings.windows, presetWindowsEnabled, now)
+                        Window.default(settings.windows, presetWindowsEnabled, now)
                     }
                 Surface(
                     onClick = {
@@ -226,36 +226,6 @@ fun NotificationSettingsWidget(
                 }
             }
         }
-    }
-}
-
-private fun defaultWindow(
-    existingWindows: List<Window> = emptyList(),
-    presetsEnabled: Boolean,
-    now: EasternTimeInstant,
-): Window {
-    if (presetsEnabled) {
-        return Window.defaultFromCurrentTime(now)
-    } else {
-        if (existingWindows.isEmpty()) {
-            return Window(
-                startTime = LocalTime(8, 0),
-                endTime = LocalTime(9, 0),
-                daysOfWeek =
-                    setOf(
-                        DayOfWeek.MONDAY,
-                        DayOfWeek.TUESDAY,
-                        DayOfWeek.WEDNESDAY,
-                        DayOfWeek.THURSDAY,
-                        DayOfWeek.FRIDAY,
-                    ),
-            )
-        }
-        return Window(
-            startTime = LocalTime(12, 0),
-            endTime = LocalTime(13, 0),
-            setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY),
-        )
     }
 }
 
@@ -538,7 +508,7 @@ private fun NotificationSwitch(
                     enabled = it,
                     windows =
                         settings.windows.ifEmpty {
-                            listOf(defaultWindow(emptyList(), presetWindowsEnabled, now))
+                            listOf(Window.default(emptyList(), presetWindowsEnabled, now))
                         },
                 )
             )
@@ -603,7 +573,7 @@ private fun NotificationSettingsWidgetPreview() {
         mutableStateOf(
             FavoriteSettings.Notifications(
                 enabled = true,
-                windows = listOf(defaultWindow(emptyList(), true, EasternTimeInstant.now())),
+                windows = listOf(Window.default(emptyList(), true, EasternTimeInstant.now())),
             )
         )
     }
