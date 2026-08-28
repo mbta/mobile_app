@@ -18,7 +18,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         let sut = NotificationSettingsWidget(
             settings: settings,
             notificationPermissionManager: MockNotificationPermissionManager()
-        )
+        ).withFixedSettings([:])
 
         try sut.inspect().find(text: "Get disruption notifications").find(ViewType.Toggle.self, relation: .parent).tap()
         XCTAssertEqual(settings, .init(enabled: true, windows: []))
@@ -49,16 +49,16 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         let sut = NotificationSettingsWidget(
             settings: settings,
             notificationPermissionManager: MockNotificationPermissionManager()
-        )
+        ).withFixedSettings([:])
 
         // unfortunately, ViewInspector does not appear to surface the selected value of a DatePicker
         XCTAssertNotNil(try sut.inspect().find(
             ViewType.DatePicker.self,
-            where: { try $0.labelView().text().string() == "From" }
+            where: { try $0.labelView().text().string() == "Select start time" }
         ))
         XCTAssertNotNil(try sut.inspect().find(
             ViewType.DatePicker.self,
-            where: { try $0.labelView().text().string() == "To" }
+            where: { try $0.labelView().text().string() == "Select end time" }
         ))
         // ViewInspector as of 0.10.3 does not support accessibilityChildren so we can’t check the days of the week
         try sut.inspect().find(button: "Add another time period").tap()
@@ -90,21 +90,27 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         let sut = NotificationSettingsWidget(
             settings: settings,
             notificationPermissionManager: MockNotificationPermissionManager()
-        )
+        ).withFixedSettings([:])
 
-        try sut.inspect().find(ViewType.DatePicker.self, where: { try $0.labelView().text().string() == "From" })
-            .select(date: XCTUnwrap(Calendar(identifier: .iso8601).nextDate(
-                after: .now,
-                matching: .init(hour: 7, minute: 45),
-                matchingPolicy: .strict
-            )))
+        try sut.inspect().find(
+            ViewType.DatePicker.self,
+            where: { try $0.labelView().text().string() == "Select start time" }
+        )
+        .select(date: XCTUnwrap(Calendar(identifier: .iso8601).nextDate(
+            after: .now,
+            matching: .init(hour: 7, minute: 45),
+            matchingPolicy: .strict
+        )))
         XCTAssertEqual(settings.windows[0].startTime, .init(hour: 7, minute: 45, second: 0))
-        try sut.inspect().find(ViewType.DatePicker.self, where: { try $0.labelView().text().string() == "To" })
-            .select(date: XCTUnwrap(Calendar(identifier: .iso8601).nextDate(
-                after: .now,
-                matching: .init(hour: 9, minute: 10),
-                matchingPolicy: .strict
-            )))
+        try sut.inspect().find(
+            ViewType.DatePicker.self,
+            where: { try $0.labelView().text().string() == "Select end time" }
+        )
+        .select(date: XCTUnwrap(Calendar(identifier: .iso8601).nextDate(
+            after: .now,
+            matching: .init(hour: 9, minute: 10),
+            matchingPolicy: .strict
+        )))
         XCTAssertEqual(settings.windows[0].endTime, .init(hour: 9, minute: 10, second: 0))
     }
 
@@ -120,7 +126,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         let sut = NotificationSettingsWidget(
             settings: settings,
             notificationPermissionManager: MockNotificationPermissionManager()
-        )
+        ).withFixedSettings([:])
 
         try sut.inspect().find(text: "Sun").find(ViewType.VStack.self, relation: .parent).callOnTapGesture()
         XCTAssertEqual(settings.windows[0].daysOfWeek, [.sunday, .monday, .tuesday, .wednesday, .thursday, .friday])
@@ -140,16 +146,19 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         let sut = NotificationSettingsWidget(
             settings: settings,
             notificationPermissionManager: MockNotificationPermissionManager()
-        )
+        ).withFixedSettings([:])
 
         let calendar = Calendar(identifier: .iso8601)
         let dayStart = calendar.startOfDay(for: .now)
-        try sut.inspect().find(ViewType.DatePicker.self, where: { try $0.labelView().text().string() == "From" })
-            .select(date: XCTUnwrap(calendar.nextDate(
-                after: dayStart,
-                matching: .init(hour: 10, minute: 45),
-                matchingPolicy: .strict
-            )))
+        try sut.inspect().find(
+            ViewType.DatePicker.self,
+            where: { try $0.labelView().text().string() == "Select start time" }
+        )
+        .select(date: XCTUnwrap(calendar.nextDate(
+            after: dayStart,
+            matching: .init(hour: 10, minute: 45),
+            matchingPolicy: .strict
+        )))
         XCTAssertEqual(settings.windows[0].startTime, .init(hour: 10, minute: 45, second: 0))
         try sut.inspect().findAndCallOnChange(newValue: settings.windows[0].startTime)
         XCTAssertEqual(settings.windows[0].endTime, .init(hour: 11, minute: 45, second: 0))

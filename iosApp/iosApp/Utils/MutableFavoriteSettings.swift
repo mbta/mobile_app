@@ -74,11 +74,13 @@ class MutableFavoriteSettings: ObservableObject, Equatable, CustomDebugStringCon
             init(_ favoriteSettings: FavoriteSettings.NotificationsWindow) {
                 startTime = .init(
                     hour: Int(favoriteSettings.startTime.hour),
-                    minute: Int(favoriteSettings.startTime.minute)
+                    minute: Int(favoriteSettings.startTime.minute),
+                    second: Int(favoriteSettings.startTime.second)
                 )
                 endTime = .init(
                     hour: Int(favoriteSettings.endTime.hour),
-                    minute: Int(favoriteSettings.endTime.minute)
+                    minute: Int(favoriteSettings.endTime.minute),
+                    second: Int(favoriteSettings.startTime.second)
                 )
                 daysOfWeek = favoriteSettings.daysOfWeek
             }
