@@ -36,6 +36,36 @@ struct NotificationSettingsWidget: View {
     @EnvironmentObject var settingsCache: SettingsCache
     var presetWindowsEnabled: Bool { settingsCache.get(.notificationPresetWindows) }
 
+    let presetOptions: [[PresetWindow]] = [
+        [
+            .init(
+                label: NSLocalizedString("Morning", comment: "Notification window preset label"),
+                window: FavoriteSettings.NotificationsWindow.companion.morningDefault
+            ),
+            .init(
+                label: NSLocalizedString("Midday", comment: "Notification window preset label"),
+                window: FavoriteSettings.NotificationsWindow.companion.middayDefault
+            ),
+            .init(
+                label: NSLocalizedString("Evening", comment: "Notification window preset label"),
+                window: FavoriteSettings.NotificationsWindow.companion.eveningDefault
+            )
+        ],
+        [
+            .init(
+                label: NSLocalizedString("All day", comment: "Notification window preset label"),
+                window: FavoriteSettings.NotificationsWindow.companion.allDayDefault
+            )
+        ]
+    ]
+
+    var presetSelection: PresetSelection {
+        PresetSelection.companion.selectedPresetFromSettings(
+            settings: settings.toShared(),
+            presetOptions: presetOptions
+        )
+    }
+
     var body: some View {
         let permissionDenied = authorizationStatus == .denied
         VStack(spacing: 8) {
@@ -108,7 +138,16 @@ struct NotificationSettingsWidget: View {
 
             if settings.enabled {
                 if presetWindowsEnabled {
-                    Text("Preset Window Selector Here")
+                    PresetWindowSelector(
+                        presetRows: presetOptions,
+                        selectedPreset: presetSelection,
+                        presetsEnabled: settings.windows.count <= 1,
+                        now: now,
+                        onSelect: { selectedWindow in
+                            let otherWindows = Array(settings.windows.dropFirst())
+                            settings.windows = [.init(selectedWindow)] + otherWindows
+                        }
+                    )
                 }
 
                 ForEach(settings.windows) { window in
