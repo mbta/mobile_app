@@ -84,6 +84,10 @@ extension SharedString {
                 "Settings",
                 comment: "More page section header, includes settings that the user can configure"
             )
+        case .shiftingDisabled: "Shifting: Disabled"
+        case .shiftingIncludeStops: "Shifting: Include Stops"
+        case .shiftingScaleWithZoom: "Shifting: Scale With Zoom"
+        case .shiftingUseTranslate: "Shifting: Use Translate for Shapes"
         case .softwareLicenses:
             NSLocalizedString(
                 "Software Licenses",
