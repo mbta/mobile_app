@@ -165,13 +165,44 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
             }
         }
 
+        fun indexSuffixMatch(placeholder: String, index: Int, suffix: String): Boolean =
+            placeholder == "%${index + 1}$$suffix"
+
+        fun positionalAndIndexMatch(
+            placeholder: String,
+            otherPlaceholder: String,
+            index: Int,
+        ): Boolean =
+            when (placeholder) {
+                "%@" -> indexSuffixMatch(otherPlaceholder, index, "@")
+                "%ld" -> indexSuffixMatch(otherPlaceholder, index, "ld")
+                "%d" -> indexSuffixMatch(otherPlaceholder, index, "d")
+                else -> false
+            }
+
+        fun placeholdersMatch(actual: String, other: String?, index: Int): Boolean {
+            if (other == null) return false
+            if (actual == other) return true
+            return positionalAndIndexMatch(actual, other, index) ||
+                positionalAndIndexMatch(other, actual, index)
+        }
+
         fun checkNoPlaceholderMismatches(
             stringKey: String,
             languageTag: String,
-            expectedPlaceholders: Set<String>,
+            expectedPlaceholders: List<String>,
         ) {
             val actualPlaceholders = resource()?.getTemplatePlaceholders()
-            check(actualPlaceholders == expectedPlaceholders) {
+            check(
+                actualPlaceholders
+                    ?.mapIndexed { index, actual ->
+                        val other = expectedPlaceholders.getOrNull(index)
+                        placeholdersMatch(actual, other, index)
+                    }
+                    ?.all { it }
+                    ?: actualPlaceholders?.let { it.isEmpty() && expectedPlaceholders.isEmpty() }
+                    ?: false
+            ) {
                 buildString {
                     append("iOS string \"")
                     append(stringKey)
@@ -204,15 +235,15 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
 
         fun convertIosTemplate(): Resource
 
-        fun getTemplatePlaceholders(): Set<String>
+        fun getTemplatePlaceholders(): List<String>
 
         data class StaticString(val text: String) : Resource {
             override fun key() = text
 
             override fun convertIosTemplate() = StaticString(convertIosTemplate(text))
 
-            override fun getTemplatePlaceholders(): Set<String> {
-                return template.findAll(text).map { it.value }.toSet()
+            override fun getTemplatePlaceholders(): List<String> {
+                return template.findAll(text).map { it.value }.sorted().toList()
             }
         }
 
@@ -222,12 +253,12 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
             override fun convertIosTemplate() =
                 Plural(items.mapValues { convertIosTemplate(it.value) })
 
-            override fun getTemplatePlaceholders(): Set<String> {
+            override fun getTemplatePlaceholders(): List<String> {
                 val templatePlaceholders = items.mapValues { (_, text) ->
-                    template.findAll(text).map { it.value }.toSet()
+                    template.findAll(text).map { it.value }.sorted().toList()
                 }
                 return checkNotNull(templatePlaceholders.values.distinct().singleOrNull()) {
-                    "plural string has inconsistent template placeholders: $templatePlaceholders"
+                    "plural string \"${key()}\" has inconsistent template placeholders: $templatePlaceholders"
                 }
             }
 
