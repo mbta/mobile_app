@@ -122,9 +122,9 @@
         <item quantity="other">%1$d elevadores fechados</item>
     </plurals>
     <plurals name="elevator_closure_count_accessibility_description">
-        <item quantity="one">Esta parada está com %1$d o elevador fechado</item>
-        <item quantity="many">Esta parada está com %1$d os elevadores fechados</item>
-        <item quantity="other">Esta parada está com %1$d os elevadores fechados</item>
+        <item quantity="one">Esta parada tem %1$d elevador fechado</item>
+        <item quantity="many">Esta parada tem %1$d elevadores fechados</item>
+        <item quantity="other">Esta parada tem %1$d elevadores fechados</item>
     </plurals>
     <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">Fim</string>
@@ -234,7 +234,7 @@
     <string name="more_section_resources">Recursos</string>
     <string name="more_section_settings">Configurações</string>
     <string name="more_section_support">Informações Gerais e Suporte da MBTA</string>
-    <string name="more_section_support_note_accessibility">711 para usuários de TTY e VRS para usuários de ASL.</string>
+    <string name="more_section_support_note_accessibility">711 para usuários de TTY e VRS para usuários de ASL</string>
     <string name="more_section_support_note_hours">De segunda a sexta: 6:30 AM - 8 PM</string>
     <string name="more_title">MBTA Go</string>
     <string name="nearby_transit">Trânsito próximo</string>
@@ -392,9 +392,9 @@
     <string name="stop_skipped_sentence_case">Parada ignorada</string>
     <string name="stops">Paradas</string>
     <plurals name="stops_away">
-        <item quantity="one">a %1$d parada</item>
-        <item quantity="many">a %1$d paradas</item>
-        <item quantity="other">a %1$d paradas</item>
+        <item quantity="one">a %1$d parada de distância</item>
+        <item quantity="many">a %1$d paradas de distância</item>
+        <item quantity="other">a %1$d paradas de distância</item>
     </plurals>
     <string name="strike">Greve</string>
     <string name="strike_lowercase">greve</string>

@@ -14,9 +14,9 @@
     <string name="additional_service">Service supplémentaire</string>
     <string name="additional_service_sentence_case">Service supplémentaire</string>
     <plurals name="affected_stops">
-        <item quantity="one">&lt;b>%1$d&lt;/b> arrêt concerné</item>
-        <item quantity="many">&lt;b>%1$d&lt;/b> arrêts concernés</item>
-        <item quantity="other">&lt;b>%1$d&lt;/b> arrêts concernés</item>
+        <item quantity="one">&lt;b>%1$d&lt;/b> arrêt affecté</item>
+        <item quantity="many">&lt;b>%1$d&lt;/b> arrêts affectés</item>
+        <item quantity="other">&lt;b>%1$d&lt;/b> arrêts affectés</item>
     </plurals>
     <string name="alert">Alerte</string>
     <string name="alert_details">Détails de l’alerte</string>
@@ -24,7 +24,7 @@
     <string name="alert_ended">L’alerte n’est plus en vigueur</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
     <string name="alert_summary_location_successive">\u0020de &lt;b>%1$s&lt;/b> à &lt;b>%2$s&lt;/b></string>
-    <string name="alert_summary_timeframe_this_week">\u0020jusqu’à %1$s</string>
+    <string name="alert_summary_timeframe_this_week">\u0020jusqu’au %1$s</string>
     <string name="alternative_path">Trajet alternatif</string>
     <string name="amber_alert">Alerte Amber</string>
     <string name="amber_alert_sentence_case">Alerte Amber</string>
@@ -117,14 +117,14 @@
     <string name="elevator_closed_sentence_case">Ascenseur fermé</string>
     <string name="elevator_closure">Fermeture de l’ascenseur</string>
     <plurals name="elevator_closure_count">
-        <item quantity="one">Ascenseur %1$d fermé</item>
-        <item quantity="many">Ascenseurs %1$d fermés</item>
-        <item quantity="other">Ascenseurs %1$d fermés</item>
+        <item quantity="one">%1$d ascenseur fermé</item>
+        <item quantity="many">%1$d ascenseurs fermés</item>
+        <item quantity="other">%1$d ascenseurs fermés</item>
     </plurals>
     <plurals name="elevator_closure_count_accessibility_description">
-        <item quantity="one">Cet arrêt comporte %1$d ascenseur fermé</item>
-        <item quantity="many">Cet arrêt comporte %1$d ascenseurs fermés</item>
-        <item quantity="other">Cet arrêt comporte %1$d ascenseurs fermés</item>
+        <item quantity="one">Cet arrêt %1$d ascenseur fermé</item>
+        <item quantity="many">Cet arrêt compte %1$d ascenseurs fermés</item>
+        <item quantity="other">Cet arrêt compte %1$d ascenseurs fermés</item>
     </plurals>
     <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">Fin</string>
@@ -323,7 +323,7 @@
     <string name="resources_link_mticket_note">Application mTicket</string>
     <string name="resources_link_trip_planner">Planificateur de trajet</string>
     <string name="results_failed_to_load">Échec du chargement des résultats ☹️</string>
-    <string name="route_effect">%1$s %2$s</string>
+    <string name="route_effect">%2$s %1$s</string>
     <string name="route_mode_label">%2$s %1$s</string>
     <string name="route_picker_header_favorites">Ajouter les arrêts favoris</string>
     <string name="routes">Trajets</string>
@@ -392,9 +392,9 @@
     <string name="stop_skipped_sentence_case">Arrêt ignoré</string>
     <string name="stops">Arrêts</string>
     <plurals name="stops_away">
-        <item quantity="one">%1$d arrêt restant</item>
-        <item quantity="many">%1$d arrêts restants</item>
-        <item quantity="other">%1$d arrêts restants</item>
+        <item quantity="one">À %1$d arrêt</item>
+        <item quantity="many">%1$d arrêts de route</item>
+        <item quantity="other">%1$d arrêts de route</item>
     </plurals>
     <string name="strike">Grève</string>
     <string name="strike_lowercase">grève</string>
@@ -449,9 +449,9 @@
     <string name="until_tomorrow">\u0020jusqu’à demain</string>
     <string name="updated_at">Mis à jour : %1$s</string>
     <plurals name="updated_mins_ago">
-        <item quantity="one">Mis à jour il y a %1$d minute</item>
-        <item quantity="many">Mis à jour il y a %1$d minutes</item>
-        <item quantity="other">Mis à jour il y a %1$d minutes</item>
+        <item quantity="one">Mise à jour il y a %1$d minute</item>
+        <item quantity="many">Mise à jour il y a %1$d minutes</item>
+        <item quantity="other">Mise à jour il y a %1$d minutes</item>
     </plurals>
     <string name="vehicle_arriving_first">%1$s arrive maintenant</string>
     <string name="vehicle_arriving_other">et arrive maintenant</string>
