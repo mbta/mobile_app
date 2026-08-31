@@ -1626,58 +1626,8 @@
       }
     },
     "**All clear:** Normal service has resumed." : {
-      "comment" : "Alert summary in the format of \"All clear: Normal service has resumed.\"",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**All clear:** Normal service has resumed."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**Todo despejado:** se ha reanudado el servicio normal."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**Alerte levé :** Le service normal a repris."
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "*Tout bagay nòmal:** Sèvis la retounen nan nòmal."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**Situação normalizada:** O serviço normal foi retomado."
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**Đã thông thoáng:** Dịch vụ đã hoạt động trở lại bình thường."
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**运行正常：**服务已恢复正常。"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**運行正常：**服務已恢復正常。"
-          }
-        }
-      }
+      "comment" : "Alert summary in the format of \\\"All clear: Normal service has resumed.\\\"",
+      "extractionState" : "manual"
     },
     "**All clear:** Regular service%1$@" : {
       "comment" : "Alert summary in the format of \"All clear: Regular service[at location]\", ex \"[All clear][Regular service][ from Alewife to Harvard]\"",
@@ -1923,113 +1873,13 @@
         }
       }
     },
-    "**Update:** %1$@ has ended%2$@.": {
-      "comment" : "Alert summary in the format of \"Update: [Alert effect] has ended[ at location].\", ex \"[Update][Stop clousure] has ended[ at Haymarket]." or \"[Update][Service suspension] has ended[ from Alewife to Harvard].",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Update:** %1$@ has ended%2$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**Actualización:** %1$@ has ended%2$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**Mise à jour :** %1$@ has ended%2$@."
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**Mizajou:** %1$@ has ended%2$@."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**Atualização:** %1$@ has ended%2$@."
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**Cập nhật:** %1$@ has ended%2$@."
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**更新：** %1$@ has ended%2$@."
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**更新：** %1$@ has ended%2$@."
-          }
-        }
-      }
+    "**Update:** %{mode} service has resumed%{summary_location}." : {
+      "comment" : "Alert summary in the format of \\\"Update: [Vehicle type] service has resumed[ at location].\\\", ex \\\"Update: [Train] service has resumed[ from Riverside to Newton Highlands].\\\" or \\\"Update: [Bus] service has resumed[ at Market St @ Lothrop St].\\\"",
+      "extractionState" : "manual"
     },
-    "**Update:** %{mode} service has resumed%{summary_location}.": {
-      "comment" : "Alert summary in the format of \"Update: [Vehicle type] service has resumed[ at location].\", ex \"Update: [Train] service has resumed[ from Riverside to Newton Highlands].\" or \"Update: [Bus] service has resumed[ at Market St @ Lothrop St].\"",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Update:** %1$@ has resumed%2$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**Actualización:** %1$@ has resumed%2$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**Mise à jour :** %1$@ has resumed%2$@."
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**Mizajou:** %1$@ has resumed%2$@."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**Atualização:** %1$@ has resumed%2$@."
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**Cập nhật:** %1$@ has resumed%2$@."
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**更新：** %1$@ has resumed%2$@."
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**更新：** %1$@ has resumed%2$@."
-          }
-        }
-      }
+    "**Update:** %1$@ has ended%2$@." : {
+      "comment" : "Alert summary in the format of \\\"Update: [Alert effect] has ended[ at location].\\\", ex \\\"[Update][Stop clousure] has ended[ at Haymarket].\" or \\\"[Update][Service suspension] has ended[ from Alewife to Harvard].",
+      "extractionState" : "manual"
     },
     "**Update:** %1$@%2$@%3$@%4$@%5$@" : {
       "comment" : "Alert summary in the format of \"Update: [Alert effect][at location][through timeframe][until recurrence][ due to cause], ex \"[Update][Stop closed][ at Haymarket][ through this Friday][]\" or \"[Update][Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday][due “to maintenance]",
@@ -11369,56 +11219,7 @@
     },
     "Elevator" : {
       "comment" : "Elevator Service",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elevator"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Ascensor"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Ascenseur"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Asansè"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Elevador"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Thang máy đóng cửa"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "直梯已关闭"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "直梯已關閉"
-          }
-        }
-      }
+      "extractionState" : "manual"
     },
     "Elevator closed" : {
       "comment" : "Possible alert effect",
@@ -14638,48 +14439,48 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : " until %@"
+            "value" : "**All clear:** Normal service has resumed."
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : " hasta %@"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : " jusqu’à %@"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : " jiska %@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : " até %@"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : " cho đến khi %@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : " 直至%@"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : " 直至%@"
           }
         }
@@ -26071,56 +25872,7 @@
     },
     "Train" : {
       "comment" : "Train",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Train"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Tren"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Train"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Tren"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Trem"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Tàu"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "列车"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "列車"
-          }
-        }
-      }
+      "extractionState" : "manual"
     },
     "Train cancelled" : {
       "localizations" : {
