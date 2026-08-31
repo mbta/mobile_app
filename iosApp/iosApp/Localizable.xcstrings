@@ -1627,7 +1627,51 @@
     },
     "**All clear:** Normal service has resumed." : {
       "comment" : "Alert summary in the format of \\\"All clear: Normal service has resumed.\\\"",
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**todo despejado:** El servicio normal se reanudó."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Voie libre :** Le service normal a repris."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**out bagay klè:** sèvis nòmal has resumed."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**tudo normal:** o serviço normal foi retomado."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**tất cả ổn thỏa:** dịch vụ bình thường đã được tiếp tục."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**通行正常：**服务已恢复正常。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**通行正常：**服務已恢復正常。"
+          }
+        }
+      }
     },
     "**All clear:** Regular service%1$@" : {
       "comment" : "Alert summary in the format of \"All clear: Regular service[at location]\", ex \"[All clear][Regular service][ from Alewife to Harvard]\"",
@@ -1875,11 +1919,99 @@
     },
     "**Update:** %{mode} service has resumed%{summary_location}." : {
       "comment" : "Alert summary in the format of \\\"Update: [Vehicle type] service has resumed[ at location].\\\", ex \\\"Update: [Train] service has resumed[ from Riverside to Newton Highlands].\\\" or \\\"Update: [Bus] service has resumed[ at Market St @ Lothrop St].\\\"",
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Update:**%{mode} servicio se reanudó%{summary_location}."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Update :** %{mode} service a repris %{summary_location}."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Mizajou:** Sèvis %{mode} la rekòmanse%{summary_location}."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Atualização:** O serviço %{mode} foi retomado."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Cập nhật:** Dịch vụ %{mode} đã hoạt động trở lại."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**更新：** %{mode} 服务已恢复%{summary_location}。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**更新：** %{mode} 服務已恢復%{summary_location}。"
+          }
+        }
+      }
     },
     "**Update:** %1$@ has ended%2$@." : {
       "comment" : "Alert summary in the format of \\\"Update: [Alert effect] has ended[ at location].\\\", ex \\\"[Update][Stop clousure] has ended[ at Haymarket].\" or \\\"[Update][Service suspension] has ended[ from Alewife to Harvard].",
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Actualización:** %1$@ terminó%2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Mise à jour :** %1$@ est terminée%2$@."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Mizajou:** %1$@ fini%2$@."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Atualização:** %1$@ terminou%2$@."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Cập nhật:** %1$@ đã kết thúc%2$@."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**更新：** %1$@ 已结束%2$@。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**更新：** %1$@ 已結束%2$@。"
+          }
+        }
+      }
     },
     "**Update:** %1$@%2$@%3$@%4$@%5$@" : {
       "comment" : "Alert summary in the format of \"Update: [Alert effect][at location][through timeframe][until recurrence][ due to cause], ex \"[Update][Stop closed][ at Haymarket][ through this Friday][]\" or \"[Update][Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday][due “to maintenance]",
@@ -11219,7 +11351,51 @@
     },
     "Elevator" : {
       "comment" : "Elevator Service",
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ascensor fuera de servicio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ascenseur fermé"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asansè a fèmen"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elevador fechado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thang máy đóng cửa"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直梯已关闭"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直梯已關閉"
+          }
+        }
+      }
     },
     "Elevator closed" : {
       "comment" : "Possible alert effect",
@@ -25872,7 +26048,51 @@
     },
     "Train" : {
       "comment" : "Train",
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tren"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "train"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tren"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trem"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tàu"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列车"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列車"
+          }
+        }
+      }
     },
     "Train cancelled" : {
       "localizations" : {
