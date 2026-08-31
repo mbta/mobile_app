@@ -26814,6 +26814,10 @@
         }
       }
     },
+    "Update: %1$@" : {
+      "comment" : "Example: “Update: Service has ended”",
+      "extractionState" : "manual"
+    },
     "Updated %ld minutes ago" : {
       "comment" : "Displayed when prediction data has not been able to update for an unexpected amount of time",
       "localizations" : {
