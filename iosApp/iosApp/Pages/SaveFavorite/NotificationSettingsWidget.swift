@@ -68,86 +68,15 @@ struct NotificationSettingsWidget: View {
     }
 
     var body: some View {
-        let enabledBinding = Binding<Bool>(
-            get: {
-                settings.enabled
-            },
-            set: { newValue in
-                setSettings(settings.doCopy(enabled: newValue, windows: settings.windows))
-            }
-        )
-
         let permissionDenied = authorizationStatus == .denied
         VStack(spacing: 8) {
-            VStack(spacing: 16) {
-                Toggle(isOn: enabledBinding) {
-                    HStack {
-                        if settings.enabled {
-                            Image(.faBellFilled)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 24, height: 24)
-                                .foregroundStyle(Color.key)
-                        } else {
-                            Image(.faBell)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 24, height: 24)
-                        }
-                        Text("Get disruption notifications")
-                    }
-                }
-                .disabled(permissionDenied)
-                .opacity(permissionDenied ? 0.6 : 1.0)
-                .tint(Color.key)
-                if permissionDenied {
-                    Button {
-                        notificationPermissionManager.openNotificationSettings()
-                    } label: {
-                        HStack {
-                            Text(
-                                "Allow Notifications in Settings",
-                                comment: "Label for a link to the app's notification permission settings"
-                            ).font(.body)
-                            Spacer()
-                            Image(systemName: "arrow.up.right")
-                                .resizable()
-                                .frame(width: 10.5, height: 10.5, alignment: .center)
-                                .fontWeight(.bold)
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 2)
-                }
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(Color.fill3)
-            .withRoundedBorder()
-            .onTapGesture {
-                if permissionDenied { notificationPermissionManager.openNotificationSettings() }
-            }
-            .onChange(of: settings.enabled) { enabled in
-                Task {
-                    if enabled {
-                        let notificationPermission = await notificationPermissionManager.requestPermission()
-                        guard notificationPermission else {
-                            setSettings(FavoriteSettings.Notifications.companion.disabled)
-                            return
-                        }
-                        if settings.windows.count == 0 {
-                            setSettings(settings.doCopy(
-                                enabled: enabled,
-                                windows: [FavoriteSettings.NotificationsWindow.companion.default(
-                                    existingWindows: [],
-                                    presetsEnabled: presetWindowsEnabled,
-                                    now: now
-                                )]
-                            ))
-                        }
-                    }
-                }
-            }
+            NotificationSwitch(
+                settings: settings,
+                setSettings: setSettings,
+                notificationPermissionManager: notificationPermissionManager,
+                now: now,
+                presetWindowsEnabled: presetWindowsEnabled
+            )
 
             if settings.enabled {
                 if presetWindowsEnabled {
@@ -400,6 +329,98 @@ struct NotificationSettingsWidget: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .enableInjection()
+        }
+    }
+}
+
+struct NotificationSwitch: View {
+    let settings: FavoriteSettings.Notifications
+    let setSettings: (FavoriteSettings.Notifications) -> Void
+    let notificationPermissionManager: INotificationPermissionManager
+    let now: EasternTimeInstant
+    let presetWindowsEnabled: Bool
+
+    var authorizationStatus: UNAuthorizationStatus? { notificationPermissionManager.authorizationStatus }
+
+    var body: some View {
+        let enabledBinding = Binding<Bool>(
+            get: {
+                settings.enabled
+            },
+            set: { newValue in
+                setSettings(settings.doCopy(enabled: newValue, windows: settings.windows))
+            }
+        )
+
+        let permissionDenied = authorizationStatus == .denied
+        VStack(spacing: 16) {
+            Toggle(isOn: enabledBinding) {
+                HStack {
+                    if settings.enabled {
+                        Image(.faBellFilled)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24)
+                            .foregroundStyle(Color.key)
+                    } else {
+                        Image(.faBell)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24)
+                    }
+                    Text("Get disruption notifications")
+                }
+            }
+            .disabled(permissionDenied)
+            .opacity(permissionDenied ? 0.6 : 1.0)
+            .tint(Color.key)
+            if permissionDenied {
+                Button {
+                    notificationPermissionManager.openNotificationSettings()
+                } label: {
+                    HStack {
+                        Text(
+                            "Allow Notifications in Settings",
+                            comment: "Label for a link to the app's notification permission settings"
+                        ).font(.body)
+                        Spacer()
+                        Image(systemName: "arrow.up.right")
+                            .resizable()
+                            .frame(width: 10.5, height: 10.5, alignment: .center)
+                            .fontWeight(.bold)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 2)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(Color.fill3)
+        .withRoundedBorder()
+        .onTapGesture {
+            if permissionDenied { notificationPermissionManager.openNotificationSettings() }
+        }
+        .onChange(of: settings.enabled) { enabled in
+            Task {
+                if enabled {
+                    let notificationPermission = await notificationPermissionManager.requestPermission()
+                    guard notificationPermission else {
+                        setSettings(FavoriteSettings.Notifications.companion.disabled)
+                        return
+                    }
+                    if settings.windows.count == 0 {
+                        setSettings(settings.doCopy(
+                            enabled: enabled,
+                            windows: [FavoriteSettings.NotificationsWindow.companion.default(
+                                existingWindows: [],
+                                presetsEnabled: presetWindowsEnabled,
+                                now: now
+                            )]
+                        ))
+                    }
+                }
+            }
         }
     }
 }
