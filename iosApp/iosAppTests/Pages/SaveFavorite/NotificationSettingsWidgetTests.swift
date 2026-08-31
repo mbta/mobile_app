@@ -225,4 +225,57 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             .find(ViewType.Toggle.self, relation: .parent).isDisabled())
         XCTAssertThrowsError(try sut.inspect().find(button: "Allow Notifications in Settings"))
     }
+
+    func testPresetButtonsAreNotVisibleWhenFeatureFlagDisabled() throws {
+        let settings: FavoriteSettings.Notifications = .init(
+            enabled: true,
+            windows: [FavoriteSettings.NotificationsWindow.companion.morningDefault]
+        )
+        let sut = NotificationSettingsWidget(
+            settings: settings,
+            setSettings: { _ in },
+            notificationPermissionManager: MockNotificationPermissionManager()
+        ).withFixedSettings([.notificationPresetWindows: false])
+
+        XCTAssertThrowsError(try sut.inspect().find(button: "Morning"))
+    }
+
+    func testPresetButtonsAreVisibleWhenFeatureFlagEnabled() throws {
+        let settings: FavoriteSettings.Notifications = .init(
+            enabled: true,
+            windows: [FavoriteSettings.NotificationsWindow.companion.morningDefault]
+        )
+        let sut = NotificationSettingsWidget(
+            settings: settings,
+            setSettings: { _ in },
+            notificationPermissionManager: MockNotificationPermissionManager()
+        ).withFixedSettings([.notificationPresetWindows: true])
+
+        XCTAssertNotNil(try sut.inspect().find(button: "Morning"))
+        XCTAssertNotNil(try sut.inspect().find(button: "Midday"))
+        XCTAssertNotNil(try sut.inspect().find(button: "Evening"))
+        XCTAssertNotNil(try sut.inspect().find(button: "All day"))
+        XCTAssertNotNil(try sut.inspect().find(button: "Custom"))
+    }
+
+    @MainActor func testSelectsPresetMatchingCurrentTime() async throws {
+        let now = EasternTimeInstant(year: 2026, month: .august, day: 27, hour: 12, minute: 30, second: 0)
+        var settings: FavoriteSettings.Notifications = .companion.disabled
+        let widget = NotificationSettingsWidget(
+            settings: settings,
+            setSettings: { newSettings in settings = newSettings },
+            notificationPermissionManager: MockNotificationPermissionManager(),
+            now: now
+        )
+        let sut = widget.withFixedSettings([.notificationPresetWindows: true])
+
+        try sut.inspect().find(text: "Get disruption notifications").find(ViewType.Toggle.self, relation: .parent).tap()
+        try sut.inspect().findAndCallOnChange(newValue: true)
+        try await Task.sleep(for: .seconds(1))
+
+        XCTAssertEqual(
+            .init(enabled: true, windows: [FavoriteSettings.NotificationsWindow.companion.middayDefault]),
+            settings
+        )
+    }
 }
