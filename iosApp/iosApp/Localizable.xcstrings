@@ -1873,12 +1873,12 @@
         }
       }
     },
-    "**Update:** %{mode} service has resumed%{summary_location}." : {
-      "comment" : "Alert summary in the format of \\\"Update: [Vehicle type] service has resumed[ at location].\\\", ex \\\"Update: [Train] service has resumed[ from Riverside to Newton Highlands].\\\" or \\\"Update: [Bus] service has resumed[ at Market St @ Lothrop St].\\\"",
+    "**Update:** %1$@ has ended%2$@." : {
+      "comment" : "Alert summary in the format of \"Update: [Alert effect] has ended[ at location].\", ex \"[Update][Stop closure] has ended[ at Haymarket].\" or \\\"[Update][Service suspension] has ended[ from Alewife to Harvard]”.",
       "extractionState" : "manual"
     },
-    "**Update:** %1$@ has ended%2$@." : {
-      "comment" : "Alert summary in the format of \\\"Update: [Alert effect] has ended[ at location].\\\", ex \\\"[Update][Stop clousure] has ended[ at Haymarket].\" or \\\"[Update][Service suspension] has ended[ from Alewife to Harvard].",
+    "**Update:** %1$@ service has resumed%2$@." : {
+      "comment" : "Alert summary in the format of \"Update: [Vehicle type] service has resumed[ at location].\", ex \"Update: [Train] service has resumed[ from Riverside to Newton Highlands].\" or \"Update: [Bus] service has resumed[ at Market St @ Lothrop St].\"",
       "extractionState" : "manual"
     },
     "**Update:** %1$@%2$@%3$@%4$@%5$@" : {
