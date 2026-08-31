@@ -40,6 +40,7 @@ internal class SettingsRepositoryTest : KoinTest {
                 Settings.Notifications to false,
                 Settings.SearchRouteResults to false,
                 Settings.StationAccessibility to false,
+                Settings.NotificationPresetWindows to false,
             ),
             repo.getSettings(),
         )

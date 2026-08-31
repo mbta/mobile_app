@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.favorites
 
+import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
@@ -72,16 +73,25 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.component.LabeledSwitch
 import com.mbta.tid.mbta_app.android.util.ConstantPermissionState
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.formattedAbbr
 import com.mbta.tid.mbta_app.android.util.formattedFull
 import com.mbta.tid.mbta_app.android.util.formattedTime
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.FavoriteSettings
+import com.mbta.tid.mbta_app.model.FavoriteSettings.Notifications.Window
+import com.mbta.tid.mbta_app.model.PresetSelection
+import com.mbta.tid.mbta_app.model.PresetWindow
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.Settings as UserSettings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.uuid.ExperimentalUuidApi
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
+import org.koin.core.context.startKoin
+import org.koin.dsl.module
+import org.koin.mp.KoinPlatformTools
 
 @OptIn(ExperimentalUuidApi::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -90,6 +100,7 @@ fun NotificationSettingsWidget(
     setSettings: (FavoriteSettings.Notifications) -> Unit,
     notificationPermissionState: PermissionState,
     hasRequestedPermission: Boolean,
+    now: EasternTimeInstant = EasternTimeInstant.now(),
 ) {
     val permissionStatus = notificationPermissionState.status
     val permissionDenied = !permissionStatus.isGranted
@@ -103,6 +114,22 @@ fun NotificationSettingsWidget(
             setSettings(FavoriteSettings.Notifications.disabled)
         }
     }
+
+    val presetOptions =
+        listOf(
+            listOf(
+                PresetWindow.morningPreset(stringResource(R.string.morning)),
+                PresetWindow.middayPreset(stringResource(R.string.midday)),
+                PresetWindow.eveningPreset(stringResource(R.string.evening)),
+            ),
+            listOf(PresetWindow.allDayPreset(stringResource(R.string.all_day))),
+        )
+    val presetSelection: PresetSelection =
+        remember(settings) {
+            PresetSelection.selectedPresetFromSettings(settings, presetOptions)
+        }
+
+    val presetWindowsEnabled = SettingsCache.get(UserSettings.NotificationPresetWindows)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Column(
@@ -123,12 +150,29 @@ fun NotificationSettingsWidget(
                 setSettings = setSettings,
                 notificationPermissionState = notificationPermissionState,
                 enabled = !showPermissionSettingsLink,
+                presetWindowsEnabled = presetWindowsEnabled,
+                now = now,
             )
             AnimatedVisibility(showPermissionSettingsLink) { PermissionSettingsLink() }
         }
         AnimatedVisibility(settings.enabled && !permissionDenied) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                for (window in settings.windows.ifEmpty { setOf(defaultWindow()) }) {
+                if (presetWindowsEnabled) {
+                    PresetWindowSelector(
+                        presetRows = presetOptions,
+                        selectedPreset = presetSelection,
+                        presetsEnabled = settings.windows.size <= 1,
+                        onSelect = { window ->
+                            val otherWindows = settings.windows.drop(1)
+                            setSettings(settings.copy(windows = listOf(window) + otherWindows))
+                        },
+                    )
+                }
+
+                for (window in
+                    settings.windows.ifEmpty {
+                        setOf(defaultWindow(emptyList(), presetWindowsEnabled, now))
+                    }) {
                     WindowWidget(
                         window,
                         setWindow = { newWindow ->
@@ -144,13 +188,16 @@ fun NotificationSettingsWidget(
                                 .takeIf { settings.windows.size > 1 },
                     )
                 }
+
+                val customWindow =
+                    if (presetWindowsEnabled) {
+                        Window.customFromCurrentTime(now)
+                    } else {
+                        defaultWindow(settings.windows, presetWindowsEnabled, now)
+                    }
                 Surface(
                     onClick = {
-                        setSettings(
-                            settings.copy(
-                                windows = settings.windows + defaultWindow(settings.windows)
-                            )
-                        )
+                        setSettings(settings.copy(windows = settings.windows + customWindow))
                     },
                     Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
@@ -183,33 +230,39 @@ fun NotificationSettingsWidget(
 }
 
 private fun defaultWindow(
-    existingWindows: List<FavoriteSettings.Notifications.Window> = emptyList()
-): FavoriteSettings.Notifications.Window {
-    if (existingWindows.isEmpty()) {
-        return FavoriteSettings.Notifications.Window(
-            startTime = LocalTime(8, 0),
-            endTime = LocalTime(9, 0),
-            daysOfWeek =
-                setOf(
-                    DayOfWeek.MONDAY,
-                    DayOfWeek.TUESDAY,
-                    DayOfWeek.WEDNESDAY,
-                    DayOfWeek.THURSDAY,
-                    DayOfWeek.FRIDAY,
-                ),
+    existingWindows: List<Window> = emptyList(),
+    presetsEnabled: Boolean,
+    now: EasternTimeInstant,
+): Window {
+    if (presetsEnabled) {
+        return Window.defaultFromCurrentTime(now)
+    } else {
+        if (existingWindows.isEmpty()) {
+            return Window(
+                startTime = LocalTime(8, 0),
+                endTime = LocalTime(9, 0),
+                daysOfWeek =
+                    setOf(
+                        DayOfWeek.MONDAY,
+                        DayOfWeek.TUESDAY,
+                        DayOfWeek.WEDNESDAY,
+                        DayOfWeek.THURSDAY,
+                        DayOfWeek.FRIDAY,
+                    ),
+            )
+        }
+        return Window(
+            startTime = LocalTime(12, 0),
+            endTime = LocalTime(13, 0),
+            setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY),
         )
     }
-    return FavoriteSettings.Notifications.Window(
-        startTime = LocalTime(12, 0),
-        endTime = LocalTime(13, 0),
-        setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY),
-    )
 }
 
 @Composable
 private fun WindowWidget(
-    window: FavoriteSettings.Notifications.Window,
-    setWindow: (FavoriteSettings.Notifications.Window) -> Unit,
+    window: Window,
+    setWindow: (Window) -> Unit,
     deleteWindow: (() -> Unit)?,
 ) {
     Row(
@@ -235,32 +288,38 @@ private fun WindowWidget(
             }
         }
         Column(Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))) {
-            LabeledTimeInput(
-                stringResource(R.string.from),
-                stringResource(R.string.select_start_time),
-                window.startTime,
-                setTime = {
-                    setWindow(
-                        window.copy(
-                            startTime = it,
-                            endTime =
-                                if (window.endTime > it) window.endTime
-                                else
-                                    LocalTime.fromSecondOfDay(
-                                        minOf(it.toSecondOfDay() + 60 * 60, (24 * 60 - 1) * 60)
-                                    ),
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                TimeInput(
+                    stringResource(R.string.select_start_time),
+                    window.startTime,
+                    setTime = {
+                        setWindow(
+                            window.copy(
+                                startTime = it,
+                                endTime =
+                                    if (window.endTime > it) window.endTime
+                                    else
+                                        LocalTime.fromSecondOfDay(
+                                            minOf(it.toSecondOfDay() + 60 * 60, (24 * 60 - 1) * 60)
+                                        ),
+                            )
                         )
-                    )
-                },
-            )
-            HaloSeparator()
-            LabeledTimeInput(
-                stringResource(R.string.to),
-                stringResource(R.string.select_end_time),
-                window.endTime,
-                setTime = { setWindow(window.copy(endTime = it)) },
-                minimumTime = window.startTime,
-            )
+                    },
+                    modifier = Modifier.weight(1f),
+                )
+                Text(stringResource(R.string.to_lowercase))
+                TimeInput(
+                    stringResource(R.string.select_end_time),
+                    window.endTime,
+                    setTime = { setWindow(window.copy(endTime = it)) },
+                    minimumTime = window.startTime,
+                    modifier = Modifier.weight(1f),
+                )
+            }
             DaysOfWeekInput(
                 window.daysOfWeek,
                 setDaysOfWeek = { setWindow(window.copy(daysOfWeek = it)) },
@@ -312,20 +371,19 @@ fun AdvancedTimePickerDialog(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun LabeledTimeInput(
-    label: String,
+private fun TimeInput(
     modalTitle: String,
     time: LocalTime,
     setTime: (LocalTime) -> Unit,
+    modifier: Modifier = Modifier,
     minimumTime: LocalTime? = null,
 ) {
     var isPicking by rememberSaveable { mutableStateOf(false) }
     Row(
-        Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+        modifier.padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(label, Modifier.weight(1f))
         Button(
             onClick = { isPicking = true },
             shape = RoundedCornerShape(6.dp),
@@ -335,6 +393,7 @@ private fun LabeledTimeInput(
                     contentColor = colorResource(R.color.text),
                 ),
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
                 EasternTimeInstant(EasternTimeInstant.now().local.date, time).formattedTime(),
@@ -445,7 +504,10 @@ private fun NotificationSwitch(
     setSettings: (FavoriteSettings.Notifications) -> Unit,
     notificationPermissionState: PermissionState,
     enabled: Boolean,
+    presetWindowsEnabled: Boolean,
+    now: EasternTimeInstant = EasternTimeInstant.now(),
 ) {
+
     LabeledSwitch(
         Modifier.haloContainer(
                 outlineColor = Color.Transparent,
@@ -474,7 +536,10 @@ private fun NotificationSwitch(
             setSettings(
                 settings.copy(
                     enabled = it,
-                    windows = settings.windows.ifEmpty { listOf(defaultWindow()) },
+                    windows =
+                        settings.windows.ifEmpty {
+                            listOf(defaultWindow(emptyList(), presetWindowsEnabled, now))
+                        },
                 )
             )
         },
@@ -518,11 +583,27 @@ private fun PermissionSettingsLink() {
 @Preview
 @Composable
 private fun NotificationSettingsWidgetPreview() {
+
+    if (KoinPlatformTools.defaultContext().getOrNull() == null) {
+        startKoin {
+            modules(
+                module {
+                    single {
+                        SettingsCache(
+                            MockSettingsRepository(
+                                mapOf(UserSettings.NotificationPresetWindows to true)
+                            )
+                        )
+                    }
+                }
+            )
+        }
+    }
     var settings by remember {
         mutableStateOf(
             FavoriteSettings.Notifications(
                 enabled = true,
-                windows = listOf(defaultWindow(), defaultWindow(listOf(defaultWindow()))),
+                windows = listOf(defaultWindow(emptyList(), true, EasternTimeInstant.now())),
             )
         )
     }
@@ -536,7 +617,7 @@ private fun NotificationSettingsWidgetPreview() {
                 settings,
                 { settings = it },
                 ConstantPermissionState(
-                    android.Manifest.permission.POST_NOTIFICATIONS,
+                    Manifest.permission.POST_NOTIFICATIONS,
                     PermissionStatus.Granted,
                 ),
                 true,
@@ -546,7 +627,7 @@ private fun NotificationSettingsWidgetPreview() {
                 FavoriteSettings.Notifications.disabled,
                 {},
                 ConstantPermissionState(
-                    android.Manifest.permission.POST_NOTIFICATIONS,
+                    Manifest.permission.POST_NOTIFICATIONS,
                     PermissionStatus.Denied(false),
                 ),
                 true,

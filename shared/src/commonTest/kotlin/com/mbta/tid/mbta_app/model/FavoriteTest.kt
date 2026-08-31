@@ -1,10 +1,12 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.json
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.buildFavorites
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.addJsonObject
@@ -16,6 +18,7 @@ import kotlinx.serialization.json.putJsonArray
 import kotlinx.serialization.json.putJsonObject
 
 class FavoriteTest {
+
     @Test
     fun `parses pre-notifications format`() {
         val oldFavorites = buildJsonObject {
@@ -102,5 +105,75 @@ class FavoriteTest {
         }
         assertEquals(serialized, json.encodeToJsonElement(favorites))
         assertEquals(favorites, json.decodeFromJsonElement(serialized))
+    }
+
+    @Test
+    fun `defaultFromCurrentTime returns the matching preset`() {
+        assertEquals(
+            FavoriteSettings.Notifications.Window.morningDefault,
+            FavoriteSettings.Notifications.Window.defaultFromCurrentTime(
+                EasternTimeInstant(LocalDateTime(2026, 8, 27, 7, 30))
+            ),
+        )
+        assertEquals(
+            FavoriteSettings.Notifications.Window.middayDefault,
+            FavoriteSettings.Notifications.Window.defaultFromCurrentTime(
+                EasternTimeInstant(LocalDateTime(2026, 8, 27, 12, 30))
+            ),
+        )
+
+        assertEquals(
+            FavoriteSettings.Notifications.Window.eveningDefault,
+            FavoriteSettings.Notifications.Window.defaultFromCurrentTime(
+                EasternTimeInstant(LocalDateTime(2026, 8, 27, 18, 30))
+            ),
+        )
+
+        assertEquals(
+            FavoriteSettings.Notifications.Window.allDayDefault,
+            FavoriteSettings.Notifications.Window.defaultFromCurrentTime(
+                EasternTimeInstant(LocalDateTime(2026, 8, 27, 21, 30))
+            ),
+        )
+    }
+
+    @Test
+    fun `customFromCurrentTime rounds to the current hour`() {
+        val now = EasternTimeInstant(LocalDateTime(2026, 8, 27, 9, 30))
+
+        assertEquals(
+            FavoriteSettings.Notifications.Window(
+                LocalTime(9, 0),
+                LocalTime(10, 0),
+                setOf(
+                    DayOfWeek.MONDAY,
+                    DayOfWeek.TUESDAY,
+                    DayOfWeek.WEDNESDAY,
+                    DayOfWeek.THURSDAY,
+                    DayOfWeek.FRIDAY,
+                ),
+            ),
+            FavoriteSettings.Notifications.Window.customFromCurrentTime(now),
+        )
+    }
+
+    @Test
+    fun `customFromCurrentTime maxes out before midnight`() {
+        val now = EasternTimeInstant(LocalDateTime(2026, 8, 27, 23, 30))
+
+        assertEquals(
+            FavoriteSettings.Notifications.Window(
+                LocalTime(23, 0),
+                LocalTime(23, 59),
+                setOf(
+                    DayOfWeek.MONDAY,
+                    DayOfWeek.TUESDAY,
+                    DayOfWeek.WEDNESDAY,
+                    DayOfWeek.THURSDAY,
+                    DayOfWeek.FRIDAY,
+                ),
+            ),
+            FavoriteSettings.Notifications.Window.customFromCurrentTime(now),
+        )
     }
 }

@@ -413,8 +413,9 @@
     <string name="tie_replacement">Tie Replacement</string>
     <string name="tie_replacement_lowercase">tie replacement</string>
     <string name="time_picker_type_toggle">Time picker type toggle</string>
-    <string name="to">To</string>
     <string name="toast_tip_prefix">Tip: %1$s</string>
+    <string name="to">To</string>
+    <string name="to_lowercase">to</string>
     <string name="toggle_direction">toggle direction</string>
     <string name="track_change">Track Change</string>
     <string name="track_change_sentence_case">Track change</string>
@@ -492,4 +493,9 @@
     <string name="weekends">Weekends</string>
     <string name="westbound">Westbound</string>
     <string name="x_and_y">%1$s and %2$s</string>
+    <string name="morning">Morning</string>
+    <string name="midday">Midday</string>
+    <string name="evening">Evening</string>
+    <string name="all_day">All day</string>
+    <string name="custom">Custom</string>
 </resources>

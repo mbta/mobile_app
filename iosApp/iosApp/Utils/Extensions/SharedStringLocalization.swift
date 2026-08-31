@@ -59,6 +59,8 @@ extension SharedString {
                 "Disruption Notifications",
                 comment: "A setting on the More page to enable the disruption notification beta"
             )
+        case .notificationPresetWindows:
+            "Notification preset windows" // dev only, no i18n
         case .privacyPolicy:
             NSLocalizedString(
                 "Privacy Policy",

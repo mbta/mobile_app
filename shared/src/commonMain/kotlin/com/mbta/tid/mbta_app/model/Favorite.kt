@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 import kotlinx.datetime.DayOfWeek
@@ -73,7 +74,97 @@ constructor(val notifications: Notifications = Notifications.disabled) {
             val startTime: LocalTime,
             val endTime: LocalTime,
             val daysOfWeek: Set<DayOfWeek>,
-        )
+        ) {
+            public companion object {
+
+                public val morningDefault: Window =
+                    Window(
+                        startTime = LocalTime(6, 0),
+                        endTime = LocalTime(10, 0),
+                        daysOfWeek =
+                            setOf(
+                                DayOfWeek.MONDAY,
+                                DayOfWeek.TUESDAY,
+                                DayOfWeek.WEDNESDAY,
+                                DayOfWeek.THURSDAY,
+                                DayOfWeek.FRIDAY,
+                            ),
+                    )
+
+                public val middayDefault: Window =
+                    Window(
+                        startTime = LocalTime(10, 0),
+                        endTime = LocalTime(16, 0),
+                        daysOfWeek =
+                            setOf(
+                                DayOfWeek.MONDAY,
+                                DayOfWeek.TUESDAY,
+                                DayOfWeek.WEDNESDAY,
+                                DayOfWeek.THURSDAY,
+                                DayOfWeek.FRIDAY,
+                            ),
+                    )
+
+                public val eveningDefault: Window =
+                    Window(
+                        startTime = LocalTime(16, 0),
+                        endTime = LocalTime(20, 0),
+                        daysOfWeek =
+                            setOf(
+                                DayOfWeek.MONDAY,
+                                DayOfWeek.TUESDAY,
+                                DayOfWeek.WEDNESDAY,
+                                DayOfWeek.THURSDAY,
+                                DayOfWeek.FRIDAY,
+                            ),
+                    )
+                // TODO: Handle default that crosses midnight boundary
+                public val allDayDefault: Window =
+                    Window(
+                        startTime = LocalTime(0, 0),
+                        endTime = LocalTime(23, 59),
+                        daysOfWeek =
+                            setOf(
+                                DayOfWeek.MONDAY,
+                                DayOfWeek.TUESDAY,
+                                DayOfWeek.WEDNESDAY,
+                                DayOfWeek.THURSDAY,
+                                DayOfWeek.FRIDAY,
+                            ),
+                    )
+
+                public fun defaultFromCurrentTime(now: EasternTimeInstant): Window {
+                    val presets =
+                        listOf(morningDefault, middayDefault, eveningDefault, allDayDefault)
+
+                    return presets.firstOrNull { now.local.time in it.startTime..it.endTime }
+                        ?: allDayDefault
+                }
+
+                public fun customFromCurrentTime(now: EasternTimeInstant): Window {
+                    val startTime = LocalTime(now.local.time.hour, 0)
+                    val endTime =
+                        if (startTime.hour == 23) LocalTime(now.local.time.hour, 59)
+                        else
+                            LocalTime(
+                                now.local.time.hour + 1,
+                                0,
+                            )
+                    return Window(
+                        startTime = startTime,
+                        endTime = endTime,
+                        daysOfWeek =
+                            setOf(
+                                DayOfWeek.MONDAY,
+                                DayOfWeek.TUESDAY,
+                                DayOfWeek.WEDNESDAY,
+                                DayOfWeek.THURSDAY,
+                                DayOfWeek.FRIDAY,
+                            ),
+                    )
+                }
+            }
+        }
 
         public companion object {
             public val disabled: Notifications =

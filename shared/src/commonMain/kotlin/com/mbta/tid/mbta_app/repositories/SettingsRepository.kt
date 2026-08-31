@@ -42,6 +42,7 @@ public enum class Settings(
     DevDebugMode(booleanPreferencesKey("dev_debug_mode")),
     HideMaps(booleanPreferencesKey("hide_maps")),
     Notifications(booleanPreferencesKey("notifications")),
+    NotificationPresetWindows(booleanPreferencesKey("notifications_window_changes")),
     SearchRouteResults(booleanPreferencesKey("searchRouteResults_featureFlag")),
     StationAccessibility(booleanPreferencesKey("elevator_accessibility")),
 }
