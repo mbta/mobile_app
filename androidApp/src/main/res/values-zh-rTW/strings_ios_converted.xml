@@ -14,7 +14,7 @@
     <string name="additional_service">附加服務</string>
     <string name="additional_service_sentence_case">附加服務</string>
     <plurals name="affected_stops">
-        <item quantity="other">&lt;b>%1$d&lt;/b>個受影響的網站</item>
+        <item quantity="other">&lt;b>%1$d&lt;/b>個受影響的站點</item>
     </plurals>
     <string name="alert">警報</string>
     <string name="alert_details">警報詳情</string>
@@ -115,10 +115,10 @@
     <string name="elevator_closed_sentence_case">直梯已關閉</string>
     <string name="elevator_closure">電梯關閉</string>
     <plurals name="elevator_closure_count">
-        <item quantity="other">%1$d部電梯關閉</item>
+        <item quantity="other">%1$d部電梯 已關閉</item>
     </plurals>
     <plurals name="elevator_closure_count_accessibility_description">
-        <item quantity="other">此網站有%1$d電梯關閉</item>
+        <item quantity="other">本站有%1$d部電梯 已關閉</item>
     </plurals>
     <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">結束日期</string>
@@ -386,7 +386,7 @@
     <string name="stop_skipped_sentence_case">網站跳停</string>
     <string name="stops">網站</string>
     <plurals name="stops_away">
-        <item quantity="other">還有%1$d站</item>
+        <item quantity="other">距離%1$d站</item>
     </plurals>
     <string name="strike">罷工</string>
     <string name="strike_lowercase">罷工</string>
@@ -441,7 +441,7 @@
     <string name="until_tomorrow">\u0020截至明日</string>
     <string name="updated_at">最後更新：%1$s</string>
     <plurals name="updated_mins_ago">
-        <item quantity="other">%1$d 分鐘前更新</item>
+        <item quantity="other">%1$d分鐘前更新</item>
     </plurals>
     <string name="vehicle_arriving_first">%1$s現已到站</string>
     <string name="vehicle_arriving_other">下一趟車現已到站</string>
