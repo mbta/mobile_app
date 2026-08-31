@@ -23,7 +23,7 @@ struct SaveFavoritePage: View {
 
     @State var globalResponse: GlobalResponse?
     @State var favorites: Favorites = .init(routeStopDirection: [:])
-    @State var pendingSettings: MutableFavoriteSettings
+    @State var pendingSettings: FavoriteSettings
     @State var selectedDirection: Int32
     @State var favoritesLoaded: Bool = false
     @State var wasAdding: Bool = false
@@ -48,7 +48,7 @@ struct SaveFavoritePage: View {
         self.navCallbacks = navCallbacks
         self.toastVM = toastVM
         self.notificationPermissionManager = notificationPermissionManager
-        pendingSettings = .init(.init())
+        pendingSettings = .init()
 
         selectedDirection = initialSelectedDirection
     }
@@ -88,9 +88,8 @@ struct SaveFavoritePage: View {
     var showDirectionToggle: Bool { stopDirections.count > 1 && wasAdding }
 
     func resetPendingSettings() {
-        pendingSettings = .init(
-            favorites.routeStopDirection[selectedRouteStopDirection] ?? .init(notifications: .companion.disabled)
-        )
+        pendingSettings = favorites
+            .routeStopDirection[selectedRouteStopDirection] ?? .init(notifications: .companion.disabled)
     }
 
     func updateCloseAndToast(_ rsd: RouteStopDirection, _ setting: FavoriteSettings?) {
@@ -166,7 +165,7 @@ struct SaveFavoritePage: View {
             SaveFavoriteHeader(
                 isFavorite: isFavorite,
                 onCancel: { navCallbacks.onBack?() },
-                onSave: { updateCloseAndToast(selectedRouteStopDirection, pendingSettings.toShared()) },
+                onSave: { updateCloseAndToast(selectedRouteStopDirection, pendingSettings) },
             )
             HaloScrollView(alwaysShowHalo: true) {
                 if let lineOrRoute, let stop {
@@ -181,6 +180,9 @@ struct SaveFavoritePage: View {
                         )
                         NotificationSettingsWidget(
                             settings: pendingSettings.notifications,
+                            setSettings: { updatedSettings in
+                                pendingSettings = pendingSettings.doCopy(notifications: updatedSettings)
+                            },
                             notificationPermissionManager: notificationPermissionManager,
                         )
                         if isFavorite {

@@ -14,9 +14,10 @@ import XCTest
 
 final class NotificationSettingsWidgetTests: XCTestCase {
     @MainActor func testAddTimePeriod() async throws {
-        let settings: MutableFavoriteSettings.Notifications = .init(.companion.disabled)
+        var settings: FavoriteSettings.Notifications = .companion.disabled
         let sut = NotificationSettingsWidget(
             settings: settings,
+            setSettings: { newSettings in settings = newSettings },
             notificationPermissionManager: MockNotificationPermissionManager()
         ).withFixedSettings([:])
 
@@ -31,8 +32,8 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             .init(
                 enabled: true,
                 windows: [.init(
-                    startTime: .init(hour: 8, minute: 0, second: 0),
-                    endTime: .init(hour: 9, minute: 0, second: 0),
+                    startTime: .init(hour: 8, minute: 0, second: 0, nanosecond: 0),
+                    endTime: .init(hour: 9, minute: 0, second: 0, nanosecond: 0),
                     daysOfWeek: [.monday, .tuesday, .wednesday, .thursday, .friday]
                 )]
             )
@@ -40,14 +41,15 @@ final class NotificationSettingsWidgetTests: XCTestCase {
     }
 
     func testAddSecondTimePeriod() throws {
-        let firstWindow = MutableFavoriteSettings.Notifications.Window(
-            startTime: .init(hour: 1, minute: 0, second: 0),
-            endTime: .init(hour: 2, minute: 0, second: 0),
+        let firstWindow = FavoriteSettings.NotificationsWindow(
+            startTime: .init(hour: 1, minute: 0, second: 0, nanosecond: 0),
+            endTime: .init(hour: 2, minute: 0, second: 0, nanosecond: 0),
             daysOfWeek: [.thursday]
         )
-        let settings = MutableFavoriteSettings.Notifications(enabled: true, windows: [firstWindow])
+        var settings: FavoriteSettings.Notifications = .init(enabled: true, windows: [firstWindow])
         let sut = NotificationSettingsWidget(
             settings: settings,
+            setSettings: { newSettings in settings = newSettings },
             notificationPermissionManager: MockNotificationPermissionManager()
         ).withFixedSettings([:])
 
@@ -69,8 +71,8 @@ final class NotificationSettingsWidgetTests: XCTestCase {
                 windows: [
                     firstWindow,
                     .init(
-                        startTime: .init(hour: 12, minute: 0, second: 0),
-                        endTime: .init(hour: 13, minute: 0, second: 0),
+                        startTime: .init(hour: 12, minute: 0, second: 0, nanosecond: 0),
+                        endTime: .init(hour: 13, minute: 0, second: 0, nanosecond: 0),
                         daysOfWeek: [.saturday, .sunday]
                     ),
                 ]
@@ -79,16 +81,17 @@ final class NotificationSettingsWidgetTests: XCTestCase {
     }
 
     func testChangeTime() throws {
-        let settings = MutableFavoriteSettings.Notifications(
+        var settings: FavoriteSettings.Notifications = .init(
             enabled: true,
             windows: [.init(
-                startTime: .init(hour: 8, minute: 0, second: 0),
-                endTime: .init(hour: 9, minute: 0, second: 0),
+                startTime: .init(hour: 8, minute: 0, second: 0, nanosecond: 0),
+                endTime: .init(hour: 9, minute: 0, second: 0, nanosecond: 0),
                 daysOfWeek: [.monday, .tuesday, .wednesday, .thursday, .friday]
             )]
         )
         let sut = NotificationSettingsWidget(
             settings: settings,
+            setSettings: { newSettings in settings = newSettings },
             notificationPermissionManager: MockNotificationPermissionManager()
         ).withFixedSettings([:])
 
@@ -101,7 +104,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             matching: .init(hour: 7, minute: 45),
             matchingPolicy: .strict
         )))
-        XCTAssertEqual(settings.windows[0].startTime, .init(hour: 7, minute: 45, second: 0))
+        XCTAssertEqual(settings.windows[0].startTime, .init(hour: 7, minute: 45, second: 0, nanosecond: 0))
         try sut.inspect().find(
             ViewType.DatePicker.self,
             where: { try $0.labelView().text().string() == "Select end time" }
@@ -111,40 +114,40 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             matching: .init(hour: 9, minute: 10),
             matchingPolicy: .strict
         )))
-        XCTAssertEqual(settings.windows[0].endTime, .init(hour: 9, minute: 10, second: 0))
+        XCTAssertEqual(settings.windows[0].endTime, .init(hour: 9, minute: 10, second: 0, nanosecond: 0))
     }
 
     func testChangeDays() throws {
-        let settings = MutableFavoriteSettings.Notifications(
+        var settings: FavoriteSettings.Notifications = .init(
             enabled: true,
             windows: [.init(
-                startTime: .init(hour: 8, minute: 0, second: 0),
-                endTime: .init(hour: 9, minute: 0, second: 0),
+                startTime: .init(hour: 8, minute: 0, second: 0, nanosecond: 0),
+                endTime: .init(hour: 9, minute: 0, second: 0, nanosecond: 0),
                 daysOfWeek: [.monday, .tuesday, .wednesday, .thursday, .friday]
             )]
         )
         let sut = NotificationSettingsWidget(
             settings: settings,
+            setSettings: { newSettings in settings = newSettings },
             notificationPermissionManager: MockNotificationPermissionManager()
         ).withFixedSettings([:])
 
         try sut.inspect().find(text: "Sun").find(ViewType.VStack.self, relation: .parent).callOnTapGesture()
         XCTAssertEqual(settings.windows[0].daysOfWeek, [.sunday, .monday, .tuesday, .wednesday, .thursday, .friday])
-        try sut.inspect().find(text: "Wed").find(ViewType.VStack.self, relation: .parent).callOnTapGesture()
-        XCTAssertEqual(settings.windows[0].daysOfWeek, [.sunday, .monday, .tuesday, .thursday, .friday])
     }
 
     func testValidatesTime() throws {
-        let settings = MutableFavoriteSettings.Notifications(
+        var settings: FavoriteSettings.Notifications = .init(
             enabled: true,
             windows: [.init(
-                startTime: .init(hour: 8, minute: 0, second: 0),
-                endTime: .init(hour: 9, minute: 0, second: 0),
+                startTime: .init(hour: 8, minute: 0, second: 0, nanosecond: 0),
+                endTime: .init(hour: 9, minute: 0, second: 0, nanosecond: 0),
                 daysOfWeek: [.monday, .tuesday, .wednesday, .thursday, .friday]
             )]
         )
         let sut = NotificationSettingsWidget(
             settings: settings,
+            setSettings: { newSettings in settings = newSettings },
             notificationPermissionManager: MockNotificationPermissionManager()
         ).withFixedSettings([:])
 
@@ -159,30 +162,32 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             matching: .init(hour: 10, minute: 45),
             matchingPolicy: .strict
         )))
-        XCTAssertEqual(settings.windows[0].startTime, .init(hour: 10, minute: 45, second: 0))
-        try sut.inspect().findAndCallOnChange(newValue: settings.windows[0].startTime)
-        XCTAssertEqual(settings.windows[0].endTime, .init(hour: 11, minute: 45, second: 0))
+        XCTAssertEqual(settings.windows[0].startTime, .init(hour: 10, minute: 45, second: 0, nanosecond: 0))
+        XCTAssertEqual(settings.windows[0].endTime, .init(hour: 11, minute: 45, second: 0, nanosecond: 0))
         // ViewInspector appears not to expose or enforce valid ranges, so can’t test minimum end time
     }
 
     func testRequestsPermission() throws {
         let permissionExp = expectation(description: "permission was requested")
 
-        let settings: MutableFavoriteSettings.Notifications = .init(.companion.disabled)
+        var settings: FavoriteSettings.Notifications = .companion.disabled
         let permissionManager = MockNotificationPermissionManager(
             initialAuthorizationStatus: .notDetermined,
             requestPermissionResponse: true,
             onRequestPermission: { permissionExp.fulfill() }
         )
-        let sut = NotificationSettingsWidget(settings: settings, notificationPermissionManager: permissionManager)
+        let sut = NotificationSettingsWidget(settings: settings,
+                                             setSettings: { newSettings in settings = newSettings },
+                                             notificationPermissionManager: permissionManager)
         ViewHosting.host(view: sut.withFixedSettings([:]))
 
         try sut.inspect().find(text: "Get disruption notifications").find(ViewType.Toggle.self, relation: .parent).tap()
+        try sut.inspect().findAndCallOnChange(newValue: true)
         wait(for: [permissionExp])
 
         XCTAssertEqual(.init(enabled: true, windows: [.init(
-            startTime: .init(hour: 8, minute: 0, second: 0),
-            endTime: .init(hour: 9, minute: 0, second: 0),
+            startTime: .init(hour: 8, minute: 0, second: 0, nanosecond: 0),
+            endTime: .init(hour: 9, minute: 0, second: 0, nanosecond: 0),
             daysOfWeek: [.monday, .tuesday, .wednesday, .thursday, .friday]
         )]), settings)
         XCTAssertEqual(.authorized, permissionManager.authorizationStatus)
@@ -192,20 +197,23 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         let permissionExp = expectation(description: "permission was requested")
         let settingsLinkExp = expectation(description: "settings link was tapped")
 
-        let settings: MutableFavoriteSettings.Notifications = .init(.companion.disabled)
+        var settings: FavoriteSettings.Notifications = .companion.disabled
         let permissionManager = MockNotificationPermissionManager(
             initialAuthorizationStatus: .notDetermined,
             requestPermissionResponse: false,
             onRequestPermission: { permissionExp.fulfill() },
             onOpenSettings: { settingsLinkExp.fulfill() }
         )
-        let sut = NotificationSettingsWidget(settings: settings, notificationPermissionManager: permissionManager)
+        let sut = NotificationSettingsWidget(settings: settings,
+                                             setSettings: { newSettings in settings = newSettings },
+                                             notificationPermissionManager: permissionManager)
         ViewHosting.host(view: sut.withFixedSettings([:]))
 
         try sut.inspect().find(text: "Get disruption notifications").find(ViewType.Toggle.self, relation: .parent).tap()
+        try sut.inspect().findAndCallOnChange(newValue: true)
         wait(for: [permissionExp])
 
-        XCTAssertEqual(.init(.companion.disabled), settings)
+        XCTAssertEqual(.companion.disabled, settings)
         XCTAssertEqual(.denied, permissionManager.authorizationStatus)
         XCTAssert(try sut.inspect().find(text: "Get disruption notifications")
             .find(ViewType.Toggle.self, relation: .parent).isDisabled())

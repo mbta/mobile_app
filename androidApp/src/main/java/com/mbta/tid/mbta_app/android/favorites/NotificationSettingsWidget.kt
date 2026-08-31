@@ -270,12 +270,7 @@ private fun WindowWidget(
                         setWindow(
                             window.copy(
                                 startTime = it,
-                                endTime =
-                                    if (window.endTime > it) window.endTime
-                                    else
-                                        LocalTime.fromSecondOfDay(
-                                            minOf(it.toSecondOfDay() + 60 * 60, (24 * 60 - 1) * 60)
-                                        ),
+                                endTime = Window.safeEndTime(it, window.endTime),
                             )
                         )
                     },
@@ -286,7 +281,7 @@ private fun WindowWidget(
                     stringResource(R.string.select_end_time),
                     window.endTime,
                     setTime = { setWindow(window.copy(endTime = it)) },
-                    minimumTime = window.startTime,
+                    minimumTime = Window.minimumEndTime(window.startTime),
                     modifier = Modifier.weight(1f),
                 )
             }
