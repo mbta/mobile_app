@@ -5766,44 +5766,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"All day\", \"en\", \"es\")"
+            "state" : "translated",
+            "value" : "Todo el día"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"All day\", \"en\", \"fr\")"
+            "state" : "translated",
+            "value" : "Toute la journée"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"All day\", \"en\", \"ht\")"
+            "state" : "translated",
+            "value" : "Tout lajounen"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"All day\", \"en\", \"pt-BR\")"
+            "state" : "translated",
+            "value" : "O dia todo"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"All day\", \"en\", \"vi\")"
+            "state" : "translated",
+            "value" : "Cả ngày"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"All day\", \"en\", \"zh-CN\")"
+            "state" : "translated",
+            "value" : "全天"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"All day\", \"en\", \"zh-TW\")"
+            "state" : "translated",
+            "value" : "全天"
           }
         }
       }
@@ -9467,44 +9467,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Custom\", \"en\", \"es\")"
+            "state" : "translated",
+            "value" : "Costumbres"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Custom\", \"en\", \"fr\")"
+            "state" : "translated",
+            "value" : "Coutumes"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Custom\", \"en\", \"ht\")"
+            "state" : "translated",
+            "value" : "Personnalisé"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Custom\", \"en\", \"pt-BR\")"
+            "state" : "translated",
+            "value" : "Personalizado"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Custom\", \"en\", \"vi\")"
+            "state" : "translated",
+            "value" : "Phong tục"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Custom\", \"en\", \"zh-CN\")"
+            "state" : "translated",
+            "value" : "风俗"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Custom\", \"en\", \"zh-TW\")"
+            "state" : "translated",
+            "value" : "風俗"
           }
         }
       }
@@ -11681,44 +11681,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Evening\", \"en\", \"es\")"
+            "state" : "translated",
+            "value" : "Noche"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Evening\", \"en\", \"fr\")"
+            "state" : "translated",
+            "value" : "Soirée"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Evening\", \"en\", \"ht\")"
+            "state" : "translated",
+            "value" : "Aswè"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Evening\", \"en\", \"pt-BR\")"
+            "state" : "translated",
+            "value" : "Noite"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Evening\", \"en\", \"vi\")"
+            "state" : "translated",
+            "value" : "Buổi tối"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Evening\", \"en\", \"zh-CN\")"
+            "state" : "translated",
+            "value" : "晚上"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Evening\", \"en\", \"zh-TW\")"
+            "state" : "translated",
+            "value" : "晚上"
           }
         }
       }
@@ -16011,44 +16011,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Midday\", \"en\", \"es\")"
+            "state" : "translated",
+            "value" : "Mediodía"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Midday\", \"en\", \"fr\")"
+            "state" : "translated",
+            "value" : "Midi"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Midday\", \"en\", \"ht\")"
+            "state" : "translated",
+            "value" : "Midi"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Midday\", \"en\", \"pt-BR\")"
+            "state" : "translated",
+            "value" : "Meio-dia"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Midday\", \"en\", \"vi\")"
+            "state" : "translated",
+            "value" : "Giữa trưa"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Midday\", \"en\", \"zh-CN\")"
+            "state" : "translated",
+            "value" : "正午"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Midday\", \"en\", \"zh-TW\")"
+            "state" : "translated",
+            "value" : "正午"
           }
         }
       }
@@ -16246,44 +16246,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Morning\", \"en\", \"es\")"
+            "state" : "translated",
+            "value" : "Buenos días"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Morning\", \"en\", \"fr\")"
+            "state" : "translated",
+            "value" : "Bonjour"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Morning\", \"en\", \"ht\")"
+            "state" : "translated",
+            "value" : "Maten"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Morning\", \"en\", \"pt-BR\")"
+            "state" : "translated",
+            "value" : "Manhã"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Morning\", \"en\", \"vi\")"
+            "state" : "translated",
+            "value" : "Buổi sáng"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Morning\", \"en\", \"zh-CN\")"
+            "state" : "translated",
+            "value" : "早晨"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"Morning\", \"en\", \"zh-TW\")"
+            "state" : "translated",
+            "value" : "早晨"
           }
         }
       }
@@ -25389,44 +25389,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"to\", \"en\", \"es\")"
+            "state" : "translated",
+            "value" : "A"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"to\", \"en\", \"fr\")"
+            "state" : "translated",
+            "value" : "Jusqu’à"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"to\", \"en\", \"ht\")"
+            "state" : "translated",
+            "value" : "Pou"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"to\", \"en\", \"pt-BR\")"
+            "state" : "translated",
+            "value" : "Para"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"to\", \"en\", \"vi\")"
+            "state" : "translated",
+            "value" : "Đến"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"to\", \"en\", \"zh-CN\")"
+            "state" : "translated",
+            "value" : "目的地"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"to\", \"en\", \"zh-TW\")"
+            "state" : "translated",
+            "value" : "目的地"
           }
         }
       }
