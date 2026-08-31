@@ -14439,7 +14439,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**All clear:** Normal service has resumed."
+            "value" : " until %@"
           }
         },
         "es" : {
