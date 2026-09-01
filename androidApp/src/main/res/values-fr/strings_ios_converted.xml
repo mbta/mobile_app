@@ -25,7 +25,6 @@
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
     <string name="alert_summary_location_successive">\u0020de &lt;b>%1$s&lt;/b> à &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_timeframe_this_week">\u0020jusqu’au %1$s</string>
-    <string name="all_day">Toute la journée</string>
     <string name="alternative_path">Trajet alternatif</string>
     <string name="amber_alert">Alerte Amber</string>
     <string name="amber_alert_sentence_case">Alerte Amber</string>
@@ -78,7 +77,6 @@
     <string name="crowding_some_crowding">Affluence modérée</string>
     <string name="crowding_unknown">Foule inconnue</string>
     <string name="current_locale">fr</string>
-    <string name="custom">Coutumes</string>
     <string name="daily">Tous les jours</string>
     <string name="delay">Retard</string>
     <string name="delays_due_to_cause">Retards dus à &lt;b>%1$s&lt;/b></string>
@@ -134,7 +132,6 @@
     <string name="error_loading_data">Erreur dans le chargement des données</string>
     <string name="escalator_closed_sentence_case">Escalator hors service</string>
     <string name="escalator_closure">Escalator hors service</string>
-    <string name="evening">Soirée</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> h</string>
     <string name="expand_remaining_stops">étendre les arrêts restants</string>
     <string name="expand_stops">afficher les arrêts</string>
@@ -224,7 +221,6 @@
     <string name="mechanical_problem_lowercase">problème mécanique</string>
     <string name="medical_emergency">Urgence médicale</string>
     <string name="medical_emergency_lowercase">urgence médicale</string>
-    <string name="midday">Midi</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> min</string>
     <string name="modified_service">Service modifié</string>
     <string name="modified_service_sentence_case">Service modifié</string>
@@ -241,7 +237,6 @@
     <string name="more_section_support_note_accessibility">711 pour le service TTY; VRS pour la langue des signes</string>
     <string name="more_section_support_note_hours">Du lundi au vendredi : de 6 h 30 à 20 h</string>
     <string name="more_title">MBTA Go</string>
-    <string name="morning">Bonjour</string>
     <string name="nearby_transit">Transports à proximité</string>
     <string name="nearby_transit_link">Proche</string>
     <string name="new_feature_screen_reader_header_prefix">Nouvelle fonctionnalité. %1$s</string>
@@ -420,7 +415,6 @@
     <string name="tie_replacement_lowercase">remplacement de traverses</string>
     <string name="time_picker_type_toggle">Changer le mode de sélection de l’heure</string>
     <string name="to">Jusqu’à</string>
-    <string name="to_lowercase">Jusqu’à</string>
     <string name="toast_tip_prefix">Astuce : %1$s</string>
     <string name="toggle_direction">inverser la direction</string>
     <string name="track_change">Changement de voie</string>

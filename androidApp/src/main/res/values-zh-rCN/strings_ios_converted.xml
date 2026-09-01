@@ -23,7 +23,6 @@
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
     <string name="alert_summary_location_successive">\u0020从&lt;b>%1$s&lt;/b>到&lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_timeframe_this_week">\u0020至%1$s</string>
-    <string name="all_day">全天</string>
     <string name="alternative_path">备选路线</string>
     <string name="amber_alert">安珀警报</string>
     <string name="amber_alert_sentence_case">安珀警报</string>
@@ -76,7 +75,6 @@
     <string name="crowding_some_crowding">略有拥挤</string>
     <string name="crowding_unknown">拥挤度未知</string>
     <string name="current_locale">zh-Hans-CN</string>
-    <string name="custom">风俗</string>
     <string name="daily">每日</string>
     <string name="delay">延误</string>
     <string name="delays_due_to_cause">由于 &lt;b>%1$s&lt;/b> 造成延误</string>
@@ -128,7 +126,6 @@
     <string name="error_loading_data">加载数据时出错</string>
     <string name="escalator_closed_sentence_case">自动扶梯已关闭</string>
     <string name="escalator_closure">自动扶梯关闭</string>
-    <string name="evening">晚上</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b>小时</string>
     <string name="expand_remaining_stops">展开剩余站点</string>
     <string name="expand_stops">展开站点</string>
@@ -218,7 +215,6 @@
     <string name="mechanical_problem_lowercase">机械故障</string>
     <string name="medical_emergency">医疗急救</string>
     <string name="medical_emergency_lowercase">医疗急救</string>
-    <string name="midday">正午</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b>分钟</string>
     <string name="modified_service">调整后的服务</string>
     <string name="modified_service_sentence_case">调整后的服务</string>
@@ -235,7 +231,6 @@
     <string name="more_section_support_note_accessibility">TTY呼叫者请拨打711；ASL呼叫者请使用VRS</string>
     <string name="more_section_support_note_hours">周一至周五：上午6:30至晚上8:00</string>
     <string name="more_title">MBTA Go</string>
-    <string name="morning">早晨</string>
     <string name="nearby_transit">附近的交通</string>
     <string name="nearby_transit_link">附近</string>
     <string name="new_feature_screen_reader_header_prefix">新增功能。%1$s</string>
@@ -412,7 +407,6 @@
     <string name="tie_replacement_lowercase">更换轨枕</string>
     <string name="time_picker_type_toggle">时间选择器类型切换</string>
     <string name="to">目的地</string>
-    <string name="to_lowercase">目的地</string>
     <string name="toast_tip_prefix">提示：%1$s</string>
     <string name="toggle_direction">切换方向</string>
     <string name="track_change">轨道变更</string>

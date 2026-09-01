@@ -23,7 +23,6 @@
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
     <string name="alert_summary_location_successive">\u0020từ &lt;b>%1$s&lt;/b> đến &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_timeframe_this_week">\u0020đến %1$s</string>
-    <string name="all_day">Cả ngày</string>
     <string name="alternative_path">Đường đi thay thế</string>
     <string name="amber_alert">Cảnh báo Amber</string>
     <string name="amber_alert_sentence_case">Cảnh báo Amber</string>
@@ -76,7 +75,6 @@
     <string name="crowding_some_crowding">Một số chỗ chật chội</string>
     <string name="crowding_unknown">Tình trạng đông đúc chưa rõ</string>
     <string name="current_locale">vi</string>
-    <string name="custom">Phong tục</string>
     <string name="daily">Hằng ngày</string>
     <string name="delay">Trễ</string>
     <string name="delays_due_to_cause">Trì hoãn do &lt;b>%1$s&lt;/b></string>
@@ -117,7 +115,7 @@
     <string name="elevator_closed_sentence_case">Thang máy đóng cửa</string>
     <string name="elevator_closure">Đóng thang máy</string>
     <plurals name="elevator_closure_count">
-        <item quantity="other">%1$d thang máy đã đóng</item>
+        <item quantity="other">%1$d elevators đã đóng</item>
     </plurals>
     <plurals name="elevator_closure_count_accessibility_description">
         <item quantity="other">Điểm dừng này có %1$d thang máy đã đóng</item>
@@ -128,7 +126,6 @@
     <string name="error_loading_data">Lỗi khi tải dữ liệu</string>
     <string name="escalator_closed_sentence_case">Thang cuốn đóng cửa</string>
     <string name="escalator_closure">Thang cuốn đóng cửa</string>
-    <string name="evening">Buổi tối</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> giờ</string>
     <string name="expand_remaining_stops">mở rộng các điểm dừng còn lại</string>
     <string name="expand_stops">mở rộng các điểm dừng</string>
@@ -218,7 +215,6 @@
     <string name="mechanical_problem_lowercase">vấn đề cơ khí</string>
     <string name="medical_emergency">Cấp cứu y tế</string>
     <string name="medical_emergency_lowercase">cấp cứu y tế</string>
-    <string name="midday">Giữa trưa</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> phút</string>
     <string name="modified_service">Dịch vụ đã sửa đổi</string>
     <string name="modified_service_sentence_case">Dịch vụ đã sửa đổi</string>
@@ -235,7 +231,6 @@
     <string name="more_section_support_note_accessibility">711 với người gọi TTY; VRS với người gọi ASL</string>
     <string name="more_section_support_note_hours">Từ thứ Hai đến thứ Sáu: 6:30 sáng - 8:00 tối</string>
     <string name="more_title">MBTA Go</string>
-    <string name="morning">Buổi sáng</string>
     <string name="nearby_transit">Phương tiện công cộng ở gần</string>
     <string name="nearby_transit_link">Ở gần</string>
     <string name="new_feature_screen_reader_header_prefix">Tính năng mới. %1$s</string>
@@ -412,7 +407,6 @@
     <string name="tie_replacement_lowercase">thay tà vẹt</string>
     <string name="time_picker_type_toggle">Công tắc chọn loại thời gian</string>
     <string name="to">Đến</string>
-    <string name="to_lowercase">Đến</string>
     <string name="toast_tip_prefix">Mẹo: %1$s</string>
     <string name="toggle_direction">chuyển hướng</string>
     <string name="track_change">Thay đổi đường ray</string>

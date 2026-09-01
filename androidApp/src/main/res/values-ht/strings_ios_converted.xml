@@ -28,7 +28,6 @@
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
     <string name="alert_summary_location_successive">\u0020soti nan &lt;b>%1$s&lt;/b> a &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_timeframe_this_week">\u0020jiska %1$s</string>
-    <string name="all_day">Tout lajounen</string>
     <string name="alternative_path">Lòt chemen</string>
     <string name="amber_alert">Avètisman Amber</string>
     <string name="amber_alert_sentence_case">Avètisman amber</string>
@@ -81,7 +80,6 @@
     <string name="crowding_some_crowding">Gen kèk moun ki te twò chaje</string>
     <string name="crowding_unknown">Foul moun enkoni</string>
     <string name="current_locale">ht</string>
-    <string name="custom">Personnalisé</string>
     <string name="daily">Chak jou</string>
     <string name="delay">Reta</string>
     <string name="delays_due_to_cause">Reta akòz &lt;b>%1$s&lt;/b></string>
@@ -143,7 +141,6 @@
     <string name="error_loading_data">Erè nan chajman done</string>
     <string name="escalator_closed_sentence_case">Fèmti eskalye</string>
     <string name="escalator_closure">Fèmti Eskalye</string>
-    <string name="evening">Aswè</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> èdtan</string>
     <string name="expand_remaining_stops">elaji arè ki rete yo</string>
     <string name="expand_stops">elaji arè yo</string>
@@ -233,7 +230,6 @@
     <string name="mechanical_problem_lowercase">pwoblèm mekanik</string>
     <string name="medical_emergency">Ijans Medikal</string>
     <string name="medical_emergency_lowercase">ijans medikal</string>
-    <string name="midday">Midi</string>
     <string name="minutes_abbr">&lt;b>%1$d&lt;/b> minit</string>
     <string name="modified_service">Sèvis Modifye</string>
     <string name="modified_service_sentence_case">Sèvis modifye</string>
@@ -250,7 +246,6 @@
     <string name="more_section_support_note_accessibility">711 pou moun ki rele TTY; VRS pou moun kap rele ASL</string>
     <string name="more_section_support_note_hours">Lendi rive vandredi: 6:30 AM - 8 PM</string>
     <string name="more_title">MBTA Go</string>
-    <string name="morning">Maten</string>
     <string name="nearby_transit">Transpò piblik ki toupre</string>
     <string name="nearby_transit_link">Toupre</string>
     <string name="new_feature_screen_reader_header_prefix">Nouvo karakteristik. %1$s</string>
@@ -432,7 +427,6 @@
     <string name="tie_replacement_lowercase">ranplasman mare</string>
     <string name="time_picker_type_toggle">Chanje/dezaktive kalite seleksyon tan an</string>
     <string name="to">Pou</string>
-    <string name="to_lowercase">Pou</string>
     <string name="toast_tip_prefix">Konsèy: %1$s</string>
     <string name="toggle_direction">baskile direksyon</string>
     <string name="track_change">Suiv Chanjman</string>
