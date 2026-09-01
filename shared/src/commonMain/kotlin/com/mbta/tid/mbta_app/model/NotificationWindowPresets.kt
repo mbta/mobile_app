@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.FavoriteSettings.Notifications.Window
+import kotlinx.datetime.DayOfWeek
 
 public class PresetWindow(
     public val label: String,
@@ -8,28 +9,28 @@ public class PresetWindow(
 ) {
     public companion object {
 
-        public fun morningPreset(label: String): PresetWindow =
+        public fun morningPreset(label: String, daysOfWeek: Set<DayOfWeek>): PresetWindow =
             PresetWindow(
                 label = label,
-                window = Window.morningDefault,
+                window = Window.morningDefault(daysOfWeek),
             )
 
-        public fun middayPreset(label: String): PresetWindow =
+        public fun middayPreset(label: String, daysOfWeek: Set<DayOfWeek>): PresetWindow =
             PresetWindow(
                 label = label,
-                window = Window.middayDefault,
+                window = Window.middayDefault(daysOfWeek),
             )
 
-        public fun eveningPreset(label: String): PresetWindow =
+        public fun eveningPreset(label: String, daysOfWeek: Set<DayOfWeek>): PresetWindow =
             PresetWindow(
                 label = label,
-                window = Window.eveningDefault,
+                window = Window.eveningDefault(daysOfWeek),
             )
 
-        public fun allDayPreset(label: String): PresetWindow =
+        public fun allDayPreset(label: String, daysOfWeek: Set<DayOfWeek>): PresetWindow =
             PresetWindow(
                 label = label,
-                window = Window.allDayDefault,
+                window = Window.allDayDefault(daysOfWeek),
             )
     }
 }

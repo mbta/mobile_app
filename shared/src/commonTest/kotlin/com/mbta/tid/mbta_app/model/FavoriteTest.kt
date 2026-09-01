@@ -17,6 +17,8 @@ import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonArray
 import kotlinx.serialization.json.putJsonObject
 
+private typealias Window = FavoriteSettings.Notifications.Window
+
 class FavoriteTest {
 
     @Test
@@ -110,30 +112,27 @@ class FavoriteTest {
     @Test
     fun `defaultFromCurrentTime returns the matching preset`() {
         assertEquals(
-            FavoriteSettings.Notifications.Window.morningDefault,
-            FavoriteSettings.Notifications.Window.defaultFromCurrentTime(
-                EasternTimeInstant(LocalDateTime(2026, 8, 27, 7, 30))
-            ),
+            Window.morningDefault(Window.weekdays),
+            Window.defaultFromCurrentTime(EasternTimeInstant(LocalDateTime(2026, 8, 27, 7, 30))),
         )
         assertEquals(
-            FavoriteSettings.Notifications.Window.middayDefault,
-            FavoriteSettings.Notifications.Window.defaultFromCurrentTime(
-                EasternTimeInstant(LocalDateTime(2026, 8, 27, 12, 30))
-            ),
+            Window.middayDefault(Window.weekdays),
+            Window.defaultFromCurrentTime(EasternTimeInstant(LocalDateTime(2026, 8, 27, 12, 30))),
         )
 
         assertEquals(
-            FavoriteSettings.Notifications.Window.eveningDefault,
-            FavoriteSettings.Notifications.Window.defaultFromCurrentTime(
-                EasternTimeInstant(LocalDateTime(2026, 8, 27, 18, 30))
-            ),
+            Window.eveningDefault(Window.weekdays),
+            Window.defaultFromCurrentTime(EasternTimeInstant(LocalDateTime(2026, 8, 27, 18, 30))),
         )
 
         assertEquals(
-            FavoriteSettings.Notifications.Window.allDayDefault,
-            FavoriteSettings.Notifications.Window.defaultFromCurrentTime(
-                EasternTimeInstant(LocalDateTime(2026, 8, 27, 21, 30))
-            ),
+            Window.allDayDefault(Window.weekdays),
+            Window.defaultFromCurrentTime(EasternTimeInstant(LocalDateTime(2026, 8, 27, 21, 30))),
+        )
+
+        assertEquals(
+            Window.allDayDefault(Window.weekend),
+            Window.defaultFromCurrentTime(EasternTimeInstant(LocalDateTime(2026, 8, 30, 21, 30))),
         )
     }
 
@@ -142,7 +141,7 @@ class FavoriteTest {
         val now = EasternTimeInstant(LocalDateTime(2026, 8, 27, 9, 30))
 
         assertEquals(
-            FavoriteSettings.Notifications.Window(
+            Window(
                 LocalTime(9, 0),
                 LocalTime(10, 0),
                 setOf(
@@ -153,7 +152,7 @@ class FavoriteTest {
                     DayOfWeek.FRIDAY,
                 ),
             ),
-            FavoriteSettings.Notifications.Window.customFromCurrentTime(now),
+            Window.customFromCurrentTime(now),
         )
     }
 
@@ -162,7 +161,7 @@ class FavoriteTest {
         val now = EasternTimeInstant(LocalDateTime(2026, 8, 27, 23, 30))
 
         assertEquals(
-            FavoriteSettings.Notifications.Window(
+            Window(
                 LocalTime(23, 0),
                 LocalTime(23, 59),
                 setOf(
@@ -173,7 +172,7 @@ class FavoriteTest {
                     DayOfWeek.FRIDAY,
                 ),
             ),
-            FavoriteSettings.Notifications.Window.customFromCurrentTime(now),
+            Window.customFromCurrentTime(now),
         )
     }
 
@@ -181,15 +180,15 @@ class FavoriteTest {
     fun `minimumEndTime advances by one minute up until end of day`() {
         assertEquals(
             LocalTime(8, 1),
-            FavoriteSettings.Notifications.Window.minimumEndTime(LocalTime(8, 0)),
+            Window.minimumEndTime(LocalTime(8, 0)),
         )
         assertEquals(
             LocalTime(9, 0),
-            FavoriteSettings.Notifications.Window.minimumEndTime(LocalTime(8, 59)),
+            Window.minimumEndTime(LocalTime(8, 59)),
         )
         assertEquals(
             LocalTime(23, 59),
-            FavoriteSettings.Notifications.Window.minimumEndTime(LocalTime(23, 59)),
+            Window.minimumEndTime(LocalTime(23, 59)),
         )
     }
 
@@ -197,21 +196,21 @@ class FavoriteTest {
     fun `safeEndTime keeps valid end times and adjusts invalid ones`() {
         assertEquals(
             LocalTime(9, 30),
-            FavoriteSettings.Notifications.Window.safeEndTime(
+            Window.safeEndTime(
                 startTime = LocalTime(8, 30),
                 endTime = LocalTime(9, 30),
             ),
         )
         assertEquals(
             LocalTime(9, 30),
-            FavoriteSettings.Notifications.Window.safeEndTime(
+            Window.safeEndTime(
                 startTime = LocalTime(8, 30),
                 endTime = LocalTime(7, 45),
             ),
         )
         assertEquals(
             LocalTime(23, 59),
-            FavoriteSettings.Notifications.Window.safeEndTime(
+            Window.safeEndTime(
                 startTime = LocalTime(23, 30),
                 endTime = LocalTime(23, 0),
             ),

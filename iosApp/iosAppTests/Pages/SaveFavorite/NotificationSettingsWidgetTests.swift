@@ -85,7 +85,10 @@ final class NotificationSettingsWidgetTests: XCTestCase {
     func testDeleteButtonWhenTwoTimePeriods() throws {
         var settings: FavoriteSettings.Notifications = .init(
             enabled: true,
-            windows: [.companion.morningDefault, .companion.eveningDefault]
+            windows: [
+                .companion.morningDefault(daysOfWeek: FavoriteSettings.NotificationsWindow.companion.weekdays),
+                .companion.eveningDefault(daysOfWeek: [.monday])
+            ]
         )
         let sut = NotificationSettingsWidget(
             settings: settings,
@@ -97,6 +100,8 @@ final class NotificationSettingsWidgetTests: XCTestCase {
     }
 
     func testChangeTime() throws {
+        let now = EasternTimeInstant(year: 2026, month: .august, day: 27, hour: 12, minute: 30, second: 0)
+
         var settings: FavoriteSettings.Notifications = .init(
             enabled: true,
             windows: [.init(
@@ -108,7 +113,8 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         let sut = NotificationSettingsWidget(
             settings: settings,
             setSettings: { newSettings in settings = newSettings },
-            notificationPermissionManager: MockNotificationPermissionManager()
+            notificationPermissionManager: MockNotificationPermissionManager(),
+            now: now
         ).withFixedSettings([:])
 
         try sut.inspect().find(
@@ -134,6 +140,8 @@ final class NotificationSettingsWidgetTests: XCTestCase {
     }
 
     func testChangeDays() throws {
+        let now = EasternTimeInstant(year: 2026, month: .august, day: 27, hour: 12, minute: 30, second: 0)
+
         var settings: FavoriteSettings.Notifications = .init(
             enabled: true,
             windows: [.init(
@@ -145,7 +153,8 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         let sut = NotificationSettingsWidget(
             settings: settings,
             setSettings: { newSettings in settings = newSettings },
-            notificationPermissionManager: MockNotificationPermissionManager()
+            notificationPermissionManager: MockNotificationPermissionManager(),
+            now: now
         ).withFixedSettings([:])
 
         try sut.inspect().find(text: "Sun").find(ViewType.VStack.self, relation: .parent).callOnTapGesture()
@@ -153,6 +162,8 @@ final class NotificationSettingsWidgetTests: XCTestCase {
     }
 
     func testValidatesTime() throws {
+        let now = EasternTimeInstant(year: 2026, month: .august, day: 27, hour: 12, minute: 30, second: 0)
+
         var settings: FavoriteSettings.Notifications = .init(
             enabled: true,
             windows: [.init(
@@ -164,7 +175,8 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         let sut = NotificationSettingsWidget(
             settings: settings,
             setSettings: { newSettings in settings = newSettings },
-            notificationPermissionManager: MockNotificationPermissionManager()
+            notificationPermissionManager: MockNotificationPermissionManager(),
+            now: now
         ).withFixedSettings([:])
 
         let calendar = Calendar(identifier: .iso8601)
@@ -184,6 +196,8 @@ final class NotificationSettingsWidgetTests: XCTestCase {
     }
 
     func testRequestsPermission() throws {
+        let now = EasternTimeInstant(year: 2026, month: .august, day: 27, hour: 12, minute: 30, second: 0)
+
         let permissionExp = expectation(description: "permission was requested")
 
         var settings: FavoriteSettings.Notifications = .companion.disabled
@@ -194,7 +208,8 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         )
         let sut = NotificationSettingsWidget(settings: settings,
                                              setSettings: { newSettings in settings = newSettings },
-                                             notificationPermissionManager: permissionManager)
+                                             notificationPermissionManager: permissionManager,
+                                             now: now)
         ViewHosting.host(view: sut.withFixedSettings([:]))
 
         try sut.inspect().find(text: "Get disruption notifications").find(ViewType.Toggle.self, relation: .parent).tap()
@@ -245,7 +260,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
     func testPresetButtonsAreNotVisibleWhenFeatureFlagDisabled() throws {
         let settings: FavoriteSettings.Notifications = .init(
             enabled: true,
-            windows: [FavoriteSettings.NotificationsWindow.companion.morningDefault]
+            windows: [FavoriteSettings.NotificationsWindow.companion.morningDefault(daysOfWeek: [.monday])]
         )
         let sut = NotificationSettingsWidget(
             settings: settings,
@@ -259,7 +274,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
     func testPresetButtonsAreVisibleWhenFeatureFlagEnabled() throws {
         let settings: FavoriteSettings.Notifications = .init(
             enabled: true,
-            windows: [FavoriteSettings.NotificationsWindow.companion.morningDefault]
+            windows: [FavoriteSettings.NotificationsWindow.companion.morningDefault(daysOfWeek: [.monday])]
         )
         let sut = NotificationSettingsWidget(
             settings: settings,
@@ -290,7 +305,11 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         try await Task.sleep(for: .seconds(1))
 
         XCTAssertEqual(
-            .init(enabled: true, windows: [FavoriteSettings.NotificationsWindow.companion.middayDefault]),
+            .init(
+                enabled: true,
+                windows: [FavoriteSettings.NotificationsWindow.companion
+                    .middayDefault(daysOfWeek: FavoriteSettings.NotificationsWindow.companion.weekdays)]
+            ),
             settings
         )
     }

@@ -79,69 +79,49 @@ constructor(val notifications: Notifications = Notifications.disabled) {
                 get() = "$startTime $endTime ${daysOfWeek.joinToString(",")}"
 
             public companion object {
-
-                public val morningDefault: Window =
-                    Window(
-                        startTime = LocalTime(6, 0),
-                        endTime = LocalTime(10, 0),
-                        daysOfWeek =
-                            setOf(
-                                DayOfWeek.MONDAY,
-                                DayOfWeek.TUESDAY,
-                                DayOfWeek.WEDNESDAY,
-                                DayOfWeek.THURSDAY,
-                                DayOfWeek.FRIDAY,
-                            ),
+                public val weekdays: Set<DayOfWeek> =
+                    setOf(
+                        DayOfWeek.MONDAY,
+                        DayOfWeek.TUESDAY,
+                        DayOfWeek.WEDNESDAY,
+                        DayOfWeek.THURSDAY,
+                        DayOfWeek.FRIDAY,
                     )
 
-                public val middayDefault: Window =
-                    Window(
-                        startTime = LocalTime(10, 0),
-                        endTime = LocalTime(16, 0),
-                        daysOfWeek =
-                            setOf(
-                                DayOfWeek.MONDAY,
-                                DayOfWeek.TUESDAY,
-                                DayOfWeek.WEDNESDAY,
-                                DayOfWeek.THURSDAY,
-                                DayOfWeek.FRIDAY,
-                            ),
-                    )
+                public val weekend: Set<DayOfWeek> = setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
 
-                public val eveningDefault: Window =
-                    Window(
-                        startTime = LocalTime(16, 0),
-                        endTime = LocalTime(20, 0),
-                        daysOfWeek =
-                            setOf(
-                                DayOfWeek.MONDAY,
-                                DayOfWeek.TUESDAY,
-                                DayOfWeek.WEDNESDAY,
-                                DayOfWeek.THURSDAY,
-                                DayOfWeek.FRIDAY,
-                            ),
-                    )
-                // TODO: Handle default that crosses midnight boundary
-                public val allDayDefault: Window =
-                    Window(
-                        startTime = LocalTime(0, 0),
-                        endTime = LocalTime(23, 59),
-                        daysOfWeek =
-                            setOf(
-                                DayOfWeek.MONDAY,
-                                DayOfWeek.TUESDAY,
-                                DayOfWeek.WEDNESDAY,
-                                DayOfWeek.THURSDAY,
-                                DayOfWeek.FRIDAY,
-                            ),
-                    )
+                public fun defaultDaysOfWeek(now: EasternTimeInstant): Set<DayOfWeek> {
+                    return if (weekend.contains(now.local.dayOfWeek)) {
+                        weekend
+                    } else {
+                        weekdays
+                    }
+                }
+
+                public fun morningDefault(daysOfWeek: Set<DayOfWeek>): Window =
+                    Window(LocalTime(6, 0), LocalTime(10, 0), daysOfWeek)
+
+                public fun middayDefault(daysOfWeek: Set<DayOfWeek>): Window =
+                    Window(LocalTime(10, 0), LocalTime(16, 0), daysOfWeek)
+
+                public fun eveningDefault(daysOfWeek: Set<DayOfWeek>): Window =
+                    Window(LocalTime(16, 0), LocalTime(20, 0), daysOfWeek)
+
+                public fun allDayDefault(daysOfWeek: Set<DayOfWeek>): Window =
+                    Window(LocalTime(0, 0), LocalTime(23, 59), daysOfWeek)
 
                 public fun defaultFromCurrentTime(now: EasternTimeInstant): Window {
+                    val daysOfWeek = defaultDaysOfWeek(now)
                     val presets =
-                        listOf(morningDefault, middayDefault, eveningDefault, allDayDefault)
+                        listOf(
+                            morningDefault(daysOfWeek),
+                            middayDefault(daysOfWeek),
+                            eveningDefault(daysOfWeek),
+                            allDayDefault(daysOfWeek),
+                        )
 
                     return presets.firstOrNull { now.local.time in it.startTime..it.endTime }
-                        ?: allDayDefault
+                        ?: allDayDefault(daysOfWeek)
                 }
 
                 public fun customFromCurrentTime(now: EasternTimeInstant): Window {
@@ -156,14 +136,7 @@ constructor(val notifications: Notifications = Notifications.disabled) {
                     return Window(
                         startTime = startTime,
                         endTime = endTime,
-                        daysOfWeek =
-                            setOf(
-                                DayOfWeek.MONDAY,
-                                DayOfWeek.TUESDAY,
-                                DayOfWeek.WEDNESDAY,
-                                DayOfWeek.THURSDAY,
-                                DayOfWeek.FRIDAY,
-                            ),
+                        daysOfWeek = defaultDaysOfWeek(now),
                     )
                 }
 

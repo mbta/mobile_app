@@ -18,8 +18,16 @@ final class PresetWindowSelectorTests: XCTestCase {
 
         let sut = PresetWindowSelector(
             presetRows: [[
-                .init(label: "Morning", window: .companion.morningDefault),
-                .init(label: "Midday", window: .companion.middayDefault)
+                .init(
+                    label: "Morning",
+                    window: .companion
+                        .morningDefault(daysOfWeek: FavoriteSettings.NotificationsWindow.companion.weekdays)
+                ),
+                .init(
+                    label: "Midday",
+                    window: .companion
+                        .middayDefault(daysOfWeek: FavoriteSettings.NotificationsWindow.companion.weekdays)
+                )
             ]],
             selectedPreset: .Preset(rowIndex: 1, columnIndex: 0),
             presetsEnabled: true,
@@ -32,7 +40,10 @@ final class PresetWindowSelectorTests: XCTestCase {
 
         try? sut.inspect().find(button: "Morning").tap()
 
-        XCTAssertEqual(selectedWindow, .companion.morningDefault)
+        XCTAssertEqual(
+            selectedWindow,
+            .companion.morningDefault(daysOfWeek: FavoriteSettings.NotificationsWindow.companion.weekdays)
+        )
     }
 
     func testCustomDefaultsToNow() {
@@ -40,8 +51,16 @@ final class PresetWindowSelectorTests: XCTestCase {
 
         let sut = PresetWindowSelector(
             presetRows: [[
-                .init(label: "Morning", window: .companion.morningDefault),
-                .init(label: "Midday", window: .companion.middayDefault)
+                .init(
+                    label: "Morning",
+                    window: .companion
+                        .morningDefault(daysOfWeek: FavoriteSettings.NotificationsWindow.companion.weekdays)
+                ),
+                .init(
+                    label: "Midday",
+                    window: .companion
+                        .middayDefault(daysOfWeek: FavoriteSettings.NotificationsWindow.companion.weekdays)
+                )
             ]],
             selectedPreset: .Preset(rowIndex: 1, columnIndex: 0),
             presetsEnabled: true,
