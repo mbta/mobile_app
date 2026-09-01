@@ -37,28 +37,33 @@ struct NotificationSettingsWidget: View {
     @EnvironmentObject var settingsCache: SettingsCache
     var presetWindowsEnabled: Bool { settingsCache.get(.notificationPresetWindows) }
 
-    let presetOptions: [[PresetWindow]] = [
+    var daysOfWeek: Set<Kotlinx_datetimeDayOfWeek> {
+        FavoriteSettings.NotificationsWindow.companion.defaultDaysOfWeek(now: now)
+    }
+
+    var presetOptions: [[PresetWindow]] { [
         [
             .init(
                 label: NSLocalizedString("Morning", comment: "Notification window preset label"),
-                window: FavoriteSettings.NotificationsWindow.companion.morningDefault
+                window: FavoriteSettings.NotificationsWindow.companion.morningDefault(daysOfWeek: daysOfWeek)
             ),
             .init(
                 label: NSLocalizedString("Midday", comment: "Notification window preset label"),
-                window: FavoriteSettings.NotificationsWindow.companion.middayDefault
+                window: FavoriteSettings.NotificationsWindow.companion.middayDefault(daysOfWeek: daysOfWeek)
             ),
             .init(
                 label: NSLocalizedString("Evening", comment: "Notification window preset label"),
-                window: FavoriteSettings.NotificationsWindow.companion.eveningDefault
+                window: FavoriteSettings.NotificationsWindow.companion.eveningDefault(daysOfWeek: daysOfWeek)
             )
         ],
         [
             .init(
                 label: NSLocalizedString("All day", comment: "Notification window preset label"),
-                window: FavoriteSettings.NotificationsWindow.companion.allDayDefault
+                window: FavoriteSettings.NotificationsWindow.companion.allDayDefault(daysOfWeek: daysOfWeek)
             )
         ]
     ]
+    }
 
     var presetSelection: PresetSelection {
         PresetSelection.companion.selectedPresetFromSettings(

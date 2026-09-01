@@ -29,12 +29,23 @@ class PresetWindowSelectorTest {
             PresetWindowSelector(
                 presetRows =
                     listOf(
-                        listOf(PresetWindow(window = Window.morningDefault, label = "Morning")),
-                        listOf(PresetWindow(window = Window.middayDefault, label = "Midday")),
+                        listOf(
+                            PresetWindow(
+                                window = Window.morningDefault(Window.weekdays),
+                                label = "Morning",
+                            )
+                        ),
+                        listOf(
+                            PresetWindow(
+                                window = Window.middayDefault(Window.weekdays),
+                                label = "Midday",
+                            )
+                        ),
                     ),
                 selectedPreset = PresetSelection.Preset(rowIndex = 1, columnIndex = 0),
                 presetsEnabled = true,
                 onSelect = { window -> selectedWindow = window },
+                now = EasternTimeInstant(LocalDateTime(2026, 8, 27, 4, 30, 0)),
             )
         }
 
@@ -43,7 +54,7 @@ class PresetWindowSelectorTest {
         composeTestRule.onNodeWithText("Custom").assertIsNotSelected()
 
         composeTestRule.onNodeWithText("Morning").performClick()
-        assertEquals(Window.morningDefault, selectedWindow)
+        assertEquals(Window.morningDefault(Window.weekdays), selectedWindow)
     }
 
     @Test
@@ -52,8 +63,18 @@ class PresetWindowSelectorTest {
             PresetWindowSelector(
                 presetRows =
                     listOf(
-                        listOf(PresetWindow(window = Window.morningDefault, label = "Morning")),
-                        listOf(PresetWindow(window = Window.middayDefault, label = "Midday")),
+                        listOf(
+                            PresetWindow(
+                                window = Window.morningDefault(Window.weekdays),
+                                label = "Morning",
+                            )
+                        ),
+                        listOf(
+                            PresetWindow(
+                                window = Window.middayDefault(Window.weekdays),
+                                label = "Midday",
+                            )
+                        ),
                     ),
                 selectedPreset = PresetSelection.Preset(rowIndex = 1, columnIndex = 0),
                 presetsEnabled = false,
@@ -73,8 +94,18 @@ class PresetWindowSelectorTest {
             PresetWindowSelector(
                 presetRows =
                     listOf(
-                        listOf(PresetWindow(window = Window.morningDefault, label = "Morning")),
-                        listOf(PresetWindow(window = Window.middayDefault, label = "Midday")),
+                        listOf(
+                            PresetWindow(
+                                window = Window.morningDefault(Window.weekdays),
+                                label = "Morning",
+                            )
+                        ),
+                        listOf(
+                            PresetWindow(
+                                window = Window.middayDefault(Window.weekdays),
+                                label = "Midday",
+                            )
+                        ),
                     ),
                 selectedPreset = PresetSelection.Preset(rowIndex = 1, columnIndex = 0),
                 presetsEnabled = true,
@@ -108,8 +139,18 @@ class PresetWindowSelectorTest {
             PresetWindowSelector(
                 presetRows =
                     listOf(
-                        listOf(PresetWindow(window = Window.morningDefault, label = "Morning")),
-                        listOf(PresetWindow(window = Window.middayDefault, label = "Midday")),
+                        listOf(
+                            PresetWindow(
+                                window = Window.morningDefault(Window.weekdays),
+                                label = "Morning",
+                            )
+                        ),
+                        listOf(
+                            PresetWindow(
+                                window = Window.middayDefault(Window.weekdays),
+                                label = "Midday",
+                            )
+                        ),
                     ),
                 selectedPreset = PresetSelection.Preset(rowIndex = 1, columnIndex = 0),
                 presetsEnabled = true,

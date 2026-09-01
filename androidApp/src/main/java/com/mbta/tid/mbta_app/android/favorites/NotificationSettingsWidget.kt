@@ -115,14 +115,16 @@ fun NotificationSettingsWidget(
         }
     }
 
+    val presetDaysOfWeek = Window.defaultDaysOfWeek(now)
+
     val presetOptions =
         listOf(
             listOf(
-                PresetWindow.morningPreset(stringResource(R.string.morning)),
-                PresetWindow.middayPreset(stringResource(R.string.midday)),
-                PresetWindow.eveningPreset(stringResource(R.string.evening)),
+                PresetWindow.morningPreset(stringResource(R.string.morning), presetDaysOfWeek),
+                PresetWindow.middayPreset(stringResource(R.string.midday), presetDaysOfWeek),
+                PresetWindow.eveningPreset(stringResource(R.string.evening), presetDaysOfWeek),
             ),
-            listOf(PresetWindow.allDayPreset(stringResource(R.string.all_day))),
+            listOf(PresetWindow.allDayPreset(stringResource(R.string.all_day), presetDaysOfWeek)),
         )
     val presetSelection: PresetSelection =
         remember(settings) {
