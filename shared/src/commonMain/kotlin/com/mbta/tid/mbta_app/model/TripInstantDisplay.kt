@@ -87,7 +87,7 @@ public sealed class TripInstantDisplay {
             isScheduledDeparture: Boolean,
             now: EasternTimeInstant,
         ): EasternTimeInstant? =
-            if (isScheduledDeparture) stopTime?.scheduleBasedStopTime
+            if (isScheduledDeparture) stopTime?.departureBasedStopTime
             else stopTime?.stopTimeAfter(now)
 
         internal fun from(

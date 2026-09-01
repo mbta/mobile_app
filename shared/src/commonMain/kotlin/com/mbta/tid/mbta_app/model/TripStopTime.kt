@@ -13,7 +13,7 @@ public interface TripStopTime : Comparable<TripStopTime> {
      * For Ferry and Commuter Rail, the departure time is the primary time that should be displayed,
      * but if arrival is the only time that exists, we should still fall back to that.
      */
-    public val scheduleBasedStopTime: EasternTimeInstant?
+    public val departureBasedStopTime: EasternTimeInstant?
         get() = departureTime ?: arrivalTime
 
     public fun stopTimeAfter(now: EasternTimeInstant): EasternTimeInstant? =
