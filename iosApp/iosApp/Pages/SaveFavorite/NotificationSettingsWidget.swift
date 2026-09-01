@@ -106,15 +106,14 @@ struct NotificationSettingsWidget: View {
                             }
                             setSettings(settings.doCopy(enabled: settings.enabled, windows: newWindows))
                         },
-                        deleteWindow: { if settings.windows.count > 1 {
+                        deleteWindow: settings.windows.count > 1 ? {
                             setSettings(
                                 settings.doCopy(
                                     enabled: settings.enabled,
                                     windows: settings.windows.filter { $0.id != window.id }
                                 )
                             )
-                        }
-                        }
+                        } : nil
                     )
                 }
 

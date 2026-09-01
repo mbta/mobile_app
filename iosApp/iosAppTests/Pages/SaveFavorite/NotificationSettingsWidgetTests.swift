@@ -62,6 +62,8 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             ViewType.DatePicker.self,
             where: { try $0.labelView().text().string() == "Select end time" }
         ))
+
+        XCTAssertThrowsError(try sut.inspect().find(viewWithAccessibilityLabel: "Delete"))
         // ViewInspector as of 0.10.3 does not support accessibilityChildren so we can’t check the days of the week
         try sut.inspect().find(button: "Add another time period").tap()
         XCTAssertEqual(
@@ -78,6 +80,20 @@ final class NotificationSettingsWidgetTests: XCTestCase {
                 ]
             )
         )
+    }
+
+    func testDeleteButtonWhenTwoTimePeriods() throws {
+        var settings: FavoriteSettings.Notifications = .init(
+            enabled: true,
+            windows: [.companion.morningDefault, .companion.eveningDefault]
+        )
+        let sut = NotificationSettingsWidget(
+            settings: settings,
+            setSettings: { newSettings in settings = newSettings },
+            notificationPermissionManager: MockNotificationPermissionManager()
+        ).withFixedSettings([:])
+
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "Delete"))
     }
 
     func testChangeTime() throws {
