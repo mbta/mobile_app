@@ -75,6 +75,9 @@ constructor(val notifications: Notifications = Notifications.disabled) {
             val endTime: LocalTime,
             val daysOfWeek: Set<DayOfWeek>,
         ) {
+            val id: String
+                get() = "$startTime $endTime ${daysOfWeek.joinToString(",")}"
+
             public companion object {
 
                 public val morningDefault: Window =
@@ -162,6 +165,72 @@ constructor(val notifications: Notifications = Notifications.disabled) {
                                 DayOfWeek.FRIDAY,
                             ),
                     )
+                }
+
+                public fun default(
+                    existingWindows: List<Window>,
+                    presetsEnabled: Boolean,
+                    now: EasternTimeInstant,
+                ): Window {
+
+                    if (presetsEnabled) {
+                        return defaultFromCurrentTime(now)
+                    } else {
+                        if (existingWindows.isEmpty()) {
+                            return Window(
+                                startTime = LocalTime(8, 0, second = 0, nanosecond = 0),
+                                endTime = LocalTime(9, 0, second = 0, nanosecond = 0),
+                                daysOfWeek =
+                                    setOf(
+                                        DayOfWeek.MONDAY,
+                                        DayOfWeek.TUESDAY,
+                                        DayOfWeek.WEDNESDAY,
+                                        DayOfWeek.THURSDAY,
+                                        DayOfWeek.FRIDAY,
+                                    ),
+                            )
+                        }
+                        return Window(
+                            startTime = LocalTime(12, 0),
+                            endTime = LocalTime(13, 0),
+                            setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY),
+                        )
+                    }
+                }
+
+                /**
+                 * The earliest possible end time for a given start time - one minute after start.
+                 */
+                public fun minimumEndTime(startTime: LocalTime): LocalTime {
+                    val startHour = startTime.hour
+                    val startMinute = startTime.minute
+                    if (startHour == 23 && startMinute == 59) {
+                        return startTime
+                    }
+                    if (startMinute < 59) {
+                        return LocalTime(hour = startHour, minute = startMinute + 1, second = 0)
+                    }
+                    return LocalTime(hour = startHour + 1, minute = 0, second = 0)
+                }
+
+                /**
+                 * Returns a safe end time for a given start time and end time. If the given end
+                 * time is before the start time, it pushes the end time out 1 hour.
+                 */
+                public fun safeEndTime(startTime: LocalTime, endTime: LocalTime): LocalTime {
+                    return if (endTime > startTime) {
+                        endTime
+                    } else {
+                        if (startTime.hour < 23) {
+                            LocalTime(
+                                hour = startTime.hour + 1,
+                                minute = startTime.minute,
+                                second = 0,
+                            )
+                        } else {
+                            LocalTime(hour = 23, minute = 59, second = 0)
+                        }
+                    }
                 }
             }
         }

@@ -30,7 +30,7 @@ final class SaveFavoritePageTests: XCTestCase {
             navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
 
         sut.inspection.inspect(after: 0.1) { view in
             XCTAssertNotNil(try view.find(text: "Alewife"))
@@ -54,7 +54,7 @@ final class SaveFavoritePageTests: XCTestCase {
             navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
 
         sut.inspection.inspect(after: 1) { view in
             XCTAssertNotNil(try sut.inspect().find(text: "Alewife"))
@@ -90,7 +90,7 @@ final class SaveFavoritePageTests: XCTestCase {
             navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
 
         sut.inspection.inspect(after: 1) { view in
             XCTAssertNotNil(try sut.inspect().find(text: "Alewife"))
@@ -142,7 +142,7 @@ final class SaveFavoritePageTests: XCTestCase {
             ])
         }
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
 
         wait(for: [exp1, exp2], timeout: 5)
     }

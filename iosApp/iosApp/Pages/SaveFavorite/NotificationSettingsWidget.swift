@@ -27,86 +27,111 @@ private extension DateComponents {
 
 struct NotificationSettingsWidget: View {
     @ObserveInjection var inject
-    @ObservedObject var settings: MutableFavoriteSettings.Notifications
+    let settings: FavoriteSettings.Notifications
+    let setSettings: (FavoriteSettings.Notifications) -> Void
 
     var notificationPermissionManager: INotificationPermissionManager
     var authorizationStatus: UNAuthorizationStatus? { notificationPermissionManager.authorizationStatus }
+    var now: EasternTimeInstant = .now()
+
+    @EnvironmentObject var settingsCache: SettingsCache
+    var presetWindowsEnabled: Bool { settingsCache.get(.notificationPresetWindows) }
+
+    let presetOptions: [[PresetWindow]] = [
+        [
+            .init(
+                label: NSLocalizedString("Morning", comment: "Notification window preset label"),
+                window: FavoriteSettings.NotificationsWindow.companion.morningDefault
+            ),
+            .init(
+                label: NSLocalizedString("Midday", comment: "Notification window preset label"),
+                window: FavoriteSettings.NotificationsWindow.companion.middayDefault
+            ),
+            .init(
+                label: NSLocalizedString("Evening", comment: "Notification window preset label"),
+                window: FavoriteSettings.NotificationsWindow.companion.eveningDefault
+            )
+        ],
+        [
+            .init(
+                label: NSLocalizedString("All day", comment: "Notification window preset label"),
+                window: FavoriteSettings.NotificationsWindow.companion.allDayDefault
+            )
+        ]
+    ]
+
+    var presetSelection: PresetSelection {
+        PresetSelection.companion.selectedPresetFromSettings(
+            settings: settings,
+            presetOptions: presetOptions
+        )
+    }
 
     var body: some View {
         let permissionDenied = authorizationStatus == .denied
         VStack(spacing: 8) {
-            VStack(spacing: 16) {
-                Toggle(isOn: $settings.enabled) {
-                    HStack {
-                        if settings.enabled {
-                            Image(.faBellFilled)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 24, height: 24)
-                                .foregroundStyle(Color.key)
-                        } else {
-                            Image(.faBell)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 24, height: 24)
-                        }
-                        Text("Get disruption notifications")
-                    }
-                }
-                .disabled(permissionDenied)
-                .opacity(permissionDenied ? 0.6 : 1.0)
-                .tint(Color.key)
-                if permissionDenied {
-                    Button {
-                        notificationPermissionManager.openNotificationSettings()
-                    } label: {
-                        HStack {
-                            Text(
-                                "Allow Notifications in Settings",
-                                comment: "Label for a link to the app's notification permission settings"
-                            ).font(.body)
-                            Spacer()
-                            Image(systemName: "arrow.up.right")
-                                .resizable()
-                                .frame(width: 10.5, height: 10.5, alignment: .center)
-                                .fontWeight(.bold)
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 2)
-                }
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(Color.fill3)
-            .withRoundedBorder()
-            .onTapGesture {
-                if permissionDenied { notificationPermissionManager.openNotificationSettings() }
-            }
-            .onChange(of: settings.enabled) { enabled in
-                Task {
-                    if enabled {
-                        let notificationPermission = await notificationPermissionManager.requestPermission()
-                        guard notificationPermission else {
-                            settings.enabled = false
-                            return
-                        }
-                        if settings.windows.count == 0 {
-                            settings.windows = [Self.defaultWindow()]
-                        }
-                    }
-                }
-            }
+            NotificationSwitch(
+                settings: settings,
+                setSettings: setSettings,
+                notificationPermissionManager: notificationPermissionManager,
+                now: now,
+                presetWindowsEnabled: presetWindowsEnabled
+            )
 
             if settings.enabled {
-                ForEach(settings.windows) { window in
+                if presetWindowsEnabled {
+                    PresetWindowSelector(
+                        presetRows: presetOptions,
+                        selectedPreset: presetSelection,
+                        presetsEnabled: settings.windows.count <= 1,
+                        now: now,
+                        onSelect: { selectedWindow in
+                            let otherWindows = settings.windows.dropFirst()
+                            setSettings(settings.doCopy(
+                                enabled: settings.enabled,
+                                windows: [selectedWindow] + otherWindows
+                            ))
+                        }
+                    )
+                }
+
+                ForEach(settings.windows, id: \.id) { window in
                     WindowWidget(
-                        window: window, deleteWindow: settings.windows.count > 1 ? {
-                            settings.windows.removeAll(where: { $0.id == window.id })
+                        window: window,
+                        setWindow: { newWindow in
+                            let windowIndex = settings.windows.firstIndex(of: window)
+                            var newWindows = settings.windows
+                            if let windowIndex {
+                                newWindows[windowIndex] = newWindow
+                            }
+                            setSettings(settings.doCopy(enabled: settings.enabled, windows: newWindows))
+                        },
+                        deleteWindow: settings.windows.count > 1 ? {
+                            setSettings(
+                                settings.doCopy(
+                                    enabled: settings.enabled,
+                                    windows: settings.windows.filter { $0.id != window.id }
+                                )
+                            )
                         } : nil
                     )
                 }
-                Button(action: { settings.windows += [Self.defaultWindow(existingWindows: settings.windows)] }) {
+
+                let customWindow =
+                    if presetWindowsEnabled {
+                        FavoriteSettings.NotificationsWindow.companion.customFromCurrentTime(now: now)
+                    } else {
+                        FavoriteSettings.NotificationsWindow.companion.default(
+                            existingWindows: settings.windows,
+                            presetsEnabled: presetWindowsEnabled,
+                            now: now
+                        )
+                    }
+
+                Button(action: { setSettings(settings.doCopy(
+                    enabled: settings.enabled,
+                    windows: settings.windows + [customWindow]
+                )) }) {
                     HStack(spacing: 12) {
                         Image(.plus)
                             .resizable()
@@ -128,27 +153,10 @@ struct NotificationSettingsWidget: View {
         .enableInjection()
     }
 
-    static func defaultWindow(existingWindows: [MutableFavoriteSettings.Notifications.Window] = [])
-        -> MutableFavoriteSettings
-        .Notifications.Window {
-        if existingWindows.isEmpty {
-            .init(
-                startTime: .init(hour: 8, minute: 0, second: 0),
-                endTime: .init(hour: 9, minute: 0, second: 0),
-                daysOfWeek: [.monday, .tuesday, .wednesday, .thursday, .friday]
-            )
-        } else {
-            .init(
-                startTime: .init(hour: 12, minute: 0, second: 0),
-                endTime: .init(hour: 13, minute: 0, second: 0),
-                daysOfWeek: [.saturday, .sunday]
-            )
-        }
-    }
-
     struct WindowWidget: View {
         @ObserveInjection var inject
-        @ObservedObject var window: MutableFavoriteSettings.Notifications.Window
+        let window: FavoriteSettings.NotificationsWindow
+        let setWindow: (FavoriteSettings.NotificationsWindow) -> Void
         let deleteWindow: (() -> Void)?
 
         var body: some View {
@@ -160,22 +168,44 @@ struct NotificationSettingsWidget: View {
                     .foregroundStyle(Color.error)
                     .frame(minWidth: 44)
                 }
-                VStack(spacing: 0) {
-                    LabeledTimeInput(
-                        label: Text("From"),
-                        time: $window.startTime,
-                        minimumTime: nil
-                    )
-                    .onChange(of: window.startTime) { startTime in
-                        window.setSafeEndTime(startTime: startTime)
+                VStack {
+                    HStack(spacing: 0) {
+                        TimeInput(
+                            label: Text("Select start time"),
+                            time: DateComponents.fromLocalTime(window.startTime),
+                            setTime: { time in
+                                let startTime = time.toLocalTime()
+                                setWindow(window.doCopy(
+                                    startTime: startTime,
+                                    endTime: FavoriteSettings.NotificationsWindow.companion
+                                        .safeEndTime(startTime: startTime, endTime: window.endTime),
+                                    daysOfWeek: window.daysOfWeek
+                                ))
+                            },
+                            minimumTime: nil
+                        ).frame(maxWidth: .infinity)
+                        Text("to")
+                        TimeInput(
+                            label: Text("Select end time"),
+                            time: DateComponents.fromLocalTime(window.endTime),
+                            setTime: { time in setWindow(window.doCopy(
+                                startTime: window.startTime,
+                                endTime: time.toLocalTime(),
+                                daysOfWeek: window.daysOfWeek
+                            )) },
+                            minimumTime: DateComponents
+                                .fromLocalTime(FavoriteSettings.NotificationsWindow.companion
+                                    .minimumEndTime(startTime: window.startTime))
+                        ).frame(maxWidth: .infinity)
                     }
-                    HaloSeparator()
-                    LabeledTimeInput(
-                        label: Text("To"),
-                        time: $window.endTime,
-                        minimumTime: window.minimumEndTime()
+                    DaysOfWeekInput(
+                        daysOfWeek: window.daysOfWeek,
+                        setDaysOfWeek: { newDays in setWindow(window.doCopy(
+                            startTime: window.startTime,
+                            endTime: window.endTime,
+                            daysOfWeek: newDays
+                        )) }
                     )
-                    DaysOfWeekInput(daysOfWeek: $window.daysOfWeek)
                 }
                 .background(Color.fill3)
                 .clipShape(RoundedRectangle(cornerRadius: 7))
@@ -187,19 +217,22 @@ struct NotificationSettingsWidget: View {
         }
     }
 
-    struct LabeledTimeInput: View {
+    struct TimeInput: View {
         @ObserveInjection var inject
         let label: Text
-        @Binding var time: DateComponents
+        let time: DateComponents
+        let setTime: (DateComponents) -> Void
         let minimumTime: DateComponents?
 
         init(
             label: Text,
-            time: Binding<DateComponents>,
+            time: DateComponents,
+            setTime: @escaping (DateComponents) -> Void,
             minimumTime: DateComponents? = nil
         ) {
             self.label = label
-            _time = time
+            self.time = time
+            self.setTime = setTime
             self.minimumTime = minimumTime
         }
 
@@ -221,19 +254,28 @@ struct NotificationSettingsWidget: View {
         }
 
         var body: some View {
-            DatePicker(selection: $time.nextDate, in: dateRange, displayedComponents: [.hourAndMinute]) {
-                label
-            }
-            .datePickerStyle(.compact)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .enableInjection()
+            let timeBinding = Binding<DateComponents>(
+                get: {
+                    time
+                },
+                set: { newValue in
+                    setTime(newValue)
+                }
+            )
+
+            DatePicker(selection: timeBinding.nextDate, in: dateRange, displayedComponents: [.hourAndMinute]) { label }
+                .labelsHidden()
+                .datePickerStyle(.compact)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .enableInjection()
         }
     }
 
     struct DaysOfWeekInput: View {
         @ObserveInjection var inject
-        @Binding var daysOfWeek: Set<Kotlinx_datetimeDayOfWeek>
+        let daysOfWeek: Set<Kotlinx_datetimeDayOfWeek>
+        let setDaysOfWeek: (Set<Kotlinx_datetimeDayOfWeek>) -> Void
 
         static var days: [Kotlinx_datetimeDayOfWeek] {
             [.sunday, .monday, .tuesday, .wednesday, .thursday, .friday, .saturday]
@@ -263,7 +305,7 @@ struct NotificationSettingsWidget: View {
                     .frame(maxWidth: .infinity)
                     .padding(.top, 8)
                     .onTapGesture {
-                        daysOfWeek.formSymmetricDifference([day])
+                        setDaysOfWeek(daysOfWeek.symmetricDifference([day]))
                     }
                     .background(isIncluded ? Color.key : Color.fill1)
                     .clipShape(RoundedRectangle(cornerRadius: 6))
@@ -274,7 +316,7 @@ struct NotificationSettingsWidget: View {
                         // labelled with the full name of the day
                         Toggle(
                             isOn: .init(get: { isIncluded }, set: { _ in
-                                daysOfWeek.formSymmetricDifference([day])
+                                setDaysOfWeek(daysOfWeek.symmetricDifference([day]))
                             }),
                             label: {
                                 Text(calendar.standaloneWeekdaySymbols[day.indexSundayFirst])
@@ -290,20 +332,116 @@ struct NotificationSettingsWidget: View {
     }
 }
 
+struct NotificationSwitch: View {
+    let settings: FavoriteSettings.Notifications
+    let setSettings: (FavoriteSettings.Notifications) -> Void
+    let notificationPermissionManager: INotificationPermissionManager
+    let now: EasternTimeInstant
+    let presetWindowsEnabled: Bool
+
+    var authorizationStatus: UNAuthorizationStatus? { notificationPermissionManager.authorizationStatus }
+
+    var body: some View {
+        let enabledBinding = Binding<Bool>(
+            get: {
+                settings.enabled
+            },
+            set: { newValue in
+                setSettings(settings.doCopy(enabled: newValue, windows: settings.windows))
+            }
+        )
+
+        let permissionDenied = authorizationStatus == .denied
+        VStack(spacing: 16) {
+            Toggle(isOn: enabledBinding) {
+                HStack {
+                    if settings.enabled {
+                        Image(.faBellFilled)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24)
+                            .foregroundStyle(Color.key)
+                    } else {
+                        Image(.faBell)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24)
+                    }
+                    Text("Get disruption notifications")
+                }
+            }
+            .disabled(permissionDenied)
+            .opacity(permissionDenied ? 0.6 : 1.0)
+            .tint(Color.key)
+            if permissionDenied {
+                Button {
+                    notificationPermissionManager.openNotificationSettings()
+                } label: {
+                    HStack {
+                        Text(
+                            "Allow Notifications in Settings",
+                            comment: "Label for a link to the app's notification permission settings"
+                        ).font(.body)
+                        Spacer()
+                        Image(systemName: "arrow.up.right")
+                            .resizable()
+                            .frame(width: 10.5, height: 10.5, alignment: .center)
+                            .fontWeight(.bold)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 2)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(Color.fill3)
+        .withRoundedBorder()
+        .onTapGesture {
+            if permissionDenied { notificationPermissionManager.openNotificationSettings() }
+        }
+        .onChange(of: settings.enabled) { enabled in
+            Task {
+                if enabled {
+                    let notificationPermission = await notificationPermissionManager.requestPermission()
+                    guard notificationPermission else {
+                        setSettings(FavoriteSettings.Notifications.companion.disabled)
+                        return
+                    }
+                    if settings.windows.count == 0 {
+                        setSettings(settings.doCopy(
+                            enabled: enabled,
+                            windows: [FavoriteSettings.NotificationsWindow.companion.default(
+                                existingWindows: [],
+                                presetsEnabled: presetWindowsEnabled,
+                                now: now
+                            )]
+                        ))
+                    }
+                }
+            }
+        }
+    }
+}
+
 struct NotificationSettingsWidget_Previews: PreviewProvider {
     struct Holder: View {
         @ObserveInjection var inject
-        @State var settings = MutableFavoriteSettings.Notifications(
+        @State var settings: FavoriteSettings = .init(notifications: .init(
             enabled: true,
-            windows: [
-                NotificationSettingsWidget.defaultWindow(),
-                NotificationSettingsWidget.defaultWindow(existingWindows: [NotificationSettingsWidget.defaultWindow()]),
-            ]
-        )
+            windows: [FavoriteSettings.NotificationsWindow.companion.default(
+                existingWindows: [],
+                presetsEnabled: false,
+                now: EasternTimeInstant.now()
+            )]
+        ))
 
         var body: some View {
             NotificationSettingsWidget(
-                settings: settings,
+                settings: settings.notifications,
+                setSettings: { updatedSettings in
+                    settings = settings.doCopy(notifications: updatedSettings)
+                },
                 notificationPermissionManager: MockNotificationPermissionManager()
             )
             .enableInjection()
@@ -315,5 +453,35 @@ struct NotificationSettingsWidget_Previews: PreviewProvider {
             .padding(.horizontal, 16)
             .padding(.vertical, 24)
             .background(Color.fill2)
+    }
+}
+
+extension DateComponents {
+    static func fromLocalTime(_ localTime: Kotlinx_datetimeLocalTime) -> Self {
+        .init(
+            hour: Int(localTime.hour),
+            minute: Int(localTime.minute),
+            second: Int(localTime.second)
+        )
+    }
+
+    func toLocalTime() -> Kotlinx_datetimeLocalTime {
+        .init(
+            hour: Int32(hour ?? 0),
+            minute: Int32(minute ?? 0),
+            second: Int32(second ?? 0),
+            nanosecond: Int32(nanosecond ?? 0)
+        )
+    }
+}
+
+extension Kotlinx_datetimeLocalTime: @retroactive Comparable {
+    public static func < (lhs: Kotlinx_datetimeLocalTime, rhs: Kotlinx_datetimeLocalTime) -> Bool {
+        // Call the bridged Kotlin compareTo method
+        lhs.compareTo(other: rhs) < 0
+    }
+
+    public static func == (lhs: Kotlinx_datetimeLocalTime, rhs: Kotlinx_datetimeLocalTime) -> Bool {
+        lhs.compareTo(other: rhs) == 0
     }
 }

@@ -176,4 +176,45 @@ class FavoriteTest {
             FavoriteSettings.Notifications.Window.customFromCurrentTime(now),
         )
     }
+
+    @Test
+    fun `minimumEndTime advances by one minute up until end of day`() {
+        assertEquals(
+            LocalTime(8, 1),
+            FavoriteSettings.Notifications.Window.minimumEndTime(LocalTime(8, 0)),
+        )
+        assertEquals(
+            LocalTime(9, 0),
+            FavoriteSettings.Notifications.Window.minimumEndTime(LocalTime(8, 59)),
+        )
+        assertEquals(
+            LocalTime(23, 59),
+            FavoriteSettings.Notifications.Window.minimumEndTime(LocalTime(23, 59)),
+        )
+    }
+
+    @Test
+    fun `safeEndTime keeps valid end times and adjusts invalid ones`() {
+        assertEquals(
+            LocalTime(9, 30),
+            FavoriteSettings.Notifications.Window.safeEndTime(
+                startTime = LocalTime(8, 30),
+                endTime = LocalTime(9, 30),
+            ),
+        )
+        assertEquals(
+            LocalTime(9, 30),
+            FavoriteSettings.Notifications.Window.safeEndTime(
+                startTime = LocalTime(8, 30),
+                endTime = LocalTime(7, 45),
+            ),
+        )
+        assertEquals(
+            LocalTime(23, 59),
+            FavoriteSettings.Notifications.Window.safeEndTime(
+                startTime = LocalTime(23, 30),
+                endTime = LocalTime(23, 0),
+            ),
+        )
+    }
 }
