@@ -34,6 +34,8 @@ struct NotificationSettingsWidget: View {
     var authorizationStatus: UNAuthorizationStatus? { notificationPermissionManager.authorizationStatus }
     var now: EasternTimeInstant = .now()
 
+    @State var customPreset: [FavoriteSettings.NotificationsWindow] = []
+
     @EnvironmentObject var settingsCache: SettingsCache
     var presetWindowsEnabled: Bool { settingsCache.get(.notificationPresetWindows) }
 
@@ -66,14 +68,17 @@ struct NotificationSettingsWidget: View {
     }
 
     var presetSelection: PresetSelection {
-        PresetSelection.companion.selectedPresetFromSettings(
-            settings: settings,
+        PresetSelection.companion.selectedPresetFromWindows(
+            windows: settings.windows,
             presetOptions: presetOptions
         )
     }
 
+    let inspection = Inspection<Self>()
+
     var body: some View {
         let permissionDenied = authorizationStatus == .denied
+        let _ = print("HELLO CUSTOM PRESET \(customPreset)")
         VStack(spacing: 8) {
             NotificationSwitch(
                 settings: settings,
@@ -88,16 +93,39 @@ struct NotificationSettingsWidget: View {
                     PresetWindowSelector(
                         presetRows: presetOptions,
                         selectedPreset: presetSelection,
-                        presetsEnabled: settings.windows.count <= 1,
                         now: now,
-                        onSelect: { selectedWindow in
-                            let otherWindows = settings.windows.dropFirst()
+                        customPreset: customPreset,
+                        onSelect: { selectedWindows in
                             setSettings(settings.doCopy(
                                 enabled: settings.enabled,
-                                windows: [selectedWindow] + otherWindows
+                                windows: selectedWindows
                             ))
                         }
                     )
+                    .onAppear {
+                        if presetSelection == PresetSelection.Custom() {
+                            customPreset = settings.windows
+                            print("HELLO A \(customPreset)")
+
+                        } else {
+                            print("HELLO B")
+
+                            customPreset =
+                                [FavoriteSettings.NotificationsWindow.companion.customFromCurrentTime(now: now)]
+                        }
+                    }
+                    .onChange(of: settings.windows) { newWindows in
+                        if PresetSelection.companion.selectedPresetFromWindows(
+                            windows: newWindows,
+                            presetOptions: presetOptions
+                        ) == PresetSelection.Custom() {
+                            print("HELLO C \(newWindows)")
+
+                            customPreset = newWindows
+                        } else {
+                            print("HELLO D \(newWindows)")
+                        }
+                    }
                 }
 
                 ForEach(settings.windows, id: \.id) { window in
@@ -112,10 +140,11 @@ struct NotificationSettingsWidget: View {
                             setSettings(settings.doCopy(enabled: settings.enabled, windows: newWindows))
                         },
                         deleteWindow: settings.windows.count > 1 ? {
+                            let nextWindows = settings.windows.filter { $0.id != window.id }
                             setSettings(
                                 settings.doCopy(
                                     enabled: settings.enabled,
-                                    windows: settings.windows.filter { $0.id != window.id }
+                                    windows: nextWindows
                                 )
                             )
                         } : nil
@@ -133,10 +162,13 @@ struct NotificationSettingsWidget: View {
                         )
                     }
 
-                Button(action: { setSettings(settings.doCopy(
-                    enabled: settings.enabled,
-                    windows: settings.windows + [customWindow]
-                )) }) {
+                Button(action: {
+                    let nextWindows = settings.windows + [customWindow]
+                    setSettings(settings.doCopy(
+                        enabled: settings.enabled,
+                        windows: nextWindows
+                    ))
+                }) {
                     HStack(spacing: 12) {
                         Image(.plus)
                             .resizable()
@@ -155,6 +187,7 @@ struct NotificationSettingsWidget: View {
                 .foregroundStyle(Color.text.opacity(0.6))
             }
         }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .enableInjection()
     }
 

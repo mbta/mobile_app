@@ -128,7 +128,7 @@ fun NotificationSettingsWidget(
         )
     val presetSelection: PresetSelection =
         remember(settings) {
-            PresetSelection.selectedPresetFromSettings(settings, presetOptions)
+            PresetSelection.selectedPresetFromWindows(settings.windows, presetOptions)
         }
     var customPreset by remember {
         mutableStateOf(listOf(Window.customFromCurrentTime(now)))

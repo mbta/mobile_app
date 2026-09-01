@@ -12,6 +12,43 @@ import SwiftUI
 import ViewInspector
 import XCTest
 
+private struct NotificationSettingsWidgetHost: View {
+    @ObserveInjection var inject
+    let now: EasternTimeInstant
+    let notificationPermissionManager: INotificationPermissionManager
+    let onSettingsChange: (FavoriteSettings.Notifications) -> Void
+    @State private var settings: FavoriteSettings.Notifications
+
+    let inspection = Inspection<Self>()
+
+    init(
+        initialSettings: FavoriteSettings.Notifications,
+        notificationPermissionManager: INotificationPermissionManager,
+        now: EasternTimeInstant,
+        onSettingsChange: @escaping (FavoriteSettings.Notifications) -> Void
+    ) {
+        _settings = State(initialValue: initialSettings)
+        self.notificationPermissionManager = notificationPermissionManager
+        self.now = now
+        self.onSettingsChange = onSettingsChange
+    }
+
+    var body: some View {
+        NotificationSettingsWidget(
+            settings: settings,
+            setSettings: { newSettings in
+                settings = newSettings
+                onSettingsChange(newSettings)
+            },
+            notificationPermissionManager: notificationPermissionManager,
+            now: now
+        )
+        .withFixedSettings([.notificationPresetWindows: true])
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .enableInjection()
+    }
+}
+
 final class NotificationSettingsWidgetTests: XCTestCase {
     @MainActor func testAddTimePeriod() async throws {
         var settings: FavoriteSettings.Notifications = .companion.disabled
