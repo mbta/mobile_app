@@ -31,13 +31,13 @@ class PresetWindowSelectorTest {
                     listOf(
                         listOf(
                             PresetWindow(
-                                window = Window(Window.morningDefaultTimes),
+                                window = Window.morningDefault(Window.weekdays),
                                 label = "Morning",
                             )
                         ),
                         listOf(
                             PresetWindow(
-                                window = Window(Window.middayDefaultTimes),
+                                window = Window.middayDefault(Window.weekdays),
                                 label = "Midday",
                             )
                         ),
@@ -54,7 +54,7 @@ class PresetWindowSelectorTest {
         composeTestRule.onNodeWithText("Custom").assertIsNotSelected()
 
         composeTestRule.onNodeWithText("Morning").performClick()
-        assertEquals(Window(Window.morningDefaultTimes), selectedWindow)
+        assertEquals(Window.morningDefault(Window.weekdays), selectedWindow)
     }
 
     @Test
@@ -63,8 +63,18 @@ class PresetWindowSelectorTest {
             PresetWindowSelector(
                 presetRows =
                     listOf(
-                        listOf(PresetWindow(window = Window.morningDefault, label = "Morning")),
-                        listOf(PresetWindow(window = Window.middayDefault, label = "Midday")),
+                        listOf(
+                            PresetWindow(
+                                window = Window.morningDefault(Window.weekdays),
+                                label = "Morning",
+                            )
+                        ),
+                        listOf(
+                            PresetWindow(
+                                window = Window.middayDefault(Window.weekdays),
+                                label = "Midday",
+                            )
+                        ),
                     ),
                 selectedPreset = PresetSelection.Preset(rowIndex = 1, columnIndex = 0),
                 presetsEnabled = false,
@@ -84,8 +94,18 @@ class PresetWindowSelectorTest {
             PresetWindowSelector(
                 presetRows =
                     listOf(
-                        listOf(PresetWindow(window = Window.morningDefault, label = "Morning")),
-                        listOf(PresetWindow(window = Window.middayDefault, label = "Midday")),
+                        listOf(
+                            PresetWindow(
+                                window = Window.morningDefault(Window.weekdays),
+                                label = "Morning",
+                            )
+                        ),
+                        listOf(
+                            PresetWindow(
+                                window = Window.middayDefault(Window.weekdays),
+                                label = "Midday",
+                            )
+                        ),
                     ),
                 selectedPreset = PresetSelection.Preset(rowIndex = 1, columnIndex = 0),
                 presetsEnabled = true,
@@ -119,8 +139,18 @@ class PresetWindowSelectorTest {
             PresetWindowSelector(
                 presetRows =
                     listOf(
-                        listOf(PresetWindow(window = Window.morningDefault, label = "Morning")),
-                        listOf(PresetWindow(window = Window.middayDefault, label = "Midday")),
+                        listOf(
+                            PresetWindow(
+                                window = Window.morningDefault(Window.weekdays),
+                                label = "Morning",
+                            )
+                        ),
+                        listOf(
+                            PresetWindow(
+                                window = Window.middayDefault(Window.weekdays),
+                                label = "Midday",
+                            )
+                        ),
                     ),
                 selectedPreset = PresetSelection.Preset(rowIndex = 1, columnIndex = 0),
                 presetsEnabled = true,
