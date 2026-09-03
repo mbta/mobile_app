@@ -112,26 +112,26 @@ class FavoriteTest {
     @Test
     fun `defaultFromCurrentTime returns the matching preset`() {
         assertEquals(
-            Window.morningDefault(Window.weekdays),
+            Window(Preset.Morning, Window.weekdays),
             Window.defaultFromCurrentTime(EasternTimeInstant(LocalDateTime(2026, 8, 27, 7, 30))),
         )
         assertEquals(
-            Window.middayDefault(Window.weekdays),
+            Window(Preset.Midday, Window.weekdays),
             Window.defaultFromCurrentTime(EasternTimeInstant(LocalDateTime(2026, 8, 27, 12, 30))),
         )
 
         assertEquals(
-            Window.eveningDefault(Window.weekdays),
+            Window(Preset.Evening, Window.weekdays),
             Window.defaultFromCurrentTime(EasternTimeInstant(LocalDateTime(2026, 8, 27, 18, 30))),
         )
 
         assertEquals(
-            Window.allDayDefault(Window.weekdays),
+            Window(Preset.AllDay, Window.weekdays),
             Window.defaultFromCurrentTime(EasternTimeInstant(LocalDateTime(2026, 8, 27, 21, 30))),
         )
 
         assertEquals(
-            Window.allDayDefault(Window.weekend),
+            Window(Preset.AllDay, Window.weekend),
             Window.defaultFromCurrentTime(EasternTimeInstant(LocalDateTime(2026, 8, 30, 21, 30))),
         )
     }

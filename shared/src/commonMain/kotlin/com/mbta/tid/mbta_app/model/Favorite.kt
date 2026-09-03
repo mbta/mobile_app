@@ -78,6 +78,11 @@ constructor(val notifications: Notifications = Notifications.disabled) {
             val id: String
                 get() = "$startTime $endTime ${daysOfWeek.joinToString(",")}"
 
+            public constructor(
+                preset: Preset,
+                daysOfWeek: Set<DayOfWeek>,
+            ) : this(preset.startTime, preset.endTime, daysOfWeek)
+
             public companion object {
                 public val weekdays: Set<DayOfWeek> =
                     setOf(
@@ -114,14 +119,14 @@ constructor(val notifications: Notifications = Notifications.disabled) {
                     val daysOfWeek = defaultDaysOfWeek(now)
                     val presets =
                         listOf(
-                            morningDefault(daysOfWeek),
-                            middayDefault(daysOfWeek),
-                            eveningDefault(daysOfWeek),
-                            allDayDefault(daysOfWeek),
+                            Window(Preset.Morning, daysOfWeek),
+                            Window(Preset.Midday, daysOfWeek),
+                            Window(Preset.Evening, daysOfWeek),
+                            Window(Preset.AllDay, daysOfWeek),
                         )
 
                     return presets.firstOrNull { now.local.time in it.startTime..it.endTime }
-                        ?: allDayDefault(daysOfWeek)
+                        ?: Window(Preset.AllDay, daysOfWeek)
                 }
 
                 public fun customFromCurrentTime(now: EasternTimeInstant): Window {
