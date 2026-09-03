@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="access_issue">Access Issue</string>
+    <string name="access_issue">Android translation test</string>
     <string name="access_issue_sentence_case">Access issue</string>
     <string name="accident">Accident</string>
     <string name="accident_lowercase">accident</string>
