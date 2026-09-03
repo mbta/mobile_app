@@ -146,6 +146,16 @@ fun SaveFavoritePage(
         }
     }
 
+    val notificationSettingsState by notificationSettingsViewModel.models.collectAsState()
+
+    LaunchedEffect(existingSettings) {
+        notificationSettingsViewModel.loadSavedSettings(existingSettings.notifications)
+    }
+
+    LaunchedEffect(notificationSettingsState) {
+        updatedSettings = settings.copy(notifications = notificationSettingsState.settings)
+    }
+
     val includeAccessibility = SettingsCache.get(Settings.StationAccessibility)
     val notificationsEnabled = SettingsCache.get(Settings.Notifications)
     val currentLocale = stringResource(R.string.current_locale)

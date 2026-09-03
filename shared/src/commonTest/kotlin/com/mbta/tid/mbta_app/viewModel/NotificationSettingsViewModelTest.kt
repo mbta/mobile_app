@@ -29,6 +29,33 @@ class NotificationSettingsViewModelTest {
     }
 
     @Test
+    fun loadSavedSettingsReplacesStateAndSelectsPreset() = runTest {
+        val viewModel = NotificationSettingsViewModel(MockSentryRepository())
+        val loadedSettings =
+            FavoriteSettings.Notifications(
+                enabled = true,
+                windows =
+                    listOf(
+                        FavoriteSettings.Notifications.Window(
+                            startTime = Preset.Morning.startTime,
+                            endTime = Preset.Morning.endTime,
+                            daysOfWeek = FavoriteSettings.Notifications.Window.weekdays,
+                        )
+                    ),
+            )
+
+        testViewModelFlow(viewModel).test {
+            assertEquals(FavoriteSettings.Notifications.disabled, awaitItem().settings)
+
+            viewModel.loadSavedSettings(loadedSettings)
+
+            val state = awaitItem()
+            assertEquals(loadedSettings, state.settings)
+            assertEquals(Preset.Morning, state.selectedPreset)
+        }
+    }
+
+    @Test
     fun setEnabledUpdatesNotificationToggle() = runTest {
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
 

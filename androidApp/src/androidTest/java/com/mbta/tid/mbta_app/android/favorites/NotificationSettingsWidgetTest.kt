@@ -417,10 +417,8 @@ class NotificationSettingsWidgetTest : KoinTest {
                 MockSettingsRepository(settings = mapOf(Settings.NotificationPresetWindows to true))
         }
         composeTestRule.setContent {
-            var settings by remember { mutableStateOf(FavoriteSettings.Notifications.disabled) }
             NotificationSettingsWidget(
-                settings,
-                setSettings = { settings = it },
+                koinInject(),
                 notificationPermissionState = permissionGranted,
                 hasRequestedPermission = true,
                 now = EasternTimeInstant(LocalDateTime(2026, 8, 27, 4, 30, 0)),

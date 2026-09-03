@@ -18,11 +18,13 @@ import kotlinx.coroutines.flow.StateFlow
 public interface INotificationSettingsViewModel {
     public val models: StateFlow<NotificationSettingsViewModel.State>
 
+    public fun loadSavedSettings(settings: Notifications)
+
     public fun setEnabled(enabled: Boolean)
 
     public fun setPresetsEnabledFlag(enabled: Boolean)
 
-    public fun setCustomWindows(windows: List<FavoriteSettings.Notifications.Window>)
+    public fun setCustomWindows(windows: List<Window>)
 
     public fun addPlaceholderWindow()
 
@@ -35,6 +37,9 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
     MoleculeViewModel<NotificationSettingsViewModel.Event, NotificationSettingsViewModel.State>(),
     INotificationSettingsViewModel {
     public sealed class Event {
+
+        public data class LoadSavedSettings(val settings: Notifications) : Event()
+
         public data class SetEnabled(val enabled: Boolean) : Event()
 
         public data class SetPresetsEnabledFlag(val enabled: Boolean) : Event()
@@ -115,6 +120,8 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
                                 settings.windows +
                                     Window.default(settings.windows, presetsEnabledFlag, now)
                         )
+
+                is Event.LoadSavedSettings -> settings = event.settings
             }
         }
 
@@ -123,6 +130,10 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
                 State(settings, Preset.selected(settings.windows))
             }
         return state
+    }
+
+    override fun loadSavedSettings(settings: Notifications) {
+        fireEvent(Event.LoadSavedSettings(settings))
     }
 
     override fun setEnabled(enabled: Boolean) {
@@ -156,6 +167,8 @@ public class MockNotificationSettingsViewModel(
 ) : INotificationSettingsViewModel {
     override val models: MutableStateFlow<NotificationSettingsViewModel.State>
         get() = MutableStateFlow(initialState)
+
+    override fun loadSavedSettings(settings: Notifications) {}
 
     public var onSetEnabled: (Boolean) -> Unit = {}
     public var onSetCustomWindows: (List<FavoriteSettings.Notifications.Window>) -> Unit = {}
