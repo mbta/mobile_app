@@ -4762,44 +4762,44 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problema de accesibilidad"
+            "state" : "translated",
+            "value" : "Prueba de traducción de iOS"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problème d’accès"
+            "state" : "translated",
+            "value" : "Test de traduction iOS"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Pwoblèm aksè"
+            "state" : "translated",
+            "value" : "Tès tradiksyon iOS"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Problema de acesso"
+            "state" : "translated",
+            "value" : "teste de tradução do iOS"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Vấn đề về tiếp cận"
+            "state" : "translated",
+            "value" : "Kiểm thử dịch thuật iOS"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "无障碍问题"
+            "state" : "translated",
+            "value" : "iOS翻译测试"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "無障礙問題"
+            "state" : "translated",
+            "value" : "iOS翻譯測試"
           }
         }
       }
