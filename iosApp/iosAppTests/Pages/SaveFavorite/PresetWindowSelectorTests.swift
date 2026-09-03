@@ -14,25 +14,12 @@ import XCTest
 
 final class PresetWindowSelectorTests: XCTestCase {
     func testPresetWindowsVisible() {
-        var selectedWindows: [FavoriteSettings.NotificationsWindow]?
+        var selectedPreset: Preset?
 
         let sut = PresetWindowSelector(
-            presetRows: [[
-                .init(
-                    label: "Morning",
-                    window: .companion
-                        .morningDefault(daysOfWeek: FavoriteSettings.NotificationsWindow.companion.weekdays)
-                ),
-                .init(
-                    label: "Midday",
-                    window: .companion
-                        .middayDefault(daysOfWeek: FavoriteSettings.NotificationsWindow.companion.weekdays)
-                )
-            ]],
-            selectedPreset: .Preset(rowIndex: 1, columnIndex: 0),
-            customPreset: [FavoriteSettings.NotificationsWindow.companion
-                .eveningDefault(daysOfWeek: FavoriteSettings.NotificationsWindow.companion.weekend)],
-            onSelect: { windows in selectedWindows = windows }
+            presetRows: [[.morning, .midday]],
+            selectedPreset: .midday,
+            onSelect: { preset in selectedPreset = preset }
         )
 
         XCTAssertNotNil(try sut.inspect().find(button: "Morning"))
@@ -41,39 +28,19 @@ final class PresetWindowSelectorTests: XCTestCase {
 
         try? sut.inspect().find(button: "Morning").tap()
 
-        XCTAssertEqual(
-            selectedWindows,
-            [.companion.morningDefault(daysOfWeek: FavoriteSettings.NotificationsWindow.companion.weekdays)]
-        )
+        XCTAssertEqual(selectedPreset, .morning)
     }
 
-    func testCustomUsesProvidedCustomPreset() {
-        var selectedWindows: [FavoriteSettings.NotificationsWindow] = []
-        let customWindow = FavoriteSettings.NotificationsWindow(
-            startTime: .init(hour: 10, minute: 15, second: 0, nanosecond: 0),
-            endTime: .init(hour: 11, minute: 45, second: 0, nanosecond: 0),
-            daysOfWeek: [.sunday, .tuesday]
-        )
+    func testCustomSelectsNil() {
+        var selectedPreset: Preset? = .morning
 
         let sut = PresetWindowSelector(
-            presetRows: [[
-                .init(
-                    label: "Morning",
-                    window: .companion
-                        .morningDefault(daysOfWeek: FavoriteSettings.NotificationsWindow.companion.weekdays)
-                ),
-                .init(
-                    label: "Midday",
-                    window: .companion
-                        .middayDefault(daysOfWeek: FavoriteSettings.NotificationsWindow.companion.weekdays)
-                )
-            ]],
-            selectedPreset: .Preset(rowIndex: 1, columnIndex: 0),
-            customPreset: [customWindow],
-            onSelect: { windows in selectedWindows = windows }
+            presetRows: [[.morning, .midday]],
+            selectedPreset: selectedPreset,
+            onSelect: { preset in selectedPreset = preset }
         )
 
         try? sut.inspect().find(button: "Custom").tap()
-        XCTAssertEqual(selectedWindows, [customWindow])
+        XCTAssertEqual(nil, selectedPreset)
     }
 }

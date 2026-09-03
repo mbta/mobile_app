@@ -27,14 +27,50 @@ private extension DateComponents {
 
 struct NotificationSettingsWidget: View {
     @ObserveInjection var inject
-    let settings: FavoriteSettings.Notifications
-    let setSettings: (FavoriteSettings.Notifications) -> Void
+    let vm: INotificationSettingsViewModel
+    let onUpdate: (FavoriteSettings.Notifications) -> Void
 
     var notificationPermissionManager: INotificationPermissionManager
     var authorizationStatus: UNAuthorizationStatus? { notificationPermissionManager.authorizationStatus }
     var now: EasternTimeInstant = .now()
 
-    @State var customPreset: [FavoriteSettings.NotificationsWindow] = []
+    @State var vmState: NotificationSettingsViewModel.State?
+
+    let inspection = Inspection<Self>()
+
+    var body: some View {
+        VStack(spacing: 0) {
+            if let vmState {
+                NotificationSettingsWidgetPresetnationView(state: vmState,
+                                                           setEnabled: { enabled in vm.setEnabled(enabled: enabled) },
+                                                           setPreset: { preset in vm.setPreset(preset: preset) },
+                                                           setCustomWindows: { custom in
+                                                               vm.setCustomWindows(windows: custom)
+                                                           },
+                                                           addPlaceholderWindow: { vm.addPlaceholderWindow() },
+                                                           notificationPermissionManager: notificationPermissionManager)
+            }
+        }.manageVM(vm, $vmState, now)
+            .onChange(of: vmState) { newState in
+                if let newState, let settings = newState.settings {
+                    onUpdate(settings)
+                }
+            }
+            .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .enableInjection()
+    }
+}
+
+struct NotificationSettingsWidgetPresetnationView: View {
+    let state: NotificationSettingsViewModel.State
+    var setEnabled: (Bool) -> Void = { _ in }
+    var setPreset: (Preset?) -> Void = { _ in }
+    var setCustomWindows: ([FavoriteSettings.NotificationsWindow]) -> Void = { _ in }
+    var addPlaceholderWindow: () -> Void = {}
+
+    var notificationPermissionManager: INotificationPermissionManager
+    var authorizationStatus: UNAuthorizationStatus? { notificationPermissionManager.authorizationStatus }
+    var now: EasternTimeInstant = .now()
 
     @EnvironmentObject var settingsCache: SettingsCache
     var presetWindowsEnabled: Bool { settingsCache.get(.notificationPresetWindows) }
@@ -43,330 +79,263 @@ struct NotificationSettingsWidget: View {
         FavoriteSettings.NotificationsWindow.companion.defaultDaysOfWeek(now: now)
     }
 
-    var presetOptions: [[PresetWindow]] { [
-        [
-            .init(
-                label: NSLocalizedString("Morning", comment: "Notification window preset label"),
-                window: FavoriteSettings.NotificationsWindow.companion.morningDefault(daysOfWeek: daysOfWeek)
-            ),
-            .init(
-                label: NSLocalizedString("Midday", comment: "Notification window preset label"),
-                window: FavoriteSettings.NotificationsWindow.companion.middayDefault(daysOfWeek: daysOfWeek)
-            ),
-            .init(
-                label: NSLocalizedString("Evening", comment: "Notification window preset label"),
-                window: FavoriteSettings.NotificationsWindow.companion.eveningDefault(daysOfWeek: daysOfWeek)
-            )
-        ],
-        [
-            .init(
-                label: NSLocalizedString("All day", comment: "Notification window preset label"),
-                window: FavoriteSettings.NotificationsWindow.companion.allDayDefault(daysOfWeek: daysOfWeek)
-            )
-        ]
+    let presetOptions: [[Preset]] = [
+        [.morning, .midday, .evening],
+        [.allDay]
     ]
-    }
-
-    var presetSelection: PresetSelection {
-        PresetSelection.companion.selectedPresetFromWindows(
-            windows: settings.windows,
-            presetOptions: presetOptions
-        )
-    }
 
     let inspection = Inspection<Self>()
 
     var body: some View {
         let permissionDenied = authorizationStatus == .denied
-        VStack(spacing: 8) {
-            NotificationSwitch(
-                settings: settings,
-                setSettings: setSettings,
-                notificationPermissionManager: notificationPermissionManager,
-                now: now,
-                presetWindowsEnabled: presetWindowsEnabled
-            )
-
-            if settings.enabled {
-                if presetWindowsEnabled {
-                    PresetWindowSelector(
-                        presetRows: presetOptions,
-                        selectedPreset: presetSelection,
-                        now: now,
-                        customPreset: customPreset,
-                        onSelect: { selectedWindows in
-                            setSettings(settings.doCopy(
-                                enabled: settings.enabled,
-                                windows: selectedWindows
-                            ))
-                        }
+        VStack(spacing: 0) {
+            if let settings = state.settings {
+                VStack(spacing: 8) {
+                    NotificationSwitch(
+                        settings: settings,
+                        onValueChanged: { setEnabled($0) },
+                        notificationPermissionManager: notificationPermissionManager,
                     )
-                    .onAppear {
-                        if presetSelection == PresetSelection.Custom() {
-                            customPreset = settings.windows
-                        } else {
-                            customPreset =
-                                [FavoriteSettings.NotificationsWindow.companion.customFromCurrentTime(now: now)]
-                        }
-                    }
-                    .onChange(of: settings.windows) { newWindows in
-                        if PresetSelection.companion.selectedPresetFromWindows(
-                            windows: newWindows,
-                            presetOptions: presetOptions
-                        ) == PresetSelection.Custom() {
-                            customPreset = newWindows
-                        }
-                    }
-                }
 
-                ForEach(settings.windows, id: \.id) { window in
-                    WindowWidget(
-                        window: window,
-                        setWindow: { newWindow in
-                            let windowIndex = settings.windows.firstIndex(of: window)
-                            var newWindows = settings.windows
-                            if let windowIndex {
-                                newWindows[windowIndex] = newWindow
-                            }
-                            setSettings(settings.doCopy(enabled: settings.enabled, windows: newWindows))
-                        },
-                        deleteWindow: settings.windows.count > 1 ? {
-                            let nextWindows = settings.windows.filter { $0.id != window.id }
-                            setSettings(
-                                settings.doCopy(
-                                    enabled: settings.enabled,
-                                    windows: nextWindows
-                                )
+                    if settings.enabled {
+                        if presetWindowsEnabled {
+                            PresetWindowSelector(
+                                presetRows: presetOptions,
+                                selectedPreset: state.selectedPreset,
+                                onSelect: { preset in
+                                    setPreset(preset)
+                                }
                             )
-                        } : nil
-                    )
-                }
+                        }
 
-                let customWindow =
-                    if presetWindowsEnabled {
-                        FavoriteSettings.NotificationsWindow.companion.customFromCurrentTime(now: now)
-                    } else {
-                        FavoriteSettings.NotificationsWindow.companion.default(
-                            existingWindows: settings.windows,
-                            presetsEnabled: presetWindowsEnabled,
-                            now: now
-                        )
-                    }
+                        ForEach(settings.windows, id: \.id) { window in
+                            WindowWidget(
+                                window: window,
+                                setWindow: { newWindow in
+                                    let windowIndex = settings.windows.firstIndex(of: window)
+                                    var newWindows = settings.windows
+                                    if let windowIndex {
+                                        newWindows[windowIndex] = newWindow
+                                    }
+                                    setCustomWindows(newWindows)
+                                },
+                                deleteWindow: settings.windows.count > 1 ? {
+                                    let nextWindows = settings.windows.filter { $0.id != window.id }
+                                    setCustomWindows(nextWindows)
+                                } : nil
+                            )
+                        }
 
-                Button(action: {
-                    let nextWindows = settings.windows + [customWindow]
-                    setSettings(settings.doCopy(
-                        enabled: settings.enabled,
-                        windows: nextWindows
-                    ))
-                }) {
-                    HStack(spacing: 12) {
-                        Image(.plus)
-                            .resizable()
-                            .padding(4)
-                            .background(Color.text.opacity(0.6), in: .circle)
-                            .foregroundStyle(Color.fill3)
-                            .frame(width: 24, height: 24)
-                        Text("Add another time period")
-                        Spacer()
+                        Button(action: {
+                            addPlaceholderWindow()
+                        }) {
+                            HStack(spacing: 12) {
+                                Image(.plus)
+                                    .resizable()
+                                    .padding(4)
+                                    .background(Color.text.opacity(0.6), in: .circle)
+                                    .foregroundStyle(Color.fill3)
+                                    .frame(width: 24, height: 24)
+                                Text("Add another time period")
+                                Spacer()
+                            }
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 10)
+                        .background(Color.fill3)
+                        .withRoundedBorder()
+                        .foregroundStyle(Color.text.opacity(0.6))
                     }
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 10)
-                .background(Color.fill3)
-                .withRoundedBorder()
-                .foregroundStyle(Color.text.opacity(0.6))
             }
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .enableInjection()
     }
+}
 
-    struct WindowWidget: View {
-        @ObserveInjection var inject
-        let window: FavoriteSettings.NotificationsWindow
-        let setWindow: (FavoriteSettings.NotificationsWindow) -> Void
-        let deleteWindow: (() -> Void)?
+struct WindowWidget: View {
+    @ObserveInjection var inject
+    let window: FavoriteSettings.NotificationsWindow
+    let setWindow: (FavoriteSettings.NotificationsWindow) -> Void
+    let deleteWindow: (() -> Void)?
 
-        var body: some View {
-            HStack(spacing: 0) {
-                if let deleteWindow {
-                    Button(action: deleteWindow) {
-                        Image(.faDelete).accessibilityLabel(Text("Delete"))
-                    }
-                    .foregroundStyle(Color.error)
-                    .frame(minWidth: 44)
+    var body: some View {
+        HStack(spacing: 0) {
+            if let deleteWindow {
+                Button(action: deleteWindow) {
+                    Image(.faDelete).accessibilityLabel(Text("Delete"))
                 }
-                VStack {
-                    HStack(spacing: 0) {
-                        TimeInput(
-                            label: Text("Select start time"),
-                            time: DateComponents.fromLocalTime(window.startTime),
-                            setTime: { time in
-                                let startTime = time.toLocalTime()
-                                setWindow(window.doCopy(
-                                    startTime: startTime,
-                                    endTime: FavoriteSettings.NotificationsWindow.companion
-                                        .safeEndTime(startTime: startTime, endTime: window.endTime),
-                                    daysOfWeek: window.daysOfWeek
-                                ))
-                            },
-                            minimumTime: nil
-                        ).frame(maxWidth: .infinity)
-                        Text("to")
-                        TimeInput(
-                            label: Text("Select end time"),
-                            time: DateComponents.fromLocalTime(window.endTime),
-                            setTime: { time in setWindow(window.doCopy(
-                                startTime: window.startTime,
-                                endTime: time.toLocalTime(),
+                .foregroundStyle(Color.error)
+                .frame(minWidth: 44)
+            }
+            VStack {
+                HStack(spacing: 0) {
+                    TimeInput(
+                        label: Text("Select start time"),
+                        time: DateComponents.fromLocalTime(window.startTime),
+                        setTime: { time in
+                            let startTime = time.toLocalTime()
+                            setWindow(window.doCopy(
+                                startTime: startTime,
+                                endTime: FavoriteSettings.NotificationsWindow.companion
+                                    .safeEndTime(startTime: startTime, endTime: window.endTime),
                                 daysOfWeek: window.daysOfWeek
-                            )) },
-                            minimumTime: DateComponents
-                                .fromLocalTime(FavoriteSettings.NotificationsWindow.companion
-                                    .minimumEndTime(startTime: window.startTime))
-                        ).frame(maxWidth: .infinity)
-                    }
-                    DaysOfWeekInput(
-                        daysOfWeek: window.daysOfWeek,
-                        setDaysOfWeek: { newDays in setWindow(window.doCopy(
+                            ))
+                        },
+                        minimumTime: nil
+                    ).frame(maxWidth: .infinity)
+                    Text("to")
+                    TimeInput(
+                        label: Text("Select end time"),
+                        time: DateComponents.fromLocalTime(window.endTime),
+                        setTime: { time in setWindow(window.doCopy(
                             startTime: window.startTime,
-                            endTime: window.endTime,
-                            daysOfWeek: newDays
-                        )) }
-                    )
+                            endTime: time.toLocalTime(),
+                            daysOfWeek: window.daysOfWeek
+                        )) },
+                        minimumTime: DateComponents
+                            .fromLocalTime(FavoriteSettings.NotificationsWindow.companion
+                                .minimumEndTime(startTime: window.startTime))
+                    ).frame(maxWidth: .infinity)
                 }
-                .background(Color.fill3)
-                .clipShape(RoundedRectangle(cornerRadius: 7))
-                .padding(1)
+                DaysOfWeekInput(
+                    daysOfWeek: window.daysOfWeek,
+                    setDaysOfWeek: { newDays in setWindow(window.doCopy(
+                        startTime: window.startTime,
+                        endTime: window.endTime,
+                        daysOfWeek: newDays
+                    )) }
+                )
             }
-            .background(Color.halo)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-            .enableInjection()
+            .background(Color.fill3)
+            .clipShape(RoundedRectangle(cornerRadius: 7))
+            .padding(1)
         }
+        .background(Color.halo)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .enableInjection()
+    }
+}
+
+struct TimeInput: View {
+    @ObserveInjection var inject
+    let label: Text
+    let time: DateComponents
+    let setTime: (DateComponents) -> Void
+    let minimumTime: DateComponents?
+
+    init(
+        label: Text,
+        time: DateComponents,
+        setTime: @escaping (DateComponents) -> Void,
+        minimumTime: DateComponents? = nil
+    ) {
+        self.label = label
+        self.time = time
+        self.setTime = setTime
+        self.minimumTime = minimumTime
     }
 
-    struct TimeInput: View {
-        @ObserveInjection var inject
-        let label: Text
-        let time: DateComponents
-        let setTime: (DateComponents) -> Void
-        let minimumTime: DateComponents?
-
-        init(
-            label: Text,
-            time: DateComponents,
-            setTime: @escaping (DateComponents) -> Void,
-            minimumTime: DateComponents? = nil
-        ) {
-            self.label = label
-            self.time = time
-            self.setTime = setTime
-            self.minimumTime = minimumTime
-        }
-
-        var dateRange: ClosedRange<Date> {
-            let calendar = Calendar(identifier: .iso8601)
-            let beforeDayStart = calendar.startOfDay(for: .now).addingTimeInterval(-0.01)
-            let minimum: DateComponents = minimumTime ?? .init(hour: 0, minute: 0, second: 0)
-            let start = calendar.nextDate(
-                after: beforeDayStart,
-                matching: minimum,
-                matchingPolicy: .strict
-            )!
-            let end = calendar.nextDate(
-                after: start,
-                matching: .init(hour: 23, minute: 59, second: 59),
-                matchingPolicy: .strict
-            )!
-            return start ... end
-        }
-
-        var body: some View {
-            let timeBinding = Binding<DateComponents>(
-                get: {
-                    time
-                },
-                set: { newValue in
-                    setTime(newValue)
-                }
-            )
-
-            DatePicker(selection: timeBinding.nextDate, in: dateRange, displayedComponents: [.hourAndMinute]) { label }
-                .labelsHidden()
-                .datePickerStyle(.compact)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .enableInjection()
-        }
+    var dateRange: ClosedRange<Date> {
+        let calendar = Calendar(identifier: .iso8601)
+        let beforeDayStart = calendar.startOfDay(for: .now).addingTimeInterval(-0.01)
+        let minimum: DateComponents = minimumTime ?? .init(hour: 0, minute: 0, second: 0)
+        let start = calendar.nextDate(
+            after: beforeDayStart,
+            matching: minimum,
+            matchingPolicy: .strict
+        )!
+        let end = calendar.nextDate(
+            after: start,
+            matching: .init(hour: 23, minute: 59, second: 59),
+            matchingPolicy: .strict
+        )!
+        return start ... end
     }
 
-    struct DaysOfWeekInput: View {
-        @ObserveInjection var inject
-        let daysOfWeek: Set<Kotlinx_datetimeDayOfWeek>
-        let setDaysOfWeek: (Set<Kotlinx_datetimeDayOfWeek>) -> Void
-
-        static var days: [Kotlinx_datetimeDayOfWeek] {
-            [.sunday, .monday, .tuesday, .wednesday, .thursday, .friday, .saturday]
-        }
-
-        static var calendar: Calendar {
-            var result = Calendar(identifier: .iso8601)
-            result.locale = .autoupdatingCurrent
-            return result
-        }
-
-        var body: some View {
-            let calendar = Self.calendar
-            HStack(alignment: .top, spacing: 2) {
-                ForEach(Self.days, id: \.ordinal) { day in
-                    let isIncluded = daysOfWeek.contains(day)
-                    VStack(spacing: 0) {
-                        Text(calendar.shortStandaloneWeekdaySymbols[day.indexSundayFirst])
-                            .lineLimit(1)
-                            .font(Typography.footnoteSemibold)
-                        if isIncluded {
-                            Image(.faCheck)
-                        } else {
-                            Image(.faCheck).hidden()
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.top, 8)
-                    .onTapGesture {
-                        setDaysOfWeek(daysOfWeek.symmetricDifference([day]))
-                    }
-                    .background(isIncluded ? Color.key : Color.fill1)
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                    .foregroundStyle(isIncluded ? Color.fill3 : Color.text.opacity(0.6))
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityChildren {
-                        // .accessibilityAddTraits(.isToggle) is iOS 17+ only, so we use a real toggle
-                        // labelled with the full name of the day
-                        Toggle(
-                            isOn: .init(get: { isIncluded }, set: { _ in
-                                setDaysOfWeek(daysOfWeek.symmetricDifference([day]))
-                            }),
-                            label: {
-                                Text(calendar.standaloneWeekdaySymbols[day.indexSundayFirst])
-                            }
-                        )
-                    }
-                }
+    var body: some View {
+        let timeBinding = Binding<DateComponents>(
+            get: {
+                time
+            },
+            set: { newValue in
+                setTime(newValue)
             }
+        )
+
+        DatePicker(selection: timeBinding.nextDate, in: dateRange, displayedComponents: [.hourAndMinute]) { label }
+            .labelsHidden()
+            .datePickerStyle(.compact)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .enableInjection()
+    }
+}
+
+struct DaysOfWeekInput: View {
+    @ObserveInjection var inject
+    let daysOfWeek: Set<Kotlinx_datetimeDayOfWeek>
+    let setDaysOfWeek: (Set<Kotlinx_datetimeDayOfWeek>) -> Void
+
+    static var days: [Kotlinx_datetimeDayOfWeek] {
+        [.sunday, .monday, .tuesday, .wednesday, .thursday, .friday, .saturday]
+    }
+
+    static var calendar: Calendar {
+        var result = Calendar(identifier: .iso8601)
+        result.locale = .autoupdatingCurrent
+        return result
+    }
+
+    var body: some View {
+        let calendar = Self.calendar
+        HStack(alignment: .top, spacing: 2) {
+            ForEach(Self.days, id: \.ordinal) { day in
+                let isIncluded = daysOfWeek.contains(day)
+                VStack(spacing: 0) {
+                    Text(calendar.shortStandaloneWeekdaySymbols[day.indexSundayFirst])
+                        .lineLimit(1)
+                        .font(Typography.footnoteSemibold)
+                    if isIncluded {
+                        Image(.faCheck)
+                    } else {
+                        Image(.faCheck).hidden()
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.top, 8)
+                .onTapGesture {
+                    setDaysOfWeek(daysOfWeek.symmetricDifference([day]))
+                }
+                .background(isIncluded ? Color.key : Color.fill1)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+                .foregroundStyle(isIncluded ? Color.fill3 : Color.text.opacity(0.6))
+                .accessibilityElement(children: .ignore)
+                .accessibilityChildren {
+                    // .accessibilityAddTraits(.isToggle) is iOS 17+ only, so we use a real toggle
+                    // labelled with the full name of the day
+                    Toggle(
+                        isOn: .init(get: { isIncluded }, set: { _ in
+                            setDaysOfWeek(daysOfWeek.symmetricDifference([day]))
+                        }),
+                        label: {
+                            Text(calendar.standaloneWeekdaySymbols[day.indexSundayFirst])
+                        }
+                    )
+                }
+            }
         }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .enableInjection()
     }
 }
 
 struct NotificationSwitch: View {
     let settings: FavoriteSettings.Notifications
-    let setSettings: (FavoriteSettings.Notifications) -> Void
+    let onValueChanged: (Bool) -> Void
     let notificationPermissionManager: INotificationPermissionManager
-    let now: EasternTimeInstant
-    let presetWindowsEnabled: Bool
 
     var authorizationStatus: UNAuthorizationStatus? { notificationPermissionManager.authorizationStatus }
 
@@ -376,7 +345,7 @@ struct NotificationSwitch: View {
                 settings.enabled
             },
             set: { newValue in
-                setSettings(settings.doCopy(enabled: newValue, windows: settings.windows))
+                onValueChanged(newValue)
             }
         )
 
@@ -432,21 +401,7 @@ struct NotificationSwitch: View {
         .onChange(of: settings.enabled) { enabled in
             Task {
                 if enabled {
-                    let notificationPermission = await notificationPermissionManager.requestPermission()
-                    guard notificationPermission else {
-                        setSettings(FavoriteSettings.Notifications.companion.disabled)
-                        return
-                    }
-                    if settings.windows.count == 0 {
-                        setSettings(settings.doCopy(
-                            enabled: enabled,
-                            windows: [FavoriteSettings.NotificationsWindow.companion.default(
-                                existingWindows: [],
-                                presetsEnabled: presetWindowsEnabled,
-                                now: now
-                            )]
-                        ))
-                    }
+                    let _notificationPermission = await notificationPermissionManager.requestPermission()
                 }
             }
         }
@@ -456,23 +411,23 @@ struct NotificationSwitch: View {
 struct NotificationSettingsWidget_Previews: PreviewProvider {
     struct Holder: View {
         @ObserveInjection var inject
-        @State var settings: FavoriteSettings = .init(notifications: .init(
-            enabled: true,
-            windows: [FavoriteSettings.NotificationsWindow.companion.default(
-                existingWindows: [],
-                presetsEnabled: false,
-                now: EasternTimeInstant.now()
-            )]
-        ))
+        let windows = [FavoriteSettings.NotificationsWindow.companion.default(
+            existingWindows: [],
+            presetsEnabled: false,
+            now: EasternTimeInstant.now()
+        )]
+
+        var vm = NotificationSettingsViewModel(sentryRepository: MockSentryRepository())
 
         var body: some View {
             NotificationSettingsWidget(
-                settings: settings.notifications,
-                setSettings: { updatedSettings in
-                    settings = settings.doCopy(notifications: updatedSettings)
-                },
+                vm: vm,
+                onUpdate: { _ in },
                 notificationPermissionManager: MockNotificationPermissionManager()
-            )
+            ).onAppear {
+                vm.setEnabled(enabled: true)
+                vm.setCustomWindows(windows: windows)
+            }
             .enableInjection()
         }
     }

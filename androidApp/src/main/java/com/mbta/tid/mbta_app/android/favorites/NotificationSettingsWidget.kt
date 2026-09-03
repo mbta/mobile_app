@@ -42,9 +42,9 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -81,11 +81,13 @@ import com.mbta.tid.mbta_app.android.util.formattedTime
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.FavoriteSettings.Notifications.Window
-import com.mbta.tid.mbta_app.model.PresetSelection
-import com.mbta.tid.mbta_app.model.PresetWindow
+import com.mbta.tid.mbta_app.model.Preset
+import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings as UserSettings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.INotificationSettingsViewModel
+import com.mbta.tid.mbta_app.viewModel.NotificationSettingsViewModel
 import kotlin.uuid.ExperimentalUuidApi
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
@@ -96,8 +98,7 @@ import org.koin.mp.KoinPlatformTools
 @OptIn(ExperimentalUuidApi::class, ExperimentalPermissionsApi::class)
 @Composable
 fun NotificationSettingsWidget(
-    settings: FavoriteSettings.Notifications,
-    setSettings: (FavoriteSettings.Notifications) -> Unit,
+    viewModel: INotificationSettingsViewModel,
     notificationPermissionState: PermissionState,
     hasRequestedPermission: Boolean,
     now: EasternTimeInstant = EasternTimeInstant.now(),
@@ -109,128 +110,116 @@ fun NotificationSettingsWidget(
 
     val context = LocalContext.current
 
-    LaunchedEffect(permissionStatus, hasRequestedPermission) {
-        if (permissionDenied) {
-            setSettings(FavoriteSettings.Notifications.disabled)
-        }
+    val notificationSettingsState by viewModel.models.collectAsState()
+
+    LaunchedEffect(null) {
+        viewModel.setNow(now)
     }
 
-    val presetDaysOfWeek = Window.defaultDaysOfWeek(now)
+    LaunchedEffect(permissionStatus, hasRequestedPermission) {
+        if (permissionDenied) {
+            viewModel.setEnabled(false)
+        }
+    }
 
     val presetOptions =
         listOf(
             listOf(
-                PresetWindow.morningPreset(stringResource(R.string.morning), presetDaysOfWeek),
-                PresetWindow.middayPreset(stringResource(R.string.midday), presetDaysOfWeek),
-                PresetWindow.eveningPreset(stringResource(R.string.evening), presetDaysOfWeek),
+                Preset.Morning,
+                Preset.Midday,
+                Preset.Evening,
             ),
-            listOf(PresetWindow.allDayPreset(stringResource(R.string.all_day), presetDaysOfWeek)),
+            listOf(Preset.AllDay),
         )
-    val presetSelection: PresetSelection =
-        remember(settings) {
-            PresetSelection.selectedPresetFromWindows(settings.windows, presetOptions)
-        }
-    var customPreset by remember {
-        mutableStateOf(listOf(Window.customFromCurrentTime(now)))
-    }
-
-    LaunchedEffect(presetSelection, settings.windows) {
-        if (presetSelection is PresetSelection.Custom && settings.windows.isNotEmpty()) {
-            customPreset = settings.windows
-        }
-    }
 
     val presetWindowsEnabled = SettingsCache.get(UserSettings.NotificationPresetWindows)
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Column(
-            Modifier.haloContainer(borderWidth = 1.dp).clickable(
-                enabled = showPermissionSettingsLink
-            ) {
-                val openNotificationSettings =
-                    Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                    }
+    LaunchedEffect(presetWindowsEnabled) {
+        viewModel.setPresetsEnabledFlag(presetWindowsEnabled)
+    }
 
-                context.startActivity(openNotificationSettings)
-            },
-            verticalArrangement = Arrangement.spacedBy(0.dp),
-        ) {
-            NotificationSwitch(
-                settings = settings,
-                setSettings = setSettings,
-                notificationPermissionState = notificationPermissionState,
-                enabled = !showPermissionSettingsLink,
-                presetWindowsEnabled = presetWindowsEnabled,
-                now = now,
-            )
-            AnimatedVisibility(showPermissionSettingsLink) { PermissionSettingsLink() }
-        }
-        AnimatedVisibility(settings.enabled && !permissionDenied) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                if (presetWindowsEnabled) {
-                    PresetWindowSelector(
-                        presetRows = presetOptions,
-                        selectedPreset = presetSelection,
-                        customPreset = customPreset,
-                    ) { windows ->
-                        setSettings(settings.copy(windows = windows))
-                    }
-                }
+    val settings = notificationSettingsState.settings
 
-                for (window in
-                    settings.windows.ifEmpty {
-                        setOf(Window.default(emptyList(), presetWindowsEnabled, now))
-                    }) {
-                    WindowWidget(
-                        window,
-                        setWindow = { newWindow ->
-                            val windows = settings.windows.toMutableList()
-                            val index = windows.indexOf(window)
-                            if (index != -1) windows[index] = newWindow
-                            setSettings(settings.copy(windows = windows))
-                        },
-                        deleteWindow =
-                            {
-                                    setSettings(settings.copy(windows = settings.windows - window))
-                                }
-                                .takeIf { settings.windows.size > 1 },
-                    )
-                }
+    if (settings != null) {
 
-                val customWindow =
-                    if (presetWindowsEnabled) {
-                        Window.customFromCurrentTime(now)
-                    } else {
-                        Window.default(settings.windows, presetWindowsEnabled, now)
-                    }
-                Surface(
-                    onClick = {
-                        setSettings(settings.copy(windows = settings.windows + customWindow))
-                    },
-                    Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                    color = colorResource(R.color.fill3),
-                    border = BorderStroke(1.5.dp, colorResource(R.color.halo)),
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(
+                Modifier.haloContainer(borderWidth = 1.dp).clickable(
+                    enabled = showPermissionSettingsLink
                 ) {
-                    Row(
-                        Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
+                    val openNotificationSettings =
+                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                        }
+
+                    context.startActivity(openNotificationSettings)
+                },
+                verticalArrangement = Arrangement.spacedBy(0.dp),
+            ) {
+                NotificationSwitch(
+                    settings = settings,
+                    onValueChange = viewModel::setEnabled,
+                    notificationPermissionState = notificationPermissionState,
+                    enabled = !showPermissionSettingsLink,
+                )
+                AnimatedVisibility(showPermissionSettingsLink) { PermissionSettingsLink() }
+            }
+            AnimatedVisibility(settings.enabled && !permissionDenied) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (presetWindowsEnabled) {
+                        PresetWindowSelector(
+                            presetRows = presetOptions,
+                            selectedPreset = notificationSettingsState.selectedPreset,
+                            onSelect = { preset ->
+                                viewModel.setPreset(preset)
+                            },
+                        )
+                    }
+
+                    for (window in settings.windows) {
+                        WindowWidget(
+                            window,
+                            setWindow = { newWindow ->
+                                val windows = settings.windows.toMutableList()
+                                val index = windows.indexOf(window)
+                                if (index != -1) windows[index] = newWindow
+                                viewModel.setCustomWindows(windows)
+                            },
+                            deleteWindow =
+                                {
+                                        viewModel.setCustomWindows(settings.windows - window)
+                                    }
+                                    .takeIf { settings.windows.size > 1 },
+                        )
+                    }
+                    Surface(
+                        onClick = {
+                            viewModel.addPlaceholderWindow()
+                        },
+                        Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp),
+                        color = colorResource(R.color.fill3),
+                        border = BorderStroke(1.5.dp, colorResource(R.color.halo)),
                     ) {
-                        Icon(
-                            painterResource(R.drawable.plus),
-                            null,
-                            Modifier.background(
-                                colorResource(R.color.text).copy(alpha = 0.6f),
-                                CircleShape,
-                            ),
-                            tint = colorResource(R.color.fill3),
-                        )
-                        Text(
-                            stringResource(R.string.add_another_time_period),
-                            color = colorResource(R.color.text).copy(alpha = 0.6f),
-                        )
+                        Row(
+                            Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.plus),
+                                null,
+                                Modifier.background(
+                                    colorResource(R.color.text).copy(alpha = 0.6f),
+                                    CircleShape,
+                                ),
+                                tint = colorResource(R.color.fill3),
+                            )
+                            Text(
+                                stringResource(R.string.add_another_time_period),
+                                color = colorResource(R.color.text).copy(alpha = 0.6f),
+                            )
+                        }
                     }
                 }
             }
@@ -475,11 +464,9 @@ private fun DaysOfWeekInput(daysOfWeek: Set<DayOfWeek>, setDaysOfWeek: (Set<DayO
 @Composable
 private fun NotificationSwitch(
     settings: FavoriteSettings.Notifications,
-    setSettings: (FavoriteSettings.Notifications) -> Unit,
+    onValueChange: (Boolean) -> Unit,
     notificationPermissionState: PermissionState,
     enabled: Boolean,
-    presetWindowsEnabled: Boolean,
-    now: EasternTimeInstant = EasternTimeInstant.now(),
 ) {
 
     LabeledSwitch(
@@ -507,15 +494,7 @@ private fun NotificationSwitch(
         value = settings.enabled,
         onValueChange = {
             notificationPermissionState.launchPermissionRequest()
-            setSettings(
-                settings.copy(
-                    enabled = it,
-                    windows =
-                        settings.windows.ifEmpty {
-                            listOf(Window.default(emptyList(), presetWindowsEnabled, now))
-                        },
-                )
-            )
+            onValueChange(it)
         },
         enabled = enabled,
     )
@@ -573,14 +552,17 @@ private fun NotificationSettingsWidgetPreview() {
             )
         }
     }
-    var settings by remember {
-        mutableStateOf(
-            FavoriteSettings.Notifications(
-                enabled = true,
-                windows = listOf(Window.default(emptyList(), true, EasternTimeInstant.now())),
-            )
+    var settings =
+        FavoriteSettings.Notifications(
+            enabled = true,
+            windows = listOf(Window.default(emptyList(), true, EasternTimeInstant.now())),
         )
-    }
+
+    val viewModel = NotificationSettingsViewModel(MockSentryRepository())
+    viewModel.setEnabled(true)
+    viewModel.setCustomWindows(settings.windows)
+
+    val viewModel2 = NotificationSettingsViewModel(MockSentryRepository())
     MyApplicationTheme {
         Column(
             Modifier.background(colorResource(R.color.fill2))
@@ -588,8 +570,7 @@ private fun NotificationSettingsWidgetPreview() {
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             NotificationSettingsWidget(
-                settings,
-                { settings = it },
+                viewModel,
                 ConstantPermissionState(
                     Manifest.permission.POST_NOTIFICATIONS,
                     PermissionStatus.Granted,
@@ -598,8 +579,7 @@ private fun NotificationSettingsWidgetPreview() {
             )
             HaloSeparator()
             NotificationSettingsWidget(
-                FavoriteSettings.Notifications.disabled,
-                {},
+                viewModel2,
                 ConstantPermissionState(
                     Manifest.permission.POST_NOTIFICATIONS,
                     PermissionStatus.Denied(false),

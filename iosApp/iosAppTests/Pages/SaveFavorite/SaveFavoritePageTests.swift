@@ -110,13 +110,21 @@ final class SaveFavoritePageTests: XCTestCase {
         }
     }
 
-    @MainActor func testNotifications() {
+    @MainActor func testsLoadsNotificationSettings() {
         let objects = TestData.clone()
         let route = objects.getRoute(id: "Orange")
         let stop = objects.getStop(id: "place-welln")
         var updatedFavorites: [RouteStopDirection: FavoriteSettings?]?
 
         loadKoinMocks(objects: objects)
+
+        var settingsLoadedCalled = false
+
+        let notificationSettingsVM: MockNotificationSettingsViewModel = .init(initialState: .init(
+            settings: FavoriteSettings.Notifications.companion.disabled,
+            selectedPreset: nil
+        ))
+        notificationSettingsVM.onLoadSavedSettings = { _ in settingsLoadedCalled = true }
 
         let sut = SaveFavoritePage(
             routeId: route.id,
@@ -125,25 +133,16 @@ final class SaveFavoritePageTests: XCTestCase {
             context: .stopDetails,
             updateFavorites: { updatedFavorites = $0 },
             navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
+            notificationSettingsVM: notificationSettingsVM
         )
 
         let exp1 = sut.inspection.inspect(after: 1) { view in
             XCTAssertNotNil(try view.find(text: "Add Favorite"))
-            try view.find(text: "Get disruption notifications").find(ViewType.Toggle.self, relation: .parent).tap()
-            try view.find(button: "Save").tap()
-        }
-
-        let exp2 = sut.inspection.inspect(after: 2) { _ in
-            XCTAssertEqual(updatedFavorites, [
-                .init(route: route.id, stop: stop.id, direction: 0): .init(notifications: .init(
-                    enabled: true,
-                    windows: []
-                )),
-            ])
+            XCTAssertTrue(settingsLoadedCalled)
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
 
-        wait(for: [exp1, exp2], timeout: 5)
+        wait(for: [exp1], timeout: 5)
     }
 }

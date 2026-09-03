@@ -19,18 +19,13 @@ import androidx.compose.ui.semantics.collectionItemInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.model.FavoriteSettings.Notifications.Window
-import com.mbta.tid.mbta_app.model.PresetSelection
-import com.mbta.tid.mbta_app.model.PresetWindow
-import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.model.Preset
 
 @Composable
 fun PresetWindowSelector(
-    presetRows: List<List<PresetWindow>>,
-    selectedPreset: PresetSelection,
-    now: EasternTimeInstant = EasternTimeInstant.now(),
-    customPreset: List<Window> = listOf(Window.customFromCurrentTime(now)),
-    onSelect: (List<Window>) -> Unit,
+    presetRows: List<List<Preset>>,
+    selectedPreset: Preset?,
+    onSelect: (Preset?) -> Unit,
 ) {
     val maxColumnCount = presetRows.firstOrNull()?.size ?: 0
 
@@ -47,14 +42,17 @@ fun PresetWindowSelector(
         presetRows.forEachIndexed { rowIndex, windows ->
             Row() {
                 windows.forEachIndexed { presetIndex, preset ->
-                    val isSelected =
-                        selectedPreset is PresetSelection.Preset &&
-                            rowIndex == selectedPreset.rowIndex &&
-                            presetIndex == selectedPreset.columnIndex
+                    val isSelected = selectedPreset == preset
                     PresetButton(
                         isSelected = isSelected,
-                        onSelect = { onSelect(listOf(preset.window)) },
-                        label = preset.label,
+                        onSelect = { onSelect(preset) },
+                        label =
+                            when (preset) {
+                                Preset.Morning -> stringResource(R.string.morning)
+                                Preset.Midday -> stringResource(R.string.midday)
+                                Preset.Evening -> stringResource(R.string.evening)
+                                Preset.AllDay -> stringResource(R.string.all_day)
+                            },
                         modifier =
                             Modifier.weight(1f).semantics {
                                 collectionItemInfo =
@@ -70,10 +68,10 @@ fun PresetWindowSelector(
             }
         }
         Row() {
-            val isSelected = selectedPreset is PresetSelection.Custom
+            val isSelected = selectedPreset == null
             PresetButton(
                 isSelected = isSelected,
-                onSelect = { onSelect(customPreset) },
+                onSelect = { onSelect(null) },
                 label = stringResource(R.string.custom),
                 modifier =
                     Modifier.weight(1f).semantics {

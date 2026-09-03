@@ -103,18 +103,6 @@ constructor(val notifications: Notifications = Notifications.disabled) {
                     }
                 }
 
-                public fun morningDefault(daysOfWeek: Set<DayOfWeek>): Window =
-                    Window(LocalTime(6, 0), LocalTime(10, 0), daysOfWeek)
-
-                public fun middayDefault(daysOfWeek: Set<DayOfWeek>): Window =
-                    Window(LocalTime(10, 0), LocalTime(16, 0), daysOfWeek)
-
-                public fun eveningDefault(daysOfWeek: Set<DayOfWeek>): Window =
-                    Window(LocalTime(16, 0), LocalTime(20, 0), daysOfWeek)
-
-                public fun allDayDefault(daysOfWeek: Set<DayOfWeek>): Window =
-                    Window(LocalTime(0, 0), LocalTime(23, 59), daysOfWeek)
-
                 public fun defaultFromCurrentTime(now: EasternTimeInstant): Window {
                     val daysOfWeek = defaultDaysOfWeek(now)
                     val presets =
