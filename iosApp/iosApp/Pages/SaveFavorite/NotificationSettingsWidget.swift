@@ -78,7 +78,6 @@ struct NotificationSettingsWidget: View {
 
     var body: some View {
         let permissionDenied = authorizationStatus == .denied
-        let _ = print("HELLO CUSTOM PRESET \(customPreset)")
         VStack(spacing: 8) {
             NotificationSwitch(
                 settings: settings,
@@ -105,11 +104,7 @@ struct NotificationSettingsWidget: View {
                     .onAppear {
                         if presetSelection == PresetSelection.Custom() {
                             customPreset = settings.windows
-                            print("HELLO A \(customPreset)")
-
                         } else {
-                            print("HELLO B")
-
                             customPreset =
                                 [FavoriteSettings.NotificationsWindow.companion.customFromCurrentTime(now: now)]
                         }
@@ -119,11 +114,7 @@ struct NotificationSettingsWidget: View {
                             windows: newWindows,
                             presetOptions: presetOptions
                         ) == PresetSelection.Custom() {
-                            print("HELLO C \(newWindows)")
-
                             customPreset = newWindows
-                        } else {
-                            print("HELLO D \(newWindows)")
                         }
                     }
                 }
