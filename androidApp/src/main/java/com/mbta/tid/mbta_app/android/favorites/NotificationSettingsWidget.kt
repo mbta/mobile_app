@@ -128,8 +128,17 @@ fun NotificationSettingsWidget(
         )
     val presetSelection: PresetSelection =
         remember(settings) {
-            PresetSelection.selectedPresetFromSettings(settings, presetOptions)
+            PresetSelection.selectedPresetFromWindows(settings.windows, presetOptions)
         }
+    var customPreset by remember {
+        mutableStateOf(listOf(Window.customFromCurrentTime(now)))
+    }
+
+    LaunchedEffect(presetSelection, settings.windows) {
+        if (presetSelection is PresetSelection.Custom && settings.windows.isNotEmpty()) {
+            customPreset = settings.windows
+        }
+    }
 
     val presetWindowsEnabled = SettingsCache.get(UserSettings.NotificationPresetWindows)
 
@@ -163,12 +172,10 @@ fun NotificationSettingsWidget(
                     PresetWindowSelector(
                         presetRows = presetOptions,
                         selectedPreset = presetSelection,
-                        presetsEnabled = settings.windows.size <= 1,
-                        onSelect = { window ->
-                            val otherWindows = settings.windows.drop(1)
-                            setSettings(settings.copy(windows = listOf(window) + otherWindows))
-                        },
-                    )
+                        customPreset = customPreset,
+                    ) { windows ->
+                        setSettings(settings.copy(windows = windows))
+                    }
                 }
 
                 for (window in

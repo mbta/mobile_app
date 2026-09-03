@@ -10,21 +10,21 @@ struct PresetWindowSelector: View {
     @ObserveInjection var inject
     let presetRows: [[PresetWindow]]
     let selectedPreset: PresetSelection
-    let presetsEnabled: Bool
     let now: EasternTimeInstant
-    let onSelect: (FavoriteSettings.NotificationsWindow) -> Void
+    let customPreset: [FavoriteSettings.NotificationsWindow]
+    let onSelect: ([FavoriteSettings.NotificationsWindow]) -> Void
 
     init(
         presetRows: [[PresetWindow]],
         selectedPreset: PresetSelection,
-        presetsEnabled: Bool,
         now: EasternTimeInstant = .now(),
-        onSelect: @escaping (FavoriteSettings.NotificationsWindow) -> Void
+        customPreset: [FavoriteSettings.NotificationsWindow],
+        onSelect: @escaping ([FavoriteSettings.NotificationsWindow]) -> Void
     ) {
         self.presetRows = presetRows
         self.selectedPreset = selectedPreset
-        self.presetsEnabled = presetsEnabled
         self.now = now
+        self.customPreset = customPreset
         self.onSelect = onSelect
     }
 
@@ -40,9 +40,8 @@ struct PresetWindowSelector: View {
                             return false
                         }()
                         PresetButton(
-                            enabled: presetsEnabled,
                             isSelected: isSelected,
-                            onSelect: { onSelect(preset.window) },
+                            onSelect: { onSelect([preset.window]) },
                             label: preset.label
                         )
                         .frame(maxWidth: .infinity)
@@ -52,10 +51,9 @@ struct PresetWindowSelector: View {
 
             HStack {
                 PresetButton(
-                    enabled: true,
                     isSelected: selectedPreset == PresetSelection.Custom(),
                     onSelect: {
-                        onSelect(FavoriteSettings.NotificationsWindow.companion.customFromCurrentTime(now: now))
+                        onSelect(customPreset)
                     },
                     label: NSLocalizedString(
                         "Custom",
@@ -78,7 +76,6 @@ struct PresetWindowSelector: View {
 
 private struct PresetButton: View {
     @ObserveInjection var inject
-    let enabled: Bool
     let isSelected: Bool
     let onSelect: () -> Void
     let label: String
@@ -91,7 +88,6 @@ private struct PresetButton: View {
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
         }
-        .disabled(!enabled)
         .foregroundStyle(isSelected ? Color.fill3 : Color.text.opacity(0.6))
         .background(isSelected ? Color.key : Color.fill1)
         .clipShape(RoundedRectangle(cornerRadius: 8))

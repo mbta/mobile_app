@@ -41,13 +41,13 @@ public sealed class PresetSelection {
     public object Custom : PresetSelection()
 
     public companion object {
-        public fun selectedPresetFromSettings(
-            settings: FavoriteSettings.Notifications,
+        public fun selectedPresetFromWindows(
+            windows: List<Window>,
             presetOptions: List<List<PresetWindow>>,
         ): PresetSelection =
             when {
-                settings.windows.size == 1 -> {
-                    val targetWindow: Window = settings.windows[0]
+                windows.size == 1 -> {
+                    val targetWindow: Window = windows[0]
                     presetOptions
                         .asSequence()
                         .mapIndexedNotNull { rowIndex, presets ->

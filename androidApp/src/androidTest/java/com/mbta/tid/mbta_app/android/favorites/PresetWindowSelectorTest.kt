@@ -1,7 +1,5 @@
 package com.mbta.tid.mbta_app.android.favorites
 
-import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -24,7 +22,7 @@ class PresetWindowSelectorTest {
 
     @Test
     fun testPresetWindowsVisible() {
-        var selectedWindow: Window? = null
+        var selectedWindows: List<Window>? = null
         composeTestRule.setContent {
             PresetWindowSelector(
                 presetRows =
@@ -43,10 +41,10 @@ class PresetWindowSelectorTest {
                         ),
                     ),
                 selectedPreset = PresetSelection.Preset(rowIndex = 1, columnIndex = 0),
-                presetsEnabled = true,
-                onSelect = { window -> selectedWindow = window },
                 now = EasternTimeInstant(LocalDateTime(2026, 8, 27, 4, 30, 0)),
-            )
+            ) { windows ->
+                selectedWindows = windows
+            }
         }
 
         composeTestRule.onNodeWithText("Morning").assertIsNotSelected()
@@ -54,42 +52,12 @@ class PresetWindowSelectorTest {
         composeTestRule.onNodeWithText("Custom").assertIsNotSelected()
 
         composeTestRule.onNodeWithText("Morning").performClick()
-        assertEquals(Window.morningDefault(Window.weekdays), selectedWindow)
-    }
-
-    @Test
-    fun testPresetButtonsDisabled() {
-        composeTestRule.setContent {
-            PresetWindowSelector(
-                presetRows =
-                    listOf(
-                        listOf(
-                            PresetWindow(
-                                window = Window.morningDefault(Window.weekdays),
-                                label = "Morning",
-                            )
-                        ),
-                        listOf(
-                            PresetWindow(
-                                window = Window.middayDefault(Window.weekdays),
-                                label = "Midday",
-                            )
-                        ),
-                    ),
-                selectedPreset = PresetSelection.Preset(rowIndex = 1, columnIndex = 0),
-                presetsEnabled = false,
-                onSelect = {},
-            )
-        }
-
-        composeTestRule.onNodeWithText("Morning").assertIsNotEnabled()
-        composeTestRule.onNodeWithText("Midday").assertIsNotEnabled()
-        composeTestRule.onNodeWithText("Custom").assertIsEnabled()
+        assertEquals(listOf(Window.morningDefault(Window.weekdays)), selectedWindows)
     }
 
     @Test
     fun testCustomDefaultsToNow() {
-        var selectedWindow: Window? = null
+        var selectedWindows: List<Window>? = null
         composeTestRule.setContent {
             PresetWindowSelector(
                 presetRows =
@@ -108,33 +76,35 @@ class PresetWindowSelectorTest {
                         ),
                     ),
                 selectedPreset = PresetSelection.Preset(rowIndex = 1, columnIndex = 0),
-                presetsEnabled = true,
-                onSelect = { window -> selectedWindow = window },
                 now = EasternTimeInstant(LocalDateTime(2026, 8, 27, 4, 30, 0)),
-            )
+            ) { windows ->
+                selectedWindows = windows
+            }
         }
 
         composeTestRule.onNodeWithText("Custom").performClick()
         assertEquals(
-            selectedWindow,
-            Window(
-                startTime = LocalTime(4, 0, 0),
-                endTime = LocalTime(5, 0, 0),
-                daysOfWeek =
-                    setOf(
-                        DayOfWeek.MONDAY,
-                        DayOfWeek.TUESDAY,
-                        DayOfWeek.WEDNESDAY,
-                        DayOfWeek.THURSDAY,
-                        DayOfWeek.FRIDAY,
-                    ),
+            selectedWindows,
+            listOf(
+                Window(
+                    startTime = LocalTime(4, 0, 0),
+                    endTime = LocalTime(5, 0, 0),
+                    daysOfWeek =
+                        setOf(
+                            DayOfWeek.MONDAY,
+                            DayOfWeek.TUESDAY,
+                            DayOfWeek.WEDNESDAY,
+                            DayOfWeek.THURSDAY,
+                            DayOfWeek.FRIDAY,
+                        ),
+                )
             ),
         )
     }
 
     @Test
     fun testCustomDefaultsToNowLateNight() {
-        var selectedWindow: Window? = null
+        var selectedWindows: List<Window>? = null
         composeTestRule.setContent {
             PresetWindowSelector(
                 presetRows =
@@ -153,27 +123,70 @@ class PresetWindowSelectorTest {
                         ),
                     ),
                 selectedPreset = PresetSelection.Preset(rowIndex = 1, columnIndex = 0),
-                presetsEnabled = true,
-                onSelect = { window -> selectedWindow = window },
                 now = EasternTimeInstant(LocalDateTime(2026, 8, 27, 23, 30, 0)),
-            )
+            ) { windows ->
+                selectedWindows = windows
+            }
         }
 
         composeTestRule.onNodeWithText("Custom").performClick()
         assertEquals(
-            selectedWindow,
-            Window(
-                startTime = LocalTime(23, 0, 0),
-                endTime = LocalTime(23, 59, 0),
-                daysOfWeek =
-                    setOf(
-                        DayOfWeek.MONDAY,
-                        DayOfWeek.TUESDAY,
-                        DayOfWeek.WEDNESDAY,
-                        DayOfWeek.THURSDAY,
-                        DayOfWeek.FRIDAY,
-                    ),
+            selectedWindows,
+            listOf(
+                Window(
+                    startTime = LocalTime(23, 0, 0),
+                    endTime = LocalTime(23, 59, 0),
+                    daysOfWeek =
+                        setOf(
+                            DayOfWeek.MONDAY,
+                            DayOfWeek.TUESDAY,
+                            DayOfWeek.WEDNESDAY,
+                            DayOfWeek.THURSDAY,
+                            DayOfWeek.FRIDAY,
+                        ),
+                )
             ),
         )
+    }
+
+    @Test
+    fun testCustomUsesProvidedCustomPreset() {
+        var selectedWindows: List<Window>? = null
+        val customPresetWindows =
+            listOf(
+                Window(
+                    startTime = LocalTime(10, 15, 0),
+                    endTime = LocalTime(11, 45, 0),
+                    daysOfWeek = setOf(DayOfWeek.SUNDAY, DayOfWeek.TUESDAY),
+                )
+            )
+
+        composeTestRule.setContent {
+            PresetWindowSelector(
+                presetRows =
+                    listOf(
+                        listOf(
+                            PresetWindow(
+                                window = Window.morningDefault(Window.weekdays),
+                                label = "Morning",
+                            )
+                        ),
+                        listOf(
+                            PresetWindow(
+                                window = Window.middayDefault(Window.weekdays),
+                                label = "Midday",
+                            )
+                        ),
+                    ),
+                selectedPreset = PresetSelection.Preset(rowIndex = 1, columnIndex = 0),
+                now = EasternTimeInstant(LocalDateTime(2026, 8, 27, 4, 30, 0)),
+                customPreset = customPresetWindows,
+            ) { windows ->
+                selectedWindows = windows
+            }
+        }
+
+        composeTestRule.onNodeWithText("Custom").performClick()
+        assertEquals(customPresetWindows, selectedWindows)
     }
 }

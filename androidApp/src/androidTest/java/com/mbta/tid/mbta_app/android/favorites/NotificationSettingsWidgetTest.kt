@@ -385,4 +385,38 @@ class NotificationSettingsWidgetTest : KoinTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Morning"))
         composeTestRule.onNodeWithText("Midday").assertIsSelected()
     }
+
+    @Test
+    fun testCustomPresetRestoredAfterSelectingAnotherPreset() {
+        loadKoinMocks {
+            settings =
+                MockSettingsRepository(settings = mapOf(Settings.NotificationPresetWindows to true))
+        }
+        composeTestRule.setContent {
+            var settings by remember { mutableStateOf(FavoriteSettings.Notifications.disabled) }
+            NotificationSettingsWidget(
+                settings,
+                setSettings = { settings = it },
+                notificationPermissionState = permissionGranted,
+                hasRequestedPermission = true,
+                now = EasternTimeInstant(LocalDateTime(2026, 8, 27, 4, 30, 0)),
+            )
+        }
+
+        composeTestRule.onNodeWithText("Get disruption notifications").performClick()
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Morning"))
+
+        composeTestRule.onNodeWithText("Custom").performClick()
+        composeTestRule.onNodeWithText("Sunday").performClick()
+        composeTestRule.onNodeWithText("Custom").assertIsSelected()
+        composeTestRule.onNodeWithText("Sunday").assertIsOn()
+
+        composeTestRule.onNodeWithText("Morning").performClick()
+        composeTestRule.onNodeWithText("Morning").assertIsSelected()
+        composeTestRule.onNodeWithText("Sunday").assertIsOff()
+
+        composeTestRule.onNodeWithText("Custom").performClick()
+        composeTestRule.onNodeWithText("Custom").assertIsSelected()
+        composeTestRule.onNodeWithText("Sunday").assertIsOn()
+    }
 }

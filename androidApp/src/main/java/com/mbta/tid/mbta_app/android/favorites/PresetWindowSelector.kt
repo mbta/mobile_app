@@ -28,9 +28,9 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 fun PresetWindowSelector(
     presetRows: List<List<PresetWindow>>,
     selectedPreset: PresetSelection,
-    presetsEnabled: Boolean,
     now: EasternTimeInstant = EasternTimeInstant.now(),
-    onSelect: (Window) -> Unit,
+    customPreset: List<Window> = listOf(Window.customFromCurrentTime(now)),
+    onSelect: (List<Window>) -> Unit,
 ) {
     val maxColumnCount = presetRows.firstOrNull()?.size ?: 0
 
@@ -52,9 +52,8 @@ fun PresetWindowSelector(
                             rowIndex == selectedPreset.rowIndex &&
                             presetIndex == selectedPreset.columnIndex
                     PresetButton(
-                        enabled = presetsEnabled,
                         isSelected = isSelected,
-                        onSelect = { onSelect(preset.window) },
+                        onSelect = { onSelect(listOf(preset.window)) },
                         label = preset.label,
                         modifier =
                             Modifier.weight(1f).semantics {
@@ -72,11 +71,9 @@ fun PresetWindowSelector(
         }
         Row() {
             val isSelected = selectedPreset is PresetSelection.Custom
-            val customWindow = Window.customFromCurrentTime(now)
             PresetButton(
-                enabled = true,
                 isSelected = isSelected,
-                onSelect = { onSelect(customWindow) },
+                onSelect = { onSelect(customPreset) },
                 label = stringResource(R.string.custom),
                 modifier =
                     Modifier.weight(1f).semantics {
@@ -95,7 +92,6 @@ fun PresetWindowSelector(
 
 @Composable
 fun PresetButton(
-    enabled: Boolean,
     isSelected: Boolean,
     onSelect: () -> Unit,
     label: String,
@@ -103,7 +99,6 @@ fun PresetButton(
 ) {
     Button(
         onClick = onSelect,
-        enabled = enabled,
         colors =
             ButtonDefaults.buttonColors(
                 containerColor =
@@ -116,7 +111,6 @@ fun PresetButton(
         modifier =
             modifier.selectable(
                 selected = isSelected,
-                enabled = enabled,
                 onClick = onSelect,
                 role = Role.Tab,
             ),
