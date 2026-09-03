@@ -6,9 +6,7 @@ import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.model.Preset
-import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertEquals
-import kotlinx.datetime.LocalDateTime
 import org.junit.Rule
 import org.junit.Test
 
@@ -27,7 +25,8 @@ class PresetWindowSelectorTest {
                         listOf(Preset.Midday),
                     ),
                 selectedPreset = Preset.Midday,
-                onSelect = { preset -> selectedPreset = preset })
+                onSelect = { preset -> selectedPreset = preset },
+            )
         }
 
         composeTestRule.onNodeWithText("Morning").assertIsNotSelected()
@@ -38,6 +37,7 @@ class PresetWindowSelectorTest {
 
         assertEquals(Preset.Morning, selectedPreset)
     }
+
     @Test
     fun testCustomSetsNullPreset() {
         var selectedPreset: Preset? = Preset.Midday
@@ -49,7 +49,8 @@ class PresetWindowSelectorTest {
                         listOf(Preset.Midday),
                     ),
                 selectedPreset = Preset.Midday,
-                onSelect = { preset -> selectedPreset = preset })
+                onSelect = { preset -> selectedPreset = preset },
+            )
         }
 
         composeTestRule.onNodeWithText("Custom").performClick()
@@ -58,5 +59,4 @@ class PresetWindowSelectorTest {
             selectedPreset,
         )
     }
-
 }
