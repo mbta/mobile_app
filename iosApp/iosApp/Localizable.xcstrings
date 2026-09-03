@@ -4757,7 +4757,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "iOS translation test"
+            "value" : "New **bolded** string"
           }
         },
         "es" : {
