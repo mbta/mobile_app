@@ -4754,45 +4754,51 @@
     "Access issue" : {
       "comment" : "Possible alert effect",
       "localizations" : {
-        "es" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "iOS translation test"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
             "value" : "Problema de accesibilidad"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Problème d’accès"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Pwoblèm aksè"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Problema de acesso"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Vấn đề về tiếp cận"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "无障碍问题"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "無障礙問題"
           }
         }
