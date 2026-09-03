@@ -23,7 +23,6 @@
     <string name="alert_elevator_header">Fermeture de l’ascenseur (%1$s)</string>
     <string name="alert_ended">L’alerte n’est plus en vigueur</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
-    <string name="alert_summary_location_successive">\u0020de &lt;b>%1$s&lt;/b> à &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_timeframe_this_week">\u0020jusqu’au %1$s</string>
     <string name="all_day">Toute la journée</string>
     <string name="alternative_path">Trajet alternatif</string>
@@ -207,7 +206,6 @@
     <string name="later_today">plus tard aujourd’hui</string>
     <string name="less_common_stop">Arrêt le moins utilisé</string>
     <string name="less_common_stops">&lt;b>%1$d&lt;/b> arrêts les moins utilisés</string>
-    <string name="list_join">,\u0020</string>
     <string name="live">En temps réel</string>
     <string name="loading">Chargement...</string>
     <string name="location_not_available_yet">La localisation n’est pas encore disponible</string>
@@ -452,7 +450,6 @@
     <string name="unruly_passenger_lowercase">passager indiscipliné</string>
     <string name="unstar_route_hint">désépingler le trajet du haut de la liste</string>
     <string name="until_further_notice">Jusqu’à nouvel ordre</string>
-    <string name="until_tomorrow">\u0020jusqu’à demain</string>
     <string name="updated_at">Mis à jour : %1$s</string>
     <plurals name="updated_mins_ago">
         <item quantity="one">Mise à jour il y a %1$d minute</item>
