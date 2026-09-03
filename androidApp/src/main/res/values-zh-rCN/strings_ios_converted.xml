@@ -21,7 +21,6 @@
     <string name="alert_elevator_header">电梯关停(%1$s)</string>
     <string name="alert_ended">警报已失效</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
-    <string name="alert_summary_location_successive">\u0020从&lt;b>%1$s&lt;/b>到&lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_timeframe_this_week">\u0020至%1$s</string>
     <string name="all_day">全天</string>
     <string name="alternative_path">备选路线</string>
@@ -201,7 +200,6 @@
     <string name="later_today">今天晚些时候</string>
     <string name="less_common_stop">较少停靠的站点</string>
     <string name="less_common_stops">&lt;b>%1$d&lt;/b>较少停靠的站点</string>
-    <string name="list_join">、\u0020</string>
     <string name="live">实时</string>
     <string name="loading">正在加载……</string>
     <string name="location_not_available_yet">定位服务暂不可用</string>
@@ -444,7 +442,6 @@
     <string name="unruly_passenger_lowercase">乘客干扰</string>
     <string name="unstar_route_hint">在列表中取消置顶路线</string>
     <string name="until_further_notice">等待进一步通知</string>
-    <string name="until_tomorrow">\u0020截至明日</string>
     <string name="updated_at">最后更新：%1$s</string>
     <plurals name="updated_mins_ago">
         <item quantity="other">%1$d分钟前更新</item>

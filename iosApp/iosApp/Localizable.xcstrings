@@ -4754,12 +4754,6 @@
     "Access issue" : {
       "comment" : "Possible alert effect",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "New **bolded** string"
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",

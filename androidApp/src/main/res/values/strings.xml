@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="access_issue">New &lt;b&gt;bolded&lt;/b&gt; string</string>
+    <string name="access_issue">Access Issue</string>
     <string name="access_issue_sentence_case">Access issue</string>
     <string name="accident">Accident</string>
     <string name="accident_lowercase">accident</string>
@@ -21,10 +21,10 @@
     <string name="alert_details">Alert Details</string>
     <string name="alert_elevator_header">Elevator closure (%1$s)</string>
     <string name="alert_ended">Alert is no longer in effect</string>
-    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
-    <string name="alert_summary_location_successive">\u0020from &lt;b>%1$s&lt;/b> to &lt;b>%2$s&lt;/b></string>
-    <string name="alert_summary_timeframe_this_week">\u0020through %1$s</string>
-    <string name="alerts_channel" tools:ignore="MissingTranslation">Service Alerts</string>
+    <string name="alert_summary">&lt;b&gt;%1$s&lt;/b&gt;%2$s%3$s%4$s</string>
+    <string name="alert_summary_location_successive">&#032;from &lt;b&gt;%1$s&lt;/b&gt; to &lt;b&gt;%2$s&lt;/b&gt;</string>
+    <string name="alert_summary_timeframe_this_week">&#032;through %1$s</string>
+    <string name="alerts_channel" translatable="false">Service Alerts</string>
     <string name="alternative_path">Alternative path</string>
     <string name="amber_alert">Amber Alert</string>
     <string name="amber_alert_sentence_case">Amber alert</string>
@@ -184,7 +184,7 @@
     <string name="group_by_direction" translatable="false">Group by Direction</string>
     <string name="hazmat_condition">Hazmat Condition</string>
     <string name="hazmat_condition_lowercase">hazmat condition</string>
-    <string name="header_at_stop">at &lt;b>%1$s&lt;/b></string>
+    <string name="header_at_stop">at &lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="heading">Heading</string>
     <string name="heavy_ridership">Heavy Ridership</string>
     <string name="heavy_ridership_lowercase">heavy ridership</string>
@@ -204,7 +204,7 @@
     <string name="later_today">later today</string>
     <string name="less_common_stop">Less common stop</string>
     <string name="less_common_stops">&lt;b&gt;%1$d&lt;/b&gt; less common stops</string>
-    <string name="list_join">,\u0020</string>
+    <string name="list_join">,&#032;</string>
     <string name="live">Live</string>
     <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
     <string name="location_not_available_yet">Location not available yet</string>
@@ -221,7 +221,7 @@
     <string name="mechanical_problem_lowercase">mechanical problem</string>
     <string name="medical_emergency">Medical Emergency</string>
     <string name="medical_emergency_lowercase">medical emergency</string>
-    <string name="minutes_abbr">&lt;b>%1$d&lt;/b> min</string>
+    <string name="minutes_abbr">&lt;b&gt;%1$d&lt;/b&gt; min</string>
     <string name="modified_service">Modified Service</string>
     <string name="modified_service_sentence_case">Modified service</string>
     <string name="more_link">More</string>
@@ -241,9 +241,9 @@
     <string name="nearby_transit_link">Nearby</string>
     <string name="new_feature_screen_reader_header_prefix">New feature. %1$s</string>
     <string name="next_stop">Next stop</string>
-    <string name="next_trip_at">Next trip at &lt;b>%1$s&lt;/b></string>
-    <string name="next_trip_at_tomorrow">Next trip at &lt;b>%1$s&lt;/b> tomorrow</string>
-    <string name="next_trip_on">Next trip on &lt;b>%1$s&lt;/b></string>
+    <string name="next_trip_at">Next trip at &lt;b&gt;%1$s&lt;/b&gt;</string>
+    <string name="next_trip_at_tomorrow">Next trip at &lt;b&gt;%1$s&lt;/b&gt; tomorrow</string>
+    <string name="next_trip_on">Next trip on &lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="no_matching_routes">No matching %1$s routes</string>
     <string name="no_predictions">Predictions unavailable</string>
     <string name="no_results_found">No results found 🤔</string>
@@ -300,7 +300,7 @@
     <string name="power_problem_lowercase">power problem</string>
     <string name="predictions_unavailable_details">Service is running, but predicted arrival times aren’t available. Check the map to see where %1$s are right now.</string>
     <string name="predictions_unavailable_details_hide_maps">Service is running, but predicted arrival times aren’t available.</string>
-    <string name="promo_favorites_body">Now save your frequently used stops to &lt;b>one easy place&lt;/b>.</string>
+    <string name="promo_favorites_body">Now save your frequently used stops to &lt;b&gt;one easy place&lt;/b&gt;.</string>
     <string name="promo_favorites_header">Add your favorites</string>
     <string name="promo_notifications_body">We’ll tell you about any problems before you go!</string>
     <string name="promo_notifications_header">Now get disruption notifications</string>
@@ -398,8 +398,8 @@
     <string name="strike">Strike</string>
     <string name="strike_lowercase">strike</string>
     <string name="subway">Subway</string>
-    <string name="subway_early_am_detail">The first &lt;b>%1$s&lt;/b> train is scheduled to arrive at &lt;b>%2$s&lt;/b>. We don’t have predictions to show you yet, but they’ll appear here closer to the scheduled time.</string>
-    <string name="subway_early_am_first_time">First &lt;b>%1$s&lt;/b></string>
+    <string name="subway_early_am_detail">The first &lt;b&gt;%1$s&lt;/b&gt; train is scheduled to arrive at &lt;b&gt;%2$s&lt;/b&gt;. We don’t have predictions to show you yet, but they’ll appear here closer to the scheduled time.</string>
+    <string name="subway_early_am_first_time">First &lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="summary">Summary</string>
     <string name="suspension">Suspension</string>
     <string name="switch_issue">Switch Issue</string>
@@ -446,7 +446,6 @@
     <string name="unruly_passenger_lowercase">unruly passenger</string>
     <string name="unstar_route_hint">unpin route from the top of the list</string>
     <string name="until_further_notice">Until further notice</string>
-    <string name="until_tomorrow">\u0020until tomorrow</string>
     <string name="updated_at">Updated: %1$s</string>
     <plurals name="updated_mins_ago">
         <item quantity="one">Updated %1$d minute ago</item>
