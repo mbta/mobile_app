@@ -73,6 +73,7 @@ import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
+import com.mbta.tid.mbta_app.viewModel.INotificationSettingsViewModel
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.MockToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
@@ -93,6 +94,7 @@ fun SaveFavoritePage(
     goBack: () -> Unit,
     analytics: Analytics = koinInject(),
     favoritesViewModel: IFavoritesViewModel = koinInject(),
+    notificationSettingsViewModel: INotificationSettingsViewModel = koinInject(),
     toastViewModel: IToastViewModel = koinInject(),
 ) {
     val resources = LocalResources.current
@@ -277,8 +279,7 @@ fun SaveFavoritePage(
                     stopDirections.singleOrNull()?.id == 1 - initialDirection,
             )
             NotificationSettingsWidget(
-                settings = settings.notifications,
-                setSettings = { updatedSettings = settings.copy(notifications = it) },
+                viewModel = notificationSettingsViewModel,
                 notificationPermissionState = notificationPermissionState,
                 hasRequestedPermission = hasRequestedPermission,
             )
