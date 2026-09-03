@@ -22,8 +22,8 @@
     <string name="alert_elevator_header">Elevator closure (%1$s)</string>
     <string name="alert_ended">Alert is no longer in effect</string>
     <string name="alert_summary">&lt;b&gt;%1$s&lt;/b&gt;%2$s%3$s%4$s</string>
-    <string name="alert_summary_location_successive">&#032;from &lt;b&gt;%1$s&lt;/b&gt; to &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="alert_summary_timeframe_this_week">&#032;through %1$s</string>
+    <string name="alert_summary_location_successive">" from &lt;b&gt;%1$s&lt;/b&gt; to &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="alert_summary_timeframe_this_week">" through %1$s"</string>
     <string name="alerts_channel" translatable="false">Service Alerts</string>
     <string name="alternative_path">Alternative path</string>
     <string name="amber_alert">Amber Alert</string>
@@ -204,7 +204,7 @@
     <string name="later_today">later today</string>
     <string name="less_common_stop">Less common stop</string>
     <string name="less_common_stops">&lt;b&gt;%1$d&lt;/b&gt; less common stops</string>
-    <string name="list_join">,&#032;</string>
+    <string name="list_join">", "</string>
     <string name="live">Live</string>
     <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
     <string name="location_not_available_yet">Location not available yet</string>
