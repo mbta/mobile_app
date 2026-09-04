@@ -199,14 +199,19 @@ struct SaveFavoritePage: View {
                 }
             }
         }
-        .onAppear { resetPendingSettings() }
+        .onAppear { resetPendingSettings()
+            notificationSettingsVM.loadSavedSettings(settings: pendingSettings.notifications)
+        }
         .manageVM(notificationSettingsVM, $notificationSettingsState)
         .onChange(of: pendingSettings) { newSettings in
+            print("LOADING SAVED newSettings: \(newSettings)")
             notificationSettingsVM.loadSavedSettings(settings: newSettings.notifications)
         }
         .onChange(of: notificationSettingsState) { state in
-            if let state {
-                pendingSettings = pendingSettings.doCopy(notifications: state.settings)
+            print("HI")
+            if let settings = state?.settings {
+                print("CHANGING STATE pendingState: \(pendingSettings) incomingChanges: \(state)")
+                pendingSettings = pendingSettings.doCopy(notifications: settings)
             }
         }
         .onChange(of: selectedDirection) { _ in resetPendingSettings() }

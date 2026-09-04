@@ -52,68 +52,69 @@ struct NotificationSettingsWidget: View {
 
     var body: some View {
         let permissionDenied = authorizationStatus == .denied
-        if let vmState {
-            VStack(spacing: 8) {
-                NotificationSwitch(
-                    settings: vmState.settings,
-                    onValueChanged: { vm.setEnabled(enabled: $0) },
-                    notificationPermissionManager: notificationPermissionManager,
-                )
+        VStack(spacing: 0) {
+            if let vmState, let settings = vmState.settings {
+                VStack(spacing: 8) {
+                    NotificationSwitch(
+                        settings: settings,
+                        onValueChanged: { vm.setEnabled(enabled: $0) },
+                        notificationPermissionManager: notificationPermissionManager,
+                    )
 
-                if vmState.settings.enabled {
-                    if presetWindowsEnabled {
-                        PresetWindowSelector(
-                            presetRows: presetOptions,
-                            selectedPreset: vmState.selectedPreset,
-                            onSelect: { preset in
-                                vm.setPreset(preset: preset)
-                            }
-                        )
-                    }
-
-                    ForEach(vmState.settings.windows, id: \.id) { window in
-                        WindowWidget(
-                            window: window,
-                            setWindow: { newWindow in
-                                let windowIndex = vmState.settings.windows.firstIndex(of: window)
-                                var newWindows = vmState.settings.windows
-                                if let windowIndex {
-                                    newWindows[windowIndex] = newWindow
+                    if settings.enabled {
+                        if presetWindowsEnabled {
+                            PresetWindowSelector(
+                                presetRows: presetOptions,
+                                selectedPreset: vmState.selectedPreset,
+                                onSelect: { preset in
+                                    vm.setPreset(preset: preset)
                                 }
-                                vm.setCustomWindows(windows: newWindows)
-                            },
-                            deleteWindow: vmState.settings.windows.count > 1 ? {
-                                let nextWindows = vmState.settings.windows.filter { $0.id != window.id }
-                                vm.setCustomWindows(windows: nextWindows)
-                            } : nil
-                        )
-                    }
-
-                    Button(action: {
-                        vm.addPlaceholderWindow()
-                    }) {
-                        HStack(spacing: 12) {
-                            Image(.plus)
-                                .resizable()
-                                .padding(4)
-                                .background(Color.text.opacity(0.6), in: .circle)
-                                .foregroundStyle(Color.fill3)
-                                .frame(width: 24, height: 24)
-                            Text("Add another time period")
-                            Spacer()
+                            )
                         }
+
+                        ForEach(settings.windows, id: \.id) { window in
+                            WindowWidget(
+                                window: window,
+                                setWindow: { newWindow in
+                                    let windowIndex = settings.windows.firstIndex(of: window)
+                                    var newWindows = settings.windows
+                                    if let windowIndex {
+                                        newWindows[windowIndex] = newWindow
+                                    }
+                                    vm.setCustomWindows(windows: newWindows)
+                                },
+                                deleteWindow: settings.windows.count > 1 ? {
+                                    let nextWindows = settings.windows.filter { $0.id != window.id }
+                                    vm.setCustomWindows(windows: nextWindows)
+                                } : nil
+                            )
+                        }
+
+                        Button(action: {
+                            vm.addPlaceholderWindow()
+                        }) {
+                            HStack(spacing: 12) {
+                                Image(.plus)
+                                    .resizable()
+                                    .padding(4)
+                                    .background(Color.text.opacity(0.6), in: .circle)
+                                    .foregroundStyle(Color.fill3)
+                                    .frame(width: 24, height: 24)
+                                Text("Add another time period")
+                                Spacer()
+                            }
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 10)
+                        .background(Color.fill3)
+                        .withRoundedBorder()
+                        .foregroundStyle(Color.text.opacity(0.6))
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 10)
-                    .background(Color.fill3)
-                    .withRoundedBorder()
-                    .foregroundStyle(Color.text.opacity(0.6))
                 }
             }
-            .manageVM(vm, $vmState, now)
+        }.manageVM(vm, $vmState, now)
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
-        }
-        .enableInjection()
+            .enableInjection()
     }
 
     struct WindowWidget: View {
@@ -308,11 +309,13 @@ struct NotificationSwitch: View {
                 settings.enabled
             },
             set: { newValue in
+                print("ON VALUE CHANGED \(newValue)")
                 onValueChanged(newValue)
             }
         )
 
         let permissionDenied = authorizationStatus == .denied
+        let _ = print("PERMISSION DENIED \(permissionDenied)")
         VStack(spacing: 16) {
             Toggle(isOn: enabledBinding) {
                 HStack {

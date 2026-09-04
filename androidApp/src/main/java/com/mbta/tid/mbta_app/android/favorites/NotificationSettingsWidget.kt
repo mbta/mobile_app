@@ -138,85 +138,88 @@ fun NotificationSettingsWidget(
         viewModel.setPresetsEnabledFlag(presetWindowsEnabled)
     }
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Column(
-            Modifier.haloContainer(borderWidth = 1.dp).clickable(
-                enabled = showPermissionSettingsLink
+    val settings = notificationSettingsState.settings
+
+    if (settings != null) {
+
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(
+                Modifier.haloContainer(borderWidth = 1.dp).clickable(
+                    enabled = showPermissionSettingsLink
+                ) {
+                    val openNotificationSettings =
+                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                        }
+
+                    context.startActivity(openNotificationSettings)
+                },
+                verticalArrangement = Arrangement.spacedBy(0.dp),
             ) {
-                val openNotificationSettings =
-                    Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                NotificationSwitch(
+                    settings = settings,
+                    onValueChange = viewModel::setEnabled,
+                    notificationPermissionState = notificationPermissionState,
+                    enabled = !showPermissionSettingsLink,
+                )
+                AnimatedVisibility(showPermissionSettingsLink) { PermissionSettingsLink() }
+            }
+            AnimatedVisibility(settings.enabled && !permissionDenied) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (presetWindowsEnabled) {
+                        PresetWindowSelector(
+                            presetRows = presetOptions,
+                            selectedPreset = notificationSettingsState.selectedPreset,
+                            onSelect = { preset ->
+                                viewModel.setPreset(preset)
+                            },
+                        )
                     }
 
-                context.startActivity(openNotificationSettings)
-            },
-            verticalArrangement = Arrangement.spacedBy(0.dp),
-        ) {
-            NotificationSwitch(
-                settings = notificationSettingsState.settings,
-                onValueChange = viewModel::setEnabled,
-                notificationPermissionState = notificationPermissionState,
-                enabled = !showPermissionSettingsLink,
-            )
-            AnimatedVisibility(showPermissionSettingsLink) { PermissionSettingsLink() }
-        }
-        AnimatedVisibility(notificationSettingsState.settings.enabled && !permissionDenied) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                if (presetWindowsEnabled) {
-                    PresetWindowSelector(
-                        presetRows = presetOptions,
-                        selectedPreset = notificationSettingsState.selectedPreset,
-                        onSelect = { preset ->
-                            viewModel.setPreset(preset)
+                    for (window in settings.windows) {
+                        WindowWidget(
+                            window,
+                            setWindow = { newWindow ->
+                                val windows = settings.windows.toMutableList()
+                                val index = windows.indexOf(window)
+                                if (index != -1) windows[index] = newWindow
+                                viewModel.setCustomWindows(windows)
+                            },
+                            deleteWindow =
+                                {
+                                        viewModel.setCustomWindows(settings.windows - window)
+                                    }
+                                    .takeIf { settings.windows.size > 1 },
+                        )
+                    }
+                    Surface(
+                        onClick = {
+                            viewModel.addPlaceholderWindow()
                         },
-                    )
-                }
-
-                for (window in notificationSettingsState.settings.windows) {
-                    WindowWidget(
-                        window,
-                        setWindow = { newWindow ->
-                            val windows = notificationSettingsState.settings.windows.toMutableList()
-                            val index = windows.indexOf(window)
-                            if (index != -1) windows[index] = newWindow
-                            viewModel.setCustomWindows(windows)
-                        },
-                        deleteWindow =
-                            {
-                                    viewModel.setCustomWindows(
-                                        notificationSettingsState.settings.windows - window
-                                    )
-                                }
-                                .takeIf { notificationSettingsState.settings.windows.size > 1 },
-                    )
-                }
-                Surface(
-                    onClick = {
-                        viewModel.addPlaceholderWindow()
-                    },
-                    Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                    color = colorResource(R.color.fill3),
-                    border = BorderStroke(1.5.dp, colorResource(R.color.halo)),
-                ) {
-                    Row(
-                        Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
+                        Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp),
+                        color = colorResource(R.color.fill3),
+                        border = BorderStroke(1.5.dp, colorResource(R.color.halo)),
                     ) {
-                        Icon(
-                            painterResource(R.drawable.plus),
-                            null,
-                            Modifier.background(
-                                colorResource(R.color.text).copy(alpha = 0.6f),
-                                CircleShape,
-                            ),
-                            tint = colorResource(R.color.fill3),
-                        )
-                        Text(
-                            stringResource(R.string.add_another_time_period),
-                            color = colorResource(R.color.text).copy(alpha = 0.6f),
-                        )
+                        Row(
+                            Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.plus),
+                                null,
+                                Modifier.background(
+                                    colorResource(R.color.text).copy(alpha = 0.6f),
+                                    CircleShape,
+                                ),
+                                tint = colorResource(R.color.fill3),
+                            )
+                            Text(
+                                stringResource(R.string.add_another_time_period),
+                                color = colorResource(R.color.text).copy(alpha = 0.6f),
+                            )
+                        }
                     }
                 }
             }

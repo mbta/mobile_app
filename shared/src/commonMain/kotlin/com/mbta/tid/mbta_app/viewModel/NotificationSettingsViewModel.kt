@@ -54,7 +54,7 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
     }
 
     public data class State(
-        val settings: Notifications,
+        val settings: Notifications?,
         val selectedPreset: Preset?,
     ) {
         public constructor() : this(Notifications.disabled, null)
@@ -67,8 +67,8 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
     override fun runLogic(): State {
         var now: EasternTimeInstant by remember { mutableStateOf(EasternTimeInstant.now()) }
 
-        var settings: Notifications by remember {
-            mutableStateOf(Notifications.disabled)
+        var settings: Notifications? by remember {
+            mutableStateOf(null)
         }
         var customPreset: List<Window> by remember {
             mutableStateOf(listOf(Window.customFromCurrentTime(now)))
@@ -79,27 +79,34 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
         }
 
         EventSink(eventHandlingTimeout = 1.seconds, sentryRepository = sentryRepository) { event ->
+            val enabled = settings?.enabled ?: false
+
             when (event) {
                 is Event.SetEnabled -> {
                     val windows =
-                        settings.windows.ifEmpty {
-                            listOf(Window.default(emptyList(), presetsEnabledFlag, now))
+                        if (!enabled && event.enabled) {
+                            (settings?.windows ?: emptyList()).ifEmpty {
+                                listOf(Window.default(emptyList(), presetsEnabledFlag, now))
+                            }
+                        } else {
+                            settings?.windows ?: emptyList()
                         }
 
-                    settings = settings.copy(enabled = event.enabled, windows = windows)
+                    settings = Notifications(enabled = event.enabled, windows = windows)
                 }
 
                 is Event.SetCustomWindows -> {
-                    settings = settings.copy(windows = event.windows)
+                    settings = Notifications(enabled = enabled, windows = event.windows)
                     customPreset = event.windows
                 }
                 is Event.SetNow -> now = event.now
                 is Event.SetPreset -> {
                     settings =
                         if (event.preset == null) {
-                            settings.copy(windows = customPreset)
+                            Notifications(enabled = enabled, windows = customPreset)
                         } else {
-                            settings.copy(
+                            Notifications(
+                                enabled = enabled,
                                 windows =
                                     listOf(
                                         Window(
@@ -107,19 +114,22 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
                                             event.preset.endTime,
                                             Window.defaultDaysOfWeek(now),
                                         )
-                                    )
+                                    ),
                             )
                         }
                 }
 
                 is Event.SetPresetsEnabledFlag -> presetsEnabledFlag = event.enabled
-                is Event.AddPlaceholderWindow ->
+                is Event.AddPlaceholderWindow -> {
+                    val existingWindows = settings?.windows ?: emptyList()
                     settings =
-                        settings.copy(
+                        Notifications(
+                            enabled = enabled,
                             windows =
-                                settings.windows +
-                                    Window.default(settings.windows, presetsEnabledFlag, now)
+                                existingWindows +
+                                    Window.default(existingWindows, presetsEnabledFlag, now),
                         )
+                }
 
                 is Event.LoadSavedSettings -> settings = event.settings
             }
@@ -127,7 +137,7 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
 
         val state =
             remember(settings) {
-                State(settings, Preset.selected(settings.windows))
+                State(settings, Preset.selected(settings?.windows ?: emptyList()))
             }
         return state
     }

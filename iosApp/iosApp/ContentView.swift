@@ -653,6 +653,8 @@ struct ContentView: View {
                 }
 
             case let .saveFavorite(routeId, stopId, selectedDirection, context):
+                @State var notificationSettingsVM: INotificationSettingsViewModel = ViewModelDI().notificationSettings
+                let _ = Self._printChanges() // Prints what triggered the refresh
                 SaveFavoritePage(
                     routeId: routeId,
                     stopId: stopId,
@@ -667,6 +669,7 @@ struct ContentView: View {
                         )
                     },
                     navCallbacks: navCallbacks,
+                    notificationSettingsVM: notificationSettingsVM
                 )
 
             default:

@@ -153,7 +153,10 @@ fun SaveFavoritePage(
     }
 
     LaunchedEffect(notificationSettingsState) {
-        updatedSettings = settings.copy(notifications = notificationSettingsState.settings)
+        val notificationSettings = notificationSettingsState.settings
+        if (notificationSettings != null) {
+            updatedSettings = settings.copy(notifications = notificationSettings)
+        }
     }
 
     val includeAccessibility = SettingsCache.get(Settings.StationAccessibility)

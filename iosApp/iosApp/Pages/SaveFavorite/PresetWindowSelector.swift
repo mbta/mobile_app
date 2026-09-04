@@ -14,19 +14,22 @@ struct PresetWindowSelector: View {
 
     var body: some View {
         let presetGrid = VStack {
-            ForEach(Array(presetRows.enumerated()), id: \.element) { _, presets in
+            ForEach(presetRows, id: \.hashValue) { presets in
                 HStack {
-                    ForEach(Array(presets.enumerated()), id: \.element.name) { _, preset in
+                    ForEach(presets, id: \.self) { preset in
                         let isSelected = preset == selectedPreset
-                        let label = switch onEnum(of: preset) {
-                        case let .morning: NSLocalizedString("Morning")
-                        case let .midday: NSLocalizedString("Midday")
-                        case let .evening: NSLocalizedString("Evening")
-                        case let .allDay: NSLocalizedString("All day")
+                        let label = switch preset {
+                        case .morning: NSLocalizedString("Morning", comment: "Notification window preset label")
+                        case .midday: NSLocalizedString("Midday", comment: "Notification window preset label")
+                        case .evening: NSLocalizedString("Evening", comment: "Notification window preset label")
+                        case .allDay: NSLocalizedString("All day", comment: "Notification window preset label")
                         }
                         PresetButton(
                             isSelected: isSelected,
-                            onSelect: { onSelect(preset) },
+                            onSelect: {
+                                print("SELECTED PRESET \(preset)")
+                                onSelect(preset)
+                            },
                             label: label
                         )
                         .frame(maxWidth: .infinity)
