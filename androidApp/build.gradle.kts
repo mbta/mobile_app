@@ -1,6 +1,5 @@
 import com.diffplug.spotless.FormatterFunc
 import com.mbta.tid.mbta_app.gradle.CheckMapboxBridgeTask
-import com.mbta.tid.mbta_app.gradle.ConvertIosLocalizationTask
 import com.mbta.tid.mbta_app.gradle.ConvertIosMapIconsTask
 import com.mbta.tid.mbta_app.gradle.EnvReader
 import java.io.Serializable
@@ -191,12 +190,6 @@ tasks.register<ConvertIosMapIconsTask>("convertIosIconsToAssets") {
     assetsToReturnByName = listOf("alert-borderless-*")
 }
 
-tasks.register<ConvertIosLocalizationTask>("convertIosLocalization") {
-    androidEnglishStrings = layout.projectDirectory.file("src/main/res/values/strings.xml")
-    xcstrings = layout.projectDirectory.file("../iosApp/iosApp/Localizable.xcstrings")
-    resources = layout.projectDirectory.dir("src/main/res")
-}
-
 tasks.register<CheckMapboxBridgeTask>("checkMapboxBridge") {
     mapboxBridgePath =
         layout.projectDirectory.file(
@@ -292,9 +285,7 @@ run {
 }
 
 gradle.projectsEvaluated {
-    tasks
-        .getByPath("preBuild")
-        .dependsOn("mapboxTempToken", "convertIosIconsToAssets", "convertIosLocalization")
-    tasks.getByPath("spotlessKotlin").mustRunAfter("convertIosLocalization")
+    tasks.getByPath("preBuild").dependsOn("mapboxTempToken", "convertIosIconsToAssets")
+    tasks.getByPath("spotlessKotlin")
     tasks.getByPath("check").dependsOn("checkMapboxBridge")
 }

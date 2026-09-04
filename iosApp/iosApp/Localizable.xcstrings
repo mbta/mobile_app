@@ -1774,7 +1774,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retrasos debido a **%1$@**"
+            "value" : "**Retrasos** debido a %1$@"
           }
         },
         "fr" : {
@@ -1828,7 +1828,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**demora**%1$@%2$@%3$@%4$@%5$@"
+            "value" : "**Retrasos**%1$@%2$@%3$@%4$@%5$@"
           }
         },
         "fr" : {
@@ -9753,7 +9753,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Demora"
+            "value" : "Retraso"
           }
         },
         "fr" : {
@@ -15236,7 +15236,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : " Arè ki mwen komen"
+            "value" : "Arè ki mwen komen"
           }
         },
         "pt-BR" : {
@@ -15359,7 +15359,7 @@
         }
       }
     },
-    "Loading..." : {
+    "Loading…" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
