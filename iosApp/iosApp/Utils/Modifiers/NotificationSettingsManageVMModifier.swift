@@ -21,7 +21,6 @@ struct NotificationSettingsManageVMModifier: ViewModifier {
         content
             .task {
                 for await models in viewModel.models {
-                    print("NEW STATE \(models)")
                     vmState = models
                 }
             }

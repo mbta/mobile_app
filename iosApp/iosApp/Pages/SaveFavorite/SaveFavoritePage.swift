@@ -186,8 +186,6 @@ struct SaveFavoritePage: View {
                         NotificationSettingsWidget(
                             vm: notificationSettingsVM,
                             onUpdate: { newNotificationSettings in
-                                print("UPDATING: \(newNotificationSettings)")
-
                                 pendingSettings = pendingSettings.doCopy(notifications: newNotificationSettings)
                             },
                             notificationPermissionManager: notificationPermissionManager,
@@ -208,7 +206,6 @@ struct SaveFavoritePage: View {
             notificationSettingsVM.loadSavedSettings(settings: pendingSettings.notifications)
         }
         .onChange(of: pendingSettings) { newSettings in
-            print("LOADING SAVED newSettings: \(newSettings)")
             notificationSettingsVM.loadSavedSettings(settings: newSettings.notifications)
         }
         .onChange(of: selectedDirection) { _ in resetPendingSettings() }

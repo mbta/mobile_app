@@ -315,13 +315,11 @@ struct NotificationSwitch: View {
                 settings.enabled
             },
             set: { newValue in
-                print("ON VALUE CHANGED \(newValue)")
                 onValueChanged(newValue)
             }
         )
 
         let permissionDenied = authorizationStatus == .denied
-        let _ = print("PERMISSION DENIED \(permissionDenied)")
         VStack(spacing: 16) {
             Toggle(isOn: enabledBinding) {
                 HStack {

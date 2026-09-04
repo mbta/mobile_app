@@ -27,7 +27,6 @@ struct PresetWindowSelector: View {
                         PresetButton(
                             isSelected: isSelected,
                             onSelect: {
-                                print("SELECTED PRESET \(preset)")
                                 onSelect(preset)
                             },
                             label: label
