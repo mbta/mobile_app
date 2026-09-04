@@ -13,25 +13,25 @@ public class PresetWindow(
         public fun morningPreset(label: String, daysOfWeek: Set<DayOfWeek>): PresetWindow =
             PresetWindow(
                 label = label,
-                window = Window.morningDefault(daysOfWeek),
+                window = Window(Preset.Morning, daysOfWeek),
             )
 
         public fun middayPreset(label: String, daysOfWeek: Set<DayOfWeek>): PresetWindow =
             PresetWindow(
                 label = label,
-                window = Window.middayDefault(daysOfWeek),
+                window = Window(Preset.Midday, daysOfWeek),
             )
 
         public fun eveningPreset(label: String, daysOfWeek: Set<DayOfWeek>): PresetWindow =
             PresetWindow(
                 label = label,
-                window = Window.eveningDefault(daysOfWeek),
+                window = Window(Preset.Evening, daysOfWeek),
             )
 
         public fun allDayPreset(label: String, daysOfWeek: Set<DayOfWeek>): PresetWindow =
             PresetWindow(
                 label = label,
-                window = Window.allDayDefault(daysOfWeek),
+                window = Window(Preset.AllDay, daysOfWeek),
             )
     }
 }
