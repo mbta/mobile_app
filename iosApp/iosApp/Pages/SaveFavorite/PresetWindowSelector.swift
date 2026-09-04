@@ -8,41 +8,26 @@ import SwiftUI
 
 struct PresetWindowSelector: View {
     @ObserveInjection var inject
-    let presetRows: [[PresetWindow]]
-    let selectedPreset: PresetSelection
-    let now: EasternTimeInstant
-    let customPreset: [FavoriteSettings.NotificationsWindow]
-    let onSelect: ([FavoriteSettings.NotificationsWindow]) -> Void
-
-    init(
-        presetRows: [[PresetWindow]],
-        selectedPreset: PresetSelection,
-        now: EasternTimeInstant = .now(),
-        customPreset: [FavoriteSettings.NotificationsWindow],
-        onSelect: @escaping ([FavoriteSettings.NotificationsWindow]) -> Void
-    ) {
-        self.presetRows = presetRows
-        self.selectedPreset = selectedPreset
-        self.now = now
-        self.customPreset = customPreset
-        self.onSelect = onSelect
-    }
+    let presetRows: [[Preset]]
+    let selectedPreset: Preset?
+    let onSelect: (Preset?) -> Void
 
     var body: some View {
         let presetGrid = VStack {
-            ForEach(Array(presetRows.enumerated()), id: \.offset) { rowIndex, windows in
+            ForEach(Array(presetRows.enumerated()), id: \.element) { _, presets in
                 HStack {
-                    ForEach(Array(windows.enumerated()), id: \.element.label) { presetIndex, preset in
-                        let isSelected = {
-                            if case let .preset(preset) = onEnum(of: selectedPreset) {
-                                return preset.rowIndex == rowIndex && preset.columnIndex == presetIndex
-                            }
-                            return false
-                        }()
+                    ForEach(Array(presets.enumerated()), id: \.element.name) { _, preset in
+                        let isSelected = preset == selectedPreset
+                        let label = switch onEnum(of: preset) {
+                        case let .morning: NSLocalizedString("Morning")
+                        case let .midday: NSLocalizedString("Midday")
+                        case let .evening: NSLocalizedString("Evening")
+                        case let .allDay: NSLocalizedString("All day")
+                        }
                         PresetButton(
                             isSelected: isSelected,
-                            onSelect: { onSelect([preset.window]) },
-                            label: preset.label
+                            onSelect: { onSelect(preset) },
+                            label: label
                         )
                         .frame(maxWidth: .infinity)
                     }
@@ -51,9 +36,9 @@ struct PresetWindowSelector: View {
 
             HStack {
                 PresetButton(
-                    isSelected: selectedPreset == PresetSelection.Custom(),
+                    isSelected: selectedPreset == nil,
                     onSelect: {
-                        onSelect(customPreset)
+                        onSelect(nil)
                     },
                     label: NSLocalizedString(
                         "Custom",

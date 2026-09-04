@@ -18,6 +18,7 @@ struct SaveFavoritePage: View {
 
     let updateFavorites: ([RouteStopDirection: FavoriteSettings?]) -> Void
     var navCallbacks: NavigationCallbacks
+    var notificationSettingsVM: INotificationSettingsViewModel
     var toastVM: IToastViewModel
     var notificationPermissionManager: INotificationPermissionManager
 
@@ -27,6 +28,8 @@ struct SaveFavoritePage: View {
     @State var selectedDirection: Int32
     @State var favoritesLoaded: Bool = false
     @State var wasAdding: Bool = false
+
+    @State var notificationSettingsState: NotificationSettingsViewModel.State?
 
     let inspection = Inspection<Self>()
 
@@ -38,6 +41,7 @@ struct SaveFavoritePage: View {
         updateFavorites: @escaping ([RouteStopDirection: FavoriteSettings?]) -> Void,
         navCallbacks: NavigationCallbacks,
         toastVM: IToastViewModel = ViewModelDI().toast,
+        notificationSettingsVM: INotificationSettingsViewModel = ViewModelDI().notificationSettings,
         notificationPermissionManager: INotificationPermissionManager = NotificationPermissionManager(),
     ) {
         self.routeId = routeId
@@ -46,6 +50,7 @@ struct SaveFavoritePage: View {
         self.context = context
         self.updateFavorites = updateFavorites
         self.navCallbacks = navCallbacks
+        self.notificationSettingsVM = notificationSettingsVM
         self.toastVM = toastVM
         self.notificationPermissionManager = notificationPermissionManager
         pendingSettings = .init()
@@ -179,10 +184,7 @@ struct SaveFavoritePage: View {
                             } : nil,
                         )
                         NotificationSettingsWidget(
-                            settings: pendingSettings.notifications,
-                            setSettings: { updatedSettings in
-                                pendingSettings = pendingSettings.doCopy(notifications: updatedSettings)
-                            },
+                            vm: notificationSettingsVM,
                             notificationPermissionManager: notificationPermissionManager,
                         )
                         if isFavorite {
@@ -198,6 +200,15 @@ struct SaveFavoritePage: View {
             }
         }
         .onAppear { resetPendingSettings() }
+        .manageVM(notificationSettingsVM, $notificationSettingsState)
+        .onChange(of: pendingSettings) { newSettings in
+            notificationSettingsVM.loadSavedSettings(settings: newSettings.notifications)
+        }
+        .onChange(of: notificationSettingsState) { state in
+            if let state {
+                pendingSettings = pendingSettings.doCopy(notifications: state.settings)
+            }
+        }
         .onChange(of: selectedDirection) { _ in resetPendingSettings() }
         .onChange(of: favorites) { _ in
             resetPendingSettings()

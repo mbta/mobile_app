@@ -27,14 +27,13 @@ private extension DateComponents {
 
 struct NotificationSettingsWidget: View {
     @ObserveInjection var inject
-    let settings: FavoriteSettings.Notifications
-    let setSettings: (FavoriteSettings.Notifications) -> Void
+    let vm: INotificationSettingsViewModel
 
     var notificationPermissionManager: INotificationPermissionManager
     var authorizationStatus: UNAuthorizationStatus? { notificationPermissionManager.authorizationStatus }
     var now: EasternTimeInstant = .now()
 
-    @State var customPreset: [FavoriteSettings.NotificationsWindow] = []
+    @State var vmState: NotificationSettingsViewModel.State?
 
     @EnvironmentObject var settingsCache: SettingsCache
     var presetWindowsEnabled: Bool { settingsCache.get(.notificationPresetWindows) }
@@ -43,142 +42,77 @@ struct NotificationSettingsWidget: View {
         FavoriteSettings.NotificationsWindow.companion.defaultDaysOfWeek(now: now)
     }
 
-    var presetOptions: [[PresetWindow]] { [
-        [
-            .init(
-                label: NSLocalizedString("Morning", comment: "Notification window preset label"),
-                window: FavoriteSettings.NotificationsWindow.companion.morningDefault(daysOfWeek: daysOfWeek)
-            ),
-            .init(
-                label: NSLocalizedString("Midday", comment: "Notification window preset label"),
-                window: FavoriteSettings.NotificationsWindow.companion.middayDefault(daysOfWeek: daysOfWeek)
-            ),
-            .init(
-                label: NSLocalizedString("Evening", comment: "Notification window preset label"),
-                window: FavoriteSettings.NotificationsWindow.companion.eveningDefault(daysOfWeek: daysOfWeek)
-            )
-        ],
-        [
-            .init(
-                label: NSLocalizedString("All day", comment: "Notification window preset label"),
-                window: FavoriteSettings.NotificationsWindow.companion.allDayDefault(daysOfWeek: daysOfWeek)
-            )
-        ]
+    var presetOptions: [[Preset]] { [
+        [.morning, .midday, .evening],
+        [.allDay]
     ]
-    }
-
-    var presetSelection: PresetSelection {
-        PresetSelection.companion.selectedPresetFromWindows(
-            windows: settings.windows,
-            presetOptions: presetOptions
-        )
     }
 
     let inspection = Inspection<Self>()
 
     var body: some View {
         let permissionDenied = authorizationStatus == .denied
-        VStack(spacing: 8) {
-            NotificationSwitch(
-                settings: settings,
-                setSettings: setSettings,
-                notificationPermissionManager: notificationPermissionManager,
-                now: now,
-                presetWindowsEnabled: presetWindowsEnabled
-            )
+        if let vmState {
+            VStack(spacing: 8) {
+                NotificationSwitch(
+                    settings: vmState.settings,
+                    onValueChanged: { vm.setEnabled(enabled: $0) },
+                    notificationPermissionManager: notificationPermissionManager,
+                )
 
-            if settings.enabled {
-                if presetWindowsEnabled {
-                    PresetWindowSelector(
-                        presetRows: presetOptions,
-                        selectedPreset: presetSelection,
-                        now: now,
-                        customPreset: customPreset,
-                        onSelect: { selectedWindows in
-                            setSettings(settings.doCopy(
-                                enabled: settings.enabled,
-                                windows: selectedWindows
-                            ))
-                        }
-                    )
-                    .onAppear {
-                        if presetSelection == PresetSelection.Custom() {
-                            customPreset = settings.windows
-                        } else {
-                            customPreset =
-                                [FavoriteSettings.NotificationsWindow.companion.customFromCurrentTime(now: now)]
-                        }
-                    }
-                    .onChange(of: settings.windows) { newWindows in
-                        if PresetSelection.companion.selectedPresetFromWindows(
-                            windows: newWindows,
-                            presetOptions: presetOptions
-                        ) == PresetSelection.Custom() {
-                            customPreset = newWindows
-                        }
-                    }
-                }
-
-                ForEach(settings.windows, id: \.id) { window in
-                    WindowWidget(
-                        window: window,
-                        setWindow: { newWindow in
-                            let windowIndex = settings.windows.firstIndex(of: window)
-                            var newWindows = settings.windows
-                            if let windowIndex {
-                                newWindows[windowIndex] = newWindow
-                            }
-                            setSettings(settings.doCopy(enabled: settings.enabled, windows: newWindows))
-                        },
-                        deleteWindow: settings.windows.count > 1 ? {
-                            let nextWindows = settings.windows.filter { $0.id != window.id }
-                            setSettings(
-                                settings.doCopy(
-                                    enabled: settings.enabled,
-                                    windows: nextWindows
-                                )
-                            )
-                        } : nil
-                    )
-                }
-
-                let customWindow =
+                if vmState.settings.enabled {
                     if presetWindowsEnabled {
-                        FavoriteSettings.NotificationsWindow.companion.customFromCurrentTime(now: now)
-                    } else {
-                        FavoriteSettings.NotificationsWindow.companion.default(
-                            existingWindows: settings.windows,
-                            presetsEnabled: presetWindowsEnabled,
-                            now: now
+                        PresetWindowSelector(
+                            presetRows: presetOptions,
+                            selectedPreset: vmState.selectedPreset,
+                            onSelect: { preset in
+                                vm.setPreset(preset: preset)
+                            }
                         )
                     }
 
-                Button(action: {
-                    let nextWindows = settings.windows + [customWindow]
-                    setSettings(settings.doCopy(
-                        enabled: settings.enabled,
-                        windows: nextWindows
-                    ))
-                }) {
-                    HStack(spacing: 12) {
-                        Image(.plus)
-                            .resizable()
-                            .padding(4)
-                            .background(Color.text.opacity(0.6), in: .circle)
-                            .foregroundStyle(Color.fill3)
-                            .frame(width: 24, height: 24)
-                        Text("Add another time period")
-                        Spacer()
+                    ForEach(vmState.settings.windows, id: \.id) { window in
+                        WindowWidget(
+                            window: window,
+                            setWindow: { newWindow in
+                                let windowIndex = vmState.settings.windows.firstIndex(of: window)
+                                var newWindows = vmState.settings.windows
+                                if let windowIndex {
+                                    newWindows[windowIndex] = newWindow
+                                }
+                                vm.setCustomWindows(windows: newWindows)
+                            },
+                            deleteWindow: vmState.settings.windows.count > 1 ? {
+                                let nextWindows = vmState.settings.windows.filter { $0.id != window.id }
+                                vm.setCustomWindows(windows: nextWindows)
+                            } : nil
+                        )
                     }
+
+                    Button(action: {
+                        vm.addPlaceholderWindow()
+                    }) {
+                        HStack(spacing: 12) {
+                            Image(.plus)
+                                .resizable()
+                                .padding(4)
+                                .background(Color.text.opacity(0.6), in: .circle)
+                                .foregroundStyle(Color.fill3)
+                                .frame(width: 24, height: 24)
+                            Text("Add another time period")
+                            Spacer()
+                        }
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 10)
+                    .background(Color.fill3)
+                    .withRoundedBorder()
+                    .foregroundStyle(Color.text.opacity(0.6))
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 10)
-                .background(Color.fill3)
-                .withRoundedBorder()
-                .foregroundStyle(Color.text.opacity(0.6))
             }
+            .manageVM(vm, $vmState, now)
+            .onReceive(inspection.notice) { inspection.visit(self, $0) }
         }
-        .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .enableInjection()
     }
 
@@ -363,10 +297,8 @@ struct NotificationSettingsWidget: View {
 
 struct NotificationSwitch: View {
     let settings: FavoriteSettings.Notifications
-    let setSettings: (FavoriteSettings.Notifications) -> Void
+    let onValueChanged: (Bool) -> Void
     let notificationPermissionManager: INotificationPermissionManager
-    let now: EasternTimeInstant
-    let presetWindowsEnabled: Bool
 
     var authorizationStatus: UNAuthorizationStatus? { notificationPermissionManager.authorizationStatus }
 
@@ -376,7 +308,7 @@ struct NotificationSwitch: View {
                 settings.enabled
             },
             set: { newValue in
-                setSettings(settings.doCopy(enabled: newValue, windows: settings.windows))
+                onValueChanged(newValue)
             }
         )
 
@@ -432,21 +364,7 @@ struct NotificationSwitch: View {
         .onChange(of: settings.enabled) { enabled in
             Task {
                 if enabled {
-                    let notificationPermission = await notificationPermissionManager.requestPermission()
-                    guard notificationPermission else {
-                        setSettings(FavoriteSettings.Notifications.companion.disabled)
-                        return
-                    }
-                    if settings.windows.count == 0 {
-                        setSettings(settings.doCopy(
-                            enabled: enabled,
-                            windows: [FavoriteSettings.NotificationsWindow.companion.default(
-                                existingWindows: [],
-                                presetsEnabled: presetWindowsEnabled,
-                                now: now
-                            )]
-                        ))
-                    }
+                    let _notificationPermission = await notificationPermissionManager.requestPermission()
                 }
             }
         }
@@ -456,23 +374,22 @@ struct NotificationSwitch: View {
 struct NotificationSettingsWidget_Previews: PreviewProvider {
     struct Holder: View {
         @ObserveInjection var inject
-        @State var settings: FavoriteSettings = .init(notifications: .init(
-            enabled: true,
-            windows: [FavoriteSettings.NotificationsWindow.companion.default(
-                existingWindows: [],
-                presetsEnabled: false,
-                now: EasternTimeInstant.now()
-            )]
-        ))
+        let windows = [FavoriteSettings.NotificationsWindow.companion.default(
+            existingWindows: [],
+            presetsEnabled: false,
+            now: EasternTimeInstant.now()
+        )]
+
+        var vm = NotificationSettingsViewModel(sentryRepository: MockSentryRepository())
 
         var body: some View {
             NotificationSettingsWidget(
-                settings: settings.notifications,
-                setSettings: { updatedSettings in
-                    settings = settings.doCopy(notifications: updatedSettings)
-                },
+                vm: vm,
                 notificationPermissionManager: MockNotificationPermissionManager()
-            )
+            ).onAppear {
+                vm.setEnabled(enabled: true)
+                vm.setCustomWindows(windows: windows)
+            }
             .enableInjection()
         }
     }
