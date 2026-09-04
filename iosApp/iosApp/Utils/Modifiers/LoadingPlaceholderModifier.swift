@@ -17,7 +17,7 @@ struct LoadingPlaceholderModifier: ViewModifier {
             .shimmering(active: withShimmer)
             .allowsHitTesting(false)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Loading...")
+            .accessibilityLabel("Loading…")
             .enableInjection()
     }
 }

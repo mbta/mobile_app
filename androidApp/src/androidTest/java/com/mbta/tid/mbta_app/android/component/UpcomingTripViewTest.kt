@@ -825,7 +825,7 @@ class UpcomingTripViewTest {
     @Test
     fun testUpcomingTripViewWithLoading() {
         composeTestRule.setContent { UpcomingTripView(UpcomingTripViewState.Loading) }
-        composeTestRule.onNodeWithContentDescription("Loading...").assertCanBeDisplayed()
+        composeTestRule.onNodeWithContentDescription("Loading…").assertCanBeDisplayed()
     }
 
     @Test
