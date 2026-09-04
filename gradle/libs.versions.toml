@@ -24,7 +24,7 @@ compose-shimmer= "1.5.0"
 # changelog: https://github.com/CycloneDX/cyclonedx-gradle-plugin/releases
 cyclonedx = "3.4.1"
 # changelog: https://developer.android.com/jetpack/androidx/releases/datastore
-cyclonedxCoreJava = "13.1.0"
+cyclonedxCoreJava = "13.2.0"
 datastorePreferencesCore = "1.2.1"
 # bom/changelog: https://firebase.google.com/support/release-notes/android
 firebase-bom = "34.18.0"
@@ -52,7 +52,7 @@ sentry-kmp = "0.27.0"
 skie = "0.10.14"
 spatialk = "0.7.0"
 # changelog: https://github.com/diffplug/spotless/blob/main/plugin-gradle/CHANGES.md
-spotless = "8.10.0"
+spotless = "8.10.1"
 turbine = "1.2.1"
 testLogger = "4.0.0"
 
