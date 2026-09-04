@@ -341,7 +341,7 @@ class MapAndSheetPageTest : KoinTest {
             }
         }
 
-        composeTestRule.waitUntilDoesNotExistDefaultTimeout(hasContentDescription("Loading..."))
+        composeTestRule.waitUntilDoesNotExistDefaultTimeout(hasContentDescription("Loading…"))
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
             hasContentDescription("Mapbox Attribution")
@@ -470,7 +470,7 @@ class MapAndSheetPageTest : KoinTest {
         }
 
         composeTestRule.waitUntilDoesNotExistDefaultTimeout(
-            hasContentDescription("Loading...", substring = true)
+            hasContentDescription("Loading…", substring = true)
         )
 
         composeTestRule.waitUntilDefaultTimeout { mockConfigManager.loadConfigCalledCount == 1 }
