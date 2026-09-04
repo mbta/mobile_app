@@ -28,6 +28,7 @@ private extension DateComponents {
 struct NotificationSettingsWidget: View {
     @ObserveInjection var inject
     let vm: INotificationSettingsViewModel
+    let onUpdate: (FavoriteSettings.Notifications) -> Void
 
     var notificationPermissionManager: INotificationPermissionManager
     var authorizationStatus: UNAuthorizationStatus? { notificationPermissionManager.authorizationStatus }
@@ -113,6 +114,11 @@ struct NotificationSettingsWidget: View {
                 }
             }
         }.manageVM(vm, $vmState, now)
+            .onChange(of: vmState) { newState in
+                if let newState, let settings = newState.settings {
+                    onUpdate(settings)
+                }
+            }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .enableInjection()
     }
@@ -388,6 +394,7 @@ struct NotificationSettingsWidget_Previews: PreviewProvider {
         var body: some View {
             NotificationSettingsWidget(
                 vm: vm,
+                onUpdate: { _ in },
                 notificationPermissionManager: MockNotificationPermissionManager()
             ).onAppear {
                 vm.setEnabled(enabled: true)

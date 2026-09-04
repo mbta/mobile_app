@@ -18,7 +18,6 @@ struct SaveFavoritePage: View {
 
     let updateFavorites: ([RouteStopDirection: FavoriteSettings?]) -> Void
     var navCallbacks: NavigationCallbacks
-    var notificationSettingsVM: INotificationSettingsViewModel
     var toastVM: IToastViewModel
     var notificationPermissionManager: INotificationPermissionManager
 
@@ -29,7 +28,7 @@ struct SaveFavoritePage: View {
     @State var favoritesLoaded: Bool = false
     @State var wasAdding: Bool = false
 
-    @State var notificationSettingsState: NotificationSettingsViewModel.State?
+    @State var notificationSettingsVM: INotificationSettingsViewModel
 
     let inspection = Inspection<Self>()
 
@@ -53,6 +52,7 @@ struct SaveFavoritePage: View {
         self.notificationSettingsVM = notificationSettingsVM
         self.toastVM = toastVM
         self.notificationPermissionManager = notificationPermissionManager
+        self.notificationSettingsVM = notificationSettingsVM
         pendingSettings = .init()
 
         selectedDirection = initialSelectedDirection
@@ -185,6 +185,11 @@ struct SaveFavoritePage: View {
                         )
                         NotificationSettingsWidget(
                             vm: notificationSettingsVM,
+                            onUpdate: { newNotificationSettings in
+                                print("UPDATING: \(newNotificationSettings)")
+
+                                pendingSettings = pendingSettings.doCopy(notifications: newNotificationSettings)
+                            },
                             notificationPermissionManager: notificationPermissionManager,
                         )
                         if isFavorite {
@@ -202,17 +207,9 @@ struct SaveFavoritePage: View {
         .onAppear { resetPendingSettings()
             notificationSettingsVM.loadSavedSettings(settings: pendingSettings.notifications)
         }
-        .manageVM(notificationSettingsVM, $notificationSettingsState)
         .onChange(of: pendingSettings) { newSettings in
             print("LOADING SAVED newSettings: \(newSettings)")
             notificationSettingsVM.loadSavedSettings(settings: newSettings.notifications)
-        }
-        .onChange(of: notificationSettingsState) { state in
-            print("HI")
-            if let settings = state?.settings {
-                print("CHANGING STATE pendingState: \(pendingSettings) incomingChanges: \(state)")
-                pendingSettings = pendingSettings.doCopy(notifications: settings)
-            }
         }
         .onChange(of: selectedDirection) { _ in resetPendingSettings() }
         .onChange(of: favorites) { _ in

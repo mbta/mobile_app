@@ -131,7 +131,12 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
                         )
                 }
 
-                is Event.LoadSavedSettings -> settings = event.settings
+                is Event.LoadSavedSettings -> {
+                    settings = event.settings
+                    if (Preset.selected(event.settings.windows) == null) {
+                        customPreset = event.settings.windows
+                    }
+                }
             }
         }
 
