@@ -28,6 +28,8 @@ struct SaveFavoritePage: View {
     @State var favoritesLoaded: Bool = false
     @State var wasAdding: Bool = false
 
+    @State var notificationSettingsVM: INotificationSettingsViewModel
+
     let inspection = Inspection<Self>()
 
     init(
@@ -38,6 +40,7 @@ struct SaveFavoritePage: View {
         updateFavorites: @escaping ([RouteStopDirection: FavoriteSettings?]) -> Void,
         navCallbacks: NavigationCallbacks,
         toastVM: IToastViewModel = ViewModelDI().toast,
+        notificationSettingsVM: INotificationSettingsViewModel = ViewModelDI().notificationSettings,
         notificationPermissionManager: INotificationPermissionManager = NotificationPermissionManager(),
     ) {
         self.routeId = routeId
@@ -46,8 +49,10 @@ struct SaveFavoritePage: View {
         self.context = context
         self.updateFavorites = updateFavorites
         self.navCallbacks = navCallbacks
+        self.notificationSettingsVM = notificationSettingsVM
         self.toastVM = toastVM
         self.notificationPermissionManager = notificationPermissionManager
+        self.notificationSettingsVM = notificationSettingsVM
         pendingSettings = .init()
 
         selectedDirection = initialSelectedDirection
@@ -179,9 +184,9 @@ struct SaveFavoritePage: View {
                             } : nil,
                         )
                         NotificationSettingsWidget(
-                            settings: pendingSettings.notifications,
-                            setSettings: { updatedSettings in
-                                pendingSettings = pendingSettings.doCopy(notifications: updatedSettings)
+                            vm: notificationSettingsVM,
+                            onUpdate: { newNotificationSettings in
+                                pendingSettings = pendingSettings.doCopy(notifications: newNotificationSettings)
                             },
                             notificationPermissionManager: notificationPermissionManager,
                         )
@@ -197,7 +202,12 @@ struct SaveFavoritePage: View {
                 }
             }
         }
-        .onAppear { resetPendingSettings() }
+        .onAppear { resetPendingSettings()
+            notificationSettingsVM.loadSavedSettings(settings: pendingSettings.notifications)
+        }
+        .onChange(of: pendingSettings) { newSettings in
+            notificationSettingsVM.loadSavedSettings(settings: newSettings.notifications)
+        }
         .onChange(of: selectedDirection) { _ in resetPendingSettings() }
         .onChange(of: favorites) { _ in
             resetPendingSettings()

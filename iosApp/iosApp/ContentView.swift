@@ -653,6 +653,7 @@ struct ContentView: View {
                 }
 
             case let .saveFavorite(routeId, stopId, selectedDirection, context):
+                let _ = Self._printChanges() // Prints what triggered the refresh
                 SaveFavoritePage(
                     routeId: routeId,
                     stopId: stopId,
@@ -666,7 +667,7 @@ struct ContentView: View {
                             fcmToken: fcmTokenContainer.token,
                         )
                     },
-                    navCallbacks: navCallbacks,
+                    navCallbacks: navCallbacks
                 )
 
             default:
