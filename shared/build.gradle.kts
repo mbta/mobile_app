@@ -450,7 +450,8 @@ tasks.register<CycloneDxBomTransformTask>("bomIosSwiftPM") {
                         "@",
                         if (
                             component.name == "gtm-session-fetcher" ||
-                                component.group == "github.com/mapbox" ||
+                                (component.group == "github.com/mapbox" &&
+                                    component.name != "mapbox-maps-ios") ||
                                 component.name == "Reachability.swift"
                         )
                             "/license?ref=v"
