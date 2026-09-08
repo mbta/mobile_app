@@ -5335,7 +5335,51 @@
       }
     },
     "Add favorite stops for easy access and disruption notifications" : {
-      "comment" : "Indicates the absence of favorites"
+      "comment" : "Indicates the absence of favorites",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agrega atajada favoritas para facilitar el acceso y notificaciones de interrupciones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoutez des arrêts favoris pour un accès facile et des notifications de perturbation"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoute arè ou pi renmen yo pou aksè fasil ak notifikasyon entèripsyon"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicione paradas favoritas para acesso fácil e notificações de interrupções."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thêm các điểm dừng yêu thích để dễ dàng truy cập và nhận thông báo khi có sự cố."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加常用站点以便轻松访问和接收中断通知"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新增常用網站以便輕鬆存取和接收中斷通知"
+          }
+        }
+      }
     },
     "Add your favorites" : {
       "comment" : "Promo text header that describes the value of a new feature to favorite stops",
@@ -15326,25 +15370,25 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chargement..."
+            "value" : "Chargement…"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chajman..."
+            "value" : "Chajman…"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Carregando..."
+            "value" : "Carregando…"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Đang tải..."
+            "value" : "Đang tải…"
           }
         },
         "zh-Hans-CN" : {
