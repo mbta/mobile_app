@@ -109,7 +109,7 @@ class FavoritesPageTest {
         verify(VerifyMode.exhaustiveOrder) { toastVM.showToast(matchesBy(::isCorrectToast)) }
         resetCalls(toastVM)
 
-        composeTestRule.onNodeWithText("Add stops").performClick()
+        composeTestRule.onNodeWithText("Add favorite stops").performClick()
 
         verify(VerifyMode.exhaustiveOrder) { toastVM.hideToast() }
     }
