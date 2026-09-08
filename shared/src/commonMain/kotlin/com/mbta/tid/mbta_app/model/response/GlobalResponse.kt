@@ -30,7 +30,7 @@ internal constructor(
     internal val routes: Map<Route.Id, Route>,
     @SerialName("route_patterns") internal val routePatterns: Map<String, RoutePattern>,
     internal val stops: Map<String, Stop>,
-    internal val trips: Map<String, Trip>,
+    val trips: Map<String, Trip>,
     @SerialName("stop_blocklist") internal val stopBlocklist: List<String> = emptyList(),
 ) {
     public constructor(

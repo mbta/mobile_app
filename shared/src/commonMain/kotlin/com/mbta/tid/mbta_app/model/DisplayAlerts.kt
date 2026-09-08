@@ -41,6 +41,12 @@ public data class DisplayAlerts(
         ): DisplayAlerts {
             val idsHere = alertsHere.map { it.id }.toSet()
             val allAlerts = alertsHere + alertsDownstream
+            alertsHere.forEach { alert ->
+                println("Tony test => alertsHere: [${alert.id}] [${alert.summaries}]")
+            }
+            alertsDownstream.forEach { alert ->
+                println("Tony test => alertsDownstream: [${alert.id}] [${alert.summaries}]")
+            }
             val (tier1, tier2) =
                 allAlerts
                     .filter { includeElevatorAlerts || it.effect != Effect.ElevatorClosure }

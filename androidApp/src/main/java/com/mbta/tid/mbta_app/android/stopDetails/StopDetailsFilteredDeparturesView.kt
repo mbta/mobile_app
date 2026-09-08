@@ -43,6 +43,7 @@ import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Matcher
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -97,6 +98,25 @@ fun StopDetailsFilteredDeparturesView(
             showStationAccessibility,
             now,
         )
+    println("Tony test => stopId $stopId")
+    println("Tony test => children stop Ids ${stop.childStopIds}")
+
+    val patterns =
+        global
+            ?.getPatternsFor(stopId, leaf.lineOrRoute)
+            ?.filter { it.typicality == RoutePattern.Typicality.Typical }
+            ?.filter { trip ->
+                global.trips[trip.representativeTripId]?.stopIds?.contains(stopId) == true ||
+                    stop.childStopIds.any {
+                        global.trips[trip.representativeTripId]?.stopIds?.contains(it) == true
+                    }
+            }
+    patterns?.forEach { pattern ->
+        println(
+            "Tony test => patterns: [${pattern.id}] [${pattern.name}] [${pattern.directionId}] [${pattern.sortOrder}] [${pattern.typicality}] [${pattern.representativeTripId}] [${pattern.routeId}]"
+        )
+    }
+    val thisRouteIds: Set<Route.Id> = patterns?.map { it.routeId }?.toSet() ?: emptySet<Route.Id>()
 
     val downstreamAlerts: List<Alert> = leaf.alertsDownstream(tripId = tripFilter?.tripId)
 
@@ -147,12 +167,15 @@ fun StopDetailsFilteredDeparturesView(
         val spec = displayAlert.cardSpec(now, isAllServiceDisrupted, tripFilter?.tripId)
         val summaryEntity =
             displayAlert.alert.summary(
-                Matcher.AnyOf(lineOrRoute.allRoutes.map { it.id }),
+                Matcher.AnyOf(thisRouteIds),
                 Matcher.Data(stopId),
                 Matcher.Data(selectedDirection.id),
                 if (tripFilter?.tripId != null) Matcher.Data(tripFilter.tripId)
                 else Matcher.Wildcard(),
             )
+        println(
+            "Tony test => summaryEntity: [${summaryEntity?.summary}] tripFilter: [${tripFilter?.tripId}] stopId: [$stopId] direction: [${selectedDirection.id}] lineOrRoute: [${lineOrRoute.allRoutes.map { it.id }}] alert: [${displayAlert.alert.id}]"
+        )
 
         AlertCard(
             displayAlert.alert,
