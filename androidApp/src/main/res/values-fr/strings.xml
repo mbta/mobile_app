@@ -7,9 +7,9 @@
     <string name="add_another_time_period">Ajouter une autre période</string>
     <string name="add_confirmation_button">Ajouter</string>
     <string name="add_favorite_label">ajouter aux favoris</string>
-    # Used as the header for the route picker when the user is adding a favorite stop, the button
-    # to add favorite stops on the empty favorites page, and the voiceover text for the button to
-    # add more favorites when other favorites have already been added.
+    <!-- Used as the header for the route picker when the user is adding a favorite stop, the button
+    to add favorite stops on the empty favorites page, and the voiceover text for the button to
+    add more favorites when other favorites have already been added. -->
     <string name="add_favorite_stops">Ajouter les arrêts favoris</string>
     <string name="add_favorite_title">Ajouter aux Favoris</string>
     <string name="add_to_favorites_title">Ajouter &lt;b&gt;%1$s&lt;/b&gt; à &lt;b&gt;%2$s&lt;/b&gt;</string>
