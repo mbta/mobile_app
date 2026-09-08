@@ -7,8 +7,11 @@
     <string name="add_another_time_period">Ajoute yon lòt peryòd tan</string>
     <string name="add_confirmation_button">Ajoute</string>
     <string name="add_favorite_label">ajoute yon preferans</string>
+    # Used as the header for the route picker when the user is adding a favorite stop, the button
+    # to add favorite stops on the empty favorites page, and the voiceover text for the button to
+    # add more favorites when other favorites have already been added.
+    <string name="add_favorite_stops">Ajoute arè nan Preferans yo</string>
     <string name="add_favorite_title">Ajoute nan Favorite</string>
-    <string name="add_stops">Ajoute arè</string>
     <string name="add_to_favorites_title">Ajoute &lt;b&gt;%1$s&lt;/b&gt; nan &lt;b&gt;%2$s&lt;/b&gt;</string>
     <string name="add_to_favorites_title_stop_details">Ajoute &lt;b&gt;%1$s&lt;/b&gt; nan &lt;b&gt;%2$s&lt;/b&gt; Preferans yo</string>
     <string name="additional_service">Plis Sèvis</string>
@@ -209,7 +212,7 @@
     <string name="less_common_stops">&lt;b&gt;%1$d&lt;/b&gt; arè ki mwen komen</string>
     <string name="list_join">", "</string>
     <string name="live">An dirèk</string>
-    <string name="loading">Chajman...</string>
+    <string name="loading">Chajman…</string>
     <string name="location_not_available_yet">Pozisyon poko disponib</string>
     <string name="location_services_off">Sèvis Pozisyon Fèmen</string>
     <string name="location_settings_prompt_body">W ap wè opsyon transpò piblik ki toupre a epi jwenn pi bon rezilta rechèch lè w ouvri Sèvis Pozisyon an pou MBTA Go.</string>
@@ -255,7 +258,7 @@
     <string name="no_service">Pa gen Sèvis</string>
     <string name="no_service_sentence_case">Pa gen sèvis</string>
     <string name="no_service_today">Pa gen sèvis jodi a</string>
-    <string name="no_stops_added">Pa gen arè ki ajoute</string>
+    <string name="no_stops_added">Ajoute arè ou pi renmen yo pou aksè fasil ak notifikasyon entèripsyon</string>
     <string name="no_stops_nearby">Ou deyò zòn sèvis MBTA a.</string>
     <string name="no_stops_nearby_pan">Gade transpò piblik toupre Boston</string>
     <string name="no_stops_nearby_search">Chèche dapre arè a</string>
@@ -330,7 +333,6 @@
     <string name="results_failed_to_load">Rezilta yo pa monte</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_mode_label">%1$s %2$s</string>
-    <string name="route_picker_header_favorites">Ajoute arè nan Preferans yo</string>
     <string name="routes">Wout</string>
     <string name="save">Sove</string>
     <string name="schedule_change">Chanjman Orè</string>

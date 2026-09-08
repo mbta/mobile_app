@@ -7,8 +7,11 @@
     <string name="add_another_time_period">Adicionar outro período</string>
     <string name="add_confirmation_button">Adicionar</string>
     <string name="add_favorite_label">adicionar favorito</string>
+    # Used as the header for the route picker when the user is adding a favorite stop, the button
+    # to add favorite stops on the empty favorites page, and the voiceover text for the button to
+    # add more favorites when other favorites have already been added.
+    <string name="add_favorite_stops">Adicionar paradas favoritas</string>
     <string name="add_favorite_title">Adicionar favorito</string>
-    <string name="add_stops">Adicionar paradas</string>
     <string name="add_to_favorites_title">Adicionar &lt;b&gt;%1$s&lt;/b&gt; em &lt;b&gt;%2$s&lt;/b&gt;</string>
     <string name="add_to_favorites_title_stop_details">Adicionar &lt;b&gt;%1$s&lt;/b&gt; em &lt;b&gt;%2$s&lt;/b&gt; aos Favoritos</string>
     <string name="additional_service">Serviço adicional</string>
@@ -209,7 +212,7 @@
     <string name="less_common_stops">&lt;b&gt;%1$d&lt;/b&gt; paradas menos comuns</string>
     <string name="list_join">", "</string>
     <string name="live">Ao vivo</string>
-    <string name="loading">Carregando...</string>
+    <string name="loading">Carregando…</string>
     <string name="location_not_available_yet">Localização ainda não disponível</string>
     <string name="location_services_off">Serviços de localização desativados</string>
     <string name="location_settings_prompt_body">Você verá opções de transporte próximas e obterá melhores resultados se ativar os Serviços de Localização para o MBTA Go.</string>
@@ -255,7 +258,7 @@
     <string name="no_service">Sem serviço</string>
     <string name="no_service_sentence_case">Sem serviço</string>
     <string name="no_service_today">Sem serviço hoje</string>
-    <string name="no_stops_added">Nenhuma parada adicionada</string>
+    <string name="no_stops_added">Adicione paradas favoritas para acesso fácil e notificações de interrupções.</string>
     <string name="no_stops_nearby">Você está fora da área de serviço da MBTA.</string>
     <string name="no_stops_nearby_pan">Ver trânsito perto de Boston</string>
     <string name="no_stops_nearby_search">Pesquisar por parada</string>
@@ -330,7 +333,6 @@
     <string name="results_failed_to_load">Falha ao carregar resultados 🤔</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_mode_label">%1$s %2$s</string>
-    <string name="route_picker_header_favorites">Adicionar paradas favoritas</string>
     <string name="routes">Rotas</string>
     <string name="save">Salvar</string>
     <string name="schedule_change">Alteração de horário</string>
