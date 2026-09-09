@@ -1,9 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.FavoriteSettings.Notifications.Window
-import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
-
 
 public enum class Preset(public val startTime: LocalTime, public val endTime: LocalTime) {
     Morning(LocalTime(6, 0), LocalTime(10, 0)),
