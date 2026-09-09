@@ -62,10 +62,10 @@ class NotificationSettingsWidgetTest : KoinTest {
                 )
         }
 
-        composeTestRule.setContent {
-            val viewModel = NotificationSettingsViewModel(MockSentryRepository())
-            viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
+        val viewModel = NotificationSettingsViewModel(MockSentryRepository())
+        viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
 
+        composeTestRule.setContent {
             NotificationSettingsWidget(
                 viewModel = viewModel,
                 notificationPermissionState = permissionGranted,
@@ -114,10 +114,10 @@ class NotificationSettingsWidgetTest : KoinTest {
                 )
         }
 
-        composeTestRule.setContent {
-            val viewModel = NotificationSettingsViewModel(MockSentryRepository())
-            viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
+        val viewModel = NotificationSettingsViewModel(MockSentryRepository())
+        viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
 
+        composeTestRule.setContent {
             NotificationSettingsWidget(
                 viewModel,
                 notificationPermissionState = permissionGranted,
@@ -191,10 +191,10 @@ class NotificationSettingsWidgetTest : KoinTest {
                 )
         }
 
-        composeTestRule.setContent {
-            val viewModel = NotificationSettingsViewModel(MockSentryRepository())
-            viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
+        val viewModel = NotificationSettingsViewModel(MockSentryRepository())
+        viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
 
+        composeTestRule.setContent {
             NotificationSettingsWidget(
                 viewModel,
                 notificationPermissionState = permissionGranted,

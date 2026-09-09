@@ -653,7 +653,6 @@ struct ContentView: View {
                 }
 
             case let .saveFavorite(routeId, stopId, selectedDirection, context):
-                let _ = Self._printChanges() // Prints what triggered the refresh
                 SaveFavoritePage(
                     routeId: routeId,
                     stopId: stopId,

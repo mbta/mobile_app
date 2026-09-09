@@ -23,6 +23,23 @@ private extension DateComponents {
             self = calendar.dateComponents(components, from: newValue)
         }
     }
+
+    static func fromLocalTime(_ localTime: Kotlinx_datetimeLocalTime) -> Self {
+        .init(
+            hour: Int(localTime.hour),
+            minute: Int(localTime.minute),
+            second: Int(localTime.second)
+        )
+    }
+
+    func toLocalTime() -> Kotlinx_datetimeLocalTime {
+        .init(
+            hour: Int32(hour ?? 0),
+            minute: Int32(minute ?? 0),
+            second: Int32(second ?? 0),
+            nanosecond: Int32(nanosecond ?? 0)
+        )
+    }
 }
 
 struct NotificationSettingsWidget: View {
@@ -87,7 +104,6 @@ struct NotificationSettingsWidgetPresetnationView: View {
     let inspection = Inspection<Self>()
 
     var body: some View {
-        let permissionDenied = authorizationStatus == .denied
         VStack(spacing: 0) {
             if let settings = state.settings {
                 VStack(spacing: 8) {
@@ -337,7 +353,7 @@ struct NotificationSwitch: View {
     let onValueChanged: (Bool) -> Void
     let notificationPermissionManager: INotificationPermissionManager
 
-    var authorizationStatus: UNAuthorizationStatus? { notificationPermissionManager.authorizationStatus }
+    @State var authorizationStatus: UNAuthorizationStatus?
 
     var body: some View {
         let enabledBinding = Binding<Bool>(
@@ -401,9 +417,19 @@ struct NotificationSwitch: View {
         .onChange(of: settings.enabled) { enabled in
             Task {
                 if enabled {
-                    let _notificationPermission = await notificationPermissionManager.requestPermission()
+                    let notificationPermission = await notificationPermissionManager.requestPermission()
+                    guard notificationPermission else {
+                        enabledBinding.wrappedValue = false
+                        return
+                    }
                 }
             }
+        }
+        .onAppear {
+            authorizationStatus = notificationPermissionManager.authorizationStatus
+        }
+        .onChange(of: notificationPermissionManager.authorizationStatus) { newStatus in
+            authorizationStatus = newStatus
         }
     }
 }
@@ -437,25 +463,6 @@ struct NotificationSettingsWidget_Previews: PreviewProvider {
             .padding(.horizontal, 16)
             .padding(.vertical, 24)
             .background(Color.fill2)
-    }
-}
-
-extension DateComponents {
-    static func fromLocalTime(_ localTime: Kotlinx_datetimeLocalTime) -> Self {
-        .init(
-            hour: Int(localTime.hour),
-            minute: Int(localTime.minute),
-            second: Int(localTime.second)
-        )
-    }
-
-    func toLocalTime() -> Kotlinx_datetimeLocalTime {
-        .init(
-            hour: Int32(hour ?? 0),
-            minute: Int32(minute ?? 0),
-            second: Int32(second ?? 0),
-            nanosecond: Int32(nanosecond ?? 0)
-        )
     }
 }
 
