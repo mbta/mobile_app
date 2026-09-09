@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.FavoriteSettings.Notifications.Window
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalTime
 
 public class PresetWindow(
     public val label: String,
@@ -12,25 +13,25 @@ public class PresetWindow(
         public fun morningPreset(label: String, daysOfWeek: Set<DayOfWeek>): PresetWindow =
             PresetWindow(
                 label = label,
-                window = Window.morningDefault(daysOfWeek),
+                window = Window(Preset.Morning, daysOfWeek),
             )
 
         public fun middayPreset(label: String, daysOfWeek: Set<DayOfWeek>): PresetWindow =
             PresetWindow(
                 label = label,
-                window = Window.middayDefault(daysOfWeek),
+                window = Window(Preset.Midday, daysOfWeek),
             )
 
         public fun eveningPreset(label: String, daysOfWeek: Set<DayOfWeek>): PresetWindow =
             PresetWindow(
                 label = label,
-                window = Window.eveningDefault(daysOfWeek),
+                window = Window(Preset.Evening, daysOfWeek),
             )
 
         public fun allDayPreset(label: String, daysOfWeek: Set<DayOfWeek>): PresetWindow =
             PresetWindow(
                 label = label,
-                window = Window.allDayDefault(daysOfWeek),
+                window = Window(Preset.AllDay, daysOfWeek),
             )
     }
 }
@@ -55,14 +56,41 @@ public sealed class PresetSelection {
                                 it.window == targetWindow
                             }
                             if (presetMatchIndex != -1) {
-                                Preset(rowIndex, presetMatchIndex)
+                                PresetSelection.Preset(rowIndex, presetMatchIndex)
                             } else {
                                 null
                             }
                         }
-                        .firstOrNull() ?: Custom
+                        .firstOrNull() ?: PresetSelection.Custom
                 }
-                else -> Custom
+                else -> {
+                    PresetSelection.Custom
+                }
             }
+    }
+}
+
+public enum class Preset(public val startTime: LocalTime, public val endTime: LocalTime) {
+    Morning(LocalTime(6, 0), LocalTime(10, 0)),
+    Midday(LocalTime(10, 0), LocalTime(16, 0)),
+    Evening(LocalTime(16, 0), LocalTime(20, 0)),
+    AllDay(LocalTime(0, 0), LocalTime(23, 59));
+
+    public companion object {
+
+        public fun selected(windows: List<Window>): Preset? {
+            if (windows.size == 1) {
+                val targetWindow: Window = windows[0]
+                val presetMatch =
+                    Preset.entries.firstOrNull {
+                        it.startTime == targetWindow.startTime &&
+                            it.endTime == targetWindow.endTime &&
+                            (targetWindow.daysOfWeek == Window.weekend ||
+                                targetWindow.daysOfWeek == Window.weekdays)
+                    }
+                return presetMatch
+            }
+            return null
+        }
     }
 }
