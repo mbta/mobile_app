@@ -9,4 +9,5 @@ ls gradlew > /dev/null 2>/dev/null || (echo "Failed to move to repo root" && exi
 pushd iosApp
 xcodegen generate --use-cache
 popd
+./gradlew --stop
 ./gradlew :shared:podInstallSyntheticIos

@@ -1261,6 +1261,7 @@ internal class FavoritesViewModelTest : KoinTest {
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(now)
         viewModel.setLocation(stop1.position)
+        viewModel.setActive(true, false)
 
         testViewModelFlow(viewModel).test {
             awaitItemSatisfying { it.shouldShowNotificationsHint }

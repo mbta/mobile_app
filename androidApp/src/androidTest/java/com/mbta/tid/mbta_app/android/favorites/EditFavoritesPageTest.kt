@@ -320,8 +320,12 @@ class EditFavoritesPageTest : KoinTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("No stops added"))
-        composeTestRule.onNodeWithText("No stops added").assertCanBeDisplayed()
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
+            hasText("Add favorite stops for easy access and disruption notifications")
+        )
+        composeTestRule
+            .onNodeWithText("Add favorite stops for easy access and disruption notifications")
+            .assertCanBeDisplayed()
     }
 
     @OptIn(ExperimentalTestApi::class)

@@ -390,7 +390,7 @@ public class FavoritesViewModel(
             awaitingPredictionsAfterBackground,
             favorites,
             shouldShowFirstTimeToast,
-            shouldShowNotificationsHint && favorites?.isNotEmpty() == true,
+            shouldShowNotificationsHint && favorites?.isNotEmpty() == true && stopCardData != null,
             routeCardData,
             stopCardData,
             staticRouteCardData,

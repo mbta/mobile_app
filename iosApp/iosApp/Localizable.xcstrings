@@ -5288,7 +5288,7 @@
       }
     },
     "Add favorite stops" : {
-      "comment" : "Header for the route details picker when entering from the favorites page to select favorite stops",
+      "comment" : "Header for the route details picker when entering from the favorites page to select favorite stops\nVoiceOver label for add stops button",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -5334,49 +5334,49 @@
         }
       }
     },
-    "Add stops" : {
-      "comment" : "VoiceOver label for add stops button",
+    "Add favorite stops for easy access and disruption notifications" : {
+      "comment" : "Indicates the absence of favorites",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agregar paradas"
+            "value" : "Agrega atajada favoritas para facilitar el acceso y notificaciones de interrupciones"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajouter des arrêts"
+            "value" : "Ajoutez des arrêts favoris pour un accès facile et des notifications de perturbation"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoute arè"
+            "value" : "Ajoute arè ou pi renmen yo pou aksè fasil ak notifikasyon entèripsyon"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adicionar paradas"
+            "value" : "Adicione paradas favoritas para acesso fácil e notificações de interrupções."
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thêm điểm dừng"
+            "value" : "Thêm các điểm dừng yêu thích để dễ dàng truy cập và nhận thông báo khi có sự cố."
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "添加站点"
+            "value" : "添加常用站点以便轻松访问和接收中断通知"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新增網站"
+            "value" : "新增常用網站以便輕鬆存取和接收中斷通知"
           }
         }
       }
@@ -15370,25 +15370,25 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chargement..."
+            "value" : "Chargement…"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chajman..."
+            "value" : "Chajman…"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Carregando..."
+            "value" : "Carregando…"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Đang tải..."
+            "value" : "Đang tải…"
           }
         },
         "zh-Hans-CN" : {
@@ -17325,53 +17325,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "今日無服務"
-          }
-        }
-      }
-    },
-    "No stops added" : {
-      "comment" : "Indicates the absence of favorites",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No se agregaron paradas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucun arrêt ajouté"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pa gen arè ki ajoute"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nenhuma parada adicionada"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Không có điểm dừng nào được thêm"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未添加站点"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未新增網站"
           }
         }
       }
