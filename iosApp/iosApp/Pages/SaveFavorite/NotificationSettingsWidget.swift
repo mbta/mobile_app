@@ -110,7 +110,7 @@ struct NotificationSettingsWidgetPresetnationView: View {
                     NotificationSwitch(
                         settings: settings,
                         onValueChanged: { setEnabled($0) },
-                        notificationPermissionManager: notificationPermissionManager,
+                        notificationPermissionManager: notificationPermissionManager
                     )
 
                     if settings.enabled {
@@ -353,6 +353,8 @@ struct NotificationSwitch: View {
     let onValueChanged: (Bool) -> Void
     let notificationPermissionManager: INotificationPermissionManager
 
+    let inspection = Inspection<Self>()
+
     @State var authorizationStatus: UNAuthorizationStatus?
 
     var body: some View {
@@ -431,6 +433,7 @@ struct NotificationSwitch: View {
         .onChange(of: notificationPermissionManager.authorizationStatus) { newStatus in
             authorizationStatus = newStatus
         }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 }
 

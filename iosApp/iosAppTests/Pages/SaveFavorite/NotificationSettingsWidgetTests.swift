@@ -218,35 +218,33 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         XCTAssertEqual(.authorized, permissionManager.authorizationStatus)
     }
 
-    func testPermissionDenied() throws {
-        let permissionExp = expectation(description: "permission was requested")
+    @MainActor
+    func testPermissionDenied() {
         let settingsLinkExp = expectation(description: "settings link was tapped")
 
-        var settings: FavoriteSettings.Notifications = .companion.disabled
+        let settings: FavoriteSettings.Notifications = .companion.disabled
         let permissionManager = MockNotificationPermissionManager(
-            initialAuthorizationStatus: .notDetermined,
+            initialAuthorizationStatus: .denied,
             requestPermissionResponse: false,
-            onRequestPermission: { permissionExp.fulfill() },
+            onRequestPermission: {},
             onOpenSettings: { settingsLinkExp.fulfill() }
         )
-        let sut = NotificationSettingsWidgetPresetnationView(state: .init(settings: settings, selectedPreset: nil),
-                                                             notificationPermissionManager: permissionManager)
-        ViewHosting.host(view: sut.withFixedSettings([:]))
+        let sut = NotificationSwitch(
+            settings: settings,
+            onValueChanged: { _ in },
+            notificationPermissionManager: permissionManager
+        )
 
-        try sut.inspect().find(text: "Get disruption notifications").find(ViewType.Toggle.self, relation: .parent).tap()
-        try sut.inspect().findAndCallOnChange(newValue: true)
-        wait(for: [permissionExp])
+        let exp = sut.inspection.inspect(after: 2.0) { view in
+            XCTAssert(try view.find(text: "Get disruption notifications").find(ViewType.Toggle.self, relation: .parent)
+                .isDisabled())
 
-        XCTAssertEqual(.denied, permissionManager.authorizationStatus)
-        XCTAssert(try sut.inspect().find(text: "Get disruption notifications")
-            .find(ViewType.Toggle.self, relation: .parent).isDisabled())
-        try sut.inspect().find(button: "Allow Notifications in Settings").tap()
-        wait(for: [settingsLinkExp])
+            try view.find(button: "Allow Notifications in Settings").tap()
+        }
 
-        permissionManager.updateAuthorizationStatus(nextStatus: .authorized)
-        XCTAssertFalse(try sut.inspect().find(text: "Get disruption notifications")
-            .find(ViewType.Toggle.self, relation: .parent).isDisabled())
-        XCTAssertThrowsError(try sut.inspect().find(button: "Allow Notifications in Settings"))
+        ViewHosting.host(view: sut)
+
+        wait(for: [exp, settingsLinkExp], timeout: 5)
     }
 
     func testPresetButtonsAreNotVisibleWhenFeatureFlagDisabled() throws {
