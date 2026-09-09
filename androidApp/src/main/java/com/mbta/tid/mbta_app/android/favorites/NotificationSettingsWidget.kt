@@ -535,10 +535,16 @@ private fun PermissionSettingsLink() {
 @Composable
 private fun NotificationSettingsWidgetPreview() {
 
-    val previewEnabledNotificationSettingsViewModel: INotificationSettingsViewModel by lazy {
+    val enabledNotificationSettingsViewModel: INotificationSettingsViewModel by lazy {
         NotificationSettingsViewModel(MockSentryRepository()).apply {
             setEnabled(true)
             setCustomWindows(listOf(Window.default(emptyList(), true, EasternTimeInstant.now())))
+        }
+    }
+
+    val disabledNotificationSettingsViewModel: INotificationSettingsViewModel by lazy {
+        NotificationSettingsViewModel(MockSentryRepository()).apply {
+            setEnabled(false)
         }
     }
 
@@ -564,7 +570,7 @@ private fun NotificationSettingsWidgetPreview() {
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             NotificationSettingsWidget(
-                previewEnabledNotificationSettingsViewModel,
+                enabledNotificationSettingsViewModel,
                 ConstantPermissionState(
                     Manifest.permission.POST_NOTIFICATIONS,
                     PermissionStatus.Granted,
@@ -573,7 +579,7 @@ private fun NotificationSettingsWidgetPreview() {
             )
             HaloSeparator()
             NotificationSettingsWidget(
-                NotificationSettingsViewModel(MockSentryRepository()),
+                disabledNotificationSettingsViewModel,
                 ConstantPermissionState(
                     Manifest.permission.POST_NOTIFICATIONS,
                     PermissionStatus.Denied(false),
