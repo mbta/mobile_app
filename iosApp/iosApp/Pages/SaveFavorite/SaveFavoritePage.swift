@@ -23,7 +23,7 @@ struct SaveFavoritePage: View {
 
     @State var globalResponse: GlobalResponse?
     @State var favorites: Favorites = .init(routeStopDirection: [:])
-    @State var pendingSettings: FavoriteSettings
+    @State var pendingSettings: FavoriteSettings?
     @State var selectedDirection: Int32
     @State var favoritesLoaded: Bool = false
     @State var wasAdding: Bool = false
@@ -94,11 +94,12 @@ struct SaveFavoritePage: View {
 
     func resetPendingSettings() {
         pendingSettings = favorites
-            .routeStopDirection[selectedRouteStopDirection] ?? .init(notifications: .companion.disabled)
+            .routeStopDirection[selectedRouteStopDirection]
     }
 
     func updateCloseAndToast(_ rsd: RouteStopDirection, _ setting: FavoriteSettings?) {
         updateFavorites([rsd: setting])
+        notificationSettingsVM.savedSettings()
 
         navCallbacks.onBack?()
 
@@ -186,7 +187,9 @@ struct SaveFavoritePage: View {
                         NotificationSettingsWidget(
                             vm: notificationSettingsVM,
                             onUpdate: { newNotificationSettings in
-                                pendingSettings = pendingSettings.doCopy(notifications: newNotificationSettings)
+                                pendingSettings =
+                                    (pendingSettings ?? FavoriteSettings(notifications: .companion.disabled))
+                                        .doCopy(notifications: newNotificationSettings)
                             },
                             notificationPermissionManager: notificationPermissionManager,
                         )
@@ -203,10 +206,10 @@ struct SaveFavoritePage: View {
             }
         }
         .onAppear { resetPendingSettings()
-            notificationSettingsVM.loadSavedSettings(settings: pendingSettings.notifications)
+            notificationSettingsVM.loadSavedSettings(settings: pendingSettings?.notifications)
         }
         .onChange(of: pendingSettings) { newSettings in
-            notificationSettingsVM.loadSavedSettings(settings: newSettings.notifications)
+            notificationSettingsVM.loadSavedSettings(settings: newSettings?.notifications)
         }
         .onChange(of: selectedDirection) { _ in resetPendingSettings() }
         .onChange(of: favorites) { _ in
