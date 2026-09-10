@@ -224,6 +224,7 @@ public class MockNotificationSettingsViewModel(
         get() = MutableStateFlow(initialState)
 
     public var onLoadSavedSettings: (Notifications?) -> Unit = {}
+    public var onSavedSettings: () -> Unit = {}
     public var onSetEnabled: (Boolean) -> Unit = {}
     public var onSetCustomWindows: (List<FavoriteSettings.Notifications.Window>) -> Unit = {}
     public var onSetPreset: (Preset?) -> Unit = {}
@@ -233,7 +234,9 @@ public class MockNotificationSettingsViewModel(
         onLoadSavedSettings(settings)
     }
 
-    override fun savedSettings() {}
+    override fun savedSettings() {
+        onSavedSettings()
+    }
 
     override fun setEnabled(enabled: Boolean) {
         onSetEnabled(enabled)
