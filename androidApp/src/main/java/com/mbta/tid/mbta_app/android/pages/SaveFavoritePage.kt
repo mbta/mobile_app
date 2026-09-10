@@ -127,10 +127,10 @@ fun SaveFavoritePage(
 
     LaunchedEffect(isFavorite, favorites) { if (favorites != null && !isFavorite) wasAdding = true }
 
-    val existingSettings = favorites?.get(selectedRouteStopDirection) ?: FavoriteSettings()
+    val existingSettings = favorites?.get(selectedRouteStopDirection)
     var updatedSettings by
         rememberSaveable(saver = stateJsonSaver()) { mutableStateOf<FavoriteSettings?>(null) }
-    val settings = updatedSettings ?: existingSettings
+    val settings = updatedSettings ?: existingSettings ?: FavoriteSettings()
 
     var hasRequestedPermission by rememberSaveable { mutableStateOf(false) }
     val notificationPermissionState = notificationPermissionState { hasRequestedPermission = true }
@@ -149,7 +149,7 @@ fun SaveFavoritePage(
     val notificationSettingsState by notificationSettingsViewModel.models.collectAsState()
 
     LaunchedEffect(existingSettings) {
-        notificationSettingsViewModel.loadSavedSettings(existingSettings.notifications)
+        notificationSettingsViewModel.loadSavedSettings(existingSettings?.notifications)
     }
 
     LaunchedEffect(notificationSettingsState) {
@@ -171,6 +171,7 @@ fun SaveFavoritePage(
             fcmToken,
             currentLocale,
         )
+        notificationSettingsViewModel.savedSettings()
     }
 
     val updateToastSingleText = stringResource(R.string.favorites_toast_add)

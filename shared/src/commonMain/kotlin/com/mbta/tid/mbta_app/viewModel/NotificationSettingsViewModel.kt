@@ -18,7 +18,9 @@ import kotlinx.coroutines.flow.StateFlow
 public interface INotificationSettingsViewModel {
     public val models: StateFlow<NotificationSettingsViewModel.State>
 
-    public fun loadSavedSettings(settings: Notifications)
+    public fun loadSavedSettings(settings: Notifications?)
+
+    public fun savedSettings()
 
     public fun setEnabled(enabled: Boolean)
 
@@ -33,12 +35,21 @@ public interface INotificationSettingsViewModel {
     public fun setNow(now: EasternTimeInstant)
 }
 
+/**
+ * ViewModel for editing notification settings per route/stop/direction. This VM is not responsible
+ * for persisting those settings, only for managing the state of the settings while the user is
+ * editing them. These settings are persisted by [FavoritesViewModel]
+ *
+ * Intended to be used as a singleton across the app, so that the state of the recently saved window
+ * persists through a user session.
+ */
 public class NotificationSettingsViewModel(private val sentryRepository: ISentryRepository) :
     MoleculeViewModel<NotificationSettingsViewModel.Event, NotificationSettingsViewModel.State>(),
     INotificationSettingsViewModel {
     public sealed class Event {
+        public data class LoadSavedSettings(val settings: Notifications?) : Event()
 
-        public data class LoadSavedSettings(val settings: Notifications) : Event()
+        public data object SavedSettings : Event()
 
         public data class SetEnabled(val enabled: Boolean) : Event()
 
@@ -70,6 +81,10 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
         var settings: Notifications? by remember {
             mutableStateOf(null)
         }
+
+        var lastSavedSettings: Notifications? by remember {
+            mutableStateOf(null)
+        }
         var customPreset: List<Window>? by remember {
             mutableStateOf(null)
         }
@@ -85,9 +100,13 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
                 is Event.SetEnabled -> {
                     val windows =
                         if (!enabled && event.enabled) {
-                            (settings?.windows ?: emptyList()).ifEmpty {
-                                listOf(Window.default(emptyList(), presetsEnabledFlag, now))
-                            }
+                            (settings?.windows ?: emptyList())
+                                .ifEmpty {
+                                    lastSavedSettings?.windows ?: emptyList()
+                                }
+                                .ifEmpty {
+                                    listOf(Window.default(emptyList(), presetsEnabledFlag, now))
+                                }
                         } else {
                             settings?.windows ?: emptyList()
                         }
@@ -135,11 +154,24 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
                 }
 
                 is Event.LoadSavedSettings -> {
-                    val loadedWindows = event.settings.windows
-                    if (Preset.selected(loadedWindows) == null && loadedWindows.isNotEmpty()) {
-                        customPreset = loadedWindows
+                    val newSettings =
+                        event.settings ?: (lastSavedSettings ?: Notifications.disabled)
+
+                    if (
+                        Preset.selected(newSettings.windows) == null &&
+                            newSettings.windows.isNotEmpty()
+                    ) {
+                        customPreset = newSettings.windows
                     }
-                    settings = event.settings
+
+                    settings = newSettings
+                }
+
+                Event.SavedSettings -> {
+                    if (settings?.enabled == true) {
+                        lastSavedSettings = settings
+                    }
+                    settings = null
                 }
             }
         }
@@ -151,8 +183,12 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
         return state
     }
 
-    override fun loadSavedSettings(settings: Notifications) {
+    override fun loadSavedSettings(settings: Notifications?) {
         fireEvent(Event.LoadSavedSettings(settings))
+    }
+
+    override fun savedSettings() {
+        fireEvent(Event.SavedSettings)
     }
 
     override fun setEnabled(enabled: Boolean) {
@@ -187,15 +223,17 @@ public class MockNotificationSettingsViewModel(
     override val models: MutableStateFlow<NotificationSettingsViewModel.State>
         get() = MutableStateFlow(initialState)
 
-    public var onLoadSavedSettings: (Notifications) -> Unit = {}
+    public var onLoadSavedSettings: (Notifications?) -> Unit = {}
     public var onSetEnabled: (Boolean) -> Unit = {}
     public var onSetCustomWindows: (List<FavoriteSettings.Notifications.Window>) -> Unit = {}
     public var onSetPreset: (Preset?) -> Unit = {}
     public var onSetNow: (EasternTimeInstant) -> Unit = {}
 
-    override fun loadSavedSettings(settings: Notifications) {
+    override fun loadSavedSettings(settings: Notifications?) {
         onLoadSavedSettings(settings)
     }
+
+    override fun savedSettings() {}
 
     override fun setEnabled(enabled: Boolean) {
         onSetEnabled(enabled)
