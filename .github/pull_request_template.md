@@ -6,21 +6,30 @@ _Ticket:_ [Name](URL)
 Community contributors: see our [Community Contributions](https://github.com/mbta/mobile_app?tab=readme-ov-file#Community-Contributions) documentation
 -->
 
-What is this PR for?
+<!-- What is this PR for? -->
+#### localization
+- [ ] If you added any user-facing strings, have they been included in Localizable.xcstrings and/or the android resource files?
 
-iOS
-- [ ] If you added any user-facing strings on iOS, are they included in Localizable.xcstrings?
-  - [ ] Add temporary machine translations, marked "Needs Review"
-
-android
-- [ ] All user-facing strings added to strings resource in alphabetical order
+#### Performance
 - [ ] Expensive calculations are run in `withContext(Dispatchers.Default)` where possible (ideally in shared code)
+
+
+<!--
+If you used AI to write some or all of this PR, please uncomment the below block.
+
+Remember that you are responsible for all work that you PR, whether
+it's handwritten or AI-generated.
+-->
+
+<!--
+### AI Usage
+Briefly describe how AI was used in making this PR.
+-->
 
 ### Testing
 
-What testing have you done?
+<!-- What testing have you done?
 
-<!--
 Automated tests are expected with every code change.
 
 For UI changes, include tests for the accessibility of elements. This can include:
