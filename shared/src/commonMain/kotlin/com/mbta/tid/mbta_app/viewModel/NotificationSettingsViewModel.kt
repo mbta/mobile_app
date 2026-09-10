@@ -154,17 +154,11 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
                 }
 
                 is Event.LoadSavedSettings -> {
-                    val newSettings =
-                        event.settings ?: (lastSavedSettings ?: Notifications.disabled)
-
-                    if (
-                        Preset.selected(newSettings.windows) == null &&
-                            newSettings.windows.isNotEmpty()
-                    ) {
-                        customPreset = newSettings.windows
+                    val loadedWindows = event.settings?.windows ?: emptyList()
+                    if (Preset.selected(loadedWindows) == null && loadedWindows.isNotEmpty()) {
+                        customPreset = loadedWindows
                     }
-
-                    settings = newSettings
+                    settings = event.settings
                 }
 
                 Event.SavedSettings -> {

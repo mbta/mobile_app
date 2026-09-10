@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.rule.GrantPermissionRule
+import com.mapbox.maps.extension.style.expressions.dsl.generated.not
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.FavoriteSettings
@@ -37,12 +38,26 @@ class SaveFavoritePageTests {
     @Test
     fun testCloses() {
         var backCalled = false
+        var savedSettingsCleared = false
 
         val objects = TestData.clone()
         val route = objects.getRoute("Red")
         val stop = objects.getStop("70069")
 
         loadKoinMocks(objects)
+
+        val notificationSettingsVM =
+            MockNotificationSettingsViewModel(
+                NotificationSettingsViewModel.State(
+                    FavoriteSettings.Notifications(false, emptyList()),
+                    null,
+                )
+            )
+        notificationSettingsVM.onLoadSavedSettings = {
+            if (it == null) {
+                savedSettingsCleared = true
+            }
+        }
 
         composeTestRule.setContent {
             SaveFavoritePage(
@@ -51,12 +66,14 @@ class SaveFavoritePageTests {
                 1,
                 EditFavoritesContext.StopDetails,
                 { backCalled = true },
+                notificationSettingsViewModel = notificationSettingsVM,
             )
         }
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Cancel").performClick()
         composeTestRule.waitForIdle()
         assert(backCalled)
+        assert(savedSettingsCleared)
     }
 
     @Test

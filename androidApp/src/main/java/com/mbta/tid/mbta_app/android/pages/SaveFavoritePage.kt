@@ -127,10 +127,10 @@ fun SaveFavoritePage(
 
     LaunchedEffect(isFavorite, favorites) { if (favorites != null && !isFavorite) wasAdding = true }
 
-    val existingSettings = favorites?.get(selectedRouteStopDirection)
+    val existingSettings = favorites?.get(selectedRouteStopDirection) ?: FavoriteSettings()
     var updatedSettings by
         rememberSaveable(saver = stateJsonSaver()) { mutableStateOf<FavoriteSettings?>(null) }
-    val settings = updatedSettings ?: existingSettings ?: FavoriteSettings()
+    val settings = updatedSettings ?: existingSettings
 
     var hasRequestedPermission by rememberSaveable { mutableStateOf(false) }
     val notificationPermissionState = notificationPermissionState { hasRequestedPermission = true }
@@ -149,7 +149,7 @@ fun SaveFavoritePage(
     val notificationSettingsState by notificationSettingsViewModel.models.collectAsState()
 
     LaunchedEffect(existingSettings) {
-        notificationSettingsViewModel.loadSavedSettings(existingSettings?.notifications)
+        notificationSettingsViewModel.loadSavedSettings(existingSettings.notifications)
     }
 
     LaunchedEffect(notificationSettingsState) {
@@ -260,7 +260,10 @@ fun SaveFavoritePage(
                             containerColor = Color.Transparent,
                             contentColor = colorResource(R.color.key),
                         ),
-                    action = goBack,
+                    action = {
+                        goBack()
+                        notificationSettingsViewModel.loadSavedSettings(null)
+                    },
                 )
                 NavTextButton(stringResource(R.string.save), colors = ButtonDefaults.key()) {
                     updateCloseAndToast(mapOf(selectedRouteStopDirection to settings))

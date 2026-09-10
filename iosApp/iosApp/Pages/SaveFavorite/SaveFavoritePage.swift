@@ -23,7 +23,7 @@ struct SaveFavoritePage: View {
 
     @State var globalResponse: GlobalResponse?
     @State var favorites: Favorites = .init(routeStopDirection: [:])
-    @State var pendingSettings: FavoriteSettings?
+    @State var pendingSettings: FavoriteSettings
     @State var selectedDirection: Int32
     @State var favoritesLoaded: Bool = false
     @State var wasAdding: Bool = false
@@ -94,7 +94,7 @@ struct SaveFavoritePage: View {
 
     func resetPendingSettings() {
         pendingSettings = favorites
-            .routeStopDirection[selectedRouteStopDirection]
+            .routeStopDirection[selectedRouteStopDirection] ?? FavoriteSettings(notifications: .companion.disabled)
     }
 
     func updateCloseAndToast(_ rsd: RouteStopDirection, _ setting: FavoriteSettings?) {
@@ -170,7 +170,10 @@ struct SaveFavoritePage: View {
         VStack(alignment: .leading, spacing: 0) {
             SaveFavoriteHeader(
                 isFavorite: isFavorite,
-                onCancel: { navCallbacks.onBack?() },
+                onCancel: { navCallbacks.onBack?()
+                    notificationSettingsVM.loadSavedSettings(settings: nil)
+
+                },
                 onSave: { updateCloseAndToast(selectedRouteStopDirection, pendingSettings) },
             )
             HaloScrollView(alwaysShowHalo: true) {
@@ -187,9 +190,7 @@ struct SaveFavoritePage: View {
                         NotificationSettingsWidget(
                             vm: notificationSettingsVM,
                             onUpdate: { newNotificationSettings in
-                                pendingSettings =
-                                    (pendingSettings ?? FavoriteSettings(notifications: .companion.disabled))
-                                        .doCopy(notifications: newNotificationSettings)
+                                pendingSettings = pendingSettings.doCopy(notifications: newNotificationSettings)
                             },
                             notificationPermissionManager: notificationPermissionManager,
                         )
@@ -206,10 +207,10 @@ struct SaveFavoritePage: View {
             }
         }
         .onAppear { resetPendingSettings()
-            notificationSettingsVM.loadSavedSettings(settings: pendingSettings?.notifications)
+            notificationSettingsVM.loadSavedSettings(settings: pendingSettings.notifications)
         }
         .onChange(of: pendingSettings) { newSettings in
-            notificationSettingsVM.loadSavedSettings(settings: newSettings?.notifications)
+            notificationSettingsVM.loadSavedSettings(settings: newSettings.notifications)
         }
         .onChange(of: selectedDirection) { _ in resetPendingSettings() }
         .onChange(of: favorites) { _ in
