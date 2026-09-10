@@ -193,7 +193,7 @@ class SaveFavoritePageTests {
     }
 
     @Test
-    fun testEditExisting() {
+    fun testEditExistingNotifications() {
         val objects = TestData.clone()
         val route = objects.getRoute("Orange")
         val stop = objects.getStop("place-welln")

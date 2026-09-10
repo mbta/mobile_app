@@ -666,7 +666,7 @@ struct ContentView: View {
                             fcmToken: fcmTokenContainer.token,
                         )
                     },
-                    navCallbacks: navCallbacks,
+                    navCallbacks: navCallbacks
                 )
 
             default:
