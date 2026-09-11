@@ -43,7 +43,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup
+      - uses: $/.github/actions/setup
         with:
           for: ios-build
           aws-role: ${{ secrets.AWS_ROLE_ARN }}
@@ -113,7 +113,7 @@ jobs:
         with:
           name: ios-ipa
           path: iosApp/build
-      - uses: ./.github/actions/setup
+      - uses: $/.github/actions/setup
         with:
           for: ios-deploy
           aws-role: ${{ secrets.AWS_ROLE_ARN }}
