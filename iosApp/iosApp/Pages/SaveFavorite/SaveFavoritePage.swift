@@ -94,11 +94,12 @@ struct SaveFavoritePage: View {
 
     func resetPendingSettings() {
         pendingSettings = favorites
-            .routeStopDirection[selectedRouteStopDirection] ?? .init(notifications: .companion.disabled)
+            .routeStopDirection[selectedRouteStopDirection] ?? FavoriteSettings(notifications: .companion.disabled)
     }
 
     func updateCloseAndToast(_ rsd: RouteStopDirection, _ setting: FavoriteSettings?) {
         updateFavorites([rsd: setting])
+        notificationSettingsVM.savedSettings()
 
         navCallbacks.onBack?()
 
@@ -169,7 +170,10 @@ struct SaveFavoritePage: View {
         VStack(alignment: .leading, spacing: 0) {
             SaveFavoriteHeader(
                 isFavorite: isFavorite,
-                onCancel: { navCallbacks.onBack?() },
+                onCancel: { navCallbacks.onBack?()
+                    notificationSettingsVM.loadSavedSettings(settings: nil)
+
+                },
                 onSave: { updateCloseAndToast(selectedRouteStopDirection, pendingSettings) },
             )
             HaloScrollView(alwaysShowHalo: true) {

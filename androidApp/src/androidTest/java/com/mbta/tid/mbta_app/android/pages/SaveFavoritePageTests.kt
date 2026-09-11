@@ -1,12 +1,14 @@
 package com.mbta.tid.mbta_app.android.pages
 
 import android.os.Build
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.rule.GrantPermissionRule
+import com.mapbox.maps.extension.style.expressions.dsl.generated.not
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.FavoriteSettings
@@ -16,12 +18,15 @@ import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.utils.buildFavorites
+import com.mbta.tid.mbta_app.viewModel.MockNotificationSettingsViewModel
+import com.mbta.tid.mbta_app.viewModel.NotificationSettingsViewModel
 import kotlin.test.assertEquals
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalTestApi::class)
 class SaveFavoritePageTests {
     @get:Rule val composeTestRule = createComposeRule()
     @get:Rule
@@ -33,12 +38,26 @@ class SaveFavoritePageTests {
     @Test
     fun testCloses() {
         var backCalled = false
+        var savedSettingsCleared = false
 
         val objects = TestData.clone()
         val route = objects.getRoute("Red")
         val stop = objects.getStop("70069")
 
         loadKoinMocks(objects)
+
+        val notificationSettingsVM =
+            MockNotificationSettingsViewModel(
+                NotificationSettingsViewModel.State(
+                    FavoriteSettings.Notifications(false, emptyList()),
+                    null,
+                )
+            )
+        notificationSettingsVM.onLoadSavedSettings = {
+            if (it == null) {
+                savedSettingsCleared = true
+            }
+        }
 
         composeTestRule.setContent {
             SaveFavoritePage(
@@ -47,12 +66,14 @@ class SaveFavoritePageTests {
                 1,
                 EditFavoritesContext.StopDetails,
                 { backCalled = true },
+                notificationSettingsViewModel = notificationSettingsVM,
             )
         }
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Cancel").performClick()
         composeTestRule.waitForIdle()
         assert(backCalled)
+        assert(savedSettingsCleared)
     }
 
     @Test
@@ -243,6 +264,42 @@ class SaveFavoritePageTests {
         composeTestRule.waitForIdle()
         assertEquals(Favorites(), favoritesSet)
         assert(closed)
+    }
+
+    @Test
+    fun testCallsSavedNotificationVM() {
+        var savedSettings = false
+
+        val notificationSettingsVM =
+            MockNotificationSettingsViewModel(
+                NotificationSettingsViewModel.State(
+                    FavoriteSettings.Notifications(false, emptyList()),
+                    null,
+                )
+            )
+        notificationSettingsVM.onSavedSettings = { savedSettings = true }
+
+        val objects = TestData.clone()
+        val route = objects.getRoute("Orange")
+        val stop = objects.getStop("place-welln")
+        loadKoinMocks(objects) {
+            favorites = MockFavoritesRepository()
+        }
+
+        composeTestRule.setContent {
+            SaveFavoritePage(
+                route.id,
+                stop.id,
+                0,
+                EditFavoritesContext.StopDetails,
+                {},
+                notificationSettingsViewModel = notificationSettingsVM,
+            )
+        }
+
+        composeTestRule.onNodeWithText("Add Favorite").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Save").performClick()
+        assert(savedSettings)
     }
 
     @Test

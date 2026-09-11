@@ -145,4 +145,74 @@ final class SaveFavoritePageTests: XCTestCase {
 
         wait(for: [exp1], timeout: 5)
     }
+
+    @MainActor func testCallsSavedSettingsOnSave() {
+        let objects = TestData.clone()
+        let route = objects.getRoute(id: "Orange")
+        let stop = objects.getStop(id: "place-welln")
+
+        loadKoinMocks(objects: objects)
+
+        var savedSettings = false
+
+        let notificationSettingsVM: MockNotificationSettingsViewModel = .init(initialState: .init(
+            settings: FavoriteSettings.Notifications.companion.disabled,
+            selectedPreset: nil
+        ))
+        notificationSettingsVM.onSavedSettings = { savedSettings = true }
+
+        let sut = SaveFavoritePage(
+            routeId: route.id,
+            stopId: stop.id,
+            initialSelectedDirection: 0,
+            context: .stopDetails,
+            updateFavorites: { _ in },
+            navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
+            notificationSettingsVM: notificationSettingsVM
+        )
+
+        let exp1 = sut.inspection.inspect(after: 1) { view in
+            try view.find(button: "Save").tap()
+            XCTAssertTrue(savedSettings)
+        }
+
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+
+        wait(for: [exp1], timeout: 5)
+    }
+
+    @MainActor func testClearsLoadedSettingsOnCancel() {
+        let objects = TestData.clone()
+        let route = objects.getRoute(id: "Orange")
+        let stop = objects.getStop(id: "place-welln")
+
+        loadKoinMocks(objects: objects)
+
+        var savedSettingsCleared = false
+
+        let notificationSettingsVM: MockNotificationSettingsViewModel = .init(initialState: .init(
+            settings: FavoriteSettings.Notifications.companion.disabled,
+            selectedPreset: nil
+        ))
+        notificationSettingsVM.onLoadSavedSettings = { savedSettingsCleared = $0 == nil }
+
+        let sut = SaveFavoritePage(
+            routeId: route.id,
+            stopId: stop.id,
+            initialSelectedDirection: 0,
+            context: .stopDetails,
+            updateFavorites: { _ in },
+            navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
+            notificationSettingsVM: notificationSettingsVM
+        )
+
+        let exp1 = sut.inspection.inspect(after: 1) { view in
+            try view.find(button: "Cancel").tap()
+            XCTAssertTrue(savedSettingsCleared)
+        }
+
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+
+        wait(for: [exp1], timeout: 5)
+    }
 }
