@@ -4,6 +4,8 @@ import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import kotlinx.serialization.KSerializer
@@ -70,18 +72,43 @@ constructor(val notifications: Notifications = Notifications.disabled) {
     @Serializable
     public data class Notifications(val enabled: Boolean, val windows: List<Window>) {
         @Serializable
-        public data class Window(
+        public data class Window
+        private constructor(
+            val id: String,
             val startTime: LocalTime,
             val endTime: LocalTime,
             val daysOfWeek: Set<DayOfWeek>,
         ) {
-            val id: String
-                get() = "$startTime $endTime ${daysOfWeek.joinToString(",")}"
+            @OptIn(ExperimentalUuidApi::class)
+            public constructor(
+                startTime: LocalTime,
+                endTime: LocalTime,
+                daysOfWeek: Set<DayOfWeek>,
+            ) : this(Uuid.random().toString(), startTime, endTime, daysOfWeek)
 
             public constructor(
                 preset: Preset,
                 daysOfWeek: Set<DayOfWeek>,
             ) : this(preset.startTime, preset.endTime, daysOfWeek)
+
+            // Copy function to preserve ID without making it modifiable
+            public fun copy(
+                startTime: LocalTime = this.startTime,
+                endTime: LocalTime = this.endTime,
+                daysOfWeek: Set<DayOfWeek> = this.daysOfWeek,
+            ): Window {
+                return Window(this.id, startTime, endTime, daysOfWeek)
+            }
+
+            // Copy function for Objective-C interop
+            @DefaultArgumentInterop.Enabled
+            public fun doCopy(
+                startTime: LocalTime = this.startTime,
+                endTime: LocalTime = this.endTime,
+                daysOfWeek: Set<DayOfWeek> = this.daysOfWeek,
+            ): Window {
+                return Window(this.id, startTime, endTime, daysOfWeek)
+            }
 
             public companion object {
                 public val weekdays: Set<DayOfWeek> =
@@ -138,7 +165,6 @@ constructor(val notifications: Notifications = Notifications.disabled) {
                     presetsEnabled: Boolean,
                     now: EasternTimeInstant,
                 ): Window {
-
                     if (presetsEnabled) {
                         return defaultFromCurrentTime(now)
                     } else {
