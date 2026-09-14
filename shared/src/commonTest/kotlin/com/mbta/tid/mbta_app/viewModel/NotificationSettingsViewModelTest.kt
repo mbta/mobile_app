@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.viewModel
 
 import app.cash.turbine.test
 import com.mbta.tid.mbta_app.model.FavoriteSettings
+import com.mbta.tid.mbta_app.model.FavoriteSettings.Notifications.Window
 import com.mbta.tid.mbta_app.model.Preset
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -257,6 +258,106 @@ class NotificationSettingsViewModelTest {
                 weekendPresetState.settings?.windows?.single()?.daysOfWeek,
             )
             assertEquals(Preset.Evening, weekendPresetState.selectedPreset)
+        }
+    }
+
+    @Test
+    fun usesLastSavedSettingsWhenEnabled() = runTest {
+        val viewModel = NotificationSettingsViewModel(MockSentryRepository())
+        val savedSettings =
+            FavoriteSettings.Notifications(
+                enabled = true,
+                windows =
+                    listOf(
+                        FavoriteSettings.Notifications.Window(
+                            startTime = Preset.Morning.startTime,
+                            endTime = Preset.Morning.endTime,
+                            daysOfWeek = FavoriteSettings.Notifications.Window.weekdays,
+                        )
+                    ),
+            )
+
+        testViewModelFlow(viewModel).test {
+            viewModel.loadSavedSettings(savedSettings)
+            awaitItem()
+
+            viewModel.savedSettings()
+            viewModel.setEnabled(true)
+            val state = awaitItem()
+            assertEquals(savedSettings, state.settings)
+            assertEquals(Preset.Morning, state.selectedPreset)
+        }
+    }
+
+    @Test
+    fun doesNotUseLastSavedDisabledSettings() = runTest {
+        val now = EasternTimeInstant(2026, Month.SEPTEMBER, 3, 12, 30)
+
+        val viewModel = NotificationSettingsViewModel(MockSentryRepository())
+        val savedSettings =
+            FavoriteSettings.Notifications(
+                enabled = false,
+                windows =
+                    listOf(
+                        FavoriteSettings.Notifications.Window(
+                            startTime = Preset.Morning.startTime,
+                            endTime = Preset.Morning.endTime,
+                            daysOfWeek = Window.weekdays,
+                        )
+                    ),
+            )
+
+        testViewModelFlow(viewModel).test {
+            viewModel.setNow(now)
+            viewModel.setPresetsEnabledFlag(true)
+            viewModel.loadSavedSettings(savedSettings)
+            awaitItem()
+            viewModel.savedSettings()
+            viewModel.setEnabled(true)
+            val state = awaitItem()
+            assertEquals(
+                listOf(Window(Preset.Midday, Window.weekdays)),
+                state.settings?.windows,
+            )
+        }
+    }
+
+    @Test
+    fun doesNotUseLastSavedWhenExistingSettingsLoaded() = runTest {
+        val viewModel = NotificationSettingsViewModel(MockSentryRepository())
+        val lastSavedSettings =
+            FavoriteSettings.Notifications(
+                enabled = true,
+                windows =
+                    listOf(
+                        FavoriteSettings.Notifications.Window(
+                            startTime = Preset.Morning.startTime,
+                            endTime = Preset.Morning.endTime,
+                            daysOfWeek = FavoriteSettings.Notifications.Window.weekdays,
+                        )
+                    ),
+            )
+        val newSettings =
+            FavoriteSettings.Notifications(
+                enabled = true,
+                windows =
+                    listOf(
+                        FavoriteSettings.Notifications.Window(
+                            startTime = Preset.Evening.startTime,
+                            endTime = Preset.Evening.endTime,
+                            daysOfWeek = FavoriteSettings.Notifications.Window.weekdays,
+                        )
+                    ),
+            )
+
+        testViewModelFlow(viewModel).test {
+            viewModel.loadSavedSettings(lastSavedSettings)
+            awaitItem()
+            viewModel.savedSettings()
+            viewModel.loadSavedSettings(newSettings)
+            val state = awaitItem()
+            assertEquals(newSettings, state.settings)
+            assertEquals(Preset.Evening, state.selectedPreset)
         }
     }
 }

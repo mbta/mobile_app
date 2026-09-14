@@ -171,6 +171,7 @@ fun SaveFavoritePage(
             fcmToken,
             currentLocale,
         )
+        notificationSettingsViewModel.savedSettings()
     }
 
     val updateToastSingleText = stringResource(R.string.favorites_toast_add)
@@ -259,7 +260,10 @@ fun SaveFavoritePage(
                             containerColor = Color.Transparent,
                             contentColor = colorResource(R.color.key),
                         ),
-                    action = goBack,
+                    action = {
+                        goBack()
+                        notificationSettingsViewModel.loadSavedSettings(null)
+                    },
                 )
                 NavTextButton(stringResource(R.string.save), colors = ButtonDefaults.key()) {
                     updateCloseAndToast(mapOf(selectedRouteStopDirection to settings))
