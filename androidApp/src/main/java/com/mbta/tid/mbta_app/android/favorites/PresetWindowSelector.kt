@@ -40,7 +40,7 @@ fun PresetWindowSelector(
             }
     ) {
         presetRows.forEachIndexed { rowIndex, windows ->
-            Row() {
+            Row {
                 windows.forEachIndexed { presetIndex, preset ->
                     val isSelected = selectedPreset == preset
                     PresetButton(
