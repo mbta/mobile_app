@@ -248,6 +248,7 @@
     <string name="nearby_transit">Nearby Transit</string>
     <string name="nearby_transit_link">Nearby</string>
     <string name="new_feature_screen_reader_header_prefix">New feature. %1$s</string>
+    <string name="next_day">next day</string>
     <string name="next_stop">Next stop</string>
     <string name="next_trip_at">Next trip at &lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="next_trip_at_tomorrow">Next trip at &lt;b&gt;%1$s&lt;/b&gt; tomorrow</string>
@@ -348,6 +349,8 @@
     <string name="serves_route_list">serves %1$s</string>
     <string name="service_change">Service Change</string>
     <string name="service_change_sentence_case">Service change</string>
+    <string name="service_day_start">start of service</string>
+    <string name="service_day_end">end of service</string>
     <string name="service_ended">Service ended</string>
     <string name="service_suspended">Service suspended</string>
     <string name="setting_station_accessibility">Station Accessibility Info</string>
