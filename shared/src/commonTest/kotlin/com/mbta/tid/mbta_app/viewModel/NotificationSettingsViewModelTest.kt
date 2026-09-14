@@ -2,18 +2,28 @@ package com.mbta.tid.mbta_app.viewModel
 
 import app.cash.turbine.test
 import com.mbta.tid.mbta_app.model.FavoriteSettings
+import com.mbta.tid.mbta_app.model.FavoriteSettings.Notifications
 import com.mbta.tid.mbta_app.model.FavoriteSettings.Notifications.Window
 import com.mbta.tid.mbta_app.model.Preset
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.fail
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
 
 class NotificationSettingsViewModelTest {
+    fun assertWindowsEquals(expected: List<Window>, actual: List<Window>?) {
+        actual?.zip(expected)?.forEach { (expectedWindow, actualWindow) ->
+            assertEquals(expectedWindow.startTime, actualWindow.startTime)
+            assertEquals(expectedWindow.endTime, actualWindow.endTime)
+            assertEquals(expectedWindow.daysOfWeek, actualWindow.daysOfWeek)
+        } ?: fail("Actual windows list is null")
+    }
+
     @Test
     fun initialStateIsNull() = runTest {
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
@@ -33,7 +43,7 @@ class NotificationSettingsViewModelTest {
     fun loadSavedSettingsReplacesStateAndSelectsPreset() = runTest {
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
         val loadedSettings =
-            FavoriteSettings.Notifications(
+            Notifications(
                 enabled = true,
                 windows =
                     listOf(
@@ -83,12 +93,12 @@ class NotificationSettingsViewModelTest {
 
             val state = awaitItem()
             assertEquals(true, state.settings?.enabled)
-            assertEquals(
+            assertWindowsEquals(
                 listOf(
-                    FavoriteSettings.Notifications.Window(
+                    Window(
                         startTime = LocalTime(8, 0),
                         endTime = LocalTime(9, 0),
-                        daysOfWeek = FavoriteSettings.Notifications.Window.weekdays,
+                        daysOfWeek = Window.weekdays,
                     )
                 ),
                 state.settings?.windows,
@@ -110,12 +120,12 @@ class NotificationSettingsViewModelTest {
 
             val state = awaitItem()
             assertEquals(true, state.settings?.enabled)
-            assertEquals(
+            assertWindowsEquals(
                 listOf(
-                    FavoriteSettings.Notifications.Window(
+                    Window(
                         startTime = Preset.Midday.startTime,
                         endTime = Preset.Midday.endTime,
-                        daysOfWeek = FavoriteSettings.Notifications.Window.weekdays,
+                        daysOfWeek = Window.weekdays,
                     )
                 ),
                 state.settings?.windows,
@@ -129,7 +139,7 @@ class NotificationSettingsViewModelTest {
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
         val customWindows =
             listOf(
-                FavoriteSettings.Notifications.Window(
+                Window(
                     startTime = LocalTime(9, 0),
                     endTime = LocalTime(11, 0),
                     daysOfWeek = setOf(DayOfWeek.MONDAY),
@@ -140,18 +150,18 @@ class NotificationSettingsViewModelTest {
             awaitItem()
 
             viewModel.setCustomWindows(customWindows)
-            assertEquals(customWindows, awaitItem().settings?.windows)
+            assertWindowsEquals(customWindows, awaitItem().settings?.windows)
 
             viewModel.setNow(EasternTimeInstant(2026, Month.SEPTEMBER, 2, 8, 0))
             viewModel.setPreset(Preset.Morning)
 
             val presetState = awaitItem()
-            assertEquals(
+            assertWindowsEquals(
                 listOf(
-                    FavoriteSettings.Notifications.Window(
+                    Window(
                         startTime = Preset.Morning.startTime,
                         endTime = Preset.Morning.endTime,
-                        daysOfWeek = FavoriteSettings.Notifications.Window.weekdays,
+                        daysOfWeek = Window.weekdays,
                     )
                 ),
                 presetState.settings?.windows,
@@ -160,7 +170,7 @@ class NotificationSettingsViewModelTest {
 
             viewModel.setPreset(null)
             val customState = awaitItem()
-            assertEquals(customWindows, customState.settings?.windows)
+            assertWindowsEquals(customWindows, customState.settings?.windows)
             assertEquals(null, customState.selectedPreset)
         }
     }
@@ -174,13 +184,13 @@ class NotificationSettingsViewModelTest {
             awaitItem()
             viewModel.setNow(now)
             viewModel.setPresetsEnabledFlag(true)
-            viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
+            viewModel.loadSavedSettings(Notifications.disabled)
 
             val state = awaitItem()
             assertEquals(emptyList(), state.settings?.windows)
             viewModel.setPreset(null)
-            assertEquals(
-                listOf(FavoriteSettings.Notifications.Window.customFromCurrentTime(now)),
+            assertWindowsEquals(
+                listOf(Window.customFromCurrentTime(now)),
                 awaitItem().settings?.windows,
             )
         }
@@ -191,7 +201,7 @@ class NotificationSettingsViewModelTest {
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
         val customWindows =
             listOf(
-                FavoriteSettings.Notifications.Window(
+                Window(
                     startTime = LocalTime(9, 0),
                     endTime = LocalTime(11, 0),
                     daysOfWeek = setOf(DayOfWeek.MONDAY),
@@ -208,12 +218,12 @@ class NotificationSettingsViewModelTest {
 
             val state = awaitItem()
             assertEquals(2, state.settings?.windows?.size)
-            assertEquals(
+            assertWindowsEquals(
                 customWindows +
-                    FavoriteSettings.Notifications.Window(
+                    Window(
                         startTime = LocalTime(12, 0),
                         endTime = LocalTime(13, 0),
-                        daysOfWeek = FavoriteSettings.Notifications.Window.weekend,
+                        daysOfWeek = Window.weekend,
                     ),
                 state.settings?.windows,
             )
@@ -234,7 +244,7 @@ class NotificationSettingsViewModelTest {
 
             val weekendPresetState = awaitItem()
             assertEquals(
-                FavoriteSettings.Notifications.Window.weekdays,
+                Window.weekdays,
                 weekendPresetState.settings?.windows?.single()?.daysOfWeek,
             )
             assertEquals(Preset.Evening, weekendPresetState.selectedPreset)
@@ -254,7 +264,7 @@ class NotificationSettingsViewModelTest {
 
             val weekendPresetState = awaitItem()
             assertEquals(
-                FavoriteSettings.Notifications.Window.weekend,
+                Window.weekend,
                 weekendPresetState.settings?.windows?.single()?.daysOfWeek,
             )
             assertEquals(Preset.Evening, weekendPresetState.selectedPreset)
@@ -265,14 +275,14 @@ class NotificationSettingsViewModelTest {
     fun usesLastSavedSettingsWhenEnabled() = runTest {
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
         val savedSettings =
-            FavoriteSettings.Notifications(
+            Notifications(
                 enabled = true,
                 windows =
                     listOf(
-                        FavoriteSettings.Notifications.Window(
+                        Window(
                             startTime = Preset.Morning.startTime,
                             endTime = Preset.Morning.endTime,
-                            daysOfWeek = FavoriteSettings.Notifications.Window.weekdays,
+                            daysOfWeek = Window.weekdays,
                         )
                     ),
             )
@@ -295,11 +305,11 @@ class NotificationSettingsViewModelTest {
 
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
         val savedSettings =
-            FavoriteSettings.Notifications(
+            Notifications(
                 enabled = false,
                 windows =
                     listOf(
-                        FavoriteSettings.Notifications.Window(
+                        Window(
                             startTime = Preset.Morning.startTime,
                             endTime = Preset.Morning.endTime,
                             daysOfWeek = Window.weekdays,
@@ -315,7 +325,7 @@ class NotificationSettingsViewModelTest {
             viewModel.savedSettings()
             viewModel.setEnabled(true)
             val state = awaitItem()
-            assertEquals(
+            assertWindowsEquals(
                 listOf(Window(Preset.Midday, Window.weekdays)),
                 state.settings?.windows,
             )
@@ -326,26 +336,26 @@ class NotificationSettingsViewModelTest {
     fun doesNotUseLastSavedWhenExistingSettingsLoaded() = runTest {
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
         val lastSavedSettings =
-            FavoriteSettings.Notifications(
+            Notifications(
                 enabled = true,
                 windows =
                     listOf(
-                        FavoriteSettings.Notifications.Window(
+                        Window(
                             startTime = Preset.Morning.startTime,
                             endTime = Preset.Morning.endTime,
-                            daysOfWeek = FavoriteSettings.Notifications.Window.weekdays,
+                            daysOfWeek = Window.weekdays,
                         )
                     ),
             )
         val newSettings =
-            FavoriteSettings.Notifications(
+            Notifications(
                 enabled = true,
                 windows =
                     listOf(
-                        FavoriteSettings.Notifications.Window(
+                        Window(
                             startTime = Preset.Evening.startTime,
                             endTime = Preset.Evening.endTime,
-                            daysOfWeek = FavoriteSettings.Notifications.Window.weekdays,
+                            daysOfWeek = Window.weekdays,
                         )
                     ),
             )

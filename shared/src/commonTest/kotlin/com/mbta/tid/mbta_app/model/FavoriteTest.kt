@@ -21,6 +21,12 @@ private typealias Window = FavoriteSettings.Notifications.Window
 
 class FavoriteTest {
 
+    fun assertWindowEquals(expected: Window, actual: Window) {
+        assertEquals(expected.startTime, actual.startTime)
+        assertEquals(expected.endTime, actual.endTime)
+        assertEquals(expected.daysOfWeek, actual.daysOfWeek)
+    }
+
     @Test
     fun `parses pre-notifications format`() {
         val oldFavorites = buildJsonObject {
@@ -65,6 +71,7 @@ class FavoriteTest {
             }
             routeStopDirection(Route.Id("route2"), "stop2", 1)
         }
+        val windows = favorites.routeStopDirection.entries.first().value.notifications.windows
         val serialized = buildJsonObject {
             putJsonArray("postNotificationsRSDs") {
                 addJsonObject {
@@ -78,6 +85,7 @@ class FavoriteTest {
                             put("enabled", true)
                             putJsonArray("windows") {
                                 addJsonObject {
+                                    put("id", windows.first().id)
                                     put("startTime", "08:00")
                                     put("endTime", "09:00")
                                     putJsonArray("daysOfWeek") {
@@ -87,6 +95,7 @@ class FavoriteTest {
                                     }
                                 }
                                 addJsonObject {
+                                    put("id", windows.last().id)
                                     put("startTime", "10:00")
                                     put("endTime", "13:00")
                                     putJsonArray("daysOfWeek") { add("SATURDAY") }
@@ -111,26 +120,26 @@ class FavoriteTest {
 
     @Test
     fun `defaultFromCurrentTime returns the matching preset`() {
-        assertEquals(
+        assertWindowEquals(
             Window(Preset.Morning, Window.weekdays),
             Window.defaultFromCurrentTime(EasternTimeInstant(LocalDateTime(2026, 8, 27, 7, 30))),
         )
-        assertEquals(
+        assertWindowEquals(
             Window(Preset.Midday, Window.weekdays),
             Window.defaultFromCurrentTime(EasternTimeInstant(LocalDateTime(2026, 8, 27, 12, 30))),
         )
 
-        assertEquals(
+        assertWindowEquals(
             Window(Preset.Evening, Window.weekdays),
             Window.defaultFromCurrentTime(EasternTimeInstant(LocalDateTime(2026, 8, 27, 18, 30))),
         )
 
-        assertEquals(
+        assertWindowEquals(
             Window(Preset.AllDay, Window.weekdays),
             Window.defaultFromCurrentTime(EasternTimeInstant(LocalDateTime(2026, 8, 27, 21, 30))),
         )
 
-        assertEquals(
+        assertWindowEquals(
             Window(Preset.AllDay, Window.weekend),
             Window.defaultFromCurrentTime(EasternTimeInstant(LocalDateTime(2026, 8, 30, 21, 30))),
         )
@@ -140,7 +149,7 @@ class FavoriteTest {
     fun `customFromCurrentTime rounds to the current hour`() {
         val now = EasternTimeInstant(LocalDateTime(2026, 8, 27, 9, 30))
 
-        assertEquals(
+        assertWindowEquals(
             Window(
                 LocalTime(9, 0),
                 LocalTime(10, 0),
@@ -160,7 +169,7 @@ class FavoriteTest {
     fun `customFromCurrentTime maxes out before midnight`() {
         val now = EasternTimeInstant(LocalDateTime(2026, 8, 27, 23, 30))
 
-        assertEquals(
+        assertWindowEquals(
             Window(
                 LocalTime(23, 0),
                 LocalTime(23, 59),
