@@ -499,4 +499,9 @@
     <string name="weekends">Weekends</string>
     <string name="westbound">Westbound</string>
     <string name="x_and_y">%1$s and %2$s</string>
+    <string name="start_to_end_time">%1$s - %2$s</string>
+    <string name="am_marker">AM</string>
+    <string name="pm_marker">PM</string>
+    <string name="start_to_end_of_service">start to end of service</string>
+    <string name="when_do_you_want_notifications">When do you want notifications?</string>
 </resources>

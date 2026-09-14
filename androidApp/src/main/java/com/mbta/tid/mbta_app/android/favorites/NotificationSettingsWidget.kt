@@ -143,16 +143,18 @@ fun NotificationSettingsWidget(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Column(
-            Modifier.haloContainer(borderWidth = 1.dp).clickable(
-                enabled = showPermissionSettingsLink
-            ) {
-                val openNotificationSettings =
-                    Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                    }
+            Modifier
+                .haloContainer(borderWidth = 1.dp)
+                .clickable(
+                    enabled = showPermissionSettingsLink
+                ) {
+                    val openNotificationSettings =
+                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                        }
 
-                context.startActivity(openNotificationSettings)
-            },
+                    context.startActivity(openNotificationSettings)
+                },
             verticalArrangement = Arrangement.spacedBy(0.dp),
         ) {
             NotificationSwitch(
@@ -164,60 +166,82 @@ fun NotificationSettingsWidget(
             AnimatedVisibility(showPermissionSettingsLink) { PermissionSettingsLink() }
         }
         AnimatedVisibility(settings.enabled && !permissionDenied) {
+
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                if (presetWindowsEnabled) {
-                    PresetWindowSelector(
-                        presetRows = presetOptions,
-                        selectedPreset = notificationSettingsState.selectedPreset,
-                        onSelect = { preset ->
-                            viewModel.setPreset(preset)
-                        },
-                    )
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp)
+                ) {
+                    Text(
+                        stringResource(R.string.when_do_you_want_notifications),
+                        color = colorResource(R.color.deemphasized),
+
+                        )
+
                 }
 
-                for (window in settings.windows) {
-                    WindowWidget(
-                        window,
-                        setWindow = { newWindow ->
-                            val windows = settings.windows.toMutableList()
-                            val index = windows.indexOf(window)
-                            if (index != -1) windows[index] = newWindow
-                            viewModel.setCustomWindows(windows)
-                        },
-                        deleteWindow =
-                            {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier
+                        .haloContainer(
+                            borderWidth = 1.dp, outlineColor = Color.Transparent,
+                            backgroundColor = colorResource(R.color.fill1)
+                        )
+                        .padding(4.dp)
+                ) {
+                    if (presetWindowsEnabled) {
+
+
+                        PresetWindowSelector(
+                            presetRows = presetOptions,
+                            selectedPreset = notificationSettingsState.selectedPreset,
+                            onSelect = { preset ->
+                                viewModel.setPreset(preset)
+                            },
+                        )
+                    }
+
+                    for (window in settings.windows) {
+                        WindowWidget(
+                            window,
+                            setWindow = { newWindow ->
+                                val windows = settings.windows.toMutableList()
+                                val index = windows.indexOf(window)
+                                if (index != -1) windows[index] = newWindow
+                                viewModel.setCustomWindows(windows)
+                            },
+                            deleteWindow =
+                                {
                                     viewModel.setCustomWindows(settings.windows - window)
                                 }
-                                .takeIf { settings.windows.size > 1 },
-                    )
-                }
-                Surface(
-                    onClick = {
-                        viewModel.addPlaceholderWindow()
-                    },
-                    Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                    color = colorResource(R.color.fill3),
-                    border = BorderStroke(1.5.dp, colorResource(R.color.halo)),
-                ) {
-                    Row(
-                        Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
+                                    .takeIf { settings.windows.size > 1 },
+                        )
+                    }
+                    Surface(
+                        onClick = {
+                            viewModel.addPlaceholderWindow()
+                        },
+                        Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp),
                     ) {
-                        Icon(
-                            painterResource(R.drawable.plus),
-                            null,
-                            Modifier.background(
-                                colorResource(R.color.text).copy(alpha = 0.6f),
-                                CircleShape,
-                            ),
-                            tint = colorResource(R.color.fill3),
-                        )
-                        Text(
-                            stringResource(R.string.add_another_time_period),
-                            color = colorResource(R.color.text).copy(alpha = 0.6f),
-                        )
+                        Row(
+                            Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.plus),
+                                null,
+                                Modifier.background(
+                                    colorResource(R.color.text).copy(alpha = 0.6f),
+                                    CircleShape,
+                                ),
+                                tint = colorResource(R.color.fill3),
+                            )
+                            Text(
+                                stringResource(R.string.add_another_time_period),
+                                color = colorResource(R.color.text).copy(alpha = 0.6f),
+                            )
+                        }
                     }
                 }
             }
@@ -232,17 +256,25 @@ private fun WindowWidget(
     deleteWindow: (() -> Unit)?,
 ) {
     Row(
-        Modifier.haloContainer(1.dp, backgroundColor = colorResource(R.color.halo))
+        Modifier
+            .haloContainer(
+                1.dp,
+                backgroundColor = colorResource(R.color.halo),
+                outlineColor = Color.Transparent
+            )
             .height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (deleteWindow != null) {
             Surface(
                 onClick = deleteWindow,
-                Modifier.minimumInteractiveComponentSize().fillMaxHeight().semantics {
-                    role = Role.Button
-                },
-                color = Color.Transparent,
+                Modifier
+                    .minimumInteractiveComponentSize()
+                    .fillMaxHeight()
+                    .semantics {
+                        role = Role.Button
+                    },
+                color = Color.Transparent
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
@@ -307,19 +339,25 @@ fun AdvancedTimePickerDialog(
             shape = MaterialTheme.shapes.extraLarge,
             color = MaterialTheme.colorScheme.surfaceContainerHigh,
             tonalElevation = 6.dp,
-            modifier = Modifier.width(IntrinsicSize.Min).height(IntrinsicSize.Min),
+            modifier = Modifier
+                .width(IntrinsicSize.Min)
+                .height(IntrinsicSize.Min),
         ) {
             Column(
                 modifier = Modifier.padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 20.dp),
                     text = title,
                     style = Typography.title3Semibold,
                 )
                 content()
-                Row(modifier = Modifier.height(40.dp).fillMaxWidth()) {
+                Row(modifier = Modifier
+                    .height(40.dp)
+                    .fillMaxWidth()) {
                     toggle()
                     Spacer(modifier = Modifier.weight(1f))
                     dismissButton()
@@ -431,7 +469,8 @@ private fun DaysOfWeekInput(daysOfWeek: Set<DayOfWeek>, setDaysOfWeek: (Set<DayO
                 checked = isIncluded,
                 onCheckedChange = { setDaysOfWeek(if (it) daysOfWeek + day else daysOfWeek - day) },
                 modifier =
-                    Modifier.semantics { role = Role.Checkbox }
+                    Modifier
+                        .semantics { role = Role.Checkbox }
                         .weight(1f)
                         .height(IntrinsicSize.Max),
                 shape = RoundedCornerShape(6.dp),
@@ -468,7 +507,8 @@ private fun NotificationSwitch(
 ) {
 
     LabeledSwitch(
-        Modifier.haloContainer(
+        Modifier
+            .haloContainer(
                 outlineColor = Color.Transparent,
                 backgroundColor = Color.Transparent,
                 borderWidth = 1.dp,
@@ -486,7 +526,9 @@ private fun NotificationSwitch(
             }
             Text(
                 stringResource(R.string.get_disruption_notifications),
-                Modifier.padding(start = 12.dp).weight(1f),
+                Modifier
+                    .padding(start = 12.dp)
+                    .weight(1f),
             )
         },
         value = settings.enabled,
@@ -502,9 +544,11 @@ private fun NotificationSwitch(
 private fun PermissionSettingsLink() {
     Row(
         modifier =
-            Modifier.padding(horizontal = 12.dp, vertical = 10.dp).semantics(
-                mergeDescendants = true
-            ) {}
+            Modifier
+                .padding(horizontal = 12.dp, vertical = 10.dp)
+                .semantics(
+                    mergeDescendants = true
+                ) {}
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -565,7 +609,8 @@ private fun NotificationSettingsWidgetPreview() {
     }
     MyApplicationTheme {
         Column(
-            Modifier.background(colorResource(R.color.fill2))
+            Modifier
+                .background(colorResource(R.color.fill2))
                 .padding(horizontal = 16.dp, vertical = 24.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
