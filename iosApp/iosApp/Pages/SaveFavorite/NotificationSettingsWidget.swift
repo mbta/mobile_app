@@ -9,7 +9,7 @@
 import Shared
 import SwiftUI
 
-private extension DateComponents {
+public extension DateComponents {
     var nextDate: Date {
         get {
             let calendar = Calendar(identifier: .iso8601)
@@ -114,53 +114,62 @@ struct NotificationSettingsWidgetPresetnationView: View {
                     )
 
                     if settings.enabled {
-                        if presetWindowsEnabled {
-                            PresetWindowSelector(
-                                presetRows: presetOptions,
-                                selectedPreset: state.selectedPreset,
-                                onSelect: { preset in
-                                    setPreset(preset)
-                                }
-                            )
-                        }
+                        Text("When do you want notifications?")
+                            .foregroundColor(Color.deemphasized)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.vertical, 8)
 
-                        ForEach(settings.windows, id: \.id) { window in
-                            WindowWidget(
-                                window: window,
-                                setWindow: { newWindow in
-                                    let windowIndex = settings.windows.firstIndex(of: window)
-                                    var newWindows = settings.windows
-                                    if let windowIndex {
-                                        newWindows[windowIndex] = newWindow
+                        VStack(spacing: 16) {
+                            if presetWindowsEnabled {
+                                PresetWindowSelector(
+                                    presetRows: presetOptions,
+                                    selectedPreset: state.selectedPreset,
+                                    onSelect: { preset in
+                                        setPreset(preset)
                                     }
-                                    setCustomWindows(newWindows)
-                                },
-                                deleteWindow: settings.windows.count > 1 ? {
-                                    let nextWindows = settings.windows.filter { $0.id != window.id }
-                                    setCustomWindows(nextWindows)
-                                } : nil
-                            )
-                        }
-
-                        Button(action: {
-                            addPlaceholderWindow()
-                        }) {
-                            HStack(spacing: 12) {
-                                Image(.plus)
-                                    .resizable()
-                                    .padding(4)
-                                    .background(Color.text.opacity(0.6), in: .circle)
-                                    .foregroundStyle(Color.fill3)
-                                    .frame(width: 24, height: 24)
-                                Text("Add another time period")
-                                Spacer()
+                                )
                             }
+
+                            ForEach(settings.windows, id: \.id) { window in
+                                WindowWidget(
+                                    window: window,
+                                    setWindow: { newWindow in
+                                        let windowIndex = settings.windows.firstIndex(of: window)
+                                        var newWindows = settings.windows
+                                        if let windowIndex {
+                                            newWindows[windowIndex] = newWindow
+                                        }
+                                        setCustomWindows(newWindows)
+                                    },
+                                    deleteWindow: settings.windows.count > 1 ? {
+                                        let nextWindows = settings.windows.filter { $0.id != window.id }
+                                        setCustomWindows(nextWindows)
+                                    } : nil
+                                )
+                            }
+
+                            Button(action: {
+                                addPlaceholderWindow()
+                            }) {
+                                HStack(spacing: 12) {
+                                    Image(.plus)
+                                        .resizable()
+                                        .padding(4)
+                                        .background(Color.text.opacity(0.6), in: .circle)
+                                        .foregroundStyle(Color.fill3)
+                                        .frame(width: 24, height: 24)
+                                    Text("Add another time period")
+                                    Spacer()
+                                }
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.bottom, 16)
+                            .withRoundedBorder(color: .clear)
+                            .foregroundStyle(Color.text.opacity(0.6))
                         }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 10)
-                        .background(Color.fill3)
-                        .withRoundedBorder()
-                        .foregroundStyle(Color.text.opacity(0.6))
+                        .padding(4)
+                        .background(Color.fill1)
+                        .withRoundedBorder(color: .clear)
                     }
                 }
             }

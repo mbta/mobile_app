@@ -30,6 +30,7 @@
     <string name="alerts_channel" translatable="false">Service Alerts</string>
     <string name="all_day">All day</string>
     <string name="alternative_path">Alternative path</string>
+    <string name="am_marker">AM</string>
     <string name="amber_alert">Amber Alert</string>
     <string name="amber_alert_sentence_case">Amber alert</string>
     <string name="amtrak">Amtrak</string>
@@ -298,6 +299,7 @@
     <string name="parking_closure">Parking Closure</string>
     <string name="parking_issue">Parking Issue</string>
     <string name="parking_issue_sentence_case">Parking issue</string>
+    <string name="pm_marker">PM</string>
     <string name="police_action">Police Action</string>
     <string name="police_action_lowercase">police action</string>
     <string name="police_activity">Police Activity</string>
@@ -382,6 +384,8 @@
     <string name="star_route_hint">pin route to the top of the list</string>
     <string name="start">Start</string>
     <string name="start_of_service">start of service</string>
+    <string name="start_to_end_of_service">start to end of service</string>
+    <string name="start_to_end_time">%1$s - %2$s</string>
     <string name="starting_tomorrow_until_further_notice">Starting tomorrow until further notice</string>
     <string name="station_closed">Station Closed</string>
     <string name="station_closed_sentence_case">Station closed</string>
@@ -499,4 +503,5 @@
     <string name="weekends">Weekends</string>
     <string name="westbound">Westbound</string>
     <string name="x_and_y">%1$s and %2$s</string>
+    <string name="when_do_you_want_notifications">When do you want notifications?</string>
 </resources>

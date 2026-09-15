@@ -197,6 +197,40 @@ class NotificationSettingsViewModelTest {
     }
 
     @Test
+    fun testCustomWindowsClearedWhenLoadedNullSettings() = runTest {
+        val viewModel = NotificationSettingsViewModel(MockSentryRepository())
+        val now = EasternTimeInstant(2026, Month.SEPTEMBER, 3, 12, 30)
+
+        testViewModelFlow(viewModel).test {
+            awaitItem()
+            viewModel.setNow(now)
+            viewModel.setPresetsEnabledFlag(true)
+            viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
+
+            val state = awaitItem()
+            val customWindows =
+                listOf(
+                    FavoriteSettings.Notifications.Window(
+                        startTime = Preset.Morning.startTime,
+                        endTime = Preset.Morning.endTime,
+                        daysOfWeek = setOf(DayOfWeek.MONDAY),
+                    )
+                )
+            assertEquals(emptyList(), state.settings?.windows)
+            viewModel.setCustomWindows(customWindows)
+
+            assertEquals(customWindows, awaitItem().settings?.windows)
+            viewModel.loadSavedSettings(null)
+            assertEquals(null, awaitItem().settings?.windows)
+            viewModel.setPreset(null)
+            assertWindowsEquals(
+                listOf(FavoriteSettings.Notifications.Window.customFromCurrentTime(now)),
+                awaitItem().settings?.windows,
+            )
+        }
+    }
+
+    @Test
     fun addPlaceholderWindowAppendsWeekendWindowWhenFeatureFlagDisabled() = runTest {
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
         val customWindows =
