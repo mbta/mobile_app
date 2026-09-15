@@ -2,9 +2,9 @@ package com.mbta.tid.mbta_app.android.favorites
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -45,16 +45,13 @@ fun PresetWindowSelector(
 
     Column(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .semantics {
-                    collectionInfo =
-                        CollectionInfo(
-                            rowCount = presetRows.size + 1, // +1 for Custom
-                            columnCount = maxColumnCount,
-                        )
-                }
-
+            Modifier.fillMaxWidth().semantics {
+                collectionInfo =
+                    CollectionInfo(
+                        rowCount = presetRows.size + 1, // +1 for Custom
+                        columnCount = maxColumnCount,
+                    )
+            }
     ) {
         presetRows.forEachIndexed { rowIndex, windows ->
             Row(
@@ -70,15 +67,16 @@ fun PresetWindowSelector(
                         amPmMarker(amMarker, pmMarker)
                     }
 
-                    val description = if (preset == Preset.AllDay) {
-                        stringResource(R.string.start_to_end_of_service)
-                    } else {
-                        stringResource(
-                            R.string.start_to_end_time,
-                            preset.startTime.format(timeFormat),
-                            preset.endTime.format(timeFormat)
-                        )
-                    }
+                    val description =
+                        if (preset == Preset.AllDay) {
+                            stringResource(R.string.start_to_end_of_service)
+                        } else {
+                            stringResource(
+                                R.string.start_to_end_time,
+                                preset.startTime.format(timeFormat),
+                                preset.endTime.format(timeFormat),
+                            )
+                        }
                     PresetButton(
                         isSelected = isSelected,
                         onSelect = { onSelect(preset) },
@@ -92,17 +90,15 @@ fun PresetWindowSelector(
                         description = description,
                         centerContent = preset != Preset.AllDay,
                         modifier =
-                            Modifier
-                                .weight(1f)
-                                .semantics {
-                                    collectionItemInfo =
-                                        CollectionItemInfo(
-                                            rowIndex = rowIndex,
-                                            rowSpan = 1,
-                                            columnIndex = presetIndex,
-                                            columnSpan = 1,
-                                        )
-                                },
+                            Modifier.weight(1f).semantics {
+                                collectionItemInfo =
+                                    CollectionItemInfo(
+                                        rowIndex = rowIndex,
+                                        rowSpan = 1,
+                                        columnIndex = presetIndex,
+                                        columnSpan = 1,
+                                    )
+                            },
                     )
                 }
             }
@@ -116,17 +112,15 @@ fun PresetWindowSelector(
                 description = "…",
                 centerContent = false,
                 modifier =
-                    Modifier
-                        .weight(1f)
-                        .semantics {
-                            collectionItemInfo =
-                                CollectionItemInfo(
-                                    rowIndex = presetRows.size,
-                                    rowSpan = 1,
-                                    columnIndex = 0,
-                                    columnSpan = maxColumnCount,
-                                )
-                        },
+                    Modifier.weight(1f).semantics {
+                        collectionItemInfo =
+                            CollectionItemInfo(
+                                rowIndex = presetRows.size,
+                                rowSpan = 1,
+                                columnIndex = 0,
+                                columnSpan = maxColumnCount,
+                            )
+                    },
             )
         }
     }
@@ -141,10 +135,7 @@ fun PresetButton(
     centerContent: Boolean,
     modifier: Modifier,
 ) {
-    val contentModifier =
-        Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 10.dp)
+    val contentModifier = Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 10.dp)
 
     val trailingContent: @Composable () -> Unit = {
         Row(modifier = Modifier.height(24.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -172,8 +163,7 @@ fun PresetButton(
         shape = RoundedCornerShape(8.dp),
         contentPadding = PaddingValues(0.dp),
         modifier =
-            modifier
-                .selectable(
+            modifier.selectable(
                 selected = isSelected,
                 onClick = onSelect,
                 role = Role.Tab,
@@ -199,5 +189,3 @@ fun PresetButton(
         }
     }
 }
-
-

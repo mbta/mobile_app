@@ -6,7 +6,6 @@ import android.os.Build
 import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -143,18 +142,16 @@ fun NotificationSettingsWidget(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Column(
-            Modifier
-                .haloContainer(borderWidth = 1.dp)
-                .clickable(
-                    enabled = showPermissionSettingsLink
-                ) {
-                    val openNotificationSettings =
-                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                        }
+            Modifier.haloContainer(borderWidth = 1.dp).clickable(
+                enabled = showPermissionSettingsLink
+            ) {
+                val openNotificationSettings =
+                    Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                    }
 
-                    context.startActivity(openNotificationSettings)
-                },
+                context.startActivity(openNotificationSettings)
+            },
             verticalArrangement = Arrangement.spacedBy(0.dp),
         ) {
             NotificationSwitch(
@@ -166,30 +163,28 @@ fun NotificationSettingsWidget(
             AnimatedVisibility(showPermissionSettingsLink) { PermissionSettingsLink() }
         }
         AnimatedVisibility(settings.enabled && !permissionDenied) {
-
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Row(
                     horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp)
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
                 ) {
                     Text(
                         stringResource(R.string.when_do_you_want_notifications),
                         color = colorResource(R.color.deemphasized),
-
-                        )
-
+                    )
                 }
 
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier
-                        .haloContainer(
-                            borderWidth = 1.dp, outlineColor = Color.Transparent,
-                            backgroundColor = colorResource(R.color.fill1)
-                        )
-                        .padding(4.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier =
+                        Modifier.haloContainer(
+                                borderWidth = 1.dp,
+                                outlineColor = Color.Transparent,
+                                backgroundColor = colorResource(R.color.fill1),
+                            )
+                            .padding(4.dp),
                 ) {
                     if (presetWindowsEnabled) {
-
 
                         PresetWindowSelector(
                             presetRows = presetOptions,
@@ -211,8 +206,8 @@ fun NotificationSettingsWidget(
                             },
                             deleteWindow =
                                 {
-                                    viewModel.setCustomWindows(settings.windows - window)
-                                }
+                                        viewModel.setCustomWindows(settings.windows - window)
+                                    }
                                     .takeIf { settings.windows.size > 1 },
                         )
                     }
@@ -256,11 +251,10 @@ private fun WindowWidget(
     deleteWindow: (() -> Unit)?,
 ) {
     Row(
-        Modifier
-            .haloContainer(
+        Modifier.haloContainer(
                 1.dp,
                 backgroundColor = colorResource(R.color.halo),
-                outlineColor = Color.Transparent
+                outlineColor = Color.Transparent,
             )
             .height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically,
@@ -268,13 +262,10 @@ private fun WindowWidget(
         if (deleteWindow != null) {
             Surface(
                 onClick = deleteWindow,
-                Modifier
-                    .minimumInteractiveComponentSize()
-                    .fillMaxHeight()
-                    .semantics {
-                        role = Role.Button
-                    },
-                color = Color.Transparent
+                Modifier.minimumInteractiveComponentSize().fillMaxHeight().semantics {
+                    role = Role.Button
+                },
+                color = Color.Transparent,
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
@@ -339,25 +330,19 @@ fun AdvancedTimePickerDialog(
             shape = MaterialTheme.shapes.extraLarge,
             color = MaterialTheme.colorScheme.surfaceContainerHigh,
             tonalElevation = 6.dp,
-            modifier = Modifier
-                .width(IntrinsicSize.Min)
-                .height(IntrinsicSize.Min),
+            modifier = Modifier.width(IntrinsicSize.Min).height(IntrinsicSize.Min),
         ) {
             Column(
                 modifier = Modifier.padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 20.dp),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp),
                     text = title,
                     style = Typography.title3Semibold,
                 )
                 content()
-                Row(modifier = Modifier
-                    .height(40.dp)
-                    .fillMaxWidth()) {
+                Row(modifier = Modifier.height(40.dp).fillMaxWidth()) {
                     toggle()
                     Spacer(modifier = Modifier.weight(1f))
                     dismissButton()
@@ -469,8 +454,7 @@ private fun DaysOfWeekInput(daysOfWeek: Set<DayOfWeek>, setDaysOfWeek: (Set<DayO
                 checked = isIncluded,
                 onCheckedChange = { setDaysOfWeek(if (it) daysOfWeek + day else daysOfWeek - day) },
                 modifier =
-                    Modifier
-                        .semantics { role = Role.Checkbox }
+                    Modifier.semantics { role = Role.Checkbox }
                         .weight(1f)
                         .height(IntrinsicSize.Max),
                 shape = RoundedCornerShape(6.dp),
@@ -507,8 +491,7 @@ private fun NotificationSwitch(
 ) {
 
     LabeledSwitch(
-        Modifier
-            .haloContainer(
+        Modifier.haloContainer(
                 outlineColor = Color.Transparent,
                 backgroundColor = Color.Transparent,
                 borderWidth = 1.dp,
@@ -526,9 +509,7 @@ private fun NotificationSwitch(
             }
             Text(
                 stringResource(R.string.get_disruption_notifications),
-                Modifier
-                    .padding(start = 12.dp)
-                    .weight(1f),
+                Modifier.padding(start = 12.dp).weight(1f),
             )
         },
         value = settings.enabled,
@@ -544,11 +525,9 @@ private fun NotificationSwitch(
 private fun PermissionSettingsLink() {
     Row(
         modifier =
-            Modifier
-                .padding(horizontal = 12.dp, vertical = 10.dp)
-                .semantics(
-                    mergeDescendants = true
-                ) {}
+            Modifier.padding(horizontal = 12.dp, vertical = 10.dp).semantics(
+                mergeDescendants = true
+            ) {}
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -609,8 +588,7 @@ private fun NotificationSettingsWidgetPreview() {
     }
     MyApplicationTheme {
         Column(
-            Modifier
-                .background(colorResource(R.color.fill2))
+            Modifier.background(colorResource(R.color.fill2))
                 .padding(horizontal = 16.dp, vertical = 24.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
