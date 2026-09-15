@@ -16859,6 +16859,9 @@
         }
       }
     },
+    "next day" : {
+
+    },
     "Next stop" : {
       "comment" : "Label for a vehicle's next stop. For example: Next stop Alewife",
       "localizations" : {
