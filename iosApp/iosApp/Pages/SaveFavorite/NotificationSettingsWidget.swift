@@ -163,7 +163,7 @@ struct NotificationSettingsWidgetPresetnationView: View {
                                 }
                             }
                             .padding(.horizontal, 12)
-                            .padding(.vertical, 10)
+                            .padding(.bottom, 16)
                             .withRoundedBorder(color: .clear)
                             .foregroundStyle(Color.text.opacity(0.6))
                         }
