@@ -13,6 +13,18 @@ import ViewInspector
 import XCTest
 
 final class NotificationSettingsWidgetTests: XCTestCase {
+    private func assertEqualWindows(
+        expected: [FavoriteSettings.NotificationsWindow],
+        actual: [FavoriteSettings.NotificationsWindow],
+    ) {
+        XCTAssertEqual(expected.count, actual.count)
+        for (expectedWindow, actualWindow) in zip(expected, actual) {
+            XCTAssertEqual(expectedWindow.startTime, actualWindow.startTime)
+            XCTAssertEqual(expectedWindow.endTime, actualWindow.endTime)
+            XCTAssertEqual(expectedWindow.daysOfWeek, actualWindow.daysOfWeek)
+        }
+    }
+
     @MainActor func testEnable() throws {
         let settings: FavoriteSettings.Notifications = .companion.disabled
         var enabled = false
@@ -74,18 +86,18 @@ final class NotificationSettingsWidgetTests: XCTestCase {
     }
 
     func testChangeStartTime() throws {
-        var settings: FavoriteSettings.Notifications = .init(
+        let settings: FavoriteSettings.Notifications = .init(
             enabled: true,
             windows: [.init(preset: .morning,
                             daysOfWeek: [.monday])]
         )
         var customWindows: [FavoriteSettings.NotificationsWindow] = []
 
-        let sut = NotificationSettingsWidgetPresetnationView(state: .init(settings: settings, selectedPreset: nil),
-                                                             setCustomWindows: { customWindows = $0 },
-                                                             notificationPermissionManager: MockNotificationPermissionManager(
-                                                             ))
-                                                             .withFixedSettings([:])
+        let sut = NotificationSettingsWidgetPresetnationView(
+            state: .init(settings: settings, selectedPreset: nil),
+            setCustomWindows: { customWindows = $0 },
+            notificationPermissionManager: MockNotificationPermissionManager()
+        ).withFixedSettings([:])
 
         try sut.inspect().find(
             ViewType.DatePicker.self,
@@ -97,29 +109,30 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             matchingPolicy: .strict
         )))
 
-        XCTAssertEqual(
-            customWindows,
-            [.init(
+        assertEqualWindows(
+            expected: [.init(
                 startTime: .init(hour: 7, minute: 45, second: 0, nanosecond: 0),
                 endTime: Preset.morning.endTime,
                 daysOfWeek: [.monday]
-            )]
+            )],
+            actual: customWindows,
         )
     }
 
     func testChangeEndTime() throws {
-        var settings: FavoriteSettings.Notifications = .init(
+        let settings: FavoriteSettings.Notifications = .init(
             enabled: true,
             windows: [.init(preset: .morning,
                             daysOfWeek: [.monday])]
         )
         var customWindows: [FavoriteSettings.NotificationsWindow] = []
 
-        let sut = NotificationSettingsWidgetPresetnationView(state: .init(settings: settings, selectedPreset: nil),
-                                                             setCustomWindows: { customWindows = $0 },
-                                                             notificationPermissionManager: MockNotificationPermissionManager(
-                                                             ))
-                                                             .withFixedSettings([:])
+        let sut = NotificationSettingsWidgetPresetnationView(
+            state: .init(settings: settings, selectedPreset: nil),
+            setCustomWindows: { customWindows = $0 },
+            notificationPermissionManager: MockNotificationPermissionManager()
+        )
+        .withFixedSettings([:])
 
         try sut.inspect().find(
             ViewType.DatePicker.self,
@@ -131,36 +144,33 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             matchingPolicy: .strict
         )))
 
-        XCTAssertEqual(
-            customWindows,
-            [.init(
-                startTime: Preset.morning.startTime,
-                endTime: .init(hour: 13, minute: 45, second: 0, nanosecond: 0),
-                daysOfWeek: [.monday]
-            )]
-        )
+        assertEqualWindows(expected: [.init(
+            startTime: Preset.morning.startTime,
+            endTime: .init(hour: 13, minute: 45, second: 0, nanosecond: 0),
+            daysOfWeek: [.monday]
+        )], actual: customWindows)
     }
 
     func testChangeDays() throws {
-        var settings: FavoriteSettings.Notifications = .init(
+        let settings: FavoriteSettings.Notifications = .init(
             enabled: true,
             windows: [.init(preset: .morning,
                             daysOfWeek: [.monday])]
         )
         var customWindows: [FavoriteSettings.NotificationsWindow] = []
 
-        let sut = NotificationSettingsWidgetPresetnationView(state: .init(settings: settings, selectedPreset: nil),
-                                                             setCustomWindows: { customWindows = $0 },
-                                                             notificationPermissionManager: MockNotificationPermissionManager(
-                                                             ))
-                                                             .withFixedSettings([:])
+        let sut = NotificationSettingsWidgetPresetnationView(
+            state: .init(settings: settings, selectedPreset: nil),
+            setCustomWindows: { customWindows = $0 },
+            notificationPermissionManager: MockNotificationPermissionManager()
+        ).withFixedSettings([:])
 
         try sut.inspect().find(text: "Sun").find(ViewType.VStack.self, relation: .parent).callOnTapGesture()
         XCTAssertEqual(customWindows[0].daysOfWeek, [.sunday, .monday])
     }
 
     func testValidatesTime() throws {
-        var settings: FavoriteSettings.Notifications = .init(
+        let settings: FavoriteSettings.Notifications = .init(
             enabled: true,
             windows: [.init(
                 startTime: .init(hour: 8, minute: 0, second: 0, nanosecond: 0),
@@ -189,7 +199,6 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         )))
         XCTAssertEqual(customWindows[0].startTime, .init(hour: 10, minute: 45, second: 0, nanosecond: 0))
         XCTAssertEqual(customWindows[0].endTime, .init(hour: 11, minute: 45, second: 0, nanosecond: 0))
-        // ViewInspector appears not to expose or enforce valid ranges, so can’t test minimum end time
     }
 
     func testRequestsPermission() throws {
@@ -197,16 +206,18 @@ final class NotificationSettingsWidgetTests: XCTestCase {
 
         var enabled = false
 
-        var settings: FavoriteSettings.Notifications = .companion.disabled
+        let settings: FavoriteSettings.Notifications = .companion.disabled
         let permissionManager = MockNotificationPermissionManager(
             initialAuthorizationStatus: .notDetermined,
             requestPermissionResponse: true,
             onRequestPermission: { permissionExp.fulfill() }
         )
 
-        let sut = NotificationSettingsWidgetPresetnationView(state: .init(settings: settings, selectedPreset: nil),
-                                                             setEnabled: { enabled = $0 },
-                                                             notificationPermissionManager: permissionManager)
+        let sut = NotificationSettingsWidgetPresetnationView(
+            state: .init(settings: settings, selectedPreset: nil),
+            setEnabled: { enabled = $0 },
+            notificationPermissionManager: permissionManager
+        )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
 
@@ -253,10 +264,10 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             windows: [FavoriteSettings.NotificationsWindow(preset: .morning, daysOfWeek: [.monday])]
         )
 
-        let sut = NotificationSettingsWidgetPresetnationView(state: .init(settings: settings, selectedPreset: nil),
-                                                             notificationPermissionManager: MockNotificationPermissionManager(
-                                                             ))
-                                                             .withFixedSettings([.notificationPresetWindows: false])
+        let sut = NotificationSettingsWidgetPresetnationView(
+            state: .init(settings: settings, selectedPreset: nil),
+            notificationPermissionManager: MockNotificationPermissionManager()
+        ).withFixedSettings([.notificationPresetWindows: false])
 
         XCTAssertThrowsError(try sut.inspect().find(button: "Morning"))
     }

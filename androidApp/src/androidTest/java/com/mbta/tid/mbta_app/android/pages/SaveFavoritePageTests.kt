@@ -35,6 +35,24 @@ class SaveFavoritePageTests {
             GrantPermissionRule.grant(android.Manifest.permission.POST_NOTIFICATIONS)
         else GrantPermissionRule.grant()
 
+    fun assertFavoritesEquals(expected: Favorites, actual: Favorites?) {
+        assertEquals(expected.routeStopDirection.size, actual?.routeStopDirection?.size)
+        expected.routeStopDirection.forEach { (rsd, settings) ->
+            val actualSettings = actual?.routeStopDirection?.get(rsd)
+            assertEquals(settings.notifications.enabled, actualSettings?.notifications?.enabled)
+            assertEquals(
+                settings.notifications.windows.size,
+                actualSettings?.notifications?.windows?.size,
+            )
+            settings.notifications.windows.forEachIndexed { index, window ->
+                val actualWindow = actualSettings?.notifications?.windows?.get(index)
+                assertEquals(window.startTime, actualWindow?.startTime)
+                assertEquals(window.endTime, actualWindow?.endTime)
+                assertEquals(window.daysOfWeek, actualWindow?.daysOfWeek)
+            }
+        }
+    }
+
     @Test
     fun testCloses() {
         var backCalled = false
@@ -190,7 +208,7 @@ class SaveFavoritePageTests {
         composeTestRule.onNodeWithText("Get disruption notifications").performClick()
         composeTestRule.onNodeWithText("Save").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(
+        assertFavoritesEquals(
             buildFavorites {
                 routeStopDirection(route.id, stop.id, 0) {
                     notifications {

@@ -313,10 +313,6 @@ final class SaveFavoritesFlowTest: XCTestCase {
         let onPushNavExp = XCTestExpectation(description: "Navigation pushed")
         var pushedNav: SheetNavigationStackEntry?
 
-        let route = ObjectCollectionBuilder().route { route in
-            route.type = RouteType.bus
-        }
-
         let sut = SaveFavoritesFlow(
             lineOrRoute: line,
             stop: stop,
