@@ -382,6 +382,8 @@
     <string name="star_route_hint">fixar rota no topo da lista</string>
     <string name="start">Início</string>
     <string name="start_of_service">início do serviço</string>
+    <string name="start_to_end_of_service">início do serviço</string>
+    <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">A partir de amanhã até novo aviso</string>
     <string name="station_closed">Estação fechada</string>
     <string name="station_closed_sentence_case">Estação fechada</string>
@@ -499,4 +501,5 @@
     <string name="weekends">Fins de semana</string>
     <string name="westbound">Sentido oeste</string>
     <string name="x_and_y">%1$s e %2$s</string>
+    <string name="when_do_you_want_notifications">Receba notificações sobre interrupções no serviço</string>
 </resources>
