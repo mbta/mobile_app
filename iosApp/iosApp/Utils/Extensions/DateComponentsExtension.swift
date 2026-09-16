@@ -5,6 +5,8 @@
 //  Created by Kayla Brady on 9/16/26.
 //  Copyright © 2026 MBTA. All rights reserved.
 //
+import Foundation
+import Shared
 
 public extension DateComponents {
     var nextDate: Date {

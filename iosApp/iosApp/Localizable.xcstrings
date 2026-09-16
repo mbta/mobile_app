@@ -22963,7 +22963,7 @@
       }
     },
     "start of service" : {
-      "comment" : "Description for the all-day notification preset\nUsed when an alert begins at the start of a service day",
+      "comment" : "Used when an alert begins at the start of a service day",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -23008,6 +23008,9 @@
           }
         }
       }
+    },
+    "start to end of service" : {
+      "comment" : "Description for the all-day notification preset"
     },
     "Starting tomorrow until further notice" : {
       "comment" : "Date range for a recurring alert which hasn’t started yet and has an unknown end date; may be shown next to “Daily” or a list of weekdays",

@@ -30,7 +30,7 @@ struct PresetWindowSelector: View {
                         let description = switch preset {
                         case .allDay:
                             NSLocalizedString(
-                                "start of service",
+                                "start to end of service",
                                 comment: "Description for the all-day notification preset"
                             )
                         default:
