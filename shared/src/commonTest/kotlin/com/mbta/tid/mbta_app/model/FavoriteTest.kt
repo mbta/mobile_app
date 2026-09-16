@@ -27,6 +27,25 @@ class FavoriteTest {
         assertEquals(expected.daysOfWeek, actual.daysOfWeek)
     }
 
+    fun assertFavoritesEquals(expected: Favorites, actual: Favorites) {
+        assertEquals(expected.routeStopDirection.size, actual.routeStopDirection.size)
+        expected.routeStopDirection.forEach { (rsd, expectedSettings) ->
+            val actualSettings = actual.routeStopDirection[rsd]
+            assertEquals(
+                expectedSettings.notifications.enabled,
+                actualSettings?.notifications?.enabled,
+            )
+            assertEquals(
+                expectedSettings.notifications.windows.size,
+                actualSettings?.notifications?.windows?.size,
+            )
+            expectedSettings.notifications.windows.forEachIndexed { index, expectedWindow ->
+                val actualWindow = actualSettings?.notifications?.windows?.get(index)
+                assertWindowEquals(expectedWindow, actualWindow!!)
+            }
+        }
+    }
+
     @Test
     fun `parses pre-notifications format`() {
         val oldFavorites = buildJsonObject {
@@ -85,7 +104,6 @@ class FavoriteTest {
                             put("enabled", true)
                             putJsonArray("windows") {
                                 addJsonObject {
-                                    put("id", windows.first().id)
                                     put("startTime", "08:00")
                                     put("endTime", "09:00")
                                     putJsonArray("daysOfWeek") {
@@ -95,7 +113,6 @@ class FavoriteTest {
                                     }
                                 }
                                 addJsonObject {
-                                    put("id", windows.last().id)
                                     put("startTime", "10:00")
                                     put("endTime", "13:00")
                                     putJsonArray("daysOfWeek") { add("SATURDAY") }
@@ -115,7 +132,7 @@ class FavoriteTest {
             }
         }
         assertEquals(serialized, json.encodeToJsonElement(favorites))
-        assertEquals(favorites, json.decodeFromJsonElement(serialized))
+        assertFavoritesEquals(favorites, json.decodeFromJsonElement(serialized))
     }
 
     @Test
