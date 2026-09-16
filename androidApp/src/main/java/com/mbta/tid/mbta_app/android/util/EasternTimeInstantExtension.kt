@@ -9,6 +9,10 @@ private val easternTime by lazy { TimeZone.getTimeZone("America/New_York") }
 
 private fun DateFormat.inEasternTime() = this.apply { timeZone = easternTime }
 
+private val formatHour by lazy {
+    DateFormat.getInstanceForSkeleton(DateFormat.HOUR).inEasternTime()
+}
+
 private val formatHourMinute by lazy {
     DateFormat.getInstanceForSkeleton(DateFormat.HOUR_MINUTE).inEasternTime()
 }
@@ -45,6 +49,9 @@ private fun EasternTimeInstant.formatWith(format: DateFormat): String {
     calendar.timeZone = easternTime
     return format.format(calendar)
 }
+
+/** Formats the time component in the form of "10 AM" */
+fun EasternTimeInstant.formattedHour(): String = this.formatWith(formatHour)
 
 /** Formats the time component in the form of "10:00 AM" */
 fun EasternTimeInstant.formattedTime(): String = this.formatWith(formatHourMinute)

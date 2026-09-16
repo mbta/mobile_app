@@ -137,11 +137,3 @@ private struct PresetButton: View {
         .frame(height: 24)
     }
 }
-
-private extension DateComponents {
-    func formatHour() -> String? {
-        guard let date = Calendar.current.date(from: self) else { return nil }
-
-        return date.formatted(.dateTime.hour(.defaultDigits(amPM: .abbreviated)))
-    }
-}

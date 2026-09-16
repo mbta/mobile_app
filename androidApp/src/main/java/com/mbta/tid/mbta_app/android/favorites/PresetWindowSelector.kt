@@ -30,10 +30,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.formattedHour
 import com.mbta.tid.mbta_app.model.Preset
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.format
-import kotlinx.datetime.format.Padding
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
 @Composable
 fun PresetWindowSelector(
@@ -60,12 +59,6 @@ fun PresetWindowSelector(
             ) {
                 windows.forEachIndexed { presetIndex, preset ->
                     val isSelected = selectedPreset == preset
-                    val amMarker = stringResource(R.string.am_marker)
-                    val pmMarker = stringResource(R.string.pm_marker)
-                    val timeFormat = LocalTime.Format {
-                        amPmHour(Padding.NONE)
-                        amPmMarker(amMarker, pmMarker)
-                    }
 
                     val description =
                         if (preset == Preset.AllDay) {
@@ -73,8 +66,16 @@ fun PresetWindowSelector(
                         } else {
                             stringResource(
                                 R.string.start_to_end_time,
-                                preset.startTime.format(timeFormat),
-                                preset.endTime.format(timeFormat),
+                                EasternTimeInstant(
+                                        EasternTimeInstant.now().local.date,
+                                        preset.startTime,
+                                    )
+                                    .formattedHour(),
+                                EasternTimeInstant(
+                                        EasternTimeInstant.now().local.date,
+                                        preset.endTime,
+                                    )
+                                    .formattedHour(),
                             )
                         }
                     PresetButton(
@@ -135,7 +136,7 @@ fun PresetButton(
     centerContent: Boolean,
     modifier: Modifier,
 ) {
-    val contentModifier = Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 10.dp)
+    val contentModifier = Modifier.fillMaxSize().padding(horizontal = 8.dp, vertical = 10.dp)
 
     val trailingContent: @Composable () -> Unit = {
         Row(modifier = Modifier.height(24.dp), verticalAlignment = Alignment.CenterVertically) {
