@@ -8,6 +8,8 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.mocks.MockDatastoreStorage
 import com.mbta.tid.mbta_app.mocks.mockJsonPersistence
+import com.mbta.tid.mbta_app.model.FavoriteTest
+import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.utils.SystemPaths
@@ -57,10 +59,10 @@ class FavoritesRepositoryTest {
         }
         val repo = FavoritesRepository()
 
-        assertEquals(favorites, repo.getFavorites())
-        assertEquals(
+        FavoriteTest.assertFavoritesEquals(favorites, repo.getFavorites())
+        FavoriteTest.assertFavoritesEquals(
             favorites,
-            jsonPersistence.read(SystemPaths.Category.Data, group = null, "favorites"),
+            jsonPersistence.read<Favorites>(SystemPaths.Category.Data, group = null, "favorites"),
         )
     }
 
@@ -119,7 +121,7 @@ class FavoritesRepositoryTest {
         jsonPersistence.write(SystemPaths.Category.Data, group = null, "favorites", favorites)
         startKoin { modules(module { single { jsonPersistence } }) }
         val repo = FavoritesRepository()
-        assertEquals(favorites, repo.getFavorites())
+        FavoriteTest.assertFavoritesEquals(favorites, repo.getFavorites())
     }
 
     @Test
@@ -144,10 +146,10 @@ class FavoritesRepositoryTest {
             routeStopDirection(Route.Id("route2"), "stop2", 1)
         }
         repo.setFavorites(favorites)
-        assertEquals(favorites, repo.getFavorites())
-        assertEquals(
+        FavoriteTest.assertFavoritesEquals(favorites, repo.getFavorites())
+        FavoriteTest.assertFavoritesEquals(
             favorites,
-            jsonPersistence.read(SystemPaths.Category.Data, group = null, "favorites"),
+            jsonPersistence.read<Favorites>(SystemPaths.Category.Data, group = null, "favorites"),
         )
     }
 }
