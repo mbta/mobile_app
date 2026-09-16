@@ -5,6 +5,7 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.buildFavorites
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.fail
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
@@ -21,27 +22,33 @@ private typealias Window = FavoriteSettings.Notifications.Window
 
 class FavoriteTest {
 
-    fun assertWindowEquals(expected: Window, actual: Window) {
-        assertEquals(expected.startTime, actual.startTime)
-        assertEquals(expected.endTime, actual.endTime)
-        assertEquals(expected.daysOfWeek, actual.daysOfWeek)
-    }
+    companion object {
+        fun assertWindowEquals(expected: Window, actual: Window?) {
+            if (actual == null) fail("Actual window is null, expected: $expected")
+            assertEquals(expected.startTime, actual.startTime)
+            assertEquals(expected.endTime, actual.endTime)
+            assertEquals(expected.daysOfWeek, actual.daysOfWeek)
+        }
 
-    fun assertFavoritesEquals(expected: Favorites, actual: Favorites) {
-        assertEquals(expected.routeStopDirection.size, actual.routeStopDirection.size)
-        expected.routeStopDirection.forEach { (rsd, expectedSettings) ->
-            val actualSettings = actual.routeStopDirection[rsd]
-            assertEquals(
-                expectedSettings.notifications.enabled,
-                actualSettings?.notifications?.enabled,
-            )
-            assertEquals(
-                expectedSettings.notifications.windows.size,
-                actualSettings?.notifications?.windows?.size,
-            )
-            expectedSettings.notifications.windows.forEachIndexed { index, expectedWindow ->
-                val actualWindow = actualSettings?.notifications?.windows?.get(index)
-                assertWindowEquals(expectedWindow, actualWindow!!)
+        fun assertWindowsEquals(expected: List<Window>, actual: List<Window>?) {
+            actual?.zip(expected)?.forEach { (expectedWindow, actualWindow) ->
+                assertWindowEquals(expectedWindow, actualWindow)
+            } ?: fail("Actual windows list is null, expected: $expected")
+        }
+
+        fun assertFavoritesEquals(expected: Favorites, actual: Favorites?) {
+            if (actual == null) fail("Actual favorites is null, expected: $expected")
+            assertEquals(expected.routeStopDirection.size, actual.routeStopDirection.size)
+            expected.routeStopDirection.forEach { (rsd, expectedSettings) ->
+                val actualSettings = actual.routeStopDirection[rsd]
+                assertEquals(
+                    expectedSettings.notifications.enabled,
+                    actualSettings?.notifications?.enabled,
+                )
+                assertWindowsEquals(
+                    expectedSettings.notifications.windows,
+                    actualSettings?.notifications?.windows,
+                )
             }
         }
     }
