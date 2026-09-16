@@ -11,6 +11,7 @@ import kotlinx.datetime.LocalTime
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
@@ -74,17 +75,16 @@ constructor(val notifications: Notifications = Notifications.disabled) {
         @Serializable
         public data class Window
         private constructor(
-            val id: String,
+            @Transient val id: String = getId(),
             val startTime: LocalTime,
             val endTime: LocalTime,
             val daysOfWeek: Set<DayOfWeek>,
         ) {
-            @OptIn(ExperimentalUuidApi::class)
             public constructor(
                 startTime: LocalTime,
                 endTime: LocalTime,
                 daysOfWeek: Set<DayOfWeek>,
-            ) : this(Uuid.random().toString(), startTime, endTime, daysOfWeek)
+            ) : this(getId(), startTime, endTime, daysOfWeek)
 
             public constructor(
                 preset: Preset,
@@ -111,6 +111,9 @@ constructor(val notifications: Notifications = Notifications.disabled) {
             }
 
             public companion object {
+                @OptIn(ExperimentalUuidApi::class)
+                private fun getId(): String = Uuid.random().toString()
+
                 public val weekdays: Set<DayOfWeek> =
                     setOf(
                         DayOfWeek.MONDAY,
