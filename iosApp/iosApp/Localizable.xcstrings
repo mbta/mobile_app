@@ -23010,7 +23010,51 @@
       }
     },
     "start to end of service" : {
-      "comment" : "Description for the all-day notification preset"
+      "comment" : "Description for the all-day notification preset",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "inicio del servicio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "début du service"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kòmansman sèvis"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "início do serviço"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bắt đầu dịch vụ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务开始"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服務開始"
+          }
+        }
+      }
     },
     "Starting tomorrow until further notice" : {
       "comment" : "Date range for a recurring alert which hasn’t started yet and has an unknown end date; may be shown next to “Daily” or a list of weekdays",
