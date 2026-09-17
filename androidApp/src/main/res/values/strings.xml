@@ -382,6 +382,8 @@
     <string name="star_route_hint">pin route to the top of the list</string>
     <string name="start">Start</string>
     <string name="start_of_service">start of service</string>
+    <string name="start_to_end_of_service">start to end of service</string>
+    <string name="start_to_end_time">%1$s - %2$s</string>
     <string name="starting_tomorrow_until_further_notice">Starting tomorrow until further notice</string>
     <string name="station_closed">Station Closed</string>
     <string name="station_closed_sentence_case">Station closed</string>
@@ -499,4 +501,5 @@
     <string name="weekends">Weekends</string>
     <string name="westbound">Westbound</string>
     <string name="x_and_y">%1$s and %2$s</string>
+    <string name="when_do_you_want_notifications">When do you want notifications?</string>
 </resources>

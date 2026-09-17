@@ -6,7 +6,6 @@ import android.os.Build
 import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -165,59 +164,79 @@ fun NotificationSettingsWidget(
         }
         AnimatedVisibility(settings.enabled && !permissionDenied) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                if (presetWindowsEnabled) {
-                    PresetWindowSelector(
-                        presetRows = presetOptions,
-                        selectedPreset = notificationSettingsState.selectedPreset,
-                        onSelect = { preset ->
-                            viewModel.setPreset(preset)
-                        },
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
+                ) {
+                    Text(
+                        stringResource(R.string.when_do_you_want_notifications),
+                        color = colorResource(R.color.deemphasized),
                     )
                 }
 
-                for (window in settings.windows) {
-                    WindowWidget(
-                        window,
-                        setWindow = { newWindow ->
-                            val windows = settings.windows.toMutableList()
-                            val index = windows.indexOf(window)
-                            if (index != -1) windows[index] = newWindow
-                            viewModel.setCustomWindows(windows)
-                        },
-                        deleteWindow =
-                            {
-                                    viewModel.setCustomWindows(settings.windows - window)
-                                }
-                                .takeIf { settings.windows.size > 1 },
-                    )
-                }
-                Surface(
-                    onClick = {
-                        viewModel.addPlaceholderWindow()
-                    },
-                    Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                    color = colorResource(R.color.fill3),
-                    border = BorderStroke(1.5.dp, colorResource(R.color.halo)),
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier =
+                        Modifier.haloContainer(
+                                borderWidth = 1.dp,
+                                outlineColor = Color.Transparent,
+                                backgroundColor = colorResource(R.color.fill1),
+                            )
+                            .padding(4.dp),
                 ) {
-                    Row(
-                        Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
+                    if (presetWindowsEnabled) {
+
+                        PresetWindowSelector(
+                            presetRows = presetOptions,
+                            selectedPreset = notificationSettingsState.selectedPreset,
+                            onSelect = { preset ->
+                                viewModel.setPreset(preset)
+                            },
+                        )
+                    }
+
+                    for (window in settings.windows) {
+                        WindowWidget(
+                            window,
+                            setWindow = { newWindow ->
+                                val windows = settings.windows.toMutableList()
+                                val index = windows.indexOf(window)
+                                if (index != -1) windows[index] = newWindow
+                                viewModel.setCustomWindows(windows)
+                            },
+                            deleteWindow =
+                                {
+                                        viewModel.setCustomWindows(settings.windows - window)
+                                    }
+                                    .takeIf { settings.windows.size > 1 },
+                        )
+                    }
+                    Surface(
+                        onClick = {
+                            viewModel.addPlaceholderWindow()
+                        },
+                        Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp),
                     ) {
-                        Icon(
-                            painterResource(R.drawable.plus),
-                            null,
-                            Modifier.background(
-                                colorResource(R.color.text).copy(alpha = 0.6f),
-                                CircleShape,
-                            ),
-                            tint = colorResource(R.color.fill3),
-                        )
-                        Text(
-                            stringResource(R.string.add_another_time_period),
-                            color = colorResource(R.color.text).copy(alpha = 0.6f),
-                        )
+                        Row(
+                            Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.plus),
+                                null,
+                                Modifier.background(
+                                    colorResource(R.color.text).copy(alpha = 0.6f),
+                                    CircleShape,
+                                ),
+                                tint = colorResource(R.color.fill3),
+                            )
+                            Text(
+                                stringResource(R.string.add_another_time_period),
+                                color = colorResource(R.color.text).copy(alpha = 0.6f),
+                            )
+                        }
                     }
                 }
             }
@@ -232,7 +251,11 @@ private fun WindowWidget(
     deleteWindow: (() -> Unit)?,
 ) {
     Row(
-        Modifier.haloContainer(1.dp, backgroundColor = colorResource(R.color.halo))
+        Modifier.haloContainer(
+                1.dp,
+                backgroundColor = colorResource(R.color.halo),
+                outlineColor = Color.Transparent,
+            )
             .height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically,
     ) {
