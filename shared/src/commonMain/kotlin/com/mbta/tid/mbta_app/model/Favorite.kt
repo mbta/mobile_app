@@ -210,27 +210,25 @@ constructor(val notifications: Notifications = Notifications.disabled) {
                 }
 
                 /**
-                 * The earliest possible end time for a given start time - one minute after start.
-                 */
-                public fun minimumEndTime(startTime: LocalTime): LocalTime {
-                    val startHour = startTime.hour
-                    val startMinute = startTime.minute
-                    if (startHour == 23 && startMinute == 59) {
-                        return LocalTime(1, 0)
-                    }
-                    if (startMinute < 59) {
-                        return LocalTime(hour = startHour, minute = startMinute + 1, second = 0)
-                    }
-                    return LocalTime(hour = startHour + 1, minute = 0, second = 0)
-                }
-
-                /**
                  * Returns a safe end time for a given start time and end time. If the given end
-                 * time is before the start time and after the 3am end of service, it's set to 3am
+                 * time is before the start time and after the 3am end of service, it's set to the
+                 * next 15 minute increment after the start time.
                  */
-                public fun safeEndTime(startTime: LocalTime, endTime: LocalTime): LocalTime =
+                @DefaultArgumentInterop.Enabled
+                public fun safeEndTime(
+                    startTime: LocalTime,
+                    endTime: LocalTime,
+                    roundUp: Boolean = false,
+                ): LocalTime =
                     if (endTime > startTime || endTime <= serviceBoundary) endTime
-                    else serviceBoundary
+                    else if (roundUp) serviceBoundary else nextQuarterHour(startTime)
+
+                /** Returns the next 15 minute increment strictly after the given time */
+                private fun nextQuarterHour(time: LocalTime): LocalTime {
+                    val nextMinute = ((time.minute / 15) + 1) * 15
+                    return if (nextMinute == 60) LocalTime(hour = (time.hour + 1) % 24, minute = 0)
+                    else LocalTime(hour = time.hour, minute = nextMinute)
+                }
             }
         }
 

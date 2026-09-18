@@ -165,11 +165,12 @@ struct WindowWidget: View {
             }
             VStack(spacing: 16) {
                 VStack(spacing: 0) {
-                    HStack(spacing: 16) {
+                    HStack(spacing: 8) {
                         TimeInput(
                             label: Text("Select start time"),
                             time: DateComponents.fromLocalTime(window.startTime),
                             type: window.startType,
+                            clampTime: nil,
                             setTime: { time in
                                 let startTime = time.toLocalTime()
                                 setWindow(window.doCopy(
@@ -184,10 +185,15 @@ struct WindowWidget: View {
                             label: Text("Select end time"),
                             time: DateComponents.fromLocalTime(window.endTime),
                             type: window.endType,
-                            setTime: { time in setWindow(window.doCopy(
-                                endTime: FavoriteSettings.NotificationsWindow.companion
-                                    .safeEndTime(startTime: window.startTime, endTime: time.toLocalTime()),
-                            )) },
+                            clampTime: { time, roundUp in
+                                Date.fromLocalTime(FavoriteSettings.NotificationsWindow.companion
+                                    .safeEndTime(
+                                        startTime: window.startTime,
+                                        endTime: time.toLocalTime(),
+                                        roundUp: roundUp
+                                    ))
+                            },
+                            setTime: { time in setWindow(window.doCopy(endTime: time.toLocalTime())) },
                         )
                     }
                     HStack(spacing: 0) {
@@ -221,6 +227,15 @@ enum TimeIconPosition {
     case after
 }
 
+private func timeNoteText(_ type: FavoriteSettings.NotificationsWindowType) -> Text? {
+    switch onEnum(of: type) {
+    case .nextDay: Text("next day")
+    case .serviceEnd: Text("end of service")
+    case .serviceStart: Text("start of service")
+    default: nil
+    }
+}
+
 struct TimeIcon: View {
     let type: FavoriteSettings.NotificationsWindowType
     let position: TimeIconPosition
@@ -240,6 +255,7 @@ struct TimeIcon: View {
                 .scaledToFit()
                 .frame(width: 24, height: 24)
                 .foregroundStyle(Color.deemphasized)
+                .accessibilityHidden(true)
         }
     }
 }
@@ -248,17 +264,13 @@ struct TimeNote: View {
     let type: FavoriteSettings.NotificationsWindowType
 
     var body: some View {
-        HStack {
-            switch onEnum(of: type) {
-            case .nextDay: Text("next day")
-            case .serviceEnd: Text("end of service")
-            case .serviceStart: Text("start of service")
-            default: EmptyView()
-            }
+        if let text = timeNoteText(type) {
+            text
+                .accessibilityHidden(true)
+                .font(Typography.footnote)
+                .foregroundStyle(Color.deemphasized)
+                .padding(.horizontal, 8)
         }
-        .font(Typography.footnote)
-        .foregroundStyle(Color.deemphasized)
-        .padding(.horizontal, 8)
     }
 }
 
@@ -267,14 +279,22 @@ struct TimeInput: View {
     let label: Text
     let time: DateComponents
     let type: FavoriteSettings.NotificationsWindowType
+    let clampTime: ((Date, Bool) -> Date)?
     let setTime: (DateComponents) -> Void
+
+    @State var roundUp: Bool = true
 
     private var dateBinding: Binding<Date> {
         Binding(
             get: { time.nextDate },
             set: { newDate in
+                var setDate = newDate
                 var components = time
-                components.nextDate = newDate
+                if let clampTime {
+                    setDate = clampTime(newDate, roundUp)
+                    roundUp = if setDate == newDate { true } else { !roundUp }
+                }
+                components.nextDate = setDate
                 setTime(components)
             }
         )
@@ -288,12 +308,16 @@ struct TimeInput: View {
         }
     }
 
+    var timeString: String { dateBinding.wrappedValue.formatted(date: .omitted, time: .shortened) }
+    var timeNote: Text? { timeNoteText(type) }
+
     var body: some View {
         HStack(spacing: 10) {
             TimeIcon(type: type, position: .before)
-            Text(dateBinding.wrappedValue.formatted(date: .omitted, time: .shortened))
+            Text(timeString)
                 .font(Typography.bodySemibold)
                 .foregroundStyle(Color.text)
+                .accessibilityHidden(true)
             TimeIcon(type: type, position: .after)
         }
         .padding(.horizontal, 8)
