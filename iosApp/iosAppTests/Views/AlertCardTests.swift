@@ -544,11 +544,6 @@ final class AlertCardTests: XCTestCase {
         XCTAssertNotNil(
             try sut.inspect().find(imageName: "alert-borderless-shuttle")
         )
-        try print(
-            sut.inspect().findAll(ViewType.Text.self).map { text in
-                try text.string()
-            }
-        )
         XCTAssertNotNil(
             try sut.inspect()
                 .find(

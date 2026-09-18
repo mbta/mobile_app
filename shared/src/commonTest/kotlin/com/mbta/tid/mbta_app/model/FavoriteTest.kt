@@ -190,13 +190,13 @@ class FavoriteTest {
     }
 
     @Test
-    fun `customFromCurrentTime maxes out before midnight`() {
+    fun `customFromCurrentTime wraps into early morning past midnight, up to the 3am service boundary`() {
         val now = EasternTimeInstant(LocalDateTime(2026, 8, 27, 23, 30))
 
         assertWindowEquals(
             Window(
                 LocalTime(23, 0),
-                LocalTime(23, 59),
+                LocalTime(1, 0),
                 setOf(
                     DayOfWeek.MONDAY,
                     DayOfWeek.TUESDAY,
@@ -210,23 +210,7 @@ class FavoriteTest {
     }
 
     @Test
-    fun `minimumEndTime advances by one minute up until end of day`() {
-        assertEquals(
-            LocalTime(8, 1),
-            Window.minimumEndTime(LocalTime(8, 0)),
-        )
-        assertEquals(
-            LocalTime(9, 0),
-            Window.minimumEndTime(LocalTime(8, 59)),
-        )
-        assertEquals(
-            LocalTime(23, 59),
-            Window.minimumEndTime(LocalTime(23, 59)),
-        )
-    }
-
-    @Test
-    fun `safeEndTime keeps valid end times and adjusts invalid ones`() {
+    fun `safeEndTime keeps valid end times and adjusts invalid ones to the next quarter hour`() {
         assertEquals(
             LocalTime(9, 30),
             Window.safeEndTime(
@@ -234,18 +218,48 @@ class FavoriteTest {
                 endTime = LocalTime(9, 30),
             ),
         )
+        // end time is before start time and after the 3am service boundary, so it's invalid and
+        // gets adjusted to the next 15 minute increment after the start time
         assertEquals(
-            LocalTime(9, 30),
+            LocalTime(8, 45),
             Window.safeEndTime(
                 startTime = LocalTime(8, 30),
                 endTime = LocalTime(7, 45),
             ),
         )
         assertEquals(
-            LocalTime(23, 59),
+            LocalTime(23, 45),
             Window.safeEndTime(
                 startTime = LocalTime(23, 30),
                 endTime = LocalTime(23, 0),
+            ),
+        )
+        // end time before the 3am boundary is treated as a valid next-day end time
+        assertEquals(
+            LocalTime(2, 0),
+            Window.safeEndTime(
+                startTime = LocalTime(23, 30),
+                endTime = LocalTime(2, 0),
+            ),
+        )
+    }
+
+    @Test
+    fun `safeEndTime rounds up to service end if boolean is passed`() {
+        assertEquals(
+            LocalTime(3, 0),
+            Window.safeEndTime(
+                startTime = LocalTime(8, 30),
+                endTime = LocalTime(8, 30),
+                roundUp = true,
+            ),
+        )
+        assertEquals(
+            LocalTime(3, 0),
+            Window.safeEndTime(
+                startTime = LocalTime(8, 30),
+                endTime = LocalTime(4, 0),
+                roundUp = true,
             ),
         )
     }
