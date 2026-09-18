@@ -54,6 +54,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
@@ -343,7 +344,12 @@ private fun TimeNote(type: Window.Type) {
             Window.Type.NextDay -> Arrangement.End
             Window.Type.Basic -> Arrangement.Center
         }
-    Row(Modifier.padding(horizontal = 8.dp), horizontalArrangement = arrangement) {
+    // Semantics are cleared because the TimeIcons contain identical content descriptions,
+    // so that it can be colocated with the time text
+    Row(
+        Modifier.clearAndSetSemantics {}.padding(horizontal = 8.dp),
+        horizontalArrangement = arrangement,
+    ) {
         if (type != Window.Type.Basic) {
             Text(
                 stringResource(
@@ -366,21 +372,35 @@ private sealed class TimeIconPosition {
     data object After : TimeIconPosition()
 }
 
+private fun <T> ifPosition(position: TimeIconPosition, matches: TimeIconPosition, then: T): T? =
+    if (position == matches) then else null
+
+private fun <T> ifAfter(position: TimeIconPosition, then: T) =
+    ifPosition(position, TimeIconPosition.After, then)
+
+private fun <T> ifBefore(position: TimeIconPosition, then: T) =
+    ifPosition(position, TimeIconPosition.Before, then)
+
 @Composable
 private fun TimeIcon(type: Window.Type, position: TimeIconPosition) {
     val resource =
         when (type) {
-            Window.Type.ServiceStart ->
-                if (position == TimeIconPosition.Before) R.drawable.service_start_sun else null
+            Window.Type.ServiceStart -> ifBefore(position, R.drawable.service_start_sun)
             Window.Type.ServiceEnd,
-            Window.Type.NextDay ->
-                if (position == TimeIconPosition.After) R.drawable.service_end_moon else null
+            Window.Type.NextDay -> ifAfter(position, R.drawable.service_end_moon)
             else -> null
         }
+    val contentDescription =
+        when (type) {
+            Window.Type.ServiceStart -> ifBefore(position, R.string.service_day_start)
+            Window.Type.ServiceEnd -> ifAfter(position, R.string.service_day_end)
+            Window.Type.NextDay -> ifAfter(position, R.string.next_day)
+            else -> null
+        }?.let { stringResource(it) }
     if (resource != null) {
         Icon(
             painterResource(resource),
-            null,
+            contentDescription,
             modifier = Modifier.size(24.dp),
             tint = colorResource(R.color.deemphasized),
         )
@@ -469,7 +489,7 @@ private fun TimeInput(
                 horizontalArrangement = timeArrangement,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                TimeIcon(type, Position.Before)
+                TimeIcon(type, TimeIconPosition.Before)
                 Text(
                     EasternTimeInstant(
                             EasternTimeInstant.now().local.date,
@@ -478,7 +498,7 @@ private fun TimeInput(
                         .formattedTime(),
                     style = Typography.bodySemibold,
                 )
-                TimeIcon(type, Position.After)
+                TimeIcon(type, TimeIconPosition.After)
             }
         }
     }
