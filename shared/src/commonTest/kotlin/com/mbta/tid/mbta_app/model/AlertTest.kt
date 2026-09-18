@@ -1101,6 +1101,22 @@ class AlertTest {
     }
 
     @Test
+    fun `currentOrNextPeriod finds current or next period`() {
+        val now = EasternTimeInstant.now()
+        val objects = ObjectCollectionBuilder()
+        val upcoming = objects.alert {
+            activePeriod(now - 2.hours, now - 1.hours)
+            activePeriod(now + 1.hours, now + 2.hours)
+        }
+        val active = objects.alert {
+            activePeriod(now - 1.hours, now + 1.hours)
+        }
+
+        assertEquals(upcoming.activePeriod[1], upcoming.currentOrNextPeriod(now))
+        assertEquals(active.activePeriod[0], active.currentOrNextPeriod(now))
+    }
+
+    @Test
     fun `anyInformedEntityMatches route`() {
         val objects = ObjectCollectionBuilder()
 
