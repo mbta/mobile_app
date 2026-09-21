@@ -58,6 +58,7 @@
     <string name="cancel">取消</string>
     <string name="cancellation">取消</string>
     <string name="cancelled">已取消</string>
+    <string name="clockwise">顺时针</string>
     <string name="close_button_label">关闭</string>
     <string name="coast_guard_restriction">海岸警卫队警戒</string>
     <string name="coast_guard_restriction_lowercase">海岸警卫队警戒</string>
@@ -69,6 +70,7 @@
     <string name="connections_to_and">连接到%1$s和%2$s</string>
     <string name="construction">建筑施工</string>
     <string name="construction_lowercase">建筑施工</string>
+    <string name="counterclockwise">逆时针</string>
     <string name="crossing_issue">交通信号灯问题</string>
     <string name="crossing_issue_lowercase">交通信号灯问题</string>
     <string name="crossing_malfunction">交通信号灯故障</string>
@@ -216,6 +218,7 @@
     <string name="location_settings_prompt_keep_off">保持关闭定位服务</string>
     <string name="location_settings_prompt_title">MBTA Go在定位服务开启时效果最佳</string>
     <string name="location_settings_prompt_turn_on">在设置中打开</string>
+    <string name="looping">循环</string>
     <string name="maintenance">维护</string>
     <string name="maintenance_lowercase">维护</string>
     <string name="mechanical_issue">机械问题</string>
@@ -379,7 +382,7 @@
     <string name="star_route_hint">在列表中置顶路线</string>
     <string name="start">开始日期</string>
     <string name="start_of_service">服务开始</string>
-    <string name="start_to_end_of_service">服务开始</string>
+    <string name="start_to_end_of_service">从服务开始到结束</string>
     <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">自明日起，直至另行通知</string>
     <string name="station_closed">车站已关闭</string>
@@ -496,5 +499,5 @@
     <string name="weekends">周末</string>
     <string name="westbound">西行</string>
     <string name="x_and_y">%1$s和%2$s</string>
-    <string name="when_do_you_want_notifications">接收运营变动通知</string>
+    <string name="when_do_you_want_notifications">您希望在什么时候接收通知？</string>
 </resources>

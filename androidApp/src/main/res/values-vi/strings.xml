@@ -58,6 +58,7 @@
     <string name="cancel">Hủy bỏ</string>
     <string name="cancellation">Hủy</string>
     <string name="cancelled">Đã hủy</string>
+    <string name="clockwise">Theo chiều kim đồng hồ</string>
     <string name="close_button_label">Đóng</string>
     <string name="coast_guard_restriction">Hạn chế của cảnh sát biển</string>
     <string name="coast_guard_restriction_lowercase">Hạn chế của Cảnh sát biển</string>
@@ -69,6 +70,7 @@
     <string name="connections_to_and">Kết nối với %1$s và %2$s</string>
     <string name="construction">Thi công</string>
     <string name="construction_lowercase">hạt động thi công</string>
+    <string name="counterclockwise">Ngược chiều kim đồng hồ</string>
     <string name="crossing_issue">Vấn đề tại điểm giao cắt</string>
     <string name="crossing_issue_lowercase">vấn đề tại điểm giao cắt</string>
     <string name="crossing_malfunction">Sự cố giao cắt</string>
@@ -216,6 +218,7 @@
     <string name="location_settings_prompt_keep_off">Tắt dịch vụ định vị</string>
     <string name="location_settings_prompt_title">MBTA Go hoạt động tốt nhất khi bật dịch vụ định vị</string>
     <string name="location_settings_prompt_turn_on">Bật trong Cài đặt</string>
+    <string name="looping">Lặp lại</string>
     <string name="maintenance">Bảo trì</string>
     <string name="maintenance_lowercase">bảo trì</string>
     <string name="mechanical_issue">Vấn đề cơ khí</string>
@@ -379,7 +382,7 @@
     <string name="star_route_hint">ghim đường dẫn ở đầu danh sách</string>
     <string name="start">Bắt đầu</string>
     <string name="start_of_service">bắt đầu dịch vụ</string>
-    <string name="start_to_end_of_service">bắt đầu dịch vụ</string>
+    <string name="start_to_end_of_service">Từ khi bắt đầu đến khi kết thúc dịch vụ</string>
     <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">Bắt đầu từ ngày mai cho đến khi có thông báo mới</string>
     <string name="station_closed">Nhà ga/trạm dừng đóng cửa</string>
@@ -496,5 +499,5 @@
     <string name="weekends">Ngày cuối tuần</string>
     <string name="westbound">Về hướng tây</string>
     <string name="x_and_y">%1$s và %2$s</string>
-    <string name="when_do_you_want_notifications">Nhận thông báo gián đoạn</string>
+    <string name="when_do_you_want_notifications">Bạn muốn nhận thông báo khi nào?</string>
 </resources>
