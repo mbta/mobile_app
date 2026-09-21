@@ -41,6 +41,10 @@ internal class SettingsRepositoryTest : KoinTest {
                 Settings.SearchRouteResults to false,
                 Settings.StationAccessibility to false,
                 Settings.NotificationPresetWindows to false,
+                Settings.ShiftingDisabled to false,
+                Settings.ShiftingIncludeStops to false,
+                Settings.ShiftingScaleWithZoom to false,
+                Settings.ShiftingUseTranslate to false,
             ),
             repo.getSettings(),
         )

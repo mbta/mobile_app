@@ -18,7 +18,8 @@ protocol IMapLayerManager {
         routes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
         state: StopLayerGenerator.State,
         globalResponse: GlobalResponse,
-        colorScheme: ColorScheme
+        colorScheme: ColorScheme,
+        settings: [Settings: KotlinBoolean],
     )
     func resetPuckPosition()
     func updateSourceData(routeData: [RouteSourceData])
@@ -30,13 +31,15 @@ extension iosApp.IMapLayerManager {
         mapFriendlyRouteResponse: MapFriendlyRouteResponse,
         state: StopLayerGenerator.State,
         globalResponse: GlobalResponse,
-        colorScheme: ColorScheme
+        colorScheme: ColorScheme,
+        settings: [Settings: KotlinBoolean],
     ) {
         addLayers(
             routes: mapFriendlyRouteResponse.routesWithSegmentedShapes,
             state: state,
             globalResponse: globalResponse,
-            colorScheme: colorScheme
+            colorScheme: colorScheme,
+            settings: settings,
         )
     }
 }
@@ -130,7 +133,8 @@ class MapLayerManager: iosApp.IMapLayerManager {
         routes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
         state: StopLayerGenerator.State,
         globalResponse: GlobalResponse,
-        colorScheme: ColorScheme
+        colorScheme: ColorScheme,
+        settings: [Settings: KotlinBoolean],
     ) {
         Task {
             let colorPalette = getColorPalette(colorScheme: colorScheme)
@@ -138,12 +142,14 @@ class MapLayerManager: iosApp.IMapLayerManager {
             let routeLayers = try await RouteLayerGenerator.shared.createAllRouteLayers(
                 routesWithShapes: routes,
                 globalResponse: globalResponse,
-                colorPalette: colorPalette
+                colorPalette: colorPalette,
+                settings: settings,
             )
             .map { $0.toMapbox() }
             let stopLayers = try await StopLayerGenerator.shared.createStopLayers(
                 colorPalette: colorPalette,
-                state: state
+                state: state,
+                settings: settings,
             )
             .map { $0.toMapbox() }
 
@@ -245,13 +251,15 @@ extension MapLayerManager: Shared.IMapLayerManager {
         mapFriendlyRouteResponse: MapFriendlyRouteResponse,
         state: StopLayerGenerator.State,
         globalResponse: GlobalResponse,
-        colorPalette: ColorPalette
+        colorPalette: ColorPalette,
+        settings: [Settings: KotlinBoolean],
     ) async throws {
         addLayers(
             mapFriendlyRouteResponse: mapFriendlyRouteResponse,
             state: state,
             globalResponse: globalResponse,
-            colorScheme: colorPalette.colorScheme
+            colorScheme: colorPalette.colorScheme,
+            settings: settings,
         )
     }
 
@@ -260,13 +268,15 @@ extension MapLayerManager: Shared.IMapLayerManager {
         routes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
         state: StopLayerGenerator.State,
         globalResponse: GlobalResponse,
-        colorPalette: ColorPalette
+        colorPalette: ColorPalette,
+        settings: [Settings: KotlinBoolean],
     ) async throws {
         addLayers(
             routes: routes,
             state: state,
             globalResponse: globalResponse,
-            colorScheme: colorPalette.colorScheme
+            colorScheme: colorPalette.colorScheme,
+            settings: settings,
         )
     }
 

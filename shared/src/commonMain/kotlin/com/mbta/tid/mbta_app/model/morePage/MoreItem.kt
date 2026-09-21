@@ -16,7 +16,7 @@ public sealed class MoreItem {
     public data class NavLink(
         val label: SharedString,
         val callback: () -> Unit,
-        val note: String? = null,
+        val note: SharedString? = null,
     ) : MoreItem()
 
     public data class Phone(val label: String, val phoneNumber: String) : MoreItem()
