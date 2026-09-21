@@ -36,7 +36,7 @@ struct StopDetailsFilteredView: View {
 
     @State var inSaveFavoritesFlow = false
 
-    @ObservedObject var fcmTokenContainer = FcmTokenContainer.shared
+    @ObservedObject var fcmInstallationIdContainer = FcmInstallationIdContainer.shared
 
     @EnvironmentObject var settingsCache: SettingsCache
 
@@ -288,7 +288,7 @@ struct StopDetailsFilteredView: View {
                             updatedFavorites: updatedValues,
                             context: .stopDetails,
                             defaultDirection: routeStopDirection.direction,
-                            fcmToken: fcmTokenContainer.token,
+                            fcmInstallationId: fcmInstallationIdContainer.installationId,
                         )
                     },
                     onClose: { inSaveFavoritesFlow = false },

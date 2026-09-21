@@ -16,14 +16,14 @@ import org.koin.core.component.inject
 
 public interface ISubscriptionsRepository {
     public suspend fun updateSubscriptions(
-        fcmToken: String,
+        fcmInstallationId: String,
         subscriptions: List<SubscriptionRequest>,
         locale: String?,
         notificationsEnabled: Boolean,
     )
 
     public suspend fun updateAccessibility(
-        fcmToken: String,
+        fcmInstallationId: String,
         includeAccessibility: Boolean,
         locale: String?,
     )
@@ -34,13 +34,13 @@ internal class SubscriptionsRepository : ISubscriptionsRepository, KoinComponent
     private val mobileBackendClient: MobileBackendClient by inject()
 
     override suspend fun updateSubscriptions(
-        fcmToken: String,
+        fcmInstallationId: String,
         subscriptions: List<SubscriptionRequest>,
         locale: String?,
         notificationsEnabled: Boolean,
     ) {
         val subscriptions = if (notificationsEnabled) subscriptions else emptyList()
-        val requestBody = WriteSubscriptionsRequest(fcmToken, subscriptions, locale)
+        val requestBody = WriteSubscriptionsRequest(fcmInstallationId, subscriptions, locale)
         ApiResult.runCatching {
             mobileBackendClient
                 .post {
@@ -53,11 +53,12 @@ internal class SubscriptionsRepository : ISubscriptionsRepository, KoinComponent
     }
 
     override suspend fun updateAccessibility(
-        fcmToken: String,
+        fcmInstallationId: String,
         includeAccessibility: Boolean,
         locale: String?,
     ) {
-        val requestBody = UpdateAccessibilityRequest(fcmToken, includeAccessibility, locale)
+        val requestBody =
+            UpdateAccessibilityRequest(fcmInstallationId, includeAccessibility, locale)
         ApiResult.runCatching {
             mobileBackendClient
                 .post {
@@ -77,19 +78,19 @@ public class MockSubscriptionsRepository(
     public val onUpdateAccessibility: (String, Boolean, String?) -> Unit = { _, _, _ -> },
 ) : ISubscriptionsRepository {
     override suspend fun updateSubscriptions(
-        fcmToken: String,
+        fcmInstallationId: String,
         subscriptions: List<SubscriptionRequest>,
         locale: String?,
         notificationsEnabled: Boolean,
     ) {
-        onUpdateSubscriptions(fcmToken, subscriptions, locale)
+        onUpdateSubscriptions(fcmInstallationId, subscriptions, locale)
     }
 
     override suspend fun updateAccessibility(
-        fcmToken: String,
+        fcmInstallationId: String,
         includeAccessibility: Boolean,
         locale: String?,
     ) {
-        onUpdateAccessibility(fcmToken, includeAccessibility, locale)
+        onUpdateAccessibility(fcmInstallationId, includeAccessibility, locale)
     }
 }

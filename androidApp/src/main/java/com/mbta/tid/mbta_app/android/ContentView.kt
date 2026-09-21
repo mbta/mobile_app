@@ -42,7 +42,7 @@ import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.subscribeToAlerts
 import com.mbta.tid.mbta_app.android.util.ManageErrorBannerBackgrounding
 import com.mbta.tid.mbta_app.android.util.SettingsCache
-import com.mbta.tid.mbta_app.android.util.fcmToken
+import com.mbta.tid.mbta_app.android.util.fcmInstallationId
 import com.mbta.tid.mbta_app.cache.ScheduleCache
 import com.mbta.tid.mbta_app.model.FeaturePromo
 import com.mbta.tid.mbta_app.model.OnboardingScreen
@@ -108,8 +108,8 @@ fun ContentView(
 
     ManageMapboxConfig()
 
-    LaunchedEffect(fcmToken, notificationsEnabled) {
-        fcmToken?.let {
+    LaunchedEffect(fcmInstallationId, notificationsEnabled) {
+        fcmInstallationId?.let {
             val favorites = favoritesUsecases.getRouteStopDirectionFavorites()
             val subscriptions = SubscriptionRequest.fromFavorites(favorites, includeAccessibility)
             subscriptionsRepository.updateSubscriptions(
@@ -121,7 +121,9 @@ fun ContentView(
         }
     }
 
-    LaunchedEffect(fcmToken, globalResponse) { favoritesViewModel.clearStaleFavorites(fcmToken) }
+    LaunchedEffect(fcmInstallationId, globalResponse) {
+        favoritesViewModel.clearStaleFavorites(fcmInstallationId)
+    }
 
     val locationDataManager = rememberLocationDataManager()
     val mapViewportState = rememberMapViewportState {
