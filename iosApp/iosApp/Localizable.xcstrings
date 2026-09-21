@@ -8651,6 +8651,9 @@
         }
       }
     },
+    "Clockwise" : {
+      "comment" : "A route direction label"
+    },
     "Close" : {
       "comment" : "VoiceOver label for a generic close button",
       "localizations" : {
@@ -9322,6 +9325,9 @@
           }
         }
       }
+    },
+    "Counterclockwise" : {
+      "comment" : "A route direction label"
     },
     "crossing issue" : {
       "comment" : "Alert cause, used in 'Delays due to [cause]'",
@@ -15497,6 +15503,9 @@
           }
         }
       }
+    },
+    "Looping" : {
+      "comment" : "A route direction label"
     },
     "Made with ♥ by the T" : {
       "localizations" : {
