@@ -48,7 +48,7 @@ jobs:
           for: ios-build
           aws-role: ${{ secrets.AWS_ROLE_ARN }}
       - name: Fetch AWS secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3.0.1
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88 # v3.0.2
         with:
           secret-ids: |
             APP_STORE_CONNECT_API_KEY_ID, mobile-app-ios-app-store-connect-api-key-id
@@ -118,7 +118,7 @@ jobs:
           for: ios-deploy
           aws-role: ${{ secrets.AWS_ROLE_ARN }}
       - name: Fetch AWS secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3.0.1
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88 # v3.0.2
         with:
           secret-ids: |
             APP_STORE_CONNECT_API_KEY_ID, mobile-app-ios-app-store-connect-api-key-id
