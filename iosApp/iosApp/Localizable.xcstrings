@@ -8652,7 +8652,51 @@
       }
     },
     "Clockwise" : {
-      "comment" : "A route direction label"
+      "comment" : "A route direction label",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En sentido horario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans le sens des aiguilles d’une montre"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nan sans zegwi mont lan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sentido horário"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Theo chiều kim đồng hồ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "顺时针"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "順時針"
+          }
+        }
+      }
     },
     "Close" : {
       "comment" : "VoiceOver label for a generic close button",
@@ -9327,7 +9371,51 @@
       }
     },
     "Counterclockwise" : {
-      "comment" : "A route direction label"
+      "comment" : "A route direction label",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En sentido antihorario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans le sens antihoraire"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nan sans kontrè zegwi mont lan (goch mont)"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sentido anti-horário"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ngược chiều kim đồng hồ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "逆时针"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "逆時針"
+          }
+        }
+      }
     },
     "crossing issue" : {
       "comment" : "Alert cause, used in 'Delays due to [cause]'",
@@ -15505,7 +15593,51 @@
       }
     },
     "Looping" : {
-      "comment" : "A route direction label"
+      "comment" : "A route direction label",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bucle"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boucle"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boukl"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Em loop"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lặp lại"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "循环"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "循環"
+          }
+        }
+      }
     },
     "Made with ♥ by the T" : {
       "localizations" : {
@@ -28338,43 +28470,43 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recibir notificaciones de interrupciones"
+            "value" : "¿Cuándo quieres recibir notificaciones?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recevoir des notifications en cas de perturbation"
+            "value" : "Quand souhaitez-vous recevoir des notifications ?"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jwenn notifikasyon anka pwoblèm"
+            "value" : "Ki lè ou vle resevwa notifikasyon?"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Receba notificações sobre interrupções no serviço"
+            "value" : "Quando você quer receber notificações?"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nhận thông báo gián đoạn"
+            "value" : "Bạn muốn nhận thông báo khi nào?"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "接收运营变动通知"
+            "value" : "您希望在什么时候接收通知？"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "接收營運變動通知"
+            "value" : "您希望什麼時候接收通知？"
           }
         }
       }
