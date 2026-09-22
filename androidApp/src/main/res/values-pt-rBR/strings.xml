@@ -59,6 +59,7 @@
     <string name="cancel">Cancelar</string>
     <string name="cancellation">Cancelamento</string>
     <string name="cancelled">Cancelado</string>
+    <string name="clockwise">sentido horário</string>
     <string name="close_button_label">Fechar</string>
     <string name="coast_guard_restriction">Restrição da Guarda Costeira</string>
     <string name="coast_guard_restriction_lowercase">Restrição da Guarda Costeira</string>
@@ -70,6 +71,7 @@
     <string name="connections_to_and">Conexões para %1$s e %2$s</string>
     <string name="construction">Obras</string>
     <string name="construction_lowercase">construção</string>
+    <string name="counterclockwise">sentido anti-horário</string>
     <string name="crossing_issue">Problema de travessia</string>
     <string name="crossing_issue_lowercase">problema de travessia</string>
     <string name="crossing_malfunction">Problemas no cruzamento</string>
@@ -219,6 +221,7 @@
     <string name="location_settings_prompt_keep_off">Manter serviços de localização desativados</string>
     <string name="location_settings_prompt_title">O MBTA Go funciona melhor com os Serviços de Localização ativados</string>
     <string name="location_settings_prompt_turn_on">Ativar nas Configurações</string>
+    <string name="looping">Em loop</string>
     <string name="maintenance">Manutenção</string>
     <string name="maintenance_lowercase">manutenção</string>
     <string name="mechanical_issue">Problema mecânico</string>
@@ -382,7 +385,7 @@
     <string name="star_route_hint">fixar rota no topo da lista</string>
     <string name="start">Início</string>
     <string name="start_of_service">início do serviço</string>
-    <string name="start_to_end_of_service">início do serviço</string>
+    <string name="start_to_end_of_service">Do início ao fim do serviço</string>
     <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">A partir de amanhã até novo aviso</string>
     <string name="station_closed">Estação fechada</string>
@@ -501,5 +504,5 @@
     <string name="weekends">Fins de semana</string>
     <string name="westbound">Sentido oeste</string>
     <string name="x_and_y">%1$s e %2$s</string>
-    <string name="when_do_you_want_notifications">Receba notificações sobre interrupções no serviço</string>
+    <string name="when_do_you_want_notifications">Quando você quer receber notificações?</string>
 </resources>

@@ -59,6 +59,7 @@
     <string name="cancel">Cancelar</string>
     <string name="cancellation">Cancelación</string>
     <string name="cancelled">Cancelado</string>
+    <string name="clockwise">En sentido horario</string>
     <string name="close_button_label">Cerrar</string>
     <string name="coast_guard_restriction">Restricción de la Guardia Costera</string>
     <string name="coast_guard_restriction_lowercase">restricción de la Guardia Costera</string>
@@ -70,6 +71,7 @@
     <string name="connections_to_and">Conexiones a %1$s y %2$s</string>
     <string name="construction">Construcción</string>
     <string name="construction_lowercase">construcción</string>
+    <string name="counterclockwise">En sentido antihorario</string>
     <string name="crossing_issue">Problema en el cruce</string>
     <string name="crossing_issue_lowercase">problema en el cruce</string>
     <string name="crossing_malfunction">Fallo en el cruce</string>
@@ -219,6 +221,7 @@
     <string name="location_settings_prompt_keep_off">Mantener servicios de ubicación desactivados</string>
     <string name="location_settings_prompt_title">MBTA Go funciona mejor con los Servicios de Ubicación activados</string>
     <string name="location_settings_prompt_turn_on">Activar en Configuración</string>
+    <string name="looping">Bucle</string>
     <string name="maintenance">Mantenimiento</string>
     <string name="maintenance_lowercase">mantenimiento</string>
     <string name="mechanical_issue">Problema mecánico</string>
@@ -382,7 +385,7 @@
     <string name="star_route_hint">anclar la ruta en la parte superior de la lista</string>
     <string name="start">Inicio</string>
     <string name="start_of_service">inicio del servicio</string>
-    <string name="start_to_end_of_service">inicio del servicio</string>
+    <string name="start_to_end_of_service">Desde el inicio hasta el final del servicio</string>
     <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">A partir de mañana y hasta nuevo aviso</string>
     <string name="station_closed">Estación cerrada</string>
@@ -501,5 +504,5 @@
     <string name="weekends">Fines de semana</string>
     <string name="westbound">En dirección oeste</string>
     <string name="x_and_y">%1$s y %2$s</string>
-    <string name="when_do_you_want_notifications">Recibir notificaciones de interrupciones</string>
+    <string name="when_do_you_want_notifications">¿Cuándo quieres recibir notificaciones?</string>
 </resources>
