@@ -11,6 +11,7 @@ public fun initializeSentry(dsn: String, environment: String) {
         it.environment = environment
         it.beforeBreadcrumb = { breadcrumb -> breadcrumb }
         it.beforeSend = beforeSend::processEvent
+        it.enableUnhandledCppExceptionMonitoring = false
     }
     Sentry.init(configuration)
 }

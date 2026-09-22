@@ -3,7 +3,6 @@ AllCops:
     - '**/*.rb'
     - 'Gemfile'
     - 'fastlane/*file'
-    - 'iosApp/Podfile'
   NewCops: enable
 
 Metrics/BlockLength:
