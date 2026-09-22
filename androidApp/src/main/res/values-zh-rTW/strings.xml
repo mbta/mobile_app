@@ -58,6 +58,7 @@
     <string name="cancel">取消</string>
     <string name="cancellation">取消</string>
     <string name="cancelled">已取消</string>
+    <string name="clockwise">順時針</string>
     <string name="close_button_label">關閉</string>
     <string name="coast_guard_restriction">海岸警衛隊警戒</string>
     <string name="coast_guard_restriction_lowercase">海岸警衛隊警戒</string>
@@ -69,6 +70,7 @@
     <string name="connections_to_and">連接到%1$s和%2$s</string>
     <string name="construction">建築施工</string>
     <string name="construction_lowercase">建築施工</string>
+    <string name="counterclockwise">逆時針</string>
     <string name="crossing_issue">交通信號燈問題</string>
     <string name="crossing_issue_lowercase">交通信號燈問題</string>
     <string name="crossing_malfunction">交通信號燈故障</string>
@@ -216,6 +218,7 @@
     <string name="location_settings_prompt_keep_off">保持關閉定位服務</string>
     <string name="location_settings_prompt_title">MBTA Go在定位服務開啟時效果最佳</string>
     <string name="location_settings_prompt_turn_on">在設定中打開</string>
+    <string name="looping">循環</string>
     <string name="maintenance">維護</string>
     <string name="maintenance_lowercase">維護</string>
     <string name="mechanical_issue">機械問題</string>
