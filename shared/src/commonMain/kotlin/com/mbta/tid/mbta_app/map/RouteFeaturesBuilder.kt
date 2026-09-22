@@ -286,11 +286,26 @@ public object RouteFeaturesBuilder {
                         .flatMap { it.upcomingTrips }
                         .map { it.trip.routePatternId }
                         .toSet()
+                        .ifEmpty {
+                            val allRoutePatterns =
+                                routeCardData
+                                    .flatMap { it.stopData }
+                                    .flatMap { it.data }
+                                    .flatMap { it.routePatterns }
+                                    .toSet()
+                            val bestTypicality =
+                                allRoutePatterns.minOfWithOrNull(nullsLast()) { it.typicality }
+                            allRoutePatterns
+                                .filter { it.typicality == bestTypicality }
+                                .map { it.id }
+                                .toSet()
+                                .ifEmpty { null }
+                        }
                 targetRouteData.map { routeData ->
                     val filteredShapes =
                         routeData.segmentedShapes.filter {
                             it.directionId == filter.directionId &&
-                                targetRoutePatternIds.contains(it.sourceRoutePatternId)
+                                (targetRoutePatternIds?.contains(it.sourceRoutePatternId) ?: true)
                         }
                     MapFriendlyRouteResponse.RouteWithSegmentedShapes(
                         routeData.routeId,
