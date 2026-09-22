@@ -379,7 +379,7 @@
     <string name="star_route_hint">將線路固定到清單頂部</string>
     <string name="start">開始日期</string>
     <string name="start_of_service">服務開始</string>
-    <string name="start_to_end_of_service">服務開始</string>
+    <string name="start_to_end_of_service">從服務開始到結束</string>
     <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">自明日起，直至另行通知</string>
     <string name="station_closed">車站已關閉</string>
@@ -496,5 +496,5 @@
     <string name="weekends">週末</string>
     <string name="westbound">西行</string>
     <string name="x_and_y">%1$s和%2$s</string>
-    <string name="when_do_you_want_notifications">接收營運變動通知</string>
+    <string name="when_do_you_want_notifications">您希望什麼時候接收通知？</string>
 </resources>

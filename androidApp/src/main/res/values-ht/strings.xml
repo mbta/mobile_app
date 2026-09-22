@@ -382,7 +382,7 @@
     <string name="star_route_hint">tache wout la nan tèt lis la</string>
     <string name="start">Kòmanse</string>
     <string name="start_of_service">kòmansman sèvis</string>
-    <string name="start_to_end_of_service">kòmansman sèvis</string>
+    <string name="start_to_end_of_service">Soti nan kòmansman rive nan fen sèvis la</string>
     <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">Apati demen jiskaske nou jwenn plis avi</string>
     <string name="station_closed">Estasyon Fèmen</string>
@@ -501,5 +501,5 @@
     <string name="weekends">Jou wikenn</string>
     <string name="westbound">Pran direksyon lwès</string>
     <string name="x_and_y">%1$s ak %2$s</string>
-    <string name="when_do_you_want_notifications">Jwenn notifikasyon anka pwoblèm</string>
+    <string name="when_do_you_want_notifications">Ki lè ou vle resevwa notifikasyon?</string>
 </resources>
