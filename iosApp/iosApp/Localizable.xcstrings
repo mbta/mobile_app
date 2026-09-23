@@ -57,7 +57,51 @@
     },
     " at %1$@" : {
       "comment" : "Alert summary when there are multiple locations For example \"Service suspended at [Downtown Crossing and Oak Grove]\" or \"Service suspended at [multiple stops]\"",
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " en %1$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " à %1$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " nan %1$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " em %1$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " tại %1$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " 于%1$@到站"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " 在%1$@"
+          }
+        }
+      }
     },
     " daily%@" : {
       "comment" : "Alert summary recurrence every day until the indicated date, e.g. “ daily until Friday”. The leading space must be retained.",
@@ -28712,7 +28756,51 @@
     },
     "will not stop%1$@ %2$@" : {
       "comment" : "Alert effect denoting station bypass, ex “will not stop at [Back Bay and Ruggles] [today]”",
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "no se detendrá en%1$@ %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ne s’arrêtera pas à%1$@ %2$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "p ap rete nan%1$@ %2$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "não vai parar em%1$@ %2$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sẽ không dừng lại ở%1$@ %2$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将不停靠%1$@%2$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將不停靠%1$@%2$@"
+          }
+        }
+      }
     },
     "will terminate at %1$@ %2$@" : {
       "comment" : "Trip specific alert effect denoting suspension downstream, with interpolated stop name, ex: “will terminate at [Porter]“",
