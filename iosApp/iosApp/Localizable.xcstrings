@@ -7612,6 +7612,54 @@
         }
       }
     },
+    "at %1$@" : {
+      "comment" : "Alert summary when there are multiple locations For example “Service suspended at [Downtown Crossing and Oak Grove]“ or “Service suspended at [multiple stops]“",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "en %1$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "à %1$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nan %1$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "em %1$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tại %1$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "于%1$@到站"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在%1$@"
+          }
+        }
+      }
+    },
     "autos impeding service" : {
       "comment" : "Alert cause, used in 'Delays due to [cause]'",
       "localizations" : {
