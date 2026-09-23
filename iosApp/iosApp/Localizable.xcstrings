@@ -7614,7 +7614,51 @@
     },
     "at %1$@" : {
       "comment" : "Alert summary when there are multiple locations For example “Service suspended at [Downtown Crossing and Oak Grove]“ or “Service suspended at [multiple stops]“",
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "y a la(s) %1$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "et à %1$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "epi a %1$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e às %1$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "và lúc %1$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下一趟车将于%1$@到站"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下一趟車將於%1$@到站"
+          }
+        }
+      }
     },
     "autos impeding service" : {
       "comment" : "Alert cause, used in 'Delays due to [cause]'",
@@ -15602,7 +15646,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bucle"
+            "value" : "Vuelta"
           }
         },
         "fr" : {
