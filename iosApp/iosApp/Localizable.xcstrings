@@ -55,6 +55,10 @@
         }
       }
     },
+    " at %1$@" : {
+      "comment" : "Alert summary when there are multiple locations For example \"Service suspended at [Downtown Crossing and Oak Grove]\" or \"Service suspended at [multiple stops]\"",
+      "extractionState" : "manual"
+    },
     " daily%@" : {
       "comment" : "Alert summary recurrence every day until the indicated date, e.g. “ daily until Friday”. The leading space must be retained.",
       "extractionState" : "manual",
@@ -28705,6 +28709,10 @@
           }
         }
       }
+    },
+    "will not stop%1$@ %2$@" : {
+      "comment" : "Alert effect denoting station bypass, ex “will not stop at [Back Bay and Ruggles] [today]”",
+      "extractionState" : "manual"
     },
     "will terminate at %1$@ %2$@" : {
       "comment" : "Trip specific alert effect denoting suspension downstream, with interpolated stop name, ex: “will terminate at [Porter]“",
