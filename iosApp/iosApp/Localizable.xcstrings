@@ -7612,6 +7612,10 @@
         }
       }
     },
+    "at %1$@" : {
+      "comment" : "Alert summary when there are multiple locations For example “Service suspended at [Downtown Crossing and Oak Grove]“ or “Service suspended at [multiple stops]“",
+      "extractionState" : "manual"
+    },
     "autos impeding service" : {
       "comment" : "Alert cause, used in 'Delays due to [cause]'",
       "localizations" : {
