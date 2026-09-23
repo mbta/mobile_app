@@ -251,6 +251,7 @@
     <string name="nearby_transit">Trânsito próximo</string>
     <string name="nearby_transit_link">Próximo</string>
     <string name="new_feature_screen_reader_header_prefix">Novo recurso. %1$s</string>
+    <string name="next_day">no dia seguinte</string>
     <string name="next_stop">Próxima parada</string>
     <string name="next_trip_at">Próxima viagem às &lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="next_trip_at_tomorrow">Próxima viagem às &lt;b&gt;%1$s&lt;/b&gt; amanhã</string>
@@ -351,6 +352,8 @@
     <string name="serves_route_list">atende %1$s</string>
     <string name="service_change">Troca de serviço</string>
     <string name="service_change_sentence_case">Troca de serviço</string>
+    <string name="service_day_start">início do serviço</string>
+    <string name="service_day_end">fim do serviço</string>
     <string name="service_ended">Serviço encerrado</string>
     <string name="service_suspended">Serviço suspenso</string>
     <string name="setting_station_accessibility">Informações de acessibilidade da estação</string>
