@@ -248,6 +248,7 @@
     <string name="nearby_transit">Phương tiện công cộng ở gần</string>
     <string name="nearby_transit_link">Ở gần</string>
     <string name="new_feature_screen_reader_header_prefix">Tính năng mới. %1$s</string>
+    <string name="next_day">ngày hôm sau</string>
     <string name="next_stop">Điểm dừng tiếp theo</string>
     <string name="next_trip_at">Chuyến đi tiếp theo lúc &lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="next_trip_at_tomorrow">Chuyến đi tiếp theo lúc &lt;b&gt;%1$s&lt;/b&gt; ngày mai</string>
@@ -348,6 +349,8 @@
     <string name="serves_route_list">phục vụ %1$s</string>
     <string name="service_change">Thay đổi dịch vụ</string>
     <string name="service_change_sentence_case">Thay đổi dịch vụ</string>
+    <string name="service_day_start">bắt đầu dịch vụ</string>
+    <string name="service_day_end">kết thúc dịch vụ</string>
     <string name="service_ended">Dịch vụ đã kết thúc</string>
     <string name="service_suspended">Dịch vụ bị đình chỉ</string>
     <string name="setting_station_accessibility">Thông tin về khả năng tiếp cận ga</string>
