@@ -599,13 +599,13 @@ struct ContentView: View {
                 )
             }
         }
-        .withLocationStateHandler(locationDataManager) {
+        .withLocationStateHandler(locationDataManager) { _, location in
             guard viewportProvider.viewport == nil else { return }
 
-            let center = ViewportProvider.Defaults.center
+            let defaultCenter = ViewportProvider.Defaults.center
             viewportProvider.initViewport(
-                location: locationDataManager.currentLocation
-                    ?? CLLocation(latitude: center.latitude, longitude: center.longitude)
+                location: location
+                    ?? CLLocation(latitude: defaultCenter.latitude, longitude: defaultCenter.longitude)
             )
         }
     }

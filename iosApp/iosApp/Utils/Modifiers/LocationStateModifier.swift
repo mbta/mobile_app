@@ -12,7 +12,10 @@ import SwiftUI
 
 struct LocationStateModifier: ViewModifier {
     @ObservedObject var locationDataManager: LocationDataManager
-    let action: () -> Void
+    let action: (_ status: CLAuthorizationStatus?, _ location: CLLocation?) -> Void
+
+    var authorizationStatus: CLAuthorizationStatus? { locationDataManager.authorizationStatus }
+    var currentLocation: CLLocation? { locationDataManager.currentLocation }
 
     func body(content: Content) -> some View {
         content
@@ -20,9 +23,9 @@ struct LocationStateModifier: ViewModifier {
             // callback and the first location fix can both land before the `onChange` handlers below
             // have been registered. Running on appear as well means we don't sit waiting forever for
             // a change that already happened.
-            .onAppear { action() }
-            .onChange(of: locationDataManager.authorizationStatus) { _ in action() }
-            .onChange(of: locationDataManager.currentLocation) { _ in action() }
+            .onAppear { action(authorizationStatus, currentLocation) }
+            .onChange(of: locationDataManager.authorizationStatus) { status in action(status, currentLocation) }
+            .onChange(of: locationDataManager.currentLocation) { location in action(authorizationStatus, location) }
             .enableInjection()
     }
 }
@@ -34,7 +37,7 @@ public extension View {
      */
     func withLocationStateHandler(
         _ locationDataManager: LocationDataManager,
-        action: @escaping () -> Void
+        action: @escaping (_ status: CLAuthorizationStatus?, _ location: CLLocation?) -> Void
     ) -> some View {
         modifier(LocationStateModifier(locationDataManager: locationDataManager, action: action))
     }
