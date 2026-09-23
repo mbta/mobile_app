@@ -181,9 +181,8 @@ struct HomeMapView: View {
     @ViewBuilder
     var staticResponsiveMap: some View {
         annotatedMap
-            .withLocationStateHandler(locationDataManager) {
+            .withLocationStateHandler(locationDataManager) { status, _ in
                 guard !hasFollowedCurrentLocation else { return }
-                let status = locationDataManager.authorizationStatus
                 guard status == .authorizedAlways || status == .authorizedWhenInUse,
                       viewportProvider.isDefault() else { return }
                 hasFollowedCurrentLocation = true
