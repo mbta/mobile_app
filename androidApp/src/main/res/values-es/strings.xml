@@ -221,7 +221,7 @@
     <string name="location_settings_prompt_keep_off">Mantener servicios de ubicación desactivados</string>
     <string name="location_settings_prompt_title">MBTA Go funciona mejor con los Servicios de Ubicación activados</string>
     <string name="location_settings_prompt_turn_on">Activar en Configuración</string>
-    <string name="looping">Bucle</string>
+    <string name="looping">Vuelta</string>
     <string name="maintenance">Mantenimiento</string>
     <string name="maintenance_lowercase">mantenimiento</string>
     <string name="mechanical_issue">Problema mecánico</string>
