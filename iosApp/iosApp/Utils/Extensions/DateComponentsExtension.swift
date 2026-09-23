@@ -46,3 +46,15 @@ public extension DateComponents {
         return date.formatted(.dateTime.hour(.defaultDigits(amPM: .abbreviated)))
     }
 }
+
+public extension Date {
+    static func fromLocalTime(_ localTime: Kotlinx_datetimeLocalTime) -> Self {
+        DateComponents.fromLocalTime(localTime).nextDate
+    }
+
+    func toLocalTime() -> Kotlinx_datetimeLocalTime {
+        var components = DateComponents()
+        components.nextDate = self
+        return components.toLocalTime()
+    }
+}

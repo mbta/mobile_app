@@ -141,6 +141,8 @@ struct NotificationSettingsWidgetPresetnationView: View {
                 }
             }
         }
+        .onAppear { UIDatePicker.appearance().minuteInterval = 15 }
+        .onDisappear { UIDatePicker.appearance().minuteInterval = 1 }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .enableInjection()
     }
@@ -161,35 +163,44 @@ struct WindowWidget: View {
                 .foregroundStyle(Color.error)
                 .frame(minWidth: 44)
             }
-            VStack {
-                HStack(spacing: 0) {
-                    TimeInput(
-                        label: Text("Select start time"),
-                        time: DateComponents.fromLocalTime(window.startTime),
-                        setTime: { time in
-                            let startTime = time.toLocalTime()
-                            setWindow(window.doCopy(
-                                startTime: startTime,
-                                endTime: FavoriteSettings.NotificationsWindow.companion
-                                    .safeEndTime(startTime: startTime, endTime: window.endTime),
-                                daysOfWeek: window.daysOfWeek
-                            ))
-                        },
-                        minimumTime: nil
-                    ).frame(maxWidth: .infinity)
-                    Text("to")
-                    TimeInput(
-                        label: Text("Select end time"),
-                        time: DateComponents.fromLocalTime(window.endTime),
-                        setTime: { time in setWindow(window.doCopy(
-                            startTime: window.startTime,
-                            endTime: time.toLocalTime(),
-                            daysOfWeek: window.daysOfWeek
-                        )) },
-                        minimumTime: DateComponents
-                            .fromLocalTime(FavoriteSettings.NotificationsWindow.companion
-                                .minimumEndTime(startTime: window.startTime))
-                    ).frame(maxWidth: .infinity)
+            VStack(spacing: 16) {
+                VStack(spacing: 0) {
+                    HStack(spacing: 8) {
+                        TimeInput(
+                            label: Text("Select start time"),
+                            time: DateComponents.fromLocalTime(window.startTime),
+                            type: window.startType,
+                            clampTime: nil,
+                            setTime: { time in
+                                let startTime = time.toLocalTime()
+                                setWindow(window.doCopy(
+                                    startTime: startTime,
+                                    endTime: FavoriteSettings.NotificationsWindow.companion
+                                        .safeEndTime(startTime: startTime, endTime: window.endTime),
+                                ))
+                            },
+                        )
+                        Text("to")
+                        TimeInput(
+                            label: Text("Select end time"),
+                            time: DateComponents.fromLocalTime(window.endTime),
+                            type: window.endType,
+                            clampTime: { time, roundUp in
+                                Date.fromLocalTime(FavoriteSettings.NotificationsWindow.companion
+                                    .safeEndTime(
+                                        startTime: window.startTime,
+                                        endTime: time.toLocalTime(),
+                                        roundUp: roundUp
+                                    ))
+                            },
+                            setTime: { time in setWindow(window.doCopy(endTime: time.toLocalTime())) },
+                        )
+                    }
+                    HStack(spacing: 0) {
+                        TimeNote(type: window.startType)
+                        Spacer()
+                        TimeNote(type: window.endType)
+                    }.frame(maxWidth: .infinity)
                 }
                 DaysOfWeekInput(
                     daysOfWeek: window.daysOfWeek,
@@ -200,6 +211,7 @@ struct WindowWidget: View {
                     )) }
                 )
             }
+            .padding(12)
             .background(Color.fill3)
             .clipShape(RoundedRectangle(cornerRadius: 7))
             .padding(1)
@@ -210,58 +222,119 @@ struct WindowWidget: View {
     }
 }
 
+enum TimeIconPosition {
+    case before
+    case after
+}
+
+private func timeNoteText(_ type: FavoriteSettings.NotificationsWindowType) -> Text? {
+    switch onEnum(of: type) {
+    case .nextDay: Text("next day")
+    case .serviceEnd: Text("end of service")
+    case .serviceStart: Text("start of service")
+    default: nil
+    }
+}
+
+struct TimeIcon: View {
+    let type: FavoriteSettings.NotificationsWindowType
+    let position: TimeIconPosition
+
+    var icon: ImageResource? {
+        switch onEnum(of: type) {
+        case .serviceEnd, .nextDay: position == .after ? .serviceEndMoon : nil
+        case .serviceStart: position == .before ? .serviceStartSun : nil
+        default: nil
+        }
+    }
+
+    var body: some View {
+        if let icon {
+            Image(icon)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 24, height: 24)
+                .foregroundStyle(Color.deemphasized)
+                .accessibilityHidden(true)
+        }
+    }
+}
+
+struct TimeNote: View {
+    let type: FavoriteSettings.NotificationsWindowType
+
+    var body: some View {
+        if let text = timeNoteText(type) {
+            text
+                .accessibilityHidden(true)
+                .font(Typography.footnote)
+                .foregroundStyle(Color.deemphasized)
+                .padding(.horizontal, 8)
+        }
+    }
+}
+
 struct TimeInput: View {
     @ObserveInjection var inject
     let label: Text
     let time: DateComponents
+    let type: FavoriteSettings.NotificationsWindowType
+    let clampTime: ((Date, Bool) -> Date)?
     let setTime: (DateComponents) -> Void
-    let minimumTime: DateComponents?
 
-    init(
-        label: Text,
-        time: DateComponents,
-        setTime: @escaping (DateComponents) -> Void,
-        minimumTime: DateComponents? = nil
-    ) {
-        self.label = label
-        self.time = time
-        self.setTime = setTime
-        self.minimumTime = minimumTime
-    }
+    @State var roundUp: Bool = true
 
-    var dateRange: ClosedRange<Date> {
-        let calendar = Calendar(identifier: .iso8601)
-        let beforeDayStart = calendar.startOfDay(for: .now).addingTimeInterval(-0.01)
-        let minimum: DateComponents = minimumTime ?? .init(hour: 0, minute: 0, second: 0)
-        let start = calendar.nextDate(
-            after: beforeDayStart,
-            matching: minimum,
-            matchingPolicy: .strict
-        )!
-        let end = calendar.nextDate(
-            after: start,
-            matching: .init(hour: 23, minute: 59, second: 59),
-            matchingPolicy: .strict
-        )!
-        return start ... end
-    }
-
-    var body: some View {
-        let timeBinding = Binding<DateComponents>(
-            get: {
-                time
-            },
-            set: { newValue in
-                setTime(newValue)
+    private var dateBinding: Binding<Date> {
+        Binding(
+            get: { time.nextDate },
+            set: { newDate in
+                var setDate = newDate
+                var components = time
+                if let clampTime {
+                    setDate = clampTime(newDate, roundUp)
+                    roundUp = if setDate == newDate { true } else { !roundUp }
+                }
+                components.nextDate = setDate
+                setTime(components)
             }
         )
+    }
 
-        DatePicker(selection: timeBinding.nextDate, in: dateRange, displayedComponents: [.hourAndMinute]) { label }
-            .labelsHidden()
-            .datePickerStyle(.compact)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .enableInjection()
+    var alignment: Alignment {
+        switch onEnum(of: type) {
+        case .basic: .center
+        case .nextDay, .serviceEnd: .trailing
+        case .serviceStart: .leading
+        }
+    }
+
+    var timeString: String { dateBinding.wrappedValue.formatted(date: .omitted, time: .shortened) }
+    var timeNote: Text? { timeNoteText(type) }
+
+    var body: some View {
+        HStack(spacing: 10) {
+            TimeIcon(type: type, position: .before)
+            Text(timeString)
+                .font(Typography.bodySemibold)
+                .foregroundStyle(Color.text)
+                .accessibilityHidden(true)
+            TimeIcon(type: type, position: .after)
+        }
+        .padding(.horizontal, 8)
+        .frame(maxWidth: .infinity, minHeight: 40, alignment: alignment)
+        .overlay {
+            // This is a hack to get around the default date picker styling,
+            // the time is displayed with an invisible date picker on top of it.
+            DatePicker(selection: dateBinding, displayedComponents: [.hourAndMinute]) { label }
+                .labelsHidden()
+                .datePickerStyle(.compact)
+                .compositingGroup()
+                .scaleEffect(x: 2, y: 1.6)
+                .colorMultiply(.clear)
+        }
+        .background(RoundedRectangle(cornerRadius: 6).fill(Color.fill1))
+        .contentShape(Rectangle())
+        .enableInjection()
     }
 }
 
@@ -318,8 +391,6 @@ struct DaysOfWeekInput: View {
                 }
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
         .enableInjection()
     }
 }
