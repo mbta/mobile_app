@@ -190,7 +190,7 @@ class FavoriteTest {
     }
 
     @Test
-    fun `customFromCurrentTime wraps into early morning past midnight, up to the 3am service boundary`() {
+    fun `customFromCurrentTime wraps into early morning past midnight up to the 3am service boundary`() {
         val now = EasternTimeInstant(LocalDateTime(2026, 8, 27, 23, 30))
 
         assertWindowEquals(
