@@ -73,6 +73,7 @@ import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
+import com.mbta.tid.mbta_app.viewModel.INotificationSettingsViewModel
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.MockToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
@@ -93,6 +94,7 @@ fun SaveFavoritePage(
     goBack: () -> Unit,
     analytics: Analytics = koinInject(),
     favoritesViewModel: IFavoritesViewModel = koinInject(),
+    notificationSettingsViewModel: INotificationSettingsViewModel = koinInject(),
     toastViewModel: IToastViewModel = koinInject(),
 ) {
     val resources = LocalResources.current
@@ -144,6 +146,19 @@ fun SaveFavoritePage(
         }
     }
 
+    val notificationSettingsState by notificationSettingsViewModel.models.collectAsState()
+
+    LaunchedEffect(existingSettings) {
+        notificationSettingsViewModel.loadSavedSettings(existingSettings.notifications)
+    }
+
+    LaunchedEffect(notificationSettingsState) {
+        val notificationSettings = notificationSettingsState.settings
+        if (notificationSettings != null) {
+            updatedSettings = settings.copy(notifications = notificationSettings)
+        }
+    }
+
     val includeAccessibility = SettingsCache.get(Settings.StationAccessibility)
     val notificationsEnabled = SettingsCache.get(Settings.Notifications)
     val currentLocale = stringResource(R.string.current_locale)
@@ -156,6 +171,7 @@ fun SaveFavoritePage(
             fcmToken,
             currentLocale,
         )
+        notificationSettingsViewModel.savedSettings()
     }
 
     val updateToastSingleText = stringResource(R.string.favorites_toast_add)
@@ -244,7 +260,10 @@ fun SaveFavoritePage(
                             containerColor = Color.Transparent,
                             contentColor = colorResource(R.color.key),
                         ),
-                    action = goBack,
+                    action = {
+                        goBack()
+                        notificationSettingsViewModel.loadSavedSettings(null)
+                    },
                 )
                 NavTextButton(stringResource(R.string.save), colors = ButtonDefaults.key()) {
                     updateCloseAndToast(mapOf(selectedRouteStopDirection to settings))
@@ -277,8 +296,7 @@ fun SaveFavoritePage(
                     stopDirections.singleOrNull()?.id == 1 - initialDirection,
             )
             NotificationSettingsWidget(
-                settings = settings.notifications,
-                setSettings = { updatedSettings = settings.copy(notifications = it) },
+                viewModel = notificationSettingsViewModel,
                 notificationPermissionState = notificationPermissionState,
                 hasRequestedPermission = hasRequestedPermission,
             )

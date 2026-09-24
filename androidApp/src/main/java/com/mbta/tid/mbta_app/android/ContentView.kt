@@ -31,6 +31,7 @@ import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffold
 import com.mbta.tid.mbta_app.android.component.sheet.rememberStandardBottomSheetState
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.location.rememberLocationDataManager
+import com.mbta.tid.mbta_app.android.map.ManageMapboxConfig
 import com.mbta.tid.mbta_app.android.pages.MapAndSheetPage
 import com.mbta.tid.mbta_app.android.pages.MorePage
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
@@ -104,6 +105,8 @@ fun ContentView(
     val pendingOnboarding = viewModel.pendingOnboarding.collectAsState().value
     val pendingFeaturePromos = viewModel.pendingFeaturePromos.collectAsState().value
     val currentLocale = stringResource(R.string.current_locale)
+
+    ManageMapboxConfig()
 
     LaunchedEffect(fcmToken, notificationsEnabled) {
         fcmToken?.let {

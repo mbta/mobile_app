@@ -248,5 +248,5 @@ struct StopCardList<EmptyView: View>: View {
             pushNavEntry: { _ in }
         )
     }
-    .withFixedSettings([.favoritesByStop: true, .stationAccessibility: true])
+    .withFixedSettings([.stationAccessibility: true])
 }

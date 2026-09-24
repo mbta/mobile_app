@@ -220,7 +220,7 @@ final class FavoritesViewTests: XCTestCase {
             viewportProvider: .init(),
         )
         let exp = sut.inspection.inspect(after: 0.2) { view in
-            XCTAssertNotNil(try view.find(text: "No stops added"))
+            XCTAssertNotNil(try view.find(text: "Add favorite stops for easy access and disruption notifications"))
             XCTAssertThrowsError(try view.find(button: "Edit"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -387,7 +387,7 @@ final class FavoritesViewTests: XCTestCase {
         )
 
         sut.inspection.inspect(after: 1) { view in
-            try view.find(button: "Add stops").tap()
+            try view.find(button: "Add favorite stops").tap()
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))

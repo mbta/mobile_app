@@ -146,8 +146,8 @@ fun MorePage(
                                                 reloadPendingOnboarding()
                                             }
                                             Settings.DevDebugMode,
-                                            Settings.FavoritesByStop,
                                             Settings.HideMaps,
+                                            Settings.NotificationPresetWindows,
                                             Settings.SearchRouteResults -> {}
                                         }
                                     },

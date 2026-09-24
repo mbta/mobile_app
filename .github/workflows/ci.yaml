@@ -39,15 +39,15 @@ jobs:
     name: Run pre-commit to check formatting and linting
     permissions:
       contents: read
-    uses: ./.github/workflows/pre-commit.yaml
+    uses: $/.github/workflows/pre-commit.yaml
   zizmor:
-    uses: ./.github/workflows/zizmor.yaml
+    uses: $/.github/workflows/zizmor.yaml
   test-android:
     name: Test for Android
     permissions:
       contents: read
     needs: check-changes
-    uses: ./.github/workflows/test-android.yaml
+    uses: $/.github/workflows/test-android.yaml
     with:
       skip-everything: ${{ github.event_name == 'pull_request' && needs.check-changes.outputs.android == 'false' }}
   test-ios:
@@ -55,7 +55,7 @@ jobs:
     permissions:
       contents: read
     needs: check-changes
-    uses: ./.github/workflows/test-ios.yaml
+    uses: $/.github/workflows/test-ios.yaml
     with:
       skip-everything: ${{ github.event_name == 'pull_request' && needs.check-changes.outputs.ios == 'false' }}
     secrets:
@@ -69,7 +69,7 @@ jobs:
       contents: read
       pull-requests: write
     needs: check-changes
-    uses: ./.github/workflows/build-android.yaml
+    uses: $/.github/workflows/build-android.yaml
     with:
       build-type: "Debug"
       deploy: false

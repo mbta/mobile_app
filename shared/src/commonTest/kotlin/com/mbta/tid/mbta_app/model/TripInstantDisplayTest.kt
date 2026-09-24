@@ -1204,4 +1204,50 @@ class TripInstantDisplayTest {
             ),
         )
     }
+
+    @Test
+    fun `departure times are shown instead of arrival times for Ferry and Commuter Rail`() =
+        parametricTest {
+            val now = EasternTimeInstant.now()
+            val lastTrip = anyBoolean()
+            assertEquals(
+                TripInstantDisplay.Time(now + 15.minutes, lastTrip, true),
+                TripInstantDisplay.from(
+                    prediction =
+                        ObjectCollectionBuilder.Single.prediction {
+                            arrivalTime = now + 10.minutes
+                            departureTime = now + 15.minutes
+                        },
+                    schedule = null,
+                    vehicle = null,
+                    routeType = RouteType.COMMUTER_RAIL,
+                    now = now,
+                    context = nonTripDetails(),
+                    lastTrip = lastTrip,
+                ),
+            )
+        }
+
+    @Test
+    fun `arrival times are show instead of departure times for Ferry and Commuter Rail on trip details`() =
+        parametricTest {
+            val now = EasternTimeInstant.now()
+            val lastTrip = anyBoolean()
+            assertEquals(
+                TripInstantDisplay.Time(now + 10.minutes, lastTrip),
+                TripInstantDisplay.from(
+                    prediction =
+                        ObjectCollectionBuilder.Single.prediction {
+                            arrivalTime = now + 10.minutes
+                            departureTime = now + 15.minutes
+                        },
+                    schedule = null,
+                    vehicle = null,
+                    routeType = RouteType.COMMUTER_RAIL,
+                    now = now,
+                    context = TripInstantDisplay.Context.TripDetails,
+                    lastTrip = lastTrip,
+                ),
+            )
+        }
 }

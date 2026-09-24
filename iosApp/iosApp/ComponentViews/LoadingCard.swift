@@ -13,7 +13,7 @@ struct LoadingCard<Message: View>: View {
     @ObserveInjection var inject
     var message: () -> Message?
 
-    init(message: @escaping () -> Message? = { Text("Loading...") }) {
+    init(message: @escaping () -> Message? = { Text("Loading…") }) {
         self.message = message
     }
 

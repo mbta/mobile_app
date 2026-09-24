@@ -821,6 +821,65 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         wait(for: [exp], timeout: 2)
     }
 
+    @MainActor func testLoadsNextTripAgainWhenSelectedDirectionChanges() {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let route = objects.route { route in route.id = "Red" }
+
+        let now = EasternTimeInstant.now()
+        let nextSchedule = objects.schedule { schedule in
+            schedule.departureTime = .init(
+                year: now.local.year + 1,
+                month: .december,
+                day: 8,
+                hour: 8,
+                minute: 0,
+                second: 0
+            )
+        }
+
+        let reloadExp = expectation(description: "Loads next schedule for initial and updated directions")
+        reloadExp.expectedFulfillmentCount = 2
+        var requestedDirections: [Int] = []
+        let directionReloadRepo = MockScheduleRepository(
+            nextScheduleResponse: .init(nextSchedule: nextSchedule),
+            nextScheduleCallback: { _, directionId in
+                requestedDirections.append(Int(directionId))
+                reloadExp.fulfill()
+            }
+        )
+
+        let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [], objects: objects)
+
+        let sut = StopDetailsFilteredDepartureDetails(
+            stopId: stop.id,
+            stopFilter: .init(routeId: route.id, directionId: 0),
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            leaf: leaf,
+            selectedDirection: .init(name: nil, destination: nil, id: 0),
+            favorite: false,
+            now: now,
+            errorBannerVM: MockErrorBannerViewModel(),
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
+            schedulesRepository: directionReloadRepo,
+            navManager: .init(),
+        )
+
+        let directionChangeExp = sut.inspection.inspect(after: 0.5) { view in
+            try view.find(ViewType.VStack.self).callOnChange(newValue: NextScheduleKeys(
+                selectedDirection: .init(name: nil, destination: nil, id: 1),
+                noPredictionStatus: UpcomingFormat.NoTripsFormatNoSchedulesToday()
+            ))
+        }
+
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
+        wait(for: [directionChangeExp, reloadExp], timeout: 2)
+        XCTAssertEqual(requestedDirections, [0, 1])
+    }
+
     func testHidesEarlyMorningCardWhenPredictionExists() {
         let now = EasternTimeInstant(year: 2025, month: .november, day: 17, hour: 3, minute: 30, second: 0)
         let subwayStartTime = EasternTimeInstant(year: 2025, month: .november, day: 17, hour: 9, minute: 44, second: 0)

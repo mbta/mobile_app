@@ -7,6 +7,7 @@ repos:
         stages: [pre-commit]
       - id: end-of-file-fixer
         stages: [pre-commit]
+        exclude: \.xcstrings$
       - id: trailing-whitespace
         stages: [pre-commit]
       - id: pretty-format-json
@@ -28,7 +29,7 @@ repos:
         entry: gradle-task :buildSrc:spotlessCheck :buildSrc:spotlessApply -w
         files: ^buildSrc/.*\.(kt|kts)$
   - repo: https://github.com/nicklockwood/SwiftFormat
-    rev: 0.62.1
+    rev: 0.63.0
     hooks:
       - id: swiftformat
         stages: [pre-commit]

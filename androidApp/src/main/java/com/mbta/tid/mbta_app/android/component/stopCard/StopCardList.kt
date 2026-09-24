@@ -316,12 +316,7 @@ private fun StopCardListPreview() {
                 single<Analytics> { MockAnalytics() }
                 single {
                     SettingsCache(
-                        MockSettingsRepository(
-                            mapOf(
-                                Settings.FavoritesByStop to true,
-                                Settings.StationAccessibility to true,
-                            )
-                        )
+                        MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
                     )
                 }
             }

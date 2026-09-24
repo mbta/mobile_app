@@ -96,8 +96,7 @@ fun RoutePickerView(
         when (path) {
             is RoutePickerPath.Root ->
                 when (context) {
-                    is RouteDetailsContext.Favorites ->
-                        stringResource(R.string.route_picker_header_favorites)
+                    is RouteDetailsContext.Favorites -> stringResource(R.string.add_favorite_stops)
 
                     is RouteDetailsContext.Details -> TODO("Implement details header")
                 }

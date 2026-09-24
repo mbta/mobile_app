@@ -13,17 +13,23 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup
+      - uses: $/.github/actions/setup
         with:
           for: pre-commit
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.12'
+      - name: Capture runner image
+        id: runner-image
+        shell: bash
+        run: |
+          echo "os=${ImageOS:-unknown}" >> "$GITHUB_OUTPUT"
+          echo "version=${ImageVersion:-unknown}" >> "$GITHUB_OUTPUT"
       # pre-commit/action@v3.0.1
       - run: python -m pip install pre-commit
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/pre-commit
-          key: pre-commit|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
+          key: pre-commit|${{ env.pythonLocation }}|${{ steps.runner-image.outputs.os }}|${{ steps.runner-image.outputs.version }}|${{ hashFiles('.pre-commit-config.yaml') }}
       - name: Run pre-commit
         run: SKIP=diff-xcodeproj,cache-xcodeproj pre-commit run --show-diff-on-failure --color=always --all-files

@@ -7,8 +7,11 @@
     <string name="add_another_time_period">Add another time period</string>
     <string name="add_confirmation_button">Add</string>
     <string name="add_favorite_label">add favorite</string>
+    <!-- Used as the header for the route picker when the user is adding a favorite stop, the button
+    to add favorite stops on the empty favorites page, and the voiceover text for the button to
+    add more favorites when other favorites have already been added. -->
+    <string name="add_favorite_stops">Add favorite stops</string>
     <string name="add_favorite_title">Add Favorite</string>
-    <string name="add_stops">Add stops</string>
     <string name="add_to_favorites_title">Add &lt;b&gt;%1$s&lt;/b&gt; at &lt;b&gt;%2$s&lt;/b&gt;</string>
     <string name="add_to_favorites_title_stop_details">Add &lt;b&gt;%1$s&lt;/b&gt; at &lt;b&gt;%2$s&lt;/b&gt; to Favorites</string>
     <string name="additional_service">Additional Service</string>
@@ -21,10 +24,11 @@
     <string name="alert_details">Alert Details</string>
     <string name="alert_elevator_header">Elevator closure (%1$s)</string>
     <string name="alert_ended">Alert is no longer in effect</string>
-    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
-    <string name="alert_summary_location_successive">\u0020from &lt;b>%1$s&lt;/b> to &lt;b>%2$s&lt;/b></string>
-    <string name="alert_summary_timeframe_this_week">\u0020through %1$s</string>
-    <string name="alerts_channel" tools:ignore="MissingTranslation">Service Alerts</string>
+    <string name="alert_summary">&lt;b&gt;%1$s&lt;/b&gt;%2$s%3$s%4$s</string>
+    <string name="alert_summary_location_successive">" from &lt;b&gt;%1$s&lt;/b&gt; to &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="alert_summary_timeframe_this_week">" through %1$s"</string>
+    <string name="alerts_channel" translatable="false">Service Alerts</string>
+    <string name="all_day">All day</string>
     <string name="alternative_path">Alternative path</string>
     <string name="amber_alert">Amber Alert</string>
     <string name="amber_alert_sentence_case">Amber alert</string>
@@ -55,6 +59,7 @@
     <string name="cancel">Cancel</string>
     <string name="cancellation">Cancellation</string>
     <string name="cancelled">Cancelled</string>
+    <string name="clockwise">Clockwise</string>
     <string name="close_button_label">Close</string>
     <string name="coast_guard_restriction">Coast Guard Restriction</string>
     <string name="coast_guard_restriction_lowercase">Coast Guard restriction</string>
@@ -66,6 +71,7 @@
     <string name="connections_to_and">Connections to %1$s and %2$s</string>
     <string name="construction">Construction</string>
     <string name="construction_lowercase">construction</string>
+    <string name="counterclockwise">Counterclockwise</string>
     <string name="crossing_issue">Crossing Issue</string>
     <string name="crossing_issue_lowercase">crossing issue</string>
     <string name="crossing_malfunction">Crossing Malfunction</string>
@@ -77,6 +83,7 @@
     <string name="crowding_some_crowding">Some crowding</string>
     <string name="crowding_unknown">Crowding unknown</string>
     <string name="current_locale">en</string>
+    <string name="custom">Custom</string>
     <string name="daily">Daily</string>
     <string name="delay">Delay</string>
     <string name="delays_due_to_cause">&lt;b&gt;Delays&lt;/b&gt; due to %1$s</string>
@@ -131,6 +138,7 @@
     <string name="error_loading_data">Error loading data</string>
     <string name="escalator_closed_sentence_case">Escalator closed</string>
     <string name="escalator_closure">Escalator Closure</string>
+    <string name="evening">Evening</string>
     <string name="exact_hours_format_abbr">&lt;b&gt;%1$d&lt;/b&gt; hr</string>
     <string name="expand_remaining_stops">expand remaining stops</string>
     <string name="expand_stops">expand stops</string>
@@ -184,7 +192,7 @@
     <string name="group_by_direction" translatable="false">Group by Direction</string>
     <string name="hazmat_condition">Hazmat Condition</string>
     <string name="hazmat_condition_lowercase">hazmat condition</string>
-    <string name="header_at_stop">at &lt;b>%1$s&lt;/b></string>
+    <string name="header_at_stop">at &lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="heading">Heading</string>
     <string name="heavy_ridership">Heavy Ridership</string>
     <string name="heavy_ridership_lowercase">heavy ridership</string>
@@ -204,15 +212,16 @@
     <string name="later_today">later today</string>
     <string name="less_common_stop">Less common stop</string>
     <string name="less_common_stops">&lt;b&gt;%1$d&lt;/b&gt; less common stops</string>
-    <string name="list_join">,\u0020</string>
+    <string name="list_join">", "</string>
     <string name="live">Live</string>
-    <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
+    <string name="loading">Loading…</string>
     <string name="location_not_available_yet">Location not available yet</string>
     <string name="location_services_off">Location Services is off</string>
     <string name="location_settings_prompt_body">You’ll see nearby transit options and get better search results when you turn on Location Services for MBTA Go.</string>
     <string name="location_settings_prompt_keep_off">Keep Location Services Off</string>
     <string name="location_settings_prompt_title">MBTA Go works best with Location Services turned on</string>
     <string name="location_settings_prompt_turn_on">Turn On in Settings</string>
+    <string name="looping">Looping</string>
     <string name="maintenance">Maintenance</string>
     <string name="maintenance_lowercase">maintenance</string>
     <string name="mechanical_issue">Mechanical Issue</string>
@@ -221,7 +230,8 @@
     <string name="mechanical_problem_lowercase">mechanical problem</string>
     <string name="medical_emergency">Medical Emergency</string>
     <string name="medical_emergency_lowercase">medical emergency</string>
-    <string name="minutes_abbr">&lt;b>%1$d&lt;/b> min</string>
+    <string name="midday">Midday</string>
+    <string name="minutes_abbr">&lt;b&gt;%1$d&lt;/b&gt; min</string>
     <string name="modified_service">Modified Service</string>
     <string name="modified_service_sentence_case">Modified service</string>
     <string name="more_link">More</string>
@@ -237,20 +247,21 @@
     <string name="more_section_support_note_accessibility">711 for TTY callers; VRS for ASL callers</string>
     <string name="more_section_support_note_hours">Monday through Friday: 6:30 AM - 8 PM</string>
     <string name="more_title">MBTA Go</string>
+    <string name="morning">Morning</string>
     <string name="nearby_transit">Nearby Transit</string>
     <string name="nearby_transit_link">Nearby</string>
     <string name="new_feature_screen_reader_header_prefix">New feature. %1$s</string>
     <string name="next_stop">Next stop</string>
-    <string name="next_trip_at">Next trip at &lt;b>%1$s&lt;/b></string>
-    <string name="next_trip_at_tomorrow">Next trip at &lt;b>%1$s&lt;/b> tomorrow</string>
-    <string name="next_trip_on">Next trip on &lt;b>%1$s&lt;/b></string>
+    <string name="next_trip_at">Next trip at &lt;b&gt;%1$s&lt;/b&gt;</string>
+    <string name="next_trip_at_tomorrow">Next trip at &lt;b&gt;%1$s&lt;/b&gt; tomorrow</string>
+    <string name="next_trip_on">Next trip on &lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="no_matching_routes">No matching %1$s routes</string>
     <string name="no_predictions">Predictions unavailable</string>
     <string name="no_results_found">No results found 🤔</string>
     <string name="no_service">No Service</string>
     <string name="no_service_sentence_case">No service</string>
     <string name="no_service_today">No service today</string>
-    <string name="no_stops_added">No stops added</string>
+    <string name="no_stops_added">Add favorite stops for easy access and disruption notifications</string>
     <string name="no_stops_nearby">You’re outside the MBTA service area.</string>
     <string name="no_stops_nearby_pan">View transit near Boston</string>
     <string name="no_stops_nearby_search">Search by stop</string>
@@ -300,7 +311,7 @@
     <string name="power_problem_lowercase">power problem</string>
     <string name="predictions_unavailable_details">Service is running, but predicted arrival times aren’t available. Check the map to see where %1$s are right now.</string>
     <string name="predictions_unavailable_details_hide_maps">Service is running, but predicted arrival times aren’t available.</string>
-    <string name="promo_favorites_body">Now save your frequently used stops to &lt;b>one easy place&lt;/b>.</string>
+    <string name="promo_favorites_body">Now save your frequently used stops to &lt;b&gt;one easy place&lt;/b&gt;.</string>
     <string name="promo_favorites_header">Add your favorites</string>
     <string name="promo_notifications_body">We’ll tell you about any problems before you go!</string>
     <string name="promo_notifications_header">Now get disruption notifications</string>
@@ -325,7 +336,6 @@
     <string name="results_failed_to_load">Results failed to load ☹️</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_mode_label">%1$s %2$s</string>
-    <string name="route_picker_header_favorites">Add favorite stops</string>
     <string name="routes">Routes</string>
     <string name="save">Save</string>
     <string name="schedule_change">Schedule Change</string>
@@ -375,6 +385,8 @@
     <string name="star_route_hint">pin route to the top of the list</string>
     <string name="start">Start</string>
     <string name="start_of_service">start of service</string>
+    <string name="start_to_end_of_service">start to end of service</string>
+    <string name="start_to_end_time">%1$s - %2$s</string>
     <string name="starting_tomorrow_until_further_notice">Starting tomorrow until further notice</string>
     <string name="station_closed">Station Closed</string>
     <string name="station_closed_sentence_case">Station closed</string>
@@ -398,8 +410,8 @@
     <string name="strike">Strike</string>
     <string name="strike_lowercase">strike</string>
     <string name="subway">Subway</string>
-    <string name="subway_early_am_detail">The first &lt;b>%1$s&lt;/b> train is scheduled to arrive at &lt;b>%2$s&lt;/b>. We don’t have predictions to show you yet, but they’ll appear here closer to the scheduled time.</string>
-    <string name="subway_early_am_first_time">First &lt;b>%1$s&lt;/b></string>
+    <string name="subway_early_am_detail">The first &lt;b&gt;%1$s&lt;/b&gt; train is scheduled to arrive at &lt;b&gt;%2$s&lt;/b&gt;. We don’t have predictions to show you yet, but they’ll appear here closer to the scheduled time.</string>
+    <string name="subway_early_am_first_time">First &lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="summary">Summary</string>
     <string name="suspension">Suspension</string>
     <string name="switch_issue">Switch Issue</string>
@@ -414,6 +426,7 @@
     <string name="tie_replacement_lowercase">tie replacement</string>
     <string name="time_picker_type_toggle">Time picker type toggle</string>
     <string name="to">To</string>
+    <string name="to_lowercase">to</string>
     <string name="toast_tip_prefix">Tip: %1$s</string>
     <string name="toggle_direction">toggle direction</string>
     <string name="track_change">Track Change</string>
@@ -445,7 +458,6 @@
     <string name="unruly_passenger_lowercase">unruly passenger</string>
     <string name="unstar_route_hint">unpin route from the top of the list</string>
     <string name="until_further_notice">Until further notice</string>
-    <string name="until_tomorrow">\u0020until tomorrow</string>
     <string name="updated_at">Updated: %1$s</string>
     <plurals name="updated_mins_ago">
         <item quantity="one">Updated %1$d minute ago</item>
@@ -492,4 +504,5 @@
     <string name="weekends">Weekends</string>
     <string name="westbound">Westbound</string>
     <string name="x_and_y">%1$s and %2$s</string>
+    <string name="when_do_you_want_notifications">When do you want notifications?</string>
 </resources>

@@ -14,22 +14,23 @@ struct NoFavoritesView: View {
 
     var body: some View {
         VStack(spacing: 32) {
-            Text("No stops added", comment: "Indicates the absence of favorites")
-                .font(Typography.title3)
-                .foregroundColor(.deemphasized)
-            StarIcon(starred: false, color: .deemphasized, size: 56).accessibilityHidden(true)
+            Text(
+                "Add favorite stops for easy access and disruption notifications",
+                comment: "Indicates the absence of favorites"
+            )
+            .multilineTextAlignment(.center)
+            .font(Typography.title3)
+            .foregroundColor(.deemphasized)
+
             if let onAddStops {
                 Button(
                     action: onAddStops,
                     label: {
                         HStack(alignment: .center, spacing: 16) {
-                            Text("Add stops")
+                            Text("Add favorite stops")
                                 .font(Typography.bodySemibold)
                                 .foregroundColor(.fill3)
-                            Image(.plus)
-                                .resizable()
-                                .frame(width: 13, height: 13)
-                                .tint(.fill3)
+                            StarIcon(starred: true, color: .fill3, size: 24).accessibilityHidden(true)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 10)
@@ -39,6 +40,9 @@ struct NoFavoritesView: View {
                 )
             }
         }
+        .padding(.horizontal, 16)
+        .padding(.top, 64)
+        .padding(.bottom, 16)
         .enableInjection()
     }
 }

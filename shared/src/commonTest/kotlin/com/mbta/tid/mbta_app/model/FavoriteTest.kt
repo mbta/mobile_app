@@ -1,10 +1,13 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.json
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.buildFavorites
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.fail
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.addJsonObject
@@ -15,7 +18,41 @@ import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonArray
 import kotlinx.serialization.json.putJsonObject
 
+private typealias Window = FavoriteSettings.Notifications.Window
+
 class FavoriteTest {
+
+    companion object {
+        fun assertWindowEquals(expected: Window, actual: Window?) {
+            if (actual == null) fail("Actual window is null, expected: $expected")
+            assertEquals(expected.startTime, actual.startTime)
+            assertEquals(expected.endTime, actual.endTime)
+            assertEquals(expected.daysOfWeek, actual.daysOfWeek)
+        }
+
+        fun assertWindowsEquals(expected: List<Window>, actual: List<Window>?) {
+            actual?.zip(expected)?.forEach { (expectedWindow, actualWindow) ->
+                assertWindowEquals(expectedWindow, actualWindow)
+            } ?: fail("Actual windows list is null, expected: $expected")
+        }
+
+        fun assertFavoritesEquals(expected: Favorites, actual: Favorites?) {
+            if (actual == null) fail("Actual favorites is null, expected: $expected")
+            assertEquals(expected.routeStopDirection.size, actual.routeStopDirection.size)
+            expected.routeStopDirection.forEach { (rsd, expectedSettings) ->
+                val actualSettings = actual.routeStopDirection[rsd]
+                assertEquals(
+                    expectedSettings.notifications.enabled,
+                    actualSettings?.notifications?.enabled,
+                )
+                assertWindowsEquals(
+                    expectedSettings.notifications.windows,
+                    actualSettings?.notifications?.windows,
+                )
+            }
+        }
+    }
+
     @Test
     fun `parses pre-notifications format`() {
         val oldFavorites = buildJsonObject {
@@ -60,6 +97,7 @@ class FavoriteTest {
             }
             routeStopDirection(Route.Id("route2"), "stop2", 1)
         }
+        val windows = favorites.routeStopDirection.entries.first().value.notifications.windows
         val serialized = buildJsonObject {
             putJsonArray("postNotificationsRSDs") {
                 addJsonObject {
@@ -101,6 +139,114 @@ class FavoriteTest {
             }
         }
         assertEquals(serialized, json.encodeToJsonElement(favorites))
-        assertEquals(favorites, json.decodeFromJsonElement(serialized))
+        assertFavoritesEquals(favorites, json.decodeFromJsonElement(serialized))
+    }
+
+    @Test
+    fun `defaultFromCurrentTime returns the matching preset`() {
+        assertWindowEquals(
+            Window(Preset.Morning, Window.weekdays),
+            Window.defaultFromCurrentTime(EasternTimeInstant(LocalDateTime(2026, 8, 27, 7, 30))),
+        )
+        assertWindowEquals(
+            Window(Preset.Midday, Window.weekdays),
+            Window.defaultFromCurrentTime(EasternTimeInstant(LocalDateTime(2026, 8, 27, 12, 30))),
+        )
+
+        assertWindowEquals(
+            Window(Preset.Evening, Window.weekdays),
+            Window.defaultFromCurrentTime(EasternTimeInstant(LocalDateTime(2026, 8, 27, 18, 30))),
+        )
+
+        assertWindowEquals(
+            Window(Preset.AllDay, Window.weekdays),
+            Window.defaultFromCurrentTime(EasternTimeInstant(LocalDateTime(2026, 8, 27, 21, 30))),
+        )
+
+        assertWindowEquals(
+            Window(Preset.AllDay, Window.weekend),
+            Window.defaultFromCurrentTime(EasternTimeInstant(LocalDateTime(2026, 8, 30, 21, 30))),
+        )
+    }
+
+    @Test
+    fun `customFromCurrentTime rounds to the current hour`() {
+        val now = EasternTimeInstant(LocalDateTime(2026, 8, 27, 9, 30))
+
+        assertWindowEquals(
+            Window(
+                LocalTime(9, 0),
+                LocalTime(10, 0),
+                setOf(
+                    DayOfWeek.MONDAY,
+                    DayOfWeek.TUESDAY,
+                    DayOfWeek.WEDNESDAY,
+                    DayOfWeek.THURSDAY,
+                    DayOfWeek.FRIDAY,
+                ),
+            ),
+            Window.customFromCurrentTime(now),
+        )
+    }
+
+    @Test
+    fun `customFromCurrentTime maxes out before midnight`() {
+        val now = EasternTimeInstant(LocalDateTime(2026, 8, 27, 23, 30))
+
+        assertWindowEquals(
+            Window(
+                LocalTime(23, 0),
+                LocalTime(23, 59),
+                setOf(
+                    DayOfWeek.MONDAY,
+                    DayOfWeek.TUESDAY,
+                    DayOfWeek.WEDNESDAY,
+                    DayOfWeek.THURSDAY,
+                    DayOfWeek.FRIDAY,
+                ),
+            ),
+            Window.customFromCurrentTime(now),
+        )
+    }
+
+    @Test
+    fun `minimumEndTime advances by one minute up until end of day`() {
+        assertEquals(
+            LocalTime(8, 1),
+            Window.minimumEndTime(LocalTime(8, 0)),
+        )
+        assertEquals(
+            LocalTime(9, 0),
+            Window.minimumEndTime(LocalTime(8, 59)),
+        )
+        assertEquals(
+            LocalTime(23, 59),
+            Window.minimumEndTime(LocalTime(23, 59)),
+        )
+    }
+
+    @Test
+    fun `safeEndTime keeps valid end times and adjusts invalid ones`() {
+        assertEquals(
+            LocalTime(9, 30),
+            Window.safeEndTime(
+                startTime = LocalTime(8, 30),
+                endTime = LocalTime(9, 30),
+            ),
+        )
+        assertEquals(
+            LocalTime(9, 30),
+            Window.safeEndTime(
+                startTime = LocalTime(8, 30),
+                endTime = LocalTime(7, 45),
+            ),
+        )
+        assertEquals(
+            LocalTime(23, 59),
+            Window.safeEndTime(
+                startTime = LocalTime(23, 30),
+                endTime = LocalTime(23, 0),
+            ),
+        )
     }
 }

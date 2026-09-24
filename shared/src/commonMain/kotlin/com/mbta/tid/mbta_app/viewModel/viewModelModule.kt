@@ -49,6 +49,7 @@ public fun viewModelModule(): Module = module {
         .bind(IMapViewModel::class)
     single { NearbyViewModel(get(), get(), get(named("coroutineDispatcherDefault"))) }
         .bind(INearbyViewModel::class)
+    single { NotificationSettingsViewModel(get()) }.bind(INotificationSettingsViewModel::class)
     singleOf(::RouteCardDataViewModel).bind(IRouteCardDataViewModel::class)
     singleOf(::SearchRoutesViewModel).bind(ISearchRoutesViewModel::class)
     singleOf(::SearchViewModel).bind(ISearchViewModel::class)

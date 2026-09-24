@@ -48,8 +48,6 @@ The recommendation for KMM projects is to use Android Studio for editing & runni
 #### Gotchas
 
 - Be sure to install the Android SDK Command-line Tools via Android Studio > Settings Android SDK > SDK Tool Tabs > Android SDK Command Line Tools.
-- If you're seeing the error "undefined method 'map' for nil:NilClass" when running pod installs locally, you likely need to run `bundle exec gem uninstall ffi` then `bundle install` to get a cocoapods requirement to be installed properly on M1 Macs.
-- If an Xcode build fails because of CocoaPods, try `bin/fix-cocoapods.sh`.
 - If some piece of BOM generation fails in Xcode, try quitting Xcode and then running `open /Applications/Xcode.app` from a terminal with a good `PATH`.
 - If iOS asset conversion fails in Android Studio, try quitting Android Studio and then running `open /Applications/Android\ Studio.app` from a terminal with a good `PATH`.
 - If some piece of BOM generation still fails in Xcode even when Xcode was launched with a good `PATH`, try running `./gradlew :shared:bomCodegenIos` manually from a terminal with a good `PATH`.
@@ -83,14 +81,12 @@ section of the Inject readme. The build setting configurations are already set u
 - Select `open project` from the top bar menu and select the `iosApp` directory
 - Once you launch the app you should see `💉 InjectionIII connected` in the logs
 
-The shared library dependency is managed using Cocoapods. To install the dependency and build the
+The shared library dependency is managed using Xcode build scripts. To install the dependency and build the
 ios app:
 
-- Run a gradle sync of the project from Android Studio, or you may run
-  `./gradlew :shared:generateDummyFramework` from the root directory
-- `bundle install` to install cocoapods and fastlane
-- `bin/generate-xcodeproj.sh` to generate the Xcode project and then integrate CocoaPods with it
-- Open the project from `/iosApp/iosApp.xcworkspace` in Xcode (not `iosApp.xcodeproj`).
+- Run a gradle sync of the project from Android Studio
+- `bin/generate-xcodeproj.sh` to generate the Xcode project
+- Open the project from `/iosApp/iosApp.xcodeproj` in Xcode.
 - Populate any configuration needed in your the .envrc file. These will be read by a build phase
   script and set as info.plist values so that they can be read by the application.
 
@@ -102,56 +98,18 @@ Make sure you don't commit this change, though, because that will break deployme
 
 To switch between the staging and prod app flavors, go to Build > Select Build Variant and then set the `:androidApp` Active Build Variant.
 
-Populate any configuration needed in your the .envrc file. These will be read by a gradle build task
- set as BuildConfig values so that they can be read by the application.
+Populate any configuration needed in your .envrc file. These will be read by a gradle build task
+and set as BuildConfig values so that they can be read by the application.
 
 ## i18n
 
 The source of truth for our translations is
-[Localizable.xcstrings](iosApp/iosApp/Localizable.xcstrings), any `en` strings added to
-[strings.xml](androidApp/src/main/res/values/strings.xml) which match an equivalent `en` string in
-`Localizable.xcstrings` will automatically have all existing translations imported to Android by the
-[convertIosLocalization](buildSrc/src/main/kotlin/com/mbta/tid/mbta_app/gradle/ConvertIosLocalizationTask.kt)
-gradle task on Android build.
-
-If there are distinct strings that have the same English translation, give them an iOS key of
-`key/<Android ID>` and then the Android resources will be written with that key automatically.
-
-### Temporary machine translations
-
-Any time we add new user facing strings to the app, we add temporary machine translations of that
-text, while we're waiting to get translations back from our vendor. Any machine translations that
-are added must be marked as "Needs review" in XCode so that the translators know to audit them.
-
-To mostly-automatically fill in temporary machine translations, use [`placeholder-translations.py`](bin/placeholder-translations.py),
-which will require you to paste in and copy out of Google Sheets, but will automatically determine
-which new strings need translations, set up Google Sheets `=GOOGLETRANSLATE()` formulas, and then
-save the results directly in `Localizable.xcstrings` marked as “Needs review”.
-
-### Importing from `.xliff`
-
-When we get translations from our vendor, they're generally in `.xliff` format, which we can import
-into XCode by selecting `Product > Import Localizations...`, selecting `iOSApp Project` in the
-dialog, then reviewing the imported strings and hitting `Import`. It's expected that many strings
-will be missing, since we generally only get a partial batch of translations at a time.
-
-### Importing from a spreadsheet
-
-Sometimes, we need to batch import translations from a spreadsheet if the vendor has not provided us
-with `.xliff` files. For this, you can use the [csv-to-xliff.py](bin/csv-to-xliff.py) script to
-convert a CSV file into individual `.xliff`s for each language. The CSV must be formatted with a
-header row of all of the language codes exactly matching the language codes that XCode expects, and
-the first column must be `en`. The strings will also not be imported properly if the `en` string
-doesn't _exactly_ match the strings in `Localizable.xcstrings`, we've had issues before where some
-markdown formatting was removed in the provided spreadsheet, which resulted in XCode not importing
-them as the same string.
-
-To run `csv-to-xliff.py`, you should be able to just run `./bin/csv-to-xliff.py <csv file path>`
-from the directory root. By default, it will put the `.xliff` files in a `translations-YYYY-MM-DD`
-directory in the same directory you ran the script, but you can also add `-o <output directory>` to
-specify a different directory. The generated files should never be commited directly, only imported.
-This isn't a particularly robust or well tested script, so expect issues and be cautious about the
-output.
+[Smartling](https://dashboard.smartling.com/app/projects/d93b839e6/project-dashboard/index.html),
+any `en` strings added to [Localizable.xcstrings](iosApp/iosApp/Localizable.xcstrings) or
+[strings.xml](androidApp/src/main/res/values/strings.xml) will be automatically sent for translation
+after a PR is created and the "Not Ready for Translation" label is removed. Smartling will then
+create another PR based off of your branch containing machine translations for the new strings,
+which you can review and merge back into your branch.
 
 ## Running Tests
 

@@ -34,7 +34,7 @@ struct ActionButton: View {
                     comment: "Screen reader label for a button that swaps between southbound and northbound, eastbound and westbound, inbound and outbound"
                 )
             case .plus:
-                NSLocalizedString("Add stops", comment: "VoiceOver label for add stops button")
+                NSLocalizedString("Add favorite stops", comment: "VoiceOver label for add stops button")
             }
         }
 

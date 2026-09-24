@@ -155,6 +155,7 @@ public class MockScheduleRepository(
     private val response: ApiResult<ScheduleResponse>,
     private val nextResponse: ApiResult<NextScheduleResponse>,
     private val callback: (stopIds: Set<String>) -> Unit = {},
+    private val nextScheduleCallback: (stopId: String, directionId: Int) -> Unit = { _, _ -> },
 ) : ISchedulesRepository {
 
     @DefaultArgumentInterop.Enabled
@@ -162,7 +163,13 @@ public class MockScheduleRepository(
         scheduleResponse: ScheduleResponse = ScheduleResponse(listOf(), mapOf()),
         nextScheduleResponse: NextScheduleResponse = NextScheduleResponse(null),
         callback: (stopIds: Set<String>) -> Unit = {},
-    ) : this(ApiResult.Ok(scheduleResponse), ApiResult.Ok(nextScheduleResponse), callback)
+        nextScheduleCallback: (stopId: String, directionId: Int) -> Unit = { _, _ -> },
+    ) : this(
+        ApiResult.Ok(scheduleResponse),
+        ApiResult.Ok(nextScheduleResponse),
+        callback,
+        nextScheduleCallback,
+    )
 
     public constructor() :
         this(
@@ -189,6 +196,7 @@ public class MockScheduleRepository(
         directionId: Int,
         now: EasternTimeInstant,
     ): ApiResult<NextScheduleResponse> {
+        nextScheduleCallback(stopId, directionId)
         return nextResponse
     }
 }

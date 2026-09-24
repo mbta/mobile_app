@@ -25,6 +25,9 @@ private val localizedDirectionNames: Map<String, Int> =
         "West" to R.string.westbound,
         "Inbound" to R.string.inbound,
         "Outbound" to R.string.outbound,
+        "Clockwise" to R.string.clockwise,
+        "Counterclockwise" to R.string.counterclockwise,
+        "Loop" to R.string.looping,
     )
 
 @StringRes

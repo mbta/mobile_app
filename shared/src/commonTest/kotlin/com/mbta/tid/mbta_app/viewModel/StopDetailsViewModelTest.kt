@@ -82,7 +82,10 @@ class StopDetailsViewModelTest : KoinTest {
     fun testLoadsSchedules() = runTest {
         var schedulesLoaded = false
         val scheduleRepo =
-            MockScheduleRepository(ScheduleResponse(objects)) { _ -> schedulesLoaded = true }
+            MockScheduleRepository(
+                ScheduleResponse(objects),
+                callback = { _ -> schedulesLoaded = true },
+            )
 
         val dispatcher = StandardTestDispatcher(testScheduler)
         setUpKoin(objects, dispatcher) { schedules = scheduleRepo }

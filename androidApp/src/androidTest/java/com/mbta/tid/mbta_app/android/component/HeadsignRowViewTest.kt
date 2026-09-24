@@ -133,6 +133,6 @@ class HeadsignRowViewTest {
     fun showsLoading() {
         init("Headsign", UpcomingFormat.Loading)
 
-        composeTestRule.onNodeWithContentDescription("Loading...").assertCanBeDisplayed()
+        composeTestRule.onNodeWithContentDescription("Loading…").assertCanBeDisplayed()
     }
 }

@@ -1,13 +1,17 @@
 package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
@@ -69,11 +73,162 @@ constructor(val notifications: Notifications = Notifications.disabled) {
     @Serializable
     public data class Notifications(val enabled: Boolean, val windows: List<Window>) {
         @Serializable
-        public data class Window(
+        public data class Window
+        private constructor(
+            @Transient val id: String = getId(),
             val startTime: LocalTime,
             val endTime: LocalTime,
             val daysOfWeek: Set<DayOfWeek>,
-        )
+        ) {
+            public constructor(
+                startTime: LocalTime,
+                endTime: LocalTime,
+                daysOfWeek: Set<DayOfWeek>,
+            ) : this(getId(), startTime, endTime, daysOfWeek)
+
+            public constructor(
+                preset: Preset,
+                daysOfWeek: Set<DayOfWeek>,
+            ) : this(preset.startTime, preset.endTime, daysOfWeek)
+
+            // Copy function to preserve ID without making it modifiable
+            public fun copy(
+                startTime: LocalTime = this.startTime,
+                endTime: LocalTime = this.endTime,
+                daysOfWeek: Set<DayOfWeek> = this.daysOfWeek,
+            ): Window {
+                return Window(this.id, startTime, endTime, daysOfWeek)
+            }
+
+            // Copy function for Objective-C interop
+            @DefaultArgumentInterop.Enabled
+            public fun doCopy(
+                startTime: LocalTime = this.startTime,
+                endTime: LocalTime = this.endTime,
+                daysOfWeek: Set<DayOfWeek> = this.daysOfWeek,
+            ): Window {
+                return Window(this.id, startTime, endTime, daysOfWeek)
+            }
+
+            public companion object {
+                @OptIn(ExperimentalUuidApi::class)
+                private fun getId(): String = Uuid.random().toString()
+
+                public val weekdays: Set<DayOfWeek> =
+                    setOf(
+                        DayOfWeek.MONDAY,
+                        DayOfWeek.TUESDAY,
+                        DayOfWeek.WEDNESDAY,
+                        DayOfWeek.THURSDAY,
+                        DayOfWeek.FRIDAY,
+                    )
+
+                public val weekend: Set<DayOfWeek> = setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
+
+                public fun defaultDaysOfWeek(now: EasternTimeInstant): Set<DayOfWeek> {
+                    return if (weekend.contains(now.local.dayOfWeek)) {
+                        weekend
+                    } else {
+                        weekdays
+                    }
+                }
+
+                public fun defaultFromCurrentTime(now: EasternTimeInstant): Window {
+                    val daysOfWeek = defaultDaysOfWeek(now)
+                    val presets =
+                        listOf(
+                            Window(Preset.Morning, daysOfWeek),
+                            Window(Preset.Midday, daysOfWeek),
+                            Window(Preset.Evening, daysOfWeek),
+                            Window(Preset.AllDay, daysOfWeek),
+                        )
+
+                    return presets.firstOrNull { now.local.time in it.startTime..it.endTime }
+                        ?: Window(Preset.AllDay, daysOfWeek)
+                }
+
+                public fun customFromCurrentTime(now: EasternTimeInstant): Window {
+                    val startTime = LocalTime(now.local.time.hour, 0)
+                    val endTime =
+                        if (startTime.hour == 23) LocalTime(now.local.time.hour, 59)
+                        else
+                            LocalTime(
+                                now.local.time.hour + 1,
+                                0,
+                            )
+                    return Window(
+                        startTime = startTime,
+                        endTime = endTime,
+                        daysOfWeek = defaultDaysOfWeek(now),
+                    )
+                }
+
+                public fun default(
+                    existingWindows: List<Window>,
+                    presetsEnabled: Boolean,
+                    now: EasternTimeInstant,
+                ): Window {
+                    if (presetsEnabled) {
+                        return defaultFromCurrentTime(now)
+                    } else {
+                        if (existingWindows.isEmpty()) {
+                            return Window(
+                                startTime = LocalTime(8, 0, second = 0, nanosecond = 0),
+                                endTime = LocalTime(9, 0, second = 0, nanosecond = 0),
+                                daysOfWeek =
+                                    setOf(
+                                        DayOfWeek.MONDAY,
+                                        DayOfWeek.TUESDAY,
+                                        DayOfWeek.WEDNESDAY,
+                                        DayOfWeek.THURSDAY,
+                                        DayOfWeek.FRIDAY,
+                                    ),
+                            )
+                        }
+                        return Window(
+                            startTime = LocalTime(12, 0),
+                            endTime = LocalTime(13, 0),
+                            setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY),
+                        )
+                    }
+                }
+
+                /**
+                 * The earliest possible end time for a given start time - one minute after start.
+                 */
+                public fun minimumEndTime(startTime: LocalTime): LocalTime {
+                    val startHour = startTime.hour
+                    val startMinute = startTime.minute
+                    if (startHour == 23 && startMinute == 59) {
+                        return startTime
+                    }
+                    if (startMinute < 59) {
+                        return LocalTime(hour = startHour, minute = startMinute + 1, second = 0)
+                    }
+                    return LocalTime(hour = startHour + 1, minute = 0, second = 0)
+                }
+
+                /**
+                 * Returns a safe end time for a given start time and end time. If the given end
+                 * time is before the start time, it pushes the end time out 1 hour.
+                 */
+                public fun safeEndTime(startTime: LocalTime, endTime: LocalTime): LocalTime {
+                    return if (endTime > startTime) {
+                        endTime
+                    } else {
+                        if (startTime.hour < 23) {
+                            LocalTime(
+                                hour = startTime.hour + 1,
+                                minute = startTime.minute,
+                                second = 0,
+                            )
+                        } else {
+                            LocalTime(hour = 23, minute = 59, second = 0)
+                        }
+                    }
+                }
+            }
+        }
 
         public companion object {
             public val disabled: Notifications =

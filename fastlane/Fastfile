@@ -212,7 +212,7 @@ platform :ios do
   desc 'Run tests'
   lane :test do |options|
     run_tests(
-      workspace: 'iosApp/iosApp.xcworkspace',
+      project: 'iosApp/iosApp.xcodeproj',
       scheme: 'Staging',
       device: options[:device]&.strip || 'iPhone 16 (26.2)',
       testplan: 'iosAppRetries',
@@ -248,7 +248,7 @@ platform :ios do
       xcodeproj: 'iosApp/iosApp.xcodeproj'
     )
     build_app(
-      workspace: 'iosApp/iosApp.xcworkspace',
+      project: 'iosApp/iosApp.xcodeproj',
       scheme: options[:scheme],
       output_directory: 'iosApp/build',
       output_name: 'iosApp.ipa',

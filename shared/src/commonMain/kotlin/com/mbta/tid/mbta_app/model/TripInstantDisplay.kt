@@ -82,6 +82,14 @@ public sealed class TripInstantDisplay {
     public companion object {
         public val delayStatuses: Set<String> = setOf("Delay", "Delayed", "Late")
 
+        private fun timeFor(
+            stopTime: TripStopTime?,
+            isScheduledDeparture: Boolean,
+            now: EasternTimeInstant,
+        ): EasternTimeInstant? =
+            if (isScheduledDeparture) stopTime?.departureBasedStopTime
+            else stopTime?.stopTimeAfter(now)
+
         internal fun from(
             prediction: Prediction?,
             schedule: Schedule?,
@@ -96,9 +104,9 @@ public sealed class TripInstantDisplay {
             val scheduleBasedRouteType =
                 routeType == RouteType.COMMUTER_RAIL || routeType == RouteType.FERRY
             val forceAsTime = context == Context.TripDetails || scheduleBasedRouteType
-            val showTimeAsHeadline = scheduleBasedRouteType && context != Context.TripDetails
-            val predictionTime = prediction?.stopTimeAfter(now)
-            val scheduleTime = schedule?.stopTimeAfter(now)
+            val isScheduledDeparture = scheduleBasedRouteType && context != Context.TripDetails
+            val predictionTime = timeFor(prediction, isScheduledDeparture, now)
+            val scheduleTime = timeFor(schedule, isScheduledDeparture, now)
             val isScheduleUpcoming = scheduleTime?.let { it >= now } ?: false
             scheduleTime
                 ?.takeIf {
@@ -127,22 +135,22 @@ public sealed class TripInstantDisplay {
                                 predictionTime,
                                 prediction.status,
                                 lastTrip,
-                                showTimeAsHeadline,
+                                isScheduledDeparture,
                             )
                         predictionTime != null ->
-                            return Time(predictionTime, lastTrip, showTimeAsHeadline)
+                            return Time(predictionTime, lastTrip, isScheduledDeparture)
                         scheduleTime != null &&
                             (context == Context.StopDetailsFiltered || lastTrip) ->
                             return ScheduleTimeWithStatusColumn(
                                 scheduleTime,
                                 prediction.status,
                                 lastTrip,
-                                showTimeAsHeadline,
+                                isScheduledDeparture,
                             )
                         scheduleTime != null && scheduleTime < now ->
                             return ScheduleTimeWithStatusRow(scheduleTime, prediction.status)
                         scheduleTime != null ->
-                            return ScheduleTime(scheduleTime, lastTrip, showTimeAsHeadline)
+                            return ScheduleTime(scheduleTime, lastTrip, isScheduledDeparture)
                     }
                 }
                 return Overridden(prediction.status, lastTrip)
@@ -167,7 +175,7 @@ public sealed class TripInstantDisplay {
                         scheduleMinutesRemaining >=
                             SCHEDULE_CLOCK_CUTOFF.toDouble(DurationUnit.MINUTES) || forceAsTime
                     ) {
-                        ScheduleTime(scheduleTime, lastTrip, headline = showTimeAsHeadline)
+                        ScheduleTime(scheduleTime, lastTrip, headline = isScheduledDeparture)
                     } else {
                         ScheduleMinutes(scheduleMinutesRemaining, lastTrip)
                     }
@@ -195,10 +203,10 @@ public sealed class TripInstantDisplay {
                         predictionTime,
                         scheduleTime,
                         lastTrip,
-                        headline = showTimeAsHeadline,
+                        headline = isScheduledDeparture,
                     )
                 } else {
-                    Time(predictionTime, lastTrip, headline = showTimeAsHeadline)
+                    Time(predictionTime, lastTrip, headline = isScheduledDeparture)
                 }
             }
 

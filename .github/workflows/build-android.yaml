@@ -57,7 +57,7 @@ jobs:
         if: ${{ !inputs.skip-everything }}
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup
+      - uses: $/.github/actions/setup
         if: ${{ !inputs.skip-everything }}
         with:
           for: android-build
@@ -127,7 +127,7 @@ jobs:
         with:
           name: android-aab
           path: androidApp/build/outputs/bundle/${{ steps.lowercase.outputs.flavor }}Release
-      - uses: ./.github/actions/setup
+      - uses: $/.github/actions/setup
         with:
           for: android-deploy
           gcp-provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}

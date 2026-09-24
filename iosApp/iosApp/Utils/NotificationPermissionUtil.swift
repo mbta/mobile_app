@@ -39,6 +39,7 @@ class NotificationPermissionManager: INotificationPermissionManager {
                 AnalyticsProvider.shared.notificationsPermissionGranted()
             } else {
                 AnalyticsProvider.shared.notificationsPermissionDenied()
+                authorizationStatus = .denied
             }
             return result
         } catch {

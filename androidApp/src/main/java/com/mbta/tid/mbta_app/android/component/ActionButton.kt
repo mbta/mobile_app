@@ -31,7 +31,7 @@ enum class ActionButtonKind(
     Close(10.dp, R.string.close_button_label, R.drawable.fa_xmark),
     Dismiss(10.dp, R.string.dismiss, R.drawable.fa_xmark),
     Exchange(24.dp, R.string.toggle_direction, R.drawable.fa_exchange),
-    Plus(24.dp, R.string.add_stops, R.drawable.plus),
+    Plus(24.dp, R.string.add_favorite_stops, R.drawable.plus),
 }
 
 @Composable

@@ -20,7 +20,7 @@ jobs:
         if: ${{ !inputs.skip-everything }}
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup
+      - uses: $/.github/actions/setup
         if: ${{ !inputs.skip-everything }}
         with:
           for: android-test
@@ -60,7 +60,7 @@ jobs:
         if: ${{ !inputs.skip-everything }}
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup
+      - uses: $/.github/actions/setup
         if: ${{ !inputs.skip-everything }}
         with:
           for: android-test

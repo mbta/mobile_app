@@ -2,8 +2,6 @@
 
 source 'https://rubygems.org'
 
-gem 'cocoapods'
-gem 'cyclonedx-cocoapods'
 gem 'fastlane'
 gem 'fastlane-plugin-sentry'
 gem 'fastlane-plugin-versioning_android'

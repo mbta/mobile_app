@@ -28,7 +28,6 @@ import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.LoadedSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
-import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
 import kotlin.experimental.ExperimentalObjCRefinement
 import kotlin.jvm.JvmName
 import kotlin.native.ShouldRefineInSwift
@@ -271,25 +270,6 @@ public class FavoritesViewModel(
                     fcmToken,
                     locale = null,
                 )
-                sentryRepository.captureMessage("Clearing stale favorites") {
-                    addBreadcrumb(
-                        Breadcrumb(
-                            message = "Removing ${staleFavorites.size} stale favorite(s)",
-                            data =
-                                mutableMapOf(
-                                    "staleFavorites" to
-                                        staleFavorites.map { (rsd, removalReason) ->
-                                            mapOf(
-                                                "route" to rsd.route.idText,
-                                                "stop" to rsd.stop,
-                                                "direction" to rsd.direction,
-                                                "removalReason" to removalReason,
-                                            )
-                                        }
-                                ),
-                        )
-                    )
-                }
             }
         }
 
@@ -374,7 +354,6 @@ public class FavoritesViewModel(
                         location,
                         favorites?.keys,
                         coroutineDispatcher,
-                        sentryRepository,
                     )
             }
             staticStopCardData = staticRouteCardData?.let {
@@ -390,7 +369,7 @@ public class FavoritesViewModel(
             awaitingPredictionsAfterBackground,
             favorites,
             shouldShowFirstTimeToast,
-            shouldShowNotificationsHint && favorites?.isNotEmpty() == true,
+            shouldShowNotificationsHint && favorites?.isNotEmpty() == true && stopCardData != null,
             routeCardData,
             stopCardData,
             staticRouteCardData,
