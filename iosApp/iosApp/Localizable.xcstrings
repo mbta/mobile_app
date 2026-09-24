@@ -28755,7 +28755,7 @@
       }
     },
     "will not stop%1$@ %2$@" : {
-      "comment" : "Alert effect denoting station bypass, ex “will not stop at [Back Bay and Ruggles] [today]”",
+      "comment" : "Alert effect denoting station bypass, ex “will not stop[ at Back Bay and Ruggles] [today]”",
       "extractionState" : "manual",
       "localizations" : {
         "es" : {
