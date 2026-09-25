@@ -198,7 +198,7 @@ struct StarIcon: View {
             comment: "VoiceOver label for the button to favorite a route"
         ))
         .accessibilityHint(starred ? NSLocalizedString(
-            "Removes from favorites",
+            "Edit favorite",
             comment: "VoiceOver hint for favorite button when a route is already favorited"
         ) : NSLocalizedString(
             "Adds to favorites",

@@ -75,6 +75,29 @@ final class IosAppUITests: XCTestCase {
         }
     }
 
+    func testAccessibilityFavoritesToNotificationSettings() {
+        XCUIDevice.shared.location = XCUILocation(location: CLLocation(latitude: 42.356395, longitude: -71.062424))
+
+        addNotificationsPermissionPromptHandler()
+        addLocationPermissionPromptHandler()
+
+        let app = XCUIApplication()
+        app.launchArguments = ["--e2e-mocks", "--skip-map"]
+        app.launch()
+        app.tap() // trigger handling permission prompts
+
+        app.buttons["Favorites"].firstMatch.tapAfterWaiting()
+
+        app.buttons["Add favorite stops"].firstMatch.tapAfterWaiting()
+
+        app.buttons["Red Line"].firstMatch.tapAfterWaiting()
+        app.buttons.element(matching: .init(format: "label CONTAINS[c] %@", "Davis")).tapAfterWaiting()
+        app.switches["Get disruption notifications"].firstMatch.tapAfterWaiting()
+        app.buttons["Add another time period"].firstMatch.tapAfterWaiting()
+
+        defaultAccessibilityAudit(app)
+    }
+
     func defaultAccessibilityAudit(_ app: XCUIApplication) {
         try? app.performAccessibilityAudit(for: [.elementDetection, .hitRegion, .sufficientElementDescription, .trait])
     }
@@ -97,6 +120,17 @@ final class IosAppUITests: XCTestCase {
                 return true
             }
             return false
+        }
+    }
+}
+
+extension XCUIElement {
+    /// Waits for the element to exist and taps it. Fails the test if it doesn't appear.
+    func tapAfterWaiting(timeout: TimeInterval = 10.0, file: StaticString = #file, line: UInt = #line) {
+        if waitForExistence(timeout: timeout) {
+            tap()
+        } else {
+            XCTFail("Element \(description) did not appear within \(timeout) seconds.", file: file, line: line)
         }
     }
 }

@@ -227,6 +227,7 @@ public class MockRepositories : IRepositories {
     @DefaultArgumentInterop.Enabled
     public fun useObjects(
         objects: ObjectCollectionBuilder,
+        selectedRouteId: String? = null,
         selectedTripId: String? = null,
         selectedVehicleId: String? = null,
     ) {
@@ -236,6 +237,7 @@ public class MockRepositories : IRepositories {
         predictions =
             MockPredictionsRepository(connectV2Response = PredictionsByStopJoinResponse(objects))
         railRouteShapes = MockRailRouteShapeRepository(objects)
+        routeStops = MockRouteStopsRepository(objects, selectedRouteId)
         schedules = MockScheduleRepository(ScheduleResponse(objects))
         stop = MockStopRepository(objects)
         trip =
