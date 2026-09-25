@@ -86,14 +86,20 @@ final class IosAppUITests: XCTestCase {
         app.launch()
         app.tap() // trigger handling permission prompts
 
-        app.buttons["Favorites"].firstMatch.tapAfterWaiting()
+        app.buttons["Favorites"].firstMatch.tapAfter()
 
-        app.buttons["Add favorite stops"].firstMatch.tapAfterWaiting()
+        app.buttons["Add favorite stops"].firstMatch.tapAfter {
+            defaultAccessibilityAudit(app)
+        }
 
-        app.buttons["Red Line"].firstMatch.tapAfterWaiting()
-        app.buttons.element(matching: .init(format: "label CONTAINS[c] %@", "Davis")).tapAfterWaiting()
-        app.switches["Get disruption notifications"].firstMatch.tapAfterWaiting()
-        app.buttons["Add another time period"].firstMatch.tapAfterWaiting()
+        app.buttons["Red Line"].firstMatch.tapAfter {
+            defaultAccessibilityAudit(app)
+        }
+        app.buttons.element(matching: .init(format: "label CONTAINS[c] %@", "Davis")).tapAfter {
+            defaultAccessibilityAudit(app)
+        }
+        app.switches["Get disruption notifications"].firstMatch.tapAfter()
+        app.buttons["Add another time period"].firstMatch.tapAfter()
 
         defaultAccessibilityAudit(app)
     }
@@ -126,8 +132,14 @@ final class IosAppUITests: XCTestCase {
 
 extension XCUIElement {
     /// Waits for the element to exist and taps it. Fails the test if it doesn't appear.
-    func tapAfterWaiting(timeout: TimeInterval = 10.0, file: StaticString = #file, line: UInt = #line) {
+    func tapAfter(
+        timeout: TimeInterval = 10.0,
+        file: StaticString = #file,
+        line: UInt = #line,
+        beforeTapAction: () -> Void = {}
+    ) {
         if waitForExistence(timeout: timeout) {
+            beforeTapAction()
             tap()
         } else {
             XCTFail("Element \(description) did not appear within \(timeout) seconds.", file: file, line: line)

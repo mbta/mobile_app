@@ -159,9 +159,10 @@ struct WindowWidget: View {
             if let deleteWindow {
                 Button(action: deleteWindow) {
                     Image(.faDelete).accessibilityLabel(Text("Delete time period"))
+                        .padding(10)
                 }
-                .foregroundStyle(Color.error)
                 .frame(minWidth: 44)
+                .foregroundStyle(Color.error)
                 .accessibilitySortPriority(2)
             }
             VStack {
