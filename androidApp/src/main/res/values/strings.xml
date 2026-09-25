@@ -505,4 +505,6 @@
     <string name="westbound">Westbound</string>
     <string name="x_and_y">%1$s and %2$s</string>
     <string name="when_do_you_want_notifications">When do you want notifications?</string>
+    <string name="delete_time_period">Delete time period</string>
+    <string name="edit_favorite">edit favorite</string>
 </resources>
