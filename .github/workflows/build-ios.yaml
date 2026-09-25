@@ -34,7 +34,7 @@ concurrency:
 jobs:
   build-ios:
     name: Build for iOS
-    runs-on: macos-15-xlarge
+    runs-on: xcode-27-xlarge
     permissions:
       id-token: write
       contents: read
@@ -98,7 +98,7 @@ jobs:
     if: ${{ inputs.deploy }}
     needs:
       - build-ios
-    runs-on: macos-15-xlarge
+    runs-on: xcode-27-xlarge
     permissions:
       id-token: write
       contents: read

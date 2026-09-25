@@ -41,6 +41,7 @@ struct HomeMapView: View {
     @State var globalData: GlobalResponse?
     @Binding var selectedVehicle: Vehicle?
     @State var routeCardDataState: RouteCardDataViewModel.State?
+    @State private var hasFollowedCurrentLocation = false
 
     let inspection = Inspection<Self>()
     let log = Logger()
@@ -180,12 +181,12 @@ struct HomeMapView: View {
     @ViewBuilder
     var staticResponsiveMap: some View {
         annotatedMap
-            .onChange(of: locationDataManager.authorizationStatus) { status in
-                Task {
-                    guard status == .authorizedAlways || status == .authorizedWhenInUse,
-                          viewportProvider.isDefault() else { return }
-                    mapVM.locationPermissionsChanged(hasPermission: true)
-                }
+            .withLocationStateHandler(locationDataManager) { status, _ in
+                guard !hasFollowedCurrentLocation else { return }
+                guard status == .authorizedAlways || status == .authorizedWhenInUse,
+                      viewportProvider.isDefault() else { return }
+                hasFollowedCurrentLocation = true
+                mapVM.locationPermissionsChanged(hasPermission: true)
             }
     }
 
@@ -213,8 +214,7 @@ struct HomeMapView: View {
     private var crosshairs: some View {
         VStack {
             Image(.mapNearbyLocationCursor)
-            Spacer()
-                .frame(height: sheetHeight - 20)
+            Spacer().frame(height: sheetHeight + 4)
         }
     }
 

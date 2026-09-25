@@ -599,21 +599,14 @@ struct ContentView: View {
                 )
             }
         }
-        .onChange(of: locationDataManager
-            .authorizationStatus) { [oldStatus = locationDataManager.authorizationStatus] status in
-                if oldStatus == nil, [.denied, .notDetermined, .restricted].contains(status) {
-                    let center = ViewportProvider.Defaults.center
-                    viewportProvider.initViewport(location: CLLocation(
-                        latitude: center.latitude,
-                        longitude: center.longitude
-                    ))
-                }
-        }
-        .onChange(of: locationDataManager
-            .currentLocation) { [oldLocation = locationDataManager.currentLocation] location in
-                if let location, oldLocation == nil {
-                    viewportProvider.initViewport(location: location)
-                }
+        .withLocationStateHandler(locationDataManager) { _, location in
+            guard viewportProvider.viewport == nil else { return }
+
+            let defaultCenter = ViewportProvider.Defaults.center
+            viewportProvider.initViewport(
+                location: location
+                    ?? CLLocation(latitude: defaultCenter.latitude, longitude: defaultCenter.longitude)
+            )
         }
     }
 
