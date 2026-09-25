@@ -20,6 +20,7 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -59,6 +60,7 @@ class TripStopRowTest {
                 onOpenAlertDetails = {},
                 route,
                 TripRouteAccents(route),
+                GlobalResponse(objects),
             )
         }
 
@@ -92,6 +94,7 @@ class TripStopRowTest {
                 onOpenAlertDetails = {},
                 route,
                 TripRouteAccents(route),
+                GlobalResponse(objects),
             )
         }
 
@@ -133,6 +136,7 @@ class TripStopRowTest {
                 onOpenAlertDetails = {},
                 route,
                 TripRouteAccents(route),
+                GlobalResponse(objects),
             )
         }
 
@@ -173,6 +177,7 @@ class TripStopRowTest {
                 onOpenAlertDetails = {},
                 route,
                 TripRouteAccents(route),
+                GlobalResponse(objects),
                 targeted = selected,
                 firstStop = first,
             )
@@ -225,6 +230,7 @@ class TripStopRowTest {
                 onOpenAlertDetails = {},
                 route,
                 TripRouteAccents(route),
+                GlobalResponse(objects),
             )
         }
 
@@ -275,6 +281,7 @@ class TripStopRowTest {
                 onOpenAlertDetails = {},
                 route,
                 TripRouteAccents(route),
+                GlobalResponse(objects),
             )
         }
 
@@ -346,6 +353,7 @@ class TripStopRowTest {
                 {},
                 route,
                 TripRouteAccents(route),
+                GlobalResponse(objects),
                 showDownstreamAlert = true,
             )
         }

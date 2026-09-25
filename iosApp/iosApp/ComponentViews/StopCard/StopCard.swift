@@ -12,11 +12,12 @@ import SwiftUI
 struct StopCardContainer<Content: View>: View {
     @ObserveInjection var inject
     let cardData: StopCardData
+    let globalData: GlobalResponse?
     let departureContent: (StopCardData) -> Content
 
     var body: some View {
         VStack(spacing: 0) {
-            StopCardStopHeader(data: cardData)
+            StopCardStopHeader(data: cardData, globalData: globalData)
             departureContent(cardData)
         }
         .background(Color.fill3)
@@ -39,7 +40,7 @@ struct StopCard: View {
     @ScaledMetric private var modeIconHeight: CGFloat = 24
 
     var body: some View {
-        StopCardContainer(cardData: cardData) { stopData in
+        StopCardContainer(cardData: cardData, globalData: global) { stopData in
             StopCardDepartures(
                 stopData: stopData,
                 global: global,

@@ -17,6 +17,8 @@ import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.greenRoutes
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.model.silverRoutes
+import kotlin.experimental.ExperimentalObjCRefinement
+import kotlin.native.ShouldRefineInSwift
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -214,3 +216,8 @@ internal constructor(
 
     override fun toString(): String = "[GlobalResponse]"
 }
+
+@OptIn(ExperimentalObjCRefinement::class)
+@ShouldRefineInSwift
+public fun GlobalResponse?.isStopBlocklisted(stopId: String): Boolean =
+    stopId in (this?.stopBlocklist.orEmpty())

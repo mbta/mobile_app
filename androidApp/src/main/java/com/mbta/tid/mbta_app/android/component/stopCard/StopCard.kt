@@ -40,10 +40,11 @@ import org.koin.compose.koinInject
 fun StopCardContainer(
     modifier: Modifier = Modifier,
     data: StopCardData,
+    globalData: GlobalResponse?,
     departureContent: @Composable (StopCardData) -> Unit,
 ) {
     Column(modifier.haloContainer(1.dp).semantics { testTag = "StopCard" }) {
-        StopSubheader(data.stop, data.elevatorAlerts, includeIcon = true)
+        StopSubheader(data.stop, data.elevatorAlerts, includeIcon = true, globalData)
 
         departureContent(data)
     }
@@ -59,6 +60,7 @@ fun StopCard(
 ) {
     StopCardContainer(
         data = data,
+        globalData = globalData,
         departureContent = {
             Departures(
                 it,

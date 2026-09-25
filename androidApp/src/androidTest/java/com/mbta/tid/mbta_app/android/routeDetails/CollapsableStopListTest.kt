@@ -18,6 +18,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlin.test.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -58,6 +59,7 @@ class CollapsableStopListTest {
                         isTypical = false,
                     ),
                 onClick = { clicked = true },
+                globalData = GlobalResponse(objects),
                 isFirstSegment = false,
                 isLastSegment = false,
                 rightSideContent = { _, _ -> },
@@ -111,6 +113,7 @@ class CollapsableStopListTest {
                         isTypical = false,
                     ),
                 onClick = {},
+                globalData = GlobalResponse(objects),
                 isFirstSegment = false,
                 isLastSegment = false,
                 rightSideContent = { _, _ -> },

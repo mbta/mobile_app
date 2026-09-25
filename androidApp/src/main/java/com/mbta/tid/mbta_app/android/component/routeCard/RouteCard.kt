@@ -29,6 +29,7 @@ fun RouteCardContainer(
     modifier: Modifier = Modifier,
     data: RouteCardData,
     showStopHeader: Boolean,
+    globalData: GlobalResponse?,
     departureContent: @Composable (RouteCardData.RouteStopData) -> Unit,
 ) {
     Column(modifier.haloContainer(1.dp).semantics { testTag = "RouteCard" }) {
@@ -36,7 +37,7 @@ fun RouteCardContainer(
 
         data.stopData.forEach {
             if (showStopHeader) {
-                StopSubheader(it, includeIcon = false)
+                StopSubheader(it, includeIcon = false, globalData)
             }
 
             departureContent(it)
@@ -53,7 +54,7 @@ fun RouteCard(
     showStopHeader: Boolean,
     onOpenStopDetails: (String, StopDetailsFilter) -> Unit,
 ) {
-    RouteCardContainer(data = data, showStopHeader = showStopHeader) {
+    RouteCardContainer(data = data, showStopHeader = showStopHeader, globalData = globalData) {
         Departures(it, globalData, now, { routeStopDirection -> isFavorite(routeStopDirection) }) {
             leaf ->
             onOpenStopDetails(it.stop.id, StopDetailsFilter(data.lineOrRoute.id, leaf.direction.id))

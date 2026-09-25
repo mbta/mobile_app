@@ -36,6 +36,7 @@ import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
@@ -52,6 +53,7 @@ fun TripStopRow(
     onOpenAlertDetails: (Alert) -> Unit,
     route: Route,
     routeAccents: TripRouteAccents,
+    globalData: GlobalResponse?,
     modifier: Modifier = Modifier,
     showDownstreamAlert: Boolean = false,
     targeted: Boolean = false,
@@ -76,6 +78,7 @@ fun TripStopRow(
         onClick = { onTapLink(entry) },
         routeAccents = routeAccents,
         stopListContext = StopListContext.Trip(Matcher.Data(route.id), trip.directionId, trip.id),
+        globalData = globalData,
         modifier = modifier,
         activeElevatorAlerts = activeElevatorAlerts.size,
         connectingRoutes = entry.routes,
@@ -147,6 +150,7 @@ private fun TripStopRowPreview() {
         type = RouteType.HEAVY_RAIL
     }
     val redAccents = TripRouteAccents(red)
+    val globalData = GlobalResponse(objects)
     KoinContext(koin.koin) {
         MyApplicationTheme {
             Column(Modifier.background(colorResource(R.color.fill3))) {
@@ -178,6 +182,7 @@ private fun TripStopRowPreview() {
                     onOpenAlertDetails = {},
                     red,
                     redAccents,
+                    globalData,
                 )
                 TripStopRow(
                     entry =
@@ -204,6 +209,7 @@ private fun TripStopRowPreview() {
                     onOpenAlertDetails = {},
                     red,
                     redAccents,
+                    globalData,
                 )
                 TripStopRow(
                     entry =
@@ -227,6 +233,7 @@ private fun TripStopRowPreview() {
                         type = RouteType.COMMUTER_RAIL,
                         color = Color.fromHex("DA291C"),
                     ),
+                    globalData,
                 )
             }
         }
@@ -249,6 +256,7 @@ private fun TripStopRowDisruptionsPreview() {
         type = RouteType.HEAVY_RAIL
     }
     val redAccents = TripRouteAccents(red)
+    val globalData = GlobalResponse(objects)
     KoinContext(koin.koin) {
         MyApplicationTheme {
             Box {
@@ -287,6 +295,7 @@ private fun TripStopRowDisruptionsPreview() {
                         onOpenAlertDetails = {},
                         red,
                         redAccents,
+                        globalData,
                         showDownstreamAlert = true,
                     )
                     TripStopRow(
@@ -315,6 +324,7 @@ private fun TripStopRowDisruptionsPreview() {
                         onOpenAlertDetails = {},
                         red,
                         redAccents,
+                        globalData,
                         showDownstreamAlert = true,
                     )
                     TripStopRow(
@@ -344,6 +354,7 @@ private fun TripStopRowDisruptionsPreview() {
                             type = RouteType.COMMUTER_RAIL,
                             color = Color.fromHex("DA291C"),
                         ),
+                        globalData,
                         showDownstreamAlert = true,
                     )
                 }

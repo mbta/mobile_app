@@ -380,6 +380,7 @@ fun RouteStopListView(
             onClickLabel = onClickLabel,
             stopRowContext = ::stopRowContext,
             rightSideContent = rightSideContent,
+            globalData,
         )
     }
 }
@@ -394,10 +395,11 @@ private fun RouteStops(
     onClickLabel: @Composable (RouteDetailsRowContext) -> String?,
     stopRowContext: (Stop) -> RouteDetailsRowContext,
     rightSideContent: @Composable RowScope.(RouteDetailsRowContext, Modifier) -> Unit,
+    globalData: GlobalResponse?,
     loading: Boolean = false,
 ) {
     if (stopList == null || stopList.directionId != selectedDirection) {
-        LoadingRouteStops(lineOrRoute, selectedDirection, context, rightSideContent)
+        LoadingRouteStops(lineOrRoute, selectedDirection, context, globalData, rightSideContent)
         return
     }
 
@@ -447,6 +449,7 @@ private fun RouteStops(
                         onClick = { onTapStop(stopRowContext) },
                         routeAccents = TripRouteAccents(lineOrRoute.sortRoute),
                         stopListContext = stopListContext,
+                        globalData,
                         modifier = Modifier.minimumInteractiveComponentSize().fillMaxWidth(),
                         connectingRoutes = stop.connectingRoutes,
                         onClickLabel = onClickLabel(stopRowContext),
@@ -462,6 +465,7 @@ private fun RouteStops(
                     stopListContext,
                     segment,
                     onClick = { onTapStop(stopRowContext(it.stop)) },
+                    globalData,
                     onClickLabel = { onClickLabel(stopRowContext(it.stop)) },
                     segmentIndex == 0,
                     segmentIndex == stopList.segments.lastIndex,
@@ -525,6 +529,7 @@ private fun LoadingRouteStops(
     lineOrRoute: LineOrRoute,
     selectedDirection: Int,
     context: RouteDetailsContext,
+    globalData: GlobalResponse?,
     rightSideContent: @Composable RowScope.(RouteDetailsRowContext, Modifier) -> Unit,
 ) {
     val loadingStops =
@@ -547,6 +552,7 @@ private fun LoadingRouteStops(
                 }
             },
             rightSideContent = rightSideContent,
+            globalData,
             loading = true,
         )
     }
@@ -656,5 +662,6 @@ private fun RouteStopsPreview() {
         onClickLabel = { null },
         stopRowContext = { RouteDetailsRowContext.Details(it) },
         rightSideContent = { _, _ -> },
+        GlobalResponse(TestData),
     )
 }
