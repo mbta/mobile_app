@@ -63,7 +63,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             where: { try $0.labelView().text().string() == "Select end time" }
         ))
 
-        XCTAssertThrowsError(try sut.inspect().find(viewWithAccessibilityLabel: "Delete"))
+        XCTAssertThrowsError(try sut.inspect().find(viewWithAccessibilityLabel: "Delete time period"))
         // ViewInspector as of 0.10.3 does not support accessibilityChildren so we can’t check the days of the week
         try sut.inspect().find(button: "Add another time period").tap()
         XCTAssertTrue(addedWindow)
@@ -82,7 +82,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         )
         .withFixedSettings([:])
 
-        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "Delete"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "Delete time period"))
     }
 
     func testChangeStartTime() throws {

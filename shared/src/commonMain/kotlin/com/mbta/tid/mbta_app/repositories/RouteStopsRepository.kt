@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.repositories
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.response.ApiResult
@@ -59,6 +60,44 @@ public class MockRouteStopsRepository(
         directionId: Int = 0,
         onGet: (Route.Id, Int) -> Unit = { _, _ -> },
     ) : this(ApiResult.Ok(RouteStopsResult(routeId, directionId, segments)), onGet)
+
+    public constructor(
+        objects: ObjectCollectionBuilder,
+        selectedRouteId: String? = null,
+        onGet: (Route.Id, Int) -> Unit = { _, _ -> },
+    ) : this(
+        result =
+            ApiResult.Ok(
+                RouteStopsResult(
+                    routeId = Route.Id(selectedRouteId ?: "Red"),
+                    directionId = 0,
+                    segments =
+                        listOf(
+                            RouteBranchSegment(
+                                name = "mockSegment",
+                                stops =
+                                    objects.trips.values
+                                        .first {
+                                            it.routeId == Route.Id(selectedRouteId ?: "Red") &&
+                                                it.directionId == 0 &&
+                                                (objects.routePatterns[it.routePatternId]
+                                                    ?.isTypical() ?: false)
+                                        }
+                                        .stopIds
+                                        ?.map {
+                                            RouteBranchSegment.BranchStop(
+                                                stopId = it,
+                                                stopLane = RouteBranchSegment.Lane.Center,
+                                                connections = emptyList(),
+                                            )
+                                        } ?: emptyList(),
+                                isTypical = true,
+                            )
+                        ),
+                )
+            ),
+        onGet = { _, _ -> },
+    )
 
     override suspend fun getRouteSegments(
         routeId: Route.Id,

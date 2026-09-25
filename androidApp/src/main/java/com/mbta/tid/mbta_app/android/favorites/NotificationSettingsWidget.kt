@@ -54,6 +54,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
@@ -171,6 +172,10 @@ fun NotificationSettingsWidget(
                     Text(
                         stringResource(R.string.when_do_you_want_notifications),
                         color = colorResource(R.color.deemphasized),
+                        modifier =
+                            Modifier.semantics {
+                                heading()
+                            },
                     )
                 }
 
@@ -270,7 +275,7 @@ private fun WindowWidget(
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         painterResource(R.drawable.fa_delete),
-                        stringResource(R.string.delete),
+                        stringResource(R.string.delete_time_period),
                         tint = colorResource(R.color.error),
                     )
                 }

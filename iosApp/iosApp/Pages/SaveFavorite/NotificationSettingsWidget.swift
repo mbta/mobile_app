@@ -82,6 +82,8 @@ struct NotificationSettingsWidgetPresetnationView: View {
 
                     if settings.enabled {
                         Text("When do you want notifications?")
+                            .accessibilityAddTraits(.isHeader)
+                            .accessibilityHeading(.h2)
                             .foregroundColor(Color.deemphasized)
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding(.vertical, 8)
@@ -156,10 +158,12 @@ struct WindowWidget: View {
         HStack(spacing: 0) {
             if let deleteWindow {
                 Button(action: deleteWindow) {
-                    Image(.faDelete).accessibilityLabel(Text("Delete"))
+                    Image(.faDelete).accessibilityLabel(Text("Delete time period"))
+                        .padding(10)
                 }
-                .foregroundStyle(Color.error)
                 .frame(minWidth: 44)
+                .foregroundStyle(Color.error)
+                .accessibilitySortPriority(2)
             }
             VStack {
                 HStack(spacing: 0) {
@@ -190,7 +194,7 @@ struct WindowWidget: View {
                             .fromLocalTime(FavoriteSettings.NotificationsWindow.companion
                                 .minimumEndTime(startTime: window.startTime))
                     ).frame(maxWidth: .infinity)
-                }
+                }.accessibilitySortPriority(1)
                 DaysOfWeekInput(
                     daysOfWeek: window.daysOfWeek,
                     setDaysOfWeek: { newDays in setWindow(window.doCopy(
@@ -198,7 +202,7 @@ struct WindowWidget: View {
                         endTime: window.endTime,
                         daysOfWeek: newDays
                     )) }
-                )
+                ).accessibilitySortPriority(0)
             }
             .background(Color.fill3)
             .clipShape(RoundedRectangle(cornerRadius: 7))
@@ -206,6 +210,7 @@ struct WindowWidget: View {
         }
         .background(Color.halo)
         .clipShape(RoundedRectangle(cornerRadius: 8))
+        .accessibilityElement(children: .contain)
         .enableInjection()
     }
 }
