@@ -205,7 +205,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : " desde paradas en **%1$@** hasta **%2$@**"
+            "value" : " desde paradas **%1$@** hasta **%2$@**"
           }
         },
         "fr" : {
@@ -1398,13 +1398,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "**%1$ld** afectó la atajada"
+                  "value" : "**%1$ld** parada afectada"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "**%1$ld** atajada afectadas"
+                  "value" : "**%1$ld** paradas afectadas"
                 }
               }
             }
@@ -5388,7 +5388,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agrega atajada favoritas para facilitar el acceso y notificaciones de interrupciones"
+            "value" : "Agrega paradas a favoritos para acceder a ellas fácilmente y recibir notificaciones sobre incidentes"
           }
         },
         "fr" : {
