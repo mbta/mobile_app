@@ -88,6 +88,7 @@
     <string name="delays_due_to_cause">因 %1$s 造成&lt;b&gt;延誤&lt;/b&gt;</string>
     <string name="delays_unknown_reason">&lt;b&gt;延誤&lt;/b&gt;</string>
     <string name="delete">刪除</string>
+    <string name="delete_time_period">新增其他時間段</string>
     <string name="demonstration">示威</string>
     <string name="demonstration_lowercase">示威</string>
     <string name="departure_tile_on_click_label">顯示有關此行程的更多信息</string>
@@ -115,6 +116,7 @@
     <string name="drawbridge_issue_lowercase">開合橋故障</string>
     <string name="eastbound">東行</string>
     <string name="edit">編輯</string>
+    <string name="edit_favorite">編輯收藏</string>
     <string name="edit_favorite_title">編輯收藏</string>
     <string name="edit_favorites">編輯我的最愛</string>
     <string name="effect" translatable="false">&lt;b&gt;%1$s&lt;/b&gt;</string>
