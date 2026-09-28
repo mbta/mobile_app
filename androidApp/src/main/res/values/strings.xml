@@ -89,6 +89,7 @@
     <string name="delays_due_to_cause">&lt;b&gt;Delays&lt;/b&gt; due to %1$s</string>
     <string name="delays_unknown_reason">&lt;b&gt;Delays&lt;/b&gt;</string>
     <string name="delete">Delete</string>
+    <string name="delete_time_period">Delete time period</string>
     <string name="demonstration">Demonstration</string>
     <string name="demonstration_lowercase">demonstration</string>
     <string name="departure_tile_on_click_label">display more information about this trip</string>
@@ -116,6 +117,7 @@
     <string name="drawbridge_issue_lowercase">drawbridge issue</string>
     <string name="eastbound">Eastbound</string>
     <string name="edit">Edit</string>
+    <string name="edit_favorite">edit favorite</string>
     <string name="edit_favorite_title">Edit Favorite</string>
     <string name="edit_favorites">Edit Favorites</string>
     <string name="effect" translatable="false">&lt;b&gt;%1$s&lt;/b&gt;</string>
@@ -505,6 +507,4 @@
     <string name="westbound">Westbound</string>
     <string name="x_and_y">%1$s and %2$s</string>
     <string name="when_do_you_want_notifications">When do you want notifications?</string>
-    <string name="delete_time_period">Delete time period</string>
-    <string name="edit_favorite">edit favorite</string>
 </resources>
