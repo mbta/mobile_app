@@ -89,6 +89,7 @@
     <string name="delays_due_to_cause">&lt;b&gt;Retrasos&lt;/b&gt; debido a %1$s</string>
     <string name="delays_unknown_reason">&lt;b&gt;Retraso&lt;/b&gt;</string>
     <string name="delete">Eliminar</string>
+    <string name="delete_time_period">Agregar otro período de tiempo</string>
     <string name="demonstration">Demostración</string>
     <string name="demonstration_lowercase">demostración</string>
     <string name="departure_tile_on_click_label">mostrar más información sobre este viaje</string>
@@ -116,6 +117,7 @@
     <string name="drawbridge_issue_lowercase">problema con el puente levadizo</string>
     <string name="eastbound">En dirección este</string>
     <string name="edit">Editar</string>
+    <string name="edit_favorite">Editar favorito</string>
     <string name="edit_favorite_title">Editar favorito</string>
     <string name="edit_favorites">Editar Favoritos</string>
     <string name="effect" translatable="false">&lt;b&gt;%1$s&lt;/b&gt;</string>
@@ -129,8 +131,8 @@
         <item quantity="other">%1$d ascensores cerrados</item>
     </plurals>
     <plurals name="elevator_closure_count_accessibility_description">
-        <item quantity="one">Esta atajada tiene %1$d ascensor cerrado</item>
-        <item quantity="other">Esta atajada tiene %1$d ascensores cerrados</item>
+        <item quantity="one">Esta parada tiene %1$d ascensor cerrado</item>
+        <item quantity="other">Esta parada tiene %1$d ascensores cerrados</item>
     </plurals>
     <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">Fin</string>
@@ -261,7 +263,7 @@
     <string name="no_service">Sin servicio</string>
     <string name="no_service_sentence_case">Sin servicio</string>
     <string name="no_service_today">No hay servicio hoy</string>
-    <string name="no_stops_added">Agrega atajada favoritas para facilitar el acceso y notificaciones de interrupciones</string>
+    <string name="no_stops_added">Agrega paradas a favoritos para acceder a ellas fácilmente y recibir notificaciones sobre incidentes</string>
     <string name="no_stops_nearby">Está fuera del área de servicio de MBTA.</string>
     <string name="no_stops_nearby_pan">Ver el tránsito cerca de Boston</string>
     <string name="no_stops_nearby_search">Buscar por parada</string>
