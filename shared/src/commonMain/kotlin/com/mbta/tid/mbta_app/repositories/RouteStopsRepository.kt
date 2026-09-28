@@ -67,35 +67,39 @@ public class MockRouteStopsRepository(
         onGet: (Route.Id, Int) -> Unit = { _, _ -> },
     ) : this(
         result =
-            ApiResult.Ok(
-                RouteStopsResult(
-                    routeId = Route.Id(selectedRouteId ?: "Red"),
-                    directionId = 0,
-                    segments =
-                        listOf(
-                            RouteBranchSegment(
-                                name = "mockSegment",
-                                stops =
-                                    objects.trips.values
-                                        .first {
-                                            it.routeId == Route.Id(selectedRouteId ?: "Red") &&
-                                                it.directionId == 0 &&
-                                                (objects.routePatterns[it.routePatternId]
-                                                    ?.isTypical() ?: false)
-                                        }
-                                        .stopIds
-                                        ?.map {
-                                            RouteBranchSegment.BranchStop(
-                                                stopId = it,
-                                                stopLane = RouteBranchSegment.Lane.Center,
-                                                connections = emptyList(),
-                                            )
-                                        } ?: emptyList(),
-                                isTypical = true,
-                            )
-                        ),
+            if (selectedRouteId == null) {
+                ApiResult.Error(null, message = "No selected route id provided for mock response")
+            } else {
+                ApiResult.Ok(
+                    RouteStopsResult(
+                        routeId = Route.Id(selectedRouteId),
+                        directionId = 0,
+                        segments =
+                            listOf(
+                                RouteBranchSegment(
+                                    name = "mockSegment",
+                                    stops =
+                                        objects.trips.values
+                                            .first {
+                                                it.routeId == Route.Id(selectedRouteId) &&
+                                                    it.directionId == 0 &&
+                                                    (objects.routePatterns[it.routePatternId]
+                                                        ?.isTypical() ?: false)
+                                            }
+                                            .stopIds
+                                            ?.map {
+                                                RouteBranchSegment.BranchStop(
+                                                    stopId = it,
+                                                    stopLane = RouteBranchSegment.Lane.Center,
+                                                    connections = emptyList(),
+                                                )
+                                            } ?: emptyList(),
+                                    isTypical = true,
+                                )
+                            ),
+                    )
                 )
-            ),
+            },
         onGet = { _, _ -> },
     )
 
