@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
@@ -107,7 +108,11 @@ fun RoutePickerView(
             is RoutePickerPath.Ferry -> stringResource(R.string.ferry)
         }
 
-    Column(Modifier.fillMaxWidth(), Arrangement.Top, Alignment.CenterHorizontally) {
+    Column(
+        Modifier.fillMaxWidth().semantics { paneTitle = headerTitle },
+        Arrangement.Top,
+        Alignment.CenterHorizontally,
+    ) {
         SheetHeader(
             title = headerTitle,
             titleColor = path.textColor,
