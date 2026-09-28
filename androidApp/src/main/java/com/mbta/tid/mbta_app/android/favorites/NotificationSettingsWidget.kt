@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -55,9 +54,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
+import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -261,14 +262,18 @@ private fun WindowWidget(
                 backgroundColor = colorResource(R.color.halo),
                 outlineColor = Color.Transparent,
             )
-            .height(IntrinsicSize.Min),
+            .height(IntrinsicSize.Min)
+            .semantics {
+                isTraversalGroup = true
+            },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (deleteWindow != null) {
             Surface(
                 onClick = deleteWindow,
-                Modifier.minimumInteractiveComponentSize().fillMaxHeight().semantics {
+                Modifier.minimumInteractiveComponentSize().semantics {
                     role = Role.Button
+                    traversalIndex = -1f
                 },
                 color = Color.Transparent,
             ) {
