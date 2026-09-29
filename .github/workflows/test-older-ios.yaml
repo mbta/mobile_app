@@ -18,13 +18,6 @@ jobs:
       - uses: $/.github/actions/setup
         with:
           for: ios-test
-      - name: Install CocoaPods dependencies
-        run: |
-          ./gradlew :shared:generateDummyFramework
-          pushd iosApp
-          bundle exec pod install
-          popd
-          bundle exec ./gradlew :shared:podInstallSyntheticIos
       - name: shared checks & unit tests
         run: ./gradlew shared:iosSimulatorArm64Test
         env:

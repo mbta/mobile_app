@@ -75,6 +75,35 @@ final class IosAppUITests: XCTestCase {
         }
     }
 
+    func testAccessibilityFavoritesToNotificationSettings() {
+        XCUIDevice.shared.location = XCUILocation(location: CLLocation(latitude: 42.356395, longitude: -71.062424))
+
+        addNotificationsPermissionPromptHandler()
+        addLocationPermissionPromptHandler()
+
+        let app = XCUIApplication()
+        app.launchArguments = ["--e2e-mocks", "--skip-map"]
+        app.launch()
+        app.tap() // trigger handling permission prompts
+
+        app.buttons["Favorites"].firstMatch.tapAfter()
+
+        app.buttons["Add favorite stops"].firstMatch.tapAfter {
+            defaultAccessibilityAudit(app)
+        }
+
+        app.buttons["Red Line"].firstMatch.tapAfter {
+            defaultAccessibilityAudit(app)
+        }
+        app.buttons.element(matching: .init(format: "label CONTAINS[c] %@", "Davis")).tapAfter {
+            defaultAccessibilityAudit(app)
+        }
+        app.switches["Get disruption notifications"].firstMatch.tapAfter()
+        app.buttons["Add another time period"].firstMatch.tapAfter()
+
+        defaultAccessibilityAudit(app)
+    }
+
     func defaultAccessibilityAudit(_ app: XCUIApplication) {
         try? app.performAccessibilityAudit(for: [.elementDetection, .hitRegion, .sufficientElementDescription, .trait])
     }
@@ -97,6 +126,23 @@ final class IosAppUITests: XCTestCase {
                 return true
             }
             return false
+        }
+    }
+}
+
+extension XCUIElement {
+    /// Waits for the element to exist and taps it. Fails the test if it doesn't appear.
+    func tapAfter(
+        timeout: TimeInterval = 10.0,
+        file: StaticString = #file,
+        line: UInt = #line,
+        beforeTapAction: () -> Void = {}
+    ) {
+        if waitForExistence(timeout: timeout) {
+            beforeTapAction()
+            tap()
+        } else {
+            XCTFail("Element \(description) did not appear within \(timeout) seconds.", file: file, line: line)
         }
     }
 }

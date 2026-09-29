@@ -56,7 +56,7 @@ import kotlinx.coroutines.delay
 fun StarButton(starred: Boolean?, color: Color, action: () -> Unit) {
     val onClickLabel =
         if (starred == true) {
-            stringResource(R.string.remove_favorite)
+            stringResource(R.string.edit_favorite)
         } else {
             stringResource(R.string.add_favorite_label)
         }
