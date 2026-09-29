@@ -89,7 +89,7 @@
     <string name="delays_due_to_cause">&lt;b&gt;Atrasos&lt;/b&gt; devido a %1$s</string>
     <string name="delays_unknown_reason">&lt;b&gt;Atraso&lt;/b&gt;</string>
     <string name="delete">Excluir</string>
-    <string name="delete_time_period">Adicionar outro período</string>
+    <string name="delete_time_period">excluir período de tempo</string>
     <string name="demonstration">Manifestação</string>
     <string name="demonstration_lowercase">manifestação</string>
     <string name="departure_tile_on_click_label">exibir mais informações sobre esta viagem</string>
