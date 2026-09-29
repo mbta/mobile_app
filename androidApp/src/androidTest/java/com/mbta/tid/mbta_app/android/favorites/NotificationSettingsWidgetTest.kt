@@ -87,7 +87,7 @@ class NotificationSettingsWidgetTest : KoinTest {
         composeTestRule.onNodeWithText("Thursday").assertIsOn()
         composeTestRule.onNodeWithText("Friday").assertIsOn()
         composeTestRule.onNodeWithText("Saturday").assertIsOff()
-        composeTestRule.onNodeWithContentDescription("Delete").assertDoesNotExist()
+        composeTestRule.onNodeWithContentDescription("Delete time period").assertDoesNotExist()
         composeTestRule.onNodeWithText("Add another time period").performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
             (hasTextMatching(Regex("12:00\\sPM", RegexOption.IGNORE_CASE)))
@@ -102,7 +102,7 @@ class NotificationSettingsWidgetTest : KoinTest {
         composeTestRule.onAllNodesWithText("Thursday").onLast().assertIsOff()
         composeTestRule.onAllNodesWithText("Friday").onLast().assertIsOff()
         composeTestRule.onAllNodesWithText("Saturday").onLast().assertIsOn()
-        composeTestRule.onAllNodesWithContentDescription("Delete").assertCountEquals(2)
+        composeTestRule.onAllNodesWithContentDescription("Delete time period").assertCountEquals(2)
     }
 
     @Test

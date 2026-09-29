@@ -44,7 +44,10 @@ struct SaveFavoriteHeader: View {
                 Spacer()
                 NavTextButton(string: saveText, backgroundColor: Color.key, textColor: Color.fill3, action: onSave)
             }
-            Text(titleText).font(Typography.title1Bold).padding(.leading, 16)
+            Text(titleText)
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityHeading(.h1)
+                .font(Typography.title1Bold).padding(.leading, 16)
         }
         .padding([.bottom, .trailing], 16)
         .foregroundStyle(Color.text)

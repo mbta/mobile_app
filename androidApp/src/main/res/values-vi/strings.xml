@@ -88,6 +88,7 @@
     <string name="delays_due_to_cause">&lt;b&gt;Trì hoãn&lt;/b&gt; do %1$s</string>
     <string name="delays_unknown_reason">&lt;b&gt;Trễ&lt;/b&gt;</string>
     <string name="delete">Xóa</string>
+    <string name="delete_time_period">Thêm một khoảng thời gian khác</string>
     <string name="demonstration">Biểu tình</string>
     <string name="demonstration_lowercase">cuộc biểu tình</string>
     <string name="departure_tile_on_click_label">hiển thị thêm thông tin về chuyến đi này</string>
@@ -115,6 +116,7 @@
     <string name="drawbridge_issue_lowercase">vấn đề cầu kéo</string>
     <string name="eastbound">Về hướng đông</string>
     <string name="edit">Chỉnh sửa</string>
+    <string name="edit_favorite">Chỉnh sửa mục yêu thích</string>
     <string name="edit_favorite_title">Chỉnh sửa mục yêu thích</string>
     <string name="edit_favorites">Chỉnh sửa mục Yêu thích</string>
     <string name="effect" translatable="false">&lt;b&gt;%1$s&lt;/b&gt;</string>
