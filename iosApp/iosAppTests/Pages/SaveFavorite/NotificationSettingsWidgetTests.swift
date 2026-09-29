@@ -291,7 +291,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
     }
 
     func testStartAndEndOfService() throws {
-        NSTimeZone.default = try XCTUnwrap(TimeZone(identifier: "America/New_York"))
+        NSTimeZone.default = NSTimeZone.system
         let settings: FavoriteSettings.Notifications = .init(
             enabled: true,
             windows: [FavoriteSettings.NotificationsWindow(preset: .allDay, daysOfWeek: [.monday])]
