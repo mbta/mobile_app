@@ -372,6 +372,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                                     onClick: { onTapStop(stopRowContext) },
                                     routeAccents: .init(route: lineOrRoute.sortRoute),
                                     stopListContext: stopListContext,
+                                    globalData: globalData,
                                     connectingRoutes: stop.connectingRoutes,
                                     stopPlacement: stopPlacement,
                                     descriptor: { EmptyView() },
@@ -384,6 +385,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                                 stopListContext: stopListContext,
                                 segment: segment,
                                 onClick: { onTapStop(stopRowContext($0.stop)) },
+                                globalData: globalData,
                                 isFirstSegment: segmentIndex == stopList.segments.startIndex,
                                 isLastSegment: segmentIndex == stopList.segments.endIndex,
                                 rightSideContent: { stop in rightSideContent(stopRowContext(stop.stop)) }

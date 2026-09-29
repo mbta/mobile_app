@@ -28,7 +28,7 @@ struct StopDetailsUnfilteredView: View {
     @ObservedObject var navManager: NavigationManager
 
     @EnvironmentObject var settingsCache: SettingsCache
-    var stationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
+    var stationAccessibility: Bool { settingsCache.get(.stationAccessibility) && !global.isStopBlocklisted(stopId) }
 
     var analytics: Analytics = AnalyticsProvider.shared
     let inspection = Inspection<Self>()

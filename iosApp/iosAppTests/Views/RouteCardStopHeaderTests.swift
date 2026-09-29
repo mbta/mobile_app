@@ -26,7 +26,8 @@ final class RouteCardStopHeaderTests: XCTestCase {
                 lineOrRoute: .route(route),
                 stop: stop,
                 data: []
-            )
+            ),
+            globalData: .init(objects: objects),
         ).withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().find(text: stop.name))
     }
@@ -45,9 +46,30 @@ final class RouteCardStopHeaderTests: XCTestCase {
                 lineOrRoute: .route(route),
                 stop: stop,
                 data: []
-            )
+            ),
+            globalData: .init(objects: objects),
         ).withFixedSettings([.stationAccessibility: true])
         XCTAssertNotNil(try sut.inspect().find(text: "Not accessible"))
+    }
+
+    func testNotAccessibleBlocklisted() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route()
+        let stop = objects.stop { stop in
+            stop.name = "Boylston"
+            stop.wheelchairBoarding = .inaccessible
+            stop.vehicleType = .lightRail
+        }
+
+        let sut = RouteCardStopHeader(
+            data: .init(
+                lineOrRoute: .route(route),
+                stop: stop,
+                data: []
+            ),
+            globalData: .init(objects: objects, patternIdsByStop: [:], stopBlocklist: [stop.id]),
+        ).withFixedSettings([.stationAccessibility: true])
+        XCTAssertThrowsError(try sut.inspect().find(text: "Not accessible"))
     }
 
     func testElevatorAlert() throws {
@@ -79,7 +101,8 @@ final class RouteCardStopHeaderTests: XCTestCase {
                     alertsDownstream: [],
                     context: .stopDetailsFiltered
                 )]
-            )
+            ),
+            globalData: .init(objects: objects),
         ).withFixedSettings([.stationAccessibility: true])
         XCTAssertNotNil(try sut.inspect().find(text: "1 elevator closed"))
     }

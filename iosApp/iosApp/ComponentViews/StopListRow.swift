@@ -53,6 +53,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
     var onClick: () -> Void
     var routeAccents: TripRouteAccents
     var stopListContext: StopListContext
+    var globalData: GlobalResponse?
     var activeElevatorAlerts: Int
     var background: Color?
     var connectingRoutes: [Route]?
@@ -66,7 +67,9 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
     var rightSideContent: () -> RightSideContent
 
     @EnvironmentObject var settingsCache: SettingsCache
-    var showStationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
+    var showStationAccessibility: Bool {
+        settingsCache.get(.stationAccessibility) && !globalData.isStopBlocklisted(stop.id)
+    }
 
     init(
         stop: Stop,
@@ -75,6 +78,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
         onClick: @escaping () -> Void,
         routeAccents: TripRouteAccents,
         stopListContext: StopListContext,
+        globalData: GlobalResponse?,
         activeElevatorAlerts: Int = 0,
         background: Color? = nil,
         connectingRoutes: [Route]? = nil,
@@ -93,6 +97,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
         self.onClick = onClick
         self.routeAccents = routeAccents
         self.stopListContext = stopListContext
+        self.globalData = globalData
         self.activeElevatorAlerts = activeElevatorAlerts
         self.background = background
         self.connectingRoutes = connectingRoutes

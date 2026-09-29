@@ -229,7 +229,7 @@ private fun EditFavoritesList(
         ) {
             items(displayedFavorites, key = { it.stop.id }) {
                 Column(Modifier.animateItem().haloContainer(1.dp)) {
-                    StopSubheader(it.stop, it.elevatorAlerts, includeIcon = true)
+                    StopSubheader(it.stop, it.elevatorAlerts, includeIcon = true, global)
 
                     FavoriteDepartures(
                         favorites,

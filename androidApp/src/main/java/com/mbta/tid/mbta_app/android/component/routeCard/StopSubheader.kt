@@ -31,11 +31,19 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.isStopBlocklisted
 import com.mbta.tid.mbta_app.repositories.Settings
 
 @Composable
-fun StopSubheader(stop: Stop, elevatorAlerts: List<Alert>, includeIcon: Boolean) {
-    val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
+fun StopSubheader(
+    stop: Stop,
+    elevatorAlerts: List<Alert>,
+    includeIcon: Boolean,
+    globalData: GlobalResponse?,
+) {
+    val showStationAccessibility =
+        SettingsCache.get(Settings.StationAccessibility) && !globalData.isStopBlocklisted(stop.id)
     val isWheelchairAccessible = stop.isWheelchairAccessible
     val showInaccessible = showStationAccessibility && !isWheelchairAccessible
     val showElevatorAlerts = showStationAccessibility && elevatorAlerts.isNotEmpty()
@@ -117,6 +125,10 @@ fun StopSubheader(stop: Stop, elevatorAlerts: List<Alert>, includeIcon: Boolean)
 }
 
 @Composable
-fun StopSubheader(data: RouteCardData.RouteStopData, includeIcon: Boolean) {
-    StopSubheader(data.stop, data.elevatorAlerts, includeIcon)
+fun StopSubheader(
+    data: RouteCardData.RouteStopData,
+    includeIcon: Boolean,
+    globalData: GlobalResponse?,
+) {
+    StopSubheader(data.stop, data.elevatorAlerts, includeIcon, globalData)
 }

@@ -50,6 +50,8 @@ import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.SegmentAlertState
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.UpcomingFormat
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.isStopBlocklisted
 import com.mbta.tid.mbta_app.repositories.Settings
 import kotlinx.serialization.Serializable
 
@@ -87,6 +89,7 @@ fun StopListRow(
     onClick: () -> Unit,
     routeAccents: TripRouteAccents,
     stopListContext: StopListContext,
+    globalData: GlobalResponse?,
     modifier: Modifier = Modifier,
     activeElevatorAlerts: Int = 0,
     connectingRoutes: List<Route>? = null,
@@ -103,7 +106,8 @@ fun StopListRow(
     rightSideContent: @Composable RowScope.(Modifier) -> Unit = {},
 ) {
     val resources = LocalResources.current
-    val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
+    val showStationAccessibility =
+        SettingsCache.get(Settings.StationAccessibility) && !globalData.isStopBlocklisted(stop.id)
 
     Column {
         Box(

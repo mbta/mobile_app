@@ -19,6 +19,7 @@ struct TripStopRow: View {
     var route: Route
     var routeAccents: TripRouteAccents
     var stopListContext: StopListContext
+    var globalData: GlobalResponse?
     var showDownstreamAlert: Bool = false
     var targeted: Bool = false
     var firstStop: Bool = false
@@ -55,6 +56,7 @@ struct TripStopRow: View {
             onClick: { onTapLink(stop) },
             routeAccents: routeAccents,
             stopListContext: stopListContext,
+            globalData: globalData,
             activeElevatorAlerts: activeElevatorAlerts.count,
             background: background,
             connectingRoutes: stop.routes,

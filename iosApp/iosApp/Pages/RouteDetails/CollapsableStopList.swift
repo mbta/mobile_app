@@ -16,6 +16,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
     let stopListContext: StopListContext
     let segment: RouteDetailsStopList.Segment
     let onClick: (RouteDetailsStopList.Entry) -> Void
+    let globalData: GlobalResponse?
     let isFirstSegment: Bool
     let isLastSegment: Bool
     let rightSideContent: (RouteDetailsStopList.Entry) -> RightSideContent
@@ -29,6 +30,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
         stopListContext: StopListContext,
         segment: RouteDetailsStopList.Segment,
         onClick: @escaping (RouteDetailsStopList.Entry) -> Void,
+        globalData: GlobalResponse?,
         isFirstSegment: Bool = false,
         isLastSegment: Bool = false,
         rightSideContent: @escaping (RouteDetailsStopList.Entry) -> RightSideContent
@@ -37,6 +39,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
         self.stopListContext = stopListContext
         self.segment = segment
         self.onClick = onClick
+        self.globalData = globalData
         self.isFirstSegment = isFirstSegment
         self.isLastSegment = isLastSegment
         self.rightSideContent = rightSideContent
@@ -51,6 +54,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
                 onClick: { onClick(stop) },
                 routeAccents: .init(route: lineOrRoute.sortRoute),
                 stopListContext: stopListContext,
+                globalData: globalData,
                 connectingRoutes: stop.connectingRoutes,
                 stopPlacement: .init(isFirst: isFirstSegment, isLast: isLastSegment),
                 descriptor: { Text("Less common stop").font(Typography.footnote).foregroundStyle(Color.text) },
@@ -69,6 +73,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
                             onClick: { onClick(stop) },
                             routeAccents: .init(route: lineOrRoute.sortRoute),
                             stopListContext: stopListContext,
+                            globalData: globalData,
                             connectingRoutes: stop.connectingRoutes,
                             stopPlacement: .init(
                                 isFirst: isFirstSegment && index == segment.stops.startIndex,

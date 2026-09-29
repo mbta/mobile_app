@@ -13,6 +13,7 @@ struct RouteCardContainer<Content: View>: View {
     @ObserveInjection var inject
     let cardData: RouteCardData
     let showStopHeader: Bool
+    let globalData: GlobalResponse?
     let departureContent: (RouteCardData.RouteStopData) -> Content
 
     var body: some View {
@@ -28,7 +29,8 @@ struct RouteCardContainer<Content: View>: View {
             ForEach(Array(cardData.stopData.enumerated()), id: \.element) { index, stopData in
                 if showStopHeader {
                     RouteCardStopHeader(
-                        data: stopData
+                        data: stopData,
+                        globalData: globalData,
                     )
                 }
                 departureContent(stopData)
@@ -60,7 +62,7 @@ struct RouteCard: View {
 
     var body: some View {
         RouteCardContainer(cardData: cardData,
-                           showStopHeader: showStopHeader) { stopData in
+                           showStopHeader: showStopHeader, globalData: global) { stopData in
             RouteCardDepartures(
                 stopData: stopData,
                 global: global,

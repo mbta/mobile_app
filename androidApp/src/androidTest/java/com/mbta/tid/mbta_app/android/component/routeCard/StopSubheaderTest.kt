@@ -11,6 +11,7 @@ import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import org.junit.Rule
@@ -29,6 +30,7 @@ class StopSubheaderTest {
             StopSubheader(
                 RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
                 includeIcon = false,
+                GlobalResponse(objects),
             )
         }
         composeTestRule.onNodeWithText(stop.name).assertCanBeDisplayed()
@@ -47,6 +49,7 @@ class StopSubheaderTest {
             StopSubheader(
                 RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
                 includeIcon = false,
+                GlobalResponse(objects),
             )
         }
         composeTestRule.onNodeWithText(stop.name).assertCanBeDisplayed()
@@ -66,11 +69,36 @@ class StopSubheaderTest {
             StopSubheader(
                 RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
                 includeIcon = false,
+                GlobalResponse(objects),
             )
         }
         composeTestRule.onNodeWithText(stop.name).assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Not accessible").assertCanBeDisplayed()
         composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertCanBeDisplayed()
+    }
+
+    @Test
+    fun testNotAccessibleBlocklisted() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val stop = objects.stop { wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE }
+
+        loadKoinMocks {
+            settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
+        }
+        composeTestRule.setContent {
+            StopSubheader(
+                RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
+                includeIcon = false,
+                GlobalResponse(
+                    objects,
+                    patternIdsByStop = emptyMap(),
+                    stopBlocklist = listOf(stop.id),
+                ),
+            )
+        }
+        composeTestRule.onNodeWithText(stop.name).assertCanBeDisplayed()
+        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertDoesNotExist()
     }
 
     @Test
@@ -110,6 +138,7 @@ class StopSubheaderTest {
                     ),
                 ),
                 includeIcon = false,
+                GlobalResponse(objects),
             )
         }
         composeTestRule.onNodeWithText(stop.name).assertCanBeDisplayed()
