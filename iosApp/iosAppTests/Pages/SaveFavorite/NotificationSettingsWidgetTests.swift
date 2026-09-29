@@ -198,7 +198,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             matchingPolicy: .strict
         )))
         XCTAssertEqual(customWindows[0].startTime, .init(hour: 10, minute: 45, second: 0, nanosecond: 0))
-        XCTAssertEqual(customWindows[0].endTime, .init(hour: 11, minute: 45, second: 0, nanosecond: 0))
+        XCTAssertEqual(customWindows[0].endTime, .init(hour: 11, minute: 00, second: 0, nanosecond: 0))
     }
 
     func testRequestsPermission() throws {
@@ -288,5 +288,50 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(button: "Evening"))
         XCTAssertNotNil(try sut.inspect().find(button: "All day"))
         XCTAssertNotNil(try sut.inspect().find(button: "Custom"))
+    }
+
+    func testStartAndEndOfService() throws {
+        let settings: FavoriteSettings.Notifications = .init(
+            enabled: true,
+            windows: [FavoriteSettings.NotificationsWindow(preset: .allDay, daysOfWeek: [.monday])]
+        )
+
+        let sut = NotificationSettingsWidgetPresetnationView(
+            state: .init(settings: settings, selectedPreset: nil),
+            notificationPermissionManager: MockNotificationPermissionManager()
+        ).withFixedSettings([.notificationPresetWindows: true])
+
+        XCTAssertEqual(
+            2,
+            try sut.inspect()
+                .findAll(ViewType.Text.self)
+                .filter { try $0.string() == "3:00\u{202F}AM" }
+                .count
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "start of service"))
+        XCTAssertNotNil(try sut.inspect().find(text: "end of service"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "service-start-sun"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "service-end-moon"))
+    }
+
+    func testNextDay() throws {
+        let settings: FavoriteSettings.Notifications = .init(
+            enabled: true,
+            windows: [
+                FavoriteSettings.NotificationsWindow(
+                    startTime: .init(hour: 22, minute: 0, second: 0, nanosecond: 0),
+                    endTime: .init(hour: 1, minute: 0, second: 0, nanosecond: 0),
+                    daysOfWeek: [.monday]
+                )
+            ]
+        )
+
+        let sut = NotificationSettingsWidgetPresetnationView(
+            state: .init(settings: settings, selectedPreset: nil),
+            notificationPermissionManager: MockNotificationPermissionManager()
+        ).withFixedSettings([.notificationPresetWindows: true])
+
+        XCTAssertNotNil(try sut.inspect().find(text: "next day"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "service-end-moon"))
     }
 }
