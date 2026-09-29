@@ -29,7 +29,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         let settings: FavoriteSettings.Notifications = .companion.disabled
         var enabled = false
 
-        let sut = NotificationSettingsWidgetPresetnationView(
+        let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
             setEnabled: { enabled = $0 },
             notificationPermissionManager: MockNotificationPermissionManager()
@@ -47,7 +47,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         )
 
         var addedWindow = false
-        let sut = NotificationSettingsWidgetPresetnationView(
+        let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: .init(enabled: true, windows: [firstWindow]), selectedPreset: nil),
             addPlaceholderWindow: { addedWindow = true },
             notificationPermissionManager: MockNotificationPermissionManager()
@@ -76,7 +76,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
                       .init(preset: .evening, daysOfWeek: [.monday])]
         )
 
-        let sut = NotificationSettingsWidgetPresetnationView(
+        let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
             notificationPermissionManager: MockNotificationPermissionManager()
         )
@@ -93,7 +93,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         )
         var customWindows: [FavoriteSettings.NotificationsWindow] = []
 
-        let sut = NotificationSettingsWidgetPresetnationView(
+        let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
             setCustomWindows: { customWindows = $0 },
             notificationPermissionManager: MockNotificationPermissionManager()
@@ -127,7 +127,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         )
         var customWindows: [FavoriteSettings.NotificationsWindow] = []
 
-        let sut = NotificationSettingsWidgetPresetnationView(
+        let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
             setCustomWindows: { customWindows = $0 },
             notificationPermissionManager: MockNotificationPermissionManager()
@@ -159,7 +159,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         )
         var customWindows: [FavoriteSettings.NotificationsWindow] = []
 
-        let sut = NotificationSettingsWidgetPresetnationView(
+        let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
             setCustomWindows: { customWindows = $0 },
             notificationPermissionManager: MockNotificationPermissionManager()
@@ -180,7 +180,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         )
         var customWindows: [FavoriteSettings.NotificationsWindow] = []
 
-        let sut = NotificationSettingsWidgetPresetnationView(
+        let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
             setCustomWindows: { customWindows = $0 },
             notificationPermissionManager: MockNotificationPermissionManager()
@@ -213,7 +213,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             onRequestPermission: { permissionExp.fulfill() }
         )
 
-        let sut = NotificationSettingsWidgetPresetnationView(
+        let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
             setEnabled: { enabled = $0 },
             notificationPermissionManager: permissionManager
@@ -264,7 +264,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             windows: [FavoriteSettings.NotificationsWindow(preset: .morning, daysOfWeek: [.monday])]
         )
 
-        let sut = NotificationSettingsWidgetPresetnationView(
+        let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
             notificationPermissionManager: MockNotificationPermissionManager()
         ).withFixedSettings([.notificationPresetWindows: false])
@@ -278,7 +278,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             windows: [FavoriteSettings.NotificationsWindow(preset: .morning, daysOfWeek: [.monday])]
         )
 
-        let sut = NotificationSettingsWidgetPresetnationView(
+        let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
             notificationPermissionManager: MockNotificationPermissionManager()
         ).withFixedSettings([.notificationPresetWindows: true])
@@ -296,7 +296,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             windows: [FavoriteSettings.NotificationsWindow(preset: .allDay, daysOfWeek: [.monday])]
         )
 
-        let sut = NotificationSettingsWidgetPresetnationView(
+        let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
             notificationPermissionManager: MockNotificationPermissionManager()
         ).withFixedSettings([.notificationPresetWindows: true])
@@ -326,7 +326,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             ]
         )
 
-        let sut = NotificationSettingsWidgetPresetnationView(
+        let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
             notificationPermissionManager: MockNotificationPermissionManager()
         ).withFixedSettings([.notificationPresetWindows: true])

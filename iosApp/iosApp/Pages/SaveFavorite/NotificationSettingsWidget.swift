@@ -25,7 +25,7 @@ struct NotificationSettingsWidget: View {
     var body: some View {
         VStack(spacing: 0) {
             if let vmState {
-                NotificationSettingsWidgetPresetnationView(state: vmState,
+                NotificationSettingsWidgetPresentationView(state: vmState,
                                                            setEnabled: { enabled in vm.setEnabled(enabled: enabled) },
                                                            setPreset: { preset in vm.setPreset(preset: preset) },
                                                            setCustomWindows: { custom in
@@ -45,7 +45,7 @@ struct NotificationSettingsWidget: View {
     }
 }
 
-struct NotificationSettingsWidgetPresetnationView: View {
+struct NotificationSettingsWidgetPresentationView: View {
     let state: NotificationSettingsViewModel.State
     var setEnabled: (Bool) -> Void = { _ in }
     var setPreset: (Preset?) -> Void = { _ in }
