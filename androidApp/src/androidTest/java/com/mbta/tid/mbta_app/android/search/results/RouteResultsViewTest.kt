@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.android.search.results
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp

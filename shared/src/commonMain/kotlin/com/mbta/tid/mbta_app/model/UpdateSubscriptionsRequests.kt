@@ -43,10 +43,10 @@ internal constructor(
             favorites: Map<RouteStopDirection, FavoriteSettings>,
             includeAccessibility: Boolean = false,
         ): List<SubscriptionRequest> {
-            val enabled = favorites.filter { it.value?.notifications?.enabled == true }
+            val enabled = favorites.filter { it.value.notifications.enabled }
             return enabled.map { (rsd, settings) ->
                 val windows =
-                    settings?.notifications?.windows?.map {
+                    settings.notifications.windows.map {
                         WindowRequest(
                             startTime = it.startTime,
                             endTime = it.endTime,
@@ -58,7 +58,7 @@ internal constructor(
                     stopId = rsd.stop,
                     directionId = rsd.direction,
                     includeAccessibility = includeAccessibility,
-                    windows = windows ?: emptyList(),
+                    windows = windows,
                 )
             }
         }

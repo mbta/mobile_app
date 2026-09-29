@@ -51,9 +51,9 @@ internal constructor(
     internal companion object {
 
         /**
-         * Return the map of LineOrRoute => Stop => Patterns that are served by the given [stopIds].
-         * A stop is only included for a LineOrRoute if it has any patterns that haven't been seen
-         * at an earlier stop for that LineOrRoute.
+         * Return the map of LineOrRoute => Stop => Patterns that are served by the given stops. A
+         * stop is only included for a LineOrRoute if it has any patterns that haven't been seen at
+         * an earlier stop for that LineOrRoute.
          */
         fun patternsGroupedByLineOrRouteAndStop(
             parentToAllStops: Map<Stop, Set<String>>,
@@ -149,17 +149,13 @@ internal constructor(
                     patternsIds.mapNotNull { patternId ->
                         val pattern = globalData.routePatterns[patternId]
                         val route = pattern?.let { globalData.routes[it.routeId] }
-                        if (route != null && pattern != null) {
-                            Pair(route, pattern)
-                        } else {
-                            null
-                        }
+                        if (route != null) Pair(route, pattern) else null
                     }
                 }
 
             val patternsByRouteOrLine =
                 allPatternsAtStopWithRoute.groupBy(
-                    { (route, _pattern) ->
+                    { (route, _) ->
                         val line = route.lineId?.let { globalData.lines[it] }
                         if (line != null && !route.isShuttle && line.isGrouped) {
                             LineOrRoute.Line(

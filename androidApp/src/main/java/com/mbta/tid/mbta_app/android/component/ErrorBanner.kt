@@ -45,7 +45,7 @@ import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
-import org.koin.compose.KoinContext
+import org.koin.compose.KoinIsolatedContext
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 
@@ -208,7 +208,7 @@ class ErrorBannerPreviews() {
     @Preview
     @Composable
     fun Previews() {
-        KoinContext(koinApplication.koin) {
+        KoinIsolatedContext(koinApplication) {
             MyApplicationTheme {
                 Column(
                     modifier =

@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.gradle
 
 import java.util.Base64
 import org.cyclonedx.model.AttachmentText
+import org.cyclonedx.model.LicenseItem
 import org.cyclonedx.parsers.JsonParser
 import org.cyclonedx.parsers.XmlParser
 import org.gradle.api.DefaultTask
@@ -48,9 +49,12 @@ abstract class DependencyCodegenTask : DefaultTask() {
                     val name = component.displayName
                     val licenseText =
                         try {
-                            component.licenses.licenses.joinToString("\n") {
-                                it.attachmentText.decoded().replace(trailingWhitespace, "")
-                            }
+                            component.licenses.items
+                                .filter { it.type == LicenseItem.LicenseItemType.LICENSE }
+                                .map { it.license }
+                                .joinToString("\n") {
+                                    it.attachmentText.decoded().replace(trailingWhitespace, "")
+                                }
                         } catch (e: Throwable) {
                             logger.error("bad license for $purl: $e")
                             return@mapNotNull null

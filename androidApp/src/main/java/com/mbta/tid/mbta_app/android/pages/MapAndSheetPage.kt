@@ -300,7 +300,6 @@ fun MapAndSheetPage(
             is DeepLinkState.Stop -> {
                 navController.navigate(state.sheetRoute)
             }
-            else -> {}
         }
         deepLinkCallback()
     }
