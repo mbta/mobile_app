@@ -2,11 +2,14 @@ package com.mbta.tid.mbta_app.usecases
 
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.model.FavoriteSettings
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.SubscriptionRequest
 import com.mbta.tid.mbta_app.model.WindowRequest
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
+import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockSubscriptionsRepository
 import com.mbta.tid.mbta_app.utils.buildFavorites
@@ -23,19 +26,30 @@ class FavoritesUsecasesTests : KoinTest {
 
     @Test
     fun testGetRouteStopDirectionFavorites() = runBlocking {
-        val routeStopDirection = RouteStopDirection(Route.Id("Red"), "place-alfcl", 0)
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { id = "Red" }
+        val stop = objects.stop { id = "place-alfcl" }
+        val firstStop = objects.stop { id = "first stop" }
+        val lastStop = objects.stop { id = "last stop" }
+        objects.routePattern(route) {
+            directionId = 0
+            representativeTrip { stopIds = listOf(firstStop.id, stop.id, lastStop.id) }
+        }
+        val global = GlobalResponse(objects)
+        val routeStopDirection = RouteStopDirection(route.id, stop.id, 0)
         val savedFavorites = buildFavorites { routeStopDirection(routeStopDirection) }
         val repository = MockFavoritesRepository(savedFavorites)
         val usecase =
             FavoritesUsecases(
                 repository,
+                MockGlobalRepository(global),
                 MockSettingsRepository(),
                 MockSubscriptionsRepository(),
                 MockAnalytics(),
             )
         assertEquals(
-            usecase.getRouteStopDirectionFavorites(),
             mapOf(routeStopDirection to FavoriteSettings()),
+            usecase.getRouteStopDirectionFavorites(),
         )
     }
 
@@ -45,6 +59,7 @@ class FavoritesUsecasesTests : KoinTest {
         val usecase =
             FavoritesUsecases(
                 repository,
+                MockGlobalRepository(),
                 MockSettingsRepository(),
                 MockSubscriptionsRepository(),
                 MockAnalytics(),
@@ -63,6 +78,7 @@ class FavoritesUsecasesTests : KoinTest {
         val useCase =
             FavoritesUsecases(
                 repository,
+                MockGlobalRepository(),
                 MockSettingsRepository(),
                 MockSubscriptionsRepository(),
                 MockAnalytics(onLogEvent = { event, attrs -> eventLogged = event }),
@@ -100,9 +116,30 @@ class FavoritesUsecasesTests : KoinTest {
                 }
             )
 
+        val objects = ObjectCollectionBuilder()
+        val route1 = objects.route { id = "route_1" }
+        val route2 = objects.route { id = "route_2" }
+        val stop1 = objects.stop { id = "stop_1" }
+        val stop2 = objects.stop { id = "stop_2" }
+        val otherStop = objects.stop { id = "other_stop" }
+        objects.routePattern(route1) {
+            directionId = 0
+            representativeTrip { stopIds = listOf(stop1.id, otherStop.id) }
+        }
+        objects.routePattern(route1) {
+            directionId = 1
+            representativeTrip { stopIds = listOf(stop1.id, otherStop.id) }
+        }
+        objects.routePattern(route2) {
+            directionId = 0
+            representativeTrip { stopIds = listOf(stop2.id, otherStop.id) }
+        }
+        val globalRepository = MockGlobalRepository(GlobalResponse(objects))
+
         val useCase =
             FavoritesUsecases(
                 repository,
+                globalRepository,
                 MockSettingsRepository(),
                 subscriptionsRepository,
                 MockAnalytics(),

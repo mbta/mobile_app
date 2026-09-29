@@ -339,6 +339,7 @@ private fun SaveFavoritePagePreviewAdd() {
                 single {
                     FavoritesUsecases(
                         MockFavoritesRepository(),
+                        MockGlobalRepository(GlobalResponse(objects)),
                         MockSettingsRepository(),
                         MockSubscriptionsRepository(),
                         MockAnalytics(),
@@ -394,6 +395,7 @@ private fun SaveFavoritePagePreviewEdit() {
                                 )
                             )
                         ),
+                        MockGlobalRepository(GlobalResponse(objects)),
                         MockSettingsRepository(),
                         MockSubscriptionsRepository(),
                         MockAnalytics(),
