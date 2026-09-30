@@ -88,7 +88,7 @@
     <string name="delays_due_to_cause">&lt;b&gt;Trì hoãn&lt;/b&gt; do %1$s</string>
     <string name="delays_unknown_reason">&lt;b&gt;Trễ&lt;/b&gt;</string>
     <string name="delete">Xóa</string>
-    <string name="delete_time_period">Thêm một khoảng thời gian khác</string>
+    <string name="delete_time_period">xóa khoảng thời gian</string>
     <string name="demonstration">Biểu tình</string>
     <string name="demonstration_lowercase">cuộc biểu tình</string>
     <string name="departure_tile_on_click_label">hiển thị thêm thông tin về chuyến đi này</string>

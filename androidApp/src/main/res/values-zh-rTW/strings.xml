@@ -88,7 +88,7 @@
     <string name="delays_due_to_cause">因 %1$s 造成&lt;b&gt;延誤&lt;/b&gt;</string>
     <string name="delays_unknown_reason">&lt;b&gt;延誤&lt;/b&gt;</string>
     <string name="delete">刪除</string>
-    <string name="delete_time_period">新增其他時間段</string>
+    <string name="delete_time_period">刪除時段</string>
     <string name="demonstration">示威</string>
     <string name="demonstration_lowercase">示威</string>
     <string name="departure_tile_on_click_label">顯示有關此行程的更多信息</string>
