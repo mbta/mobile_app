@@ -21,23 +21,17 @@ public enum class FavoriteValidityIssue {
  * Checks whether this route/stop/direction combination corresponds to real, currently-valid
  * schedule data in [global]. Returns the reason it's invalid, or `null` if it's valid.
  */
-public fun RouteStopDirection.validityIssue(global: GlobalResponse): FavoriteValidityIssue? =
-    checkValidity(this, global)?.let {
-        println("Invalid favorite due to $it: $this")
-        return@let it
-    }
+public fun RouteStopDirection.validityIssue(global: GlobalResponse): FavoriteValidityIssue? {
+    val lineOrRoute = global.getLineOrRoute(this.route) ?: return FavoriteValidityIssue.MissingRoute
+    val stop = global.getStop(this.stop) ?: return FavoriteValidityIssue.MissingStop
 
-private fun checkValidity(rsd: RouteStopDirection, global: GlobalResponse): FavoriteValidityIssue? {
-    val lineOrRoute = global.getLineOrRoute(rsd.route) ?: return FavoriteValidityIssue.MissingRoute
-    val stop = global.getStop(rsd.stop) ?: return FavoriteValidityIssue.MissingStop
+    val patterns = global.getPatternsFor(this.stop, lineOrRoute)
 
-    val patterns = global.getPatternsFor(rsd.stop, lineOrRoute)
-
-    if (patterns.none { pattern -> pattern.directionId == rsd.direction }) {
+    if (patterns.none { pattern -> pattern.directionId == this.direction }) {
         return FavoriteValidityIssue.MissingDirection
     }
 
-    if (stop.isLastStopForAllPatterns(rsd.direction, patterns, global)) {
+    if (stop.isLastStopForAllPatterns(this.direction, patterns, global)) {
         return FavoriteValidityIssue.LastStopForRoute
     }
 
