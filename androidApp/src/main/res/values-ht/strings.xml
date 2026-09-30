@@ -89,7 +89,7 @@
     <string name="delays_due_to_cause">&lt;b&gt;Reta&lt;/b&gt; akòz %1$s</string>
     <string name="delays_unknown_reason">&lt;b&gt;Reta&lt;/b&gt;</string>
     <string name="delete">Efase</string>
-    <string name="delete_time_period">Ajoute yon lòt peryòd tan</string>
+    <string name="delete_time_period">efase peryòd tan</string>
     <string name="demonstration">Demonstrasyon</string>
     <string name="demonstration_lowercase">manifestasyon</string>
     <string name="departure_tile_on_click_label">montre plis enfòmasyon sou vwayaj sa a</string>
@@ -253,6 +253,7 @@
     <string name="nearby_transit">Transpò piblik ki toupre</string>
     <string name="nearby_transit_link">Toupre</string>
     <string name="new_feature_screen_reader_header_prefix">Nouvo karakteristik. %1$s</string>
+    <string name="next_day">jou kap vini an</string>
     <string name="next_stop">Pwochen arè</string>
     <string name="next_trip_at">Pwochen vwayaj la nan &lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="next_trip_at_tomorrow">Pwochen vwayaj la nan &lt;b&gt;%1$s&lt;/b&gt; demen</string>
@@ -353,6 +354,8 @@
     <string name="serves_route_list">sèvi %1$s</string>
     <string name="service_change">Chanjman Sèvis</string>
     <string name="service_change_sentence_case">Chanjman sèvis</string>
+    <string name="service_day_start">kòmansman sèvis</string>
+    <string name="service_day_end">fen sèvis</string>
     <string name="service_ended">Sèvis ki fini</string>
     <string name="service_suspended">Sèvis ki kanpe</string>
     <string name="setting_station_accessibility">Enfòmasyon sou Aksè Estasyon</string>

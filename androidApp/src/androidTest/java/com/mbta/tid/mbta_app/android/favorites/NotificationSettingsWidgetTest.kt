@@ -9,7 +9,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsNotDisplayed
-import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
@@ -17,7 +16,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isEnabled
 import androidx.compose.ui.test.isOff
 import androidx.compose.ui.test.isOn
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onLast
@@ -28,7 +27,6 @@ import androidx.compose.ui.test.performTextReplacement
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.mbta.tid.mbta_app.android.loadKoinMocks
-import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.hasTextMatching
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.util.ConstantPermissionState
@@ -38,6 +36,7 @@ import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.NotificationSettingsViewModel
+import kotlin.test.assertEquals
 import kotlinx.datetime.LocalDateTime
 import org.junit.Rule
 import org.junit.Test
@@ -49,7 +48,7 @@ class NotificationSettingsWidgetTest : KoinTest {
 
     private val permissionGranted =
         ConstantPermissionState(
-            android.Manifest.permission.POST_NOTIFICATIONS,
+            Manifest.permission.POST_NOTIFICATIONS,
             PermissionStatus.Granted,
         )
 
@@ -220,7 +219,7 @@ class NotificationSettingsWidgetTest : KoinTest {
             hasTextMatching(Regex("10:45\\sAM", RegexOption.IGNORE_CASE))
         )
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasTextMatching(Regex("11:45\\sAM", RegexOption.IGNORE_CASE))
+            hasTextMatching(Regex("11:00\\sAM", RegexOption.IGNORE_CASE))
         )
     }
 
@@ -257,7 +256,10 @@ class NotificationSettingsWidgetTest : KoinTest {
         composeTestRule.onNodeWithContentDescription("7 o'clock").performClick()
         composeTestRule.onNodeWithContentDescription("Select minutes").performClick()
         composeTestRule.onNodeWithContentDescription("40 minutes").performClick()
-        composeTestRule.onNodeWithText("Okay").assertIsNotEnabled()
+        composeTestRule.onNodeWithText("Okay").performClick()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("8:15\\sAM", RegexOption.IGNORE_CASE)))
+            .performClick()
     }
 
     @Test
@@ -283,7 +285,7 @@ class NotificationSettingsWidgetTest : KoinTest {
         composeTestRule.onNodeWithText("Allow Notifications in Settings").assertIsNotDisplayed()
         hasRequestedPermission.value = true
 
-        composeTestRule.onNodeWithText("Allow Notifications in Settings").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Allow Notifications in Settings").assertExists()
     }
 
     @Test
@@ -460,5 +462,75 @@ class NotificationSettingsWidgetTest : KoinTest {
         composeTestRule.onNodeWithText("Custom").performClick()
         composeTestRule.onNodeWithText("Custom").assertIsSelected()
         composeTestRule.onNodeWithText("Sunday").assertIsOn()
+    }
+
+    @Test
+    fun testStartAndEndOfService() {
+        loadKoinMocks {
+            settings =
+                MockSettingsRepository(settings = mapOf(Settings.NotificationPresetWindows to true))
+        }
+        val viewModel = NotificationSettingsViewModel(MockSentryRepository())
+        viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
+
+        composeTestRule.setContent {
+            NotificationSettingsWidget(
+                viewModel,
+                notificationPermissionState = permissionGranted,
+                hasRequestedPermission = true,
+            )
+        }
+
+        composeTestRule.onNodeWithText("Get disruption notifications").performClick()
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Morning"))
+        composeTestRule.onNodeWithText("All day").performClick()
+        composeTestRule.onNodeWithText("All day").assertIsSelected()
+
+        val serviceBoundTimes =
+            composeTestRule.onAllNodes(hasTextMatching(Regex("3:00\\sAM", RegexOption.IGNORE_CASE)))
+
+        assertEquals(2, serviceBoundTimes.fetchSemanticsNodes().size)
+        composeTestRule.onNodeWithContentDescription("start of service").assertExists()
+        composeTestRule.onNodeWithContentDescription("end of service").assertExists()
+    }
+
+    @Test
+    fun testNextDay() {
+        loadKoinMocks {
+            settings =
+                MockSettingsRepository(settings = mapOf(Settings.NotificationPresetWindows to true))
+        }
+        val viewModel = NotificationSettingsViewModel(MockSentryRepository())
+        viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
+
+        composeTestRule.setContent {
+            NotificationSettingsWidget(
+                viewModel,
+                notificationPermissionState = permissionGranted,
+                hasRequestedPermission = true,
+            )
+        }
+
+        composeTestRule.onNodeWithText("Get disruption notifications").performClick()
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Evening"))
+        composeTestRule.onNodeWithText("Evening").performClick()
+        composeTestRule.onNodeWithText("Evening").assertIsSelected()
+
+        composeTestRule
+            .onNode(hasTextMatching(Regex("4:00\\sPM", RegexOption.IGNORE_CASE)))
+            .performClick()
+
+        composeTestRule.onNodeWithContentDescription("10 o'clock").performClick()
+        composeTestRule.onNodeWithText("Okay").performClick()
+
+        composeTestRule
+            .onNode(hasTextMatching(Regex("10:15\\sPM", RegexOption.IGNORE_CASE)))
+            .performClick()
+
+        composeTestRule.onNodeWithContentDescription("1 o'clock").performClick()
+        composeTestRule.onNodeWithText("AM").performClick()
+        composeTestRule.onNodeWithText("Okay").performClick()
+
+        composeTestRule.onNodeWithContentDescription("next day").assertExists()
     }
 }

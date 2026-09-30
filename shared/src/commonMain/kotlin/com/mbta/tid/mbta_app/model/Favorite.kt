@@ -91,18 +91,34 @@ constructor(val notifications: Notifications = Notifications.disabled) {
                 daysOfWeek: Set<DayOfWeek>,
             ) : this(preset.startTime, preset.endTime, daysOfWeek)
 
-            // Copy function to preserve ID without making it modifiable
-            public fun copy(
-                startTime: LocalTime = this.startTime,
-                endTime: LocalTime = this.endTime,
-                daysOfWeek: Set<DayOfWeek> = this.daysOfWeek,
-            ): Window {
-                return Window(this.id, startTime, endTime, daysOfWeek)
+            public sealed class Type {
+                public object Basic : Type()
+
+                public object NextDay : Type()
+
+                public object ServiceEnd : Type()
+
+                public object ServiceStart : Type()
             }
 
-            // Copy function for Objective-C interop
+            val startType: Type
+                get() =
+                    when {
+                        startTime == serviceBoundary -> Type.ServiceStart
+                        else -> Type.Basic
+                    }
+
+            val endType: Type
+                get() =
+                    when {
+                        endTime == serviceBoundary -> Type.ServiceEnd
+                        endTime <= startTime -> Type.NextDay
+                        else -> Type.Basic
+                    }
+
+            // Copy function to preserve ID without making it modifiable
             @DefaultArgumentInterop.Enabled
-            public fun doCopy(
+            public fun copy(
                 startTime: LocalTime = this.startTime,
                 endTime: LocalTime = this.endTime,
                 daysOfWeek: Set<DayOfWeek> = this.daysOfWeek,
@@ -150,7 +166,7 @@ constructor(val notifications: Notifications = Notifications.disabled) {
                 public fun customFromCurrentTime(now: EasternTimeInstant): Window {
                     val startTime = LocalTime(now.local.time.hour, 0)
                     val endTime =
-                        if (startTime.hour == 23) LocalTime(now.local.time.hour, 59)
+                        if (startTime.hour == 23) LocalTime(1, 0)
                         else
                             LocalTime(
                                 now.local.time.hour + 1,
@@ -194,38 +210,24 @@ constructor(val notifications: Notifications = Notifications.disabled) {
                 }
 
                 /**
-                 * The earliest possible end time for a given start time - one minute after start.
-                 */
-                public fun minimumEndTime(startTime: LocalTime): LocalTime {
-                    val startHour = startTime.hour
-                    val startMinute = startTime.minute
-                    if (startHour == 23 && startMinute == 59) {
-                        return startTime
-                    }
-                    if (startMinute < 59) {
-                        return LocalTime(hour = startHour, minute = startMinute + 1, second = 0)
-                    }
-                    return LocalTime(hour = startHour + 1, minute = 0, second = 0)
-                }
-
-                /**
                  * Returns a safe end time for a given start time and end time. If the given end
-                 * time is before the start time, it pushes the end time out 1 hour.
+                 * time is before the start time and after the 3am end of service, it's set to the
+                 * next 15 minute increment after the start time.
                  */
-                public fun safeEndTime(startTime: LocalTime, endTime: LocalTime): LocalTime {
-                    return if (endTime > startTime) {
-                        endTime
-                    } else {
-                        if (startTime.hour < 23) {
-                            LocalTime(
-                                hour = startTime.hour + 1,
-                                minute = startTime.minute,
-                                second = 0,
-                            )
-                        } else {
-                            LocalTime(hour = 23, minute = 59, second = 0)
-                        }
-                    }
+                @DefaultArgumentInterop.Enabled
+                public fun safeEndTime(
+                    startTime: LocalTime,
+                    endTime: LocalTime,
+                    roundUp: Boolean = false,
+                ): LocalTime =
+                    if (endTime > startTime || endTime <= serviceBoundary) endTime
+                    else if (roundUp) serviceBoundary else nextQuarterHour(startTime)
+
+                /** Returns the next 15 minute increment strictly after the given time */
+                private fun nextQuarterHour(time: LocalTime): LocalTime {
+                    val nextMinute = ((time.minute / 15) + 1) * 15
+                    return if (nextMinute == 60) LocalTime(hour = (time.hour + 1) % 24, minute = 0)
+                    else LocalTime(hour = time.hour, minute = nextMinute)
                 }
             }
         }
@@ -233,6 +235,8 @@ constructor(val notifications: Notifications = Notifications.disabled) {
         public companion object {
             public val disabled: Notifications =
                 Notifications(enabled = false, windows = emptyList())
+
+            public val serviceBoundary: LocalTime = LocalTime(3, 0, second = 0, nanosecond = 0)
         }
     }
 }
