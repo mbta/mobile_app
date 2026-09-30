@@ -9942,43 +9942,43 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agregar otro período de tiempo"
+            "value" : "eliminar período de tiempo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajouter une autre période"
+            "value" : "supprimer la période"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoute yon lòt peryòd tan"
+            "value" : "efase peryòd tan"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adicionar outro período"
+            "value" : "excluir período de tempo"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thêm một khoảng thời gian khác"
+            "value" : "chỉnh sửa mục yêu thích"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "添加其他时间段"
+            "value" : "编辑收藏"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新增其他時間段"
+            "value" : "刪除時段"
           }
         }
       }
@@ -16995,6 +16995,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "新增功能。%1$@"
+          }
+        }
+      }
+    },
+    "next day" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al día siguiente"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le lendemain"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "jou kap vini an"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "no dia seguinte"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ngày hôm sau"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "第二天"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "第二天"
           }
         }
       }
