@@ -93,6 +93,13 @@ class NearbyTransitPageTest : KoinTest {
         latitude = 0.0
         longitude = 0.0
     }
+    val laterStop = builder.stop {
+        id = "stop_later"
+        name = "Later Stop"
+        locationType = LocationType.STOP
+        latitude = 0.0
+        longitude = 0.0
+    }
     val line = builder.line {
         id = "line_1"
         color = "FF0000"
@@ -104,7 +111,7 @@ class NearbyTransitPageTest : KoinTest {
         directionId = 0
         headsign = "Sample Headsign"
         routePatternId = "pattern_1"
-        stopIds = listOf(sampleStop.id)
+        stopIds = listOf(sampleStop.id, laterStop.id)
     }
     val prediction = builder.prediction {
         id = "prediction_1"
