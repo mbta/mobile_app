@@ -89,7 +89,7 @@
     <string name="delays_due_to_cause">&lt;b&gt;Retards&lt;/b&gt; dus à %1$s</string>
     <string name="delays_unknown_reason">&lt;b&gt;Retard&lt;/b&gt;</string>
     <string name="delete">Supprimer</string>
-    <string name="delete_time_period">Ajouter une autre période</string>
+    <string name="delete_time_period">supprimer la période</string>
     <string name="demonstration">Manifestation</string>
     <string name="demonstration_lowercase">manifestation</string>
     <string name="departure_tile_on_click_label">afficher plus d’informations sur ce trajet</string>

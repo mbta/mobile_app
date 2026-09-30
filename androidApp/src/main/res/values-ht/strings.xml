@@ -89,7 +89,7 @@
     <string name="delays_due_to_cause">&lt;b&gt;Reta&lt;/b&gt; akòz %1$s</string>
     <string name="delays_unknown_reason">&lt;b&gt;Reta&lt;/b&gt;</string>
     <string name="delete">Efase</string>
-    <string name="delete_time_period">Ajoute yon lòt peryòd tan</string>
+    <string name="delete_time_period">efase peryòd tan</string>
     <string name="demonstration">Demonstrasyon</string>
     <string name="demonstration_lowercase">manifestasyon</string>
     <string name="departure_tile_on_click_label">montre plis enfòmasyon sou vwayaj sa a</string>
