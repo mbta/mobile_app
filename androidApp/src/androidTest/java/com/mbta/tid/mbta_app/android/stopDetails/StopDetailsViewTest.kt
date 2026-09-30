@@ -32,6 +32,7 @@ import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
 import com.mbta.tid.mbta_app.viewModel.MockStopDetailsViewModel
 import com.mbta.tid.mbta_app.viewModel.StopDetailsViewModel
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -108,7 +109,7 @@ class StopDetailsViewTest {
     val settingsRepository =
         MockSettingsRepository(settings = mapOf(Pair(Settings.StationAccessibility, true)))
 
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Before
     fun setUp() {

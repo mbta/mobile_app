@@ -32,12 +32,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.fail
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.koinInject
 
 class RouteStopListViewTest {
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @OptIn(ExperimentalTestApi::class)
     @Test

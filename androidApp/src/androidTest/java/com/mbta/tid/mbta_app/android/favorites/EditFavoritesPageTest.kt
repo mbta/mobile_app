@@ -41,6 +41,7 @@ import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.datetime.DayOfWeek
 import org.junit.Before
 import org.junit.Rule
@@ -248,7 +249,7 @@ class EditFavoritesPageTest : KoinTest {
 
     val globalResponse = GlobalResponse(builder)
 
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Before
     fun setUp() {

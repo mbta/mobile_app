@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import kotlin.test.assertTrue
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 
@@ -40,7 +41,7 @@ class StopDetailsFilteredSheetHeaderTest {
         longitude = 0.0
     }
 
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @OptIn(ExperimentalTestApi::class)
     @Test

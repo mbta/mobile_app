@@ -43,6 +43,7 @@ import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.datetime.Month
 import org.junit.Before
 import org.junit.Rule
@@ -144,7 +145,7 @@ class StopDetailsFilteredDeparturesViewTest {
             override suspend fun setSettings(settings: Map<Settings, Boolean>) {}
         }
 
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Before
     fun setUp() {

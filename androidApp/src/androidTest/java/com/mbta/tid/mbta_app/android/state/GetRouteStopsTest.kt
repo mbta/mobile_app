@@ -17,6 +17,7 @@ import com.mbta.tid.mbta_app.repositories.MockRouteStopsRepository
 import com.mbta.tid.mbta_app.repositories.RouteStopsResult
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -24,7 +25,7 @@ import org.junit.Rule
 import org.junit.Test
 
 class GetRouteStopsTest {
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Test
     fun testRouteStops() {

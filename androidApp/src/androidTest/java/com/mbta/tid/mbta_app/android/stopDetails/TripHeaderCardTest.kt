@@ -18,13 +18,14 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.datetime.Month
 import org.junit.Rule
 import org.junit.Test
 
 class TripHeaderCardTest {
 
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Test
     fun testDisplaysStopName() {

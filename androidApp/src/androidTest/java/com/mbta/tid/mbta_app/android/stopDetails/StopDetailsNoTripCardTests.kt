@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.model.response.NextScheduleResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
@@ -23,7 +24,7 @@ import org.junit.Test
 
 class StopDetailsNoTripCardTests {
 
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Test
     fun testSubwayEarlyMorning() {

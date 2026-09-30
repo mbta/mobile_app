@@ -32,6 +32,7 @@ import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import kotlin.test.assertEquals
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 import org.koin.test.KoinTest
@@ -52,7 +53,7 @@ class SearchBarOverlayTest : KoinTest {
             representativeTrip { stopIds = listOf(visitedStop.id, searchedStop.id) }
         }
 
-    @get:Rule var composeTestRule = createComposeRule()
+    @get:Rule var composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Test
     fun testSearchBarOverlayBehavesCorrectly() {

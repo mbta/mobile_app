@@ -43,12 +43,13 @@ import dev.mokkery.verify.VerifyMode
 import kotlin.collections.emptyList
 import kotlin.time.Clock
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 
 class FavoritesPageTest {
 
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Test

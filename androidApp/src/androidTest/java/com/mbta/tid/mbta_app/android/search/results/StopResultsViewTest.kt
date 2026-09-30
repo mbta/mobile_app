@@ -13,11 +13,12 @@ import com.mbta.tid.mbta_app.model.RoutePillSpec
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.viewModel.SearchViewModel
 import kotlin.test.assertTrue
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 
 class StopResultsViewTest {
-    @get:Rule var composeTestRule = createComposeRule()
+    @get:Rule var composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Test
     fun testStationResultWithMultipleRoutes() {

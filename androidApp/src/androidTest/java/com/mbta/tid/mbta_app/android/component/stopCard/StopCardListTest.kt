@@ -23,6 +23,7 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -147,7 +148,7 @@ class StopCardListTest {
 
     val globalResponse = GlobalResponse(builder)
 
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Before
     fun setUp() {

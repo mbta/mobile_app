@@ -19,13 +19,14 @@ import dev.mokkery.everySuspend
 import dev.mokkery.mock
 import kotlin.test.assertEquals
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 import org.koin.test.KoinTest
 
 class ContentViewModelTests : KoinTest {
 
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Test
     fun testDefaultTabNearbyIfNotShownPromo() = runBlocking {

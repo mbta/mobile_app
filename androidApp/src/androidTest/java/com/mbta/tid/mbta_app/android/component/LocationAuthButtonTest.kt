@@ -8,11 +8,12 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 
 class LocationAuthButtonTest {
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Test
     fun testShowsWhenPermissionsNotGranted() {

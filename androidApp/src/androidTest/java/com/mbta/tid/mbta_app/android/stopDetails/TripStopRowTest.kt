@@ -26,12 +26,13 @@ import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.datetime.Month
 import org.junit.Rule
 import org.junit.Test
 
 class TripStopRowTest {
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Test
     fun testStopName() {

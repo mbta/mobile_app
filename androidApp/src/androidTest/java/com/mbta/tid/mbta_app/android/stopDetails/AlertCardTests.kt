@@ -17,13 +17,14 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.datetime.Month
 import org.junit.Rule
 import org.junit.Test
 
 class AlertCardTests {
 
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     private val routeAccents =
         TripRouteAccents(Color.fromHex("ED8B00"), Color.fromHex("FFFFFF"), RouteType.BUS)

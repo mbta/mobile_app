@@ -12,11 +12,12 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.SearchViewModel
 import kotlin.test.assertEquals
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 
 class RouteResultsViewTest {
-    @get:Rule var composeTestRule = createComposeRule()
+    @get:Rule var composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Test
     fun testBusBothNames() {

@@ -21,6 +21,7 @@ import com.mbta.tid.mbta_app.utils.buildFavorites
 import com.mbta.tid.mbta_app.viewModel.MockNotificationSettingsViewModel
 import com.mbta.tid.mbta_app.viewModel.NotificationSettingsViewModel
 import kotlin.test.assertEquals
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import org.junit.Rule
@@ -28,7 +29,7 @@ import org.junit.Test
 
 @OptIn(ExperimentalTestApi::class)
 class SaveFavoritePageTests {
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
     @get:Rule
     val runtimePermissionRule =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)

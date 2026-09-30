@@ -7,12 +7,13 @@ import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.RouteType
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 
 class AlertListContainerTest {
 
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     private val routeAccents =
         TripRouteAccents(Color.fromHex("ED8B00"), Color.fromHex("FFFFFF"), RouteType.BUS)

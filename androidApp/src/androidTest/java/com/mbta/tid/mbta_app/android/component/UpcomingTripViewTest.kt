@@ -24,12 +24,13 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.datetime.Month
 import org.junit.Rule
 import org.junit.Test
 
 class UpcomingTripViewTest {
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Test
     fun testUpcomingTripViewWithSomeOverridden() {

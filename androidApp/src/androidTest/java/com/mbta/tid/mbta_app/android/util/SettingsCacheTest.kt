@@ -14,13 +14,14 @@ import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.test.assertEquals
 import kotlin.test.fail
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.koinInject
 
 class SettingsCacheTest {
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Test
     fun testLoadsSettings() {

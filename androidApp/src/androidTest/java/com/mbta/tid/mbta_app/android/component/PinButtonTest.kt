@@ -4,12 +4,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 
 class PinButtonTest {
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Test
     fun callsAction() {
