@@ -82,12 +82,10 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider
         )
 
-        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
-        defer { ViewHosting.expel() }
-
-        try await Task.sleep(for: .seconds(1))
-        XCTAssertNotNil(try sut.inspect().find(StopDetailsFilteredView.self))
-        XCTAssertNotNil(try sut.inspect().find(DepartureTile.self))
+        try await ViewHosting.host(sut.environmentObject(ViewportProvider()).withFixedSettings([:])) {
+            XCTAssertNotNil(try sut.inspect().find(StopDetailsFilteredView.self))
+            XCTAssertNotNil(try sut.inspect().find(DepartureTile.self))
+        }
     }
 
     func testCloseButton() throws {

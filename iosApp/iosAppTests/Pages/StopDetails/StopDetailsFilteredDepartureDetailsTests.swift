@@ -772,9 +772,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "5 min"))
         }
 
-        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
-        defer { ViewHosting.expel() }
-        await fulfillment(of: [exp], timeout: 3)
+        try await ViewHosting.host(sut.environmentObject(ViewportProvider()).withFixedSettings([:])) {
+            await fulfillment(of: [exp], timeout: 3)
+        }
     }
 
     @MainActor func testLoadsNextTrip() {

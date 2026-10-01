@@ -13,22 +13,25 @@ import ViewInspector
 import XCTest
 
 final class MorePageTests: XCTestCase {
-    @MainActor func testLoadsState() async {
+    @MainActor func testLoadsState() async throws {
         let sut = MorePage(highlight: nil)
         let exp = sut.inspection.inspect(after: 1) { view in
             XCTAssertTrue(try view.find(text: "Debug Mode").parent().parent().find(ViewType.Toggle.self).isOn())
             XCTAssertTrue(try view.find(text: "Map Display").parent().parent().find(ViewType.Toggle.self).isOn())
         }
 
-        ViewHosting.host(view: sut.withFixedSettings([.devDebugMode: true,
-                                                      .searchRouteResults: false,
-                                                      .hideMaps: false]))
-        defer { ViewHosting.expel() }
-
-        await fulfillment(of: [exp], timeout: 2)
+        try await ViewHosting.host(
+            sut.withFixedSettings([
+                .devDebugMode: true,
+                .searchRouteResults: false,
+                .hideMaps: false
+            ])
+        ) {
+            await fulfillment(of: [exp], timeout: 2)
+        }
     }
 
-    @MainActor func testSavesState() async {
+    @MainActor func testSavesState() async throws {
         let savedExp = expectation(description: "saved state")
 
         let settingsRepository = MockSettingsRepository(
@@ -44,13 +47,12 @@ final class MorePageTests: XCTestCase {
             try view.find(text: "Debug Mode").parent().parent().find(ViewType.Toggle.self).tap()
         }
 
-        ViewHosting.host(view: sut.environmentObject(SettingsCache(settingsRepo: settingsRepository)))
-        defer { ViewHosting.expel() }
-
-        await fulfillment(of: [tapExp, savedExp], timeout: 5)
+        try await ViewHosting.host(sut.environmentObject(SettingsCache(settingsRepo: settingsRepository))) {
+            await fulfillment(of: [tapExp, savedExp], timeout: 5)
+        }
     }
 
-    @MainActor func testAccessibilityToggleUpdatesSubscriptions() async {
+    @MainActor func testAccessibilityToggleUpdatesSubscriptions() async throws {
         let savedExp = expectation(description: "saved state")
         let updateExp = expectation(description: "updated subscription accessibility")
 
@@ -81,15 +83,14 @@ final class MorePageTests: XCTestCase {
             try view.find(text: "Station Accessibility Info").parent().parent().find(ViewType.Toggle.self).tap()
         }
 
-        ViewHosting.host(view: sut.environmentObject(
+        try await ViewHosting.host(sut.environmentObject(
             SettingsCache(settingsRepo: settingsRepository, cache: [.notifications: true])
-        ))
-        defer { ViewHosting.expel() }
-
-        await fulfillment(of: [tapExp, savedExp, updateExp], timeout: 5)
+        )) {
+            await fulfillment(of: [tapExp, savedExp, updateExp], timeout: 5)
+        }
     }
 
-    @MainActor func testLinksExist() async {
+    @MainActor func testLinksExist() async throws {
         let sut = MorePage(highlight: nil)
         let exp = sut.inspection.inspect(after: 0) { view in
             try XCTAssertNotNil(view.find(text: "Send App Feedback"))
@@ -102,10 +103,9 @@ final class MorePageTests: XCTestCase {
             try XCTAssertNotNil(view.find(text: "617-222-3200"))
         }
 
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        defer { ViewHosting.expel() }
-
-        await fulfillment(of: [exp], timeout: 3)
+        try await ViewHosting.host(sut.withFixedSettings([:])) {
+            await fulfillment(of: [exp], timeout: 3)
+        }
     }
 
     @MainActor func testShowsBuildNumberOnTap() {
