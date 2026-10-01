@@ -38,7 +38,7 @@ kotlin {
         )
     }
 
-    androidLibrary {
+    android {
         namespace = "com.mbta.tid.mbta_app"
         compileSdk = 37
         minSdk = 28
@@ -61,7 +61,7 @@ kotlin {
     jvm { mainRun { mainClass.set("com.mbta.tid.mbta_app.ProjectUtilsKt") } }
 
     sourceSets {
-        val commonMain by getting {
+        getByName("commonMain") {
             dependencies {
                 api(libs.sentry.kmp)
                 api(libs.spatialk.geojson)
@@ -84,7 +84,7 @@ kotlin {
                 implementation(libs.spatialk.turf)
             }
         }
-        val commonTest by getting {
+        getByName("commonTest") {
             dependencies {
                 implementation(libs.koin.test)
                 implementation(libs.kotlin.test)
@@ -94,7 +94,7 @@ kotlin {
                 implementation(libs.turbine)
             }
         }
-        val androidMain by getting {
+        getByName("androidMain") {
             dependencies {
                 implementation(libs.androidx.lifecycle.viewmodel.android)
                 implementation(libs.androidx.work)
@@ -103,9 +103,9 @@ kotlin {
             }
         }
         if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
-            val iosMain by getting { dependencies { implementation(libs.ktor.client.darwin) } }
+            getByName("iosMain") { dependencies { implementation(libs.ktor.client.darwin) } }
         }
-        val jvmMain by getting {
+        getByName("jvmMain") {
             dependencies {
                 implementation(kotlin("reflect"))
                 implementation(libs.kotlinpoet)

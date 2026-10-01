@@ -3,7 +3,7 @@ package com.mbta.tid.mbta_app.android.stopDetails
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -35,6 +35,7 @@ import com.mbta.tid.mbta_app.viewModel.StopDetailsViewModel.RouteData
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -135,7 +136,7 @@ class StopDetailsFilteredViewTest {
             override suspend fun setSettings(settings: Map<Settings, Boolean>) {}
         }
 
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Before
     fun setUp() {

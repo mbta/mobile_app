@@ -8,6 +8,7 @@ import com.mbta.tid.mbta_app.usecases.ConfigUseCase
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +23,7 @@ interface IMapboxConfigManager {
     suspend fun loadConfig()
 }
 
+@OptIn(FlowPreview::class)
 open class MapboxConfigManager(
     private val configUseCase: ConfigUseCase = UsecaseDI().configUsecase,
     val configureMapboxToken: (String) -> Unit = { token -> MapboxOptions.accessToken = token },

@@ -150,5 +150,5 @@ fun shouldShowSettingsPrompt(
 ): Boolean {
     return !shouldShowRationale &&
         startPermissionRequest != null &&
-        (endPermissionRequest - startPermissionRequest!! < 0.35.seconds)
+        (endPermissionRequest - startPermissionRequest < 0.35.seconds)
 }
