@@ -96,6 +96,7 @@ final class TripDetailsPageTests: XCTestCase {
             exp.fulfill()
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         wait(for: [exp], timeout: 1)
     }

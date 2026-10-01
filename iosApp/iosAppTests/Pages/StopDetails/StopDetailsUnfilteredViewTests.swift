@@ -142,6 +142,7 @@ import XCTest
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         await fulfillment(of: [exp], timeout: 2)
     }
 
@@ -176,6 +177,7 @@ import XCTest
             XCTAssertNotNil(try view.find(text: "This stop is not accessible"))
         }
         ViewHosting.host(view: sut.withFixedSettings([.stationAccessibility: true]))
+        defer { ViewHosting.expel() }
         await fulfillment(of: [exp], timeout: 2)
     }
 

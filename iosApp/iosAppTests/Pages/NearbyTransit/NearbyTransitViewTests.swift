@@ -66,6 +66,7 @@ final class NearbyTransitViewTests: XCTestCase {
             }
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [hasAppeared], timeout: 5)
         wait(for: [activeExpectation], timeout: 5)
     }
@@ -140,6 +141,7 @@ final class NearbyTransitViewTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         let hasAppeared = sut.inspection.inspect(after: 1) { view in
             XCTAssertNotNil(try view.find(text: "67"))
             XCTAssertNotNil(try view.find(text: "Alewife"))
@@ -199,6 +201,7 @@ final class NearbyTransitViewTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         wait(for: [loadExp, davisExp, alewifeExp], timeout: 3)
     }
@@ -223,13 +226,16 @@ final class NearbyTransitViewTests: XCTestCase {
             viewportProvider: .init(),
         )
 
-        sut.inspection.inspect(after: 0.5) { view in
+        let expect = sut.inspection.inspect(after: 0.5) { view in
             XCTAssertNil(try? view.find(LoadingCard<Text>.self))
             XCTAssertNotNil(try view.find(text: "No nearby stops"))
             XCTAssertNotNil(try view.find(text: "You’re outside the MBTA service area."))
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
+
+        wait(for: [expect], timeout: 3)
     }
 
     @MainActor func testFilterChangesWithAlerts() {
@@ -278,6 +284,7 @@ final class NearbyTransitViewTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         wait(for: [changeAlertExp, initialSetExp, updateSetExp], timeout: 3)
     }

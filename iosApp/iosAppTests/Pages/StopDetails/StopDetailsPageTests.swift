@@ -83,6 +83,7 @@ final class StopDetailsPageTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         try await Task.sleep(for: .seconds(1))
         XCTAssertNotNil(try sut.inspect().find(StopDetailsFilteredView.self))
@@ -152,6 +153,7 @@ final class StopDetailsPageTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         try sut.inspect().findAndCallOnChange(newValue: ScenePhase.background)
         wait(for: [leaveExpectation], timeout: 1)
@@ -213,6 +215,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider
         )
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         stopDetailsVM.filterUpdates.tryEmit(value: .init(
             stopId: stop.id,
@@ -293,6 +296,7 @@ final class StopDetailsPageTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         sut.inspection.inspect(after: 1) { _ in
             XCTAssertEqual(

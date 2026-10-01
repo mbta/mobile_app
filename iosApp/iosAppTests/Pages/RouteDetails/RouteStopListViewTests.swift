@@ -104,6 +104,7 @@ final class RouteStopListViewTests: XCTestCase {
             XCTAssertTrue(closeTapped)
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 2)
     }
 
@@ -167,6 +168,7 @@ final class RouteStopListViewTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp1, exp2, exp3], timeout: 5)
     }
 
@@ -240,6 +242,7 @@ final class RouteStopListViewTests: XCTestCase {
             )
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 2)
     }
 
@@ -291,6 +294,7 @@ final class RouteStopListViewTests: XCTestCase {
             XCTAssertThrowsError(try view.find(ViewType.DisclosureGroup.self))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 2)
     }
 }

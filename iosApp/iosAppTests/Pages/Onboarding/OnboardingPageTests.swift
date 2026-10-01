@@ -28,6 +28,7 @@ final class OnboardingPageTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         let locationExp = sut.inspection.inspect(onReceive: stepChannel, after: 0.1) { view in
             try view.find(button: "Continue").tap()

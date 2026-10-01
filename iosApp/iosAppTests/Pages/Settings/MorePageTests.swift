@@ -23,6 +23,7 @@ final class MorePageTests: XCTestCase {
         ViewHosting.host(view: sut.withFixedSettings([.devDebugMode: true,
                                                       .searchRouteResults: false,
                                                       .hideMaps: false]))
+        defer { ViewHosting.expel() }
 
         await fulfillment(of: [exp], timeout: 2)
     }
@@ -44,6 +45,7 @@ final class MorePageTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.environmentObject(SettingsCache(settingsRepo: settingsRepository)))
+        defer { ViewHosting.expel() }
 
         await fulfillment(of: [tapExp, savedExp], timeout: 5)
     }
@@ -82,6 +84,7 @@ final class MorePageTests: XCTestCase {
         ViewHosting.host(view: sut.environmentObject(
             SettingsCache(settingsRepo: settingsRepository, cache: [.notifications: true])
         ))
+        defer { ViewHosting.expel() }
 
         await fulfillment(of: [tapExp, savedExp, updateExp], timeout: 5)
     }
@@ -100,6 +103,7 @@ final class MorePageTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         await fulfillment(of: [exp], timeout: 3)
     }
@@ -124,6 +128,7 @@ final class MorePageTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         wait(for: [exp], timeout: 1)
     }
