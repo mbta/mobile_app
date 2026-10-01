@@ -166,6 +166,7 @@ final class ContentViewTests: XCTestCase {
             if cameraUpdate == 0 {
                 XCTAssertEqual(ViewportProvider.Defaults.center, updatedCamera.center)
                 cameraExp.fulfill()
+                cameraUpdate += 1
             }
         }
 
@@ -193,7 +194,7 @@ final class ContentViewTests: XCTestCase {
         let sut = try sutWithEnv.inspect().find(ContentView.self).actualView()
 
         var cameraUpdate = 0
-        let cancelSink = sut.viewportProvider.cameraStatePublisher.sink { updatedCamera in
+        let cancelSink = sut.viewportProvider.cameraStatePublisherThrottled.sink { updatedCamera in
             if cameraUpdate == 0 {
                 XCTAssertEqual(newLocation.coordinate, updatedCamera.center)
                 cameraExp.fulfill()
