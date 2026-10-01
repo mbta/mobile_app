@@ -155,6 +155,33 @@ class DisplayAlertsTest {
     }
 
     @Test
+    fun `forAlertsAtStop sorts later alerts with bounded periods by start`() = runBlocking {
+        val laterBoundedSooner = objects.alert {
+            id = "laterBoundedSooner"
+            effect = Effect.Shuttle
+            activePeriod(now.plus(10.minutes), now.plus(60.minutes))
+        }
+        val laterBoundedLater = objects.alert {
+            id = "laterBoundedLater"
+            effect = Effect.Shuttle
+            activePeriod(now.plus(30.minutes), now.plus(60.minutes))
+        }
+
+        val displayAlerts =
+            DisplayAlerts.forAlertsAtStop(
+                listOf(laterBoundedLater, laterBoundedSooner),
+                listOf(),
+                false,
+                now,
+            )
+
+        assertEquals(
+            listOf(laterBoundedSooner, laterBoundedLater),
+            displayAlerts.lowPriority.map { it.alert },
+        )
+    }
+
+    @Test
     fun `hasTakeover true when any takeover`() = runBlocking {
         val displayAlerts =
             DisplayAlerts.forAlertsAtStop(
