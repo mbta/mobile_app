@@ -128,6 +128,7 @@ fun TripStops(
                         onOpenAlertDetails,
                         route,
                         routeAccents,
+                        global,
                         firstStop = true,
                     )
                 }
@@ -168,6 +169,7 @@ fun TripStops(
                         onOpenAlertDetails,
                         route,
                         routeAccents,
+                        global,
                     )
                 }
             }
@@ -193,6 +195,7 @@ fun TripStops(
                     onOpenAlertDetails,
                     route,
                     routeAccents,
+                    global,
                     targeted = true,
                     firstStop = showFirstStopSeparately && target == stops.startTerminalEntry,
                     modifier = Modifier.background(colorResource(R.color.fill3)),
@@ -210,6 +213,7 @@ fun TripStops(
                 onOpenAlertDetails,
                 route,
                 routeAccents,
+                global,
                 showDownstreamAlerts = true,
             )
         }
@@ -245,6 +249,7 @@ private fun StopList(
     onOpenAlertDetails: (Alert) -> Unit,
     route: Route,
     routeAccents: TripRouteAccents,
+    globalData: GlobalResponse?,
     showDownstreamAlerts: Boolean = false,
 ) {
     for (stop in list) {
@@ -256,6 +261,7 @@ private fun StopList(
             onOpenAlertDetails,
             route,
             routeAccents,
+            globalData,
             showDownstreamAlert = showDownstreamAlerts,
             lastStop = stop.stopSequence == lastStopSequence,
         )

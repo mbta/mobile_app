@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.repositories
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
+import com.mbta.tid.mbta_app.model.response.isStopBlocklisted
 import org.koin.core.component.KoinComponent
 import org.maplibre.spatialk.geojson.Position
 import org.maplibre.spatialk.units.Length
@@ -55,7 +56,7 @@ public class NearbyRepository : KoinComponent, INearbyRepository {
                 }
                 .filterNot {
                     global.getStop(it)?.resolveParent(global)?.id?.let { stopId ->
-                        global.stopBlocklist.contains(stopId)
+                        global.isStopBlocklisted(stopId)
                     } ?: false
                 }
                 .toList()

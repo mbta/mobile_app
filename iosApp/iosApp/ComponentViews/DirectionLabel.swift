@@ -38,6 +38,9 @@ struct DirectionLabel: View {
         "West": NSLocalizedString("Westbound", comment: "A route direction label"),
         "Inbound": NSLocalizedString("Inbound", comment: "A route direction label"),
         "Outbound": NSLocalizedString("Outbound", comment: "A route direction label"),
+        "Clockwise": NSLocalizedString("Clockwise", comment: "A route direction label"),
+        "Counterclockwise": NSLocalizedString("Counterclockwise", comment: "A route direction label"),
+        "Loop": NSLocalizedString("Looping", comment: "A route direction label"),
     ]
 
     static func directionNameFormatted(_ direction: Direction) -> String {

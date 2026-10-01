@@ -302,7 +302,9 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     @ViewBuilder
     var alertCards: some View {
-        let showNotAccessibleCard = settingsCache.get(.stationAccessibility) && !leaf.stop.isWheelchairAccessible
+        let showNotAccessibleCard = settingsCache
+            .get(.stationAccessibility) && !global.isStopBlocklisted(leaf.stop.id) && !leaf.stop
+            .isWheelchairAccessible
         if !displayAlerts.allAlerts.isEmpty || showNotAccessibleCard {
             AlertListContainer(displayAlerts: displayAlerts,
                                showNotAccessibleCard: showNotAccessibleCard,

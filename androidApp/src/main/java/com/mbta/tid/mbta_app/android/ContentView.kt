@@ -47,6 +47,7 @@ import com.mbta.tid.mbta_app.cache.ScheduleCache
 import com.mbta.tid.mbta_app.model.FeaturePromo
 import com.mbta.tid.mbta_app.model.OnboardingScreen
 import com.mbta.tid.mbta_app.model.SubscriptionRequest
+import com.mbta.tid.mbta_app.model.filterValidFavorites
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.repositories.DefaultTab
@@ -108,20 +109,23 @@ fun ContentView(
 
     ManageMapboxConfig()
 
-    LaunchedEffect(fcmToken, notificationsEnabled) {
-        fcmToken?.let {
+    // Update notification subscriptions on the backend
+    LaunchedEffect(fcmToken, notificationsEnabled, globalResponse) {
+        fcmToken?.let { token ->
             val favorites = favoritesUsecases.getRouteStopDirectionFavorites()
-            val subscriptions = SubscriptionRequest.fromFavorites(favorites, includeAccessibility)
+            val subscriptions =
+                SubscriptionRequest.fromFavorites(
+                    globalResponse?.let { favorites.filterValidFavorites(it) } ?: favorites,
+                    includeAccessibility,
+                )
             subscriptionsRepository.updateSubscriptions(
-                it,
+                token,
                 subscriptions,
                 currentLocale,
                 notificationsEnabled,
             )
         }
     }
-
-    LaunchedEffect(fcmToken, globalResponse) { favoritesViewModel.clearStaleFavorites(fcmToken) }
 
     val locationDataManager = rememberLocationDataManager()
     val mapViewportState = rememberMapViewportState {

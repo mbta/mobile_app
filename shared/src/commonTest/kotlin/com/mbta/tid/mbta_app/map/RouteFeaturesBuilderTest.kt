@@ -2,9 +2,12 @@ package com.mbta.tid.mbta_app.map
 
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertAssociatedStop
+import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.Line
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteSegment
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SegmentAlertState
@@ -459,5 +462,110 @@ class RouteFeaturesBuilderTest {
             )
         assertEquals(glFilteredShapes.count(), 3)
         assertEquals(glFilteredShapes.get(0).segmentedShapes.count(), 1)
+    }
+
+    @Test
+    fun `filter keeps typical shapes if no upcoming trips`() {
+        val basicMapResponse =
+            StopMapResponse(
+                routeShapes = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
+                childStops = emptyMap(),
+            )
+        val filteredShapes =
+            RouteFeaturesBuilder.filteredRouteShapesForStop(
+                basicMapResponse,
+                StopDetailsFilter(
+                    MapTestDataHelper.routeRed.id,
+                    MapTestDataHelper.patternRed10.directionId,
+                ),
+                listOf(
+                    RouteCardData(
+                        LineOrRoute.Route(MapTestDataHelper.routeRed),
+                        listOf(
+                            RouteCardData.RouteStopData(
+                                MapTestDataHelper.routeRed,
+                                MapTestDataHelper.stopAlewife,
+                                listOf(
+                                    RouteCardData.Leaf(
+                                        LineOrRoute.Route(MapTestDataHelper.routeRed),
+                                        MapTestDataHelper.stopAlewife,
+                                        Direction(
+                                            MapTestDataHelper.patternRed10.directionId,
+                                            MapTestDataHelper.routeRed,
+                                        ),
+                                        listOf(
+                                            MapTestDataHelper.patternRed10,
+                                            MapTestDataHelper.patternRed30,
+                                        ),
+                                        setOf(MapTestDataHelper.stopAlewife.id),
+                                        emptyList(),
+                                        emptyList(),
+                                        true,
+                                        true,
+                                        null,
+                                        emptyList(),
+                                        RouteCardData.Context.StopDetailsFiltered,
+                                    )
+                                ),
+                            )
+                        ),
+                        EasternTimeInstant.now(),
+                    )
+                ),
+            )
+        assertEquals(filteredShapes.count(), 1)
+
+        val glLineOrRoute =
+            LineOrRoute.Line(
+                GreenLineTestHelper.line,
+                setOf(
+                    GreenLineTestHelper.routeB,
+                    GreenLineTestHelper.routeC,
+                    GreenLineTestHelper.objects.getRoute("Green-D"),
+                    GreenLineTestHelper.routeE,
+                ),
+            )
+        val glFilteredShapes =
+            RouteFeaturesBuilder.filteredRouteShapesForStop(
+                GreenLineTestHelper.stopMapResponse,
+                StopDetailsFilter(Line.Id("line-Green"), 0),
+                listOf(
+                    RouteCardData(
+                        glLineOrRoute,
+                        listOf(
+                            RouteCardData.RouteStopData(
+                                glLineOrRoute,
+                                GreenLineTestHelper.stopArlington,
+                                listOf(
+                                    RouteCardData.Leaf(
+                                        glLineOrRoute,
+                                        GreenLineTestHelper.stopArlington,
+                                        Direction(
+                                            GreenLineTestHelper.rpB0.directionId,
+                                            GreenLineTestHelper.routeB,
+                                        ),
+                                        listOf(
+                                            GreenLineTestHelper.rpB0,
+                                            GreenLineTestHelper.rpC0,
+                                            GreenLineTestHelper.rpE0,
+                                        ),
+                                        setOf(GreenLineTestHelper.stopArlington.id),
+                                        emptyList(),
+                                        emptyList(),
+                                        true,
+                                        true,
+                                        null,
+                                        emptyList(),
+                                        RouteCardData.Context.StopDetailsFiltered,
+                                    )
+                                ),
+                            )
+                        ),
+                        EasternTimeInstant.now(),
+                    )
+                ),
+            )
+        assertEquals(glFilteredShapes.count(), 3)
+        assertEquals(glFilteredShapes[0].segmentedShapes.count(), 1)
     }
 }

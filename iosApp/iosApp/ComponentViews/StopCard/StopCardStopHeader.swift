@@ -12,9 +12,12 @@ import SwiftUI
 struct StopCardStopHeader: View {
     @ObserveInjection var inject
     let data: StopCardData
+    let globalData: GlobalResponse?
 
     @EnvironmentObject var settingsCache: SettingsCache
-    var showStationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
+    var showStationAccessibility: Bool {
+        settingsCache.get(.stationAccessibility) && !globalData.isStopBlocklisted(data.stop.id)
+    }
 
     var elevatorAlerts: Int { data.elevatorAlerts.count }
     var showInaccessible: Bool { showStationAccessibility && !data.stop.isWheelchairAccessible }

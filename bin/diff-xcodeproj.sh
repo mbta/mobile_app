@@ -14,8 +14,6 @@ ln -s "$REAL_REPO"/Gemfile.lock "$FAKE_ROOT"
 ln -s "$REAL_REPO"/iosApp/* "$FAKE_ROOT"/iosApp
 ln -s "$REAL_REPO"/iosApp/.swift* "$FAKE_ROOT"/iosApp
 rm "$FAKE_ROOT"/iosApp/iosApp.xcodeproj
-rm "$FAKE_ROOT"/iosApp/iosApp.xcworkspace
-rm "$FAKE_ROOT"/iosApp/Pods
 ln -s "$REAL_REPO"/shared "$FAKE_ROOT"
 pushd "$FAKE_ROOT"/iosApp
 xcodegen generate --quiet
@@ -31,6 +29,5 @@ else
   ERR=0
 fi
 popd
-rm -rf "$FAKE_ROOT"/iosApp/Pods
 rm -r "$FAKE_ROOT"
 exit $ERR

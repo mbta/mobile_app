@@ -13,6 +13,8 @@ import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.StopCardData
+import com.mbta.tid.mbta_app.model.filterValidFavorites
+import com.mbta.tid.mbta_app.model.invalidFavorites
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.ErrorKey
@@ -42,19 +44,9 @@ import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.sample
 import org.maplibre.spatialk.geojson.Position
 
-// Purely for logging
-internal enum class RemovalReason {
-    MissingRoute,
-    MissingStop,
-    MissingDirection,
-    LastStopForRoute,
-}
-
 @OptIn(ExperimentalObjCRefinement::class)
 public interface IFavoritesViewModel {
     public val models: StateFlow<FavoritesViewModel.State>
-
-    public fun clearStaleFavorites(fcmToken: String?)
 
     public fun dismissNotificationsHint()
 
@@ -98,8 +90,6 @@ public class FavoritesViewModel(
     }
 
     public sealed interface Event {
-        public data class ClearStaleFavorites(val fcmToken: String?) : Event
-
         public data object DismissNotificationsHint : Event
 
         public data object ReloadFavorites : Event
@@ -144,8 +134,10 @@ public class FavoritesViewModel(
         var favorites: Map<RouteStopDirection, FavoriteSettings>? by remember {
             mutableStateOf(null)
         }
+        var validFavorites: Map<RouteStopDirection, FavoriteSettings>? by remember {
+            mutableStateOf(null)
+        }
 
-        var fcmTokenForClearingStaleFavorites: String? by remember { mutableStateOf(null) }
         var hadOldPinnedRoutes: Boolean by remember { mutableStateOf(false) }
         var shouldShowFirstTimeToast: Boolean by remember { mutableStateOf(false) }
         var shouldShowNotificationsHint: Boolean by remember { mutableStateOf(false) }
@@ -159,9 +151,10 @@ public class FavoritesViewModel(
         var active: Boolean by remember { mutableStateOf(false) }
         val errorKey = ErrorKey(setOf(SheetRoutes.Favorites::class), "FavoritesViewModel")
         val globalData = getGlobalData(errorKey)
+
         val stopIds =
-            remember(favorites, globalData) {
-                val stops = favorites?.keys?.mapNotNull { globalData?.getStop(it.stop) }
+            remember(validFavorites, globalData) {
+                val stops = validFavorites?.keys?.mapNotNull { globalData?.getStop(it.stop) }
                 stops?.flatMap { stop ->
                     stop.childStopIds.filter { globalData?.stops?.containsKey(it) ?: false } +
                         stop.id
@@ -177,34 +170,6 @@ public class FavoritesViewModel(
                 onAnyMessageReceived = { awaitingPredictionsAfterBackground = false },
             )
 
-        fun getStaleFavorites(
-            favorites: Set<RouteStopDirection>,
-            global: GlobalResponse,
-        ): Map<RouteStopDirection, RemovalReason> =
-            favorites
-                .mapNotNull { rsd ->
-                    val lineOrRoute =
-                        global.getLineOrRoute(rsd.route)
-                            ?: return@mapNotNull rsd to RemovalReason.MissingRoute
-                    val stop =
-                        global.getStop(rsd.stop)
-                            ?: return@mapNotNull rsd to RemovalReason.MissingStop
-
-                    val patterns = global.getPatternsFor(rsd.stop, lineOrRoute)
-
-                    if (
-                        patterns.none { pattern ->
-                            pattern.directionId == rsd.direction
-                        }
-                    )
-                        return@mapNotNull rsd to RemovalReason.MissingDirection
-
-                    if (stop.isLastStopForAllPatterns(rsd.direction, patterns, global))
-                        return@mapNotNull rsd to RemovalReason.LastStopForRoute
-                    return@mapNotNull null
-                }
-                .toMap()
-
         LaunchedEffect(Unit) {
             val fetchedFavorites = favoritesUsecases.getRouteStopDirectionFavorites()
             hadOldPinnedRoutes = pinnedRoutesRepository.getPinnedRoutes().isNotEmpty()
@@ -215,11 +180,43 @@ public class FavoritesViewModel(
                 onboardingRepository.notificationsFavoritesHintShouldShow()
         }
 
+        LaunchedEffect(favorites, globalData) {
+            val currentFavorites = favorites
+            validFavorites = currentFavorites?.let {
+                globalData?.let { global ->
+                    currentFavorites.filterValidFavorites(global)
+                } ?: it
+            }
+
+            // Log invalid favorites to Sentry so we can track how often they exist
+            if (currentFavorites == null || globalData == null) return@LaunchedEffect
+            val invalid = currentFavorites.keys.invalidFavorites(globalData)
+            if (invalid.isEmpty()) return@LaunchedEffect
+            sentryRepository.captureMessage(
+                "FavoritesViewModel: ${invalid.size} favorite(s) are currently invalid and " +
+                    "hidden from display"
+            ) {
+                addBreadcrumb(
+                    Breadcrumb(
+                        message = "Invalid favorites filtered out of display",
+                        data =
+                            invalid.entries.withIndex().associateTo(mutableMapOf()) { (index, entry)
+                                ->
+                                "favorite_$index" to
+                                    mapOf(
+                                        "route" to entry.key.route.idText,
+                                        "stop" to entry.key.stop,
+                                        "direction" to entry.key.direction,
+                                        "reason" to entry.value,
+                                    )
+                            },
+                    )
+                )
+            }
+        }
+
         EventSink(eventHandlingTimeout = 2.seconds, sentryRepository = sentryRepository) { event ->
             when (event) {
-                is Event.ClearStaleFavorites -> {
-                    fcmTokenForClearingStaleFavorites = event.fcmToken
-                }
                 Event.DismissNotificationsHint -> {
                     shouldShowNotificationsHint = false
                     onboardingRepository.notificationsFavoriteHintDismissed()
@@ -249,46 +246,6 @@ public class FavoritesViewModel(
                         event.locale,
                     )
                     reloadFavorites()
-                }
-            }
-        }
-
-        LaunchedEffect(globalData, favorites, fcmTokenForClearingStaleFavorites) {
-            val fcmToken = fcmTokenForClearingStaleFavorites
-            val resolvedFavorites = favorites
-            if (globalData == null || resolvedFavorites == null || fcmToken == null) {
-                return@LaunchedEffect
-            }
-
-            fcmTokenForClearingStaleFavorites = null
-
-            val staleFavorites = getStaleFavorites(resolvedFavorites.keys, globalData)
-            if (staleFavorites.isNotEmpty()) {
-                updateFavorites(
-                    staleFavorites.mapValues { null },
-                    EditFavoritesContext.StaleCheck,
-                    defaultDirection = null,
-                    fcmToken,
-                    locale = null,
-                )
-                sentryRepository.captureMessage("Clearing stale favorites") {
-                    addBreadcrumb(
-                        Breadcrumb(
-                            message = "Removing ${staleFavorites.size} stale favorite(s)",
-                            data =
-                                mutableMapOf(
-                                    "staleFavorites" to
-                                        staleFavorites.map { (rsd, removalReason) ->
-                                            mapOf(
-                                                "route" to rsd.route.idText,
-                                                "stop" to rsd.stop,
-                                                "direction" to rsd.direction,
-                                                "removalReason" to removalReason,
-                                            )
-                                        }
-                                ),
-                        )
-                    )
                 }
             }
         }
@@ -345,7 +302,7 @@ public class FavoritesViewModel(
                                 it.alerts,
                                 it.now,
                                 RouteCardData.Context.Favorites,
-                                favorites?.keys,
+                                validFavorites?.keys,
                                 coroutineDispatcher,
                             )
                         loadedLocation = it.location
@@ -358,7 +315,7 @@ public class FavoritesViewModel(
 
         // Static data doesn't need to be processed in a snapshotFlow because the input params
         // change very infrequently
-        LaunchedEffect(stopIds, globalData, favorites, location) {
+        LaunchedEffect(stopIds, globalData, validFavorites, location) {
             if (stopIds == null || globalData == null) {
                 staticRouteCardData = null
             } else if (stopIds.isEmpty()) {
@@ -372,9 +329,8 @@ public class FavoritesViewModel(
                         // not depending on now because it only matters for testing
                         now,
                         location,
-                        favorites?.keys,
+                        validFavorites?.keys,
                         coroutineDispatcher,
-                        sentryRepository,
                     )
             }
             staticStopCardData = staticRouteCardData?.let {
@@ -401,9 +357,6 @@ public class FavoritesViewModel(
 
     override val models: StateFlow<State>
         get() = internalModels
-
-    override fun clearStaleFavorites(fcmToken: String?): Unit =
-        fireEvent(Event.ClearStaleFavorites(fcmToken))
 
     override fun dismissNotificationsHint(): Unit = fireEvent(Event.DismissNotificationsHint)
 
@@ -450,7 +403,6 @@ public class MockFavoritesViewModel
 @DefaultArgumentInterop.Enabled
 constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State()) :
     IFavoritesViewModel {
-    public var onClearStaleFavorites: (String?) -> Unit = { _ -> }
     public var onDismissNotificationsHint: () -> Unit = {}
     public var onReloadFavorites: () -> Unit = {}
     public var onSetActive: (Boolean, Boolean) -> Unit = { _, _ -> }
@@ -463,10 +415,6 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
     public var onUpdateFavorites: (Map<RouteStopDirection, FavoriteSettings?>) -> Unit = { _ -> }
 
     override val models: MutableStateFlow<FavoritesViewModel.State> = MutableStateFlow(initialState)
-
-    override fun clearStaleFavorites(fcmToken: String?) {
-        onClearStaleFavorites(fcmToken)
-    }
 
     override fun dismissNotificationsHint() {
         onDismissNotificationsHint()

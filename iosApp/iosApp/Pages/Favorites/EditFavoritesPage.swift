@@ -136,7 +136,8 @@ struct EditFavoritesList: View {
                 LazyVStack(alignment: .center, spacing: 14) {
                     ForEach(stopCardData, id: \.stop.id) { cardData in
                         StopCardContainer(
-                            cardData: cardData
+                            cardData: cardData,
+                            globalData: global,
                         ) { stopData in
                             FavoriteDepartures(
                                 favorites: favorites,
