@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.loadKoinMocks
@@ -22,6 +22,7 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -147,7 +148,7 @@ class RouteCardListTest : KoinTest {
 
     val globalResponse = GlobalResponse(builder)
 
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Before
     fun setUp() {

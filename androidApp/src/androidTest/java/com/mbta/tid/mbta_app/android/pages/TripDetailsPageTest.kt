@@ -3,7 +3,7 @@ package com.mbta.tid.mbta_app.android.pages
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -24,11 +24,12 @@ import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.assertTrue
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 
 class TripDetailsPageTest {
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Test
     fun testHasCloseButton() {

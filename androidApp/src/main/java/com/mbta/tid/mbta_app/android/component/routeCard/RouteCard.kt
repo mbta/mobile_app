@@ -20,7 +20,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.RouteCardPreviewData
-import org.koin.compose.KoinContext
+import org.koin.compose.KoinIsolatedContext
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 
@@ -75,7 +75,7 @@ class Previews() {
 
     @Composable
     fun CardForPreview(card: RouteCardData) {
-        KoinContext(koin.koin) {
+        KoinIsolatedContext(koin) {
             Box(Modifier.width(358.dp)) {
                 RouteCard(
                     card,

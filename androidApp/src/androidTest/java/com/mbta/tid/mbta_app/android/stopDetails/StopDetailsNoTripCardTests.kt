@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.loadKoinMocks
@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.model.response.NextScheduleResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
@@ -23,7 +24,7 @@ import org.junit.Test
 
 class StopDetailsNoTripCardTests {
 
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Test
     fun testSubwayEarlyMorning() {

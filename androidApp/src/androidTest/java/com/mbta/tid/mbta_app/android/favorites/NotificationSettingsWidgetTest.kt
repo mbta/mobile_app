@@ -37,6 +37,7 @@ import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.NotificationSettingsViewModel
 import kotlin.test.assertEquals
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.datetime.LocalDateTime
 import org.junit.Rule
 import org.junit.Test
@@ -44,7 +45,7 @@ import org.koin.test.KoinTest
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalTestApi::class)
 class NotificationSettingsWidgetTest : KoinTest {
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     private val permissionGranted =
         ConstantPermissionState(

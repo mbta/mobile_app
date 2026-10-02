@@ -7,7 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mapbox.geojson.Point
@@ -48,6 +48,7 @@ import com.mbta.tid.mbta_app.viewModel.MockNearbyViewModel
 import com.mbta.tid.mbta_app.viewModel.NearbyViewModel
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.koinInject
@@ -265,7 +266,7 @@ class NearbyTransitPageTest : KoinTest {
             now,
         )
 
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @OptIn(ExperimentalTestApi::class, ExperimentalMaterial3Api::class)
     @Test
