@@ -34,6 +34,7 @@ final class ContentViewTests: XCTestCase {
                                                 socketProvider: SocketProvider(socket: fakeSocketWithExpectations))
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         try sut.inspect().find(ContentView.self).find(ViewType.VStack.self)
             .callOnChange(newValue: ScenePhase.background)
@@ -53,6 +54,7 @@ final class ContentViewTests: XCTestCase {
                                                 socketProvider: SocketProvider(socket: fakeSocketWithExpectations))
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         try sut.inspect().find(ContentView.self).find(ViewType.VStack.self)
             .callOnChange(newValue: ScenePhase.background)
@@ -73,6 +75,7 @@ final class ContentViewTests: XCTestCase {
                                                 socketProvider: SocketProvider(socket: fakeSocketWithExpectations))
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         wait(for: [connectedExpectation], timeout: 1)
     }
@@ -93,6 +96,7 @@ final class ContentViewTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         wait(for: [joinAlertsExp], timeout: 5)
     }
@@ -110,6 +114,7 @@ final class ContentViewTests: XCTestCase {
         let sut = ContentView(contentVM: fakeVM)
 
         ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut, locationDataManager: locationDataManager))
+        defer { ViewHosting.expel() }
 
         fetcher.authorizationStatus = .denied
 
@@ -134,6 +139,7 @@ final class ContentViewTests: XCTestCase {
         }
 
         ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut))
+        defer { ViewHosting.expel() }
 
         wait(for: [hasAppeared, loadConfigCallback], timeout: 6)
     }
@@ -166,10 +172,12 @@ final class ContentViewTests: XCTestCase {
             if cameraUpdate == 0 {
                 XCTAssertEqual(ViewportProvider.Defaults.center, updatedCamera.center)
                 cameraExp.fulfill()
+                cameraUpdate += 1
             }
         }
 
         ViewHosting.host(view: sutWithEnv)
+        defer { ViewHosting.expel() }
         locationFetcher.authorizationStatus = .denied
         wait(for: [cameraExp], timeout: 5)
         cancelSink.cancel()
@@ -193,7 +201,7 @@ final class ContentViewTests: XCTestCase {
         let sut = try sutWithEnv.inspect().find(ContentView.self).actualView()
 
         var cameraUpdate = 0
-        let cancelSink = sut.viewportProvider.cameraStatePublisher.sink { updatedCamera in
+        let cancelSink = sut.viewportProvider.cameraStatePublisherThrottled.sink { updatedCamera in
             if cameraUpdate == 0 {
                 XCTAssertEqual(newLocation.coordinate, updatedCamera.center)
                 cameraExp.fulfill()
@@ -202,6 +210,7 @@ final class ContentViewTests: XCTestCase {
         }
 
         ViewHosting.host(view: sutWithEnv)
+        defer { ViewHosting.expel() }
         locationFetcher.updateLocations(locations: [newLocation])
         XCTAssertEqual(locationDataManager.currentLocation, newLocation)
         wait(for: [cameraExp], timeout: 5)
@@ -265,6 +274,7 @@ final class ContentViewTests: XCTestCase {
         }
 
         ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut))
+        defer { ViewHosting.expel() }
         wait(for: [exp1, exp2, exp3], timeout: 5)
     }
 
@@ -294,6 +304,7 @@ final class ContentViewTests: XCTestCase {
         }
 
         ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut))
+        defer { ViewHosting.expel() }
         wait(for: [exp1, exp2, exp3], timeout: 5)
     }
 

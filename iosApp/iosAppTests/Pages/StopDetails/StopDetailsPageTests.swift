@@ -82,11 +82,10 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider
         )
 
-        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
-
-        try await Task.sleep(for: .seconds(1))
-        XCTAssertNotNil(try sut.inspect().find(StopDetailsFilteredView.self))
-        XCTAssertNotNil(try sut.inspect().find(DepartureTile.self))
+        try await ViewHosting.host(sut.environmentObject(ViewportProvider()).withFixedSettings([:])) {
+            XCTAssertNotNil(try sut.inspect().find(StopDetailsFilteredView.self))
+            XCTAssertNotNil(try sut.inspect().find(DepartureTile.self))
+        }
     }
 
     func testCloseButton() throws {
@@ -152,6 +151,7 @@ final class StopDetailsPageTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         try sut.inspect().findAndCallOnChange(newValue: ScenePhase.background)
         wait(for: [leaveExpectation], timeout: 1)
@@ -213,6 +213,7 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: viewportProvider
         )
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         stopDetailsVM.filterUpdates.tryEmit(value: .init(
             stopId: stop.id,
@@ -293,6 +294,7 @@ final class StopDetailsPageTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         sut.inspection.inspect(after: 1) { _ in
             XCTAssertEqual(

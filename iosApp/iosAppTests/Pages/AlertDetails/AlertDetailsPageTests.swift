@@ -113,6 +113,7 @@ final class AlertDetailsPageTests: XCTestCase {
             XCTAssertNil(try? view.find(text: "Stop 2a"))
         }
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         wait(for: [exp], timeout: 5)
     }

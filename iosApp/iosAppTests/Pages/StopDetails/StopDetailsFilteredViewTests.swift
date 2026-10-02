@@ -59,6 +59,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([
             .devDebugMode: false,
         ]))
+        defer { ViewHosting.expel() }
         wait(for: [tapButtonExp, confirmationDialogExp], timeout: 4)
     }
 
@@ -173,6 +174,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([
             .devDebugMode: false,
         ]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 4)
     }
 
@@ -257,6 +259,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([
             .devDebugMode: false,
         ]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 4)
     }
 
@@ -358,6 +361,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([
             .devDebugMode: false,
         ]))
+        defer { ViewHosting.expel() }
         wait(for: [exp, setStopFilterExp], timeout: 4)
     }
 }

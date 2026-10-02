@@ -101,6 +101,7 @@ final class CollapsableStopListTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: stop2.name))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 1)
     }
 }

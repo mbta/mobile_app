@@ -92,6 +92,7 @@ final class TripDetailsViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(TripHeaderCard.self).find(text: "Next stop"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 1)
     }
 
@@ -178,6 +179,7 @@ final class TripDetailsViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(TripHeaderCard.self).find(text: targetStop.name))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 1)
     }
 
@@ -255,6 +257,7 @@ final class TripDetailsViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(TripStops.self).find(text: targetStop.name))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 1)
     }
 
@@ -338,6 +341,7 @@ final class TripDetailsViewTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         let exp = sut.inspection.inspect(after: 0.1) { view in
             try view.find(button: targetStop.name).tap()
             XCTAssertEqual(navManager.navigationStack, [oldNavEntry, newNavEntry])
@@ -427,6 +431,7 @@ final class TripDetailsViewTests: XCTestCase {
             }
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 1)
     }
 
@@ -504,6 +509,7 @@ final class TripDetailsViewTests: XCTestCase {
             XCTAssertThrowsError(try view.find(TripHeaderCard.self).find(button: "Follow"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 1)
     }
 
@@ -581,6 +587,7 @@ final class TripDetailsViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "Trip complete"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 1)
     }
 
@@ -658,6 +665,7 @@ final class TripDetailsViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "Trip not available"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 1)
     }
 }
