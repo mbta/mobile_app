@@ -313,6 +313,12 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "end of service"))
         XCTAssertNotNil(try sut.inspect().find(imageName: "service-start-sun"))
         XCTAssertNotNil(try sut.inspect().find(imageName: "service-end-moon"))
+        XCTAssertNotNil(try sut.inspect().find(where: { view in
+            try view.accessibilityValue().string() == "3:00\u{202F}AM, start of service"
+        }))
+        XCTAssertNotNil(try sut.inspect().find(where: { view in
+            try view.accessibilityValue().string() == "3:00\u{202F}AM, end of service"
+        }))
     }
 
     func testNextDay() throws {
