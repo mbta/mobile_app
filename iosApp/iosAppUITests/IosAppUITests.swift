@@ -48,8 +48,8 @@ final class IosAppUITests: XCTestCase {
 
         let app = XCUIApplication()
         app.launchArguments = ["--e2e-mocks", "--skip-map"]
+        app.activate()
         app.launch()
-        app.tap() // trigger handling permission prompts
 
         let prediction = app.staticTexts["Boston College"].firstMatch
         if prediction.waitForExistence(timeout: 10) {
@@ -83,8 +83,8 @@ final class IosAppUITests: XCTestCase {
 
         let app = XCUIApplication()
         app.launchArguments = ["--e2e-mocks", "--skip-map"]
+        app.activate()
         app.launch()
-        app.tap() // trigger handling permission prompts
 
         app.buttons["Favorites"].firstMatch.tapAfter()
 
@@ -119,7 +119,7 @@ final class IosAppUITests: XCTestCase {
     }
 
     func addLocationPermissionPromptHandler() {
-        let monitor = addUIInterruptionMonitor(withDescription: "Location Permission Alert") { alert -> Bool in
+        addUIInterruptionMonitor(withDescription: "Location Permission Alert") { alert -> Bool in
             let allowLocationButton = alert.buttons["Allow Once"]
             if allowLocationButton.exists {
                 allowLocationButton.tap()
