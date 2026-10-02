@@ -8940,6 +8940,9 @@
         }
       }
     },
+    "collapsed, double-tap to expand" : {
+      "comment" : "Screen reader hint for a time picker button, tapping it will open a modal"
+    },
     "Commuter Rail and Ferry Tickets" : {
       "comment" : "Label for a More page link to the MBTA mTicket app",
       "localizations" : {
@@ -25426,6 +25429,9 @@
           }
         }
       }
+    },
+    "time picker" : {
+      "comment" : "Screen reader label for a time picker button, tapping it will open a modal"
     },
     "Time picker type toggle" : {
       "comment" : "Screen reader label for the button on Android that switches between the dial time picker and the text input time picker",

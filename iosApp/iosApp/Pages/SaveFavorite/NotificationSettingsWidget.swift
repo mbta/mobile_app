@@ -25,14 +25,14 @@ struct NotificationSettingsWidget: View {
     var body: some View {
         VStack(spacing: 0) {
             if let vmState {
-                NotificationSettingsWidgetPresentationView(state: vmState,
-                                                           setEnabled: { enabled in vm.setEnabled(enabled: enabled) },
-                                                           setPreset: { preset in vm.setPreset(preset: preset) },
-                                                           setCustomWindows: { custom in
-                                                               vm.setCustomWindows(windows: custom)
-                                                           },
-                                                           addPlaceholderWindow: { vm.addPlaceholderWindow() },
-                                                           notificationPermissionManager: notificationPermissionManager)
+                NotificationSettingsWidgetPresentationView(
+                    state: vmState,
+                    setEnabled: { enabled in vm.setEnabled(enabled: enabled) },
+                    setPreset: { preset in vm.setPreset(preset: preset) },
+                    setCustomWindows: { custom in vm.setCustomWindows(windows: custom) },
+                    addPlaceholderWindow: { vm.addPlaceholderWindow() },
+                    notificationPermissionManager: notificationPermissionManager
+                )
             }
         }.manageVM(vm, $vmState, now)
             .onChange(of: vmState) { newState in
@@ -315,6 +315,9 @@ struct TimeInput: View {
 
     var timeString: String { dateBinding.wrappedValue.formatted(date: .omitted, time: .shortened) }
     var timeNote: Text? { timeNoteText(type) }
+    var timeAccessibilityValue: Text {
+        if let timeNote { Text(timeString) + Text(verbatim: ", ") + timeNote } else { Text(timeString) }
+    }
 
     var body: some View {
         HStack(spacing: 10) {
@@ -336,6 +339,13 @@ struct TimeInput: View {
                 .compositingGroup()
                 .scaleEffect(x: 2, y: 1.6)
                 .colorMultiply(.clear)
+                // SwiftUI's built in announcement makes it impossible to include the time note next to the time,
+                // so this reconstructs the built in behavior adding the note if it exists
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(label + Text(verbatim: ", ") + Text("time picker"))
+                .accessibilityValue(timeAccessibilityValue)
+                .accessibilityAddTraits(.isButton)
+                .accessibilityHint(Text("collapsed, double-tap to expand"))
         }
         .background(RoundedRectangle(cornerRadius: 6).fill(Color.fill1))
         .contentShape(Rectangle())
