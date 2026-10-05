@@ -25,11 +25,9 @@ import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.LoadedPredictions
-import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.LoadedSchedules
+import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.DepartureData
+import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getDepartureData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
-import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
-import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
 import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
 import kotlin.experimental.ExperimentalObjCRefinement
 import kotlin.jvm.JvmName
@@ -160,10 +158,10 @@ public class FavoritesViewModel(
                         stop.id
                 }
             }
-        val schedules = getSchedules(stopIds?.toSet(), errorKey)
-        val predictions =
-            subscribeToPredictions(
+        val departureData =
+            getDepartureData(
                 stopIds?.toSet(),
+                now,
                 SheetRoutes.Favorites,
                 active,
                 errorKey,
@@ -254,8 +252,7 @@ public class FavoritesViewModel(
             val location: Position?,
             val stopIds: List<String>?,
             val globalData: GlobalResponse?,
-            val schedules: LoadedSchedules?,
-            val predictions: LoadedPredictions?,
+            val departureData: DepartureData,
             val alerts: AlertsStreamDataResponse?,
             val now: EasternTimeInstant,
         )
@@ -264,17 +261,8 @@ public class FavoritesViewModel(
         // as keys to a LaunchedEffect, then routeCardData setting can get interrupted by frequent
         // changes to predictions or now, which can chain and significantly delay updates.
         var params: RouteCardDataParams? by remember { mutableStateOf(null) }
-        LaunchedEffect(location, stopIds, globalData, schedules, predictions, alerts, now) {
-            params =
-                RouteCardDataParams(
-                    location,
-                    stopIds,
-                    globalData,
-                    schedules,
-                    predictions,
-                    alerts,
-                    now,
-                )
+        LaunchedEffect(location, stopIds, globalData, departureData, alerts, now) {
+            params = RouteCardDataParams(location, stopIds, globalData, departureData, alerts, now)
         }
 
         LaunchedEffect(Unit) {
@@ -287,25 +275,25 @@ public class FavoritesViewModel(
                         routeCardData = null
                     } else if (it.stopIds.isEmpty()) {
                         routeCardData = emptyList()
-                    } else if (
-                        it.location != null &&
-                            it.schedules?.stopIds == it.stopIds.toSet() &&
-                            it.predictions?.stopIds == it.stopIds.toSet()
-                    ) {
-                        routeCardData =
-                            RouteCardData.routeCardsForStopList(
-                                it.stopIds,
-                                it.globalData,
-                                it.location,
-                                it.schedules.response,
-                                it.predictions.response,
-                                it.alerts,
-                                it.now,
-                                RouteCardData.Context.Favorites,
-                                validFavorites?.keys,
-                                coroutineDispatcher,
-                            )
-                        loadedLocation = it.location
+                    } else if (it.location != null) {
+                        val responses =
+                            it.departureData.matchingResponses(it.stopIds.toSet(), it.now)
+                        if (responses != null) {
+                            routeCardData =
+                                RouteCardData.routeCardsForStopList(
+                                    it.stopIds,
+                                    it.globalData,
+                                    it.location,
+                                    responses.schedules,
+                                    responses.predictions,
+                                    it.alerts,
+                                    it.now,
+                                    RouteCardData.Context.Favorites,
+                                    validFavorites?.keys,
+                                    coroutineDispatcher,
+                                )
+                            loadedLocation = it.location
+                        }
                     }
                     stopCardData = routeCardData?.let { rcd ->
                         StopCardData.fromRouteCardData(rcd, sortByDistanceFrom = it.location)
