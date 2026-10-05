@@ -8941,7 +8941,51 @@
       }
     },
     "collapsed, double-tap to expand" : {
-      "comment" : "Screen reader hint for a time picker button, tapping it will open a modal"
+      "comment" : "Screen reader hint for a time picker button, tapping it will open a modal",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "colapsado, doble toque para expandir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "effondré, double pression pour s’étendre"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "retresi, tape de fwa pou elaji"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recolhido, toque duas vezes para expandir"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(Thu gọn, chạm hai lần để mở rộng)"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已折叠，双击展开"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已折疊，雙擊展開"
+          }
+        }
+      }
     },
     "Commuter Rail and Ferry Tickets" : {
       "comment" : "Label for a More page link to the MBTA mTicket app",
@@ -25431,7 +25475,51 @@
       }
     },
     "time picker" : {
-      "comment" : "Screen reader label for a time picker button, tapping it will open a modal"
+      "comment" : "Screen reader label for a time picker button, tapping it will open a modal",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lector de tiempo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chronomètre"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "seleksyonè tan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "seletor de tempo"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "người chọn thời gian"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "时间选择器"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "時間選擇器"
+          }
+        }
+      }
     },
     "Time picker type toggle" : {
       "comment" : "Screen reader label for the button on Android that switches between the dial time picker and the text input time picker",
