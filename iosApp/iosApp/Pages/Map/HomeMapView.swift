@@ -142,9 +142,8 @@ struct HomeMapView: View {
     var realtimeResponsiveMap: some View {
         staticResponsiveMap
             .manageVM(routeCardDataVM, $routeCardDataState)
-            .onChange(of: alerts) { _ in
-                mapVM.alertsChanged(alerts: alerts)
-            }
+            .onAppear { mapVM.alertsChanged(alerts: alerts) }
+            .onChange(of: alerts) { _ in mapVM.alertsChanged(alerts: alerts) }
             .onDisappear {
                 leaveVehiclesChannel()
                 viewportProvider.saveCurrentViewport()
@@ -153,6 +152,7 @@ struct HomeMapView: View {
                 onActive: {
                     let lastNavEntry = navManager.navigationStack.lastSafe()
                     handleNavStackChange(entry: lastNavEntry)
+                    mapVM.alertsChanged(alerts: alerts)
                 },
                 onInactive: leaveVehiclesChannel,
                 onBackground: leaveVehiclesChannel

@@ -684,9 +684,7 @@ public class MapViewModel(
         isDarkMode: Boolean?,
         layerManager: IMapLayerManager?,
     ) {
-        if (globalResponse == null || routeSourceData == null || routeShapes == null) {
-            return
-        }
+        if (globalResponse == null || routeSourceData == null || routeShapes == null) return
 
         layerManager?.updateRouteSourceData(routeSourceData)
         layerManager?.addLayers(
