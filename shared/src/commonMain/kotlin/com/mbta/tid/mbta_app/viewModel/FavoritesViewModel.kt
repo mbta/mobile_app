@@ -444,8 +444,8 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
         onSetNow(now)
     }
 
-    override fun setIsFirstExposureToNewFavorites(isFirstExposure: Boolean) {
-        onSetIsFirstExposureToNewFavorites(isFirstExposure)
+    override fun setIsFirstExposureToNewFavorites(isFirst: Boolean) {
+        onSetIsFirstExposureToNewFavorites(isFirst)
     }
 
     override fun updateFavorites(

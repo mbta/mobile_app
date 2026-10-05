@@ -42,6 +42,7 @@ final class AlertsModifierTests: XCTestCase {
 
         let sut = Text("test").alerts(alertBinding)
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
         wait(for: [repoExp, setExp], timeout: 1)
     }
 }

@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.android.search.results
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
@@ -12,11 +12,12 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.SearchViewModel
 import kotlin.test.assertEquals
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 
 class RouteResultsViewTest {
-    @get:Rule var composeTestRule = createComposeRule()
+    @get:Rule var composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Test
     fun testBusBothNames() {

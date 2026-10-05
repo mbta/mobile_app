@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
@@ -28,6 +28,7 @@ import com.mbta.tid.mbta_app.viewModel.MockRouteCardDataViewModel
 import com.mbta.tid.mbta_app.viewModel.RouteCardDataViewModel
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -35,7 +36,9 @@ import org.junit.Test
 
 @OptIn(ExperimentalTestApi::class)
 class SubscribeToVehiclesTest {
-    @get:Rule val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+    @get:Rule
+    val composeTestRule =
+        createAndroidComposeRule<ComponentActivity>(effectContext = UnconfinedTestDispatcher())
 
     // Test structure based on lifecycle tests:
     // https://github.com/androidx/androidx/blob/0b709f31b71110fe671ed8b4c03f96ad30a0cd37/lifecycle/lifecycle-runtime-compose/src/androidInstrumentedTest/kotlin/androidx/lifecycle/compose/LifecycleEffectTest.kt#L247

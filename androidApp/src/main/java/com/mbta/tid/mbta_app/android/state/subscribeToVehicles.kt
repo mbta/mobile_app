@@ -61,6 +61,7 @@ class VehiclesViewModel(private val vehiclesRepository: IVehiclesRepository) : V
     }
 
     class Factory(private val vehiclesRepository: IVehiclesRepository) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return VehiclesViewModel(vehiclesRepository) as T
         }

@@ -22,6 +22,7 @@ final class SaveFavoriteHeaderTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         XCTAssertNotNil(try? sut.inspect().find(text: "Add Favorite"))
     }
@@ -34,6 +35,7 @@ final class SaveFavoriteHeaderTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         XCTAssertNotNil(try? sut.inspect().find(text: "Edit Favorite"))
     }
@@ -48,6 +50,7 @@ final class SaveFavoriteHeaderTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         try? sut.inspect().find(button: "Cancel").tap()
         wait(for: [cancelExp], timeout: 1)
@@ -63,6 +66,7 @@ final class SaveFavoriteHeaderTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         try? sut.inspect().find(button: "Save").tap()
         wait(for: [saveExp], timeout: 1)

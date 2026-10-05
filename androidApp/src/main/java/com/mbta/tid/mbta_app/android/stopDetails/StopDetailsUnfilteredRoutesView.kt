@@ -57,7 +57,7 @@ import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.MockErrorBannerViewModel
 import kotlin.time.Duration.Companion.minutes
-import org.koin.compose.KoinContext
+import org.koin.compose.KoinIsolatedContext
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 
@@ -311,7 +311,7 @@ private fun StopDetailsRoutesViewPreview() {
     val errorBannerVM: IErrorBannerViewModel = MockErrorBannerViewModel()
 
     MyApplicationTheme {
-        KoinContext(koin.koin) {
+        KoinIsolatedContext(koin) {
             StopDetailsUnfilteredRoutesView(
                 stop,
                 routeCardData,

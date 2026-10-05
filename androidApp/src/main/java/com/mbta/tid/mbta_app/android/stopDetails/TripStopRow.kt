@@ -40,7 +40,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
-import org.koin.compose.KoinContext
+import org.koin.compose.KoinIsolatedContext
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 
@@ -151,7 +151,7 @@ private fun TripStopRowPreview() {
     }
     val redAccents = TripRouteAccents(red)
     val globalData = GlobalResponse(objects)
-    KoinContext(koin.koin) {
+    KoinIsolatedContext(koin) {
         MyApplicationTheme {
             Column(Modifier.background(colorResource(R.color.fill3))) {
                 TripStopRow(
@@ -257,7 +257,7 @@ private fun TripStopRowDisruptionsPreview() {
     }
     val redAccents = TripRouteAccents(red)
     val globalData = GlobalResponse(objects)
-    KoinContext(koin.koin) {
+    KoinIsolatedContext(koin) {
         MyApplicationTheme {
             Box {
                 Box(

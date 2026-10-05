@@ -214,10 +214,13 @@ platform :ios do
     run_tests(
       project: 'iosApp/iosApp.xcodeproj',
       scheme: 'Staging',
-      device: options[:device]&.strip || 'iPhone 16 (26.2)',
+      device: options[:device]&.strip || 'iPhone 16 (27.0)',
       testplan: 'iosAppRetries',
       output_directory: options[:output_directory],
       include_simulator_logs: false,
+      # Switch this to `-collect-test-diagnostics on-failure` if you want to collect diagnostics
+      # to debug test failures in CI, but it's disabled because it can cause a 10 minute delay
+      xcargs: '-collect-test-diagnostics never',
       xcodebuild_formatter: options[:xcodebuild_formatter],
       result_bundle: true,
       number_of_retries: 3
