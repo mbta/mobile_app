@@ -141,8 +141,9 @@ import XCTest
             XCTAssertThrowsError(try view.find(text: "This stop is not accessible"))
         }
 
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        await fulfillment(of: [exp], timeout: 2)
+        try await ViewHosting.host(sut.withFixedSettings([:])) {
+            await fulfillment(of: [exp], timeout: 2)
+        }
     }
 
     func testInaccessibleByDirection() async throws {
@@ -175,8 +176,9 @@ import XCTest
         let exp = sut.inspection.inspect(after: 0.5) { view in
             XCTAssertNotNil(try view.find(text: "This stop is not accessible"))
         }
-        ViewHosting.host(view: sut.withFixedSettings([.stationAccessibility: true]))
-        await fulfillment(of: [exp], timeout: 2)
+        try await ViewHosting.host(sut.withFixedSettings([.stationAccessibility: true])) {
+            await fulfillment(of: [exp], timeout: 2)
+        }
     }
 
     func testShowsElevatorAlertsWhenGroupedByDirection() async throws {

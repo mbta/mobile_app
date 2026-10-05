@@ -31,6 +31,7 @@ final class SaveFavoritePageTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         sut.inspection.inspect(after: 0.1) { view in
             XCTAssertNotNil(try view.find(text: "Alewife"))
@@ -55,6 +56,7 @@ final class SaveFavoritePageTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         sut.inspection.inspect(after: 1) { view in
             XCTAssertNotNil(try sut.inspect().find(text: "Alewife"))
@@ -91,6 +93,7 @@ final class SaveFavoritePageTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         sut.inspection.inspect(after: 1) { view in
             XCTAssertNotNil(try sut.inspect().find(text: "Alewife"))
@@ -142,6 +145,7 @@ final class SaveFavoritePageTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         wait(for: [exp1], timeout: 5)
     }
@@ -177,6 +181,7 @@ final class SaveFavoritePageTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         wait(for: [exp1], timeout: 5)
     }
@@ -212,6 +217,7 @@ final class SaveFavoritePageTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         wait(for: [exp1], timeout: 5)
     }

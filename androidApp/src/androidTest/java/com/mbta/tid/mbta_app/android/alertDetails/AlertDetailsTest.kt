@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.android.alertDetails
 
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
@@ -22,7 +23,7 @@ import org.junit.Rule
 import org.junit.Test
 
 class AlertDetailsTest {
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Test
     fun testBasicAlertDetails() {

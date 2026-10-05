@@ -31,6 +31,7 @@ final class ErrorBannerTests: XCTestCase {
         )))
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         XCTAssertNil(try? sut.inspect().find(ViewType.Text.self))
 
@@ -51,6 +52,7 @@ final class ErrorBannerTests: XCTestCase {
         )))
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         let showedError = sut.inspection.inspect(after: 0.5) { view in
             XCTAssertNotNil(try view.find(text: "Unable to connect"))
@@ -67,6 +69,7 @@ final class ErrorBannerTests: XCTestCase {
         )))
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         let showedError = sut.inspection.inspect(after: 0.5) { view in
             XCTAssertNotNil(try view.find(text: "Error loading data"))
@@ -86,6 +89,7 @@ final class ErrorBannerTests: XCTestCase {
         )))
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         let showedLoading = sut.inspection.inspect(after: 0.5) { view in
             XCTAssertNotNil(try view.find(ViewType.ProgressView.self))
@@ -104,6 +108,7 @@ final class ErrorBannerTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         XCTAssertThrowsError(try sut.inspect().find(text: "Fake message"))
     }
@@ -116,6 +121,7 @@ final class ErrorBannerTests: XCTestCase {
         )))
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         let hidError = sut.inspection.inspect(after: 0.5) { view in
             XCTAssertThrowsError(try view.find(text: "Error loading data"))

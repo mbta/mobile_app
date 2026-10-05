@@ -3,7 +3,7 @@ package com.mbta.tid.mbta_app.android.state
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
@@ -15,12 +15,13 @@ import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.usecases.AlertsUsecase
 import kotlin.test.assertEquals
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
 
 class SubscribeToAlertsTest {
-    @get:Rule val composeRule = createComposeRule()
+    @get:Rule val composeRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Test
     fun testAlerts() {

@@ -37,6 +37,7 @@ final class EditFavoritesPageTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         XCTAssertNotNil(try sut.inspect().find(text: "Edit Favorites"))
         try sut.inspect().find(button: "Done").tap()
@@ -92,6 +93,7 @@ final class EditFavoritesPageTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))
+        defer { ViewHosting.expel() }
 
         try sut.inspect().findAll(EditFavoriteButton.self)[0].find(ViewType.Button.self).tap()
         XCTAssertEqual(expectedRsd, editRsd)
@@ -146,6 +148,7 @@ final class EditFavoritesPageTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))
+        defer { ViewHosting.expel() }
 
         XCTAssertNotNil(try? sut.inspect().find(imageName: "fa-bell-filled"))
     }
@@ -235,6 +238,7 @@ final class EditFavoritesPageTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp, updateFavoritesExp], timeout: 3)
     }
 
@@ -323,6 +327,7 @@ final class EditFavoritesPageTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp, updateFavoritesExp, undoFavoritesExp], timeout: 3)
     }
 }

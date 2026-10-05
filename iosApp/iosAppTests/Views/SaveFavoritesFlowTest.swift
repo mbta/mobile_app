@@ -47,6 +47,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         try sut.inspect().findAll(ViewType.Button.self)[1].tap()
 
@@ -67,6 +68,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         try sut.inspect().findAll(ViewType.Button.self)[1].tap()
 
@@ -95,6 +97,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         wait(for: [exp], timeout: 2)
     }
@@ -121,6 +124,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         wait(for: [onCloseExp], timeout: 2)
         XCTAssertEqual(updateFavoritesCalledFor, [.init(route: route.id, stop: stop.id, direction: 0): .init()])
@@ -148,6 +152,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         wait(for: [onCloseExp], timeout: 2)
         XCTAssertEqual(updateFavoritesCalledFor, [.init(route: route.id, stop: stop.id, direction: 0): nil])
@@ -173,6 +178,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         wait(for: [exp], timeout: 2)
     }
@@ -234,6 +240,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         wait(for: [onToastExp], timeout: 2)
         XCTAssertEqual(updateFavoritesCalledFor, [.init(route: route.id, stop: stop.id, direction: 0): .init()])
@@ -265,6 +272,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))
+        defer { ViewHosting.expel() }
 
         wait(for: [onCloseExp, onPushNavExp], timeout: 2)
         XCTAssertEqual(
@@ -299,6 +307,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))
+        defer { ViewHosting.expel() }
 
         wait(for: [onCloseExp, onPushNavExp], timeout: 2)
         XCTAssertEqual(
@@ -330,6 +339,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))
+        defer { ViewHosting.expel() }
 
         wait(for: [onCloseExp, onPushNavExp], timeout: 2)
         XCTAssertEqual(

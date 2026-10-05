@@ -220,6 +220,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         try sut.inspect().find(text: "Get disruption notifications").find(ViewType.Toggle.self, relation: .parent).tap()
         try sut.inspect().findAndCallOnChange(newValue: true)
@@ -254,6 +255,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         wait(for: [exp, settingsLinkExp], timeout: 5)
     }

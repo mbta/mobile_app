@@ -29,6 +29,7 @@ final class PromoScreenViewTests: XCTestCase {
             await self.fulfillment(of: [advanceExp], timeout: 1)
         }
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 5)
     }
 
@@ -47,6 +48,7 @@ final class PromoScreenViewTests: XCTestCase {
             await self.fulfillment(of: [advanceExp], timeout: 1)
         }
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 5)
     }
 }
