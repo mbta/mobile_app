@@ -40,7 +40,8 @@ class MockLayerManager: iosApp.IMapLayerManager {
         routes _: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
         state _: StopLayerGenerator.State,
         globalResponse _: GlobalResponse,
-        colorScheme: ColorScheme
+        colorScheme: ColorScheme,
+        settings _: [Settings: KotlinBoolean],
     ) {
         currentScheme = colorScheme
         addLayersCallback()

@@ -23,6 +23,7 @@ import com.mbta.tid.mbta_app.map.StopIcons
 import com.mbta.tid.mbta_app.map.StopLayerGenerator
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
+import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.IMapLayerManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
@@ -61,12 +62,14 @@ class MapLayerManager(val map: MapboxMap, val context: Context) : IMapLayerManag
         state: StopLayerGenerator.State,
         globalResponse: GlobalResponse,
         colorPalette: ColorPalette,
+        settings: Map<Settings, Boolean>,
     ) {
         addLayers(
             mapFriendlyRouteResponse.routesWithSegmentedShapes,
             state,
             globalResponse,
             colorPalette,
+            settings,
         )
     }
 
@@ -75,13 +78,13 @@ class MapLayerManager(val map: MapboxMap, val context: Context) : IMapLayerManag
         state: StopLayerGenerator.State,
         globalResponse: GlobalResponse,
         colorPalette: ColorPalette,
+        settings: Map<Settings, Boolean>,
     ) {
         val routeLayers =
-            RouteLayerGenerator.createAllRouteLayers(routes, globalResponse, colorPalette).map {
-                it.toMapbox()
-            }
+            RouteLayerGenerator.createAllRouteLayers(routes, globalResponse, colorPalette, settings)
+                .map { it.toMapbox() }
         val stopLayers =
-            StopLayerGenerator.createStopLayers(colorPalette, state).map { it.toMapbox() }
+            StopLayerGenerator.createStopLayers(colorPalette, state, settings).map { it.toMapbox() }
         setLayers(routeLayers, stopLayers)
     }
 
