@@ -127,6 +127,8 @@ struct EditFavoritesList: View {
     let global: GlobalResponse?
     let deleteFavorite: (RouteStopDirection) -> Void
     let onOpenEditModal: (RouteStopDirection) -> Void
+    // TODO: Remove sections/validation of this value after notification release
+    var notificationsFlag: Bool { true }
 
     @EnvironmentObject var settingsCache: SettingsCache
 
@@ -144,7 +146,7 @@ struct EditFavoritesList: View {
                                 leaves: stopData.data,
                                 globalData: global
                             ) { leaf in
-                                if settingsCache.get(.notifications) {
+                                if notificationsFlag {
                                     onOpenEditModal(leaf.routeStopDirection)
                                 } else {
                                     deleteFavorite(leaf.routeStopDirection)
@@ -253,11 +255,13 @@ struct FavoriteRowRightContent: View {
     let leaf: RouteCardData.Leaf
     let favoriteSettings: FavoriteSettings?
     let onClick: (RouteCardData.Leaf) -> Void
+    // TODO: Remove sections/validation of this value after notification release
+    var notificationsFlag: Bool { true }
 
     @EnvironmentObject var settingsCache: SettingsCache
 
     var body: some View {
-        if settingsCache.get(.notifications) {
+        if notificationsFlag {
             NotificationStatusIcon(favoriteSetting: favoriteSettings)
             EditFavoriteButton { onClick(leaf) }
         } else {

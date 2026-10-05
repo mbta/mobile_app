@@ -26,7 +26,8 @@ fun manageFavorites(favoritesUseCases: FavoritesUsecases = koinInject()): Manage
 
     LaunchedEffect(Unit) { favoritesUseCases.getRouteStopDirectionFavorites() }
     val includeAccessibility = SettingsCache.get(Settings.StationAccessibility)
-    val notificationsEnabled = SettingsCache.get(Settings.Notifications)
+    // TODO: Remove sections/validation of this value after notification release
+    val notificationsEnabled = true
     val currentLocale = stringResource(R.string.current_locale)
     val updateFavorites:
         suspend (Map<RouteStopDirection, FavoriteSettings?>, EditFavoritesContext, Int) -> Unit =

@@ -22,6 +22,8 @@ struct MorePage: View {
 
     @ObservedObject var fcmTokenContainer = FcmTokenContainer.shared
     @EnvironmentObject var settingsCache: SettingsCache
+    // TODO: Remove sections/validation of this value after notification release
+    var notificationsEnabled: Bool { true }
 
     private let translation = NSLocalizedString("key/current_locale", comment: "")
 
@@ -87,7 +89,7 @@ struct MorePage: View {
                                 onChangeSetting: { setting, newValue in
                                     switch setting {
                                     case .stationAccessibility:
-                                        if settingsCache.get(.notifications), let fcmToken = fcmTokenContainer.token {
+                                        if notificationsEnabled, let fcmToken = fcmTokenContainer.token {
                                             viewModel.updateAccessibility(
                                                 fcmToken: fcmToken,
                                                 includeAccessibility: newValue,

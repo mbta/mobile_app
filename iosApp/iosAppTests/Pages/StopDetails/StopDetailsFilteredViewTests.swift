@@ -52,15 +52,21 @@ final class StopDetailsFilteredViewTests: XCTestCase {
                 .tap()
             tappedPublisher.send()
         }
-        let confirmationDialogExp = sut.inspection.inspect(onReceive: tappedPublisher, after: 1) { view in
-            XCTAssertTrue(try view.actualView().inSaveFavoritesFlow)
+
+        try? sut.inspect().find(button: "Save").tap()
+
+        let starButtonExp = sut.inspection.inspect(after: 1) { view in
+            let button = try view.find(StarButton.self).find(ViewType.Button.self)
+
+            XCTAssertFalse(button.isDisabled())
         }
 
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([
             .devDebugMode: false,
         ]))
+
         defer { ViewHosting.expel() }
-        wait(for: [tapButtonExp, confirmationDialogExp], timeout: 4)
+        wait(for: [tapButtonExp, starButtonExp], timeout: 1)
     }
 
     @MainActor func testShowsDataWhenStopAndRouteMatchFilterButDirectionDoesnt() {

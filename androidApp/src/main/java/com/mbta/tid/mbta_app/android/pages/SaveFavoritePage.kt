@@ -162,7 +162,6 @@ fun SaveFavoritePage(
     }
 
     val includeAccessibility = SettingsCache.get(Settings.StationAccessibility)
-    val notificationsEnabled = SettingsCache.get(Settings.Notifications)
     val currentLocale = stringResource(R.string.current_locale)
 
     fun updateFavorites(update: Map<RouteStopDirection, FavoriteSettings?>) {

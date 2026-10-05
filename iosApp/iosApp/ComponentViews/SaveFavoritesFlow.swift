@@ -24,8 +24,11 @@ struct SaveFavoritesFlow: View {
     let onClose: () -> Void
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let toastVM: IToastViewModel
+    
 
     @EnvironmentObject var settingsCache: SettingsCache
+    // TODO: Remove sections/validation of this value after notification release
+    var notificationsFlag: Bool { true }
 
     var selectedDirectionIsAvailableAtStop: Bool { directions.contains(where: { $0.id == selectedDirection }) }
 
@@ -149,7 +152,7 @@ struct SaveFavoritesFlow: View {
     var body: some View {
         // Save automatically without confirmation modal
         VStack(spacing: 0) {
-            if settingsCache.get(.notifications) {
+            if notificationsFlag {
                 VStack {}.onAppear { openSaveModal() }
             } else if isUnFavoriting || isBusOneDirection, selectedDirectionIsAvailableAtStop {
                 VStack {}

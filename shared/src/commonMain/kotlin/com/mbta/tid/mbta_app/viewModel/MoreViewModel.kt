@@ -50,18 +50,18 @@ public class MoreViewModel(
                         MoreItem.Link(label = SharedString.SendAppFeedback, url = feedbackFormUrl)
                     ),
             ),
-            MoreSection(
-                id = MoreSection.Category.PublicBetas,
-                label = SharedString.BetaSection,
-                items =
-                    listOf(
-                        MoreItem.Toggle(
-                            label = SharedString.Notifications,
-                            settings = Settings.Notifications,
-                        )
-                    ),
-                noteBelow = SharedString.BetaEarlyAccessNote,
-            ),
+            //            MoreSection(
+            //                id = MoreSection.Category.PublicBetas,
+            //                label = SharedString.BetaSection,
+            //                items =
+            //                    listOf(
+            //                        MoreItem.Toggle(
+            //                            label = SharedString.Notifications,
+            //                            settings = Settings.Notifications,
+            //                        )
+            //                    ),
+            //                noteBelow = SharedString.BetaEarlyAccessNote,
+            //            ),
             MoreSection(
                 id = MoreSection.Category.Resources,
                 label = SharedString.ResourcesSection,

@@ -37,7 +37,8 @@ struct ContentView: View {
     @EnvironmentObject var settingsCache: SettingsCache
     var hideMaps: Bool { settingsCache.get(.hideMaps) }
     var includeAccessibility: Bool { settingsCache.get(.stationAccessibility) }
-    var notificationsFlag: Bool { settingsCache.get(.notifications) }
+    // TODO: Remove sections/validation of this value after notification release
+    var notificationsFlag: Bool { true }
 
     let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     let analytics: Analytics = AnalyticsProvider.shared

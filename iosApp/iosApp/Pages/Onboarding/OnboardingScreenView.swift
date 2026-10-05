@@ -328,7 +328,7 @@ struct OnboardingScreenView: View {
         .frame(height: 160, alignment: .bottom)
         OnboardingPieces.PageColumn(content: {
             VStack(alignment: .leading, spacing: 32) {
-                let header = NSLocalizedString("Now get disruption notifications", comment: "")
+                let header = NSLocalizedString("Get disruption notifications", comment: "")
                 Text(header)
                     .font(Typography.title1Bold)
                     .accessibilityLabel(Text("New feature. \(header)"))

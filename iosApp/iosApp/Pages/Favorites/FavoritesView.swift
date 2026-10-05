@@ -25,7 +25,8 @@ struct FavoritesView: View {
     @State var locationUnthrottled: CLLocationCoordinate2D?
 
     @EnvironmentObject var settingsCache: SettingsCache
-    var notificationsEnabled: Bool { settingsCache.get(.notifications) }
+    // TODO: Remove sections/validation of this value after notification release
+    var notificationsEnabled: Bool { true }
 
     @State var globalData: GlobalResponse?
     var globalRepository = RepositoryDI().global
