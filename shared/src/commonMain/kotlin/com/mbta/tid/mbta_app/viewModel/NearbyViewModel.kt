@@ -20,11 +20,9 @@ import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.isRoughlyEqualTo
-import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.LoadedPredictions
-import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.LoadedSchedules
+import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.DepartureData
+import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getDepartureData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
-import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
-import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
 import kotlin.experimental.ExperimentalObjCRefinement
 import kotlin.jvm.JvmName
 import kotlin.native.ShouldRefineInSwift
@@ -100,10 +98,10 @@ public class NearbyViewModel(
 
         val errorKey = ErrorKey(setOf(SheetRoutes.NearbyTransit::class), "NearbyViewModel")
         val globalData = getGlobalData(errorKey)
-        val schedules = getSchedules(locationStops?.stopIds?.toSet(), errorKey)
-        val predictions =
-            subscribeToPredictions(
+        val departureData =
+            getDepartureData(
                 locationStops?.stopIds?.toSet(),
+                now,
                 SheetRoutes.NearbyTransit,
                 active,
                 errorKey,
@@ -140,8 +138,7 @@ public class NearbyViewModel(
             val location: Position?,
             val locationStops: StopsAtLocation?,
             val globalData: GlobalResponse?,
-            val schedules: LoadedSchedules?,
-            val predictions: LoadedPredictions?,
+            val departureData: DepartureData,
             val alerts: AlertsStreamDataResponse?,
             val now: EasternTimeInstant,
         )
@@ -150,17 +147,9 @@ public class NearbyViewModel(
         // as keys to a LaunchedEffect, then routeCardData setting can get interrupted by frequent
         // changes to predictions or now, which can chain and significantly delay updates.
         var params: RouteCardDataParams? by remember { mutableStateOf(null) }
-        LaunchedEffect(location, locationStops, globalData, schedules, predictions, alerts, now) {
+        LaunchedEffect(location, locationStops, globalData, departureData, alerts, now) {
             params =
-                RouteCardDataParams(
-                    location,
-                    locationStops,
-                    globalData,
-                    schedules,
-                    predictions,
-                    alerts,
-                    now,
-                )
+                RouteCardDataParams(location, locationStops, globalData, departureData, alerts, now)
         }
 
         LaunchedEffect(Unit) {
@@ -178,27 +167,28 @@ public class NearbyViewModel(
                     } else if (stopIdSet.isEmpty()) {
                         routeCardData = emptyList()
                         loadedLocationStops = resolvedLocationStops
-                    } else if (
-                        resolvedLocationStops.location?.let { loadedStopLocation ->
-                            it.location?.isRoughlyEqualTo(loadedStopLocation)
-                        } == true &&
-                            it.schedules?.stopIds == stopIdSet &&
-                            it.predictions?.stopIds == stopIdSet
-                    ) {
-                        routeCardData =
-                            RouteCardData.routeCardsForStopList(
-                                resolvedLocationStops.stopIds,
-                                it.globalData,
-                                resolvedLocationStops.location,
-                                it.schedules.response,
-                                it.predictions.response,
-                                it.alerts,
-                                it.now,
-                                RouteCardData.Context.NearbyTransit,
-                                null,
-                                coroutineDispatcher,
-                            )
-                        loadedLocationStops = resolvedLocationStops
+                    } else {
+                        val responses = it.departureData.matchingResponses(stopIdSet, it.now)
+                        val locationMatches =
+                            resolvedLocationStops.location?.let { loadedStopLocation ->
+                                it.location?.isRoughlyEqualTo(loadedStopLocation)
+                            } == true
+                        if (locationMatches && responses != null) {
+                            routeCardData =
+                                RouteCardData.routeCardsForStopList(
+                                    resolvedLocationStops.stopIds,
+                                    it.globalData,
+                                    resolvedLocationStops.location,
+                                    responses.schedules,
+                                    responses.predictions,
+                                    it.alerts,
+                                    it.now,
+                                    RouteCardData.Context.NearbyTransit,
+                                    null,
+                                    coroutineDispatcher,
+                                )
+                            loadedLocationStops = resolvedLocationStops
+                        }
                     }
                 }
         }
