@@ -20,9 +20,8 @@ import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getDepartureData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
-import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
-import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
 import kotlin.jvm.JvmName
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
@@ -109,24 +108,18 @@ public class StopDetailsViewModel(
                 }
             }
 
-        val schedules =
-            getSchedules(
+        val departureData =
+            getDepartureData(
                 stopIds?.toSet(),
-                errorKey,
-                schedulesRepository,
-                errorBannerRepository,
-                coroutineDispatcher,
-            )
-
-        val predictions =
-            subscribeToPredictions(
-                stopIds?.toSet(),
+                now,
                 filters?.let { SheetRoutes.StopDetails(it.stopId, it.stopFilter, it.tripFilter) },
                 active,
                 errorKey,
                 onAnyMessageReceived = { awaitingPredictionsAfterBackground = false },
                 errorBannerRepository,
+                schedulesRepository,
                 predictionsRepository,
+                coroutineDispatcher,
             )
 
         EventSink(eventHandlingTimeout = 1.seconds, sentryRepository = sentryRepository) { event ->
@@ -140,13 +133,13 @@ public class StopDetailsViewModel(
             }
         }
 
-        LaunchedEffect(stopIds, globalData, schedules, predictions, alerts, now, filters) {
+        LaunchedEffect(stopIds, globalData, departureData, alerts, now, filters) {
             val resolvedFilters = filters
+            val responses = stopIds?.let { departureData.matchingResponses(it.toSet(), now) }
             if (
                 stopIds == null ||
                     globalData == null ||
-                    schedules == null ||
-                    predictions == null ||
+                    responses == null ||
                     resolvedFilters == null
             ) {
                 routeCardData = null
@@ -162,8 +155,8 @@ public class StopDetailsViewModel(
                     stopIds,
                     globalData,
                     sortByDistanceFrom = null,
-                    schedules.response,
-                    predictions.response,
+                    responses.schedules,
+                    responses.predictions,
                     alerts,
                     now,
                     if (resolvedFilters.stopFilter != null)
