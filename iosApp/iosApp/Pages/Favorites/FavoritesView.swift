@@ -25,10 +25,7 @@ struct FavoritesView: View {
     @State var locationUnthrottled: CLLocationCoordinate2D?
 
     @EnvironmentObject var settingsCache: SettingsCache
-    // TODO: Remove sections/validation of this value after notification release
-    var notificationsEnabled: Bool {
-        true
-    }
+    var notificationsEnabled: Bool { settingsCache.get(.notifications) }
 
     @State var globalData: GlobalResponse?
     var globalRepository = RepositoryDI().global
@@ -156,7 +153,7 @@ struct FavoritesView: View {
         .enableInjection()
     }
 
-    private func emptyView() -> some View {
+    @ViewBuilder private func emptyView() -> some View {
         NoFavoritesView(
             onAddStops: {
                 onAddStops()

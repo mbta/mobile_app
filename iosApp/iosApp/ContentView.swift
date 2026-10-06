@@ -35,18 +35,9 @@ struct ContentView: View {
     @State var mapVM = ViewModelDI().map
 
     @EnvironmentObject var settingsCache: SettingsCache
-    var hideMaps: Bool {
-        settingsCache.get(.hideMaps)
-    }
-
-    var includeAccessibility: Bool {
-        settingsCache.get(.stationAccessibility)
-    }
-
-    // TODO: Remove sections/validation of this value after notification release
-    var notificationsFlag: Bool {
-        true
-    }
+    var hideMaps: Bool { settingsCache.get(.hideMaps) }
+    var includeAccessibility: Bool { settingsCache.get(.stationAccessibility) }
+    var notificationsFlag: Bool { settingsCache.get(.notifications) }
 
     let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     let analytics: Analytics = AnalyticsProvider.shared
@@ -199,6 +190,7 @@ struct ContentView: View {
         }
     }
 
+    @ViewBuilder
     var mainContent: some View {
         VStack {
             if hideMaps {
@@ -299,7 +291,7 @@ struct ContentView: View {
                             )) },
                             pushNavEntry: { entry in navManager.pushNavEntry(entry) },
                             navCallbacks: navCallbacks,
-                            errorBannerVM: errorBannerVM
+                            errorBannerVM: errorBannerVM,
                         )
                         .toolbar(.hidden, for: .tabBar)
                     }
@@ -354,7 +346,7 @@ struct ContentView: View {
                             routeCardDataVM: routeCardDataVM,
                             stopDetailsVM: stopDetailsVM,
                             navManager: navManager,
-                            viewportProvider: viewportProvider
+                            viewportProvider: viewportProvider,
                         )
                         .toolbar(.hidden, for: .tabBar)
                     }
@@ -372,7 +364,7 @@ struct ContentView: View {
                             filter: filter,
                             alerts: alerts,
                             navCallbacks: navCallbacks,
-                            navManager: navManager
+                            navManager: navManager,
                         )
                         .toolbar(.hidden, for: .tabBar)
                     }
@@ -392,6 +384,7 @@ struct ContentView: View {
         .onOpenURL { handleDeepLink(url: $0) }
     }
 
+    @ViewBuilder
     var sheetContentsPlaceholder: some View {
         ZStack {
             Color.sheetBackground.ignoresSafeArea(.all)
@@ -430,6 +423,7 @@ struct ContentView: View {
         }
     }
 
+    @ViewBuilder
     var tabbedSheetContents: some View {
         // Putting the TabView in a VStack prevents the tabs from covering the nearby transit contents
         // when re-opening nearby transit
@@ -479,7 +473,7 @@ struct ContentView: View {
                             )
                         },
                         errorBannerVM: errorBannerVM,
-                        toastVM: toastVM
+                        toastVM: toastVM,
                     )
                     .toolbar(.hidden, for: .tabBar)
                 }
@@ -499,6 +493,7 @@ struct ContentView: View {
         .task { await contentVM.setTabPreference(.favorites) }
     }
 
+    @ViewBuilder
     var nearbyPage: some View {
         NearbyTransitPage(
             alerts: alerts,
@@ -515,6 +510,7 @@ struct ContentView: View {
         .task { await contentVM.setTabPreference(.nearby) }
     }
 
+    @ViewBuilder
     var map: some View {
         HomeMapView(
             alerts: alerts,
@@ -525,7 +521,7 @@ struct ContentView: View {
             selectedVehicle: $selectedVehicle,
             locationDataManager: locationDataManager,
             navManager: navManager,
-            viewportProvider: viewportProvider
+            viewportProvider: viewportProvider,
         ).accessibilityHidden(searchObserver.isSearching)
     }
 
@@ -537,9 +533,7 @@ struct ContentView: View {
                 navSheetContents
                     .fullScreenCover(item: .constant(nav.coverItemIdentifiable()), onDismiss: {
                         // Don't navigate back if hideMaps has been changed and the cover is being switched over
-                        if hideMaps == false {
-                            return
-                        }
+                        if hideMaps == false { return }
                         switch navManager.navigationStack.last {
                         case .alertDetails, .more, .saveFavorite: navManager.goBack()
                         default: break
@@ -572,9 +566,7 @@ struct ContentView: View {
                             item: .constant(nav.coverItemIdentifiable()),
                             onDismiss: {
                                 // Don't navigate back if hideMaps has been changed and the cover is being switched over
-                                if hideMaps {
-                                    return
-                                }
+                                if hideMaps { return }
                                 switch navManager.navigationStack.last {
                                 case .alertDetails, .more, .saveFavorite: navManager.goBack()
                                 default: break
@@ -624,7 +616,7 @@ struct ContentView: View {
                     line: line,
                     routes: routes,
                     stop: stop,
-                    navManager: navManager
+                    navManager: navManager,
                 )
 
             case let .more(category):
@@ -658,7 +650,7 @@ struct ContentView: View {
                             updatedFavorites: favorites,
                             context: context,
                             defaultDirection: selectedDirection,
-                            fcmToken: fcmTokenContainer.token
+                            fcmToken: fcmTokenContainer.token,
                         )
                     },
                     navCallbacks: navCallbacks
@@ -670,6 +662,7 @@ struct ContentView: View {
         }
     }
 
+    @ViewBuilder
     var searchHeaderBackground: some View {
         (
             searchObserver.isSearching && navManager.navigationStack.lastSafe().isEntrypoint

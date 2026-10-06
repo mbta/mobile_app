@@ -26,23 +26,15 @@ struct SaveFavoritesFlow: View {
     let toastVM: IToastViewModel
 
     @EnvironmentObject var settingsCache: SettingsCache
-    // TODO: Remove sections/validation of this value after notification release
-    var notificationsFlag: Bool {
-        true
-    }
 
-    var selectedDirectionIsAvailableAtStop: Bool {
-        directions.contains(where: { $0.id == selectedDirection })
-    }
+    var selectedDirectionIsAvailableAtStop: Bool { directions.contains(where: { $0.id == selectedDirection }) }
 
     var isUnFavoriting: Bool {
         selectedDirectionIsAvailableAtStop &&
             isFavorite(RouteStopDirection(route: lineOrRoute.id, stop: stop.id, direction: selectedDirection))
     }
 
-    var isBusOneDirection: Bool {
-        directions.count == 1 && lineOrRoute.type == RouteType.bus
-    }
+    var isBusOneDirection: Bool { directions.count == 1 && lineOrRoute.type == RouteType.bus }
 
     let inspection = Inspection<Self>()
 
@@ -157,7 +149,7 @@ struct SaveFavoritesFlow: View {
     var body: some View {
         // Save automatically without confirmation modal
         VStack(spacing: 0) {
-            if notificationsFlag {
+            if settingsCache.get(.notifications) {
                 VStack {}.onAppear { openSaveModal() }
             } else if isUnFavoriting || isBusOneDirection, selectedDirectionIsAvailableAtStop {
                 VStack {}
@@ -176,7 +168,7 @@ struct SaveFavoritesFlow: View {
                     proposedFavorites: proposedFavorites(),
                     updateFavorites: updateAndToast,
                     onClose: onClose,
-                    openSaveModal: openSaveModal
+                    openSaveModal: openSaveModal,
                 )
             }
         }.onReceive(inspection.notice) { inspection.visit(self, $0) }

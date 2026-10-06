@@ -50,6 +50,7 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
@@ -72,9 +73,8 @@ fun SaveFavoritesFlow(
     onClose: () -> Unit,
     openModal: (ModalRoutes) -> Unit,
 ) {
-    // TODO: Remove sections/validation of this value after notification release
-    val notificationsEnabled = true
-    if (notificationsEnabled) {
+    val notificationsFlag = SettingsCache.get(Settings.Notifications)
+    if (notificationsFlag) {
         openModal(ModalRoutes.SaveFavorite(lineOrRoute.id, stop.id, selectedDirection, context))
         onClose()
         return
@@ -173,8 +173,7 @@ fun FavoriteConfirmation(
     updateFavorites: (Map<RouteStopDirection, FavoriteSettings?>) -> Unit,
     onClose: () -> Unit,
 ) {
-    // TODO: Remove sections/validation of this value after notification release
-    val notificationsEnabled = true
+    val notificationsFlag = SettingsCache.get(Settings.Notifications)
 
     var favoritesToSave: Map<Int, FavoriteSettings?> by remember {
         mutableStateOf(proposedFavorites)
@@ -280,7 +279,7 @@ fun FavoriteConfirmation(
                 TextButton(onClose) { Text(stringResource(R.string.cancel)) }
                 TextButton(
                     { saveAndClose() },
-                    enabled = notificationsEnabled || favoritesToSave.values.any { it != null },
+                    enabled = notificationsFlag || favoritesToSave.values.any { it != null },
                 ) {
                     Text(stringResource(R.string.add_confirmation_button))
                 }

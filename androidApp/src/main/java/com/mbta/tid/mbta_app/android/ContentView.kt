@@ -102,8 +102,7 @@ fun ContentView(
     val globalResponse = getGlobalData(ErrorKey(setOf(), "ContentView"))
     val hideMaps = SettingsCache.get(Settings.HideMaps)
     val includeAccessibility = SettingsCache.get(Settings.StationAccessibility)
-    // TODO: Remove sections/validation of this value after notification release
-    val notificationsEnabled = true
+    val notificationsEnabled = SettingsCache.get(Settings.Notifications)
     val pendingOnboarding = viewModel.pendingOnboarding.collectAsState().value
     val pendingFeaturePromos = viewModel.pendingFeaturePromos.collectAsState().value
     val currentLocale = stringResource(R.string.current_locale)

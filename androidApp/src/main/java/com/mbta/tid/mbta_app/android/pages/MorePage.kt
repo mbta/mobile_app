@@ -79,8 +79,7 @@ fun MorePage(
 
     val dependencies = Dependency.getAllDependencies()
     var showingBuildNumber by remember { mutableStateOf(false) }
-    // TODO: Remove sections/validation of this value after notification release
-    val notificationsEnabled = true
+    val notificationsEnabled = SettingsCache.get(Settings.Notifications)
 
     Scaffold(
         Modifier.fillMaxSize().background(colorResource(R.color.fill3)),
