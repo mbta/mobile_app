@@ -31,7 +31,9 @@ final class SaveFavoritesFlowTest: XCTestCase {
     let stop = TestData.getStop(id: "place-boyls")
     let direction0 = Direction(name: "West", destination: "Copley & West", id: 0)
     let direction1 = Direction(name: "East", destination: "Park St & North", id: 1)
-    var directions: [Direction] { [direction0, direction1] }
+    var directions: [Direction] {
+        [direction0, direction1]
+    }
 
     func testAddingOtherDirectionUpdates() throws {
         var updateLocalFavoriteCalledFor: [Direction: FavoriteSettings?] = [:]
@@ -43,7 +45,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
             selectedDirection: 0,
             context: EditFavoritesContext.favorites,
             favoritesToSave: [direction0: .init(), direction1: nil],
-            updateLocalFavorite: { updateLocalFavoriteCalledFor = [$0: $1] },
+            updateLocalFavorite: { updateLocalFavoriteCalledFor = [$0: $1] }
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -64,7 +66,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
             selectedDirection: 0,
             context: EditFavoritesContext.favorites,
             favoritesToSave: [direction0: .init(), direction1: .init()],
-            updateLocalFavorite: { updateLocalFavoriteCalledFor = [$0: $1] },
+            updateLocalFavorite: { updateLocalFavoriteCalledFor = [$0: $1] }
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -125,7 +127,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
             pushNavEntry: { entry in
                 pushedNav = entry
                 onPushNavExp.fulfill()
-            },
+            }
         )
 
         ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))
@@ -160,7 +162,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
             pushNavEntry: { entry in
                 pushedNav = entry
                 onPushNavExp.fulfill()
-            },
+            }
         )
 
         ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))
@@ -192,7 +194,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
             pushNavEntry: { entry in
                 pushedNav = entry
                 onPushNavExp.fulfill()
-            },
+            }
         )
 
         ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))

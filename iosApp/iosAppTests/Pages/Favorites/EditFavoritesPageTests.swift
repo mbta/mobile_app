@@ -24,7 +24,7 @@ final class EditFavoritesPageTests: XCTestCase {
             stopCardData: [],
             staticRouteCardData: [],
             staticStopCardData: [],
-            loadedLocation: nil,
+            loadedLocation: nil
         ))
 
         var onCloseCalled = false
@@ -33,7 +33,7 @@ final class EditFavoritesPageTests: XCTestCase {
             navCallbacks: .init(onBack: nil, onClose: { onCloseCalled = true }, backButtonPresentation: .floating),
             onOpenEditModal: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
-            toastVM: MockToastViewModel(),
+            toastVM: MockToastViewModel()
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -60,7 +60,7 @@ final class EditFavoritesPageTests: XCTestCase {
             stopCardData: [],
             staticRouteCardData: [],
             staticStopCardData: [],
-            loadedLocation: nil,
+            loadedLocation: nil
         ))
 
         var editRsd: RouteStopDirection?
@@ -117,7 +117,7 @@ final class EditFavoritesPageTests: XCTestCase {
             stopCardData: [],
             staticRouteCardData: [],
             staticStopCardData: [],
-            loadedLocation: nil,
+            loadedLocation: nil
         ))
 
         // We can't test EditFavoritesPage directly until the feature flag is removed

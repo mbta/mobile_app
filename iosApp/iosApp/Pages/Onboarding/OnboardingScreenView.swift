@@ -30,11 +30,21 @@ struct OnboardingScreenView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dynamicTypeSize) var typeSize
 
-    private var screenHeight: CGFloat { UIScreen.current?.bounds.height ?? 852.0 }
-    private var screenWidth: CGFloat { UIScreen.current?.bounds.width ?? 393.0 }
+    private var screenHeight: CGFloat {
+        UIScreen.current?.bounds.height ?? 852.0
+    }
 
-    private var locationHaloSize: CGFloat { screenWidth * 0.8 }
-    private var moreHaloSize: CGFloat { screenWidth * 0.55 }
+    private var screenWidth: CGFloat {
+        UIScreen.current?.bounds.width ?? 393.0
+    }
+
+    private var locationHaloSize: CGFloat {
+        screenWidth * 0.8
+    }
+
+    private var moreHaloSize: CGFloat {
+        screenWidth * 0.55
+    }
 
     private var haloOffset: CGFloat {
         let height = screenHeight
@@ -109,7 +119,7 @@ struct OnboardingScreenView: View {
                         ),
                         focusBinding: $focusHeader,
                         focusValue: .hideMaps,
-                        context: .onboarding,
+                        context: .onboarding
                     )
                     .padding(32)
                     .background(Color.fill2)
@@ -134,7 +144,11 @@ struct OnboardingScreenView: View {
                 })
 
             case .location:
-                let illustrationCutoff: DynamicTypeSize = if screenHeight < 812 { .xxLarge } else { .xxxLarge }
+                let illustrationCutoff: DynamicTypeSize = if screenHeight < 812 {
+                    .xxLarge
+                } else {
+                    .xxxLarge
+                }
                 OnboardingPieces.PageColumn(content: {
                     Spacer()
                     OnboardingPieces.PageDescription(
@@ -142,7 +156,7 @@ struct OnboardingScreenView: View {
                         bodyText: Text("We use your location to show you nearby transit options."),
                         focusBinding: $focusHeader,
                         focusValue: .location,
-                        context: .onboarding,
+                        context: .onboarding
                     )
                     .padding(.bottom, 8)
                     if typeSize >= illustrationCutoff, typeSize < .accessibility3 {
@@ -180,7 +194,7 @@ struct OnboardingScreenView: View {
                         ),
                         focusBinding: $focusHeader,
                         focusValue: .stationAccessibility,
-                        context: .onboarding,
+                        context: .onboarding
                     )
                     .padding(.bottom, 8)
                     OnboardingPieces.SettingsToggle(

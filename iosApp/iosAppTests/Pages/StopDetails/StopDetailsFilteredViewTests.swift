@@ -42,7 +42,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
-            navManager: .init(),
+            navManager: .init()
         )
 
         let tappedPublisher = PassthroughSubject<Void, Never>()
@@ -171,7 +171,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
-            navManager: .init(),
+            navManager: .init()
         )
 
         let exp = sut.inspection.inspect(after: 2) { view in
@@ -256,7 +256,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
-            navManager: .init(),
+            navManager: .init()
         )
 
         let exp = sut.inspection.inspect(after: 2) { view in
@@ -348,17 +348,19 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},
-            setStopFilter: { filter in if filter?.directionId == 1, filter?.routeId.idText == "line-Green" {
-                setStopFilterExp.fulfill()
-            } else {
-                XCTFail("setStopFilter called with wrong params \(filter?.directionId) \(filter?.routeId)")
-            } },
+            setStopFilter: {
+                filter in if filter?.directionId == 1, filter?.routeId.idText == "line-Green" {
+                    setStopFilterExp.fulfill()
+                } else {
+                    XCTFail("setStopFilter called with wrong params \(filter?.directionId) \(filter?.routeId)")
+                }
+            },
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
-            navManager: .init(),
+            navManager: .init()
         )
 
         let exp = sut.inspection.inspect(after: 2) { view in

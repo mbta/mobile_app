@@ -34,7 +34,7 @@ struct EditFavoritesPage: View {
             updatedFavorites: [rsd: nil],
             context: .favorites,
             defaultDirection: rsd.direction,
-            fcmToken: fcmTokenContainer.token,
+            fcmToken: fcmTokenContainer.token
         )
 
         let labels = rsd.getLabels(globalResponse)
@@ -68,10 +68,10 @@ struct EditFavoritesPage: View {
                         updatedFavorites: [rsd: settings],
                         context: .favorites,
                         defaultDirection: rsd.direction,
-                        fcmToken: fcmTokenContainer.token,
+                        fcmToken: fcmTokenContainer.token
                     )
                 }
-            ),
+            )
         ))
     }
 
@@ -91,7 +91,7 @@ struct EditFavoritesPage: View {
                     stopCardData: favoritesVMState.staticStopCardData,
                     global: globalResponse,
                     deleteFavorite: deleteAndToast,
-                    onOpenEditModal: onOpenEditModal,
+                    onOpenEditModal: onOpenEditModal
                 )
             }
             .onAppear {
@@ -128,7 +128,9 @@ struct EditFavoritesList: View {
     let deleteFavorite: (RouteStopDirection) -> Void
     let onOpenEditModal: (RouteStopDirection) -> Void
     // TODO: Remove sections/validation of this value after notification release
-    var notificationsFlag: Bool { true }
+    var notificationsFlag: Bool {
+        true
+    }
 
     @EnvironmentObject var settingsCache: SettingsCache
 
@@ -139,7 +141,7 @@ struct EditFavoritesList: View {
                     ForEach(stopCardData, id: \.stop.id) { cardData in
                         StopCardContainer(
                             cardData: cardData,
-                            globalData: global,
+                            globalData: global
                         ) { stopData in
                             FavoriteDepartures(
                                 favorites: favorites,
@@ -210,7 +212,11 @@ struct FavoriteDepartures: View {
                     case let .single(single):
                         HStack(alignment: .center, spacing: 8) {
                             let pillDecoration: PredictionRowView.PillDecoration = if let route = single
-                                .route { .onRow(route: route) } else { .none }
+                                .route {
+                                .onRow(route: route)
+                            } else {
+                                .none
+                            }
                             DirectionLabel(
                                 direction: direction,
                                 showDestination: true,
@@ -256,7 +262,9 @@ struct FavoriteRowRightContent: View {
     let favoriteSettings: FavoriteSettings?
     let onClick: (RouteCardData.Leaf) -> Void
     // TODO: Remove sections/validation of this value after notification release
-    var notificationsFlag: Bool { true }
+    var notificationsFlag: Bool {
+        true
+    }
 
     @EnvironmentObject var settingsCache: SettingsCache
 
@@ -282,7 +290,7 @@ struct BranchRows: View {
                         RoutePill(
                             route: route,
                             line: nil,
-                            type: .flex,
+                            type: .flex
                         ).padding(.trailing, 8)
                     }
                     Text(

@@ -26,7 +26,9 @@ struct FavoritesView: View {
 
     @EnvironmentObject var settingsCache: SettingsCache
     // TODO: Remove sections/validation of this value after notification release
-    var notificationsEnabled: Bool { true }
+    var notificationsEnabled: Bool {
+        true
+    }
 
     @State var globalData: GlobalResponse?
     var globalRepository = RepositoryDI().global
@@ -154,7 +156,7 @@ struct FavoritesView: View {
         .enableInjection()
     }
 
-    @ViewBuilder private func emptyView() -> some View {
+    private func emptyView() -> some View {
         NoFavoritesView(
             onAddStops: {
                 onAddStops()
