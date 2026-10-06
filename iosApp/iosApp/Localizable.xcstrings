@@ -25480,13 +25480,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lector de tiempo"
+            "value" : "selector de hora"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chronomètre"
+            "value" : "sélecteur d'heure"
           }
         },
         "ht" : {
@@ -25504,7 +25504,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "người chọn thời gian"
+            "value" : "bộ chọn thời gian"
           }
         },
         "zh-Hans-CN" : {
