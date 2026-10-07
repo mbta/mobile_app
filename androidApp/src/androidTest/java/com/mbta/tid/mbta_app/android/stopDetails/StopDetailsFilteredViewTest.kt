@@ -1,22 +1,16 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
-import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
-import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
-import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
@@ -357,143 +351,5 @@ class StopDetailsFilteredViewTest {
         }
 
         composeTestRule.onNodeWithText("This stop is not accessible").assertCanBeDisplayed()
-    }
-
-    @OptIn(ExperimentalTestApi::class)
-    @Test
-    fun testStarSavesEnhancedFavoritesWithDialogBehindFlag(): Unit = runBlocking {
-        val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-
-        val routeCardData =
-            checkNotNull(
-                RouteCardData.routeCardsForStopList(
-                    listOf(stop.id),
-                    globalResponse,
-                    null,
-                    null,
-                    PredictionsStreamDataResponse(builder),
-                    AlertsStreamDataResponse(emptyMap()),
-                    now,
-                    RouteCardData.Context.StopDetailsFiltered,
-                )
-            )
-        val routeStopData = routeCardData.single().stopData.single()
-
-        var updatedFavorites: Pair<Map<RouteStopDirection, FavoriteSettings?>, Int>? = null
-
-        composeTestRule.setContent {
-            StopDetailsFilteredView(
-                stopId = stop.id,
-                stopFilter = filterState,
-                tripFilter = null,
-                allAlerts = null,
-                now = now,
-                errorBannerViewModel = koinInject(),
-                updateStopFilter = {},
-                updateTripFilter = {},
-                tileScrollState = rememberScrollState(),
-                isFavorite = { false },
-                updateFavorites = { favMap, direction ->
-                    updatedFavorites = Pair(favMap, direction)
-                },
-                openModal = {},
-                openSheetRoute = {},
-                navCallbacks = NavigationCallbacks.empty,
-                stopDetailsViewModel =
-                    MockStopDetailsViewModel(
-                        StopDetailsViewModel.State(
-                            RouteData.Filtered(
-                                StopDetailsPageFilters(stop.id, filterState, null),
-                                routeStopData,
-                            )
-                        )
-                    ),
-            )
-        }
-
-        composeTestRule
-            .onNodeWithContentDescription("Star route")
-            .assertCanBeDisplayed()
-            .performClick()
-
-        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Add"))
-
-        composeTestRule.onNodeWithText("Add").performClick()
-
-        composeTestRule.waitUntilDefaultTimeout {
-            updatedFavorites ==
-                Pair(
-                    mapOf(
-                        RouteStopDirection(route.id, stop.id, 0) to FavoriteSettings(),
-                        RouteStopDirection(route.id, stop.id, 1) to null,
-                    ),
-                    0,
-                )
-        }
-    }
-
-    @Test
-    fun testUnfavoriteWithoutDialogBehindFlag(): Unit = runBlocking {
-        val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-
-        val routeCardData =
-            checkNotNull(
-                RouteCardData.routeCardsForStopList(
-                    listOf(stop.id),
-                    globalResponse,
-                    null,
-                    null,
-                    PredictionsStreamDataResponse(builder),
-                    AlertsStreamDataResponse(emptyMap()),
-                    now,
-                    RouteCardData.Context.StopDetailsFiltered,
-                )
-            )
-        val routeStopData = routeCardData.single().stopData.single()
-
-        var updatedFavorites: Pair<Map<RouteStopDirection, FavoriteSettings?>, Int>? = null
-
-        composeTestRule.setContent {
-            StopDetailsFilteredView(
-                stopId = stop.id,
-                stopFilter = filterState,
-                tripFilter = null,
-                allAlerts = null,
-                now = now,
-                errorBannerViewModel = koinInject(),
-                updateStopFilter = {},
-                updateTripFilter = {},
-                tileScrollState = rememberScrollState(),
-                isFavorite = { true },
-                updateFavorites = { favMap, direction ->
-                    updatedFavorites = Pair(favMap, direction)
-                },
-                openModal = {},
-                openSheetRoute = {},
-                navCallbacks = NavigationCallbacks.empty,
-                stopDetailsViewModel =
-                    MockStopDetailsViewModel(
-                        StopDetailsViewModel.State(
-                            RouteData.Filtered(
-                                StopDetailsPageFilters(stop.id, filterState, null),
-                                routeStopData,
-                            )
-                        )
-                    ),
-            )
-        }
-
-        composeTestRule
-            .onNodeWithContentDescription("Star route")
-            .assertCanBeDisplayed()
-            .performClick()
-
-        composeTestRule.waitForIdle()
-
-        composeTestRule.onNodeWithText("Add").assertDoesNotExist()
-
-        composeTestRule.waitUntilDefaultTimeout {
-            updatedFavorites == Pair(mapOf(RouteStopDirection(route.id, stop.id, 0) to null), 0)
-        }
     }
 }

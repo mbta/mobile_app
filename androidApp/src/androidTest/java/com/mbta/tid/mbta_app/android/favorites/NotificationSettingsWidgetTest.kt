@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
@@ -17,23 +16,17 @@ import androidx.compose.ui.test.isEnabled
 import androidx.compose.ui.test.isOff
 import androidx.compose.ui.test.isOn
 import androidx.compose.ui.test.junit4.v2.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithContentDescription
-import androidx.compose.ui.test.onAllNodesWithText
-import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
-import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.hasTextMatching
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.util.ConstantPermissionState
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.NotificationSettingsViewModel
 import kotlin.test.assertEquals
@@ -54,66 +47,7 @@ class NotificationSettingsWidgetTest : KoinTest {
         )
 
     @Test
-    fun testAddTimePeriod() {
-        loadKoinMocks {
-            settings =
-                MockSettingsRepository(
-                    settings = mapOf(Settings.NotificationPresetWindows to false)
-                )
-        }
-
-        val viewModel = NotificationSettingsViewModel(MockSentryRepository())
-        viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
-
-        composeTestRule.setContent {
-            NotificationSettingsWidget(
-                viewModel = viewModel,
-                notificationPermissionState = permissionGranted,
-                hasRequestedPermission = true,
-            )
-        }
-
-        composeTestRule.onNodeWithText("Get disruption notifications").performClick()
-        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            (hasTextMatching(Regex("8:00\\sAM", RegexOption.IGNORE_CASE)))
-        )
-        composeTestRule
-            .onNode(hasTextMatching(Regex("9:00\\sAM", RegexOption.IGNORE_CASE)))
-            .assertExists()
-        composeTestRule.onNodeWithText("Sunday").assertIsOff()
-        composeTestRule.onNodeWithText("Monday").assertIsOn()
-        composeTestRule.onNodeWithText("Tuesday").assertIsOn()
-        composeTestRule.onNodeWithText("Wednesday").assertIsOn()
-        composeTestRule.onNodeWithText("Thursday").assertIsOn()
-        composeTestRule.onNodeWithText("Friday").assertIsOn()
-        composeTestRule.onNodeWithText("Saturday").assertIsOff()
-        composeTestRule.onNodeWithContentDescription("Delete time period").assertDoesNotExist()
-        composeTestRule.onNodeWithText("Add another time period").performClick()
-        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            (hasTextMatching(Regex("12:00\\sPM", RegexOption.IGNORE_CASE)))
-        )
-        composeTestRule
-            .onNode(hasTextMatching(Regex("1:00\\sPM", RegexOption.IGNORE_CASE)))
-            .assertExists()
-        composeTestRule.onAllNodesWithText("Sunday").onLast().assertIsOn()
-        composeTestRule.onAllNodesWithText("Monday").onLast().assertIsOff()
-        composeTestRule.onAllNodesWithText("Tuesday").onLast().assertIsOff()
-        composeTestRule.onAllNodesWithText("Wednesday").onLast().assertIsOff()
-        composeTestRule.onAllNodesWithText("Thursday").onLast().assertIsOff()
-        composeTestRule.onAllNodesWithText("Friday").onLast().assertIsOff()
-        composeTestRule.onAllNodesWithText("Saturday").onLast().assertIsOn()
-        composeTestRule.onAllNodesWithContentDescription("Delete time period").assertCountEquals(2)
-    }
-
-    @Test
     fun testChangeTime() {
-        loadKoinMocks {
-            settings =
-                MockSettingsRepository(
-                    settings = mapOf(Settings.NotificationPresetWindows to false)
-                )
-        }
-
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
         viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
 
@@ -130,10 +64,10 @@ class NotificationSettingsWidgetTest : KoinTest {
             hasText("Get disruption notifications").and(isEnabled())
         )
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasTextMatching(Regex("8:00\\sAM", RegexOption.IGNORE_CASE))
+            hasTextMatching(Regex("4:00\\sPM", RegexOption.IGNORE_CASE))
         )
         composeTestRule
-            .onNode(hasTextMatching(Regex("8:00\\sAM", RegexOption.IGNORE_CASE)))
+            .onNode(hasTextMatching(Regex("10:00\\sAM", RegexOption.IGNORE_CASE)))
             .performClick()
         composeTestRule.onNodeWithText("Select start time").assertExists()
         composeTestRule.onNodeWithContentDescription("7 o'clock").performClick()
@@ -145,15 +79,15 @@ class NotificationSettingsWidgetTest : KoinTest {
             hasTextMatching(Regex("7:45\\sAM", RegexOption.IGNORE_CASE))
         )
         composeTestRule
-            .onNode(hasTextMatching(Regex("9:00\\sAM", RegexOption.IGNORE_CASE)))
+            .onNode(hasTextMatching(Regex("4:00\\sPM", RegexOption.IGNORE_CASE)))
             .performClick()
         composeTestRule.onNodeWithText("Select end time").assertExists()
         composeTestRule.onNodeWithContentDescription("Time picker type toggle").performClick()
         composeTestRule.onNodeWithContentDescription("for hour").performTextReplacement("9")
-        composeTestRule.onNodeWithContentDescription("for minutes").performTextReplacement("10")
+        composeTestRule.onNodeWithContentDescription("for minutes").performTextReplacement("15")
         composeTestRule.onNodeWithText("Okay").performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasTextMatching(Regex("9:10\\sAM", RegexOption.IGNORE_CASE))
+            hasTextMatching(Regex("9:15\\sPM", RegexOption.IGNORE_CASE))
         )
     }
 
@@ -184,13 +118,6 @@ class NotificationSettingsWidgetTest : KoinTest {
 
     @Test
     fun testValidatesStartTime() {
-        loadKoinMocks {
-            settings =
-                MockSettingsRepository(
-                    settings = mapOf(Settings.NotificationPresetWindows to false)
-                )
-        }
-
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
         viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
 
@@ -206,11 +133,12 @@ class NotificationSettingsWidgetTest : KoinTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
             hasText("Get disruption notifications").and(isEnabled())
         )
+        composeTestRule.onNodeWithText("Morning").performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasTextMatching(Regex("8:00\\sAM", RegexOption.IGNORE_CASE))
+            hasTextMatching(Regex("10:00\\sAM", RegexOption.IGNORE_CASE))
         )
         composeTestRule
-            .onNode(hasTextMatching(Regex("8:00\\sAM", RegexOption.IGNORE_CASE)))
+            .onNode(hasTextMatching(Regex("6:00\\sAM", RegexOption.IGNORE_CASE)))
             .performClick()
         composeTestRule.onNodeWithContentDescription("10 o'clock").performClick()
         composeTestRule.onNodeWithContentDescription("Select minutes").performClick()
@@ -226,13 +154,6 @@ class NotificationSettingsWidgetTest : KoinTest {
 
     @Test
     fun testValidatesEndTime() {
-        loadKoinMocks {
-            settings =
-                MockSettingsRepository(
-                    settings = mapOf(Settings.NotificationPresetWindows to false)
-                )
-        }
-
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
         viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
 
@@ -248,18 +169,19 @@ class NotificationSettingsWidgetTest : KoinTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
             hasText("Get disruption notifications").and(isEnabled())
         )
+        composeTestRule.onNodeWithText("Morning").performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasTextMatching(Regex("8:00\\sAM", RegexOption.IGNORE_CASE))
+            hasTextMatching(Regex("6:00\\sAM", RegexOption.IGNORE_CASE))
         )
         composeTestRule
-            .onNode(hasTextMatching(Regex("9:00\\sAM", RegexOption.IGNORE_CASE)))
+            .onNode(hasTextMatching(Regex("10:00\\sAM", RegexOption.IGNORE_CASE)))
             .performClick()
-        composeTestRule.onNodeWithContentDescription("7 o'clock").performClick()
+        composeTestRule.onNodeWithContentDescription("5 o'clock").performClick()
         composeTestRule.onNodeWithContentDescription("Select minutes").performClick()
-        composeTestRule.onNodeWithContentDescription("40 minutes").performClick()
+        composeTestRule.onNodeWithContentDescription("45 minutes").performClick()
         composeTestRule.onNodeWithText("Okay").performClick()
         composeTestRule
-            .onNode(hasTextMatching(Regex("8:15\\sAM", RegexOption.IGNORE_CASE)))
+            .onNode(hasTextMatching(Regex("6:15\\sAM", RegexOption.IGNORE_CASE)))
             .performClick()
     }
 
@@ -290,40 +212,7 @@ class NotificationSettingsWidgetTest : KoinTest {
     }
 
     @Test
-    fun testPresetButtonsAreNotVisibleWhenFeatureFlagDisabled() {
-        loadKoinMocks {
-            settings =
-                MockSettingsRepository(
-                    settings = mapOf(Settings.NotificationPresetWindows to false)
-                )
-        }
-
-        val viewModel = NotificationSettingsViewModel(MockSentryRepository())
-        viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
-
-        composeTestRule.setContent {
-            NotificationSettingsWidget(
-                viewModel,
-                notificationPermissionState = permissionGranted,
-                hasRequestedPermission = true,
-            )
-        }
-
-        composeTestRule.onNodeWithText("Get disruption notifications").performClick()
-
-        composeTestRule.onNodeWithText("Morning").assertDoesNotExist()
-        composeTestRule.onNodeWithText("Midday").assertDoesNotExist()
-        composeTestRule.onNodeWithText("Evening").assertDoesNotExist()
-        composeTestRule.onNodeWithText("All day").assertDoesNotExist()
-        composeTestRule.onNodeWithText("Custom").assertDoesNotExist()
-    }
-
-    @Test
     fun testPresetButtonsAreVisibleWhenFeatureFlagEnabled() {
-        loadKoinMocks {
-            settings =
-                MockSettingsRepository(settings = mapOf(Settings.NotificationPresetWindows to true))
-        }
 
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
         viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
@@ -347,10 +236,6 @@ class NotificationSettingsWidgetTest : KoinTest {
 
     @Test
     fun testEditingPresetTimeSelectsCustom() {
-        loadKoinMocks {
-            settings =
-                MockSettingsRepository(settings = mapOf(Settings.NotificationPresetWindows to true))
-        }
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
         viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
 
@@ -380,10 +265,6 @@ class NotificationSettingsWidgetTest : KoinTest {
 
     @Test
     fun testAddingWindowSelectsCustom() {
-        loadKoinMocks {
-            settings =
-                MockSettingsRepository(settings = mapOf(Settings.NotificationPresetWindows to true))
-        }
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
         viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
 
@@ -407,11 +288,6 @@ class NotificationSettingsWidgetTest : KoinTest {
 
     @Test
     fun testSelectsPresetMatchingCurrentTime() {
-        loadKoinMocks {
-            settings =
-                MockSettingsRepository(settings = mapOf(Settings.NotificationPresetWindows to true))
-        }
-
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
         viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
 
@@ -432,11 +308,6 @@ class NotificationSettingsWidgetTest : KoinTest {
 
     @Test
     fun testCustomPresetRestoredAfterSelectingAnotherPreset() {
-        loadKoinMocks {
-            settings =
-                MockSettingsRepository(settings = mapOf(Settings.NotificationPresetWindows to true))
-        }
-
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
         viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
         composeTestRule.setContent {
@@ -467,10 +338,6 @@ class NotificationSettingsWidgetTest : KoinTest {
 
     @Test
     fun testStartAndEndOfService() {
-        loadKoinMocks {
-            settings =
-                MockSettingsRepository(settings = mapOf(Settings.NotificationPresetWindows to true))
-        }
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
         viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
 
@@ -497,10 +364,6 @@ class NotificationSettingsWidgetTest : KoinTest {
 
     @Test
     fun testNextDay() {
-        loadKoinMocks {
-            settings =
-                MockSettingsRepository(settings = mapOf(Settings.NotificationPresetWindows to true))
-        }
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
         viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
 
