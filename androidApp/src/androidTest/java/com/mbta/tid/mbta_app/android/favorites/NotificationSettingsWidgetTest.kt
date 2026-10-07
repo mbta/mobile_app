@@ -7,6 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.assertAll
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
@@ -16,6 +18,8 @@ import androidx.compose.ui.test.isEnabled
 import androidx.compose.ui.test.isOff
 import androidx.compose.ui.test.isOn
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -45,6 +49,51 @@ class NotificationSettingsWidgetTest : KoinTest {
             Manifest.permission.POST_NOTIFICATIONS,
             PermissionStatus.Granted,
         )
+
+    @Test
+    fun testAddTimePeriod() {
+        val viewModel = NotificationSettingsViewModel(MockSentryRepository())
+        viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
+
+        composeTestRule.setContent {
+            NotificationSettingsWidget(
+                viewModel = viewModel,
+                notificationPermissionState = permissionGranted,
+                hasRequestedPermission = true,
+            )
+        }
+
+        composeTestRule.onNodeWithText("Get disruption notifications").performClick()
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
+            (hasTextMatching(Regex("10:00\\sAM", RegexOption.IGNORE_CASE)))
+        )
+        composeTestRule
+            .onNode(hasTextMatching(Regex("4:00\\sPM", RegexOption.IGNORE_CASE)))
+            .assertExists()
+        composeTestRule.onNodeWithText("Sunday").assertIsOff()
+        composeTestRule.onNodeWithText("Monday").assertIsOn()
+        composeTestRule.onNodeWithText("Tuesday").assertIsOn()
+        composeTestRule.onNodeWithText("Wednesday").assertIsOn()
+        composeTestRule.onNodeWithText("Thursday").assertIsOn()
+        composeTestRule.onNodeWithText("Friday").assertIsOn()
+        composeTestRule.onNodeWithText("Saturday").assertIsOff()
+        composeTestRule.onNodeWithContentDescription("Delete time period").assertDoesNotExist()
+        composeTestRule.onNodeWithText("Add another time period").performClick()
+        composeTestRule
+            .onAllNodes(hasTextMatching(Regex("10:00\\sAM", RegexOption.IGNORE_CASE)))
+            .assertCountEquals(2)
+        composeTestRule
+            .onAllNodes(hasTextMatching(Regex("10:00\\sAM", RegexOption.IGNORE_CASE)))
+            .assertCountEquals(2)
+        composeTestRule.onAllNodesWithText("Sunday").assertCountEquals(2).assertAll(isOff())
+        composeTestRule.onAllNodesWithText("Monday").assertCountEquals(2).assertAll(isOn())
+        composeTestRule.onAllNodesWithText("Tuesday").assertCountEquals(2).assertAll(isOn())
+        composeTestRule.onAllNodesWithText("Wednesday").assertCountEquals(2).assertAll(isOn())
+        composeTestRule.onAllNodesWithText("Thursday").assertCountEquals(2).assertAll(isOn())
+        composeTestRule.onAllNodesWithText("Friday").assertCountEquals(2).assertAll(isOn())
+        composeTestRule.onAllNodesWithText("Saturday").assertCountEquals(2).assertAll(isOff())
+        composeTestRule.onAllNodesWithContentDescription("Delete time period").assertCountEquals(2)
+    }
 
     @Test
     fun testChangeTime() {
