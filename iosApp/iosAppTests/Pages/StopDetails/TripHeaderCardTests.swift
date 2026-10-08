@@ -30,7 +30,7 @@ final class TripHeaderCardTests: XCTestCase {
         let sut = TripHeaderCard(
             spec: .vehicle(vehicle, stop, nil, false),
             trip: trip,
-            targetId: "",
+            targeted: false,
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
@@ -55,7 +55,7 @@ final class TripHeaderCardTests: XCTestCase {
         let inTransitSut = TripHeaderCard(
             spec: .vehicle(inTransitVehicle, stop, nil, false),
             trip: trip,
-            targetId: "",
+            targeted: false,
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
@@ -71,7 +71,7 @@ final class TripHeaderCardTests: XCTestCase {
         let incomingSut = TripHeaderCard(
             spec: .vehicle(incomingVehicle, stop, nil, false),
             trip: trip,
-            targetId: "",
+            targeted: false,
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
@@ -87,7 +87,7 @@ final class TripHeaderCardTests: XCTestCase {
         let stoppedSut = TripHeaderCard(
             spec: .vehicle(stoppedVehicle, stop, nil, false),
             trip: trip,
-            targetId: "",
+            targeted: false,
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
@@ -114,7 +114,7 @@ final class TripHeaderCardTests: XCTestCase {
         let notCrowdedSut = TripHeaderCard(
             spec: .vehicle(notCrowdedVehicle, stop, nil, false),
             trip: trip,
-            targetId: "",
+            targeted: false,
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
@@ -131,7 +131,7 @@ final class TripHeaderCardTests: XCTestCase {
         let someCrowdingSut = TripHeaderCard(
             spec: .vehicle(someCrowdingVehicle, stop, nil, false),
             trip: trip,
-            targetId: "",
+            targeted: false,
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
@@ -148,7 +148,7 @@ final class TripHeaderCardTests: XCTestCase {
         let crowdedSut = TripHeaderCard(
             spec: .vehicle(crowdedVehicle, stop, nil, false),
             trip: trip,
-            targetId: "",
+            targeted: false,
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
@@ -168,7 +168,7 @@ final class TripHeaderCardTests: XCTestCase {
         let sut = TripHeaderCard(
             spec: .finishingAnotherTrip,
             trip: trip,
-            targetId: "",
+            targeted: false,
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
@@ -189,7 +189,7 @@ final class TripHeaderCardTests: XCTestCase {
         let sut = TripHeaderCard(
             spec: .noVehicle,
             trip: trip,
-            targetId: "",
+            targeted: false,
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
@@ -215,7 +215,7 @@ final class TripHeaderCardTests: XCTestCase {
         let targeted = TripHeaderCard(
             spec: .vehicle(vehicle, stop, nil, false),
             trip: trip,
-            targetId: stop.id,
+            targeted: true,
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
@@ -228,7 +228,7 @@ final class TripHeaderCardTests: XCTestCase {
         let notTargeted = TripHeaderCard(
             spec: .vehicle(vehicle, stop, nil, false),
             trip: trip,
-            targetId: "",
+            targeted: false,
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
@@ -268,7 +268,7 @@ final class TripHeaderCardTests: XCTestCase {
                 elevatorAlerts: []
             ), true),
             trip: trip,
-            targetId: stop.id,
+            targeted: true,
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
@@ -317,7 +317,7 @@ final class TripHeaderCardTests: XCTestCase {
                 elevatorAlerts: []
             ), true),
             trip: trip,
-            targetId: stop.id,
+            targeted: true,
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
@@ -351,7 +351,7 @@ final class TripHeaderCardTests: XCTestCase {
                 elevatorAlerts: []
             )),
             trip: trip,
-            targetId: stop.id,
+            targeted: true,
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
@@ -390,7 +390,7 @@ final class TripHeaderCardTests: XCTestCase {
                 elevatorAlerts: []
             )),
             trip: trip,
-            targetId: stop.id,
+            targeted: true,
             route: route,
             routeAccents: .init(route: route),
             onTap: { tapExpectation.fulfill() },
@@ -413,7 +413,7 @@ final class TripHeaderCardTests: XCTestCase {
         let withTap = TripHeaderCard(
             spec: .finishingAnotherTrip,
             trip: trip,
-            targetId: stop.id,
+            targeted: true,
             route: route,
             routeAccents: .init(route: route),
             onTap: {},
@@ -428,7 +428,7 @@ final class TripHeaderCardTests: XCTestCase {
         let withoutTap = TripHeaderCard(
             spec: .finishingAnotherTrip,
             trip: trip,
-            targetId: stop.id,
+            targeted: true,
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
@@ -447,7 +447,8 @@ final class TripHeaderCardTests: XCTestCase {
 
         let withVehicleAtStop = TripHeaderCard(
             spec: .vehicle(vehicle, stop, nil, false),
-            trip: trip, targetId: stop.id,
+            trip: trip,
+            targeted: true,
             route: route,
             routeAccents: .init(route: route),
             onTap: {},
@@ -463,7 +464,8 @@ final class TripHeaderCardTests: XCTestCase {
         }
         let withVehicleAtOtherStop = TripHeaderCard(
             spec: .vehicle(vehicle, otherStop, nil, false),
-            trip: trip, targetId: stop.id,
+            trip: trip,
+            targeted: false,
             route: route,
             routeAccents: .init(route: route),
             onTap: {},
@@ -489,7 +491,7 @@ final class TripHeaderCardTests: XCTestCase {
                 elevatorAlerts: []
             )),
             trip: trip,
-            targetId: stop.id,
+            targeted: true,
             route: route,
             routeAccents: .init(route: route),
             onTap: {},
@@ -512,7 +514,7 @@ final class TripHeaderCardTests: XCTestCase {
                 elevatorAlerts: []
             )),
             trip: trip,
-            targetId: stop.id,
+            targeted: false,
             route: route,
             routeAccents: .init(route: route),
             onTap: {},
@@ -545,7 +547,8 @@ final class TripHeaderCardTests: XCTestCase {
                     prediction.stopId = platformStop.id
                 }, predictionStop: platformStop, vehicle: boardingVehicle, routes: [], elevatorAlerts: []
             ), false),
-            trip: trip, targetId: coreCRStop.id,
+            trip: trip,
+            targeted: true,
             route: crRoute,
             routeAccents: .init(type: .commuterRail),
             onTap: {},
@@ -572,7 +575,7 @@ final class TripHeaderCardTests: XCTestCase {
         let sut = TripHeaderCard(
             spec: .vehicle(vehicle, stop, nil, false),
             trip: trip,
-            targetId: "",
+            targeted: false,
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
@@ -611,7 +614,7 @@ final class TripHeaderCardTests: XCTestCase {
         let sut = TripHeaderCard(
             spec: .vehicle(rlVehicle, kendallMIT, rlEntry, false),
             trip: rlTrip,
-            targetId: "",
+            targeted: false,
             route: rl,
             routeAccents: .init(route: rl),
             onTap: nil,
