@@ -50,6 +50,7 @@
     <string name="bike_issue_sentence_case">Problème de vélo</string>
     <string name="boarding_abbr">DEP</string>
     <string name="boarding_track">Embarquement sur la voie %1$s</string>
+    <string name="boarding_track_tbd">Piste à déterminer</string>
     <string name="bus">Bus</string>
     <string name="bus_cancelled">Bus annulé</string>
     <string name="bus_label">Bus %1$s</string>
@@ -437,6 +438,7 @@
     <string name="track_change">Changement de voie</string>
     <string name="track_change_sentence_case">Changement de voie</string>
     <string name="track_number">Voie %1$s</string>
+    <string name="track_tbd">À déterminer</string>
     <string name="track_problem">Problème sur la voie</string>
     <string name="track_problem_lowercase">problème de voie</string>
     <string name="track_work">Travaux sur la voie</string>
