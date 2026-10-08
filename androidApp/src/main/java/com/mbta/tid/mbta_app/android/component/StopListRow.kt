@@ -49,6 +49,7 @@ import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.SegmentAlertState
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.isStopBlocklisted
@@ -101,7 +102,7 @@ fun StopListRow(
     stopPlacement: StopPlacement = StopPlacement(),
     onOpenAlertDetails: (Alert) -> Unit = {},
     targeted: Boolean = false,
-    trackNumber: String? = null,
+    trackNumber: TripDetailsStopList.Track? = null,
     descriptor: @Composable () -> Unit = {},
     rightSideContent: @Composable RowScope.(Modifier) -> Unit = {},
 ) {
@@ -187,17 +188,8 @@ fun StopListRow(
                                 color = colorResource(R.color.text),
                                 style = if (targeted) Typography.headlineBold else Typography.body,
                             )
-                            if (trackNumber != null) {
-                                val boardingTrackText =
-                                    stringResource(R.string.boarding_track, trackNumber)
-                                Text(
-                                    stringResource(R.string.track_number, trackNumber),
-                                    Modifier.semantics { contentDescription = boardingTrackText }
-                                        .placeholderIfLoading(),
-                                    color = colorResource(R.color.text),
-                                    style = Typography.footnote,
-                                )
-                            }
+
+                            trackNumber?.let { TrackNumber(it) }
                         }
                         rightSideContent(Modifier.padding(end = 2.dp))
                         // Adding the accessibility description into the stop label rather than on

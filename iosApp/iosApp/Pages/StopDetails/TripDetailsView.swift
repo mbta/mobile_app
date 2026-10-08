@@ -217,10 +217,19 @@ struct TripDetailsView: View {
         _ routeAccents: TripRouteAccents,
     ) -> some View {
         if let spec {
+            let targetedStop: Stop? = switch spec {
+            case let .scheduled(_, entry): entry.stop
+            case let .vehicle(_, _, entry, _): entry?.stop
+            default: nil
+            }
+            let targeted = if let global {
+                targetedStop?.resolveParent(global: global).id == stopId
+            } else { targetedStop?.id == stopId }
+
             TripHeaderCard(
                 spec: spec,
                 trip: trip,
-                targetId: stopId,
+                targeted: targeted,
                 route: route,
                 routeAccents: routeAccents,
                 onTap: onTap,

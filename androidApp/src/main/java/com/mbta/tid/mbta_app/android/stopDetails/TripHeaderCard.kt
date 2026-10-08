@@ -54,6 +54,7 @@ import com.mbta.tid.mbta_app.android.component.InfoCircle
 import com.mbta.tid.mbta_app.android.component.LiveIcon
 import com.mbta.tid.mbta_app.android.component.StickDiagram
 import com.mbta.tid.mbta_app.android.component.TightWrapText
+import com.mbta.tid.mbta_app.android.component.TrackNumber
 import com.mbta.tid.mbta_app.android.component.UpcomingTripView
 import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
 import com.mbta.tid.mbta_app.android.component.routeIcon
@@ -85,7 +86,7 @@ import kotlin.time.Duration.Companion.minutes
 fun TripHeaderCard(
     trip: Trip,
     spec: TripHeaderSpec?,
-    targetId: String,
+    targeted: Boolean,
     route: Route,
     routeAccents: TripRouteAccents,
     now: EasternTimeInstant,
@@ -121,7 +122,7 @@ fun TripHeaderCard(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         if (spec != null) {
-                            TripMarker(spec, targetId, routeAccents)
+                            TripMarker(spec, targeted, routeAccents)
                             Column(
                                 Modifier.padding(vertical = 10.dp),
                                 verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -137,7 +138,7 @@ fun TripHeaderCard(
                                     Description(
                                         spec,
                                         trip.id,
-                                        targetId,
+                                        targeted,
                                         routeAccents,
                                         clickable,
                                         DestinationPredictionBalance.destinationWidth(),
@@ -307,7 +308,7 @@ private fun crowdingText(crowding: Vehicle.CrowdingLevel?) =
 private fun Description(
     spec: TripHeaderSpec,
     tripId: String,
-    targetId: String,
+    targeted: Boolean,
     routeAccents: TripRouteAccents,
     clickable: Boolean,
     modifier: Modifier = Modifier,
@@ -317,9 +318,9 @@ private fun Description(
             TripHeaderSpec.FinishingAnotherTrip -> FinishingAnotherTripDescription()
             TripHeaderSpec.NoVehicle -> NoVehicleDescription()
             is TripHeaderSpec.Scheduled ->
-                ScheduleDescription(spec.entry, targetId, routeAccents, clickable)
+                ScheduleDescription(spec.entry, targeted, routeAccents, clickable)
             is TripHeaderSpec.VehicleOnTrip ->
-                VehicleDescription(spec, tripId, targetId, routeAccents)
+                VehicleDescription(spec, tripId, targeted, routeAccents)
         }
     }
 }
@@ -337,23 +338,24 @@ private fun NoVehicleDescription() {
 @Composable
 private fun ScheduleDescription(
     startTerminalEntry: TripDetailsStopList.Entry?,
-    targetId: String,
+    targeted: Boolean,
     routeAccents: TripRouteAccents,
     clickable: Boolean,
 ) {
     val resources = LocalResources.current
     if (startTerminalEntry != null) {
+        val stop = startTerminalEntry.stop
         Column(
             Modifier.semantics {
                 contentDescription =
                     scheduleDescriptionAccessibilityText(
                         startTerminalEntry,
-                        targetId,
+                        targeted,
                         routeAccents,
                         resources,
                     )
             },
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -368,18 +370,19 @@ private fun ScheduleDescription(
                     InfoCircle(Modifier.aspectRatio(1f).size(16.dp))
                 }
             }
-            Text(startTerminalEntry.stop.name, style = Typography.headlineBold)
+            Text(stop.name, style = Typography.headlineBold)
+            startTerminalEntry.trackNumber?.let { if (targeted) TrackNumber(it) }
         }
     }
 }
 
 private fun scheduleDescriptionAccessibilityText(
     stopEntry: TripDetailsStopList.Entry,
-    targetId: String,
+    targeted: Boolean,
     routeAccents: TripRouteAccents,
     resources: Resources,
 ): String {
-    return if (targetId == stopEntry.stop.id) {
+    return if (targeted) {
         resources.getString(
             R.string.scheduled_to_depart_selected_stop_accessibility_desc,
             routeAccents.type.typeText(resources, isOnly = true),
@@ -398,39 +401,31 @@ private fun scheduleDescriptionAccessibilityText(
 private fun VehicleDescription(
     spec: TripHeaderSpec.VehicleOnTrip,
     tripId: String,
-    targetId: String,
+    targeted: Boolean,
     routeAccents: TripRouteAccents,
 ) {
     val resources = LocalResources.current
     if (spec.vehicle.tripId == tripId) {
+        val stop = spec.stop
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Column(
                 Modifier.clearAndSetSemantics {
                     contentDescription =
-                        vehicleDescriptionAccessibilityText(spec, targetId, routeAccents, resources)
+                        vehicleDescriptionAccessibilityText(spec, targeted, routeAccents, resources)
                 },
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 VehicleStatusDescription(spec.vehicle.currentStatus, spec.atTerminal)
                 Text(
-                    spec.stop.name,
+                    stop.name,
                     style = Typography.headlineBold,
                     modifier = Modifier.placeholderIfLoading(),
                 )
+                spec.entry?.trackNumber?.let { if (targeted) TrackNumber(it) }
             }
             if (!spec.atTerminal && !spec.vehicle.hasCarLevelCrowding) {
                 val vehicleCrowdingLevel = spec.vehicle.occupancyStatus.crowdingLevel
                 if (vehicleCrowdingLevel != null) VehicleCrowding(vehicleCrowdingLevel)
-            }
-            spec.entry?.trackNumber?.let {
-                Text(
-                    resources.getString(R.string.track_number, it),
-                    Modifier.semantics {
-                            contentDescription = resources.getString(R.string.boarding_track, it)
-                        }
-                        .placeholderIfLoading(),
-                    style = Typography.footnote,
-                )
             }
         }
     }
@@ -438,13 +433,13 @@ private fun VehicleDescription(
 
 private fun vehicleDescriptionAccessibilityText(
     spec: TripHeaderSpec.VehicleOnTrip,
-    targetId: String,
+    targeted: Boolean,
     routeAccents: TripRouteAccents,
     resources: Resources,
 ): String {
     val stop = spec.stop
     return resources.getString(
-        if (targetId == stop.id) R.string.vehicle_desc_accessibility_desc_selected_stop
+        if (targeted) R.string.vehicle_desc_accessibility_desc_selected_stop
         else R.string.vehicle_desc_accessibility_desc,
         routeAccents.type.typeText(resources, isOnly = true),
         vehicleStatusString(resources, spec.vehicle.currentStatus, spec.atTerminal),
@@ -477,7 +472,7 @@ private fun vehicleStatusString(
 }
 
 @Composable
-private fun TripMarker(spec: TripHeaderSpec, targetId: String, routeAccents: TripRouteAccents) {
+private fun TripMarker(spec: TripHeaderSpec, targeted: Boolean, routeAccents: TripRouteAccents) {
     Box(
         Modifier.width(36.dp).fillMaxHeight().clearAndSetSemantics {},
         contentAlignment = Alignment.Center,
@@ -485,10 +480,9 @@ private fun TripMarker(spec: TripHeaderSpec, targetId: String, routeAccents: Tri
         when (spec) {
             TripHeaderSpec.FinishingAnotherTrip,
             TripHeaderSpec.NoVehicle -> VehicleCircle(routeAccents)
-            is TripHeaderSpec.Scheduled ->
-                StopDot(routeAccents, targeted = targetId == spec.stop.id)
+            is TripHeaderSpec.Scheduled -> StopDot(routeAccents, targeted = targeted)
             is TripHeaderSpec.VehicleOnTrip ->
-                VehiclePuck(spec.vehicle, spec.stop, targetId, routeAccents)
+                VehiclePuck(spec.vehicle, spec.stop, targeted, routeAccents)
         }
     }
 }
@@ -510,7 +504,7 @@ private fun VehicleCircle(routeAccents: TripRouteAccents) {
 private fun VehiclePuck(
     vehicle: Vehicle,
     stop: Stop,
-    targetId: String,
+    targeted: Boolean,
     routeAccents: TripRouteAccents,
 ) {
     Box(Modifier.clearAndSetSemantics {}, contentAlignment = Alignment.Center) {
@@ -524,7 +518,7 @@ private fun VehiclePuck(
             )
         }
 
-        if (targetId == stop.id && vehicle.currentStatus == Vehicle.CurrentStatus.StoppedAt) {
+        if (targeted && vehicle.currentStatus == Vehicle.CurrentStatus.StoppedAt) {
             Box(
                 modifier =
                     Modifier.align(Alignment.Center)
@@ -691,7 +685,10 @@ private fun TripHeaderCardPreview() {
         decoration = Vehicle.Decoration.Pride
     }
     val davis = objects.stop { name = "Davis" }
-    val cityPoint = objects.stop { name = "City Point Bus Terminal" }
+    val cityPoint = objects.stop {
+        name = "City Point Bus Terminal"
+        vehicleType = RouteType.BUS
+    }
 
     val rlEntry =
         TripDetailsStopList.Entry(
@@ -719,7 +716,7 @@ private fun TripHeaderCardPreview() {
             TripHeaderCard(
                 trip = trip,
                 spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry, true),
-                targetId = davis.id,
+                targeted = true,
                 route = red,
                 routeAccents = TripRouteAccents(red),
                 now = EasternTimeInstant.now(),
@@ -728,7 +725,7 @@ private fun TripHeaderCardPreview() {
             TripHeaderCard(
                 trip = trip,
                 spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry, true),
-                targetId = davis.id,
+                targeted = true,
                 route = red,
                 routeAccents = TripRouteAccents(red),
                 now = EasternTimeInstant.now(),
@@ -738,7 +735,7 @@ private fun TripHeaderCardPreview() {
             TripHeaderCard(
                 trip = trip,
                 spec = TripHeaderSpec.Scheduled(cityPoint, busEntry),
-                targetId = cityPoint.id,
+                targeted = true,
                 route = red,
                 routeAccents = TripRouteAccents(bus),
                 onTap = {},
@@ -748,7 +745,7 @@ private fun TripHeaderCardPreview() {
             TripHeaderCard(
                 trip = trip,
                 spec = TripHeaderSpec.FinishingAnotherTrip,
-                targetId = "",
+                targeted = false,
                 route = red,
                 routeAccents = TripRouteAccents(commuter),
                 onTap = {},
@@ -758,7 +755,7 @@ private fun TripHeaderCardPreview() {
             TripHeaderCard(
                 trip = trip,
                 spec = TripHeaderSpec.NoVehicle,
-                targetId = "",
+                targeted = false,
                 route = red,
                 routeAccents = TripRouteAccents(ferry),
                 onTap = {},
@@ -770,7 +767,7 @@ private fun TripHeaderCardPreview() {
                     TripHeaderCard(
                         trip = trip,
                         spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry, false),
-                        targetId = "",
+                        targeted = false,
                         route = red,
                         routeAccents = TripRouteAccents.default,
                         now = EasternTimeInstant.now(),
@@ -839,7 +836,7 @@ private fun CarLevelCrowdingPreview() {
             TripHeaderCard(
                 trip = olTrip,
                 spec = TripHeaderSpec.VehicleOnTrip(olVehicle, backBay, olEntry, false),
-                targetId = "",
+                targeted = false,
                 route = ol,
                 routeAccents = TripRouteAccents(ol),
                 now = EasternTimeInstant.now(),
@@ -849,7 +846,7 @@ private fun CarLevelCrowdingPreview() {
             TripHeaderCard(
                 trip = rlTrip,
                 spec = TripHeaderSpec.VehicleOnTrip(rlVehicle, kendallMIT, rlEntry, false),
-                targetId = "",
+                targeted = false,
                 route = rl,
                 routeAccents = TripRouteAccents(rl),
                 now = EasternTimeInstant.now(),

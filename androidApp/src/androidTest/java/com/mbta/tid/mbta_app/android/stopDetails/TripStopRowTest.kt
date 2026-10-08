@@ -138,6 +138,7 @@ class TripStopRowTest {
                 route,
                 TripRouteAccents(route),
                 GlobalResponse(objects),
+                targeted = true,
             )
         }
 
