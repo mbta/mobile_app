@@ -150,7 +150,7 @@ class OnboardingScreenViewTest {
                 locationDataManager = MockLocationDataManager(),
             )
         }
-        composeTestRule.onNodeWithText("Now get disruption notifications").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Get disruption notifications").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Add a Favorite stop").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Set your own schedule").assertCanBeDisplayed()
         composeTestRule

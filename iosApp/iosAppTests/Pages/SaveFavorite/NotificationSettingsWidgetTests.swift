@@ -260,20 +260,6 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         wait(for: [exp, settingsLinkExp], timeout: 5)
     }
 
-    func testPresetButtonsAreNotVisibleWhenFeatureFlagDisabled() throws {
-        let settings: FavoriteSettings.Notifications = .init(
-            enabled: true,
-            windows: [FavoriteSettings.NotificationsWindow(preset: .morning, daysOfWeek: [.monday])]
-        )
-
-        let sut = NotificationSettingsWidgetPresentationView(
-            state: .init(settings: settings, selectedPreset: nil),
-            notificationPermissionManager: MockNotificationPermissionManager()
-        ).withFixedSettings([.notificationPresetWindows: false])
-
-        XCTAssertThrowsError(try sut.inspect().find(button: "Morning"))
-    }
-
     func testPresetButtonsAreVisibleWhenFeatureFlagEnabled() throws {
         let settings: FavoriteSettings.Notifications = .init(
             enabled: true,

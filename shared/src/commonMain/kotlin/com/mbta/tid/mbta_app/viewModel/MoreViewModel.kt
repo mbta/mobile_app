@@ -51,18 +51,6 @@ public class MoreViewModel(
                     ),
             ),
             MoreSection(
-                id = MoreSection.Category.PublicBetas,
-                label = SharedString.BetaSection,
-                items =
-                    listOf(
-                        MoreItem.Toggle(
-                            label = SharedString.Notifications,
-                            settings = Settings.Notifications,
-                        )
-                    ),
-                noteBelow = SharedString.BetaEarlyAccessNote,
-            ),
-            MoreSection(
                 id = MoreSection.Category.Resources,
                 label = SharedString.ResourcesSection,
                 items =
@@ -117,10 +105,6 @@ public class MoreViewModel(
                                     onboardingRepository.notificationsBetaResetAndForce()
                                 }
                             },
-                        ),
-                        MoreItem.Toggle(
-                            label = SharedString.NotificationPresetWindows,
-                            settings = Settings.NotificationPresetWindows,
                         ),
                         MoreItem.Action(
                             label = SharedString.Crash,

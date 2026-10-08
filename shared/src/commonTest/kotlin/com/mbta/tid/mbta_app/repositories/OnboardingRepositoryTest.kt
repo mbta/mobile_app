@@ -56,7 +56,7 @@ class OnboardingRepositoryTest : KoinTest {
                 OnboardingScreen.Location,
                 OnboardingScreen.StationAccessibility,
                 OnboardingScreen.HideMaps,
-                OnboardingScreen.Feedback,
+                OnboardingScreen.NotificationsBeta,
             ),
             repo.getPendingOnboarding(),
         )
@@ -91,7 +91,7 @@ class OnboardingRepositoryTest : KoinTest {
             listOf(
                 OnboardingScreen.StationAccessibility,
                 OnboardingScreen.HideMaps,
-                OnboardingScreen.Feedback,
+                OnboardingScreen.NotificationsBeta,
             ),
             repo.getPendingOnboarding(),
         )
@@ -105,7 +105,7 @@ class OnboardingRepositoryTest : KoinTest {
             listOf(
                 OnboardingScreen.Location,
                 OnboardingScreen.StationAccessibility,
-                OnboardingScreen.Feedback,
+                OnboardingScreen.NotificationsBeta,
             ),
             repo.getPendingOnboarding(),
         )
@@ -119,10 +119,10 @@ class OnboardingRepositoryTest : KoinTest {
     }
 
     @Test
-    fun `does not return notifications beta if it does not apply`() = runBlocking {
+    fun `always return notifications beta`() = runBlocking {
         startKoin(settings = mapOf(Settings.Notifications to false))
         val repo = OnboardingRepository()
-        assertFalse(repo.getPendingOnboarding().contains(OnboardingScreen.NotificationsBeta))
+        assertTrue(repo.getPendingOnboarding().contains(OnboardingScreen.NotificationsBeta))
     }
 
     @Test
@@ -139,7 +139,7 @@ class OnboardingRepositoryTest : KoinTest {
             listOf(
                 OnboardingScreen.Location,
                 OnboardingScreen.StationAccessibility,
-                OnboardingScreen.Feedback,
+                OnboardingScreen.NotificationsBeta,
             ),
             repo.getPendingOnboarding(),
         )

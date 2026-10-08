@@ -24,7 +24,7 @@ final class EditFavoritesPageTests: XCTestCase {
             stopCardData: [],
             staticRouteCardData: [],
             staticStopCardData: [],
-            loadedLocation: nil,
+            loadedLocation: nil
         ))
 
         var onCloseCalled = false
@@ -33,7 +33,7 @@ final class EditFavoritesPageTests: XCTestCase {
             navCallbacks: .init(onBack: nil, onClose: { onCloseCalled = true }, backButtonPresentation: .floating),
             onOpenEditModal: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
-            toastVM: MockToastViewModel(),
+            toastVM: MockToastViewModel()
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -60,7 +60,7 @@ final class EditFavoritesPageTests: XCTestCase {
             stopCardData: [],
             staticRouteCardData: [],
             staticStopCardData: [],
-            loadedLocation: nil,
+            loadedLocation: nil
         ))
 
         var editRsd: RouteStopDirection?
@@ -117,7 +117,7 @@ final class EditFavoritesPageTests: XCTestCase {
             stopCardData: [],
             staticRouteCardData: [],
             staticStopCardData: [],
-            loadedLocation: nil,
+            loadedLocation: nil
         ))
 
         // We can't test EditFavoritesPage directly until the feature flag is removed
@@ -151,183 +151,5 @@ final class EditFavoritesPageTests: XCTestCase {
         defer { ViewHosting.expel() }
 
         XCTAssertNotNil(try? sut.inspect().find(imageName: "fa-bell-filled"))
-    }
-
-    @MainActor func testDeleteFavorite() {
-        let objects = TestData.clone()
-        let globalData = GlobalResponse(objects: objects)
-
-        let route15: Route = objects.getRoute(id: "15")
-        let stop15 = objects.getStop(id: "17863")
-
-        let route67: Route = objects.getRoute(id: "67")
-        let stop67 = objects.getStop(id: "14121")
-
-        let updateFavoritesExp = XCTestExpectation(description: "Update favorites called for route 15 only")
-
-        let staticRouteCardData: [RouteCardData] = [
-            .init(lineOrRoute: .route(route15),
-                  stopData: [.init(route: route15,
-                                   stop: stop15,
-                                   data: [.init(lineOrRoute: .route(route15),
-                                                stop: stop15,
-                                                direction: .init(directionId: 0, route: route15),
-                                                routePatterns: [],
-                                                stopIds: [],
-                                                upcomingTrips: [],
-                                                alertsHere: [],
-                                                allDataLoaded: true,
-                                                hasSchedulesToday: true,
-                                                subwayServiceStartTime: nil,
-                                                alertsDownstream: [],
-                                                context: .favorites)])],
-                  at: EasternTimeInstant.now()),
-            .init(lineOrRoute: .route(route67),
-                  stopData: [.init(route: route67,
-                                   stop: stop67,
-                                   data: [.init(lineOrRoute: .route(route67),
-                                                stop: stop67,
-                                                direction: .init(directionId: 0, route: route67),
-                                                routePatterns: [],
-                                                stopIds: [],
-                                                upcomingTrips: [],
-                                                alertsHere: [],
-                                                allDataLoaded: true,
-                                                hasSchedulesToday: true,
-                                                subwayServiceStartTime: nil,
-                                                alertsDownstream: [],
-                                                context: .favorites)])],
-                  at: EasternTimeInstant.now()),
-        ]
-        let favoritesVM = MockFavoritesViewModel(initialState: .init(
-            awaitingPredictionsAfterBackground: false,
-            favorites: [
-                RouteStopDirection(route: route15.id, stop: stop15.id, direction: 0): .init(),
-                RouteStopDirection(route: route67.id, stop: stop67.id, direction: 0): .init(),
-            ],
-            shouldShowFirstTimeToast: false,
-            shouldShowNotificationsHint: false,
-            routeCardData: [],
-            stopCardData: [],
-            staticRouteCardData: staticRouteCardData,
-            staticStopCardData: StopCardData.companion.fromRouteCardData(
-                routeCardData: staticRouteCardData,
-                sortByDistanceFrom: nil
-            ),
-            loadedLocation: nil,
-        ))
-
-        favoritesVM.onUpdateFavorites = { newFavorites in
-            if newFavorites == [RouteStopDirection(route: route15.id, stop: stop15.id, direction: 0): nil] {
-                updateFavoritesExp.fulfill()
-            }
-        }
-
-        let toastVM = MockToastViewModel()
-
-        let sut = EditFavoritesPage(
-            viewModel: favoritesVM,
-            navCallbacks: .companion.empty,
-            onOpenEditModal: { _ in },
-            errorBannerVM: MockErrorBannerViewModel(),
-            toastVM: toastVM,
-        )
-
-        let exp = sut.inspection.inspect(after: 2.0) { view in
-            try view.findAll(DeleteButton.self)[0].find(ViewType.Button.self).tap()
-        }
-
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        defer { ViewHosting.expel() }
-        wait(for: [exp, updateFavoritesExp], timeout: 3)
-    }
-
-    @MainActor func testUndoToast() {
-        let objects = TestData.clone()
-        let globalData = GlobalResponse(objects: objects)
-
-        let route15: Route = objects.getRoute(id: "15")
-        let stop15 = objects.getStop(id: "17863")
-
-        let updateFavoritesExp = XCTestExpectation(description: "Update favorites called for route 15 only")
-        let undoFavoritesExp = XCTestExpectation(description: "Favorite update undone")
-
-        let staticRouteCardData: [RouteCardData] = [
-            .init(lineOrRoute: .route(route15),
-                  stopData: [.init(route: route15,
-                                   stop: stop15,
-                                   data: [.init(lineOrRoute: .route(route15),
-                                                stop: stop15,
-                                                direction: .init(directionId: 0, route: route15),
-                                                routePatterns: [],
-                                                stopIds: [],
-                                                upcomingTrips: [],
-                                                alertsHere: [],
-                                                allDataLoaded: true,
-                                                hasSchedulesToday: true,
-                                                subwayServiceStartTime: nil,
-                                                alertsDownstream: [],
-                                                context: .favorites)])],
-                  at: EasternTimeInstant.now()),
-        ]
-        let favoritesVM = MockFavoritesViewModel(initialState: .init(
-            awaitingPredictionsAfterBackground: false,
-            favorites: [
-                RouteStopDirection(route: route15.id, stop: stop15.id, direction: 0): .init(),
-            ],
-            shouldShowFirstTimeToast: false,
-            shouldShowNotificationsHint: false,
-            routeCardData: [],
-            stopCardData: [],
-            staticRouteCardData: staticRouteCardData,
-            staticStopCardData: StopCardData.companion.fromRouteCardData(
-                routeCardData: staticRouteCardData,
-                sortByDistanceFrom: nil
-            ),
-            loadedLocation: nil,
-        ))
-
-        var deleted = false
-        favoritesVM.onUpdateFavorites = { newFavorites in
-            if !deleted {
-                XCTAssertEqual(
-                    newFavorites,
-                    [RouteStopDirection(route: route15.id, stop: stop15.id, direction: 0): nil]
-                )
-                updateFavoritesExp.fulfill()
-                deleted = true
-            } else {
-                XCTAssertEqual(
-                    newFavorites,
-                    [RouteStopDirection(route: route15.id, stop: stop15.id, direction: 0): .init()]
-                )
-                undoFavoritesExp.fulfill()
-            }
-        }
-
-        let toastVM = MockToastViewModel()
-        toastVM.onShowToast = { toast in
-            XCTAssertEqual("Removed from Favorites", toast.message)
-            switch onEnum(of: toast.action) {
-            case let .custom(customAction): customAction.onAction()
-            default: XCTFail("No custom action defined found")
-            }
-        }
-
-        let sut = EditFavoritesPage(
-            viewModel: favoritesVM,
-            navCallbacks: .companion.empty,
-            onOpenEditModal: { _ in },
-            errorBannerVM: MockErrorBannerViewModel(),
-            toastVM: toastVM,
-        )
-
-        let exp = sut.inspection.inspect(after: 2.0) { view in
-            try view.findAll(DeleteButton.self)[0].find(ViewType.Button.self).tap()
-        }
-
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        defer { ViewHosting.expel() }
-        wait(for: [exp, updateFavoritesExp, undoFavoritesExp], timeout: 3)
     }
 }
