@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.TripDetailsStopList.Track
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
@@ -1169,6 +1170,175 @@ class TripDetailsStopListTest {
                 warningAlert = null,
             ),
             entry.format(trip, now, route),
+        )
+    }
+
+    @Test
+    fun `entry trackNumber uses prediction track number if available`() = test {
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+        val stop = objects.stop {
+            id = "parent"
+            vehicleType = RouteType.COMMUTER_RAIL
+        }
+        val predictionStop = objects.stop {
+            id = "child"
+            platformCode = "2"
+            vehicleType = RouteType.COMMUTER_RAIL
+        }
+        val now = EasternTimeInstant.now()
+        val schedule = objects.schedule {
+            stopId = stop.id
+            stopSequence = 10
+            routeId = route.id.idText
+        }
+        val prediction =
+            objects.prediction(schedule) {
+                stopId = predictionStop.id
+                arrivalTime = now + 5.minutes
+            }
+        val entry =
+            TripDetailsStopList.Entry(
+                stop,
+                10,
+                null,
+                schedule,
+                prediction,
+                predictionStop,
+                vehicle = null,
+                routes = listOf(),
+            )
+        assertEquals(
+            Track.Number("2"),
+            entry.trackNumber,
+        )
+    }
+
+    @Test
+    fun `entry trackNumber uses scheduled track number if no prediction is available`() = test {
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+        val stop = objects.stop {
+            id = "parent"
+            vehicleType = RouteType.COMMUTER_RAIL
+            platformCode = "5"
+        }
+        val schedule = objects.schedule {
+            stopId = stop.id
+            stopSequence = 10
+            routeId = route.id.idText
+        }
+        val entry =
+            TripDetailsStopList.Entry(
+                stop,
+                10,
+                null,
+                schedule,
+                null,
+                null,
+                vehicle = null,
+                routes = listOf(),
+            )
+        assertEquals(
+            Track.Number("5"),
+            entry.trackNumber,
+        )
+    }
+
+    @Test
+    fun `entry trackNumber is TBD for undefined platform at core stops`() = test {
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+        val stop = objects.stop {
+            id = "place-sstat"
+            vehicleType = RouteType.COMMUTER_RAIL
+        }
+        val schedule = objects.schedule {
+            stopId = stop.id
+            stopSequence = 10
+            routeId = route.id.idText
+        }
+        val entry =
+            TripDetailsStopList.Entry(
+                stop,
+                10,
+                null,
+                schedule,
+                null,
+                null,
+                vehicle = null,
+                routes = listOf(),
+            )
+        assertEquals(
+            Track.TBD,
+            entry.trackNumber,
+        )
+    }
+
+    @Test
+    fun `entry trackNumber is null for undefined platform outside of core stops`() = test {
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+        val stop = objects.stop {
+            id = "place-PB-0194"
+            vehicleType = RouteType.COMMUTER_RAIL
+        }
+        val schedule = objects.schedule {
+            stopId = stop.id
+            stopSequence = 10
+            routeId = route.id.idText
+        }
+        val entry =
+            TripDetailsStopList.Entry(
+                stop,
+                10,
+                null,
+                schedule,
+                null,
+                null,
+                vehicle = null,
+                routes = listOf(),
+            )
+        assertEquals(
+            null,
+            entry.trackNumber,
+        )
+    }
+
+    @Test
+    fun `entry trackNumber is null for non-CR route types`() = test {
+        val route = objects.route { type = RouteType.HEAVY_RAIL }
+        val stop = objects.stop {
+            id = "parent"
+            platformCode = "5"
+            vehicleType = RouteType.HEAVY_RAIL
+        }
+        val predictionStop = objects.stop {
+            id = "child"
+            platformCode = "2"
+            vehicleType = RouteType.HEAVY_RAIL
+        }
+        val now = EasternTimeInstant.now()
+        val schedule = objects.schedule {
+            stopId = stop.id
+            stopSequence = 10
+            routeId = route.id.idText
+        }
+        val prediction =
+            objects.prediction(schedule) {
+                stopId = predictionStop.id
+                arrivalTime = now + 5.minutes
+            }
+        val entry =
+            TripDetailsStopList.Entry(
+                stop,
+                10,
+                null,
+                schedule,
+                prediction,
+                predictionStop,
+                vehicle = null,
+                routes = listOf(),
+            )
+        assertEquals(
+            null,
+            entry.trackNumber,
         )
     }
 }

@@ -22,7 +22,7 @@ struct TripHeaderCard: View {
     @ObserveInjection var inject
     let spec: TripHeaderSpec
     let trip: Trip
-    let targetId: String
+    let targeted: Bool
     let route: Route
     let routeAccents: TripRouteAccents
     let onTap: (() -> Void)?
@@ -209,13 +209,16 @@ struct TripHeaderCard: View {
         _ stopEntry: TripDetailsStopList.Entry?
     ) -> some View {
         if let stopEntry {
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text("Scheduled to depart").font(Typography.footnote)
                     if onTap != nil { InfoIcon() }
                 }
                 Text(stopEntry.stop.name)
                     .font(Typography.headlineBold)
+                if let track = stopEntry.trackNumber, targeted {
+                    TrackNumber(track: track)
+                }
             }
             .accessibilityElement(children: .combine)
             .accessibilityLabel(scheduleDescriptionAccessibilityText(stopEntry))
@@ -225,7 +228,7 @@ struct TripHeaderCard: View {
     private func scheduleDescriptionAccessibilityText(
         _ stopEntry: TripDetailsStopList.Entry
     ) -> Text {
-        targetId == stopEntry.stop.id ? Text(
+        targeted ? Text(
             "Selected \(routeAccents.type.typeText(isOnly: true)) scheduled to depart \(stopEntry.stop.name), selected stop",
             comment: """
             Screen reader text for the departure status on the trip details page when the stop is selected,
@@ -245,26 +248,18 @@ struct TripHeaderCard: View {
     ) -> some View {
         if vehicle.tripId == trip.id {
             VStack(alignment: .leading, spacing: 2) {
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 4) {
                     vehicleStatusDescription(vehicle.currentStatus, atTerminal)
                         .font(Typography.footnote)
                     Text(stop.name)
                         .font(Typography.headlineBold)
+                    if let track = entry?.trackNumber, targeted {
+                        TrackNumber(track: track)
+                    }
                 }
                 .accessibilityElement(children: .combine)
                 .accessibilityLabel(vehicleDescriptionAccessibilityText(vehicle, stop, atTerminal))
                 vehicleCrowding
-                if let trackNumber = entry?.trackNumber {
-                    Text(
-                        "Track \(trackNumber)",
-                        comment: "The platform that a commuter rail train is boarding at, ex. \"Track 1\", \"Track 8\" etc"
-                    )
-                    .font(Typography.footnote)
-                    .accessibilityLabel(Text(
-                        "Boarding on track \(trackNumber)",
-                        comment: "Screen reader text describing the platform the train is boarding at"
-                    ))
-                }
             }
             .accessibilityElement(children: .combine)
         }
@@ -275,7 +270,7 @@ struct TripHeaderCard: View {
     ) -> Text {
         let typeLabel = routeAccents.type.typeText(isOnly: true)
         let statusLabel = vehicleStatusString(vehicle.currentStatus, atTerminal)
-        return targetId == stop.id ? Text(
+        return targeted ? Text(
             "Selected \(typeLabel) \(statusLabel) \(stop.name), selected stop",
             comment: """
             Screen reader text for the vehicle status on the trip details page when the stop is selected,
@@ -328,8 +323,8 @@ struct TripHeaderCard: View {
     @ViewBuilder private var tripMarker: some View {
         switch spec {
         case .finishingAnotherTrip, .noVehicle: vehicleCircle
-        case let .scheduled(stop, _):
-            StopDot(routeAccents: routeAccents, targeted: targetId == stop.id)
+        case .scheduled:
+            StopDot(routeAccents: routeAccents, targeted: targeted)
                 .frame(width: 36, height: 36)
         case let .vehicle(vehicle, stop, _, _): vehiclePuck(vehicle, stop)
         }
@@ -349,7 +344,7 @@ struct TripHeaderCard: View {
         .accessibilityHidden(true)
     }
 
-    @ViewBuilder private func vehiclePuck(_ vehicle: Vehicle, _ stop: Stop) -> some View {
+    @ViewBuilder private func vehiclePuck(_ vehicle: Vehicle, _: Stop) -> some View {
         ZStack {
             VehicleMarkerView(
                 vehicle: vehicle.butWith(bearing: 180),
@@ -360,7 +355,7 @@ struct TripHeaderCard: View {
             )
             .padding(-8)
             .overlay {
-                if targetId == stop.id, vehicle.currentStatus == .stoppedAt {
+                if targeted, vehicle.currentStatus == .stoppedAt {
                     Image(.stopPinIndicator)
                         .resizable()
                         .scaledToFit()
@@ -471,7 +466,7 @@ struct TripVehicleCard_Previews: PreviewProvider {
             TripHeaderCard(
                 spec: .vehicle(vehicle, stop, nil, false),
                 trip: trip,
-                targetId: "",
+                targeted: false,
                 route: red,
                 routeAccents: TripRouteAccents(route: red),
                 onTap: nil,
@@ -536,7 +531,7 @@ struct TripVehicleCard_Previews: PreviewProvider {
         TripHeaderCard(
             spec: .vehicle(olVehicle, backBay, olEntry, false),
             trip: olTrip,
-            targetId: "",
+            targeted: false,
             route: ol,
             routeAccents: .init(route: ol),
             onTap: nil,
@@ -546,7 +541,7 @@ struct TripVehicleCard_Previews: PreviewProvider {
         TripHeaderCard(
             spec: .vehicle(rlVehicle, kendallMIT, rlEntry, false),
             trip: rlTrip,
-            targetId: "",
+            targeted: false,
             route: rl,
             routeAccents: .init(route: rl),
             onTap: nil,
