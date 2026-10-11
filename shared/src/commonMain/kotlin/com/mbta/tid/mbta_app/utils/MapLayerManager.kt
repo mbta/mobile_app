@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.map.StopLayerGenerator
 import com.mbta.tid.mbta_app.map.style.FeatureCollection
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
+import com.mbta.tid.mbta_app.repositories.Settings
 
 public interface IMapLayerManager {
     public suspend fun addLayers(
@@ -13,6 +14,7 @@ public interface IMapLayerManager {
         state: StopLayerGenerator.State,
         globalResponse: GlobalResponse,
         colorPalette: ColorPalette,
+        settings: Map<Settings, Boolean>,
     )
 
     public suspend fun addLayers(
@@ -20,6 +22,7 @@ public interface IMapLayerManager {
         state: StopLayerGenerator.State,
         globalResponse: GlobalResponse,
         colorPalette: ColorPalette,
+        settings: Map<Settings, Boolean>,
     )
 
     public fun resetPuckPosition()
