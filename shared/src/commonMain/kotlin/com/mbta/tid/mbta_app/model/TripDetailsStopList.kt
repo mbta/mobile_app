@@ -35,11 +35,16 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
         val elevatorAlerts: List<Alert> = emptyList(),
     ) {
         val trackNumber: Track? =
-            (predictionStop ?: stop).let {
-                if (it.shouldShowTrackNumber)
-                    it.platformCode?.let { platform -> Track.Number(platform) }
-                        ?: if (it.isCRCore) Track.TBD else null
-                else null
+            (predictionStop ?: stop).let { platformStop ->
+                if (platformStop.shouldShowTrackNumber) {
+                    val trackNumber =
+                        platformStop.platformCode?.let { platform ->
+                            Track.Number(platform)
+                        }
+                    // If the stop does not have a platform code, show "TBD" for commuter rail core
+                    // stations, otherwise show nothing
+                    trackNumber ?: if (platformStop.isCRCore) Track.TBD else null
+                } else null
             }
 
         internal val isTruncating = disruption?.alert?.hasNoThroughService == true
