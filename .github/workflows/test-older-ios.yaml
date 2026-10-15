@@ -8,7 +8,7 @@ on:
 jobs:
   test-older-ios:
     name: Test for older iOS
-    runs-on: macos-15-xlarge
+    runs-on: xcode-27-xlarge
     permissions:
       contents: read
     steps:
