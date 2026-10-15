@@ -52,3 +52,5 @@ updates:
       mapbox:
         patterns:
           - "github.com/mapbox/*"
+    ignore:
+      - dependency-name: "github.com/getsentry/sentry-cocoa"
