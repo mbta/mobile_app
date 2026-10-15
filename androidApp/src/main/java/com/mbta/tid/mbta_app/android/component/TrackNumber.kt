@@ -14,6 +14,17 @@ import com.mbta.tid.mbta_app.model.TripDetailsStopList
 
 @Composable
 fun TrackNumber(track: TripDetailsStopList.Track) {
+    when (track) {
+        is TripDetailsStopList.Track.Alert -> {
+            TrackChangePill(
+                pillType = TrackChangePillType.Alert,
+                pillShape = TrackChangePillShape.Expanded,
+            )
+            return
+        }
+        else -> {}
+    }
+
     val trackText =
         when (track) {
             is TripDetailsStopList.Track.Number ->

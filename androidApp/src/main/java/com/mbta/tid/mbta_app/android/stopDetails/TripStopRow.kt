@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.StopListContext
@@ -24,6 +25,7 @@ import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.containsWrappableText
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.DestinationPredictionBalance
+import com.mbta.tid.mbta_app.android.util.trackChangeTapCallback
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Alert.Effect
 import com.mbta.tid.mbta_app.model.MapStopRoute
@@ -60,10 +62,16 @@ fun TripStopRow(
     targeted: Boolean = false,
     firstStop: Boolean = false,
     lastStop: Boolean = false,
+    openModal: (ModalRoutes) -> Unit = {},
 ) {
     val activeElevatorAlerts = entry.activeElevatorAlerts(now)
 
     val disruption = entry.disruption?.takeIf { showDownstreamAlert }
+
+    val onTapRow: () -> Unit = {
+        if (!targeted) onTapLink(entry)
+        else entry.trackChangeTapCallback(route, openModal)?.invoke()
+    }
 
     StopListRow(
         stop = entry.stop,
@@ -75,7 +83,7 @@ fun TripStopRow(
                 "".takeUnless { lastStop },
                 RouteBranchSegment.Lane.Center,
             ),
-        onClick = { onTapLink(entry) },
+        onClick = onTapRow,
         routeAccents = routeAccents,
         stopListContext = StopListContext.Trip(Matcher.Data(route.id), trip.directionId, trip.id),
         globalData = globalData,

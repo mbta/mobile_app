@@ -25,6 +25,9 @@ constructor(
     val predictionStop: Stop? = null,
     val vehicle: Vehicle? = null,
     val alert: Alert? = null,
+    // A track change alert which is active at this trip's scheduled departure time, kept separate
+    // from `alert` so that it doesn't replace a more significant alert for the trip
+    val trackChangeAlert: Alert? = null,
 ) : Comparable<UpcomingTrip> {
 
     public constructor(
@@ -238,21 +241,36 @@ constructor(
             return keys
                 .mapNotNull { key ->
                     val prediction = predictionsMap[key]
+                    val schedule = schedulesMap[key]
+                    val trip = trips[key.tripId] ?: return@mapNotNull null
                     val alert =
                         alerts.values.firstOrNull { alert ->
-                            alert.informedEntity.any {
-                                val stopId =
-                                    it.stop?.let { stopId -> stops.resolveParentId(stopId) }
-                                it.trip == key.tripId && stopId == key.rootStopId
-                            }
+                            // track changes are tracked separately in `trackChange`
+                            alert.effect != Alert.Effect.TrackChange &&
+                                alert.anyInformedEntity {
+                                    val stopId =
+                                        it.stop?.let { stopId -> stops.resolveParentId(stopId) }
+                                    it.trip == trip.id && stopId == key.rootStopId
+                                }
                         }
+                    val trackChangeAlert =
+                        Alert.trackChangeAlert(
+                            alerts.values,
+                            schedule?.departureBasedStopTime ?: prediction?.departureBasedStopTime,
+                            trip.directionId,
+                            trip.routeId,
+                            setOfNotNull(key.rootStopId) +
+                                key.rootStopId?.let { stops[it]?.childStopIds }.orEmpty(),
+                            trip.id,
+                        )
                     UpcomingTrip(
-                        trips[key.tripId] ?: return@mapNotNull null,
-                        schedulesMap[key],
+                        trip,
+                        schedule,
                         prediction,
                         stops[prediction?.stopId],
                         predictionsMap[key]?.let { vehicles[it.vehicleId] },
                         alert,
+                        trackChangeAlert,
                     )
                 }
                 .sorted()
