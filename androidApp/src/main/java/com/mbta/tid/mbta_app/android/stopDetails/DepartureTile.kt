@@ -35,6 +35,9 @@ import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
+import com.mbta.tid.mbta_app.android.component.TrackChangePill
+import com.mbta.tid.mbta_app.android.component.TrackChangePillShape
+import com.mbta.tid.mbta_app.android.component.TrackChangePillType
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
@@ -94,7 +97,18 @@ fun DepartureTile(
             if (headsign != null) {
                 Text(headsign, textAlign = TextAlign.Start, style = Typography.footnoteSemibold)
             }
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                data.upcoming.trackChangeAlert?.let { alert ->
+                    TrackChangePill(
+                        pillType = TrackChangePillType.Alert,
+                        pillShape = TrackChangePillShape.Compact,
+                        modifier = Modifier.padding(end = 8.dp),
+                    )
+                }
                 if (showRoutePill) {
                     Box(Modifier.padding(end = 8.dp)) {
                         RoutePill(data.route, type = RoutePillType.Flex)
