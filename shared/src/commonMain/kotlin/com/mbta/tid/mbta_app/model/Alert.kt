@@ -487,6 +487,44 @@ internal constructor(
         }
 
         /**
+         * Finds a track change alert that applies to a specific trip at a specific stop.
+         *
+         * Track change alerts can be stop-wide (informed entities with no trip, which apply to
+         * every matching trip) or trip-specific. Whether the alert is active is checked at
+         * [scheduledTime] rather than the current time, so alerts that start in the future are
+         * still found for trips that will depart after they start.
+         *
+         * Criteria:
+         * - Alert effect is [Alert.Effect.TrackChange]
+         * - Alert is active at [scheduledTime]
+         * - Route ID, direction ID, stop ID, and trip ID match an [Alert.InformedEntity]
+         *
+         * @param scheduledTime the scheduled departure time of the trip at the stop. If null, no
+         *   alert is returned, since there is no way to tell if it would be active.
+         * @param stopIds the parent stop ID and its child stop IDs
+         */
+        fun trackChangeAlert(
+            alerts: Collection<Alert>,
+            scheduledTime: EasternTimeInstant?,
+            directionId: Int,
+            routeId: Route.Id,
+            stopIds: Set<String>,
+            tripId: String,
+        ): Alert? {
+            if (scheduledTime == null) return null
+            return alerts.firstOrNull {
+                it.effect == Effect.TrackChange &&
+                    it.isActive(scheduledTime) &&
+                    it.anyInformedEntityMatches(
+                        directionId = Matcher.Data(directionId),
+                        routeId = Matcher.Data(routeId),
+                        stopId = Matcher.AnyOf(stopIds),
+                        tripId = Matcher.Data(tripId),
+                    )
+            }
+        }
+
+        /**
          * Gets the alerts of the stops that are downstream of the target stop which have alerts up
          * to the first suspension or shuttle that are different from the alerts at the target stop.
          * Considers only alerts that have specified stops.
@@ -584,6 +622,3 @@ internal constructor(
         }
     }
 }
-
-internal fun List<Alert>.discardTrackChangesAtCRCore(isCRCore: Boolean): List<Alert> =
-    if (isCRCore) this.filterNot { it.effect == Alert.Effect.TrackChange } else this

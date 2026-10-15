@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,11 +22,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.lerp
@@ -48,6 +49,7 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.InfoCircle
@@ -67,6 +69,7 @@ import com.mbta.tid.mbta_app.android.util.modifiers.DestinationPredictionBalance
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.modifiers.loading
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
+import com.mbta.tid.mbta_app.android.util.trackChangeTapCallback
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
@@ -83,6 +86,14 @@ import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.time.Duration.Companion.minutes
 
 @Composable
+private fun Modifier.infoClick(onTap: (() -> Unit)): Modifier =
+    this.minimumInteractiveComponentSize()
+        .clickable(
+            onClickLabel = stringResource(R.string.display_more_information),
+            onClick = onTap,
+        )
+
+@Composable
 fun TripHeaderCard(
     trip: Trip,
     spec: TripHeaderSpec?,
@@ -93,25 +104,33 @@ fun TripHeaderCard(
     modifier: Modifier = Modifier,
     onFollowTrip: (() -> Unit)? = null,
     onTap: (() -> Unit)? = null,
+    openModal: (ModalRoutes) -> Unit = {},
 ) {
     val clickable = onTap != null
 
-    val modifier =
-        if (clickable) {
-            modifier.clickable(onClickLabel = stringResource(R.string.display_more_information)) {
-                onTap()
-            }
-        } else {
-            // clickable(false) is announced to TalkBack as "disabled", which we don't want
-            modifier
-        }
+    val onTrackChangeTap =
+        when (spec) {
+            is TripHeaderSpec.Scheduled -> spec.entry
+            is TripHeaderSpec.VehicleOnTrip -> spec.entry
+            else -> null
+        }?.trackChangeTapCallback(route, openModal)
+
+    // Make the whole card clickable if an onTap callback is provided and there's no competing track
+    // change tap handler. If both tap handlers exist, they have separate tap areas within the card.
+    val cardModifier =
+        modifier
+            .then(
+                if (clickable && onTrackChangeTap == null) Modifier.infoClick(onTap) else Modifier
+            )
+            .haloContainer(2.dp)
+            .semantics(mergeDescendants = true) {}
 
     CompositionLocalProvider(LocalContentColor provides colorResource(R.color.text)) {
         Box(
             Modifier.height(IntrinsicSize.Min).fillMaxWidth(),
             contentAlignment = Alignment.BottomStart,
         ) {
-            Row(modifier.haloContainer(2.dp).semantics(mergeDescendants = true) {}) {
+            Row(cardModifier) {
                 Box(Modifier.height(IntrinsicSize.Min)) {
                     Row(
                         Modifier.padding(horizontal = 14.dp).heightIn(min = 56.dp).semantics {
@@ -140,7 +159,7 @@ fun TripHeaderCard(
                                         trip.id,
                                         targeted,
                                         routeAccents,
-                                        clickable,
+                                        onTrackChangeTap,
                                         DestinationPredictionBalance.destinationWidth(),
                                     )
                                     TripIndicator(
@@ -149,7 +168,7 @@ fun TripHeaderCard(
                                         routeAccents,
                                         trip,
                                         now,
-                                        clickable,
+                                        onTap,
                                         onFollowTrip,
                                     )
                                 }
@@ -310,7 +329,7 @@ private fun Description(
     tripId: String,
     targeted: Boolean,
     routeAccents: TripRouteAccents,
-    clickable: Boolean,
+    onTrackChangeTap: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier) {
@@ -318,9 +337,9 @@ private fun Description(
             TripHeaderSpec.FinishingAnotherTrip -> FinishingAnotherTripDescription()
             TripHeaderSpec.NoVehicle -> NoVehicleDescription()
             is TripHeaderSpec.Scheduled ->
-                ScheduleDescription(spec.entry, targeted, routeAccents, clickable)
+                ScheduleDescription(spec.entry, targeted, routeAccents, onTrackChangeTap)
             is TripHeaderSpec.VehicleOnTrip ->
-                VehicleDescription(spec, tripId, targeted, routeAccents)
+                VehicleDescription(spec, tripId, targeted, routeAccents, onTrackChangeTap)
         }
     }
 }
@@ -340,36 +359,33 @@ private fun ScheduleDescription(
     startTerminalEntry: TripDetailsStopList.Entry?,
     targeted: Boolean,
     routeAccents: TripRouteAccents,
-    clickable: Boolean,
+    onTrackChangeTap: (() -> Unit)?,
 ) {
     val resources = LocalResources.current
     if (startTerminalEntry != null) {
         val stop = startTerminalEntry.stop
         Column(
             Modifier.semantics {
-                contentDescription =
-                    scheduleDescriptionAccessibilityText(
-                        startTerminalEntry,
-                        targeted,
-                        routeAccents,
-                        resources,
-                    )
-            },
+                    contentDescription =
+                        scheduleDescriptionAccessibilityText(
+                            startTerminalEntry,
+                            targeted,
+                            routeAccents,
+                            resources,
+                        )
+                }
+                .then(
+                    onTrackChangeTap?.let {
+                        Modifier.clip(RoundedCornerShape(8.dp)).clickable { onTrackChangeTap() }
+                    } ?: Modifier
+                ),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                TightWrapText(
-                    stringResource(R.string.scheduled_to_depart),
-                    Modifier.weight(1f, fill = false),
-                    style = Typography.footnote,
-                )
-                if (clickable) {
-                    InfoCircle(Modifier.aspectRatio(1f).size(16.dp))
-                }
-            }
+            TightWrapText(
+                stringResource(R.string.scheduled_to_depart),
+                Modifier.weight(1f, fill = false),
+                style = Typography.footnote,
+            )
             Text(stop.name, style = Typography.headlineBold)
             startTerminalEntry.trackNumber?.let { if (targeted) TrackNumber(it) }
         }
@@ -403,6 +419,7 @@ private fun VehicleDescription(
     tripId: String,
     targeted: Boolean,
     routeAccents: TripRouteAccents,
+    onTrackChangeTap: (() -> Unit)?,
 ) {
     val resources = LocalResources.current
     if (spec.vehicle.tripId == tripId) {
@@ -410,9 +427,15 @@ private fun VehicleDescription(
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Column(
                 Modifier.clearAndSetSemantics {
-                    contentDescription =
-                        vehicleDescriptionAccessibilityText(spec, targeted, routeAccents, resources)
-                },
+                        contentDescription =
+                            vehicleDescriptionAccessibilityText(
+                                spec,
+                                targeted,
+                                routeAccents,
+                                resources,
+                            )
+                    }
+                    .then(onTrackChangeTap?.let { Modifier.clickable { it() } } ?: Modifier),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 VehicleStatusDescription(spec.vehicle.currentStatus, spec.atTerminal)
@@ -538,7 +561,7 @@ private fun RowScope.TripIndicator(
     routeAccents: TripRouteAccents,
     trip: Trip,
     now: EasternTimeInstant,
-    clickable: Boolean = false,
+    onInfoClick: (() -> Unit)?,
     onFollowTrip: (() -> Unit)?,
 ) {
     val upcomingTripViewState = upcomingTripViewState(spec, route, trip, now)
@@ -550,26 +573,32 @@ private fun RowScope.TripIndicator(
         horizontalAlignment = Alignment.End,
     ) {
         when (spec) {
+            // For these two cases, if an info callback is provided, we show the icon, but don't add
+            // a clickable modifier, since the entire card is already made clickable
             TripHeaderSpec.FinishingAnotherTrip,
-            TripHeaderSpec.NoVehicle -> {
-                if (clickable) {
-                    InfoCircle()
-                }
-            }
+            TripHeaderSpec.NoVehicle -> if (onInfoClick != null) InfoCircle()
             is TripHeaderSpec.VehicleOnTrip ->
                 if (onFollowTrip != null) FollowButton(routeAccents, onFollowTrip)
-                else {
-                    LiveIndicator()
-                }
-            is TripHeaderSpec.Scheduled -> {}
+                else LiveIndicator()
+            else -> {}
         }
 
         if (upcomingTripViewState != null) {
-            UpcomingTripView(
-                upcomingTripViewState,
-                routeType = routeAccents.type,
-                hideRealtimeIndicators = true,
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                when (spec) {
+                    is TripHeaderSpec.Scheduled ->
+                        onInfoClick?.let { InfoCircle(Modifier.infoClick(it)) }
+                    else -> {}
+                }
+                UpcomingTripView(
+                    upcomingTripViewState,
+                    routeType = routeAccents.type,
+                    hideRealtimeIndicators = true,
+                )
+            }
         }
     }
 }
