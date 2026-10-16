@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -57,6 +58,7 @@ fun TrackChangePill(
 
     Row(
         modifier
+            .testTag("track_change_pill")
             .heightIn(min = 24.dp)
             .widthIn(min = 24.dp)
             .background(backgroundColor, shape = RoundedCornerShape(88.dp))

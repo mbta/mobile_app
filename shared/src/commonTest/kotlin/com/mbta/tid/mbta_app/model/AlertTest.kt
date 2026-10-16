@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -1121,6 +1122,110 @@ class AlertTest {
             alert.anyInformedEntityMatches(
                 routeId = Matcher.Data(Route.Id("CR")),
                 routeType = Matcher.Data(RouteType.COMMUTER_RAIL),
+            )
+        )
+    }
+
+    @Test
+    fun `trackChangeAlert matches stop-wide alerts for any trip`() {
+        val objects = ObjectCollectionBuilder()
+        val now = EasternTimeInstant.now()
+        val alert = objects.alert {
+            effect = Alert.Effect.TrackChange
+            informedEntity(
+                routeType = RouteType.COMMUTER_RAIL,
+                directionId = 0,
+                route = "CR-Providence",
+                stop = "place-bbsta",
+            )
+        }
+        fun find(
+            tripId: String = "trip",
+            directionId: Int = 0,
+            routeId: String = "CR-Providence",
+            stopIds: Set<String> = setOf("place-bbsta", "child"),
+        ) =
+            Alert.trackChangeAlert(
+                listOf(alert),
+                now,
+                directionId,
+                Route.Id(routeId),
+                stopIds,
+                tripId,
+            )
+
+        assertEquals(alert, find())
+        assertEquals(alert, find(tripId = "other trip"))
+        assertNull(find(directionId = 1))
+        assertNull(find(routeId = "CR-Franklin"))
+        assertNull(find(stopIds = setOf("place-sstat")))
+    }
+
+    @Test
+    fun `trackChangeAlert only matches specified trips`() {
+        val objects = ObjectCollectionBuilder()
+        val now = EasternTimeInstant.now()
+        val alert = objects.alert {
+            effect = Alert.Effect.TrackChange
+            informedEntity(route = "CR-Providence", stop = "place-bbsta", trip = "trip1")
+            informedEntity(route = "CR-Providence", stop = "place-bbsta", trip = "trip2")
+        }
+        fun find(tripId: String) =
+            Alert.trackChangeAlert(
+                listOf(alert),
+                now,
+                0,
+                Route.Id("CR-Providence"),
+                setOf("place-bbsta"),
+                tripId,
+            )
+
+        assertEquals(alert, find("trip1"))
+        assertEquals(alert, find("trip2"))
+        assertNull(find("trip3"))
+    }
+
+    @Test
+    fun `trackChangeAlert is checked at the scheduled time`() {
+        val objects = ObjectCollectionBuilder()
+        val now = EasternTimeInstant.now()
+        val alert = objects.alert {
+            effect = Alert.Effect.TrackChange
+            activePeriod(now + 1.hours, now + 2.hours)
+            informedEntity(route = "CR-Providence", stop = "place-bbsta")
+        }
+        fun find(time: EasternTimeInstant?) =
+            Alert.trackChangeAlert(
+                listOf(alert),
+                time,
+                0,
+                Route.Id("CR-Providence"),
+                setOf("place-bbsta"),
+                "trip",
+            )
+
+        assertNull(find(now))
+        assertEquals(alert, find(now + 90.minutes))
+        assertNull(find(now + 3.hours))
+        assertNull(find(null))
+    }
+
+    @Test
+    fun `trackChangeAlert ignores other effects`() {
+        val objects = ObjectCollectionBuilder()
+        val alert = objects.alert {
+            effect = Alert.Effect.Delay
+            informedEntity(route = "CR-Providence", stop = "place-bbsta")
+        }
+
+        assertNull(
+            Alert.trackChangeAlert(
+                listOf(alert),
+                EasternTimeInstant.now(),
+                0,
+                Route.Id("CR-Providence"),
+                setOf("place-bbsta"),
+                "trip",
             )
         )
     }

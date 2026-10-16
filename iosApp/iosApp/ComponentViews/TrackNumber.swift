@@ -17,6 +17,7 @@ struct TrackNumber: View {
         switch onEnum(of: track) {
         case let .number(number): Text("Track \(number.number)")
         case .tBD: Text("Track TBD")
+        case .change: Text("Track Change")
         }
     }
 
@@ -24,6 +25,7 @@ struct TrackNumber: View {
         switch onEnum(of: track) {
         case let .number(number): Text("Boarding on track \(number.number)")
         case .tBD: Text("Track to be determined")
+        case .change: Text("Track Change")
         }
     }
 

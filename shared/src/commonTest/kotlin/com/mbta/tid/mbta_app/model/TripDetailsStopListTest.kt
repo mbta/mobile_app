@@ -8,6 +8,7 @@ import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Month
@@ -110,6 +111,7 @@ class TripDetailsStopListTest {
             predictionStop: Stop? = null,
             vehicle: Vehicle? = null,
             routes: List<Route> = listOf(),
+            trackChangeAlert: Alert? = null,
         ) =
             TripDetailsStopList.Entry(
                 stop(stopId),
@@ -120,6 +122,7 @@ class TripDetailsStopListTest {
                 predictionStop ?: objects.stops[prediction?.stopId],
                 vehicle,
                 routes,
+                trackChangeAlert = trackChangeAlert,
             )
 
         fun globalData(patternIdsByStop: Map<String, List<String>> = emptyMap()) =
@@ -1171,6 +1174,99 @@ class TripDetailsStopListTest {
             ),
             entry.format(trip, now, route),
         )
+    }
+
+    @Test
+    fun `fromPieces sets track change alerts active at the scheduled time`() = test {
+        val route = objects.route {}
+        val trip = trip { routeId = route.id.idText }
+        val now = EasternTimeInstant.now()
+        stop("A", childStopIds = listOf("A1"))
+        val sched1 = objects.schedule {
+            this.trip = trip
+            routeId = route.id.idText
+            stopId = stop("A1").id
+            stopSequence = 10
+            departureTime = now + 10.minutes
+        }
+        val sched2 = objects.schedule {
+            this.trip = trip
+            routeId = route.id.idText
+            stopId = stop("B").id
+            stopSequence = 20
+            departureTime = now + 90.minutes
+        }
+        val trackChange =
+            alert(Alert.Effect.TrackChange) {
+                activePeriod(now + 1.hours, now + 2.hours)
+                informedEntity(route = route.id.idText, stop = "A")
+                informedEntity(route = route.id.idText, stop = "B")
+            }
+
+        val result = fromPieces(schedulesResponseOf(sched1, sched2), null)
+
+        assertEquals(listOf(null, trackChange), result?.stops?.map { it.trackChangeAlert })
+        assertEquals(
+            listOf(null, Track.Alert(trackChange)),
+            result?.stops?.map { it.trackNumber },
+        )
+    }
+
+    @Test
+    fun `fromPieces only sets trip-specific track change alerts on that trip`() = test {
+        val route = objects.route {}
+        val trip = trip { routeId = route.id.idText }
+        val now = EasternTimeInstant.now()
+        val sched = objects.schedule {
+            this.trip = trip
+            routeId = route.id.idText
+            stopId = stop("A").id
+            stopSequence = 10
+            departureTime = now + 10.minutes
+        }
+        val matching =
+            alert(Alert.Effect.TrackChange) {
+                informedEntity(route = route.id.idText, stop = "A", trip = trip.id)
+            }
+        alert(Alert.Effect.TrackChange) {
+            informedEntity(route = route.id.idText, stop = "A", trip = "other trip")
+        }
+
+        assertEquals(
+            listOf(matching),
+            fromPieces(schedulesResponseOf(sched), null)?.stops?.mapNotNull {
+                it.trackChangeAlert
+            },
+        )
+    }
+
+    @Test
+    fun `entry trackNumber is Alert if there is a track change alert`() = test {
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+        val stop = objects.stop {
+            id = "place-bbsta"
+            vehicleType = RouteType.COMMUTER_RAIL
+            platformCode = "2"
+        }
+        val alert = objects.alert { effect = Alert.Effect.TrackChange }
+        val schedule = objects.schedule {
+            stopId = stop.id
+            stopSequence = 10
+            routeId = route.id.idText
+        }
+        val entry =
+            TripDetailsStopList.Entry(
+                stop,
+                10,
+                null,
+                schedule,
+                null,
+                null,
+                vehicle = null,
+                routes = listOf(),
+                trackChangeAlert = alert,
+            )
+        assertEquals(Track.Alert(alert), entry.trackNumber)
     }
 
     @Test
