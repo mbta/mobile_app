@@ -57,7 +57,7 @@ class MoreSectionViewTests {
                     MoreSection(
                         MoreSection.Category.PublicBetas,
                         SharedString.BetaSection,
-                        listOf(MoreItem.Toggle(SharedString.Notifications, Settings.Notifications)),
+                        listOf(MoreItem.Toggle(SharedString.MapDisplay, Settings.HideMaps)),
                     ),
                 highlighted = false,
                 settingsCache =
@@ -76,11 +76,10 @@ class MoreSectionViewTests {
             )
         }
 
-        composeTestRule.onNodeWithText("Test New Features").assertCanBeDisplayed()
-        composeTestRule.onNodeWithText("Disruption Notifications").performClick()
+        composeTestRule.onNodeWithText("Map Display").performClick()
         composeTestRule.waitForIdle()
 
         assertTrue(wasWritten)
-        assertEquals(Pair(Settings.Notifications, true), onChangeArgs)
+        assertEquals(Pair(Settings.HideMaps, true), onChangeArgs)
     }
 }

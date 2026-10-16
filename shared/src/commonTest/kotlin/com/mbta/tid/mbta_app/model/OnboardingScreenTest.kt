@@ -37,26 +37,26 @@ class OnboardingScreenTest {
     }
 
     @Test
-    fun `NotificationsBeta checks notifications beta setting`() {
+    fun `NotificationsBeta checks notifications beta setting is always true`() {
         assertTrue(
             OnboardingScreen.NotificationsBeta.applies(
                 undefinedAccessibilityStatus,
                 mapOf(Settings.Notifications to true),
             )
         )
-        assertFalse(
+        assertTrue(
             OnboardingScreen.NotificationsBeta.applies(
                 undefinedAccessibilityStatus,
                 mapOf(Settings.Notifications to false),
             )
         )
-        assertFalse(
+        assertTrue(
             OnboardingScreen.NotificationsBeta.applies(undefinedAccessibilityStatus, emptyMap())
         )
     }
 
     @Test
-    fun `Feedback always applies`() {
-        assertTrue(OnboardingScreen.Feedback.applies(undefinedAccessibilityStatus, emptyMap()))
+    fun `Feedback never applies`() {
+        assertFalse(OnboardingScreen.Feedback.applies(undefinedAccessibilityStatus, emptyMap()))
     }
 }

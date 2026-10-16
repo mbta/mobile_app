@@ -215,8 +215,8 @@ class SaveFavoritePageTests {
                     notifications {
                         enabled = true
                         window(
-                            LocalTime(8, 0),
-                            LocalTime(9, 0),
+                            LocalTime(10, 0),
+                            LocalTime(16, 0),
                             setOf(
                                 DayOfWeek.MONDAY,
                                 DayOfWeek.TUESDAY,

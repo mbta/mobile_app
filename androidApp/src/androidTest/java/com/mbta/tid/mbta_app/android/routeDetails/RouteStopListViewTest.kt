@@ -14,7 +14,6 @@ import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
-import com.mbta.tid.mbta_app.android.testUtils.waitUntilNodeCountDefaultTimeout
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
@@ -358,58 +357,6 @@ class RouteStopListViewTest {
         composeTestRule.onNodeWithText(stop1.name).assertCanBeDisplayed()
         composeTestRule.onNodeWithText(stop2.name).assertCanBeDisplayed()
         composeTestRule.onNodeWithText("2 less common stops").assertIsNotDisplayed()
-    }
-
-    @OptIn(ExperimentalTestApi::class)
-    @Test
-    fun testFavoritesWithConfirmationDialog() {
-        val objects = TestData.clone()
-        val route = LineOrRoute.Route(objects.getRoute("Red"))
-
-        loadKoinMocks(objects) {
-            routeStops =
-                MockRouteStopsRepository(
-                    segments =
-                        listOf(
-                            RouteBranchSegment.of(
-                                listOf("place-alfcl", "place-davis", "place-portr")
-                            )
-                        ),
-                    routeId = route.id,
-                )
-        }
-
-        composeTestRule.setContent {
-            RouteStopListView(
-                route,
-                RouteDetailsContext.Favorites,
-                GlobalResponse(objects),
-                onClick = {
-                    when (it) {
-                        is RouteDetailsRowContext.Details -> {}
-                        is RouteDetailsRowContext.Favorites -> it.onTapStar()
-                    }
-                },
-                navCallbacks = NavigationCallbacks.empty,
-                openModal = { _ -> },
-                errorBannerViewModel = koinInject(),
-                toastViewModel = MockToastViewModel(),
-                rightSideContent = { _, _ -> },
-            )
-        }
-
-        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Davis"))
-        // Direction toggle on route page
-        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Southbound to"))
-        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Ashmont/Braintree"))
-
-        composeTestRule.onNodeWithText("Davis").performClick()
-
-        // 2 sets of direction labels - one on toggle, and one in favorites confirmation modal
-        composeTestRule.waitUntilNodeCountDefaultTimeout(hasText("Southbound to"), 2)
-        composeTestRule.waitUntilNodeCountDefaultTimeout(hasText("Ashmont/Braintree"), 2)
-
-        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Add"))
     }
 
     @Test

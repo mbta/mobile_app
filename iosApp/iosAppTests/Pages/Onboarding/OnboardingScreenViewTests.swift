@@ -99,7 +99,7 @@ final class OnboardingScreenViewTests: XCTestCase {
             screen: .notificationsBeta,
             advance: { advanceExp.fulfill() }
         ).withFixedSettings([:])
-        XCTAssertNotNil(try sut.inspect().find(text: "Now get disruption notifications"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Get disruption notifications"))
         XCTAssertNotNil(try sut.inspect().find(text: "Add a Favorite stop"))
         XCTAssertNotNil(try sut.inspect().find(text: "Set your own schedule"))
         XCTAssertNotNil(try sut.inspect().find(text: "We’ll tell you about any problems before you go!"))
