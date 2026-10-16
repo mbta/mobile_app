@@ -94,7 +94,7 @@ fun TripStopRow(
         stopPlacement = StopPlacement(firstStop, lastStop),
         onOpenAlertDetails = onOpenAlertDetails,
         targeted = targeted,
-        trackNumber = entry.trackNumber,
+        trackNumber = if (targeted) entry.trackNumber else null,
         rightSideContent = { rightSideModifier ->
             CompositionLocalProvider(LocalContentColor provides colorResource(R.color.text)) {
                 val state = upcomingTripViewState(entry, trip, now, route)

@@ -13,6 +13,12 @@ public data class TripDetailsStopList
 @DefaultArgumentInterop.Enabled
 constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entry? = null) {
 
+    public sealed class Track {
+        public data class Number(val number: String) : Track()
+
+        public object TBD : Track()
+    }
+
     public data class Entry
     @DefaultArgumentInterop.Enabled
     constructor(
@@ -28,8 +34,18 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
         val routes: List<Route>,
         val elevatorAlerts: List<Alert> = emptyList(),
     ) {
-        val trackNumber: String? =
-            if (predictionStop?.shouldShowTrackNumber == true) predictionStop.platformCode else null
+        val trackNumber: Track? =
+            (predictionStop ?: stop).let { platformStop ->
+                if (platformStop.shouldShowTrackNumber) {
+                    val trackNumber =
+                        platformStop.platformCode?.let { platform ->
+                            Track.Number(platform)
+                        }
+                    // If the stop does not have a platform code, show "TBD" for commuter rail core
+                    // stations, otherwise show nothing
+                    trackNumber ?: if (platformStop.isCRCore) Track.TBD else null
+                } else null
+            }
 
         internal val isTruncating = disruption?.alert?.hasNoThroughService == true
 
@@ -141,7 +157,7 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
     public fun contextualTrip(
         filter: TripDetailsPageFilter,
         global: GlobalResponse?,
-    ): UpcomingTrip? {
+    ): UpcomingTrip {
         val entry = splitForTarget(filter.stopId, filter.stopSequence, global).targetStop
         return UpcomingTrip(
             trip,
@@ -269,7 +285,7 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
                         disruption,
                         working.schedule,
                         working.prediction,
-                        globalData.stops[working.prediction?.stopId],
+                        globalData.getStop(working.prediction?.stopId),
                         working.vehicle,
                         getTransferRoutes(working, globalData),
                         Alert.elevatorAlerts(allElevatorAlerts, parentAndChildStopIds),

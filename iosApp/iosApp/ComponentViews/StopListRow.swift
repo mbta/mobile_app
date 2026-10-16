@@ -62,7 +62,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
     var stopPlacement: StopPlacement
     var onOpenAlertDetails: (Shared.Alert) -> Void
     var targeted: Bool
-    var trackNumber: String?
+    var trackNumber: TripDetailsStopList.Track?
     var descriptor: () -> Descriptor
     var rightSideContent: () -> RightSideContent
 
@@ -87,7 +87,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
         stopPlacement: StopPlacement = .init(),
         onOpenAlertDetails: @escaping (Shared.Alert) -> Void = { _ in },
         targeted: Bool = false,
-        trackNumber: String? = nil,
+        trackNumber: TripDetailsStopList.Track? = nil,
         descriptor: @escaping () -> Descriptor,
         rightSideContent: @escaping () -> RightSideContent
     ) {
@@ -186,13 +186,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
                                         .foregroundStyle(Color.text)
                                         .multilineTextAlignment(.leading)
                                         .accessibilityLabel(stopAccessibilityLabel)
-                                    if let trackNumber {
-                                        Text("Track \(trackNumber)")
-                                            .font(Typography.footnote)
-                                            .foregroundStyle(Color.text)
-                                            .multilineTextAlignment(.leading)
-                                            .accessibilityLabel(Text("Boarding on track \(trackNumber)"))
-                                    }
+                                    if let trackNumber, targeted { TrackNumber(track: trackNumber) }
                                 }
 
                                 Spacer()

@@ -235,11 +235,20 @@ fun TripDetails(
         if (isTripDetailsPage && vehicleOnOtherTrip) {
             MissingTripCard(MissingTripCardType.Complete, routeAccents)
         } else {
+            val isTargeted =
+                when (headerSpec) {
+                    is TripHeaderSpec.Scheduled -> headerSpec.entry.stop
+                    is TripHeaderSpec.VehicleOnTrip -> headerSpec.entry?.stop
+                    else -> null
+                }?.let { stop ->
+                    stop.resolveParent(globalResponse).id == tripFilter.stopId
+                } ?: false
+
             Column(Modifier.zIndex(1F)) {
                 TripHeaderCard(
                     trip,
                     headerSpec,
-                    tripFilter.stopId,
+                    isTargeted,
                     route,
                     routeAccents,
                     now,
