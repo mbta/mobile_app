@@ -336,7 +336,7 @@ internal constructor(
 
     public fun currentOrNextPeriod(now: EasternTimeInstant): ActivePeriod? =
         activePeriod.firstOrNull {
-            it.end?.instant?.let { end -> end < now.instant } ?: true
+            it.end == null || it.end >= now
         }
 
     /**
