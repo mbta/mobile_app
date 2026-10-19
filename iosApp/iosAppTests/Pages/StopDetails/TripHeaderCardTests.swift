@@ -369,7 +369,7 @@ final class TripHeaderCardTests: XCTestCase {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
-        let route = objects.route { _ in }
+        let route = objects.route { $0.type = .commuterRail }
         let trip = objects.trip { _ in }
 
         let schedule = objects.schedule { schedule in
@@ -386,7 +386,7 @@ final class TripHeaderCardTests: XCTestCase {
                 schedule: schedule,
                 prediction: nil,
                 vehicle: nil,
-                routes: [],
+                routes: [route],
                 elevatorAlerts: []
             )),
             trip: trip,
@@ -645,5 +645,118 @@ final class TripHeaderCardTests: XCTestCase {
             try sut.inspect().find(viewWithAccessibilityLabel: "Car 5 of 5, Not crowded").image().actualImage().name(),
             "crowding-car-not-crowded"
         )
+    }
+
+    func testTrackChangeAlert() throws {
+        let now = EasternTimeInstant.now()
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in stop.name = "Stop Name" }
+        let route = objects.route { $0.type = .commuterRail }
+        let trip = objects.trip { _ in }
+        let alert = objects.alert { $0.effect = .trackChange }
+
+        let schedule = objects.schedule { schedule in
+            schedule.departureTime = now.plus(minutes: 5)
+        }
+
+        let entry = TripDetailsStopList.Entry(
+            stop: stop,
+            stopSequence: 0,
+            disruption: nil,
+            schedule: schedule,
+            prediction: nil,
+            vehicle: nil,
+            routes: [],
+            elevatorAlerts: [],
+            trackChangeAlert: alert
+        )
+
+        let sut = TripHeaderCard(
+            spec: .scheduled(stop, entry),
+            trip: trip,
+            targeted: true,
+            route: route,
+            routeAccents: .init(route: route),
+            onTap: {},
+            now: now,
+            onFollowTrip: nil,
+        )
+
+        try XCTAssertNotNil(sut.inspect().find(TrackChangePill.self))
+        // The info icon should be its own button, since the card has a separate track change tap target
+        try XCTAssertNotNil(sut.inspect().find(ViewType.Button.self))
+
+        let notTargeted = TripHeaderCard(
+            spec: .scheduled(stop, entry),
+            trip: trip,
+            targeted: false,
+            route: route,
+            routeAccents: .init(route: route),
+            onTap: {},
+            now: now,
+            onFollowTrip: nil,
+        )
+        XCTAssertThrowsError(try notTargeted.inspect().find(TrackChangePill.self))
+    }
+
+    func testTrackChangeAlertTapWithFollowButton() throws {
+        let now = EasternTimeInstant.now()
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in stop.name = "Stop Name" }
+        let route = objects.route { $0.type = .commuterRail }
+        let trip = objects.trip { _ in }
+        let alert = objects.alert { $0.effect = .trackChange }
+        let vehicle = objects.vehicle { vehicle in
+            vehicle.currentStatus = .stoppedAt
+            vehicle.tripId = trip.id
+            vehicle.stopId = stop.id
+            vehicle.currentStopSequence = 0
+        }
+        let prediction = objects.prediction { prediction in
+            prediction.departureTime = now.plus(minutes: 5)
+            prediction.stopId = stop.id
+        }
+        let entry = TripDetailsStopList.Entry(
+            stop: stop,
+            stopSequence: 0,
+            disruption: nil,
+            schedule: nil,
+            prediction: prediction,
+            vehicle: vehicle,
+            routes: [],
+            elevatorAlerts: [],
+            trackChangeAlert: alert
+        )
+
+        let alertTapped = expectation(description: "alert details opened")
+        let followTapped = expectation(description: "follow tapped")
+        followTapped.isInverted = true
+
+        let sut = TripHeaderCard(
+            spec: .vehicle(vehicle, stop, entry, true),
+            trip: trip,
+            targeted: true,
+            route: route,
+            routeAccents: .init(route: route),
+            onTap: nil,
+            now: now,
+            onFollowTrip: { followTapped.fulfill() },
+            onOpenAlertDetails: { tapped in
+                XCTAssertEqual(alert.id, tapped.id)
+                alertTapped.fulfill()
+            }
+        )
+
+        // The follow button is displayed alongside the track change pill
+        try XCTAssertNotNil(sut.inspect().find(button: "Follow"))
+        try XCTAssertNotNil(sut.inspect().find(TrackChangePill.self))
+
+        // The innermost column containing both the stop name and the track change pill is the tap target
+        let column = try XCTUnwrap(sut.inspect().findAll(ViewType.VStack.self, where: {
+            (try? $0.find(text: "Stop Name")) != nil && (try? $0.find(TrackChangePill.self)) != nil
+        }).last)
+        try column.callOnTapGesture()
+
+        wait(for: [alertTapped, followTapped], timeout: 1)
     }
 }

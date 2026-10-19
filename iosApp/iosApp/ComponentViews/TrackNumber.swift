@@ -17,7 +17,7 @@ struct TrackNumber: View {
         switch onEnum(of: track) {
         case let .number(number): Text("Track \(number.number)")
         case .tBD: Text("Track TBD")
-        case .change: Text("Track Change")
+        case .alert: Text("Track Change")
         }
     }
 
@@ -25,16 +25,23 @@ struct TrackNumber: View {
         switch onEnum(of: track) {
         case let .number(number): Text("Boarding on track \(number.number)")
         case .tBD: Text("Track to be determined")
-        case .change: Text("Track Change")
+        case .alert: Text("Track Change")
         }
     }
 
     var body: some View {
-        trackText
-            .font(Typography.footnote)
-            .foregroundStyle(Color.text)
-            .multilineTextAlignment(.leading)
-            .accessibilityLabel(trackLabel)
-            .enableInjection()
+        Group {
+            switch onEnum(of: track) {
+            case .alert:
+                TrackChangePill(shape: .expanded)
+            default:
+                trackText
+                    .font(Typography.footnote)
+                    .foregroundStyle(Color.text)
+                    .multilineTextAlignment(.leading)
+                    .accessibilityLabel(trackLabel)
+            }
+        }
+        .enableInjection()
     }
 }

@@ -22573,7 +22573,7 @@
       }
     },
     "Track change" : {
-      "comment" : "Possible alert effect",
+      "comment" : "Possible alert effect\nText in an info pill when there is an active track change alert affecting a trip",
       "localizations" : {
         "es" : {
           "stringUnit" : {

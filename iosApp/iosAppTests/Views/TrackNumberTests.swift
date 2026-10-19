@@ -29,4 +29,12 @@ final class TrackNumberTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "Track TBD"))
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "Track to be determined"))
     }
+
+    func testAlert() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { $0.effect = .trackChange }
+        let sut = TrackNumber(track: TripDetailsStopList.TrackAlert(alert: alert))
+        XCTAssertNotNil(try sut.inspect().find(TrackChangePill.self))
+        XCTAssertNotNil(try sut.inspect().find(text: "Track Change"))
+    }
 }

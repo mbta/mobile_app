@@ -48,12 +48,20 @@ struct TripStopRow: View {
         .compactMap { $0 }
     }
 
+    func onTapRow() {
+        if !targeted {
+            onTapLink(stop)
+        } else if let alert = stop.trackChangeAlert {
+            onOpenAlertDetails(alert)
+        }
+    }
+
     var body: some View {
         StopListRow(
             stop: stop.stop,
             stopLane: .center,
             stickConnections: stickConnections,
-            onClick: { onTapLink(stop) },
+            onClick: onTapRow,
             routeAccents: routeAccents,
             stopListContext: stopListContext,
             globalData: globalData,
