@@ -203,8 +203,6 @@
     <string name="holiday">Día festivo</string>
     <string name="holiday_lowercase">día festivo</string>
     <string name="hr_min_abbr">&lt;b&gt;%1$d&lt;/b&gt; h &lt;b&gt;%2$d&lt;/b&gt; min</string>
-    <string name="hurricane">Huracán</string>
-    <string name="hurricane_lowercase">huracán</string>
     <string name="ice_in_harbor">Hielo en el puerto</string>
     <string name="ice_in_harbor_lowercase">hielo en el puerto</string>
     <string name="inbound">Entrante</string>
@@ -304,8 +302,6 @@
     <string name="parking_closure">Cierre de estacionamiento</string>
     <string name="parking_issue">Problema de estacionamiento</string>
     <string name="parking_issue_sentence_case">Problema de estacionamiento</string>
-    <string name="police_action">Acción policial</string>
-    <string name="police_action_lowercase">acción policial</string>
     <string name="police_activity">Actividad policial</string>
     <string name="police_activity_lowercase">actividad policial</string>
     <string name="policy_change">Cambio de política</string>
@@ -314,10 +310,12 @@
     <string name="power_problem_lowercase">problema con el suministro de electricidad</string>
     <string name="predictions_unavailable_details">El servicio está en funcionamiento, pero no hay horarios de llegada previstos. Consulte el mapa para ver dónde se encuentra %1$s en este momento.</string>
     <string name="predictions_unavailable_details_hide_maps">El servicio está funcionando, pero los horarios de llegada previstos no están disponibles.</string>
+    <string name="presence_of_whales">Presencia de ballenas</string>
+    <string name="presence_of_whales_lowercase">Presencia de ballenas</string>
     <string name="promo_favorites_body">Ahora guarde las paradas que utiliza con frecuencia en &lt;b&gt;un lugar fácil de acceder&lt;/b&gt;.</string>
     <string name="promo_favorites_header">Agregar sus favoritos</string>
     <string name="promo_notifications_body">¡Le avisaremos sobre cualquier problema antes de que salga!</string>
-    <string name="promo_notifications_header">Active ahora las notificaciones sobre interrupciones del servicio</string>
+    <string name="promo_notifications_header">Recibir notificaciones de interrupciones</string>
     <string name="promo_notifications_step1">Agregar una parada favorita</string>
     <string name="promo_notifications_step2">Establezca su propio horario</string>
     <string name="rail_defect">Defecto del riel</string>
@@ -337,6 +335,8 @@
     <string name="resources_link_mticket_note">mTicket App</string>
     <string name="resources_link_trip_planner">Planificador de viaje</string>
     <string name="results_failed_to_load">Los resultados no se pudieron cargar ☹️</string>
+    <string name="rough_seas">Mares agitados</string>
+    <string name="rough_seas_lowercase">Mares agitados</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_mode_label">%1$s %2$s</string>
     <string name="routes">Rutas</string>
@@ -468,6 +468,8 @@
         <item quantity="one">Actualizado hace %1$d minuto</item>
         <item quantity="other">Actualizado hace %1$d minutos</item>
     </plurals>
+    <string name="utility_work">Trabajo de servicios públicos</string>
+    <string name="utility_work_lowercase">trabajo en la vía</string>
     <string name="vehicle_arriving_first">%1$s está llegando ahora</string>
     <string name="vehicle_arriving_other">y llegando ahora</string>
     <string name="vehicle_boarding_first">%1$s abordando ahora</string>
@@ -501,6 +503,10 @@
     <string name="vehicle_shuttled_other">y en %1$s se reemplazará por un autobús de enlace</string>
     <string name="vehicle_skipped_first">%1$s con llegada a la(s) %2$s no parará</string>
     <string name="vehicle_skipped_other">y en %1$s no parará</string>
+    <string name="vessel_substitution">Sustitución de autobús</string>
+    <string name="vessel_substitution_lowercase">Sustitución de autobús</string>
+    <string name="vessel_traffic">Tráfico</string>
+    <string name="vessel_traffic_lowercase">tráfico</string>
     <string name="view_details">Ver detalles</string>
     <string name="waiting_to_depart">Esperando para partir</string>
     <string name="weather">Clima</string>
@@ -508,6 +514,6 @@
     <string name="weekdays">Días laborables</string>
     <string name="weekends">Fines de semana</string>
     <string name="westbound">En dirección oeste</string>
-    <string name="x_and_y">%1$s y %2$s</string>
     <string name="when_do_you_want_notifications">¿Cuándo quieres recibir notificaciones?</string>
+    <string name="x_and_y">%1$s y %2$s</string>
 </resources>
