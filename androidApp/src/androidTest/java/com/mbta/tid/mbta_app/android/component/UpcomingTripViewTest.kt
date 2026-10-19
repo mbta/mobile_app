@@ -843,4 +843,17 @@ class UpcomingTripViewTest {
             .assert(hasContentDescription("Service suspended"))
         composeTestRule.onRoot().assertHasColor(Color.fromHex("008eaa"))
     }
+
+    @Test
+    fun testUpcomingTripViewWithStopClosureHidesDisruptionIcon() {
+        val alert = ObjectCollectionBuilder.Single.alert { effect = Alert.Effect.StopClosure }
+        val disruption = UpcomingFormat.Disruption(alert, mapStopRoute = MapStopRoute.ORANGE)
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Disruption(FormattedAlert(alert), disruption.iconName)
+            )
+        }
+
+        composeTestRule.onNodeWithText("Stop skipped").assertCanBeDisplayed()
+    }
 }

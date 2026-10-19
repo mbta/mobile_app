@@ -460,4 +460,13 @@ final class UpcomingTripViewTests: XCTestCase {
         let sut = UpcomingTripView(prediction: .disruption(.init(alert: alert), iconName: disruption.iconName))
         XCTAssertNotNil(try sut.inspect().find(imageName: "alert-large-bus-issue"))
     }
+
+    func testStationClosureDoesNotShowDisruptionIcon() throws {
+        let alert = ObjectCollectionBuilder.Single.shared.alert { $0.effect = .stationClosure }
+        let disruption = UpcomingFormat.Disruption(alert: alert, mapStopRoute: .bus)
+        let sut = UpcomingTripView(prediction: .disruption(.init(alert: alert), iconName: disruption.iconName))
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Stop skipped"))
+        XCTAssertThrowsError(try sut.inspect().find(imageName: disruption.iconName))
+    }
 }

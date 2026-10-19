@@ -230,7 +230,12 @@ struct UpcomingTripView: View {
         switch prediction {
         case let .some(prediction): tripInstantView(prediction)
         case let .disruption(formattedAlert, iconName: iconName):
-            DisruptionView(spec: formattedAlert.predictionReplacement, iconName: iconName, maxTextAlpha: maxTextAlpha)
+            DisruptionView(
+                spec: formattedAlert.predictionReplacement,
+                iconName: iconName,
+                maxTextAlpha: maxTextAlpha,
+                hideDisruptionIcon: formattedAlert.alert.effect == .stationClosure
+            )
         case let .noTrips(format):
             switch onEnum(of: format) {
             case let .subwayEarlyMorning(format):
@@ -272,6 +277,7 @@ struct DisruptionView: View {
     let spec: FormattedAlert.PredictionReplacement
     let iconName: String
     let maxTextAlpha: Double
+    let hideDisruptionIcon: Bool
 
     @ScaledMetric private var iconSize: CGFloat = 20
     var dimmedOpacity: Double { min(0.6, maxTextAlpha) }
@@ -281,16 +287,22 @@ struct DisruptionView: View {
             HStack(spacing: 4) {
                 fullText
                     .lineLimit(1)
-                fullImage
+                if !hideDisruptionIcon {
+                    fullImage
+                }
             }
             VStack(alignment: .trailing, spacing: 4) {
                 fullText
                     .lineLimit(1)
-                fullImage
+                if !hideDisruptionIcon {
+                    fullImage
+                }
             }
             HStack(spacing: 4) {
                 fullText
-                fullImage
+                if !hideDisruptionIcon {
+                    fullImage
+                }
             }
         }
         .enableInjection()

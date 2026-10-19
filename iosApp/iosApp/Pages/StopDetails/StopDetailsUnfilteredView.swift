@@ -28,7 +28,6 @@ struct StopDetailsUnfilteredView: View {
     @ObservedObject var navManager: NavigationManager
 
     @EnvironmentObject var settingsCache: SettingsCache
-    var stationAccessibility: Bool { settingsCache.get(.stationAccessibility) && !global.isStopBlocklisted(stopId) }
 
     var analytics: Analytics = AnalyticsProvider.shared
     let inspection = Inspection<Self>()
@@ -57,6 +56,10 @@ struct StopDetailsUnfilteredView: View {
 
     var stop: Stop? {
         global?.getStop(stopId: stopId)
+    }
+
+    var stationAccessibility: Bool {
+        settingsCache.get(.stationAccessibility) && !global.isStopBlocklisted(stop?.parentStationId ?? stopId)
     }
 
     var routeCardData: [RouteCardData]? {

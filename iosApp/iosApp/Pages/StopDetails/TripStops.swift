@@ -20,6 +20,7 @@ struct TripStops: View {
     let onOpenAlertDetails: (Shared.Alert) -> Void
     let route: Route
     let routeAccents: TripRouteAccents
+    let global: GlobalResponse?
     let splitStops: TripDetailsStopList.TargetSplit
 
     @State private var stopsExpanded = false
@@ -53,6 +54,7 @@ struct TripStops: View {
         self.onOpenAlertDetails = onOpenAlertDetails
         self.route = route
         self.routeAccents = routeAccents
+        self.global = global
 
         splitStops = stops.splitForTarget(
             targetStopId: targetId,
@@ -84,6 +86,7 @@ struct TripStops: View {
                 route: route,
                 routeAccents: routeAccents,
                 stopListContext: stopListContext,
+                globalData: global,
                 showDownstreamAlert: showDownstreamAlerts,
                 lastStop: stop.stopSequence == stops.stops.last?.stopSequence,
                 background: Color.fill2
@@ -111,6 +114,7 @@ struct TripStops: View {
                         route: route,
                         routeAccents: routeAccents,
                         stopListContext: stopListContext,
+                        globalData: global,
                         firstStop: true,
                         background: .fill2
                     )
@@ -172,6 +176,7 @@ struct TripStops: View {
                         route: route,
                         routeAccents: routeAccents,
                         stopListContext: stopListContext,
+                        globalData: global,
                         targeted: true,
                         firstStop: showFirstStopSeparately && target == stops.startTerminalEntry,
                         background: Color.fill3

@@ -31,7 +31,7 @@ struct TripStopRow: View {
     }
 
     var disruption: UpcomingFormat.Disruption? {
-        if let disruption = stop.disruption, disruption.alert.hasNoThroughService, showDownstreamAlert {
+        if let disruption = stop.disruption, showDownstreamAlert {
             disruption
         } else {
             nil

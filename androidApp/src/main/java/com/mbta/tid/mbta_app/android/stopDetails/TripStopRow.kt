@@ -25,6 +25,7 @@ import com.mbta.tid.mbta_app.android.util.containsWrappableText
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.DestinationPredictionBalance
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.Alert.Effect
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.Matcher
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -62,8 +63,7 @@ fun TripStopRow(
 ) {
     val activeElevatorAlerts = entry.activeElevatorAlerts(now)
 
-    val disruption =
-        entry.disruption?.takeIf { it.alert.hasNoThroughService && showDownstreamAlert }
+    val disruption = entry.disruption?.takeIf { showDownstreamAlert }
 
     StopListRow(
         stop = entry.stop,

@@ -68,7 +68,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
 
     @EnvironmentObject var settingsCache: SettingsCache
     var showStationAccessibility: Bool {
-        settingsCache.get(.stationAccessibility) && !globalData.isStopBlocklisted(stop.id)
+        settingsCache.get(.stationAccessibility) && !globalData.isStopBlocklisted(stop.parentStationId ?? stop.id)
     }
 
     init(
@@ -128,7 +128,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
                         }
                     }
                 }
-            if let disruption {
+            if let disruption, disruption.alert.hasNoThroughService == true {
                 ZStack(alignment: .leading) {
                     AlertCard(
                         alert: disruption.alert,
@@ -156,11 +156,12 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
 
     @ViewBuilder
     var stopRow: some View {
+        let hasNoThroughOutDisruption = disruption?.alert.hasNoThroughService == true
         Button(
             action: { onClick() },
             label: {
                 ZStack(alignment: .bottom) {
-                    if !stopPlacement.isLast, !targeted, disruption == nil {
+                    if !stopPlacement.isLast, !targeted, !hasNoThroughOutDisruption {
                         HaloSeparator()
                     }
                     HStack(alignment: .center, spacing: 0) {
@@ -232,11 +233,17 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
 
     @ViewBuilder
     var routeLine: some View {
+        let dot = Group {
+            if let iconName = disruption?.iconName, disruption?.alert.effect.stopSkipped == true {
+                StopIconDot(iconName: iconName, targeted: targeted)
+            } else {
+                StopDot(routeAccents: routeAccents, targeted: targeted)
+            }
+        }
         ZStack(alignment: .center) {
             VStack(spacing: 0) {
                 StickDiagram(routeAccents.color, stickConnections, getAlertState: getAlertState)
             }
-            let dot = StopDot(routeAccents: routeAccents, targeted: targeted)
             switch stopLane {
             case .left: dot.padding(.trailing, 20)
             case .center: dot.padding(.horizontal, 10)
