@@ -28,8 +28,34 @@ struct TripHeaderCard: View {
     let onTap: (() -> Void)?
     let now: EasternTimeInstant
     let onFollowTrip: (() -> Void)?
+    var onOpenAlertDetails: (Shared.Alert) -> Void = { _ in }
 
     @Environment(\.layoutDirection) var layoutDirection
+
+    /// The track change alert for the stop shown in the header, if there is one and it is being displayed.
+    private var trackChangeAlert: Shared.Alert? {
+        guard targeted else { return nil }
+        return switch spec {
+        case let .scheduled(_, entry): entry.trackChangeAlert
+        case let .vehicle(_, _, entry, _): entry?.trackChangeAlert
+        default: nil
+        }
+    }
+
+    private var onTrackChangeTap: (() -> Void)? {
+        if let trackChangeAlert { { onOpenAlertDetails(trackChangeAlert) } } else { nil }
+    }
+
+    /// The whole card is only tappable if there's no competing track change tap handler.
+    /// If both exist, they have separate tap areas within the card.
+    private var onCardTap: (() -> Void)? { onTrackChangeTap == nil ? onTap : nil }
+
+    private var moreInformationHint: String {
+        NSLocalizedString(
+            "displays more information",
+            comment: "Screen reader hint for tapping on the trip details header on the stop page"
+        )
+    }
 
     var body: some View {
         ZStack(alignment: .leading) {
@@ -76,13 +102,10 @@ struct TripHeaderCard: View {
         .padding([.horizontal], 6)
         .fixedSize(horizontal: false, vertical: true)
         .dynamicTypeSize(...DynamicTypeSize.accessibility3)
-        .onTapGesture { if let onTap { onTap() } }
-        .accessibilityElement(children: onTap != nil ? .combine : .contain)
-        .accessibilityAddTraits(onTap != nil ? .isButton : [])
-        .accessibilityHint(onTap != nil ? NSLocalizedString(
-            "displays more information",
-            comment: "Screen reader hint for tapping on the trip details header on the stop page"
-        ) : "")
+        .onTapGesture { if let onCardTap { onCardTap() } }
+        .accessibilityElement(children: onCardTap != nil ? .combine : .contain)
+        .accessibilityAddTraits(onCardTap != nil ? .isButton : [])
+        .accessibilityHint(onCardTap != nil ? moreInformationHint : "")
         .enableInjection()
     }
 
@@ -210,10 +233,7 @@ struct TripHeaderCard: View {
     ) -> some View {
         if let stopEntry {
             VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text("Scheduled to depart").font(Typography.footnote)
-                    if onTap != nil { InfoIcon() }
-                }
+                Text("Scheduled to depart").font(Typography.footnote)
                 Text(stopEntry.stop.name)
                     .font(Typography.headlineBold)
                 if let track = stopEntry.trackNumber, targeted {
@@ -222,6 +242,7 @@ struct TripHeaderCard: View {
             }
             .accessibilityElement(children: .combine)
             .accessibilityLabel(scheduleDescriptionAccessibilityText(stopEntry))
+            .tappableWhenAction(onTrackChangeTap, hint: moreInformationHint)
         }
     }
 
@@ -259,6 +280,7 @@ struct TripHeaderCard: View {
                 }
                 .accessibilityElement(children: .combine)
                 .accessibilityLabel(vehicleDescriptionAccessibilityText(vehicle, stop, atTerminal))
+                .tappableWhenAction(onTrackChangeTap, hint: moreInformationHint)
                 vehicleCrowding
             }
             .accessibilityElement(children: .combine)
@@ -380,12 +402,34 @@ struct TripHeaderCard: View {
             }
 
             if let upcomingTripViewState {
-                UpcomingTripView(
-                    prediction: upcomingTripViewState,
-                    routeType: routeAccents.type,
-                    hideRealtimeIndicators: true
-                ).foregroundStyle(Color.text).opacity(0.6)
+                HStack(alignment: .center, spacing: 4) {
+                    if case .scheduled = spec, let onTap {
+                        scheduledInfoIcon(onTap)
+                    }
+                    UpcomingTripView(
+                        prediction: upcomingTripViewState,
+                        routeType: routeAccents.type,
+                        hideRealtimeIndicators: true
+                    ).foregroundStyle(Color.text).opacity(0.6)
+                }
             }
+        }
+    }
+
+    /// If the whole card is tappable, the icon is purely decorative. Otherwise, the card has a competing track change
+    /// tap target, so the icon is the only thing that triggers `onTap`.
+    @ViewBuilder private func scheduledInfoIcon(_ onTap: @escaping () -> Void) -> some View {
+        if onTrackChangeTap == nil {
+            InfoIcon()
+        } else {
+            Button(action: onTap) {
+                InfoIcon()
+                    .padding(4)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text(moreInformationHint))
         }
     }
 
@@ -422,6 +466,20 @@ struct TripHeaderCard: View {
             )
         case let .some(some): return .some(some.trips[0].format)
         default: return nil
+        }
+    }
+}
+
+private extension View {
+    /// Makes the view its own tap target, separate from the rest of the trip header card.
+    @ViewBuilder func tappableWhenAction(_ action: (() -> Void)?, hint: String) -> some View {
+        if let action {
+            contentShape(Rectangle())
+                .onTapGesture(perform: action)
+                .accessibilityAddTraits(.isButton)
+                .accessibilityHint(hint)
+        } else {
+            self
         }
     }
 }

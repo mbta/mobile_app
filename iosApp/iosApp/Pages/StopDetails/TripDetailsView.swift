@@ -235,6 +235,7 @@ struct TripDetailsView: View {
                 onTap: onTap,
                 now: now,
                 onFollowTrip: context != .tripDetails ? onFollowTrip : nil,
+                onOpenAlertDetails: onOpenAlertDetails
             )
         }
     }

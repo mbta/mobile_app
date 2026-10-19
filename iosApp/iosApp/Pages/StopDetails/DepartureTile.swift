@@ -31,6 +31,12 @@ struct DepartureTile: View {
 
     let maxTileWidth: CGFloat = 195.0
 
+    private var hasRoutePill: Bool {
+        if case .onPrediction = pillDecoration { true } else { false }
+    }
+
+    private var hasPill: Bool { hasRoutePill || data.upcoming.trackChangeAlert != nil }
+
     var body: some View {
         let backgroundColor = isSelected ? Color.fill3 : Color.routeColorContrast
 
@@ -75,11 +81,15 @@ struct DepartureTile: View {
                     }
                 }
 
-                HStack(spacing: 0) {
+                HStack(alignment: .center, spacing: 0) {
+                    if data.upcoming.trackChangeAlert != nil {
+                        TrackChangePill(shape: .compact)
+                            .padding(.trailing, hasRoutePill ? 8 : 0)
+                    }
                     if case let .onPrediction(route) = pillDecoration {
                         RoutePill(route: route, type: .flex)
-                        Spacer(minLength: 8)
                     }
+                    if hasPill { Spacer(minLength: 8) }
                     TripStatus(predictions: data.formatted)
                 }
             }
