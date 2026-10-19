@@ -317,7 +317,7 @@
     <string name="promo_favorites_body">Agora salve suas paradas de uso frequente em &lt;b&gt;um lugar fácil&lt;/b&gt;.</string>
     <string name="promo_favorites_header">Adicionar seus Favoritos</string>
     <string name="promo_notifications_body">Avisaremos você sobre qualquer problema antes de sair!</string>
-    <string name="promo_notifications_header">Agora receba notificações de interrupções</string>
+    <string name="promo_notifications_header">Get disruption notifications</string>
     <string name="promo_notifications_step1">Adicionar uma parada favorita</string>
     <string name="promo_notifications_step2">Defina sua própria programação</string>
     <string name="rail_defect">Defeito nos trilhos</string>

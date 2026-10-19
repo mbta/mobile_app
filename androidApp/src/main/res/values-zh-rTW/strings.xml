@@ -314,7 +314,7 @@
     <string name="promo_favorites_body">現在將您常用的網站儲存到&lt;b&gt;一個便捷位置&lt;/b&gt;。</string>
     <string name="promo_favorites_header">新增您的我的最愛</string>
     <string name="promo_notifications_body">出行前我們將為您推播各類營運異常資訊！</string>
-    <string name="promo_notifications_header">立即開啟營運變動通知</string>
+    <string name="promo_notifications_header">Get disruption notifications</string>
     <string name="promo_notifications_step1">新增收藏網站</string>
     <string name="promo_notifications_step2">自訂行程規劃</string>
     <string name="rail_defect">軌道缺陷</string>

@@ -317,7 +317,7 @@
     <string name="promo_favorites_body">Enregistrez vos arrêts fréquents dans &lt;b&gt;un seul endroit pratique&lt;/b&gt;.</string>
     <string name="promo_favorites_header">Ajouter à vos favoris</string>
     <string name="promo_notifications_body">Nous vous informerons des éventuelles perturbations avant votre départ !</string>
-    <string name="promo_notifications_header">Recevez désormais des notifications de perturbation</string>
+    <string name="promo_notifications_header">Get disruption notifications</string>
     <string name="promo_notifications_step1">Ajouter un arrêt favori</string>
     <string name="promo_notifications_step2">Définissez votre propre horaire</string>
     <string name="rail_defect">Défaut sur les rails</string>
