@@ -18,7 +18,7 @@ public enum class OnboardingScreen {
             Location -> true
             StationAccessibility -> true
             HideMaps -> accessibilityStatus.isScreenReaderEnabled()
-            NotificationsBeta -> settings[Settings.Notifications] == true
-            Feedback -> true
+            NotificationsBeta -> true
+            Feedback -> false
         }
 }

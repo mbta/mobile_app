@@ -15379,6 +15379,7 @@
       }
     },
     "Now get disruption notifications" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {

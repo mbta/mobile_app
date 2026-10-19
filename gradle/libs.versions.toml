@@ -22,7 +22,7 @@ compose-material-icons = "1.7.8"
 compose-placeholder-material3= "1.0.12"
 compose-shimmer= "1.5.0"
 # changelog: https://github.com/CycloneDX/cyclonedx-gradle-plugin/releases
-cyclonedx = "3.4.1"
+cyclonedx = "3.5.0"
 # changelog: https://developer.android.com/jetpack/androidx/releases/datastore
 cyclonedxCoreJava = "13.2.0"
 datastorePreferencesCore = "1.2.1"
@@ -42,7 +42,7 @@ lottieCompose = "6.7.1"
 # changelog: https://github.com/mapbox/mapbox-maps-android/blob/main/CHANGELOG.md
 mapbox = "11.23.0"
 mapboxTurf = "7.10.0"
-mokkery = "3.5.0"
+mokkery = "3.5.1"
 molecule = "2.2.0"
 okhttp = "5.5.0"
 okio = "3.18.2"
