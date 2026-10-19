@@ -26,7 +26,7 @@ public interface INotificationSettingsViewModel {
 
     public fun setPresetsEnabledFlag(enabled: Boolean)
 
-    public fun setCustomWindows(windows: List<Window>)
+    public fun setWindows(windows: List<Window>)
 
     public fun addPlaceholderWindow()
 
@@ -55,7 +55,7 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
 
         public data class SetPresetsEnabledFlag(val enabled: Boolean) : Event()
 
-        public data class SetCustomWindows(val windows: List<Notifications.Window>) : Event()
+        public data class SetWindows(val windows: List<Notifications.Window>) : Event()
 
         public data object AddPlaceholderWindow : Event()
 
@@ -113,8 +113,7 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
 
                     settings = Notifications(enabled = event.enabled, windows = windows)
                 }
-
-                is Event.SetCustomWindows -> {
+                is Event.SetWindows -> {
                     settings = Notifications(enabled = enabled, windows = event.windows)
                     customPreset = event.windows
                 }
@@ -122,6 +121,9 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
                     now = event.now
                 }
                 is Event.SetPreset -> {
+                    val daysOfWeek =
+                        settings?.windows?.firstOrNull()?.daysOfWeek
+                            ?: Window.defaultDaysOfWeek(now)
                     settings =
                         if (event.preset == null) {
                             val windows = customPreset ?: listOf(Window.customFromCurrentTime(now))
@@ -134,7 +136,7 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
                                         Window(
                                             event.preset.startTime,
                                             event.preset.endTime,
-                                            Window.defaultDaysOfWeek(now),
+                                            daysOfWeek,
                                         )
                                     ),
                             )
@@ -196,8 +198,8 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
         fireEvent(Event.SetPresetsEnabledFlag(enabled))
     }
 
-    override fun setCustomWindows(windows: List<FavoriteSettings.Notifications.Window>) {
-        fireEvent(Event.SetCustomWindows(windows))
+    override fun setWindows(windows: List<FavoriteSettings.Notifications.Window>) {
+        fireEvent(Event.SetWindows(windows))
     }
 
     override fun addPlaceholderWindow() {
@@ -223,7 +225,7 @@ public class MockNotificationSettingsViewModel(
     public var onLoadSavedSettings: (Notifications?) -> Unit = {}
     public var onSavedSettings: () -> Unit = {}
     public var onSetEnabled: (Boolean) -> Unit = {}
-    public var onSetCustomWindows: (List<FavoriteSettings.Notifications.Window>) -> Unit = {}
+    public var onSetWindows: (List<FavoriteSettings.Notifications.Window>) -> Unit = {}
     public var onSetPreset: (Preset?) -> Unit = {}
     public var onSetNow: (EasternTimeInstant) -> Unit = {}
 
@@ -241,8 +243,8 @@ public class MockNotificationSettingsViewModel(
 
     override fun setPresetsEnabledFlag(enabled: Boolean) {}
 
-    override fun setCustomWindows(windows: List<FavoriteSettings.Notifications.Window>) {
-        onSetCustomWindows(windows)
+    override fun setWindows(windows: List<FavoriteSettings.Notifications.Window>) {
+        onSetWindows(windows)
     }
 
     override fun addPlaceholderWindow() {}

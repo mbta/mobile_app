@@ -131,7 +131,7 @@ class NotificationSettingsViewModelTest {
         val customWindows =
             listOf(
                 Window(
-                    startTime = LocalTime(9, 0),
+                    startTime = LocalTime(8, 0),
                     endTime = LocalTime(11, 0),
                     daysOfWeek = setOf(DayOfWeek.MONDAY),
                 )
@@ -140,7 +140,7 @@ class NotificationSettingsViewModelTest {
         testViewModelFlow(viewModel).test {
             awaitItem()
 
-            viewModel.setCustomWindows(customWindows)
+            viewModel.setWindows(customWindows)
             assertWindowsEquals(customWindows, awaitItem().settings?.windows)
 
             viewModel.setNow(EasternTimeInstant(2026, Month.SEPTEMBER, 2, 8, 0))
@@ -152,7 +152,7 @@ class NotificationSettingsViewModelTest {
                     Window(
                         startTime = Preset.Morning.startTime,
                         endTime = Preset.Morning.endTime,
-                        daysOfWeek = Window.weekdays,
+                        daysOfWeek = setOf(DayOfWeek.MONDAY),
                     )
                 ),
                 presetState.settings?.windows,
@@ -208,7 +208,7 @@ class NotificationSettingsViewModelTest {
                     )
                 )
             assertEquals(emptyList(), state.settings?.windows)
-            viewModel.setCustomWindows(customWindows)
+            viewModel.setWindows(customWindows)
 
             assertEquals(customWindows, awaitItem().settings?.windows)
             viewModel.loadSavedSettings(null)
@@ -236,7 +236,7 @@ class NotificationSettingsViewModelTest {
         testViewModelFlow(viewModel).test {
             awaitItem()
 
-            viewModel.setCustomWindows(customWindows)
+            viewModel.setWindows(customWindows)
             assertEquals(customWindows, awaitItem().settings?.windows)
 
             viewModel.addPlaceholderWindow()

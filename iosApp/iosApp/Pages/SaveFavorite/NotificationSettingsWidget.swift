@@ -29,7 +29,7 @@ struct NotificationSettingsWidget: View {
                     state: vmState,
                     setEnabled: { enabled in vm.setEnabled(enabled: enabled) },
                     setPreset: { preset in vm.setPreset(preset: preset) },
-                    setCustomWindows: { custom in vm.setCustomWindows(windows: custom) },
+                    setWindows: { custom in vm.setWindows(windows: custom) },
                     addPlaceholderWindow: { vm.addPlaceholderWindow() },
                     notificationPermissionManager: notificationPermissionManager
                 )
@@ -49,7 +49,7 @@ struct NotificationSettingsWidgetPresentationView: View {
     let state: NotificationSettingsViewModel.State
     var setEnabled: (Bool) -> Void = { _ in }
     var setPreset: (Preset?) -> Void = { _ in }
-    var setCustomWindows: ([FavoriteSettings.NotificationsWindow]) -> Void = { _ in }
+    var setWindows: ([FavoriteSettings.NotificationsWindow]) -> Void = { _ in }
     var addPlaceholderWindow: () -> Void = {}
 
     var notificationPermissionManager: INotificationPermissionManager
@@ -108,11 +108,11 @@ struct NotificationSettingsWidgetPresentationView: View {
                                         if let windowIndex {
                                             newWindows[windowIndex] = newWindow
                                         }
-                                        setCustomWindows(newWindows)
+                                        setWindows(newWindows)
                                     },
                                     deleteWindow: settings.windows.count > 1 ? {
                                         let nextWindows = settings.windows.filter { $0.id != window.id }
-                                        setCustomWindows(nextWindows)
+                                        setWindows(nextWindows)
                                     } : nil
                                 )
                             }
@@ -517,7 +517,7 @@ struct NotificationSettingsWidget_Previews: PreviewProvider {
                 notificationPermissionManager: MockNotificationPermissionManager()
             ).onAppear {
                 vm.setEnabled(enabled: true)
-                vm.setCustomWindows(windows: windows)
+                vm.setWindows(windows: windows)
             }
             .enableInjection()
         }

@@ -378,7 +378,7 @@ class NotificationSettingsWidgetTest : KoinTest {
 
         composeTestRule.onNodeWithText("Morning").performClick()
         composeTestRule.onNodeWithText("Morning").assertIsSelected()
-        composeTestRule.onNodeWithText("Sunday").assertIsOff()
+        composeTestRule.onNodeWithText("Sunday").assertIsOn()
 
         composeTestRule.onNodeWithText("Custom").performClick()
         composeTestRule.onNodeWithText("Custom").assertIsSelected()

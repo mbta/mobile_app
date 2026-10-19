@@ -209,11 +209,11 @@ fun NotificationSettingsWidget(
                                 val windows = settings.windows.toMutableList()
                                 val index = windows.indexOf(window)
                                 if (index != -1) windows[index] = newWindow
-                                viewModel.setCustomWindows(windows)
+                                viewModel.setWindows(windows)
                             },
                             deleteWindow =
                                 {
-                                        viewModel.setCustomWindows(settings.windows - window)
+                                        viewModel.setWindows(settings.windows - window)
                                     }
                                     .takeIf { settings.windows.size > 1 },
                         )
@@ -685,14 +685,14 @@ private fun NotificationSettingsWidgetPreview() {
     val enabledNotificationSettingsViewModel: INotificationSettingsViewModel by lazy {
         NotificationSettingsViewModel(MockSentryRepository()).apply {
             setEnabled(true)
-            setCustomWindows(listOf(Window.default(emptyList(), true, EasternTimeInstant.now())))
+            setWindows(listOf(Window.default(emptyList(), true, EasternTimeInstant.now())))
         }
     }
 
     val serviceDayNotificationSettingsViewModel: INotificationSettingsViewModel by lazy {
         NotificationSettingsViewModel(MockSentryRepository()).apply {
             setEnabled(true)
-            setCustomWindows(
+            setWindows(
                 listOf(
                     Window(
                         startTime = FavoriteSettings.Notifications.serviceBoundary,

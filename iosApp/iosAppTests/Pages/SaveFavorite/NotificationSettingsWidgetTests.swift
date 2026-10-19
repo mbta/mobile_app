@@ -95,7 +95,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
 
         let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
-            setCustomWindows: { customWindows = $0 },
+            setWindows: { customWindows = $0 },
             notificationPermissionManager: MockNotificationPermissionManager()
         ).withFixedSettings([:])
 
@@ -129,7 +129,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
 
         let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
-            setCustomWindows: { customWindows = $0 },
+            setWindows: { customWindows = $0 },
             notificationPermissionManager: MockNotificationPermissionManager()
         )
         .withFixedSettings([:])
@@ -161,7 +161,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
 
         let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
-            setCustomWindows: { customWindows = $0 },
+            setWindows: { customWindows = $0 },
             notificationPermissionManager: MockNotificationPermissionManager()
         ).withFixedSettings([:])
 
@@ -182,7 +182,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
 
         let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
-            setCustomWindows: { customWindows = $0 },
+            setWindows: { customWindows = $0 },
             notificationPermissionManager: MockNotificationPermissionManager()
         ).withFixedSettings([:])
 
