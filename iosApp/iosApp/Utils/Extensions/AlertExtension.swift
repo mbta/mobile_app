@@ -87,7 +87,6 @@ extension Alert.Cause {
             )
         case .highWinds: NSLocalizedString("high winds", comment: "Alert cause, used in 'Delays due to [cause]'")
         case .holiday: NSLocalizedString("holiday", comment: "Alert cause, used in 'Delays due to [cause]'")
-        case .hurricane: NSLocalizedString("hurricane", comment: "Alert cause, used in 'Delays due to [cause]'")
         case .iceInHarbor: NSLocalizedString("ice in harbor", comment: "Alert cause, used in 'Delays due to [cause]'")
         case .maintenance: NSLocalizedString("maintenance", comment: "Alert cause, used in 'Delays due to [cause]'")
         case .mechanicalIssue: NSLocalizedString(
@@ -103,13 +102,17 @@ extension Alert.Cause {
                 comment: "Alert cause, used in 'Delays due to [cause]'"
             )
         case .parade: NSLocalizedString("parade", comment: "Alert cause, used in 'Delays due to [cause]'")
-        case .policeAction: NSLocalizedString("police action", comment: "Alert cause, used in 'Delays due to [cause]'")
         case .policeActivity: NSLocalizedString(
                 "police activity",
                 comment: "Alert cause, used in 'Delays due to [cause]'"
             )
         case .powerProblem: NSLocalizedString("power problem", comment: "Alert cause, used in 'Delays due to [cause]'")
+        case .presenceOfWhales: NSLocalizedString(
+                "presence of whales",
+                comment: "Alert cause, used in 'Delays due to [cause]'"
+            )
         case .railDefect: NSLocalizedString("rail defect", comment: "Alert cause, used in 'Delays due to [cause]'")
+        case .roughSeas: NSLocalizedString("rough seas", comment: "Alert cause, used in 'Delays due to [cause]'")
         case .severeWeather: NSLocalizedString(
                 "severe weather",
                 comment: "Alert cause, used in 'Delays due to [cause]'"
@@ -152,6 +155,15 @@ extension Alert.Cause {
                 "unruly passenger",
                 comment: "Alert cause, used in 'Delays due to [cause]'"
             )
+        case .utilityWork: NSLocalizedString("utility work", comment: "Alert cause, used in 'Delays due to [cause]'")
+        case .vesselSubstitution: NSLocalizedString(
+                "vessel substitution",
+                comment: "Alert cause, used in 'Delays due to [cause]'"
+            )
+        case .vesselTraffic: NSLocalizedString(
+                "vessel traffic",
+                comment: "Alert cause, used in 'Delays due to [cause]'"
+            )
         case .weather: NSLocalizedString("weather", comment: "Alert cause, used in 'Delays due to [cause]'")
         default: nil
         }
@@ -188,17 +200,17 @@ extension Alert.Cause {
         case .heavyRidership: NSLocalizedString("Heavy Ridership", comment: "Possible alert cause")
         case .highWinds: NSLocalizedString("High Winds", comment: "Possible alert cause")
         case .holiday: NSLocalizedString("Holiday", comment: "Possible alert cause")
-        case .hurricane: NSLocalizedString("Hurricane", comment: "Possible alert cause")
         case .iceInHarbor: NSLocalizedString("Ice In Harbor", comment: "Possible alert cause")
         case .maintenance: NSLocalizedString("Maintenance", comment: "Possible alert cause")
         case .mechanicalIssue: NSLocalizedString("Mechanical Issue", comment: "Possible alert cause")
         case .mechanicalProblem: NSLocalizedString("Mechanical Problem", comment: "Possible alert cause")
         case .medicalEmergency: NSLocalizedString("Medical Emergency", comment: "Possible alert cause")
         case .parade: NSLocalizedString("Parade", comment: "Possible alert cause")
-        case .policeAction: NSLocalizedString("Police Action", comment: "Possible alert cause")
         case .policeActivity: NSLocalizedString("Police Activity", comment: "Possible alert cause")
         case .powerProblem: NSLocalizedString("Power Problem", comment: "Possible alert cause")
+        case .presenceOfWhales: NSLocalizedString("Presence of Whales", comment: "Possible alert cause")
         case .railDefect: NSLocalizedString("Rail Defect", comment: "Possible alert cause")
+        case .roughSeas: NSLocalizedString("Rough Seas", comment: "Possible alert cause")
         case .severeWeather: NSLocalizedString("Severe Weather", comment: "Possible alert cause")
         case .signalIssue: NSLocalizedString("Signal Issue", comment: "Possible alert cause")
         case .signalProblem: NSLocalizedString("Signal Problem", comment: "Possible alert cause")
@@ -217,6 +229,9 @@ extension Alert.Cause {
         case .traffic: NSLocalizedString("Traffic", comment: "Possible alert cause")
         case .trainTraffic: NSLocalizedString("Train Traffic", comment: "Possible alert cause")
         case .unrulyPassenger: NSLocalizedString("Unruly Passenger", comment: "Possible alert cause")
+        case .utilityWork: NSLocalizedString("Utility Work", comment: "Possible alert cause")
+        case .vesselSubstitution: NSLocalizedString("Vessel Substitution", comment: "Possible alert cause")
+        case .vesselTraffic: NSLocalizedString("Vessel Traffic", comment: "Possible alert cause")
         case .weather: NSLocalizedString("Weather", comment: "Possible alert cause")
         default: nil
         }

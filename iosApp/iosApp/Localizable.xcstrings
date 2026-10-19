@@ -12259,100 +12259,6 @@
         }
       }
     },
-    "hurricane" : {
-      "comment" : "Alert cause, used in 'Delays due to [cause]'",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "huracán"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ouragan"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "siklòn"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "furacão"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "cơn bão"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "飓风"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "颶風"
-          }
-        }
-      }
-    },
-    "Hurricane" : {
-      "comment" : "Possible alert cause",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Huracán"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ouragan"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Siklòn"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Furacão"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bão"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "飓风"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "颶風"
-          }
-        }
-      }
-    },
     "ice in harbor" : {
       "comment" : "Alert cause, used in 'Delays due to [cause]'",
       "localizations" : {
@@ -16135,100 +16041,6 @@
         }
       }
     },
-    "police action" : {
-      "comment" : "Alert cause, used in 'Delays due to [cause]'",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "acción policial"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "action policière"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "aksyon lapolis"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ação policial"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "hành động của cảnh sát"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "警方行动"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "警方行動"
-          }
-        }
-      }
-    },
-    "Police Action" : {
-      "comment" : "Possible alert cause",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Acción policial"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Intervention policière"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aksyon Polis"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ação policial"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hành động của cảnh sát"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "警方行动"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "警方行動"
-          }
-        }
-      }
-    },
     "police activity" : {
       "comment" : "Alert cause, used in 'Delays due to [cause]'",
       "localizations" : {
@@ -16604,6 +16416,12 @@
           }
         }
       }
+    },
+    "presence of whales" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'"
+    },
+    "Presence of Whales" : {
+      "comment" : "Possible alert cause"
     },
     "Privacy Policy" : {
       "comment" : "Label for a More page link to the MBTA.com privacy policy",
@@ -17451,6 +17269,12 @@
           }
         }
       }
+    },
+    "rough seas" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'"
+    },
+    "Rough Seas" : {
+      "comment" : "Possible alert cause"
     },
     "Route Search" : {
       "comment" : "A setting on the More page to display routes in search (only visible for developers)",
@@ -24134,6 +23958,12 @@
         }
       }
     },
+    "utility work" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'"
+    },
+    "Utility Work" : {
+      "comment" : "Possible alert cause"
+    },
     "version %@" : {
       "comment" : "Version number label on the More page",
       "localizations" : {
@@ -24233,6 +24063,18 @@
           }
         }
       }
+    },
+    "vessel substitution" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'"
+    },
+    "Vessel Substitution" : {
+      "comment" : "Possible alert cause"
+    },
+    "vessel traffic" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'"
+    },
+    "Vessel Traffic" : {
+      "comment" : "Possible alert cause"
     },
     "View details" : {
       "comment" : "Button that shows more informaton about an alert",
