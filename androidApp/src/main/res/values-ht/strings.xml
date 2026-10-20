@@ -134,7 +134,7 @@
         <item quantity="one">Arè sa a gen %1$d asansè fèmen</item>
         <item quantity="other">Arè sa a gen %1$d asansè ki fèmen</item>
     </plurals>
-    <string name="en_dash_range">%1$s—%2$s</string>
+    <string name="en_dash_range">%1$s%2$s</string>
     <string name="end">Fen</string>
     <string name="end_of_service">fen sèvis</string>
     <string name="error_loading_data">Erè nan chajman done</string>
@@ -274,6 +274,7 @@
     <string name="not_accessible_stop_card">Estasyon sa a pa aksesib</string>
     <string name="notice">Avi</string>
     <string name="notifications_beta_toggle_label">Notifikasyon Entèripsyon</string>
+    <string name="notification_settings_empty_state">Nou ka voye notifikasyon ba ou konsènan pwoblèm sou wout sa a anvan ou ale.</string>
     <string name="notifications_enabled">notifikasyon yo pèmèt</string>
     <string name="notifications_favorites_hint">Kounye a, &lt;u&gt;modifye favori ou yo&lt;/u&gt; pou resevwa notifikasyon entèripsyon yo</string>
     <string name="notifications_settings_link">Pèmèt avi Notifikasyon nan Anviwònman yo</string>
@@ -317,7 +318,7 @@
     <string name="promo_favorites_body">Kounye a tout wout ou fè souvan yo sere &lt;b&gt;fasil nan yon sèl kote&lt;/b&gt;.</string>
     <string name="promo_favorites_header">Ajoute nan Preferans ou yo</string>
     <string name="promo_notifications_body">N ap di w nenpòt pwoblèm anvan w ale!</string>
-    <string name="promo_notifications_header">Kounye a resevwa notifikasyon pou entèripsyon</string>
+    <string name="promo_notifications_header">Jwenn notifikasyon anka pwoblèm</string>
     <string name="promo_notifications_step1">Ajoute yon arè ou pi renmen</string>
     <string name="promo_notifications_step2">Fikse pwòp orè ou</string>
     <string name="rail_defect">Defo nan ray tren yo</string>

@@ -131,7 +131,7 @@
     <plurals name="elevator_closure_count_accessibility_description">
         <item quantity="other">本站有%1$d部電梯 已關閉</item>
     </plurals>
-    <string name="en_dash_range">%1$s—%2$s</string>
+    <string name="en_dash_range">%1$s %2$s</string>
     <string name="end">結束日期</string>
     <string name="end_of_service">服務結束</string>
     <string name="error_loading_data">載入資料時發生錯誤</string>
@@ -271,6 +271,7 @@
     <string name="not_accessible_stop_card">此車站不適合輪椅通行</string>
     <string name="notice">通知</string>
     <string name="notifications_beta_toggle_label">營運變動通知</string>
+    <string name="notification_settings_empty_state">我們可以在您出發前向您發送有關此路線可能出現問題的推播通知。</string>
     <string name="notifications_enabled">通知已開啟</string>
     <string name="notifications_favorites_hint">立即&lt;u&gt;編輯您的收藏&lt;/u&gt;以接收營運變動通知</string>
     <string name="notifications_settings_link">在「設定」中開啟「通知」許可權</string>
@@ -314,7 +315,7 @@
     <string name="promo_favorites_body">現在將您常用的網站儲存到&lt;b&gt;一個便捷位置&lt;/b&gt;。</string>
     <string name="promo_favorites_header">新增您的我的最愛</string>
     <string name="promo_notifications_body">出行前我們將為您推播各類營運異常資訊！</string>
-    <string name="promo_notifications_header">立即開啟營運變動通知</string>
+    <string name="promo_notifications_header">接收營運變動通知</string>
     <string name="promo_notifications_step1">新增收藏網站</string>
     <string name="promo_notifications_step2">自訂行程規劃</string>
     <string name="rail_defect">軌道缺陷</string>
