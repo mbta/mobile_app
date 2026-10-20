@@ -165,16 +165,17 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
                 is Event.SetPresetsEnabledFlag -> presetsEnabledFlag = event.enabled
                 is Event.AddPlaceholderWindow -> {
                     val existingWindows = state.settings?.windows ?: emptyList()
+                    val newWindows =
+                        existingWindows + Window.default(existingWindows, presetsEnabledFlag, now)
                     state =
                         State(
                             Notifications(
                                 enabled = enabled,
-                                windows =
-                                    existingWindows +
-                                        Window.default(existingWindows, presetsEnabledFlag, now),
+                                windows = newWindows,
                             ),
                             null,
                         )
+                    customPreset = newWindows
                 }
 
                 is Event.LoadSavedSettings -> {

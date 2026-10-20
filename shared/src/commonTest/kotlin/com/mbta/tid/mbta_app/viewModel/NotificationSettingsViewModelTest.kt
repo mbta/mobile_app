@@ -296,6 +296,35 @@ class NotificationSettingsViewModelTest {
     }
 
     @Test
+    fun addPlaceholderThenPresetAndBackRestoresPlaceholder() = runTest {
+        val viewModel = NotificationSettingsViewModel(MockSentryRepository())
+        val customWindows =
+            listOf(
+                Window(
+                    startTime = LocalTime(9, 0),
+                    endTime = LocalTime(11, 0),
+                    daysOfWeek = setOf(DayOfWeek.MONDAY),
+                )
+            )
+
+        testViewModelFlow(viewModel).test {
+            awaitItem()
+
+            viewModel.setWindows(customWindows)
+            assertEquals(customWindows, awaitItem().settings?.windows)
+
+            viewModel.addPlaceholderWindow()
+
+            val state = awaitItem()
+            assertEquals(2, state.settings?.windows?.size)
+            viewModel.setPreset(Preset.Evening)
+            awaitItem()
+            viewModel.setPreset(null)
+            assertEquals(2, state.settings?.windows?.size)
+        }
+    }
+
+    @Test
     fun setPresetUsesWeekDaysWhenNowIsWeekday() = runTest {
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
 
