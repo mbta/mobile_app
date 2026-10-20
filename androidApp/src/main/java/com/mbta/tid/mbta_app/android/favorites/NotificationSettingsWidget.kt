@@ -310,7 +310,7 @@ private fun WindowWidget(
         }
         Column(
             Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
-                .padding(if (deleteWindow == null) 12.dp else 8.dp)
+                .padding(horizontal = if (deleteWindow == null) 12.dp else 8.dp)
                 .padding(top = 8.dp, bottom = 12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
