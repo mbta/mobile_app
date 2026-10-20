@@ -146,8 +146,6 @@ fun PresetWindowSelector(
     }
 }
 
-//
-
 @Composable
 fun PresetButton(
     isSelected: Boolean,
