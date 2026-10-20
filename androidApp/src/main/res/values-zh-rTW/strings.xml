@@ -131,7 +131,7 @@
     <plurals name="elevator_closure_count_accessibility_description">
         <item quantity="other">本站有%1$d部電梯 已關閉</item>
     </plurals>
-    <string name="en_dash_range">%1$s – %2$s</string>
+    <string name="en_dash_range">%1$s—%2$s</string>
     <string name="end">結束日期</string>
     <string name="end_of_service">服務結束</string>
     <string name="error_loading_data">載入資料時發生錯誤</string>
@@ -388,7 +388,7 @@
     <string name="start">開始日期</string>
     <string name="start_of_service">服務開始</string>
     <string name="start_to_end_of_service">從服務開始到結束</string>
-    <string name="start_to_end_time">%1$s – %2$s</string>
+    <string name="start_to_end_time">%1$s—%2$s</string>
     <string name="starting_tomorrow_until_further_notice">自明日起，直至另行通知</string>
     <string name="station_closed">車站已關閉</string>
     <string name="station_closed_sentence_case">車站已關閉</string>

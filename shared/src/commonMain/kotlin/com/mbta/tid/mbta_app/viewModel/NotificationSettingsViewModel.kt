@@ -78,8 +78,8 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
     override fun runLogic(): State {
         var now: EasternTimeInstant by remember { mutableStateOf(EasternTimeInstant.now()) }
 
-        var settings: Notifications? by remember {
-            mutableStateOf(null)
+        var state: State by remember {
+            mutableStateOf(State(null, null))
         }
 
         var lastSavedSettings: Notifications? by remember {
@@ -94,13 +94,13 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
         }
 
         EventSink(eventHandlingTimeout = 1.seconds, sentryRepository = sentryRepository) { event ->
-            val enabled = settings?.enabled ?: false
+            val enabled = state.settings?.enabled ?: false
 
             when (event) {
                 is Event.SetEnabled -> {
                     val windows =
                         if (!enabled && event.enabled) {
-                            (settings?.windows ?: emptyList())
+                            (state.settings?.windows ?: emptyList())
                                 .ifEmpty {
                                     lastSavedSettings?.windows ?: emptyList()
                                 }
@@ -108,23 +108,41 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
                                     listOf(Window.default(emptyList(), presetsEnabledFlag, now))
                                 }
                         } else {
-                            settings?.windows ?: emptyList()
+                            state.settings?.windows ?: emptyList()
                         }
 
-                    settings = Notifications(enabled = event.enabled, windows = windows)
+                    state =
+                        State(
+                            Notifications(enabled = event.enabled, windows = windows),
+                            Preset.selected(windows),
+                        )
                 }
                 is Event.SetWindows -> {
-                    settings = Notifications(enabled = enabled, windows = event.windows)
-                    customPreset = event.windows
+                    state =
+                        State(
+                            Notifications(enabled = enabled, windows = event.windows),
+                            Preset.selected(event.windows),
+                        )
+                    customPreset =
+                        if (event.windows.size == 1 && Preset.selected(event.windows) != null) {
+                            // customized only the days of the week of the windows, so still use the
+                            // default custom window time
+                            listOf(
+                                Window.customFromCurrentTime(now)
+                                    .copy(daysOfWeek = event.windows.first().daysOfWeek)
+                            )
+                        } else {
+                            event.windows
+                        }
                 }
                 is Event.SetNow -> {
                     now = event.now
                 }
                 is Event.SetPreset -> {
                     val daysOfWeek =
-                        settings?.windows?.firstOrNull()?.daysOfWeek
+                        state.settings?.windows?.firstOrNull()?.daysOfWeek
                             ?: Window.defaultDaysOfWeek(now)
-                    settings =
+                    val settings =
                         if (event.preset == null) {
                             val windows = customPreset ?: listOf(Window.customFromCurrentTime(now))
                             Notifications(enabled = enabled, windows = windows)
@@ -141,17 +159,21 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
                                     ),
                             )
                         }
+                    state = State(settings, event.preset)
                 }
 
                 is Event.SetPresetsEnabledFlag -> presetsEnabledFlag = event.enabled
                 is Event.AddPlaceholderWindow -> {
-                    val existingWindows = settings?.windows ?: emptyList()
-                    settings =
-                        Notifications(
-                            enabled = enabled,
-                            windows =
-                                existingWindows +
-                                    Window.default(existingWindows, presetsEnabledFlag, now),
+                    val existingWindows = state.settings?.windows ?: emptyList()
+                    state =
+                        State(
+                            Notifications(
+                                enabled = enabled,
+                                windows =
+                                    existingWindows +
+                                        Window.default(existingWindows, presetsEnabledFlag, now),
+                            ),
+                            null,
                         )
                 }
 
@@ -163,22 +185,21 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
                         } else {
                             null
                         }
-                    settings = event.settings
+                    state =
+                        State(
+                            event.settings,
+                            Preset.selected(event.settings?.windows ?: emptyList()),
+                        )
                 }
 
                 Event.SavedSettings -> {
-                    if (settings?.enabled == true) {
-                        lastSavedSettings = settings
+                    if (state.settings?.enabled == true) {
+                        lastSavedSettings = state.settings
                     }
-                    settings = null
+                    state = State(null, null)
                 }
             }
         }
-
-        val state =
-            remember(settings) {
-                State(settings, Preset.selected(settings?.windows ?: emptyList()))
-            }
         return state
     }
 

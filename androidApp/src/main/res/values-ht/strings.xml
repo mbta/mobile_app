@@ -134,7 +134,7 @@
         <item quantity="one">Arè sa a gen %1$d asansè fèmen</item>
         <item quantity="other">Arè sa a gen %1$d asansè ki fèmen</item>
     </plurals>
-    <string name="en_dash_range">%1$s – %2$s</string>
+    <string name="en_dash_range">%1$s—%2$s</string>
     <string name="end">Fen</string>
     <string name="end_of_service">fen sèvis</string>
     <string name="error_loading_data">Erè nan chajman done</string>
@@ -391,7 +391,7 @@
     <string name="start">Kòmanse</string>
     <string name="start_of_service">kòmansman sèvis</string>
     <string name="start_to_end_of_service">Soti nan kòmansman rive nan fen sèvis la</string>
-    <string name="start_to_end_time">%1$s – %2$s</string>
+    <string name="start_to_end_time">%1$s—%2$s</string>
     <string name="starting_tomorrow_until_further_notice">Apati demen jiskaske nou jwenn plis avi</string>
     <string name="station_closed">Estasyon Fèmen</string>
     <string name="station_closed_sentence_case">Estasyon fèmen</string>

@@ -180,9 +180,48 @@ class NotificationSettingsViewModelTest {
             val state = awaitItem()
             assertEquals(emptyList(), state.settings?.windows)
             viewModel.setPreset(null)
+            val newState = awaitItem()
+            assertEquals(null, newState.selectedPreset)
             assertWindowsEquals(
                 listOf(Window.customFromCurrentTime(now)),
-                awaitItem().settings?.windows,
+                newState.settings?.windows,
+            )
+        }
+    }
+
+    @Test
+    fun testDefaultCustomWindowsWhenChangedDaysOfWeek() = runTest {
+        val viewModel = NotificationSettingsViewModel(MockSentryRepository())
+        val now = EasternTimeInstant(2026, Month.SEPTEMBER, 3, 12, 30)
+
+        testViewModelFlow(viewModel).test {
+            awaitItem()
+            viewModel.setNow(now)
+            viewModel.setPresetsEnabledFlag(true)
+            viewModel.loadSavedSettings(Notifications.disabled)
+
+            val state = awaitItem()
+            assertEquals(emptyList(), state.settings?.windows)
+            viewModel.setPreset(Preset.Morning)
+            awaitItem()
+            viewModel.setWindows(
+                listOf(
+                    Window(
+                        startTime = Preset.Morning.startTime,
+                        endTime = Preset.Morning.endTime,
+                        daysOfWeek = setOf(DayOfWeek.SUNDAY),
+                    )
+                )
+            )
+            awaitItem()
+            viewModel.setPreset(null)
+            val newState = awaitItem()
+            assertEquals(null, newState.selectedPreset)
+            assertWindowsEquals(
+                listOf(
+                    Window.customFromCurrentTime(now).copy(daysOfWeek = setOf(DayOfWeek.SUNDAY))
+                ),
+                newState.settings?.windows,
             )
         }
     }

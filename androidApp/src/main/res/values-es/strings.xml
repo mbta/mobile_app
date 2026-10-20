@@ -134,7 +134,7 @@
         <item quantity="one">Esta parada tiene %1$d ascensor cerrado</item>
         <item quantity="other">Esta parada tiene %1$d ascensores cerrados</item>
     </plurals>
-    <string name="en_dash_range">%1$s – %2$s</string>
+    <string name="en_dash_range">%1$s—%2$s</string>
     <string name="end">Fin</string>
     <string name="end_of_service">fin del servicio</string>
     <string name="error_loading_data">Error al cargar datos</string>
@@ -391,7 +391,7 @@
     <string name="start">Inicio</string>
     <string name="start_of_service">inicio del servicio</string>
     <string name="start_to_end_of_service">Desde el inicio hasta el final del servicio</string>
-    <string name="start_to_end_time">%1$s – %2$s</string>
+    <string name="start_to_end_time">%1$s—%2$s</string>
     <string name="starting_tomorrow_until_further_notice">A partir de mañana y hasta nuevo aviso</string>
     <string name="station_closed">Estación cerrada</string>
     <string name="station_closed_sentence_case">Estación cerrada</string>

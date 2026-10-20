@@ -131,7 +131,7 @@
     <plurals name="elevator_closure_count_accessibility_description">
         <item quantity="other">%1$d thang máy đã đóng</item>
     </plurals>
-    <string name="en_dash_range">%1$s – %2$s</string>
+    <string name="en_dash_range">%1$s—%2$s</string>
     <string name="end">Kết thúc</string>
     <string name="end_of_service">kết thúc dịch vụ</string>
     <string name="error_loading_data">Lỗi khi tải dữ liệu</string>
@@ -388,7 +388,7 @@
     <string name="start">Bắt đầu</string>
     <string name="start_of_service">bắt đầu dịch vụ</string>
     <string name="start_to_end_of_service">Từ khi bắt đầu đến khi kết thúc dịch vụ</string>
-    <string name="start_to_end_time">%1$s – %2$s</string>
+    <string name="start_to_end_time">%1$s—%2$s</string>
     <string name="starting_tomorrow_until_further_notice">Bắt đầu từ ngày mai cho đến khi có thông báo mới</string>
     <string name="station_closed">Nhà ga/trạm dừng đóng cửa</string>
     <string name="station_closed_sentence_case">Nhà ga/trạm dừng đóng cửa</string>
