@@ -20252,6 +20252,7 @@
     },
     "Station Closed" : {
       "comment" : "Possible alert effect",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
