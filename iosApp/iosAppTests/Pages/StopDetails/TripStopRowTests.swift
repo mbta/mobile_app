@@ -349,4 +349,9 @@ final class TripStopRowTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect()
             .find(text: "Shuttle buses from Roxbury Crossing to Green Street through tomorrow"))
     }
+
+    func testTargetedStopIconDotShowsPin() throws {
+        let sut = StopIconDot(iconName: "alert-large-green-suspension", targeted: true)
+        XCTAssertNotNil(try sut.inspect().find(imageName: "stop-pin-indicator"))
+    }
 }

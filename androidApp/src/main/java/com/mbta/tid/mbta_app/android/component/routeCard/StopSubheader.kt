@@ -43,7 +43,8 @@ fun StopSubheader(
     globalData: GlobalResponse?,
 ) {
     val showStationAccessibility =
-        SettingsCache.get(Settings.StationAccessibility) && !globalData.isStopBlocklisted(stop.id)
+        SettingsCache.get(Settings.StationAccessibility) &&
+            !globalData.isStopBlocklisted(stop.parentStationId ?: stop.id)
     val isWheelchairAccessible = stop.isWheelchairAccessible
     val showInaccessible = showStationAccessibility && !isWheelchairAccessible
     val showElevatorAlerts = showStationAccessibility && elevatorAlerts.isNotEmpty()

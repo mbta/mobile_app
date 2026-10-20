@@ -76,7 +76,8 @@ fun StopDetailsUnfilteredRoutesView(
     openModal: (ModalRoutes) -> Unit,
 ) {
     val showStationAccessibility =
-        SettingsCache.get(Settings.StationAccessibility) && !globalData.isStopBlocklisted(stop.id)
+        SettingsCache.get(Settings.StationAccessibility) &&
+            !globalData.isStopBlocklisted(stop.parentStationId ?: stop.id)
     val elevatorAlerts =
         routeCardData.flatMap { it.stopData.flatMap { it.elevatorAlerts } }.distinct()
     val hasAccessibilityWarning = elevatorAlerts.isNotEmpty() || !stop.isWheelchairAccessible

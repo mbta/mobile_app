@@ -16,7 +16,8 @@ struct StopCardStopHeader: View {
 
     @EnvironmentObject var settingsCache: SettingsCache
     var showStationAccessibility: Bool {
-        settingsCache.get(.stationAccessibility) && !globalData.isStopBlocklisted(data.stop.id)
+        settingsCache.get(.stationAccessibility) && !globalData
+            .isStopBlocklisted(data.stop.parentStationId ?? data.stop.id)
     }
 
     var elevatorAlerts: Int { data.elevatorAlerts.count }
