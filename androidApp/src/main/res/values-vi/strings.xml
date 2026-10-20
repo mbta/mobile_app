@@ -131,7 +131,7 @@
     <plurals name="elevator_closure_count_accessibility_description">
         <item quantity="other">%1$d thang máy đã đóng</item>
     </plurals>
-    <string name="en_dash_range">%1$s—%2$s</string>
+    <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">Kết thúc</string>
     <string name="end_of_service">kết thúc dịch vụ</string>
     <string name="error_loading_data">Lỗi khi tải dữ liệu</string>

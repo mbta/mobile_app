@@ -134,7 +134,7 @@
         <item quantity="one">Cet arrêt %1$d ascenseur fermé</item>
         <item quantity="other">Cet arrêt compte %1$d ascenseurs fermés</item>
     </plurals>
-    <string name="en_dash_range">%1$s—%2$s</string>
+    <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">Fin</string>
     <string name="end_of_service">fin de service</string>
     <string name="error_loading_data">Erreur dans le chargement des données</string>

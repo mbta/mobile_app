@@ -134,7 +134,7 @@
         <item quantity="one">Arè sa a gen %1$d asansè fèmen</item>
         <item quantity="other">Arè sa a gen %1$d asansè ki fèmen</item>
     </plurals>
-    <string name="en_dash_range">%1$s—%2$s</string>
+    <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">Fen</string>
     <string name="end_of_service">fen sèvis</string>
     <string name="error_loading_data">Erè nan chajman done</string>
