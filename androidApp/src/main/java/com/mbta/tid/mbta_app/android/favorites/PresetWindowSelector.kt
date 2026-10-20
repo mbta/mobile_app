@@ -98,7 +98,7 @@ fun PresetWindowSelector(
                                 },
                             description =
                                 stringResource(
-                                    R.string.start_to_end_time,
+                                    R.string.en_dash_range,
                                     EasternTimeInstant(
                                             EasternTimeInstant.now().local.date,
                                             preset.startTime,

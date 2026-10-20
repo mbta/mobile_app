@@ -391,7 +391,6 @@
     <string name="start">Commencer</string>
     <string name="start_of_service">début du service</string>
     <string name="start_to_end_of_service">Du début à la fin du service</string>
-    <string name="start_to_end_time">%1$s—%2$s</string>
     <string name="starting_tomorrow_until_further_notice">À compter de demain et jusqu’à nouvel ordre</string>
     <string name="station_closed">Station fermée</string>
     <string name="station_closed_sentence_case">Station fermée</string>
