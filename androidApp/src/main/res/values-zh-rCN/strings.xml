@@ -315,7 +315,7 @@
     <string name="promo_favorites_body">现在将您常用的站点保存到&lt;b&gt;一个便捷位置&lt;/b&gt;。</string>
     <string name="promo_favorites_header">添加您的收藏夹</string>
     <string name="promo_notifications_body">出行前我们将为您推送各类运营异常信息！</string>
-    <string name="promo_notifications_header">立即开启运营变动通知</string>
+    <string name="promo_notifications_header">接收运营变动通知</string>
     <string name="promo_notifications_step1">添加收藏站点</string>
     <string name="promo_notifications_step2">自定义行程规划</string>
     <string name="rail_defect">轨道缺陷</string>
