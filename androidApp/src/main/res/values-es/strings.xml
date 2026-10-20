@@ -134,7 +134,7 @@
         <item quantity="one">Esta parada tiene %1$d ascensor cerrado</item>
         <item quantity="other">Esta parada tiene %1$d ascensores cerrados</item>
     </plurals>
-    <string name="en_dash_range">%1$s—%2$s</string>
+    <string name="en_dash_range">%1$s%2$s</string>
     <string name="end">Fin</string>
     <string name="end_of_service">fin del servicio</string>
     <string name="error_loading_data">Error al cargar datos</string>
@@ -317,7 +317,7 @@
     <string name="promo_favorites_body">Ahora guarde las paradas que utiliza con frecuencia en &lt;b&gt;un lugar fácil de acceder&lt;/b&gt;.</string>
     <string name="promo_favorites_header">Agregar sus favoritos</string>
     <string name="promo_notifications_body">¡Le avisaremos sobre cualquier problema antes de que salga!</string>
-    <string name="promo_notifications_header">Active ahora las notificaciones sobre interrupciones del servicio</string>
+    <string name="promo_notifications_header">Recibir notificaciones de interrupciones</string>
     <string name="promo_notifications_step1">Agregar una parada favorita</string>
     <string name="promo_notifications_step2">Establezca su propio horario</string>
     <string name="rail_defect">Defecto del riel</string>
@@ -391,7 +391,7 @@
     <string name="start">Inicio</string>
     <string name="start_of_service">inicio del servicio</string>
     <string name="start_to_end_of_service">Desde el inicio hasta el final del servicio</string>
-    <string name="start_to_end_time">%1$s—%2$s</string>
+    <string name="start_to_end_time">%1$s%2$s</string>
     <string name="starting_tomorrow_until_further_notice">A partir de mañana y hasta nuevo aviso</string>
     <string name="station_closed">Estación cerrada</string>
     <string name="station_closed_sentence_case">Estación cerrada</string>
@@ -510,4 +510,5 @@
     <string name="westbound">En dirección oeste</string>
     <string name="x_and_y">%1$s y %2$s</string>
     <string name="when_do_you_want_notifications">¿Cuándo quieres recibir notificaciones?</string>
+    <string name="notification_settings_empty_state">Podemos enviarte notificaciones push sobre problemas en esta ruta antes de que te vayas</string>
 </resources>
