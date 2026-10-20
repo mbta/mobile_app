@@ -182,8 +182,7 @@ fun PresetButton(
     centerContent: Boolean,
     modifier: Modifier,
 ) {
-    // TODO: Change to 4dp
-    val contentModifier = Modifier.fillMaxSize().padding(horizontal = 8.dp, vertical = 10.dp)
+    val contentModifier = Modifier.fillMaxSize().padding(horizontal = 6.dp, vertical = 10.dp)
 
     val trailingContent: @Composable () -> Unit = {
         Row(modifier = Modifier.heightIn(24.dp), verticalAlignment = Alignment.CenterVertically) {

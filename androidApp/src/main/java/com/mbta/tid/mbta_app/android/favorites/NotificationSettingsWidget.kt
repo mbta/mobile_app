@@ -310,7 +310,7 @@ private fun WindowWidget(
         }
         Column(
             Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
-                .padding(horizontal = 12.dp)
+                .padding(if (deleteWindow == null) 12.dp else 8.dp)
                 .padding(top = 8.dp, bottom = 12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -322,7 +322,10 @@ private fun WindowWidget(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement =
-                        Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+                        Arrangement.spacedBy(
+                            if (deleteWindow == null) 16.dp else 8.dp,
+                            Alignment.CenterHorizontally,
+                        ),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     TimeInput(
