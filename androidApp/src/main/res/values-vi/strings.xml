@@ -131,7 +131,7 @@
     <plurals name="elevator_closure_count_accessibility_description">
         <item quantity="other">%1$d thang máy đã đóng</item>
     </plurals>
-    <string name="en_dash_range">%1$s—%2$s</string>
+    <string name="en_dash_range">%1$s%2$s</string>
     <string name="end">Kết thúc</string>
     <string name="end_of_service">kết thúc dịch vụ</string>
     <string name="error_loading_data">Lỗi khi tải dữ liệu</string>
@@ -271,6 +271,7 @@
     <string name="not_accessible_stop_card">Điểm dừng này không có lối vào cho người khuyết tật</string>
     <string name="notice">Thông báo</string>
     <string name="notifications_beta_toggle_label">Thông báo về sự gián đoạn</string>
+    <string name="notification_settings_empty_state">Chúng tôi có thể gửi cho bạn thông báo đẩy về các sự cố trên tuyến đường này trước khi bạn khởi hành.</string>
     <string name="notifications_enabled">thông báo đã được bật</string>
     <string name="notifications_favorites_hint">Giờ &lt;u&gt;hãy chỉnh sửa mục yêu thích&lt;/u&gt; để nhận thông báo về sự gián đoạn</string>
     <string name="notifications_settings_link">Cho phép thông báo trong phần Cài đặt</string>
@@ -314,7 +315,7 @@
     <string name="promo_favorites_body">Bây giờ hãy lưu các điểm dừng thường xuyên sử dụng vào &lt;b&gt;một nơi dễ dàng&lt;/b&gt;.</string>
     <string name="promo_favorites_header">Thêm mục yêu thích</string>
     <string name="promo_notifications_body">Chúng tôi sẽ thông báo cho bạn về bất kỳ vấn đề nào trước khi bạn khởi hành!</string>
-    <string name="promo_notifications_header">Giờ đây bạn có thể nhận thông báo về sự gián đoạn</string>
+    <string name="promo_notifications_header">Nhận thông báo gián đoạn</string>
     <string name="promo_notifications_step1">Thêm điểm dừng yêu thích</string>
     <string name="promo_notifications_step2">Tự sắp xếp lịch trình của riêng bạn</string>
     <string name="rail_defect">Lỗi đường sắt</string>
@@ -388,7 +389,7 @@
     <string name="start">Bắt đầu</string>
     <string name="start_of_service">bắt đầu dịch vụ</string>
     <string name="start_to_end_of_service">Từ khi bắt đầu đến khi kết thúc dịch vụ</string>
-    <string name="start_to_end_time">%1$s—%2$s</string>
+    <string name="start_to_end_time">%1$s%2$s</string>
     <string name="starting_tomorrow_until_further_notice">Bắt đầu từ ngày mai cho đến khi có thông báo mới</string>
     <string name="station_closed">Nhà ga/trạm dừng đóng cửa</string>
     <string name="station_closed_sentence_case">Nhà ga/trạm dừng đóng cửa</string>
