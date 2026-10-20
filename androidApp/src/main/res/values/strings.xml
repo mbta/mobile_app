@@ -274,6 +274,7 @@
     <string name="not_accessible_stop_card">This stop is not accessible</string>
     <string name="notice">Notice</string>
     <string name="notifications_beta_toggle_label">Disruption Notifications</string>
+    <string name="notification_settings_empty_state">We can send you push notifications about problems on this route before you go</string>
     <string name="notifications_enabled">notifications enabled</string>
     <string name="notifications_favorites_hint">Now &lt;u>edit your favorites&lt;/u> to get disruption notifications</string>
     <string name="notifications_settings_link">Allow Notifications in Settings</string>
@@ -510,5 +511,4 @@
     <string name="westbound">Westbound</string>
     <string name="x_and_y">%1$s and %2$s</string>
     <string name="when_do_you_want_notifications">When do you want notifications?</string>
-    <string name="notification_settings_empty_state">We can send you push notifications about problems on this route before you go</string>
 </resources>
