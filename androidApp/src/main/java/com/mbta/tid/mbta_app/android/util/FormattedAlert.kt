@@ -269,17 +269,17 @@ data class FormattedAlert(
                 Alert.Cause.HeavyRidership -> R.string.heavy_ridership
                 Alert.Cause.HighWinds -> R.string.high_winds
                 Alert.Cause.Holiday -> R.string.holiday
-                Alert.Cause.Hurricane -> R.string.hurricane
                 Alert.Cause.IceInHarbor -> R.string.ice_in_harbor
                 Alert.Cause.Maintenance -> R.string.maintenance
                 Alert.Cause.MechanicalIssue -> R.string.mechanical_issue
                 Alert.Cause.MechanicalProblem -> R.string.mechanical_problem
                 Alert.Cause.MedicalEmergency -> R.string.medical_emergency
                 Alert.Cause.Parade -> R.string.parade
-                Alert.Cause.PoliceAction -> R.string.police_action
                 Alert.Cause.PoliceActivity -> R.string.police_activity
                 Alert.Cause.PowerProblem -> R.string.power_problem
+                Alert.Cause.PresenceOfWhales -> R.string.presence_of_whales
                 Alert.Cause.RailDefect -> R.string.rail_defect
+                Alert.Cause.RoughSeas -> R.string.rough_seas
                 Alert.Cause.SevereWeather -> R.string.severe_weather
                 Alert.Cause.SignalIssue -> R.string.signal_issue
                 Alert.Cause.SignalProblem -> R.string.signal_problem
@@ -298,6 +298,9 @@ data class FormattedAlert(
                 Alert.Cause.Traffic -> R.string.traffic
                 Alert.Cause.TrainTraffic -> R.string.train_traffic
                 Alert.Cause.UnrulyPassenger -> R.string.unruly_passenger
+                Alert.Cause.UtilityWork -> R.string.utility_work
+                Alert.Cause.VesselSubstitution -> R.string.vessel_substitution
+                Alert.Cause.VesselTraffic -> R.string.vessel_traffic
                 Alert.Cause.Weather -> R.string.weather
                 else -> null
             }
@@ -333,17 +336,17 @@ data class FormattedAlert(
                 Alert.Cause.HeavyRidership -> R.string.heavy_ridership_lowercase
                 Alert.Cause.HighWinds -> R.string.high_winds_lowercase
                 Alert.Cause.Holiday -> R.string.holiday_lowercase
-                Alert.Cause.Hurricane -> R.string.hurricane_lowercase
                 Alert.Cause.IceInHarbor -> R.string.ice_in_harbor_lowercase
                 Alert.Cause.Maintenance -> R.string.maintenance_lowercase
                 Alert.Cause.MechanicalIssue -> R.string.mechanical_issue_lowercase
                 Alert.Cause.MechanicalProblem -> R.string.mechanical_problem_lowercase
                 Alert.Cause.MedicalEmergency -> R.string.medical_emergency_lowercase
                 Alert.Cause.Parade -> R.string.parade_lowercase
-                Alert.Cause.PoliceAction -> R.string.police_action_lowercase
                 Alert.Cause.PoliceActivity -> R.string.police_activity_lowercase
                 Alert.Cause.PowerProblem -> R.string.power_problem_lowercase
+                Alert.Cause.PresenceOfWhales -> R.string.presence_of_whales_lowercase
                 Alert.Cause.RailDefect -> R.string.rail_defect_lowercase
+                Alert.Cause.RoughSeas -> R.string.rough_seas_lowercase
                 Alert.Cause.SevereWeather -> R.string.severe_weather_lowercase
                 Alert.Cause.SignalIssue -> R.string.signal_issue_lowercase
                 Alert.Cause.SignalProblem -> R.string.signal_problem_lowercase
@@ -362,6 +365,9 @@ data class FormattedAlert(
                 Alert.Cause.Traffic -> R.string.traffic_lowercase
                 Alert.Cause.TrainTraffic -> R.string.train_traffic_lowercase
                 Alert.Cause.UnrulyPassenger -> R.string.unruly_passenger_lowercase
+                Alert.Cause.UtilityWork -> R.string.utility_work_lowercase
+                Alert.Cause.VesselSubstitution -> R.string.vessel_substitution_lowercase
+                Alert.Cause.VesselTraffic -> R.string.vessel_traffic_lowercase
                 Alert.Cause.Weather -> R.string.weather_lowercase
                 else -> null
             }
