@@ -274,6 +274,7 @@
     <string name="not_accessible_stop_card">Esta parada não é acessível</string>
     <string name="notice">Aviso</string>
     <string name="notifications_beta_toggle_label">Notificações de interrupções</string>
+    <string name="notification_settings_empty_state">Podemos enviar-lhe notificações push sobre problemas nesta rota antes de partir.</string>
     <string name="notifications_enabled">notificações ativadas</string>
     <string name="notifications_favorites_hint">Agora &lt;u&gt;edite seus favoritos&lt;/u&gt; para receber notificações de interrupções</string>
     <string name="notifications_settings_link">Permita as notificações nas configurações</string>
@@ -317,7 +318,7 @@
     <string name="promo_favorites_body">Agora salve suas paradas de uso frequente em &lt;b&gt;um lugar fácil&lt;/b&gt;.</string>
     <string name="promo_favorites_header">Adicionar seus Favoritos</string>
     <string name="promo_notifications_body">Avisaremos você sobre qualquer problema antes de sair!</string>
-    <string name="promo_notifications_header">Agora receba notificações de interrupções</string>
+    <string name="promo_notifications_header">Receba notificações sobre interrupções no serviço</string>
     <string name="promo_notifications_step1">Adicionar uma parada favorita</string>
     <string name="promo_notifications_step2">Defina sua própria programação</string>
     <string name="rail_defect">Defeito nos trilhos</string>
@@ -391,7 +392,7 @@
     <string name="start">Início</string>
     <string name="start_of_service">início do serviço</string>
     <string name="start_to_end_of_service">Do início ao fim do serviço</string>
-    <string name="start_to_end_time">%1$s—%2$s</string>
+    <string name="start_to_end_time">%1$s%2$s</string>
     <string name="starting_tomorrow_until_further_notice">A partir de amanhã até novo aviso</string>
     <string name="station_closed">Estação fechada</string>
     <string name="station_closed_sentence_case">Estação fechada</string>
