@@ -389,7 +389,7 @@
     <string name="start">開始日期</string>
     <string name="start_of_service">服務開始</string>
     <string name="start_to_end_of_service">從服務開始到結束</string>
-    <string name="start_to_end_time">%1$s %2$s</string>
+    <string name="start_to_end_time">%1$s—%2$s</string>
     <string name="starting_tomorrow_until_further_notice">自明日起，直至另行通知</string>
     <string name="station_closed">車站已關閉</string>
     <string name="station_closed_sentence_case">車站已關閉</string>
