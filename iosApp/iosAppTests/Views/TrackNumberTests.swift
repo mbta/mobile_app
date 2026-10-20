@@ -35,6 +35,6 @@ final class TrackNumberTests: XCTestCase {
         let alert = objects.alert { $0.effect = .trackChange }
         let sut = TrackNumber(track: TripDetailsStopList.TrackAlert(alert: alert))
         XCTAssertNotNil(try sut.inspect().find(TrackChangePill.self))
-        XCTAssertNotNil(try sut.inspect().find(text: "Track Change"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Track change"))
     }
 }
