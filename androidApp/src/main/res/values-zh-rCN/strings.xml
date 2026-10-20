@@ -271,6 +271,7 @@
     <string name="not_accessible_stop_card">此车站不适合轮椅通行</string>
     <string name="notice">通知</string>
     <string name="notifications_beta_toggle_label">运营变动通知</string>
+    <string name="notification_settings_empty_state">我们可以在您出发前向您发送有关此路线可能出现问题的推送通知。</string>
     <string name="notifications_enabled">通知已开启</string>
     <string name="notifications_favorites_hint">立即&lt;u&gt;编辑您的收藏&lt;/u&gt;以接收运营变动通知</string>
     <string name="notifications_settings_link">在“设置”中开启“通知”权限</string>
@@ -314,7 +315,7 @@
     <string name="promo_favorites_body">现在将您常用的站点保存到&lt;b&gt;一个便捷位置&lt;/b&gt;。</string>
     <string name="promo_favorites_header">添加您的收藏夹</string>
     <string name="promo_notifications_body">出行前我们将为您推送各类运营异常信息！</string>
-    <string name="promo_notifications_header">立即开启运营变动通知</string>
+    <string name="promo_notifications_header">接收运营变动通知</string>
     <string name="promo_notifications_step1">添加收藏站点</string>
     <string name="promo_notifications_step2">自定义行程规划</string>
     <string name="rail_defect">轨道缺陷</string>
