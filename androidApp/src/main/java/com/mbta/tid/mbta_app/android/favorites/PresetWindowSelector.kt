@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -185,7 +186,7 @@ fun PresetButton(
     val contentModifier = Modifier.fillMaxSize().padding(horizontal = 8.dp, vertical = 10.dp)
 
     val trailingContent: @Composable () -> Unit = {
-        Row(modifier = Modifier.height(24.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = Modifier.heightIn(24.dp), verticalAlignment = Alignment.CenterVertically) {
             if (isSelected) {
                 Icon(
                     painterResource(R.drawable.fa_bell_filled),
