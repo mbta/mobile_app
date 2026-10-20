@@ -18,41 +18,56 @@ struct PresetWindowSelector: View {
                 HStack(spacing: 4) {
                     ForEach(presets, id: \.self) { preset in
                         let isSelected = preset == selectedPreset
-                        let startTimeFormatted = DateComponents.fromLocalTime(preset.startTime).formatHour()
-                        let endTimeFormatted = DateComponents.fromLocalTime(preset.endTime).formatHour()
+                        let description = NSLocalizedString(
+                            "start to end of service",
+                            comment: "Description for the all-day notification preset"
+                        )
 
-                        let label = switch preset {
-                        case .morning: NSLocalizedString("Morning", comment: "Notification window preset label")
-                        case .midday: NSLocalizedString("Midday", comment: "Notification window preset label")
-                        case .evening: NSLocalizedString("Evening", comment: "Notification window preset label")
-                        case .allDay: NSLocalizedString("All day", comment: "Notification window preset label")
-                        }
-                        let description = switch preset {
-                        case .allDay:
-                            NSLocalizedString(
-                                "start to end of service",
-                                comment: "Description for the all-day notification preset"
+                        if preset == .allDay {
+                            PresetButton(
+                                isSelected: isSelected,
+                                onSelect: {
+                                    onSelect(preset)
+                                },
+                                label: NSLocalizedString("All day", comment: "Notification window preset label"),
+                                description: {
+                                    Text(description).font(Typography.callout).foregroundStyle(Color.text.opacity(0.6))
+                                },
+                                centerContent: false
                             )
-                        default:
-                            if let startTimeFormatted, let endTimeFormatted {
+                            .frame(maxWidth: .infinity)
+                        } else {
+                            let startTimeFormatted = DateComponents.fromLocalTime(preset.startTime).formatHour()
+                            let endTimeFormatted = DateComponents.fromLocalTime(preset.endTime).formatHour()
+
+                            let label = switch preset {
+                            case .morning: NSLocalizedString("Morning", comment: "Notification window preset label")
+                            case .midday: NSLocalizedString("Midday", comment: "Notification window preset label")
+                            case .evening: NSLocalizedString("Evening", comment: "Notification window preset label")
+                            default: ""
+                            }
+                            let description = if let startTimeFormatted, let endTimeFormatted {
                                 NSLocalizedString(
-                                    "\(startTimeFormatted) - \(endTimeFormatted)",
-                                    comment: "time formatting, ex: 10 AM - 2 PM"
+                                    "\(startTimeFormatted)—\(endTimeFormatted)",
+                                    comment: "time formatting, ex: 10 AM—2 PM"
                                 )
                             } else {
                                 ""
                             }
+
+                            PresetButton(
+                                isSelected: isSelected,
+                                onSelect: {
+                                    onSelect(preset)
+                                },
+                                label: label,
+                                description: {
+                                    Text(description).font(Typography.footnote).foregroundStyle(Color.text.opacity(0.6))
+                                },
+                                centerContent: true
+                            )
+                            .frame(maxWidth: .infinity)
                         }
-                        PresetButton(
-                            isSelected: isSelected,
-                            onSelect: {
-                                onSelect(preset)
-                            },
-                            label: label,
-                            description: description,
-                            centerContent: preset != .allDay
-                        )
-                        .frame(maxWidth: .infinity)
                     }
                 }
             }
@@ -67,7 +82,7 @@ struct PresetWindowSelector: View {
                         "Custom",
                         comment: "Button text for selecting custom time range for notifications"
                     ),
-                    description: "…",
+                    description: { Image(.tabIconMore).tint(Color.text.opacity(0.6)) },
                     centerContent: false
                 )
                 .frame(maxWidth: .infinity)
@@ -84,12 +99,12 @@ struct PresetWindowSelector: View {
     }
 }
 
-private struct PresetButton: View {
+private struct PresetButton<Description: View>: View {
     @ObserveInjection var inject
     let isSelected: Bool
     let onSelect: () -> Void
     let label: String
-    let description: String
+    @ViewBuilder let description: Description
     let centerContent: Bool
 
     var body: some View {
@@ -101,7 +116,7 @@ private struct PresetButton: View {
                     presetWindowTrailingContent
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 8)
                 .padding(.vertical, 10)
             } else {
                 HStack(spacing: 0) {
@@ -130,10 +145,9 @@ private struct PresetButton: View {
                     .scaledToFit()
                     .frame(width: 24, height: 24)
             } else {
-                Text(description)
-                    .font(Typography.footnote)
+                description
             }
         }
-        .frame(height: 24)
+        .frame(minHeight: 24)
     }
 }
