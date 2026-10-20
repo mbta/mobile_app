@@ -147,16 +147,28 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
                             val windows = customPreset ?: listOf(Window.customFromCurrentTime(now))
                             Notifications(enabled = enabled, windows = windows)
                         } else {
-                            Notifications(
-                                enabled = enabled,
-                                windows =
+                            val existingWindows = state.settings?.windows ?: emptyList()
+                            val newWindows =
+                                if (existingWindows.size > 1) {
                                     listOf(
                                         Window(
                                             event.preset.startTime,
                                             event.preset.endTime,
                                             daysOfWeek,
                                         )
-                                    ),
+                                    ) + existingWindows.drop(1)
+                                } else {
+                                    listOf(
+                                        Window(
+                                            event.preset.startTime,
+                                            event.preset.endTime,
+                                            daysOfWeek,
+                                        )
+                                    )
+                                }
+                            Notifications(
+                                enabled = enabled,
+                                windows = newWindows,
                             )
                         }
                     state = State(settings, event.preset)
