@@ -393,7 +393,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                         }
                     }
                 }
-                .background { Color.fill2 }
+                .background { Color.fill3 }
                 .withRoundedBorder(color: haloColor, width: 2)
                 .padding(2)
                 .padding(.horizontal, 14)
