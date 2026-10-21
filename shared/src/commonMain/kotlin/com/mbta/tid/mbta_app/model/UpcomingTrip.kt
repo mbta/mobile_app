@@ -70,9 +70,6 @@ constructor(
             schedule?.stopTime != null &&
                 prediction?.scheduleRelationship == Prediction.ScheduleRelationship.Cancelled
 
-    internal val trackNumber: String? =
-        if (predictionStop?.shouldShowTrackNumber == true) predictionStop.platformCode else null
-
     /** Checks if a trip has a time */
     internal fun isUpcoming() = time != null
 

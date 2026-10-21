@@ -110,7 +110,8 @@ final class TripStopRowTests: XCTestCase {
             onOpenAlertDetails: { _ in },
             route: route,
             routeAccents: .init(route: route),
-            stopListContext: .trip(MatcherData(value: route.id), trip.directionId, trip.id)
+            stopListContext: .trip(MatcherData(value: route.id), trip.directionId, trip.id),
+            targeted: true
         ).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(text: "Track 7"))
