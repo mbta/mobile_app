@@ -48,7 +48,7 @@ struct PresetWindowSelector: View {
                             }
                             let description = if let startTimeFormatted, let endTimeFormatted {
                                 NSLocalizedString(
-                                    "\(startTimeFormatted) — \(endTimeFormatted)",
+                                    "\(startTimeFormatted) – \(endTimeFormatted)",
                                     comment: "time formatting, ex: 10 AM — 2 PM"
                                 )
                             } else {
