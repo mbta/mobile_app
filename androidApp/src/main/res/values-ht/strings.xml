@@ -203,8 +203,6 @@
     <string name="holiday">Vakans</string>
     <string name="holiday_lowercase">jou ferye</string>
     <string name="hr_min_abbr">&lt;b&gt;%1$d&lt;/b&gt; lè &lt;b&gt;%2$d&lt;/b&gt; minit</string>
-    <string name="hurricane">Siklòn</string>
-    <string name="hurricane_lowercase">siklòn</string>
     <string name="ice_in_harbor">Glas Nan Pò a</string>
     <string name="ice_in_harbor_lowercase">glas nan pò</string>
     <string name="inbound">Antran</string>
@@ -305,8 +303,6 @@
     <string name="parking_closure">Fèmti Pakin</string>
     <string name="parking_issue">Pwoblèm Pakin</string>
     <string name="parking_issue_sentence_case">Pwoblèm pakin</string>
-    <string name="police_action">Aksyon Polis</string>
-    <string name="police_action_lowercase">aksyon lapolis</string>
     <string name="police_activity">Aktivite Polis</string>
     <string name="police_activity_lowercase">aktivite lapolis</string>
     <string name="policy_change">Chanjman Règleman</string>
@@ -315,6 +311,8 @@
     <string name="power_problem_lowercase">pwoblèm kouran</string>
     <string name="predictions_unavailable_details">Sèvis la ap fonksyone, men prediksyon lè arive yo pa disponib. Verifye kat la pou wè ki kote %1$s yo ye kounye a.</string>
     <string name="predictions_unavailable_details_hide_maps">Sèvis la ap fonksyone, men prediksyon lè arive yo pa disponib.</string>
+    <string name="presence_of_whales">Prezans Balèn yo</string>
+    <string name="presence_of_whales_lowercase">prezans balèn yo</string>
     <string name="promo_favorites_body">Kounye a tout wout ou fè souvan yo sere &lt;b&gt;fasil nan yon sèl kote&lt;/b&gt;.</string>
     <string name="promo_favorites_header">Ajoute nan Preferans ou yo</string>
     <string name="promo_notifications_body">N ap di w nenpòt pwoblèm anvan w ale!</string>
@@ -338,6 +336,8 @@
     <string name="resources_link_mticket_note">Aplikasyon mTicket</string>
     <string name="resources_link_trip_planner">Zouti pou planifye vwayaj</string>
     <string name="results_failed_to_load">Rezilta yo pa monte</string>
+    <string name="rough_seas">Lanmè ajite</string>
+    <string name="rough_seas_lowercase">lanmè ajite</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_mode_label">%1$s %2$s</string>
     <string name="routes">Wout</string>
@@ -469,6 +469,8 @@
         <item quantity="one">Mizajou %1$d minit de sa</item>
         <item quantity="other">Mizajou %1$d minit de sa</item>
     </plurals>
+    <string name="utility_work">Travay sèvis piblik</string>
+    <string name="utility_work_lowercase">travay ap fèt sou ray</string>
     <string name="vehicle_arriving_first">%1$s ap rive kounye a</string>
     <string name="vehicle_arriving_other">ap rive kounye a</string>
     <string name="vehicle_boarding_first">%1$s ap pran moun kounye a</string>
@@ -502,6 +504,10 @@
     <string name="vehicle_shuttled_other">epi nan %1$s ranplase pa yon bis navèt</string>
     <string name="vehicle_skipped_first">%1$s rive nan %2$s sote</string>
     <string name="vehicle_skipped_other">epi nan %1$s sote</string>
+    <string name="vessel_substitution">Ranplasman bis</string>
+    <string name="vessel_substitution_lowercase">Ranplasman bis</string>
+    <string name="vessel_traffic">Sikilasyon</string>
+    <string name="vessel_traffic_lowercase">trafik</string>
     <string name="view_details">Gade detay yo</string>
     <string name="waiting_to_depart">Ap tann pou yo ale</string>
     <string name="weather">Tan</string>
@@ -509,6 +515,6 @@
     <string name="weekdays">Jou lasemèn</string>
     <string name="weekends">Jou wikenn</string>
     <string name="westbound">Pran direksyon lwès</string>
-    <string name="x_and_y">%1$s ak %2$s</string>
     <string name="when_do_you_want_notifications">Ki lè ou vle resevwa notifikasyon?</string>
+    <string name="x_and_y">%1$s ak %2$s</string>
 </resources>

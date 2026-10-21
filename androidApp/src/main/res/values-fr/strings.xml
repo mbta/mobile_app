@@ -203,8 +203,6 @@
     <string name="holiday">Fêtes</string>
     <string name="holiday_lowercase">vacances</string>
     <string name="hr_min_abbr">&lt;b&gt;%1$d&lt;/b&gt; h &lt;b&gt;%2$d&lt;/b&gt; min</string>
-    <string name="hurricane">Ouragan</string>
-    <string name="hurricane_lowercase">ouragan</string>
     <string name="ice_in_harbor">Glace dans le port</string>
     <string name="ice_in_harbor_lowercase">glace dans le port</string>
     <string name="inbound">En direction du centre</string>
@@ -305,8 +303,6 @@
     <string name="parking_closure">Fermeture du parking</string>
     <string name="parking_issue">Problème de parking</string>
     <string name="parking_issue_sentence_case">Problème de parking</string>
-    <string name="police_action">Intervention policière</string>
-    <string name="police_action_lowercase">action policière</string>
     <string name="police_activity">Intervention policière</string>
     <string name="police_activity_lowercase">intervention policière</string>
     <string name="policy_change">Changement de politique</string>
@@ -315,6 +311,8 @@
     <string name="power_problem_lowercase">problème d’alimentation</string>
     <string name="predictions_unavailable_details">Le service fonctionne, mais les heures d’arrivée prévues ne sont pas disponibles. Consulter la carte pour afficher la position actuelle de %1$s.</string>
     <string name="predictions_unavailable_details_hide_maps">Le service fonctionne, mais les heures d’arrivée prévues ne sont pas disponibles.</string>
+    <string name="presence_of_whales">Présence des baleines</string>
+    <string name="presence_of_whales_lowercase">Présence de baleines</string>
     <string name="promo_favorites_body">Enregistrez vos arrêts fréquents dans &lt;b&gt;un seul endroit pratique&lt;/b&gt;.</string>
     <string name="promo_favorites_header">Ajouter à vos favoris</string>
     <string name="promo_notifications_body">Nous vous informerons des éventuelles perturbations avant votre départ !</string>
@@ -338,6 +336,8 @@
     <string name="resources_link_mticket_note">Application mTicket</string>
     <string name="resources_link_trip_planner">Planificateur de trajet</string>
     <string name="results_failed_to_load">Échec du chargement des résultats ☹️</string>
+    <string name="rough_seas">Mer agitée</string>
+    <string name="rough_seas_lowercase">Mer agitée</string>
     <string name="route_effect">%2$s %1$s</string>
     <string name="route_mode_label">%2$s %1$s</string>
     <string name="routes">Trajets</string>
@@ -469,6 +469,8 @@
         <item quantity="one">Mise à jour il y a %1$d minute</item>
         <item quantity="other">Mise à jour il y a %1$d minutes</item>
     </plurals>
+    <string name="utility_work">Travaux publics</string>
+    <string name="utility_work_lowercase">travaux sur la voie</string>
     <string name="vehicle_arriving_first">%1$s arrive maintenant</string>
     <string name="vehicle_arriving_other">et arrive maintenant</string>
     <string name="vehicle_boarding_first">%1$s embarquement en cours</string>
@@ -502,6 +504,10 @@
     <string name="vehicle_shuttled_other">et à %1$s remplacé par une navette</string>
     <string name="vehicle_skipped_first">%1$s arrivant à %2$s non desservi</string>
     <string name="vehicle_skipped_other">et à %1$s ignoré</string>
+    <string name="vessel_substitution">Remplacement par bus</string>
+    <string name="vessel_substitution_lowercase">Remplacement par bus</string>
+    <string name="vessel_traffic">Trafic</string>
+    <string name="vessel_traffic_lowercase">trafic</string>
     <string name="view_details">Voir les détails</string>
     <string name="waiting_to_depart">En attente de départ</string>
     <string name="weather">Météo</string>
@@ -509,6 +515,6 @@
     <string name="weekdays">Jours de la semaine</string>
     <string name="weekends">Week-ends</string>
     <string name="westbound">En direction de l’ouest</string>
-    <string name="x_and_y">%1$s et %2$s</string>
     <string name="when_do_you_want_notifications">Quand souhaitez-vous recevoir des notifications ?</string>
+    <string name="x_and_y">%1$s et %2$s</string>
 </resources>

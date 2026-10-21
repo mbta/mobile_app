@@ -203,8 +203,6 @@
     <string name="holiday">Feriado</string>
     <string name="holiday_lowercase">feriado</string>
     <string name="hr_min_abbr">&lt;b&gt;%1$d&lt;/b&gt; h &lt;b&gt;%2$d&lt;/b&gt; min</string>
-    <string name="hurricane">Furacão</string>
-    <string name="hurricane_lowercase">furacão</string>
     <string name="ice_in_harbor">Gelo no porto</string>
     <string name="ice_in_harbor_lowercase">gelo no porto</string>
     <string name="inbound">Entrada</string>
@@ -305,8 +303,6 @@
     <string name="parking_closure">Fechamento de estacionamento</string>
     <string name="parking_issue">Problema no estacionamento</string>
     <string name="parking_issue_sentence_case">Problema no estacionamento</string>
-    <string name="police_action">Ação policial</string>
-    <string name="police_action_lowercase">ação policial</string>
     <string name="police_activity">Atividade policial</string>
     <string name="police_activity_lowercase">atividade policial</string>
     <string name="policy_change">Alteração de política</string>
@@ -315,6 +311,8 @@
     <string name="power_problem_lowercase">problema de energia</string>
     <string name="predictions_unavailable_details">O serviço está funcionando, mas os horários de chegada previstos não estão disponíveis. Verifique no mapa onde %1$s estão no momento.</string>
     <string name="predictions_unavailable_details_hide_maps">O serviço está funcionando, mas os horários previstos de chegada não estão disponíveis.</string>
+    <string name="presence_of_whales">Presença de baleias</string>
+    <string name="presence_of_whales_lowercase">presença de baleias</string>
     <string name="promo_favorites_body">Agora salve suas paradas de uso frequente em &lt;b&gt;um lugar fácil&lt;/b&gt;.</string>
     <string name="promo_favorites_header">Adicionar seus Favoritos</string>
     <string name="promo_notifications_body">Avisaremos você sobre qualquer problema antes de sair!</string>
@@ -338,6 +336,8 @@
     <string name="resources_link_mticket_note">Aplicativo mTicket</string>
     <string name="resources_link_trip_planner">Planejador de trajetos</string>
     <string name="results_failed_to_load">Falha ao carregar resultados 🤔</string>
+    <string name="rough_seas">Mar agitado</string>
+    <string name="rough_seas_lowercase">mar agitado</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_mode_label">%1$s %2$s</string>
     <string name="routes">Rotas</string>
@@ -469,6 +469,8 @@
         <item quantity="one">Atualizado há %1$d minuto</item>
         <item quantity="other">Atualizado há %1$d minutos</item>
     </plurals>
+    <string name="utility_work">Serviços de utilidade pública</string>
+    <string name="utility_work_lowercase">trabalho nos trilhos</string>
     <string name="vehicle_arriving_first">%1$s chegando agora</string>
     <string name="vehicle_arriving_other">e chegando agora</string>
     <string name="vehicle_boarding_first">%1$s embarcando agora</string>
@@ -502,6 +504,10 @@
     <string name="vehicle_shuttled_other">e às %1$s substituído por ônibus de apoio</string>
     <string name="vehicle_skipped_first">%1$s chegando às %2$s sem parada</string>
     <string name="vehicle_skipped_other">e às %1$s ignorado</string>
+    <string name="vessel_substitution">Substituição de ônibus</string>
+    <string name="vessel_substitution_lowercase">Substituição de ônibus</string>
+    <string name="vessel_traffic">Tráfego</string>
+    <string name="vessel_traffic_lowercase">tráfego</string>
     <string name="view_details">Ver detalhes</string>
     <string name="waiting_to_depart">Esperando para partir</string>
     <string name="weather">Clima</string>
@@ -509,6 +515,6 @@
     <string name="weekdays">Dias úteis</string>
     <string name="weekends">Fins de semana</string>
     <string name="westbound">Sentido oeste</string>
-    <string name="x_and_y">%1$s e %2$s</string>
     <string name="when_do_you_want_notifications">Quando você quer receber notificações?</string>
+    <string name="x_and_y">%1$s e %2$s</string>
 </resources>

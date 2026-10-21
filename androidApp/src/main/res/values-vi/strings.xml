@@ -200,8 +200,6 @@
     <string name="holiday">Ngày lễ</string>
     <string name="holiday_lowercase">ngày lễ</string>
     <string name="hr_min_abbr">&lt;b&gt;%1$d&lt;/b&gt; giờ &lt;b&gt;%2$d&lt;/b&gt; phút</string>
-    <string name="hurricane">Bão</string>
-    <string name="hurricane_lowercase">cơn bão</string>
     <string name="ice_in_harbor">Băng ở cảng</string>
     <string name="ice_in_harbor_lowercase">băng ở bến cảng</string>
     <string name="inbound">Đến</string>
@@ -302,8 +300,6 @@
     <string name="parking_closure">Bãi đậu xe đóng cửa</string>
     <string name="parking_issue">Vấn đề về đậu xe</string>
     <string name="parking_issue_sentence_case">Vấn đề về đậu xe</string>
-    <string name="police_action">Hành động của cảnh sát</string>
-    <string name="police_action_lowercase">hành động của cảnh sát</string>
     <string name="police_activity">Hoạt động của cảnh sát</string>
     <string name="police_activity_lowercase">hoạt động của cảnh sát</string>
     <string name="policy_change">Thay đổi chính sách</string>
@@ -312,6 +308,8 @@
     <string name="power_problem_lowercase">vấn đề về điện</string>
     <string name="predictions_unavailable_details">Dịch vụ đang hoạt động, nhưng thời gian đến dự kiến không khả dụng. Bản đồ hiển thị vị trí hiện tại của %1$s trên tuyến đường này.</string>
     <string name="predictions_unavailable_details_hide_maps">Dịch vụ đang hoạt động nhưng không có thời gian đến dự kiến.</string>
+    <string name="presence_of_whales">Sự hiện diện của cá voi</string>
+    <string name="presence_of_whales_lowercase">sự hiện diện của cá voi</string>
     <string name="promo_favorites_body">Bây giờ hãy lưu các điểm dừng thường xuyên sử dụng vào &lt;b&gt;một nơi dễ dàng&lt;/b&gt;.</string>
     <string name="promo_favorites_header">Thêm mục yêu thích</string>
     <string name="promo_notifications_body">Chúng tôi sẽ thông báo cho bạn về bất kỳ vấn đề nào trước khi bạn khởi hành!</string>
@@ -335,6 +333,8 @@
     <string name="resources_link_mticket_note">Ứng dụng mTicket</string>
     <string name="resources_link_trip_planner">Lập kế hoạch chuyến đi</string>
     <string name="results_failed_to_load">Kết quả không tải được ☹️</string>
+    <string name="rough_seas">Biển động</string>
+    <string name="rough_seas_lowercase">biển động</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_mode_label">%1$s %2$s</string>
     <string name="routes">Tuyến đường</string>
@@ -464,6 +464,8 @@
     <plurals name="updated_mins_ago">
         <item quantity="other">Cập nhật cách đây %1$d phút</item>
     </plurals>
+    <string name="utility_work">Công việc tiện ích</string>
+    <string name="utility_work_lowercase">thi công đường ray</string>
     <string name="vehicle_arriving_first">%1$s đang đến</string>
     <string name="vehicle_arriving_other">và đang đến</string>
     <string name="vehicle_boarding_first">%1$s đang cho khách lên</string>
@@ -497,6 +499,10 @@
     <string name="vehicle_shuttled_other">và tại %1$s được thay thế bằng xe buýt đưa đón</string>
     <string name="vehicle_skipped_first">%1$s đến %2$s đã bỏ qua</string>
     <string name="vehicle_skipped_other">và tại %1$s đã bỏ qua</string>
+    <string name="vessel_substitution">Xe buýt thay thế</string>
+    <string name="vessel_substitution_lowercase">Xe buýt thay thế</string>
+    <string name="vessel_traffic">Giao thông</string>
+    <string name="vessel_traffic_lowercase">giao thông</string>
     <string name="view_details">Xem chi tiết</string>
     <string name="waiting_to_depart">Đang chờ khởi hành</string>
     <string name="weather">Thời tiết</string>
@@ -504,6 +510,6 @@
     <string name="weekdays">Ngày trong tuần</string>
     <string name="weekends">Ngày cuối tuần</string>
     <string name="westbound">Về hướng tây</string>
-    <string name="x_and_y">%1$s và %2$s</string>
     <string name="when_do_you_want_notifications">Bạn muốn nhận thông báo khi nào?</string>
+    <string name="x_and_y">%1$s và %2$s</string>
 </resources>
