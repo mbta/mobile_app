@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.component
 
-import android.R.attr.strokeWidth
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
