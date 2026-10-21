@@ -47,16 +47,20 @@ private extension Animation {
 struct StarIcon: View {
     @ObserveInjection var inject
     let starred: Bool
-    let color: Color
+    let fillColor: Color
+    let outlineColor: Color
+
+    private var color: Color { starred ? fillColor : outlineColor }
 
     @ScaledMetric private var size: CGFloat
     var strokeScale: Double {
         size / 20
     }
 
-    init(starred: Bool, color: Color, size: CGFloat = 20) {
+    init(starred: Bool, color: Color, outlineColor: Color? = nil, size: CGFloat = 20) {
         self.starred = starred
-        self.color = color
+        fillColor = color
+        self.outlineColor = outlineColor ?? color
         _size = .init(wrappedValue: size)
     }
 

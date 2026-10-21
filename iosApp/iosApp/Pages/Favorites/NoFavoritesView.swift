@@ -19,8 +19,8 @@ struct NoFavoritesView: View {
                 comment: "Indicates the absence of favorites"
             )
             .multilineTextAlignment(.center)
-            .font(Typography.title3)
-            .foregroundColor(.deemphasized)
+            .font(Typography.body)
+            .foregroundColor(.text.opacity(0.6))
 
             if let onAddStops {
                 Button(

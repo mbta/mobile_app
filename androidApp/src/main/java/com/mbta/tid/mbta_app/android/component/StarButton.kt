@@ -102,9 +102,11 @@ fun StarIcon(
     starred: Boolean?,
     color: Color,
     modifier: Modifier = Modifier,
+    outlineColor: Color = color,
     contentDescription: String? = stringResource(R.string.star_route),
     size: Dp = 20.dp,
 ) {
+    val color = if (starred == true) color else outlineColor
     val deemphasized = colorResource(R.color.deemphasized)
     val transition = updateTransition(starred, label = "starred")
     val strokeColor by
@@ -285,7 +287,12 @@ private fun StarIconAnimationPreview() {
             Modifier.background(colorResource(R.color.fill1)).padding(40.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            StarIcon(starred, Color.fromHex("FFC72C"), size = 120.dp)
+            StarIcon(
+                starred,
+                Color.fromHex("FFC72C"),
+                outlineColor = colorResource(R.color.text).copy(alpha = 0.6f),
+                size = 120.dp,
+            )
         }
     }
 }

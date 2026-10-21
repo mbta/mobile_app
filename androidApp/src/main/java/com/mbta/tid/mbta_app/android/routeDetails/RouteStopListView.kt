@@ -420,7 +420,7 @@ private fun RouteStops(
             .haloContainer(
                 2.dp,
                 outlineColor = haloColor,
-                backgroundColor = colorResource(R.color.fill2),
+                backgroundColor = colorResource(R.color.fill3),
             )
             .then(if (loading) Modifier.loading() else Modifier),
         haloColor = haloColor,
