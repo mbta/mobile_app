@@ -45,6 +45,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
@@ -56,6 +58,7 @@ import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -315,23 +318,23 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
     ) {
         Column(
             Modifier.align(Alignment.TopCenter)
-                .offset(y = (-200).dp)
-                .scale(0.6f)
+                .offset(y = (-180).dp)
+                .scale(0.8f)
                 .background(colorResource(R.color.key), RoundedCornerShape(32.dp))
                 .border(16.dp, Color.Black, RoundedCornerShape(32.dp))
-                .padding(8.dp)
+                .padding(16.dp)
         ) {
             val isDarkMode = isSystemInDarkTheme()
             Spacer(Modifier.height(250.dp))
             Row(
-                Modifier.padding(16.dp)
+                Modifier.padding(12.dp)
                     .background(
                         if (isDarkMode) Color.Black.copy(alpha = 0.5f)
                         else Color.White.copy(alpha = 0.75f),
                         RoundedCornerShape(26.dp),
                     )
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    .padding(horizontal = 12.dp, vertical = 14.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Box(Modifier.size(36.dp).clip(CircleShape)) {
@@ -411,6 +414,8 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Light,
                         fontFamily = FontFamily.Default,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
             }
@@ -421,7 +426,7 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
             // setting explicit paneTitle resets focus to the text rather than the continue button
             // when navigating to the next screen
             // https://issuetracker.google.com/issues/272065229#comment8
-            Spacer(Modifier.weight(1f))
+            Spacer(Modifier.weight(0.8f))
             Column(
                 Modifier.semantics { paneTitle = header },
                 verticalArrangement = Arrangement.spacedBy(32.dp),
@@ -510,7 +515,12 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
                 LottieAnimation(
                     composition,
                     progress = { progress },
-                    Modifier.align(Alignment.BottomCenter),
+                    Modifier.align(Alignment.BottomCenter)
+                        .graphicsLayer(
+                            scaleX = 1.65f,
+                            scaleY = 1.65f,
+                            transformOrigin = TransformOrigin(0.5f, 0.0f),
+                        ),
                 )
 
                 Column { OnboardingPieces.KeyButton(R.string.got_it, onClick = advance) }
