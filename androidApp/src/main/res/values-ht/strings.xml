@@ -392,7 +392,7 @@
     <string name="start">Kòmanse</string>
     <string name="start_of_service">kòmansman sèvis</string>
     <string name="start_to_end_of_service">Soti nan kòmansman rive nan fen sèvis la</string>
-    <string name="start_to_end_time">%1$s—%2$s</string>
+    <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">Apati demen jiskaske nou jwenn plis avi</string>
     <string name="station_closed">Estasyon Fèmen</string>
     <string name="station_closed_sentence_case">Estasyon fèmen</string>
