@@ -24,6 +24,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
@@ -65,6 +66,7 @@ fun TripStops(
     onOpenAlertDetails: (Alert) -> Unit,
     route: Route,
     routeAccents: TripRouteAccents,
+    openModal: (ModalRoutes) -> Unit = {},
 ) {
     val resources = LocalResources.current
 
@@ -130,6 +132,7 @@ fun TripStops(
                         routeAccents,
                         global,
                         firstStop = true,
+                        openModal = openModal,
                     )
                 }
             }
@@ -170,6 +173,7 @@ fun TripStops(
                         route,
                         routeAccents,
                         global,
+                        openModal = openModal,
                     )
                 }
             }
@@ -199,6 +203,7 @@ fun TripStops(
                     targeted = true,
                     firstStop = showFirstStopSeparately && target == stops.startTerminalEntry,
                     modifier = Modifier.background(colorResource(R.color.fill3)),
+                    openModal = openModal,
                 )
 
                 HaloUnderRouteLine(routeAccents.color)
@@ -214,6 +219,7 @@ fun TripStops(
                 route,
                 routeAccents,
                 global,
+                openModal = openModal,
                 showDownstreamAlerts = true,
             )
         }
@@ -250,6 +256,7 @@ private fun StopList(
     route: Route,
     routeAccents: TripRouteAccents,
     globalData: GlobalResponse?,
+    openModal: (ModalRoutes) -> Unit,
     showDownstreamAlerts: Boolean = false,
 ) {
     for (stop in list) {
@@ -264,6 +271,7 @@ private fun StopList(
             globalData,
             showDownstreamAlert = showDownstreamAlerts,
             lastStop = stop.stopSequence == lastStopSequence,
+            openModal = openModal,
         )
     }
 }

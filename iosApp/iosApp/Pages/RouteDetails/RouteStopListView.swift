@@ -173,12 +173,17 @@ struct RouteStopListView<RightSideContent: View>: View {
         globalData: GlobalResponse
     ) {
         Task {
-            stopList = try? await RouteDetailsStopList.companion.fromPieces(
-                routeId: routeId,
-                directionId: directionId,
-                routeStops: routeStops,
-                globalData: globalData
-            )
+            do {
+                stopList = try await RouteDetailsStopList.companion.fromPieces(
+                    routeId: routeId,
+                    directionId: directionId,
+                    routeStops: routeStops,
+                    globalData: globalData
+                )
+            } catch {
+                print("RouteStopListView.loadStopList failed: \(error)")
+                stopList = nil
+            }
         }
     }
 }

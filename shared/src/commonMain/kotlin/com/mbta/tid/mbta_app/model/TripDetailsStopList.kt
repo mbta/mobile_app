@@ -17,6 +17,12 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
         public data class Number(val number: String) : Track()
 
         public object TBD : Track()
+
+        /**
+         * There is a track change alert for this stop. The new track number can't be determined
+         * from the alert, so details are only available in the alert itself.
+         */
+        public data class Alert(val alert: com.mbta.tid.mbta_app.model.Alert) : Track()
     }
 
     public data class Entry
@@ -33,19 +39,23 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
         val vehicle: Vehicle?,
         val routes: List<Route>,
         val elevatorAlerts: List<Alert> = emptyList(),
+        // A track change alert which is active at the scheduled time of this entry
+        val trackChangeAlert: Alert? = null,
     ) {
         val trackNumber: Track? =
-            (predictionStop ?: stop).let { platformStop ->
-                if (platformStop.shouldShowTrackNumber) {
-                    val trackNumber =
-                        platformStop.platformCode?.let { platform ->
-                            Track.Number(platform)
-                        }
-                    // If the stop does not have a platform code, show "TBD" for commuter rail core
-                    // stations, otherwise show nothing
-                    trackNumber ?: if (platformStop.isCRCore) Track.TBD else null
-                } else null
-            }
+            if (trackChangeAlert != null) Track.Alert(trackChangeAlert)
+            else
+                (predictionStop ?: stop).let { platformStop ->
+                    if (platformStop.shouldShowTrackNumber) {
+                        val trackNumber =
+                            platformStop.platformCode?.let { platform ->
+                                Track.Number(platform)
+                            }
+                        // If the stop does not have a platform code, show "TBD" for commuter rail
+                        // core stations, otherwise show nothing
+                        trackNumber ?: if (platformStop.isCRCore) Track.TBD else null
+                    } else null
+                }
 
         internal val isTruncating = disruption?.alert?.hasNoThroughService == true
 
@@ -165,6 +175,7 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
             entry?.prediction,
             entry?.predictionStop,
             entry?.vehicle,
+            trackChangeAlert = entry?.trackChangeAlert,
         )
     }
 
@@ -289,6 +300,15 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
                         working.vehicle,
                         getTransferRoutes(working, globalData),
                         Alert.elevatorAlerts(allElevatorAlerts, parentAndChildStopIds),
+                        Alert.trackChangeAlert(
+                            alertsData.alerts.values,
+                            working.schedule?.departureBasedStopTime
+                                ?: working.prediction?.departureBasedStopTime,
+                            trip.directionId,
+                            route.id,
+                            parentAndChildStopIds,
+                            trip.id,
+                        ),
                     )
                 }
 

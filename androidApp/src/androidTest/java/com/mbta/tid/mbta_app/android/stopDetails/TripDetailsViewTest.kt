@@ -209,6 +209,7 @@ class TripDetailsViewTest {
                 now = now,
                 isTripDetailsPage = false,
                 globalResponse = GlobalResponse(objects),
+                openModal = {},
             )
         }
 
@@ -235,6 +236,7 @@ class TripDetailsViewTest {
                 now = now,
                 isTripDetailsPage = true,
                 globalResponse = GlobalResponse(objects),
+                openModal = {},
             )
         }
 
@@ -259,6 +261,7 @@ class TripDetailsViewTest {
                 now = now,
                 isTripDetailsPage = true,
                 globalResponse = GlobalResponse(objects),
+                openModal = {},
             )
         }
 

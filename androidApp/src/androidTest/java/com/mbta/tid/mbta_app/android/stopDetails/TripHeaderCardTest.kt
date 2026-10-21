@@ -7,15 +7,22 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.hasTextMatching
+import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.TestData
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -728,5 +735,274 @@ class TripHeaderCardTest {
         composeTestRule
             .onNodeWithContentDescription("Car 5 of 5, Not crowded")
             .assertCanBeDisplayed()
+    }
+
+    private fun scheduledSpec(
+        objects: ObjectCollectionBuilder,
+        now: EasternTimeInstant,
+        stop: Stop,
+        trip: Trip,
+        trackChangeAlert: Alert?,
+    ): TripHeaderSpec.Scheduled {
+        val schedule = objects.schedule {
+            this.trip = trip
+            departureTime = now.plus(5.minutes)
+        }
+        return TripHeaderSpec.Scheduled(
+            stop,
+            TripDetailsStopList.Entry(
+                stop = stop,
+                stopSequence = 0,
+                disruption = null,
+                schedule = schedule,
+                prediction = null,
+                vehicle = null,
+                routes = listOf(),
+                trackChangeAlert = trackChangeAlert,
+            ),
+        )
+    }
+
+    private fun vehicleSpec(
+        objects: ObjectCollectionBuilder,
+        now: EasternTimeInstant,
+        stop: Stop,
+        trip: Trip,
+        trackChangeAlert: Alert?,
+    ): TripHeaderSpec.VehicleOnTrip {
+        val vehicle = objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.StoppedAt
+            tripId = trip.id
+            stopId = stop.id
+            currentStopSequence = 0
+        }
+        val prediction = objects.prediction { departureTime = now.plus(5.minutes) }
+        return TripHeaderSpec.VehicleOnTrip(
+            vehicle,
+            stop,
+            TripDetailsStopList.Entry(
+                stop = stop,
+                stopSequence = 0,
+                disruption = null,
+                schedule = null,
+                prediction = prediction,
+                vehicle = vehicle,
+                routes = listOf(),
+                trackChangeAlert = trackChangeAlert,
+            ),
+            false,
+        )
+    }
+
+    @Test
+    fun testTrackChangePillScheduledTargeted() {
+        val now = EasternTimeInstant(2025, Month.JULY, 29, 9, 43)
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop { name = "Stop Name" }
+        val trip = objects.trip()
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+        val alert = objects.alert { effect = Alert.Effect.TrackChange }
+
+        composeTestRule.setContent {
+            TripHeaderCard(
+                trip,
+                scheduledSpec(objects, now, stop, trip, alert),
+                targeted = true,
+                route,
+                TripRouteAccents(route),
+                now,
+            )
+        }
+
+        composeTestRule
+            .onNodeWithTag("track_change_pill", useUnmergedTree = true)
+            .assertCanBeDisplayed()
+        composeTestRule
+            .onNodeWithText("Track change", useUnmergedTree = true)
+            .assertCanBeDisplayed()
+    }
+
+    @Test
+    fun testTrackChangePillVehicleOnTripTargeted() {
+        val now = EasternTimeInstant(2025, Month.JULY, 29, 9, 43)
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop { name = "Stop Name" }
+        val trip = objects.trip()
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+        val alert = objects.alert { effect = Alert.Effect.TrackChange }
+
+        composeTestRule.setContent {
+            TripHeaderCard(
+                trip,
+                vehicleSpec(objects, now, stop, trip, alert),
+                targeted = true,
+                route,
+                TripRouteAccents(route),
+                now,
+            )
+        }
+
+        composeTestRule
+            .onNodeWithTag("track_change_pill", useUnmergedTree = true)
+            .assertCanBeDisplayed()
+        composeTestRule
+            .onNodeWithText("Track change", useUnmergedTree = true)
+            .assertCanBeDisplayed()
+    }
+
+    @Test
+    fun testTrackChangePillHiddenWhenNotTargeted() {
+        val now = EasternTimeInstant(2025, Month.JULY, 29, 9, 43)
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop { name = "Stop Name" }
+        val trip = objects.trip()
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+        val alert = objects.alert { effect = Alert.Effect.TrackChange }
+
+        composeTestRule.setContent {
+            TripHeaderCard(
+                trip,
+                scheduledSpec(objects, now, stop, trip, alert),
+                targeted = false,
+                route,
+                TripRouteAccents(route),
+                now,
+            )
+        }
+
+        composeTestRule.onNodeWithText(stop.name, useUnmergedTree = true).assertCanBeDisplayed()
+        composeTestRule
+            .onNodeWithTag("track_change_pill", useUnmergedTree = true)
+            .assertDoesNotExist()
+    }
+
+    @Test
+    fun testNoTrackChangePillWithoutAlert() {
+        val now = EasternTimeInstant(2025, Month.JULY, 29, 9, 43)
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop { name = "Stop Name" }
+        val trip = objects.trip()
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+
+        composeTestRule.setContent {
+            TripHeaderCard(
+                trip,
+                scheduledSpec(objects, now, stop, trip, null),
+                targeted = true,
+                route,
+                TripRouteAccents(route),
+                now,
+            )
+        }
+
+        composeTestRule.onNodeWithText(stop.name, useUnmergedTree = true).assertCanBeDisplayed()
+        composeTestRule
+            .onNodeWithTag("track_change_pill", useUnmergedTree = true)
+            .assertDoesNotExist()
+    }
+
+    @Test
+    fun testTrackChangePillTapScheduled() {
+        val now = EasternTimeInstant(2025, Month.JULY, 29, 9, 43)
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop { name = "Stop Name" }
+        val trip = objects.trip()
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+        val alert = objects.alert { effect = Alert.Effect.TrackChange }
+        var openedModal: ModalRoutes? = null
+        var cardTapped = false
+
+        composeTestRule.setContent {
+            TripHeaderCard(
+                trip,
+                scheduledSpec(objects, now, stop, trip, alert),
+                targeted = true,
+                route,
+                TripRouteAccents(route),
+                now,
+                onTap = { cardTapped = true },
+                openModal = { openedModal = it },
+            )
+        }
+
+        composeTestRule.onNodeWithText("Track change", useUnmergedTree = true).performClick()
+
+        assertEquals(
+            ModalRoutes.AlertDetails(
+                alertId = alert.id,
+                lineId = null,
+                routeIds = listOf(route.id),
+                stopId = null,
+            ),
+            openedModal,
+        )
+        assertFalse(cardTapped)
+    }
+
+    @Test
+    fun testTrackChangePillTapVehicleOnTrip() {
+        val now = EasternTimeInstant(2025, Month.JULY, 29, 9, 43)
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop { name = "Stop Name" }
+        val trip = objects.trip()
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+        val alert = objects.alert { effect = Alert.Effect.TrackChange }
+        var openedModal: ModalRoutes? = null
+        var cardTapped = false
+
+        composeTestRule.setContent {
+            TripHeaderCard(
+                trip,
+                vehicleSpec(objects, now, stop, trip, alert),
+                targeted = true,
+                route,
+                TripRouteAccents(route),
+                now,
+                onTap = { cardTapped = true },
+                openModal = { openedModal = it },
+            )
+        }
+
+        composeTestRule.onNodeWithText("Track change", useUnmergedTree = true).performClick()
+
+        assertEquals(
+            ModalRoutes.AlertDetails(
+                alertId = alert.id,
+                lineId = null,
+                routeIds = listOf(route.id),
+                stopId = null,
+            ),
+            openedModal,
+        )
+        assertFalse(cardTapped)
+    }
+
+    @Test
+    fun testCardTapWithoutTrackChangeDoesNotOpenModal() {
+        val now = EasternTimeInstant(2025, Month.JULY, 29, 9, 43)
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop { name = "Stop Name" }
+        val trip = objects.trip()
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+        var openedModal: ModalRoutes? = null
+        var cardTapped = false
+
+        composeTestRule.setContent {
+            TripHeaderCard(
+                trip,
+                scheduledSpec(objects, now, stop, trip, null),
+                targeted = true,
+                route,
+                TripRouteAccents(route),
+                now,
+                onTap = { cardTapped = true },
+                openModal = { openedModal = it },
+            )
+        }
+
+        composeTestRule.onNodeWithText(stop.name, useUnmergedTree = true).performClick()
+
+        assertTrue(cardTapped)
+        assertNull(openedModal)
     }
 }

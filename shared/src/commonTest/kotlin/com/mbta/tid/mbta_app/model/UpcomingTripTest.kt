@@ -11,6 +11,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -594,6 +595,89 @@ class UpcomingTripTest {
                 objects.alerts,
             ),
         )
+    }
+
+    @Test
+    fun `tripsFromData sets track change separately from other alerts`() {
+        val objects = ObjectCollectionBuilder()
+        val now = EasternTimeInstant.now()
+        val route = objects.route()
+        val stop = objects.stop { childStop() }
+        val child = objects.stops.getValue(stop.childStopIds.single())
+        val trip = objects.trip { routeId = route.id.idText }
+        val schedule = objects.schedule {
+            this.trip = trip
+            stopId = child.id
+            departureTime = now + 10.minutes
+        }
+        val trackChange = objects.alert {
+            effect = Alert.Effect.TrackChange
+            informedEntity(route = route.id.idText, stop = stop.id)
+        }
+        val otherTripTrackChange = objects.alert {
+            effect = Alert.Effect.TrackChange
+            informedEntity(route = route.id.idText, stop = stop.id, trip = "other trip")
+        }
+        val cancellation = objects.alert {
+            effect = Alert.Effect.Cancellation
+            informedEntity(stop = stop.id, trip = trip.id)
+        }
+
+        assertEquals(
+            listOf(UpcomingTrip(trip, schedule, null, null, null, cancellation, trackChange)),
+            UpcomingTrip.tripsFromData(
+                objects.stops,
+                listOf(schedule),
+                emptyList(),
+                objects.trips,
+                emptyMap(),
+                now,
+                mapOf(
+                    trackChange.id to trackChange,
+                    otherTripTrackChange.id to otherTripTrackChange,
+                    cancellation.id to cancellation,
+                ),
+            ),
+        )
+    }
+
+    @Test
+    fun `tripsFromData checks track change alert at scheduled time`() {
+        val objects = ObjectCollectionBuilder()
+        val now = EasternTimeInstant.now()
+        val route = objects.route()
+        val stop = objects.stop()
+        val trip = objects.trip { routeId = route.id.idText }
+        val earlySchedule = objects.schedule {
+            this.trip = trip
+            stopId = stop.id
+            stopSequence = 1
+            departureTime = now + 10.minutes
+        }
+        val lateSchedule = objects.schedule {
+            this.trip = trip
+            stopId = stop.id
+            stopSequence = 2
+            departureTime = now + 90.minutes
+        }
+        val trackChange = objects.alert {
+            effect = Alert.Effect.TrackChange
+            activePeriod(now + 1.hours, now + 2.hours)
+            informedEntity(route = route.id.idText, stop = stop.id)
+        }
+
+        val result =
+            UpcomingTrip.tripsFromData(
+                objects.stops,
+                listOf(earlySchedule, lateSchedule),
+                emptyList(),
+                objects.trips,
+                emptyMap(),
+                now,
+                mapOf(trackChange.id to trackChange),
+            )
+
+        assertEquals(listOf(null, trackChange), result.map { it.trackChangeAlert })
     }
 
     @Test

@@ -917,17 +917,15 @@ public data class RouteCardData(
                     val routeType: RouteType =
                         routes.firstOrNull()?.let { globalData.getRoute(it)?.type }
                             ?: return@forEachLeaf
-                    val isCRCore = globalData.getStop(path.stopId)?.isCRCore ?: false
                     val applicableAlerts =
                         Alert.applicableAlerts(
-                                activeRelevantAlerts,
-                                path.directionId,
-                                routes,
-                                routeType,
-                                leafBuilder.stopIds,
-                                null,
-                            )
-                            .discardTrackChangesAtCRCore(isCRCore)
+                            activeRelevantAlerts,
+                            path.directionId,
+                            routes,
+                            routeType,
+                            leafBuilder.stopIds,
+                            null,
+                        )
                     val elevatorAlerts =
                         Alert.elevatorAlerts(activeRelevantAlerts, leafBuilder.stopIds.orEmpty())
                     val alertsHere = (applicableAlerts + elevatorAlerts).distinct()

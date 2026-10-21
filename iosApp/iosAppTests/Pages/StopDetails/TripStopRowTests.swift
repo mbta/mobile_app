@@ -355,4 +355,75 @@ final class TripStopRowTests: XCTestCase {
         let sut = StopIconDot(iconName: "alert-large-green-suspension", targeted: true)
         XCTAssertNotNil(try sut.inspect().find(imageName: "stop-pin-indicator"))
     }
+
+    func testTrackChangeAlertTargeted() throws {
+        let now = EasternTimeInstant.now()
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let trip = objects.trip { _ in }
+        let route = objects.route { $0.type = .commuterRail }
+        let alert = objects.alert { $0.effect = .trackChange }
+        let entry = TripDetailsStopList.Entry(
+            stop: stop, stopSequence: 0, disruption: nil,
+            schedule: nil, prediction: nil,
+            vehicle: nil, routes: [route], elevatorAlerts: [], trackChangeAlert: alert
+        )
+
+        let alertTapped = expectation(description: "alert details opened")
+        let linkTapped = expectation(description: "stop link tapped")
+        linkTapped.isInverted = true
+
+        let sut = TripStopRow(
+            stop: entry,
+            trip: trip,
+            now: now,
+            onTapLink: { _ in linkTapped.fulfill() },
+            onOpenAlertDetails: { tapped in
+                XCTAssertEqual(alert.id, tapped.id)
+                alertTapped.fulfill()
+            },
+            route: route,
+            routeAccents: .init(route: route),
+            stopListContext: .trip(MatcherData(value: route.id), trip.directionId, trip.id),
+            targeted: true
+        ).withFixedSettings([:])
+
+        XCTAssertNotNil(try sut.inspect().find(TrackChangePill.self))
+        try sut.inspect().find(ViewType.Button.self).tap()
+        wait(for: [alertTapped, linkTapped], timeout: 1)
+    }
+
+    func testTrackChangeAlertNotTargeted() throws {
+        let now = EasternTimeInstant.now()
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let trip = objects.trip { _ in }
+        let route = objects.route { $0.type = .commuterRail }
+        let alert = objects.alert { $0.effect = .trackChange }
+        let entry = TripDetailsStopList.Entry(
+            stop: stop, stopSequence: 0, disruption: nil,
+            schedule: nil, prediction: nil,
+            vehicle: nil, routes: [route], elevatorAlerts: [], trackChangeAlert: alert
+        )
+
+        let linkTapped = expectation(description: "stop link tapped")
+        let alertTapped = expectation(description: "alert details opened")
+        alertTapped.isInverted = true
+
+        let sut = TripStopRow(
+            stop: entry,
+            trip: trip,
+            now: now,
+            onTapLink: { _ in linkTapped.fulfill() },
+            onOpenAlertDetails: { _ in alertTapped.fulfill() },
+            route: route,
+            routeAccents: .init(route: route),
+            stopListContext: .trip(MatcherData(value: route.id), trip.directionId, trip.id),
+            targeted: false
+        ).withFixedSettings([:])
+
+        XCTAssertThrowsError(try sut.inspect().find(TrackChangePill.self))
+        try sut.inspect().find(ViewType.Button.self).tap()
+        wait(for: [linkTapped, alertTapped], timeout: 1)
+    }
 }
