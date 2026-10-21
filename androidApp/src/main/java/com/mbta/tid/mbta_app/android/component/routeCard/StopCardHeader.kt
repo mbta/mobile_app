@@ -1,15 +1,10 @@
 package com.mbta.tid.mbta_app.android.component.routeCard
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,11 +19,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.stopCard.StopHeader
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.Alert
-import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -36,7 +31,7 @@ import com.mbta.tid.mbta_app.model.response.isStopBlocklisted
 import com.mbta.tid.mbta_app.repositories.Settings
 
 @Composable
-fun StopSubheader(
+fun StopCardHeader(
     stop: Stop,
     elevatorAlerts: List<Alert>,
     includeIcon: Boolean,
@@ -49,35 +44,9 @@ fun StopSubheader(
     val showInaccessible = showStationAccessibility && !isWheelchairAccessible
     val showElevatorAlerts = showStationAccessibility && elevatorAlerts.isNotEmpty()
 
-    Row(
-        Modifier.background(colorResource(id = R.color.fill2))
-            .fillMaxWidth()
-            .padding(top = 11.dp, bottom = 11.dp, start = 8.dp, end = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        if (includeIcon) {
-            Image(
-                painterResource(
-                    if (stop.locationType == LocationType.STATION) R.drawable.mbta_logo
-                    else R.drawable.stop_bus
-                ),
-                null,
-                Modifier.placeholderIfLoading().width(24.dp),
-            )
-        }
-        Column(
-            modifier = Modifier.height(IntrinsicSize.Min).padding(start = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            horizontalAlignment = Alignment.Start,
-        ) {
-            Text(
-                text = stop.name,
-                modifier = Modifier.placeholderIfLoading().fillMaxWidth(),
-                overflow = TextOverflow.Visible,
-                style = Typography.callout,
-            )
-
+    StopHeader(
+        stop = stop,
+        subheader = {
             if (showInaccessible || showElevatorAlerts) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -121,15 +90,15 @@ fun StopSubheader(
                     )
                 }
             }
-        }
-    }
+        },
+    )
 }
 
 @Composable
-fun StopSubheader(
+fun StopCardHeader(
     data: RouteCardData.RouteStopData,
     includeIcon: Boolean,
     globalData: GlobalResponse?,
 ) {
-    StopSubheader(data.stop, data.elevatorAlerts, includeIcon, globalData)
+    StopCardHeader(data.stop, data.elevatorAlerts, includeIcon, globalData)
 }

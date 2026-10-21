@@ -28,7 +28,7 @@ class StopSubheaderTest {
         val stop = objects.stop {}
 
         composeTestRule.setContent {
-            StopSubheader(
+            StopCardHeader(
                 RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
                 includeIcon = false,
                 GlobalResponse(objects),
@@ -47,7 +47,7 @@ class StopSubheaderTest {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            StopSubheader(
+            StopCardHeader(
                 RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
                 includeIcon = false,
                 GlobalResponse(objects),
@@ -67,7 +67,7 @@ class StopSubheaderTest {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            StopSubheader(
+            StopCardHeader(
                 RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
                 includeIcon = false,
                 GlobalResponse(objects),
@@ -88,7 +88,7 @@ class StopSubheaderTest {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            StopSubheader(
+            StopCardHeader(
                 RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
                 includeIcon = false,
                 GlobalResponse(
@@ -117,7 +117,7 @@ class StopSubheaderTest {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            StopSubheader(
+            StopCardHeader(
                 RouteCardData.RouteStopData(
                     lineOrRoute,
                     stop,

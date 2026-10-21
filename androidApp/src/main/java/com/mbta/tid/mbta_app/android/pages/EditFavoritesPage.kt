@@ -59,7 +59,7 @@ import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.ScrollSeparatorColumn
 import com.mbta.tid.mbta_app.android.component.ScrollSeparatorLazyColumn
 import com.mbta.tid.mbta_app.android.component.SheetHeader
-import com.mbta.tid.mbta_app.android.component.routeCard.StopSubheader
+import com.mbta.tid.mbta_app.android.component.routeCard.StopCardHeader
 import com.mbta.tid.mbta_app.android.component.stopCard.LoadingStopCard
 import com.mbta.tid.mbta_app.android.favorites.NoFavoritesView
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
@@ -229,7 +229,7 @@ private fun EditFavoritesList(
         ) {
             items(displayedFavorites, key = { it.stop.id }) {
                 Column(Modifier.animateItem().haloContainer(1.dp)) {
-                    StopSubheader(it.stop, it.elevatorAlerts, includeIcon = true, global)
+                    StopCardHeader(it.stop, it.elevatorAlerts, includeIcon = true, global)
 
                     FavoriteDepartures(
                         favorites,
