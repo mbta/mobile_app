@@ -129,11 +129,11 @@ fun EditFavoritesPage(
     LaunchedEffect(Unit) { favoritesViewModel.setContext(FavoritesViewModel.Context.Edit) }
     DisposableEffect(Unit) { onDispose { toastViewModel.hideToast() } }
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column() {
         SheetHeader(
             title = stringResource(R.string.edit_favorites),
             closeText = stringResource(R.string.done),
-            navCallbacks = navCallbacks,
+            navCallbacks = navCallbacks.copy(onBack = null), // redundant to close
             buttonColors = ButtonDefaults.key(),
         )
         val deleteFavorite: (RouteStopDirection) -> Unit = { deletedFavorite ->
