@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertAll
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsOff
@@ -52,6 +51,7 @@ class NotificationSettingsWidgetTest : KoinTest {
 
     @Test
     fun testAddTimePeriod() {
+        val now = EasternTimeInstant(LocalDateTime(2026, 8, 27, 12, 30, 0))
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
         viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
 
@@ -60,6 +60,7 @@ class NotificationSettingsWidgetTest : KoinTest {
                 viewModel = viewModel,
                 notificationPermissionState = permissionGranted,
                 hasRequestedPermission = true,
+                now = now,
             )
         }
 
@@ -85,18 +86,23 @@ class NotificationSettingsWidgetTest : KoinTest {
         composeTestRule
             .onAllNodes(hasTextMatching(Regex("10:00\\sAM", RegexOption.IGNORE_CASE)))
             .assertCountEquals(2)
-        composeTestRule.onAllNodesWithText("Sunday").assertCountEquals(2).assertAll(isOff())
-        composeTestRule.onAllNodesWithText("Monday").assertCountEquals(2).assertAll(isOn())
-        composeTestRule.onAllNodesWithText("Tuesday").assertCountEquals(2).assertAll(isOn())
-        composeTestRule.onAllNodesWithText("Wednesday").assertCountEquals(2).assertAll(isOn())
-        composeTestRule.onAllNodesWithText("Thursday").assertCountEquals(2).assertAll(isOn())
-        composeTestRule.onAllNodesWithText("Friday").assertCountEquals(2).assertAll(isOn())
-        composeTestRule.onAllNodesWithText("Saturday").assertCountEquals(2).assertAll(isOff())
+
+        listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday").forEach { day ->
+            val nodes = composeTestRule.onAllNodesWithText(day).assertCountEquals(2)
+            nodes[0].assertIsOn()
+            nodes[1].assertIsOff()
+        }
+        listOf("Sunday", "Saturday").forEach { day ->
+            val nodes = composeTestRule.onAllNodesWithText(day).assertCountEquals(2)
+            nodes[0].assertIsOff()
+            nodes[1].assertIsOn()
+        }
         composeTestRule.onAllNodesWithContentDescription("Delete time period").assertCountEquals(2)
     }
 
     @Test
     fun testChangeTime() {
+        val now = EasternTimeInstant(LocalDateTime(2026, 8, 27, 12, 30, 0))
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
         viewModel.loadSavedSettings(FavoriteSettings.Notifications.disabled)
 
@@ -105,6 +111,7 @@ class NotificationSettingsWidgetTest : KoinTest {
                 viewModel,
                 notificationPermissionState = permissionGranted,
                 hasRequestedPermission = true,
+                now = now,
             )
         }
 
@@ -378,7 +385,7 @@ class NotificationSettingsWidgetTest : KoinTest {
 
         composeTestRule.onNodeWithText("Morning").performClick()
         composeTestRule.onNodeWithText("Morning").assertIsSelected()
-        composeTestRule.onNodeWithText("Sunday").assertIsOff()
+        composeTestRule.onNodeWithText("Sunday").assertIsOn()
 
         composeTestRule.onNodeWithText("Custom").performClick()
         composeTestRule.onNodeWithText("Custom").assertIsSelected()

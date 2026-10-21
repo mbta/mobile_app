@@ -272,6 +272,7 @@
     <string name="not_accessible_stop_card">Cet arrêt n’est pas accessible</string>
     <string name="notice">Avertissement</string>
     <string name="notifications_beta_toggle_label">Notifications de perturbation</string>
+    <string name="notification_settings_empty_state">Nous pouvons vous envoyer des notifications push concernant les problèmes sur cette ligne avant votre départ</string>
     <string name="notifications_enabled">notifications activées</string>
     <string name="notifications_favorites_hint">Désormais, &lt;u&gt;modifiez vos favoris&lt;/u&gt; pour recevoir des notifications de perturbation</string>
     <string name="notifications_settings_link">Autoriser les notifications dans les paramètres</string>

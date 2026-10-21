@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -59,48 +60,60 @@ fun PresetWindowSelector(
             ) {
                 windows.forEachIndexed { presetIndex, preset ->
                     val isSelected = selectedPreset == preset
-
-                    val description =
-                        if (preset == Preset.AllDay) {
-                            stringResource(R.string.start_to_end_of_service)
-                        } else {
-                            stringResource(
-                                R.string.start_to_end_time,
-                                EasternTimeInstant(
-                                        EasternTimeInstant.now().local.date,
-                                        preset.startTime,
-                                    )
-                                    .formattedHour(),
-                                EasternTimeInstant(
-                                        EasternTimeInstant.now().local.date,
-                                        preset.endTime,
-                                    )
-                                    .formattedHour(),
-                            )
+                    val modifier =
+                        Modifier.weight(1f).semantics {
+                            collectionItemInfo =
+                                CollectionItemInfo(
+                                    rowIndex = rowIndex,
+                                    rowSpan = 1,
+                                    columnIndex = presetIndex,
+                                    columnSpan = 1,
+                                )
                         }
-                    PresetButton(
-                        isSelected = isSelected,
-                        onSelect = { onSelect(preset) },
-                        label =
-                            when (preset) {
-                                Preset.Morning -> stringResource(R.string.morning)
-                                Preset.Midday -> stringResource(R.string.midday)
-                                Preset.Evening -> stringResource(R.string.evening)
-                                Preset.AllDay -> stringResource(R.string.all_day)
+
+                    if (preset == Preset.AllDay) {
+                        PresetButton(
+                            isSelected = isSelected,
+                            onSelect = { onSelect(preset) },
+                            label = stringResource(R.string.all_day),
+                            description = {
+                                Text(
+                                    stringResource(R.string.start_to_end_of_service),
+                                    style = Typography.callout,
+                                    color = colorResource(R.color.text).copy(alpha = 0.6f),
+                                )
                             },
-                        description = description,
-                        centerContent = preset != Preset.AllDay,
-                        modifier =
-                            Modifier.weight(1f).semantics {
-                                collectionItemInfo =
-                                    CollectionItemInfo(
-                                        rowIndex = rowIndex,
-                                        rowSpan = 1,
-                                        columnIndex = presetIndex,
-                                        columnSpan = 1,
-                                    )
-                            },
-                    )
+                            centerContent = false,
+                            modifier = modifier,
+                        )
+                    } else {
+                        PresetButton(
+                            isSelected = isSelected,
+                            onSelect = { onSelect(preset) },
+                            label =
+                                when (preset) {
+                                    Preset.Morning -> stringResource(R.string.morning)
+                                    Preset.Midday -> stringResource(R.string.midday)
+                                    Preset.Evening -> stringResource(R.string.evening)
+                                },
+                            description =
+                                stringResource(
+                                    R.string.start_to_end_time,
+                                    EasternTimeInstant(
+                                            EasternTimeInstant.now().local.date,
+                                            preset.startTime,
+                                        )
+                                        .formattedHour(),
+                                    EasternTimeInstant(
+                                            EasternTimeInstant.now().local.date,
+                                            preset.endTime,
+                                        )
+                                        .formattedHour(),
+                                ),
+                            centerContent = true,
+                            modifier = modifier,
+                        )
+                    }
                 }
             }
         }
@@ -110,7 +123,13 @@ fun PresetWindowSelector(
                 isSelected = isSelected,
                 onSelect = { onSelect(null) },
                 label = stringResource(R.string.custom),
-                description = "…",
+                description = {
+                    Icon(
+                        painterResource(R.drawable.more),
+                        null,
+                        tint = colorResource(R.color.text).copy(alpha = 0.6f),
+                    )
+                },
                 centerContent = false,
                 modifier =
                     Modifier.weight(1f).semantics {
@@ -136,17 +155,42 @@ fun PresetButton(
     centerContent: Boolean,
     modifier: Modifier,
 ) {
-    val contentModifier = Modifier.fillMaxSize().padding(horizontal = 8.dp, vertical = 10.dp)
+    PresetButton(
+        isSelected = isSelected,
+        onSelect = onSelect,
+        label = label,
+        description = {
+            Text(
+                description,
+                style = Typography.footnote,
+                color = colorResource(R.color.text).copy(alpha = 0.6f),
+            )
+        },
+        centerContent = centerContent,
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun PresetButton(
+    isSelected: Boolean,
+    onSelect: () -> Unit,
+    label: String,
+    description: @Composable () -> Unit,
+    centerContent: Boolean,
+    modifier: Modifier,
+) {
+    val contentModifier = Modifier.fillMaxSize().padding(horizontal = 6.dp, vertical = 10.dp)
 
     val trailingContent: @Composable () -> Unit = {
-        Row(modifier = Modifier.height(24.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = Modifier.heightIn(24.dp), verticalAlignment = Alignment.CenterVertically) {
             if (isSelected) {
                 Icon(
                     painterResource(R.drawable.fa_bell_filled),
                     null,
                 )
             } else {
-                Text(description, style = Typography.footnote)
+                description()
             }
         }
     }

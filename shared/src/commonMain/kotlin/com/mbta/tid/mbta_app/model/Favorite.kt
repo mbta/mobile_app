@@ -185,7 +185,11 @@ constructor(val notifications: Notifications = Notifications.disabled) {
                     now: EasternTimeInstant,
                 ): Window {
                     if (presetsEnabled) {
-                        return defaultFromCurrentTime(now)
+                        return if (existingWindows.isEmpty()) {
+                            defaultFromCurrentTime(now)
+                        } else {
+                            defaultFromCurrentTime(now).copy(daysOfWeek = weekend)
+                        }
                     } else {
                         if (existingWindows.isEmpty()) {
                             return Window(

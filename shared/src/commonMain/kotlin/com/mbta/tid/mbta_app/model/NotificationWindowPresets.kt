@@ -16,10 +16,7 @@ public enum class Preset(public val startTime: LocalTime, public val endTime: Lo
                 val targetWindow: Window = windows[0]
                 val presetMatch =
                     Preset.entries.firstOrNull {
-                        it.startTime == targetWindow.startTime &&
-                            it.endTime == targetWindow.endTime &&
-                            (targetWindow.daysOfWeek == Window.weekend ||
-                                targetWindow.daysOfWeek == Window.weekdays)
+                        it.startTime == targetWindow.startTime && it.endTime == targetWindow.endTime
                     }
                 return presetMatch
             }

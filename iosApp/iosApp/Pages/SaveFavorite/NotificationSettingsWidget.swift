@@ -29,7 +29,7 @@ struct NotificationSettingsWidget: View {
                     state: vmState,
                     setEnabled: { enabled in vm.setEnabled(enabled: enabled) },
                     setPreset: { preset in vm.setPreset(preset: preset) },
-                    setCustomWindows: { custom in vm.setCustomWindows(windows: custom) },
+                    setWindows: { custom in vm.setWindows(windows: custom) },
                     addPlaceholderWindow: { vm.addPlaceholderWindow() },
                     notificationPermissionManager: notificationPermissionManager
                 )
@@ -49,7 +49,7 @@ struct NotificationSettingsWidgetPresentationView: View {
     let state: NotificationSettingsViewModel.State
     var setEnabled: (Bool) -> Void = { _ in }
     var setPreset: (Preset?) -> Void = { _ in }
-    var setCustomWindows: ([FavoriteSettings.NotificationsWindow]) -> Void = { _ in }
+    var setWindows: ([FavoriteSettings.NotificationsWindow]) -> Void = { _ in }
     var addPlaceholderWindow: () -> Void = {}
 
     var notificationPermissionManager: INotificationPermissionManager
@@ -80,11 +80,21 @@ struct NotificationSettingsWidgetPresentationView: View {
                         notificationPermissionManager: notificationPermissionManager
                     )
 
+                    if !settings.enabled {
+                        Text("We can send you push notifications about problems on this route before you go")
+                            .font(Typography.callout)
+                            .foregroundColor(Color.text.opacity(0.6))
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.vertical, 8)
+                    }
+
                     if settings.enabled {
                         Text("When do you want notifications?")
+                            .font(Typography.callout)
+                            .foregroundColor(Color.text.opacity(0.6))
                             .accessibilityAddTraits(.isHeader)
                             .accessibilityHeading(.h2)
-                            .foregroundColor(Color.deemphasized)
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding(.vertical, 8)
 
@@ -108,11 +118,11 @@ struct NotificationSettingsWidgetPresentationView: View {
                                         if let windowIndex {
                                             newWindows[windowIndex] = newWindow
                                         }
-                                        setCustomWindows(newWindows)
+                                        setWindows(newWindows)
                                     },
                                     deleteWindow: settings.windows.count > 1 ? {
                                         let nextWindows = settings.windows.filter { $0.id != window.id }
-                                        setCustomWindows(nextWindows)
+                                        setWindows(nextWindows)
                                     } : nil
                                 )
                             }
@@ -138,7 +148,7 @@ struct NotificationSettingsWidgetPresentationView: View {
                         }
                         .padding(4)
                         .background(Color.fill1)
-                        .withRoundedBorder(color: .clear)
+                        .withRoundedBorder(radius: 12, color: .clear)
                     }
                 }
             }
@@ -217,8 +227,7 @@ struct WindowWidget: View {
             }
             .padding(12)
             .background(Color.fill3)
-            .clipShape(RoundedRectangle(cornerRadius: 7))
-            .padding(1)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
         }
         .background(Color.halo)
         .clipShape(RoundedRectangle(cornerRadius: 8))
@@ -347,7 +356,7 @@ struct TimeInput: View {
                 .accessibilityAddTraits(.isButton)
                 .accessibilityHint(Text("collapsed, double-tap to expand"))
         }
-        .background(RoundedRectangle(cornerRadius: 6).fill(Color.fill1))
+        .background(RoundedRectangle(cornerRadius: 6).fill(Color.fill2))
         .contentShape(Rectangle())
         .enableInjection()
     }
@@ -388,7 +397,7 @@ struct DaysOfWeekInput: View {
                 .onTapGesture {
                     setDaysOfWeek(daysOfWeek.symmetricDifference([day]))
                 }
-                .background(isIncluded ? Color.key : Color.fill1)
+                .background(isIncluded ? Color.key : Color.fill2)
                 .clipShape(RoundedRectangle(cornerRadius: 6))
                 .foregroundStyle(isIncluded ? Color.fill3 : Color.text.opacity(0.6))
                 .accessibilityElement(children: .ignore)
@@ -517,7 +526,7 @@ struct NotificationSettingsWidget_Previews: PreviewProvider {
                 notificationPermissionManager: MockNotificationPermissionManager()
             ).onAppear {
                 vm.setEnabled(enabled: true)
-                vm.setCustomWindows(windows: windows)
+                vm.setWindows(windows: windows)
             }
             .enableInjection()
         }

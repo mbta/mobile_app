@@ -269,6 +269,7 @@
     <string name="not_accessible_stop_card">Điểm dừng này không có lối vào cho người khuyết tật</string>
     <string name="notice">Thông báo</string>
     <string name="notifications_beta_toggle_label">Thông báo về sự gián đoạn</string>
+    <string name="notification_settings_empty_state">Chúng tôi có thể gửi cho bạn thông báo đẩy về các sự cố trên tuyến đường này trước khi bạn khởi hành.</string>
     <string name="notifications_enabled">thông báo đã được bật</string>
     <string name="notifications_favorites_hint">Giờ &lt;u&gt;hãy chỉnh sửa mục yêu thích&lt;/u&gt; để nhận thông báo về sự gián đoạn</string>
     <string name="notifications_settings_link">Cho phép thông báo trong phần Cài đặt</string>

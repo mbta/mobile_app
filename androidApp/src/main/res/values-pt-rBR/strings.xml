@@ -272,6 +272,7 @@
     <string name="not_accessible_stop_card">Esta parada não é acessível</string>
     <string name="notice">Aviso</string>
     <string name="notifications_beta_toggle_label">Notificações de interrupções</string>
+    <string name="notification_settings_empty_state">Podemos enviar-lhe notificações push sobre problemas nesta rota antes de partir.</string>
     <string name="notifications_enabled">notificações ativadas</string>
     <string name="notifications_favorites_hint">Agora &lt;u&gt;edite seus favoritos&lt;/u&gt; para receber notificações de interrupções</string>
     <string name="notifications_settings_link">Permita as notificações nas configurações</string>

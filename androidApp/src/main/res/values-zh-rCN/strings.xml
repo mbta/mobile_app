@@ -269,6 +269,7 @@
     <string name="not_accessible_stop_card">此车站不适合轮椅通行</string>
     <string name="notice">通知</string>
     <string name="notifications_beta_toggle_label">运营变动通知</string>
+    <string name="notification_settings_empty_state">我们可以在您出发前向您发送有关此路线可能出现问题的推送通知。</string>
     <string name="notifications_enabled">通知已开启</string>
     <string name="notifications_favorites_hint">立即&lt;u&gt;编辑您的收藏&lt;/u&gt;以接收运营变动通知</string>
     <string name="notifications_settings_link">在“设置”中开启“通知”权限</string>

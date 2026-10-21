@@ -272,6 +272,7 @@
     <string name="not_accessible_stop_card">Estasyon sa a pa aksesib</string>
     <string name="notice">Avi</string>
     <string name="notifications_beta_toggle_label">Notifikasyon Entèripsyon</string>
+    <string name="notification_settings_empty_state">Nou ka voye notifikasyon ba ou konsènan pwoblèm sou wout sa a anvan ou ale.</string>
     <string name="notifications_enabled">notifikasyon yo pèmèt</string>
     <string name="notifications_favorites_hint">Kounye a, &lt;u&gt;modifye favori ou yo&lt;/u&gt; pou resevwa notifikasyon entèripsyon yo</string>
     <string name="notifications_settings_link">Pèmèt avi Notifikasyon nan Anviwònman yo</string>

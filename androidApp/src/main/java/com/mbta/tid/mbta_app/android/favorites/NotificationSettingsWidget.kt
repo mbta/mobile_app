@@ -61,6 +61,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -165,6 +166,16 @@ fun NotificationSettingsWidget(
             )
             AnimatedVisibility(showPermissionSettingsLink) { PermissionSettingsLink() }
         }
+
+        AnimatedVisibility(!settings.enabled) {
+            Text(
+                stringResource(R.string.notification_settings_empty_state),
+                Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                style = Typography.callout,
+                textAlign = TextAlign.Center,
+                color = colorResource(R.color.text).copy(alpha = 0.6f),
+            )
+        }
         AnimatedVisibility(settings.enabled && !permissionDenied) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Row(
@@ -173,6 +184,7 @@ fun NotificationSettingsWidget(
                 ) {
                     Text(
                         stringResource(R.string.when_do_you_want_notifications),
+                        style = Typography.callout,
                         color = colorResource(R.color.deemphasized),
                         modifier =
                             Modifier.semantics {
@@ -185,11 +197,12 @@ fun NotificationSettingsWidget(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier =
                         Modifier.haloContainer(
-                                borderWidth = 1.dp,
-                                outlineColor = Color.Transparent,
-                                backgroundColor = colorResource(R.color.fill1),
-                            )
-                            .padding(4.dp),
+                            borderWidth = 1.dp,
+                            outlineColor = Color.Transparent,
+                            backgroundColor = colorResource(R.color.fill1),
+                            borderRadius = 8.dp,
+                            padding = 4.dp,
+                        ),
                 ) {
                     if (presetWindowsEnabled) {
 
@@ -209,11 +222,11 @@ fun NotificationSettingsWidget(
                                 val windows = settings.windows.toMutableList()
                                 val index = windows.indexOf(window)
                                 if (index != -1) windows[index] = newWindow
-                                viewModel.setCustomWindows(windows)
+                                viewModel.setWindows(windows)
                             },
                             deleteWindow =
                                 {
-                                        viewModel.setCustomWindows(settings.windows - window)
+                                        viewModel.setWindows(settings.windows - window)
                                     }
                                     .takeIf { settings.windows.size > 1 },
                         )
@@ -297,7 +310,7 @@ private fun WindowWidget(
         }
         Column(
             Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
-                .padding(horizontal = 12.dp)
+                .padding(horizontal = if (deleteWindow == null) 12.dp else 8.dp)
                 .padding(top = 8.dp, bottom = 12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -309,7 +322,10 @@ private fun WindowWidget(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement =
-                        Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+                        Arrangement.spacedBy(
+                            if (deleteWindow == null) 16.dp else 8.dp,
+                            Alignment.CenterHorizontally,
+                        ),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     TimeInput(
@@ -488,7 +504,7 @@ private fun TimeInput(
             shape = RoundedCornerShape(6.dp),
             colors =
                 ButtonDefaults.buttonColors(
-                    containerColor = colorResource(R.color.fill1),
+                    containerColor = colorResource(R.color.fill2),
                     contentColor = colorResource(R.color.text),
                 ),
             contentPadding = PaddingValues(8.dp),
@@ -582,7 +598,7 @@ private fun DaysOfWeekInput(daysOfWeek: Set<DayOfWeek>, setDaysOfWeek: (Set<DayO
                         .weight(1f)
                         .height(IntrinsicSize.Max),
                 shape = RoundedCornerShape(6.dp),
-                color = colorResource(if (isIncluded) R.color.key else R.color.fill1),
+                color = colorResource(if (isIncluded) R.color.key else R.color.fill2),
                 contentColor =
                     if (isIncluded) colorResource(R.color.fill3)
                     else colorResource(R.color.text).copy(alpha = 0.6f),
@@ -614,35 +630,37 @@ private fun NotificationSwitch(
     enabled: Boolean,
 ) {
 
-    LabeledSwitch(
-        Modifier.haloContainer(
-                outlineColor = Color.Transparent,
-                backgroundColor = Color.Transparent,
-                borderWidth = 1.dp,
-            )
-            .padding(horizontal = 12.dp, vertical = 8.dp),
-        label = {
-            if (settings.enabled) {
-                Icon(
-                    painterResource(R.drawable.fa_bell_filled),
-                    null,
-                    tint = colorResource(R.color.key),
+    Column() {
+        LabeledSwitch(
+            Modifier.haloContainer(
+                    outlineColor = Color.Transparent,
+                    backgroundColor = Color.Transparent,
+                    borderWidth = 1.dp,
                 )
-            } else {
-                Icon(painterResource(R.drawable.fa_bell), null)
-            }
-            Text(
-                stringResource(R.string.get_disruption_notifications),
-                Modifier.padding(start = 12.dp).weight(1f),
-            )
-        },
-        value = settings.enabled,
-        onValueChange = {
-            notificationPermissionState.launchPermissionRequest()
-            onValueChange(it)
-        },
-        enabled = enabled,
-    )
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            label = {
+                if (settings.enabled) {
+                    Icon(
+                        painterResource(R.drawable.fa_bell_filled),
+                        null,
+                        tint = colorResource(R.color.key),
+                    )
+                } else {
+                    Icon(painterResource(R.drawable.fa_bell), null)
+                }
+                Text(
+                    stringResource(R.string.get_disruption_notifications),
+                    Modifier.padding(start = 12.dp).weight(1f),
+                )
+            },
+            value = settings.enabled,
+            onValueChange = {
+                notificationPermissionState.launchPermissionRequest()
+                onValueChange(it)
+            },
+            enabled = enabled,
+        )
+    }
 }
 
 @Composable
@@ -678,21 +696,21 @@ private fun PermissionSettingsLink() {
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
-@Preview
+@Preview(fontScale = 2f)
 @Composable
 private fun NotificationSettingsWidgetPreview() {
 
     val enabledNotificationSettingsViewModel: INotificationSettingsViewModel by lazy {
         NotificationSettingsViewModel(MockSentryRepository()).apply {
             setEnabled(true)
-            setCustomWindows(listOf(Window.default(emptyList(), true, EasternTimeInstant.now())))
+            setWindows(listOf(Window.default(emptyList(), true, EasternTimeInstant.now())))
         }
     }
 
     val serviceDayNotificationSettingsViewModel: INotificationSettingsViewModel by lazy {
         NotificationSettingsViewModel(MockSentryRepository()).apply {
             setEnabled(true)
-            setCustomWindows(
+            setWindows(
                 listOf(
                     Window(
                         startTime = FavoriteSettings.Notifications.serviceBoundary,

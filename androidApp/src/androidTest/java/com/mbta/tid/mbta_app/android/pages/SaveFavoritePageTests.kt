@@ -207,6 +207,7 @@ class SaveFavoritePageTests {
 
         composeTestRule.onNodeWithText("Add Favorite").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Get disruption notifications").performClick()
+        composeTestRule.onNodeWithText("Midday").performClick()
         composeTestRule.onNodeWithText("Save").performClick()
         composeTestRule.waitForIdle()
         assertFavoritesEquals(
