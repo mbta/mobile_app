@@ -385,6 +385,7 @@ struct OnboardingScreenView: View {
                         1,
                         loopMode: .playOnce
                     )) : .paused(at: .time(0)))
+                    .scaleEffect(1.70, anchor: .top)
 
                     OnboardingPieces.KeyButton(
                         text: Text(
