@@ -80,7 +80,7 @@ fun PresetWindowSelector(
                                 Text(
                                     stringResource(R.string.start_to_end_of_service),
                                     style = Typography.callout,
-                                    color = colorResource(R.color.text).copy(alpha = 0.6f),
+                                    color = colorResource(R.color.deemphasized),
                                 )
                             },
                             centerContent = false,
@@ -127,7 +127,7 @@ fun PresetWindowSelector(
                     Icon(
                         painterResource(R.drawable.more),
                         null,
-                        tint = colorResource(R.color.text).copy(alpha = 0.6f),
+                        tint = colorResource(R.color.deemphasized),
                     )
                 },
                 centerContent = false,
@@ -163,7 +163,7 @@ fun PresetButton(
             Text(
                 description,
                 style = Typography.footnote,
-                color = colorResource(R.color.text).copy(alpha = 0.6f),
+                color = colorResource(R.color.deemphasized),
             )
         },
         centerContent = centerContent,
@@ -203,7 +203,7 @@ fun PresetButton(
                     if (isSelected) colorResource(R.color.key) else colorResource(R.color.fill3),
                 contentColor =
                     if (isSelected) colorResource(R.color.fill3)
-                    else colorResource(R.color.text).copy(alpha = 0.6f),
+                    else colorResource(R.color.deemphasized),
             ),
         shape = RoundedCornerShape(8.dp),
         contentPadding = PaddingValues(0.dp),

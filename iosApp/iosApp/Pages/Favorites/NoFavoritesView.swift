@@ -20,7 +20,7 @@ struct NoFavoritesView: View {
             )
             .multilineTextAlignment(.center)
             .font(Typography.body)
-            .foregroundColor(.text.opacity(0.6))
+            .foregroundColor(.deemphasized)
 
             if let onAddStops {
                 Button(

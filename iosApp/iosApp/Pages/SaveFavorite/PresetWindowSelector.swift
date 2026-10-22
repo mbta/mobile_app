@@ -31,7 +31,7 @@ struct PresetWindowSelector: View {
                                 },
                                 label: NSLocalizedString("All day", comment: "Notification window preset label"),
                                 description: {
-                                    Text(description).font(Typography.callout).foregroundStyle(Color.text.opacity(0.6))
+                                    Text(description).font(Typography.callout).foregroundStyle(Color.deemphasized)
                                 },
                                 centerContent: false
                             )
@@ -62,7 +62,7 @@ struct PresetWindowSelector: View {
                                 },
                                 label: label,
                                 description: {
-                                    Text(description).font(Typography.footnote).foregroundStyle(Color.text.opacity(0.6))
+                                    Text(description).font(Typography.footnote).foregroundStyle(Color.deemphasized)
                                 },
                                 centerContent: true
                             )
@@ -82,7 +82,7 @@ struct PresetWindowSelector: View {
                         "Custom",
                         comment: "Button text for selecting custom time range for notifications"
                     ),
-                    description: { Image(.tabIconMore).tint(Color.text.opacity(0.6)) },
+                    description: { Image(.tabIconMore).tint(Color.deemphasized) },
                     centerContent: false
                 )
                 .frame(maxWidth: .infinity)
@@ -130,7 +130,7 @@ private struct PresetButton<Description: View>: View {
                 .padding(.vertical, 10)
             }
         }
-        .foregroundStyle(isSelected ? Color.fill3 : Color.text.opacity(0.6))
+        .foregroundStyle(isSelected ? Color.fill3 : Color.deemphasized)
         .background(isSelected ? Color.key : Color.fill3)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .accessibilityAddTraits(isSelected ? .isSelected : [])

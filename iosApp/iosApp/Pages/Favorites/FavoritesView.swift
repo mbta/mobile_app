@@ -48,10 +48,10 @@ struct FavoritesView: View {
                 navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
                 rightActionContents: {
                     if let stopCardData = favoritesVMState.stopCardData, !stopCardData.isEmpty {
-                        ActionButton(kind: .plus, circleColor: Color.translucentContrast, action: { onAddStops() })
+                        ActionButton(kind: .plus, circleColor: .deemphasized, action: { onAddStops() })
                         NavTextButton(
                             string: NSLocalizedString("Edit", comment: "Button text to enter edit favorites flow"),
-                            backgroundColor: Color.translucentContrast,
+                            backgroundColor: Color.deemphasized,
                             textColor: Color.fill2,
                             height: editButtonHeight,
                             width: 64

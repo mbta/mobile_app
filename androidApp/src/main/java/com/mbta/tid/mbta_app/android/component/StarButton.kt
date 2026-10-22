@@ -290,7 +290,7 @@ private fun StarIconAnimationPreview() {
             StarIcon(
                 starred,
                 Color.fromHex("FFC72C"),
-                outlineColor = colorResource(R.color.text).copy(alpha = 0.6f),
+                outlineColor = colorResource(R.color.deemphasized),
                 size = 120.dp,
             )
         }

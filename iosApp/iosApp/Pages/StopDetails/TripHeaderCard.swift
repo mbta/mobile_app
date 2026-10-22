@@ -178,7 +178,7 @@ struct TripHeaderCard: View {
                     case .someCrowding: .crowdingBusSomeCrowding
                     }
                     Image(crowdingImage).resizable().frame(width: 16, height: 12, alignment: .center).scaledToFit()
-                    Text(crowdingText(crowding)).font(.footnote).foregroundStyle(Color.text.opacity(0.6))
+                    Text(crowdingText(crowding)).font(.footnote).foregroundStyle(Color.deemphasized)
                 }
             }
         default: EmptyView()
@@ -410,7 +410,7 @@ struct TripHeaderCard: View {
                         prediction: upcomingTripViewState,
                         routeType: routeAccents.type,
                         hideRealtimeIndicators: true
-                    ).foregroundStyle(Color.text).opacity(0.6)
+                    ).foregroundStyle(Color.deemphasized)
                 }
             }
         }
