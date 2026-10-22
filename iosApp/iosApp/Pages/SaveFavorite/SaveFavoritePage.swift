@@ -187,34 +187,41 @@ struct SaveFavoritePage: View {
                 },
                 onSave: { updateCloseAndToast(selectedRouteStopDirection, pendingSettings) },
             )
+            ZStack(alignment: .bottom) {
             HaloScrollView(alwaysShowHalo: true) {
                 if let lineOrRoute, let stop {
-                    VStack(spacing: 22) {
-                        FavoriteStopCard(
-                            lineOrRoute: lineOrRoute,
-                            stop: stop,
-                            direction: stopDirections.first(where: { $0.id == selectedDirection }),
-                            toggleDirection: showDirectionToggle ? {
-                                selectedDirection = 1 - selectedDirection
-                            } : nil,
-                        )
-                        NotificationSettingsWidget(
-                            vm: notificationSettingsVM,
-                            onUpdate: { newNotificationSettings in
-                                pendingSettings = pendingSettings.doCopy(notifications: newNotificationSettings)
-                            },
-                            notificationPermissionManager: notificationPermissionManager,
-                            showPresets: saveMode == .add || savedFavorite?.notifications.enabled == false,
-                        )
-                        if saveMode == .edit {
-                            HaloSeparator(height: 2)
-                            FavoriteDeleteButton {
-                                deleteCloseAndToast(selectedRouteStopDirection)
-                            }
+                        VStack(spacing: 16) {
+                            FavoriteStopCard(
+                                lineOrRoute: lineOrRoute,
+                                stop: stop,
+                                direction: stopDirections.first(where: { $0.id == selectedDirection }),
+                                toggleDirection: showDirectionToggle ? {
+                                    selectedDirection = 1 - selectedDirection
+                                } : nil,
+                            )
+                            NotificationSettingsWidget(
+                                vm: notificationSettingsVM,
+                                onUpdate: { newNotificationSettings in
+                                    pendingSettings = pendingSettings.doCopy(notifications: newNotificationSettings)
+                                },
+                                notificationPermissionManager: notificationPermissionManager,
+                                showPresets: saveMode == .add || savedFavorite?.notifications.enabled == false,
+                            )
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 24)
+                        .padding(.bottom, 69)
+                    }
+                }
+                if saveMode == .edit {
+                    VStack {
+                        FavoriteDeleteButton {
+                            deleteCloseAndToast(selectedRouteStopDirection)
                         }
                     }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 24)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 24)
+                    .background(.ultraThinMaterial)
                 }
             }
         }
