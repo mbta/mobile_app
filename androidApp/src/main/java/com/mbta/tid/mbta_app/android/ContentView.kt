@@ -228,8 +228,7 @@ fun ContentView(
     NavHost(
         navController = navController,
         startDestination = Routes.MapAndSheet,
-        if (navBarVisible) Modifier.background(colorResource(R.color.fill2)).navigationBarsPadding()
-        else Modifier,
+        Modifier.background(colorResource(R.color.fill2)).navigationBarsPadding(),
     ) {
         composable<Routes.MapAndSheet> {
             MapAndSheetPage(
