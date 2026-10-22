@@ -17,7 +17,7 @@ struct StopCardContainer<Content: View>: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            StopCardStopHeader(data: cardData, globalData: globalData)
+            StopCardHeaderWithAccessibility(data: cardData, globalData: globalData)
             departureContent(cardData)
         }
         .background(Color.fill3)

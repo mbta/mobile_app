@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -776,6 +777,11 @@ fun MapAndSheetPage(
                     EnterTransition.None
                 } else if (initialRoute == targetRoute) {
                     EnterTransition.None
+                } else if (
+                    setOf(initialRoute, targetRoute) ==
+                        setOf(SheetRoutes.EditFavorites, SheetRoutes.Favorites)
+                ) {
+                    fadeIn(animationSpec = tween(easing = EaseInOut, durationMillis = 700))
                 } else {
                     slideIntoContainer(
                         AnimatedContentTransitionScope.SlideDirection.Up,

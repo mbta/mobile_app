@@ -39,7 +39,7 @@ struct ContentView: View {
     var includeAccessibility: Bool { settingsCache.get(.stationAccessibility) }
     var notificationsFlag: Bool { settingsCache.get(.notifications) }
 
-    let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
+    @State var transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     let analytics: Analytics = AnalyticsProvider.shared
 
     let inspection = Inspection<Self>()
@@ -131,8 +131,18 @@ struct ContentView: View {
                 updateTabBarVisibility()
             }
         }
-        .onChange(of: navManager.navigationStack.lastSafe()) { _ in
-            updateTabBarVisibility()
+        .onChange(of: navManager.navigationStack
+            .lastSafe()) { [oldVal = navManager.navigationStack.lastSafe()] newVal in
+                let sheetPair: Set<SheetNavigationStackEntry> = [oldVal, newVal]
+                let opacityTransitionPair: Set<SheetNavigationStackEntry> = [.favorites, .editFavorites]
+
+                if sheetPair == opacityTransitionPair {
+                    transition = .opacity
+                } else {
+                    transition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
+                }
+
+                updateTabBarVisibility()
         }
         .onChange(of: AnalyticsParams(
             stopId: navManager.navigationStack.lastSafe().stopId(),

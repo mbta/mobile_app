@@ -3,7 +3,9 @@ package com.mbta.tid.mbta_app.android.component.stopCard
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
@@ -12,17 +14,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.Stop
 
 @Composable
-fun StopHeader(stop: Stop, modifier: Modifier = Modifier) {
+fun StopHeader(stop: Stop, modifier: Modifier = Modifier, subheader: @Composable () -> Unit = {}) {
     Row(
         modifier
-            .background(colorResource(R.color.fill1))
+            .background(colorResource(R.color.halo_light))
             .padding(horizontal = 12.dp, vertical = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -33,8 +37,16 @@ fun StopHeader(stop: Stop, modifier: Modifier = Modifier) {
                 else R.drawable.stop_bus
             ),
             null,
-            Modifier.width(24.dp),
+            Modifier.placeholderIfLoading().width(24.dp),
         )
-        Text(stop.name, Modifier.weight(1f), style = Typography.bodySemibold)
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                stop.name,
+                style = Typography.bodySemibold,
+                modifier = Modifier.placeholderIfLoading().fillMaxWidth(),
+                overflow = TextOverflow.Visible,
+            )
+            subheader()
+        }
     }
 }

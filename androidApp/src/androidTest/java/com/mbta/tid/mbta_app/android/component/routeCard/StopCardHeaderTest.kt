@@ -18,19 +18,18 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 
-class StopSubheaderTest {
+class StopCardHeaderTest {
     @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Test
     fun testBasic() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
-        val stop = objects.stop {}
+        val stop = objects.stop { name = "Test Stop" }
 
         composeTestRule.setContent {
-            StopSubheader(
+            StopCardHeader(
                 RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
-                includeIcon = false,
                 GlobalResponse(objects),
             )
         }
@@ -41,15 +40,17 @@ class StopSubheaderTest {
     fun testAccessible() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
-        val stop = objects.stop { wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE }
+        val stop = objects.stop {
+            name = "Test stop"
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+        }
 
         loadKoinMocks {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            StopSubheader(
+            StopCardHeader(
                 RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
-                includeIcon = false,
                 GlobalResponse(objects),
             )
         }
@@ -61,15 +62,17 @@ class StopSubheaderTest {
     fun testNotAccessible() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
-        val stop = objects.stop { wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE }
+        val stop = objects.stop {
+            name = "Test stop"
+            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
+        }
 
         loadKoinMocks {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            StopSubheader(
+            StopCardHeader(
                 RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
-                includeIcon = false,
                 GlobalResponse(objects),
             )
         }
@@ -82,15 +85,17 @@ class StopSubheaderTest {
     fun testNotAccessibleBlocklisted() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
-        val stop = objects.stop { wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE }
+        val stop = objects.stop {
+            name = "Test stop"
+            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
+        }
 
         loadKoinMocks {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            StopSubheader(
+            StopCardHeader(
                 RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
-                includeIcon = false,
                 GlobalResponse(
                     objects,
                     patternIdsByStop = emptyMap(),
@@ -106,7 +111,10 @@ class StopSubheaderTest {
     fun testElevatorAlert() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
-        val stop = objects.stop { wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE }
+        val stop = objects.stop {
+            name = "Test stop"
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+        }
         val alert = objects.alert {
             effect = Alert.Effect.ElevatorClosure
             informedEntity()
@@ -117,7 +125,7 @@ class StopSubheaderTest {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            StopSubheader(
+            StopCardHeader(
                 RouteCardData.RouteStopData(
                     lineOrRoute,
                     stop,
@@ -138,7 +146,6 @@ class StopSubheaderTest {
                         )
                     ),
                 ),
-                includeIcon = false,
                 GlobalResponse(objects),
             )
         }
