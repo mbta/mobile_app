@@ -29,6 +29,7 @@ import com.mbta.tid.mbta_app.android.testUtils.hasTextMatching
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.util.ConstantPermissionState
 import com.mbta.tid.mbta_app.model.FavoriteSettings
+import com.mbta.tid.mbta_app.model.FavoriteSettings.Notifications.Window
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.NotificationSettingsViewModel
@@ -60,6 +61,7 @@ class NotificationSettingsWidgetTest : KoinTest {
                 viewModel = viewModel,
                 notificationPermissionState = permissionGranted,
                 hasRequestedPermission = true,
+                showPresets = true,
                 now = now,
             )
         }
@@ -111,6 +113,7 @@ class NotificationSettingsWidgetTest : KoinTest {
                 viewModel,
                 notificationPermissionState = permissionGranted,
                 hasRequestedPermission = true,
+                showPresets = true,
                 now = now,
             )
         }
@@ -158,6 +161,7 @@ class NotificationSettingsWidgetTest : KoinTest {
                 viewModel = viewModel,
                 notificationPermissionState = permissionGranted,
                 hasRequestedPermission = true,
+                showPresets = true,
                 now = now,
             )
         }
@@ -452,5 +456,30 @@ class NotificationSettingsWidgetTest : KoinTest {
         composeTestRule.onNodeWithText("Okay").performClick()
 
         composeTestRule.onNodeWithContentDescription("next day").assertExists()
+    }
+
+    @Test
+    fun testHidesPresetButtonsWhenShowPresetsIsFalse() {
+        val viewModel = NotificationSettingsViewModel(MockSentryRepository())
+        viewModel.loadSavedSettings(
+            FavoriteSettings.Notifications(
+                enabled = true,
+                windows = listOf(Window(preset = com.mbta.tid.mbta_app.model.Preset.Morning, Window.weekdays)),
+            )
+        )
+
+        composeTestRule.setContent {
+            NotificationSettingsWidget(
+                viewModel = viewModel,
+                notificationPermissionState = permissionGranted,
+                hasRequestedPermission = true,
+                showPresets = false,
+            )
+        }
+
+        composeTestRule.onNodeWithText("Morning").assertDoesNotExist()
+        composeTestRule.onNodeWithText("Midday").assertDoesNotExist()
+        composeTestRule.onNodeWithText("Evening").assertDoesNotExist()
+        composeTestRule.onNodeWithText("All day").assertDoesNotExist()
     }
 }

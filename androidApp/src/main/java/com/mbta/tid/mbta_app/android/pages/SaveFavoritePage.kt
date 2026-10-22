@@ -86,6 +86,14 @@ import org.koin.compose.koinInject
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 
+private sealed class SaveFavoriteMode {
+    object Add : SaveFavoriteMode()
+    object Edit : SaveFavoriteMode()
+}
+
+private typealias Add = SaveFavoriteMode.Add
+private typealias Edit = SaveFavoriteMode.Edit
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun SaveFavoritePage(
@@ -123,11 +131,12 @@ fun SaveFavoritePage(
     }
     val selectedRouteStopDirection = RouteStopDirection(routeId, stopId, selectedDirection)
 
-    val isFavorite = favorites?.containsKey(selectedRouteStopDirection) ?: false
-    var wasAdding by rememberSaveable { mutableStateOf(favorites != null && !isFavorite) }
+    val savedFavorite = favorites?.get(selectedRouteStopDirection)
+    val saveMode = if (savedFavorite != null) Edit else Add
+    var wasAdding by rememberSaveable { mutableStateOf(favorites != null && saveMode == Add) }
     val showDirectionToggle = stopDirections.size > 1 && wasAdding
 
-    LaunchedEffect(isFavorite, favorites) { if (favorites != null && !isFavorite) wasAdding = true }
+    LaunchedEffect(saveMode, favorites) { if (favorites != null && saveMode == Add) wasAdding = true }
 
     val existingSettings = favorites?.get(selectedRouteStopDirection) ?: FavoriteSettings()
     var updatedSettings by
@@ -273,7 +282,7 @@ fun SaveFavoritePage(
             }
             Text(
                 stringResource(
-                    if (isFavorite) R.string.edit_favorite_title else R.string.add_favorite_title
+                    if (saveMode == Edit) R.string.edit_favorite_title else R.string.add_favorite_title
                 ),
                 Modifier.padding(start = 16.dp).semantics {
                     heading()
@@ -301,10 +310,11 @@ fun SaveFavoritePage(
             )
             NotificationSettingsWidget(
                 viewModel = notificationSettingsViewModel,
+                showPresets = saveMode == Add || savedFavorite?.notifications?.enabled == false,
                 notificationPermissionState = notificationPermissionState,
                 hasRequestedPermission = hasRequestedPermission,
             )
-            if (isFavorite) {
+            if (saveMode == Edit) {
                 HaloSeparator()
                 Button(
                     onClick = { removeCloseAndToast(selectedRouteStopDirection) },

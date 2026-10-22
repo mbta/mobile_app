@@ -15,6 +15,7 @@ struct NotificationSettingsWidget: View {
     let onUpdate: (FavoriteSettings.Notifications) -> Void
 
     var notificationPermissionManager: INotificationPermissionManager
+    var showPresets: Bool
     var authorizationStatus: UNAuthorizationStatus? { notificationPermissionManager.authorizationStatus }
     var now: EasternTimeInstant = .now()
 
@@ -27,6 +28,7 @@ struct NotificationSettingsWidget: View {
             if let vmState {
                 NotificationSettingsWidgetPresentationView(
                     state: vmState,
+                    showPresets: showPresets,
                     setEnabled: { enabled in vm.setEnabled(enabled: enabled) },
                     setPreset: { preset in vm.setPreset(preset: preset) },
                     setWindows: { custom in vm.setWindows(windows: custom) },
@@ -47,6 +49,7 @@ struct NotificationSettingsWidget: View {
 
 struct NotificationSettingsWidgetPresentationView: View {
     let state: NotificationSettingsViewModel.State
+    var showPresets: Bool
     var setEnabled: (Bool) -> Void = { _ in }
     var setPreset: (Preset?) -> Void = { _ in }
     var setWindows: ([FavoriteSettings.NotificationsWindow]) -> Void = { _ in }
@@ -99,7 +102,7 @@ struct NotificationSettingsWidgetPresentationView: View {
                             .padding(.vertical, 8)
 
                         VStack(spacing: 16) {
-                            if presetWindowsEnabled {
+                            if presetWindowsEnabled, showPresets {
                                 PresetWindowSelector(
                                     presetRows: presetOptions,
                                     selectedPreset: state.selectedPreset,
@@ -523,7 +526,8 @@ struct NotificationSettingsWidget_Previews: PreviewProvider {
             NotificationSettingsWidget(
                 vm: vm,
                 onUpdate: { _ in },
-                notificationPermissionManager: MockNotificationPermissionManager()
+                notificationPermissionManager: MockNotificationPermissionManager(),
+                showPresets: true
             ).onAppear {
                 vm.setEnabled(enabled: true)
                 vm.setWindows(windows: windows)

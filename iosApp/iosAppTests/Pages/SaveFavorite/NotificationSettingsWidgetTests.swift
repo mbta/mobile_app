@@ -278,6 +278,24 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(button: "Custom"))
     }
 
+    func testPresetButtonsAreHiddenWhenEditingEnabledFavorite() throws {
+        let settings: FavoriteSettings.Notifications = .init(
+            enabled: true,
+            windows: [FavoriteSettings.NotificationsWindow(preset: .morning, daysOfWeek: [.monday])]
+        )
+
+        let sut = NotificationSettingsWidgetPresentationView(
+            state: .init(settings: settings, selectedPreset: nil),
+            showPresets: false,
+            notificationPermissionManager: MockNotificationPermissionManager()
+        ).withFixedSettings([.notificationPresetWindows: true])
+
+        XCTAssertThrowsError(try sut.inspect().find(button: "Morning"))
+        XCTAssertThrowsError(try sut.inspect().find(button: "Midday"))
+        XCTAssertThrowsError(try sut.inspect().find(button: "Evening"))
+        XCTAssertThrowsError(try sut.inspect().find(button: "All day"))
+    }
+
     func testStartAndEndOfService() throws {
         NSTimeZone.default = NSTimeZone.system
         let settings: FavoriteSettings.Notifications = .init(

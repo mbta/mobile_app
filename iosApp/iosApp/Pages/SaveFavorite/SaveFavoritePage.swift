@@ -9,6 +9,16 @@
 import Shared
 import SwiftUI
 
+enum SaveFavoriteMode {
+    case add
+    case edit
+}
+
+private struct AddingParams: Equatable {
+    let saveMode: SaveFavoriteMode
+    let favoritesLoaded: Bool
+}
+
 struct SaveFavoritePage: View {
     @ObserveInjection var inject
     var routeId: LineOrRoute.Id
@@ -65,7 +75,8 @@ struct SaveFavoritePage: View {
         RouteStopDirection(route: routeId, stop: stopId, direction: selectedDirection)
     }
 
-    var isFavorite: Bool { favorites.isFavorite(selectedRouteStopDirection) }
+    var savedFavorite: FavoriteSettings? { favorites.routeStopDirection[selectedRouteStopDirection] }
+    var saveMode: SaveFavoriteMode { if savedFavorite != nil { .edit } else { .add } }
     var allPatternsForStop: [RoutePattern] {
         if let globalResponse, let lineOrRoute, let stop {
             globalResponse.getPatternsFor(stopId: stop.id, lineOrRoute: lineOrRoute)
@@ -104,7 +115,7 @@ struct SaveFavoritePage: View {
         navCallbacks.onBack?()
 
         // If the selected route, stop, and direction wasn't already favorited, show confirmation toast
-        if !isFavorite {
+        if saveMode == .add {
             let toastText = if let labels = rsd.getLabels(globalResponse) {
                 String(format: NSLocalizedString(
                     "**%1$@ %2$@** at **%3$@** added to Favorites",
@@ -169,7 +180,7 @@ struct SaveFavoritePage: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             SaveFavoriteHeader(
-                isFavorite: isFavorite,
+                saveMode: saveMode,
                 onCancel: { navCallbacks.onBack?()
                     notificationSettingsVM.loadSavedSettings(settings: nil)
 
@@ -193,8 +204,9 @@ struct SaveFavoritePage: View {
                                 pendingSettings = pendingSettings.doCopy(notifications: newNotificationSettings)
                             },
                             notificationPermissionManager: notificationPermissionManager,
+                            showPresets: saveMode == .add || savedFavorite?.notifications.enabled == false,
                         )
-                        if isFavorite {
+                        if saveMode == .edit {
                             HaloSeparator(height: 2)
                             FavoriteDeleteButton {
                                 deleteCloseAndToast(selectedRouteStopDirection)
@@ -217,8 +229,8 @@ struct SaveFavoritePage: View {
             resetPendingSettings()
             favoritesLoaded = true
         }
-        .onChange(of: [isFavorite, favoritesLoaded]) { _ in
-            if !isFavorite, favoritesLoaded { wasAdding = true }
+        .onChange(of: AddingParams(saveMode: saveMode, favoritesLoaded: favoritesLoaded)) { params in
+            if params.saveMode == .add, params.favoritesLoaded { wasAdding = true }
         }
         .frame(maxHeight: .infinity)
         .background(Color.fill2)

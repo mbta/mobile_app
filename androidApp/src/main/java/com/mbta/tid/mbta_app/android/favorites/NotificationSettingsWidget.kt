@@ -99,12 +99,13 @@ import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import org.koin.mp.KoinPlatformTools
 
-@OptIn(ExperimentalUuidApi::class, ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun NotificationSettingsWidget(
     viewModel: INotificationSettingsViewModel = koinInject(),
     notificationPermissionState: PermissionState,
     hasRequestedPermission: Boolean,
+    showPresets: Boolean = true,
     now: EasternTimeInstant = EasternTimeInstant.now(),
 ) {
     val permissionStatus = notificationPermissionState.status
@@ -204,8 +205,7 @@ fun NotificationSettingsWidget(
                             padding = 4.dp,
                         ),
                 ) {
-                    if (presetWindowsEnabled) {
-
+                    if (presetWindowsEnabled && showPresets) {
                         PresetWindowSelector(
                             presetRows = presetOptions,
                             selectedPreset = notificationSettingsState.selectedPreset,
@@ -751,29 +751,32 @@ private fun NotificationSettingsWidgetPreview() {
         ) {
             NotificationSettingsWidget(
                 enabledNotificationSettingsViewModel,
-                ConstantPermissionState(
+                showPresets = true,
+                notificationPermissionState = ConstantPermissionState(
                     Manifest.permission.POST_NOTIFICATIONS,
                     PermissionStatus.Granted,
                 ),
-                true,
+                hasRequestedPermission = true,
             )
             HaloSeparator()
             NotificationSettingsWidget(
                 serviceDayNotificationSettingsViewModel,
-                ConstantPermissionState(
+                showPresets = true,
+                notificationPermissionState = ConstantPermissionState(
                     Manifest.permission.POST_NOTIFICATIONS,
                     PermissionStatus.Granted,
                 ),
-                true,
+                hasRequestedPermission = true,
             )
             HaloSeparator()
             NotificationSettingsWidget(
                 disabledNotificationSettingsViewModel,
-                ConstantPermissionState(
+                showPresets = true,
+                notificationPermissionState = ConstantPermissionState(
                     Manifest.permission.POST_NOTIFICATIONS,
                     PermissionStatus.Denied(false),
                 ),
-                true,
+                hasRequestedPermission = true,
             )
         }
     }
