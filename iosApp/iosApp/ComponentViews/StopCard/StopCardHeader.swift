@@ -82,7 +82,7 @@ struct StopCardHeader<Subheader: View>: View {
             .padding(.vertical, 12)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.haloLight)
+        .background(Color.halo)
         .enableInjection()
     }
 }

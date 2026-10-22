@@ -21,7 +21,7 @@ class RouteCardTest {
     fun testNearbyCard() {
         val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
-        val stop = objects.stop {}
+        val stop = objects.stop { name = "Test Stop" }
         val route = objects.route {
             longName = "Route"
             type = RouteType.LIGHT_RAIL
@@ -52,7 +52,7 @@ class RouteCardTest {
     fun testNoPinRouteButtonWhenEnhancedFavorites() {
         val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
-        val stop = objects.stop {}
+        val stop = objects.stop { name = "Test Stop" }
         val route = objects.route {
             longName = "Route"
             type = RouteType.LIGHT_RAIL

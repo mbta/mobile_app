@@ -44,7 +44,7 @@ fun StopCardContainer(
     departureContent: @Composable (StopCardData) -> Unit,
 ) {
     Column(modifier.haloContainer(1.dp).semantics { testTag = "StopCard" }) {
-        StopCardHeader(data.stop, data.elevatorAlerts, includeIcon = true, globalData)
+        StopCardHeader(data.stop, data.elevatorAlerts, globalData)
 
         departureContent(data)
     }
