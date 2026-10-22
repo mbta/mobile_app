@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mapbox/mapbox-common-ios.git",
       "state" : {
-        "revision" : "c00b5eef6a2ec81930d915730c6dbd92c83d874c",
-        "version" : "24.31.1"
+        "revision" : "46ecd9ff66a486e84d9a004cd794eb278b12a732",
+        "version" : "24.32.2"
       }
     },
     {
@@ -141,8 +141,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mapbox/mapbox-core-maps-ios.git",
       "state" : {
-        "revision" : "03fc876d19072637689a465ff9a2be64ba447439",
-        "version" : "11.31.1"
+        "revision" : "e9e7abf4010280e800156c57ff9eb0c07eb4f069",
+        "version" : "11.32.2"
       }
     },
     {
@@ -150,8 +150,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mapbox/mapbox-maps-ios.git",
       "state" : {
-        "revision" : "6be7a1608d70c6d64eb9c57acb45f982f3953d09",
-        "version" : "11.31.1"
+        "revision" : "31fe69dac93b36db509f367b136cf03c985426ee",
+        "version" : "11.32.2"
       }
     },
     {
@@ -222,8 +222,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mapbox/turf-swift.git",
       "state" : {
-        "revision" : "bf840e6b9529d105687840fe2c9dcd74197d46d1",
-        "version" : "4.0.0"
+        "revision" : "bede176c40528de69aef7ee3beb4c4f0177c8a31",
+        "version" : "4.1.0"
       }
     },
     {
