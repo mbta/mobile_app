@@ -27,6 +27,15 @@ enum RouteDetailsRowContext: Equatable {
     }
 }
 
+/// Retains the last selected value outside of SwiftUI’s state management
+private struct LastSelection {
+    let lineOrRouteId: LineOrRoute.Id
+    let routeId: Route.Id
+    let direction: Int32
+
+    static var value: Self?
+}
+
 struct RouteStopListView<RightSideContent: View>: View {
     @ObserveInjection var inject
     let lineOrRoute: LineOrRoute
@@ -78,10 +87,15 @@ struct RouteStopListView<RightSideContent: View>: View {
         self.favoritesVM = favoritesVM
         self.toastVM = toastVM
 
-        selectedRouteId = defaultSelectedRouteId ?? lineOrRoute.sortRoute.id
         let parameters = RouteDetailsStopList.RouteParameters(lineOrRoute: lineOrRoute, globalData: globalData)
         self.parameters = parameters
-        selectedDirection = Int32(truncating: parameters.availableDirections.first ?? 0)
+        if let lastSelection = LastSelection.value, lastSelection.lineOrRouteId == lineOrRoute.id {
+            selectedRouteId = lastSelection.routeId
+            selectedDirection = lastSelection.direction
+        } else {
+            selectedRouteId = defaultSelectedRouteId ?? lineOrRoute.sortRoute.id
+            selectedDirection = Int32(truncating: parameters.availableDirections.first ?? 0)
+        }
     }
 
     private struct RouteStopsParams: Equatable {
@@ -121,6 +135,7 @@ struct RouteStopListView<RightSideContent: View>: View {
             }
         }
         .onChange(of: RouteStopsParams(routeId: selectedRouteId, directionId: selectedDirection)) {
+            LastSelection.value = .init(lineOrRouteId: lineOrRoute.id, routeId: $0.routeId, direction: $0.directionId)
             loadRouteStops(routeId: $0.routeId, directionId: $0.directionId)
         }
         .onChange(of: RouteStopListParams(
