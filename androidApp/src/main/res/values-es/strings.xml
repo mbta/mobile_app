@@ -508,8 +508,8 @@
     <string name="vehicle_skipped_other">y en %1$s no parará</string>
     <string name="vessel_substitution">Cambio de Barco</string>
     <string name="vessel_substitution_lowercase">cambio de barco</string>
-    <string name="vessel_traffic">Tráfico</string>
-    <string name="vessel_traffic_lowercase">tráfico</string>
+    <string name="vessel_traffic">Tráfico Marítimo</string>
+    <string name="vessel_traffic_lowercase">tráfico marítimo</string>
     <string name="view_details">Ver detalles</string>
     <string name="waiting_to_depart">Esperando para partir</string>
     <string name="weather">Clima</string>
