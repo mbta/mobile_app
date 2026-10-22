@@ -92,7 +92,7 @@ struct StopDetailsUnfilteredView: View {
                 VStack(spacing: 0) {
                     SheetHeader(
                         title: stop?.name ?? "Invalid Stop",
-                        buttonColor: .text.opacity(0.6),
+                        buttonColor: .deemphasized,
                         buttonTextColor: .fill2,
                         navCallbacks: navCallbacks,
                     ).padding(.bottom, hasPillFilters ? 4 : 16)

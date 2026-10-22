@@ -31,8 +31,6 @@ extension Color {
     static let text = Color("Text")
     static let textContrast = Color("Text Contrast")
     static let trackChangePillAlertBackground = Color("Track Change Pill Alert Background")
-
-    static let translucentContrast = text.opacity(0.6)
 }
 
 extension UIColor {
@@ -60,6 +58,4 @@ extension UIColor {
     static let text = UIColor(named: "Text") ?? UIColor(Color(.text))
     static let trackChangePillAlertBackground = UIColor(named: "Track Change Pill Alert Background") ??
         UIColor(Color(.trackChangePillAlertBackground))
-
-    static let translucentContrast = text.withAlphaComponent(0.6)
 }

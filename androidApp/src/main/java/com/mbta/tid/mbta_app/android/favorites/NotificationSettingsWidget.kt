@@ -173,7 +173,7 @@ fun NotificationSettingsWidget(
                 Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                 style = Typography.callout,
                 textAlign = TextAlign.Center,
-                color = colorResource(R.color.text).copy(alpha = 0.6f),
+                color = colorResource(R.color.deemphasized),
             )
         }
         AnimatedVisibility(settings.enabled && !permissionDenied) {
@@ -247,14 +247,14 @@ fun NotificationSettingsWidget(
                                 painterResource(R.drawable.plus),
                                 null,
                                 Modifier.background(
-                                    colorResource(R.color.text).copy(alpha = 0.6f),
+                                    colorResource(R.color.deemphasized),
                                     CircleShape,
                                 ),
                                 tint = colorResource(R.color.fill3),
                             )
                             Text(
                                 stringResource(R.string.add_another_time_period),
-                                color = colorResource(R.color.text).copy(alpha = 0.6f),
+                                color = colorResource(R.color.deemphasized),
                             )
                         }
                     }
@@ -601,7 +601,7 @@ private fun DaysOfWeekInput(daysOfWeek: Set<DayOfWeek>, setDaysOfWeek: (Set<DayO
                 color = colorResource(if (isIncluded) R.color.key else R.color.fill2),
                 contentColor =
                     if (isIncluded) colorResource(R.color.fill3)
-                    else colorResource(R.color.text).copy(alpha = 0.6f),
+                    else colorResource(R.color.deemphasized),
             ) {
                 Column(
                     Modifier.padding(top = 8.dp),

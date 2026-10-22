@@ -83,7 +83,7 @@ struct NotificationSettingsWidgetPresentationView: View {
                     if !settings.enabled {
                         Text("We can send you push notifications about problems on this route before you go")
                             .font(Typography.callout)
-                            .foregroundColor(Color.text.opacity(0.6))
+                            .foregroundColor(Color.deemphasized)
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding(.vertical, 8)
@@ -92,7 +92,7 @@ struct NotificationSettingsWidgetPresentationView: View {
                     if settings.enabled {
                         Text("When do you want notifications?")
                             .font(Typography.callout)
-                            .foregroundColor(Color.text.opacity(0.6))
+                            .foregroundColor(Color.deemphasized)
                             .accessibilityAddTraits(.isHeader)
                             .accessibilityHeading(.h2)
                             .frame(maxWidth: .infinity, alignment: .center)
@@ -134,7 +134,7 @@ struct NotificationSettingsWidgetPresentationView: View {
                                     Image(.plus)
                                         .resizable()
                                         .padding(4)
-                                        .background(Color.text.opacity(0.6), in: .circle)
+                                        .background(Color.deemphasized, in: .circle)
                                         .foregroundStyle(Color.fill3)
                                         .frame(width: 24, height: 24)
                                     Text("Add another time period")
@@ -144,7 +144,7 @@ struct NotificationSettingsWidgetPresentationView: View {
                             .padding(.horizontal, 12)
                             .padding(.bottom, 16)
                             .withRoundedBorder(color: .clear)
-                            .foregroundStyle(Color.text.opacity(0.6))
+                            .foregroundStyle(Color.deemphasized)
                         }
                         .padding(4)
                         .background(Color.fill1)
@@ -399,7 +399,7 @@ struct DaysOfWeekInput: View {
                 }
                 .background(isIncluded ? Color.key : Color.fill2)
                 .clipShape(RoundedRectangle(cornerRadius: 6))
-                .foregroundStyle(isIncluded ? Color.fill3 : Color.text.opacity(0.6))
+                .foregroundStyle(isIncluded ? Color.fill3 : Color.deemphasized)
                 .accessibilityElement(children: .ignore)
                 .accessibilityChildren {
                     // .accessibilityAddTraits(.isToggle) is iOS 17+ only, so we use a real toggle

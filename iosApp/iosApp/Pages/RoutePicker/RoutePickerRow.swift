@@ -34,7 +34,7 @@ struct RoutePickerRow: View {
                         .scaledToFit()
                         .frame(width: 8)
                         .padding(.horizontal, 8)
-                        .foregroundColor(Color.translucentContrast)
+                        .foregroundColor(Color.deemphasized)
                 }
                 .padding(.horizontal, 8)
                 .padding(.vertical, 12)
