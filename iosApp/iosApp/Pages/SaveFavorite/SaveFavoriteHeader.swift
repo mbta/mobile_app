@@ -23,11 +23,11 @@ struct SaveFavoriteHeader: View {
     )
     var titleText: String {
         switch saveMode {
-        case .add:NSLocalizedString("Add Favorite", comment: "Title for creating a favorite")
+        case .add: NSLocalizedString("Add Favorite", comment: "Title for creating a favorite")
         case .edit: NSLocalizedString(
-            "Edit Favorite",
-            comment: "Title for editing an individual favorite’s settings"
-        )
+                "Edit Favorite",
+                comment: "Title for editing an individual favorite’s settings"
+            )
         }
     }
 

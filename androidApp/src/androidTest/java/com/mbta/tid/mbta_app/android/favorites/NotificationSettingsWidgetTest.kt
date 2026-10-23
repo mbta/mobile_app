@@ -464,7 +464,10 @@ class NotificationSettingsWidgetTest : KoinTest {
         viewModel.loadSavedSettings(
             FavoriteSettings.Notifications(
                 enabled = true,
-                windows = listOf(Window(preset = com.mbta.tid.mbta_app.model.Preset.Morning, Window.weekdays)),
+                windows =
+                    listOf(
+                        Window(preset = com.mbta.tid.mbta_app.model.Preset.Morning, Window.weekdays)
+                    ),
             )
         )
 

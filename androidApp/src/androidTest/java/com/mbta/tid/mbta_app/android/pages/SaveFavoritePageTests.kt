@@ -369,7 +369,10 @@ class SaveFavoritePageTests {
 
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Edit Favorite").assertCanBeDisplayed()
-        composeTestRule.onNodeWithText("Get disruption notifications").assertCanBeDisplayed().assertIsOn()
+        composeTestRule
+            .onNodeWithText("Get disruption notifications")
+            .assertCanBeDisplayed()
+            .assertIsOn()
         composeTestRule.onNodeWithText("Add another time period").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Morning").assertDoesNotExist()
         composeTestRule.onNodeWithText("Midday").assertDoesNotExist()

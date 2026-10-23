@@ -188,8 +188,8 @@ struct SaveFavoritePage: View {
                 onSave: { updateCloseAndToast(selectedRouteStopDirection, pendingSettings) },
             )
             ZStack(alignment: .bottom) {
-            HaloScrollView(alwaysShowHalo: true) {
-                if let lineOrRoute, let stop {
+                HaloScrollView(alwaysShowHalo: true) {
+                    if let lineOrRoute, let stop {
                         VStack(spacing: 16) {
                             FavoriteStopCard(
                                 lineOrRoute: lineOrRoute,

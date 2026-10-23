@@ -92,10 +92,12 @@ import org.koin.dsl.module
 
 private sealed class SaveFavoriteMode {
     object Add : SaveFavoriteMode()
+
     object Edit : SaveFavoriteMode()
 }
 
 private typealias Add = SaveFavoriteMode.Add
+
 private typealias Edit = SaveFavoriteMode.Edit
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -140,7 +142,9 @@ fun SaveFavoritePage(
     var wasAdding by rememberSaveable { mutableStateOf(favorites != null && saveMode == Add) }
     val showDirectionToggle = stopDirections.size > 1 && wasAdding
 
-    LaunchedEffect(saveMode, favorites) { if (favorites != null && saveMode == Add) wasAdding = true }
+    LaunchedEffect(saveMode, favorites) {
+        if (favorites != null && saveMode == Add) wasAdding = true
+    }
 
     val existingSettings = favorites?.get(selectedRouteStopDirection) ?: FavoriteSettings()
     var updatedSettings by
@@ -261,8 +265,7 @@ fun SaveFavoritePage(
 
     Column {
         Column(
-            Modifier
-                .background(colorResource(R.color.fill3))
+            Modifier.background(colorResource(R.color.fill3))
                 .statusBarsPadding()
                 .padding(vertical = 16.dp)
                 .padding(end = 16.dp)
@@ -287,21 +290,19 @@ fun SaveFavoritePage(
             }
             Text(
                 stringResource(
-                    if (saveMode == Edit) R.string.edit_favorite_title else R.string.add_favorite_title
+                    if (saveMode == Edit) R.string.edit_favorite_title
+                    else R.string.add_favorite_title
                 ),
-                Modifier
-                    .padding(start = 16.dp)
-                    .semantics {
-                        heading()
-                    },
+                Modifier.padding(start = 16.dp).semantics {
+                    heading()
+                },
                 style = Typography.title1Bold,
             )
         }
         HaloSeparator()
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
             Column(
-                Modifier
-                    .fillMaxHeight()
+                Modifier.fillMaxHeight()
                     .background(colorResource(R.color.fill2))
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 16.dp, vertical = 24.dp)
@@ -315,8 +316,9 @@ fun SaveFavoritePage(
                     stopDirections.find { it.id == selectedDirection } ?: stopDirections.first(),
                     toggleDirection =
                         {
-                            selectedDirection = 1 - selectedDirection
-                        }.takeIf { showDirectionToggle },
+                                selectedDirection = 1 - selectedDirection
+                            }
+                            .takeIf { showDirectionToggle },
                     onlyServingOppositeDirection =
                         stopDirections.singleOrNull()?.id == 1 - initialDirection,
                 )
@@ -329,8 +331,7 @@ fun SaveFavoritePage(
             }
             if (saveMode == Edit) {
                 Column(
-                    Modifier
-                        .fillMaxWidth()
+                    Modifier.fillMaxWidth()
                         .background(colorResource(R.color.fill2).copy(alpha = 0.9f))
                         .padding(horizontal = 24.dp)
                         .padding(top = 24.dp, bottom = 12.dp)

@@ -91,7 +91,6 @@ import com.mbta.tid.mbta_app.repositories.Settings as UserSettings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.INotificationSettingsViewModel
 import com.mbta.tid.mbta_app.viewModel.NotificationSettingsViewModel
-import kotlin.uuid.ExperimentalUuidApi
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import org.koin.compose.koinInject
@@ -752,30 +751,33 @@ private fun NotificationSettingsWidgetPreview() {
             NotificationSettingsWidget(
                 enabledNotificationSettingsViewModel,
                 showPresets = true,
-                notificationPermissionState = ConstantPermissionState(
-                    Manifest.permission.POST_NOTIFICATIONS,
-                    PermissionStatus.Granted,
-                ),
+                notificationPermissionState =
+                    ConstantPermissionState(
+                        Manifest.permission.POST_NOTIFICATIONS,
+                        PermissionStatus.Granted,
+                    ),
                 hasRequestedPermission = true,
             )
             HaloSeparator()
             NotificationSettingsWidget(
                 serviceDayNotificationSettingsViewModel,
                 showPresets = true,
-                notificationPermissionState = ConstantPermissionState(
-                    Manifest.permission.POST_NOTIFICATIONS,
-                    PermissionStatus.Granted,
-                ),
+                notificationPermissionState =
+                    ConstantPermissionState(
+                        Manifest.permission.POST_NOTIFICATIONS,
+                        PermissionStatus.Granted,
+                    ),
                 hasRequestedPermission = true,
             )
             HaloSeparator()
             NotificationSettingsWidget(
                 disabledNotificationSettingsViewModel,
                 showPresets = true,
-                notificationPermissionState = ConstantPermissionState(
-                    Manifest.permission.POST_NOTIFICATIONS,
-                    PermissionStatus.Denied(false),
-                ),
+                notificationPermissionState =
+                    ConstantPermissionState(
+                        Manifest.permission.POST_NOTIFICATIONS,
+                        PermissionStatus.Denied(false),
+                    ),
                 hasRequestedPermission = true,
             )
         }
