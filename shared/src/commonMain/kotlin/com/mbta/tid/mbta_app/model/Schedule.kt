@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -28,5 +29,24 @@ internal constructor(
         @SerialName("call_agency") CallAgency,
         /** Must coordinate with driver to arrange drop off / pickup */
         @SerialName("coordinate_with_driver") CoordinateWithDriver,
+    }
+
+    /**
+     * Is the scheduled stop id different from the canonically scheduled stop id. For commuter rail
+     * trips only.
+     */
+    public fun isScheduledTrackChange(globalData: GlobalResponse): Boolean {
+        val trip = globalData.trips[tripId] ?: return false
+        if (globalData.routes[routeId]?.type != (RouteType.COMMUTER_RAIL)) {
+            return false
+        }
+        val canonicalTrip =
+            globalData
+                .getPatternsFor(this.routeId, trip.directionId)
+                .firstOrNull { it.canonical }
+                ?.representativeTripId ?: return false
+        val canonicalStopIds = globalData.trips[canonicalTrip]?.stopIds?.toSet() ?: return false
+
+        return !canonicalStopIds.contains(stopId)
     }
 }
