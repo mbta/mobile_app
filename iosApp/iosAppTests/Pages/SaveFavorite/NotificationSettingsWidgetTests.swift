@@ -31,8 +31,9 @@ final class NotificationSettingsWidgetTests: XCTestCase {
 
         let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
+            showPresets: true,
             setEnabled: { enabled = $0 },
-            notificationPermissionManager: MockNotificationPermissionManager()
+            notificationPermissionManager: MockNotificationPermissionManager(),
         ).withFixedSettings([:])
 
         try sut.inspect().find(text: "Get disruption notifications").find(ViewType.Toggle.self, relation: .parent).tap()
@@ -49,8 +50,9 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         var addedWindow = false
         let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: .init(enabled: true, windows: [firstWindow]), selectedPreset: nil),
+            showPresets: true,
             addPlaceholderWindow: { addedWindow = true },
-            notificationPermissionManager: MockNotificationPermissionManager()
+            notificationPermissionManager: MockNotificationPermissionManager(),
         ).withFixedSettings([:])
 
         // unfortunately, ViewInspector does not appear to surface the selected value of a DatePicker
@@ -78,7 +80,8 @@ final class NotificationSettingsWidgetTests: XCTestCase {
 
         let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
-            notificationPermissionManager: MockNotificationPermissionManager()
+            showPresets: true,
+            notificationPermissionManager: MockNotificationPermissionManager(),
         )
         .withFixedSettings([:])
 
@@ -95,8 +98,9 @@ final class NotificationSettingsWidgetTests: XCTestCase {
 
         let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
+            showPresets: true,
             setWindows: { customWindows = $0 },
-            notificationPermissionManager: MockNotificationPermissionManager()
+            notificationPermissionManager: MockNotificationPermissionManager(),
         ).withFixedSettings([:])
 
         try sut.inspect().find(
@@ -129,8 +133,9 @@ final class NotificationSettingsWidgetTests: XCTestCase {
 
         let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
+            showPresets: true,
             setWindows: { customWindows = $0 },
-            notificationPermissionManager: MockNotificationPermissionManager()
+            notificationPermissionManager: MockNotificationPermissionManager(),
         )
         .withFixedSettings([:])
 
@@ -161,8 +166,9 @@ final class NotificationSettingsWidgetTests: XCTestCase {
 
         let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
+            showPresets: true,
             setWindows: { customWindows = $0 },
-            notificationPermissionManager: MockNotificationPermissionManager()
+            notificationPermissionManager: MockNotificationPermissionManager(),
         ).withFixedSettings([:])
 
         try sut.inspect().find(text: "Sun").find(ViewType.VStack.self, relation: .parent).callOnTapGesture()
@@ -182,8 +188,9 @@ final class NotificationSettingsWidgetTests: XCTestCase {
 
         let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
+            showPresets: true,
             setWindows: { customWindows = $0 },
-            notificationPermissionManager: MockNotificationPermissionManager()
+            notificationPermissionManager: MockNotificationPermissionManager(),
         ).withFixedSettings([:])
 
         let calendar = Calendar(identifier: .iso8601)
@@ -215,6 +222,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
 
         let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
+            showPresets: true,
             setEnabled: { enabled = $0 },
             notificationPermissionManager: permissionManager
         )
@@ -268,7 +276,8 @@ final class NotificationSettingsWidgetTests: XCTestCase {
 
         let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
-            notificationPermissionManager: MockNotificationPermissionManager()
+            showPresets: true,
+            notificationPermissionManager: MockNotificationPermissionManager(),
         ).withFixedSettings([.notificationPresetWindows: true])
 
         XCTAssertNotNil(try sut.inspect().find(button: "Morning"))
@@ -287,7 +296,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
             showPresets: false,
-            notificationPermissionManager: MockNotificationPermissionManager()
+            notificationPermissionManager: MockNotificationPermissionManager(),
         ).withFixedSettings([.notificationPresetWindows: true])
 
         XCTAssertThrowsError(try sut.inspect().find(button: "Morning"))
@@ -305,7 +314,8 @@ final class NotificationSettingsWidgetTests: XCTestCase {
 
         let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
-            notificationPermissionManager: MockNotificationPermissionManager()
+            showPresets: true,
+            notificationPermissionManager: MockNotificationPermissionManager(),
         ).withFixedSettings([.notificationPresetWindows: true])
 
         XCTAssertEqual(
@@ -341,7 +351,8 @@ final class NotificationSettingsWidgetTests: XCTestCase {
 
         let sut = NotificationSettingsWidgetPresentationView(
             state: .init(settings: settings, selectedPreset: nil),
-            notificationPermissionManager: MockNotificationPermissionManager()
+            showPresets: true,
+            notificationPermissionManager: MockNotificationPermissionManager(),
         ).withFixedSettings([.notificationPresetWindows: true])
 
         XCTAssertNotNil(try sut.inspect().find(text: "next day"))
