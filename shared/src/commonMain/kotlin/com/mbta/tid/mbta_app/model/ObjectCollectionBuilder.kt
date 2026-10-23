@@ -313,6 +313,7 @@ private constructor(
         public var name: String = ""
         public var sortOrder: Int = 0
         public var typicality: RoutePattern.Typicality? = RoutePattern.Typicality.Atypical
+        public var canonical: Boolean = false
         public var representativeTripId: String = ""
         public var routeId: String = ""
 
@@ -332,6 +333,7 @@ private constructor(
                 name,
                 sortOrder,
                 typicality,
+                canonical,
                 representativeTripId,
                 Route.Id(routeId),
             )

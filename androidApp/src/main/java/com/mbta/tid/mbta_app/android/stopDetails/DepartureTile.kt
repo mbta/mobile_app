@@ -126,6 +126,7 @@ fun DepartureTile(
 
                     null -> {}
                 }
+
                 if (showRoutePill) {
                     Box(Modifier.padding(end = 8.dp)) {
                         RoutePill(data.route, type = RoutePillType.Flex)
