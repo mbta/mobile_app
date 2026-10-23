@@ -90,15 +90,10 @@ import org.koin.compose.koinInject
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 
-private sealed class SaveFavoriteMode {
-    object Add : SaveFavoriteMode()
-
-    object Edit : SaveFavoriteMode()
+private enum class Mode {
+    Add,
+    Edit,
 }
-
-private typealias Add = SaveFavoriteMode.Add
-
-private typealias Edit = SaveFavoriteMode.Edit
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -138,12 +133,12 @@ fun SaveFavoritePage(
     val selectedRouteStopDirection = RouteStopDirection(routeId, stopId, selectedDirection)
 
     val savedFavorite = favorites?.get(selectedRouteStopDirection)
-    val saveMode = if (savedFavorite != null) Edit else Add
-    var wasAdding by rememberSaveable { mutableStateOf(favorites != null && saveMode == Add) }
+    val saveMode = if (savedFavorite != null) Mode.Edit else Mode.Add
+    var wasAdding by rememberSaveable { mutableStateOf(favorites != null && saveMode == Mode.Add) }
     val showDirectionToggle = stopDirections.size > 1 && wasAdding
 
     LaunchedEffect(saveMode, favorites) {
-        if (favorites != null && saveMode == Add) wasAdding = true
+        if (favorites != null && saveMode == Mode.Add) wasAdding = true
     }
 
     val existingSettings = favorites?.get(selectedRouteStopDirection) ?: FavoriteSettings()
@@ -290,7 +285,7 @@ fun SaveFavoritePage(
             }
             Text(
                 stringResource(
-                    if (saveMode == Edit) R.string.edit_favorite_title
+                    if (saveMode == Mode.Edit) R.string.edit_favorite_title
                     else R.string.add_favorite_title
                 ),
                 Modifier.padding(start = 16.dp).semantics {
@@ -324,12 +319,13 @@ fun SaveFavoritePage(
                 )
                 NotificationSettingsWidget(
                     viewModel = notificationSettingsViewModel,
-                    showPresets = saveMode == Add || savedFavorite?.notifications?.enabled == false,
+                    showPresets =
+                        saveMode == Mode.Add || savedFavorite?.notifications?.enabled == false,
                     notificationPermissionState = notificationPermissionState,
                     hasRequestedPermission = hasRequestedPermission,
                 )
             }
-            if (saveMode == Edit) {
+            if (saveMode == Mode.Edit) {
                 Column(
                     Modifier.fillMaxWidth()
                         .background(colorResource(R.color.fill2).copy(alpha = 0.9f))
