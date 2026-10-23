@@ -193,6 +193,17 @@ targets:
               exit 0
           fi
           cd "$SRCROOT/.."
+          # Xcode runs this in a minimal shell that doesn't load direnv/asdf, so find Java here.
+          export PATH="/opt/homebrew/bin:/usr/local/bin:$HOME/.asdf/shims:$PATH"
+          if [ -z "$JAVA_HOME" ] || [ ! -x "$JAVA_HOME/bin/java" ]; then
+              if command -v direnv >/dev/null 2>&1; then
+                  eval "$(direnv export bash 2>/dev/null)"
+              fi
+          fi
+          if { [ -z "$JAVA_HOME" ] || [ ! -x "$JAVA_HOME/bin/java" ]; } && command -v asdf >/dev/null 2>&1; then
+              JAVA_HOME="$(asdf where java 2>/dev/null)"
+              export JAVA_HOME
+          fi
           ./gradlew :shared:embedAndSignAppleFrameworkForXcode
         basedOnDependencyAnalysis: false
       - name: Automatic Injection Code

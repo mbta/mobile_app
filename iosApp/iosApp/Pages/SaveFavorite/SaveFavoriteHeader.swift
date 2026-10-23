@@ -11,7 +11,7 @@ import SwiftUI
 
 struct SaveFavoriteHeader: View {
     @ObserveInjection var inject
-    var isFavorite: Bool
+    var saveMode: SaveFavoriteMode
     var onCancel: () -> Void
     var onSave: () -> Void
 
@@ -22,13 +22,12 @@ struct SaveFavoriteHeader: View {
         "Save", comment: "Button to save a favorite that’s being added or edited"
     )
     var titleText: String {
-        if isFavorite {
-            NSLocalizedString(
+        switch saveMode {
+        case .add: NSLocalizedString("Add Favorite", comment: "Title for creating a favorite")
+        case .edit: NSLocalizedString(
                 "Edit Favorite",
                 comment: "Title for editing an individual favorite’s settings"
             )
-        } else {
-            NSLocalizedString("Add Favorite", comment: "Title for creating a favorite")
         }
     }
 
