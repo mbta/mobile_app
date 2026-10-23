@@ -668,7 +668,7 @@ final class TripHeaderCardTests: XCTestCase {
             vehicle: nil,
             routes: [],
             elevatorAlerts: [],
-            trackChangeAlert: alert
+            trackChange: TrackChange.Alert(alert: alert)
         )
 
         let sut = TripHeaderCard(
@@ -725,7 +725,7 @@ final class TripHeaderCardTests: XCTestCase {
             vehicle: vehicle,
             routes: [],
             elevatorAlerts: [],
-            trackChangeAlert: alert
+            trackChange: TrackChange.Alert(alert: alert)
         )
 
         let alertTapped = expectation(description: "alert details opened")

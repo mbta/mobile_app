@@ -35,7 +35,7 @@ struct DepartureTile: View {
         if case .onPrediction = pillDecoration { true } else { false }
     }
 
-    private var hasPill: Bool { hasRoutePill || data.upcoming.trackChangeAlert != nil }
+    private var hasPill: Bool { hasRoutePill || data.upcoming.trackChange != nil }
 
     var body: some View {
         let backgroundColor = isSelected ? Color.fill3 : Color.routeColorContrast
@@ -82,7 +82,7 @@ struct DepartureTile: View {
                 }
 
                 HStack(alignment: .center, spacing: 0) {
-                    if data.upcoming.trackChangeAlert != nil {
+                    if data.upcoming.trackChange != nil {
                         TrackChangePill(shape: .compact)
                             .padding(.trailing, hasRoutePill ? 8 : 0)
                     }

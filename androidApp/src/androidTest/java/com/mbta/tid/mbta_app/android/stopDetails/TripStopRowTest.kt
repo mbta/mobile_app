@@ -19,6 +19,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.TrackChange
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
@@ -374,7 +375,7 @@ class TripStopRowTest {
         now: EasternTimeInstant,
         stop: Stop,
         route: Route,
-        trackChangeAlert: Alert?,
+        trackChange: TrackChange?,
     ): TripDetailsStopList.Entry {
         val schedule = objects.schedule { departureTime = now + 5.seconds }
         val prediction = objects.prediction(schedule) { departureTime = now + 6.seconds }
@@ -386,7 +387,7 @@ class TripStopRowTest {
             prediction,
             vehicle = null,
             routes = listOf(route),
-            trackChangeAlert = trackChangeAlert,
+            trackChange = trackChange,
         )
     }
 
@@ -401,7 +402,7 @@ class TripStopRowTest {
 
         composeTestRule.setContent {
             TripStopRow(
-                trackChangeEntry(objects, now, stop, route, alert),
+                trackChangeEntry(objects, now, stop, route, TrackChange.Alert(alert)),
                 trip,
                 now,
                 onTapLink = {},
@@ -448,7 +449,7 @@ class TripStopRowTest {
                     predictionStop = platformStop,
                     vehicle = null,
                     routes = listOf(route),
-                    trackChangeAlert = alert,
+                    trackChange = TrackChange.Alert(alert),
                 ),
                 trip,
                 now,
@@ -481,7 +482,7 @@ class TripStopRowTest {
 
         composeTestRule.setContent {
             TripStopRow(
-                trackChangeEntry(objects, now, stop, route, alert),
+                trackChangeEntry(objects, now, stop, route, TrackChange.Alert(alert)),
                 trip,
                 now,
                 onTapLink = {},
@@ -543,7 +544,7 @@ class TripStopRowTest {
 
         composeTestRule.setContent {
             TripStopRow(
-                trackChangeEntry(objects, now, stop, route, alert),
+                trackChangeEntry(objects, now, stop, route, TrackChange.Alert(alert)),
                 trip,
                 now,
                 onTapLink = { linkTapped = true },

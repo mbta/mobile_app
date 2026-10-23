@@ -366,7 +366,7 @@ final class TripStopRowTests: XCTestCase {
         let entry = TripDetailsStopList.Entry(
             stop: stop, stopSequence: 0, disruption: nil,
             schedule: nil, prediction: nil,
-            vehicle: nil, routes: [route], elevatorAlerts: [], trackChangeAlert: alert
+            vehicle: nil, routes: [route], elevatorAlerts: [], trackChange: TrackChange.Alert(alert: alert)
         )
 
         let alertTapped = expectation(description: "alert details opened")
@@ -403,7 +403,7 @@ final class TripStopRowTests: XCTestCase {
         let entry = TripDetailsStopList.Entry(
             stop: stop, stopSequence: 0, disruption: nil,
             schedule: nil, prediction: nil,
-            vehicle: nil, routes: [route], elevatorAlerts: [], trackChangeAlert: alert
+            vehicle: nil, routes: [route], elevatorAlerts: [], trackChange: TrackChange.Alert(alert: alert)
         )
 
         let linkTapped = expectation(description: "stop link tapped")

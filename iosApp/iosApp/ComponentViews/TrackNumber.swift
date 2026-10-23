@@ -17,7 +17,11 @@ struct TrackNumber: View {
         switch onEnum(of: track) {
         case let .number(number): Text("Track \(number.number)")
         case .tBD: Text("Track TBD")
-        case .alert: Text("Track Change")
+        case let .trackChange(trackChangeWrapper):
+            switch onEnum(of: trackChangeWrapper.trackChange) {
+            case .alert: Text("Track Change")
+            case .scheduled: Text("") // TODO:
+            }
         }
     }
 
@@ -25,14 +29,18 @@ struct TrackNumber: View {
         switch onEnum(of: track) {
         case let .number(number): Text("Boarding on track \(number.number)")
         case .tBD: Text("Track to be determined")
-        case .alert: Text("Track Change")
+        case let .trackChange(trackChangeWrapper):
+            switch onEnum(of: trackChangeWrapper.trackChange) {
+            case .alert: Text("Track Change")
+            case .scheduled: Text("") // TODO:
+            }
         }
     }
 
     var body: some View {
         Group {
             switch onEnum(of: track) {
-            case .alert:
+            case .trackChange:
                 TrackChangePill(shape: .expanded)
             default:
                 trackText

@@ -33,7 +33,7 @@ final class TrackNumberTests: XCTestCase {
     func testAlert() throws {
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { $0.effect = .trackChange }
-        let sut = TrackNumber(track: TripDetailsStopList.TrackAlert(alert: alert))
+        let sut = TrackNumber(track: TripDetailsStopList.TrackTrackChange(trackChange: TrackChange.Alert(alert: alert)))
         XCTAssertNotNil(try sut.inspect().find(TrackChangePill.self))
         XCTAssertNotNil(try sut.inspect().find(text: "Track change"))
     }

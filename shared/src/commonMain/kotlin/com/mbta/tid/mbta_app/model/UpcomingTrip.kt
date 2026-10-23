@@ -25,9 +25,9 @@ constructor(
     val predictionStop: Stop? = null,
     val vehicle: Vehicle? = null,
     val alert: Alert? = null,
-    // A track change alert which is active at this trip's scheduled departure time, kept separate
+    // A track change  which is active at this trip's scheduled departure time, kept separate
     // from `alert` so that it doesn't replace a more significant alert for the trip
-    val trackChangeAlert: Alert? = null,
+    val trackChange: TrackChange? = null,
 ) : Comparable<UpcomingTrip> {
 
     public constructor(
@@ -270,7 +270,7 @@ constructor(
                         stops[prediction?.stopId],
                         predictionsMap[key]?.let { vehicles[it.vehicleId] },
                         alert,
-                        trackChangeAlert,
+                        trackChangeAlert?.let { TrackChange.Alert(it) },
                     )
                 }
                 .sorted()
