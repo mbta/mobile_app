@@ -920,6 +920,42 @@ class TripInstantDisplayTest {
     }
 
     @Test
+    fun `time with schedule late in future`() = parametricTest {
+        val now = EasternTimeInstant.now()
+        val predictionTime = now + 10.minutes
+        val scheduledArrivalTime = now + 5.minutes
+        val scheduledDepartureTime = now + 7.minutes
+        val prediction =
+            ObjectCollectionBuilder.Single.prediction { departureTime = predictionTime }
+
+        val schedule =
+            ObjectCollectionBuilder.Single.schedule {
+                arrivalTime = scheduledArrivalTime
+                departureTime = scheduledDepartureTime
+            }
+
+        val lastTrip = anyBoolean()
+
+        assertEquals(
+            TripInstantDisplay.TimeWithSchedule(
+                predictionTime,
+                scheduledDepartureTime,
+                last = lastTrip,
+                headline = true,
+            ),
+            TripInstantDisplay.from(
+                prediction,
+                schedule,
+                vehicle = null,
+                routeType = RouteType.COMMUTER_RAIL,
+                now,
+                context = TripInstantDisplay.Context.StopDetailsFiltered,
+                lastTrip = lastTrip,
+            ),
+        )
+    }
+
+    @Test
     fun `minutes less than 20 outside trip details`() = parametricTest {
         val now = EasternTimeInstant.now()
         val context = nonTripDetails()

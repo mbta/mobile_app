@@ -188,7 +188,6 @@ public sealed class TripInstantDisplay {
             val minutes = timeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()
 
             if (forceAsTime) {
-                val scheduleTime = schedule?.stopTimeAfter(now)
                 val showDelayedSchedule =
                     context == Context.StopDetailsFiltered &&
                         scheduleTime?.let {
