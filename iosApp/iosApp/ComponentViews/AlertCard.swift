@@ -30,10 +30,20 @@ private struct TakeoverAlertCard: View {
                 HStack(alignment: .center, spacing: 16) {
                     // Override alert state and icon size in the case of all clear
                     let alertState = alert.allClear(atTime: now) ? .allClear : alert.alertState
+                    let isPresenceOfWhalesAlert = alert.cause == .presenceOfWhales
                     AlertIcon(
                         alertState: alertState,
                         color: routeAccents.color,
-                        overrideIcon: alert.effect == .cancellation ? routeSlashIcon(routeAccents.type) : nil
+                        preserveOriginalColors: isPresenceOfWhalesAlert,
+                        overrideIcon: {
+                            if isPresenceOfWhalesAlert {
+                                Image("alert-cause-backgroundless-presense-of-whales")
+                            } else if alert.effect == .cancellation {
+                                routeSlashIcon(routeAccents.type)
+                            } else {
+                                nil
+                            }
+                        }()
                     )
                     .scaledToFit()
                     .frame(width: iconSize, height: iconSize, alignment: .center)
@@ -119,14 +129,27 @@ struct AlertCard: View {
     var card: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                HStack(alignment: .center, spacing: 16) {
+                let alertState = alert.allClear(atTime: now) ? StopAlertState.allClear : alert.alertState
+                let isPresenceOfWhalesAlert = alert.cause == .presenceOfWhales
+                let iconSize =
+                    if isPresenceOfWhalesAlert { 32.0 }
+                    else if alertState == .allClear || spec == .elevator { elevatorIconSize }
+                    else { miniIconSize }
+                HStack(alignment: .center, spacing: isPresenceOfWhalesAlert ? 12 : 10) {
                     // Override alert state and icon size in the case of all clear
-                    let alertState = alert.allClear(atTime: now) ? .allClear : alert.alertState
-                    let iconSize = alertState == .allClear ? elevatorIconSize : iconSize
                     AlertIcon(
                         alertState: alertState,
                         color: routeAccents.color,
-                        overrideIcon: alert.effect == .cancellation ? routeSlashIcon(routeAccents.type) : nil
+                        preserveOriginalColors: isPresenceOfWhalesAlert,
+                        overrideIcon: {
+                            if isPresenceOfWhalesAlert {
+                                Image("alert-cause-presence-of-whales")
+                            } else if alert.effect == .cancellation {
+                                routeSlashIcon(routeAccents.type)
+                            } else {
+                                nil
+                            }
+                        }()
                     )
                     .scaledToFit()
                     .frame(width: iconSize, height: iconSize, alignment: .center)
