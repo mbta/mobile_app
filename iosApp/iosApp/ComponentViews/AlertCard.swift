@@ -135,7 +135,7 @@ struct AlertCard: View {
                     if isPresenceOfWhalesAlert { 32.0 }
                     else if alertState == .allClear || spec == .elevator { elevatorIconSize }
                     else { miniIconSize }
-                HStack(alignment: .center, spacing: isPresenceOfWhalesAlert ? 12 : 10) {
+                HStack(alignment: .center, spacing: isPresenceOfWhalesAlert ? 12 : 16) {
                     // Override alert state and icon size in the case of all clear
                     AlertIcon(
                         alertState: alertState,

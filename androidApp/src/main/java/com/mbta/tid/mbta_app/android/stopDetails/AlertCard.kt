@@ -164,7 +164,7 @@ fun AlertCard(
             horizontalAlignment = Alignment.Start,
         ) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(if(isPresenceOfWhalesAlert) 12.dp else 10.dp),
+                horizontalArrangement = Arrangement.spacedBy(if(isPresenceOfWhalesAlert) 12.dp else 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 AlertIcon(
