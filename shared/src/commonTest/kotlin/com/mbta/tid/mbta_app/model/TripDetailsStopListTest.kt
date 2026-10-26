@@ -122,7 +122,7 @@ class TripDetailsStopListTest {
                 predictionStop ?: objects.stops[prediction?.stopId],
                 vehicle,
                 routes,
-                trackChangeAlert = trackChangeAlert,
+                trackChange = trackChangeAlert?.let { TrackChange.Alert(it) },
             )
 
         fun globalData(patternIdsByStop: Map<String, List<String>> = emptyMap()) =
@@ -1205,9 +1205,8 @@ class TripDetailsStopListTest {
 
         val result = fromPieces(schedulesResponseOf(sched1, sched2), null)
 
-        assertEquals(listOf(null, trackChange), result?.stops?.map { it.trackChangeAlert })
         assertEquals(
-            listOf(null, Track.Alert(trackChange)),
+            listOf(null, Track.TrackChange(TrackChange.Alert(trackChange))),
             result?.stops?.map { it.trackNumber },
         )
     }
@@ -1224,7 +1223,7 @@ class TripDetailsStopListTest {
             stopSequence = 10
             departureTime = now + 10.minutes
         }
-        val matching =
+        val matchingAlert =
             alert(Alert.Effect.TrackChange) {
                 informedEntity(route = route.id.idText, stop = "A", trip = trip.id)
             }
@@ -1233,9 +1232,9 @@ class TripDetailsStopListTest {
         }
 
         assertEquals(
-            listOf(matching),
+            listOf(TrackChange.Alert(matchingAlert)),
             fromPieces(schedulesResponseOf(sched), null)?.stops?.mapNotNull {
-                it.trackChangeAlert
+                it.trackChange
             },
         )
     }
@@ -1264,9 +1263,9 @@ class TripDetailsStopListTest {
                 null,
                 vehicle = null,
                 routes = listOf(),
-                trackChangeAlert = alert,
+                trackChange = TrackChange.Alert(alert),
             )
-        assertEquals(Track.Alert(alert), entry.trackNumber)
+        assertEquals(Track.TrackChange(TrackChange.Alert(alert)), entry.trackNumber)
     }
 
     @Test
