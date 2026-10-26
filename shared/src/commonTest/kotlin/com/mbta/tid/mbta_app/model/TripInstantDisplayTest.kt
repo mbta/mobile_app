@@ -350,6 +350,44 @@ class TripInstantDisplayTest {
     }
 
     @Test
+    fun `schedule instead of prediction CR dwell`() = parametricTest {
+        val now = EasternTimeInstant.now()
+        assertEquals(
+            TripInstantDisplay.ScheduleTime(now + 10.minutes, last = false, headline = false),
+            TripInstantDisplay.from(
+                prediction = null,
+                schedule =
+                    ObjectCollectionBuilder.Single.schedule {
+                        arrivalTime = now + 10.minutes
+                        departureTime = now + 15.minutes
+                    },
+                vehicle = null,
+                routeType = RouteType.COMMUTER_RAIL,
+                now = now,
+                context = TripInstantDisplay.Context.TripDetails,
+                lastTrip = false,
+            ),
+        )
+
+        assertEquals(
+            TripInstantDisplay.ScheduleTime(now + 15.minutes, last = false, headline = true),
+            TripInstantDisplay.from(
+                prediction = null,
+                schedule =
+                    ObjectCollectionBuilder.Single.schedule {
+                        arrivalTime = now + 10.minutes
+                        departureTime = now + 15.minutes
+                    },
+                vehicle = null,
+                routeType = RouteType.COMMUTER_RAIL,
+                now = now,
+                context = nonTripDetails(),
+                lastTrip = false,
+            ),
+        )
+    }
+
+    @Test
     fun `schedule rounding`() = parametricTest {
         val now = EasternTimeInstant.now()
         val lastTrip = anyBoolean()

@@ -163,9 +163,8 @@ public sealed class TripInstantDisplay {
             }
 
             if (prediction == null) {
-                val scheduleTime = schedule?.stopTimeAfter(now)
                 return if (
-                    scheduleTime == null || (schedule.departureTime == null && !allowArrivalOnly)
+                    scheduleTime == null || (schedule?.departureTime == null && !allowArrivalOnly)
                 ) {
                     Hidden
                 } else {
