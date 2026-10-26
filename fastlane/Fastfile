@@ -230,7 +230,7 @@ platform :ios do
   desc 'Run smoke tests'
   lane :smoke_test do |options|
     run_tests(
-      workspace: 'iosApp/iosApp.xcodeproj',
+      project: 'iosApp/iosApp.xcodeproj',
       scheme: 'Staging',
       device: options[:device]&.strip || 'iPhone 15 (17.4)',
       testplan: 'iosAppSmokeTest',
