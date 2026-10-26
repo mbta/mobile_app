@@ -18,11 +18,8 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
 
         public object TBD : Track()
 
-        /**
-         * There is a track change alert for this stop. The new track number can't be determined
-         * from the alert, so details are only available in the alert itself.
-         */
-        public data class Alert(val alert: com.mbta.tid.mbta_app.model.Alert) : Track()
+        public data class TrackChange(val trackChange: com.mbta.tid.mbta_app.model.TrackChange) :
+            Track()
     }
 
     public data class Entry
@@ -39,11 +36,12 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
         val vehicle: Vehicle?,
         val routes: List<Route>,
         val elevatorAlerts: List<Alert> = emptyList(),
-        // A track change alert which is active at the scheduled time of this entry
-        val trackChangeAlert: Alert? = null,
+        // A track change  which is active at the scheduled time of this entry
+
+        val trackChange: TrackChange? = null,
     ) {
         val trackNumber: Track? =
-            if (trackChangeAlert != null) Track.Alert(trackChangeAlert)
+            if (trackChange != null) Track.TrackChange(trackChange)
             else
                 (predictionStop ?: stop).let { platformStop ->
                     if (platformStop.shouldShowTrackNumber) {
@@ -175,7 +173,7 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
             entry?.prediction,
             entry?.predictionStop,
             entry?.vehicle,
-            trackChangeAlert = entry?.trackChangeAlert,
+            trackChange = entry?.trackChange,
         )
     }
 
@@ -290,6 +288,17 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
                             trip.id,
                             trip.directionId,
                         )
+
+                    val trackChangeAlert =
+                        Alert.trackChangeAlert(
+                            alertsData.alerts.values,
+                            working.schedule?.departureBasedStopTime
+                                ?: working.prediction?.departureBasedStopTime,
+                            trip.directionId,
+                            route.id,
+                            parentAndChildStopIds,
+                            trip.id,
+                        )
                     return Entry(
                         stop,
                         working.stopSequence,
@@ -300,15 +309,7 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
                         working.vehicle,
                         getTransferRoutes(working, globalData),
                         Alert.elevatorAlerts(allElevatorAlerts, parentAndChildStopIds),
-                        Alert.trackChangeAlert(
-                            alertsData.alerts.values,
-                            working.schedule?.departureBasedStopTime
-                                ?: working.prediction?.departureBasedStopTime,
-                            trip.directionId,
-                            route.id,
-                            parentAndChildStopIds,
-                            trip.id,
-                        ),
+                        trackChange = trackChangeAlert?.let { TrackChange.Alert(it) },
                     )
                 }
 

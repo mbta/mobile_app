@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "" : {
+
+    },
     " from **%1$@** to **%2$@**" : {
       "comment" : "Alert summary location for consecutive stops in the format of \" from [Stop name] to [Other stop name]\" ex. \" from [Alewife] to [Harvard]\" or \" from [Lechmere] to [Park Street]\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
       "localizations" : {

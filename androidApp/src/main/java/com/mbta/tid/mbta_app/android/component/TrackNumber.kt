@@ -10,16 +10,30 @@ import androidx.compose.ui.semantics.semantics
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
+import com.mbta.tid.mbta_app.model.TrackChange
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 
 @Composable
 fun TrackNumber(track: TripDetailsStopList.Track) {
     when (track) {
-        is TripDetailsStopList.Track.Alert -> {
-            TrackChangePill(
-                pillType = TrackChangePillType.Alert,
-                pillShape = TrackChangePillShape.Expanded,
-            )
+        is TripDetailsStopList.Track.TrackChange -> {
+            when (val trackChange = track.trackChange) {
+                is TrackChange.Alert ->
+                    TrackChangePill(
+                        pillType = TrackChangePillType.Alert,
+                        pillShape = TrackChangePillShape.Expanded,
+                    )
+
+                is TrackChange.Scheduled ->
+                    TrackChangePill(
+                        pillType =
+                            TrackChangePillType.Scheduled(
+                                trackChange.platformCode,
+                                trackChange.platformName,
+                            ),
+                        pillShape = TrackChangePillShape.Expanded,
+                    )
+            }
             return
         }
         else -> {}

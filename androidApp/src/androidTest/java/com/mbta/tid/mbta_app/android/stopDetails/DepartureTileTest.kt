@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.android.testUtils.hasClickActionLabel
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.TrackChange
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.UpcomingTrip
@@ -183,7 +184,7 @@ class DepartureTileTest {
         val route = objects.route { type = RouteType.COMMUTER_RAIL }
         val trip = objects.trip()
         val alert = objects.alert { effect = Alert.Effect.TrackChange }
-        val upcoming = UpcomingTrip(trip, trackChangeAlert = alert)
+        val upcoming = UpcomingTrip(trip, trackChange = TrackChange.Alert(alert))
         composeTestRule.setContent {
             DepartureTile(
                 TileData(
@@ -227,7 +228,7 @@ class DepartureTileTest {
         }
         val trip = objects.trip()
         val alert = objects.alert { effect = Alert.Effect.TrackChange }
-        val upcoming = UpcomingTrip(trip, trackChangeAlert = alert)
+        val upcoming = UpcomingTrip(trip, trackChange = TrackChange.Alert(alert))
         composeTestRule.setContent {
             DepartureTile(
                 TileData(

@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.TrackChange
 import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.Vehicle
@@ -742,7 +743,7 @@ class TripHeaderCardTest {
         now: EasternTimeInstant,
         stop: Stop,
         trip: Trip,
-        trackChangeAlert: Alert?,
+        trackChange: TrackChange?,
     ): TripHeaderSpec.Scheduled {
         val schedule = objects.schedule {
             this.trip = trip
@@ -758,7 +759,7 @@ class TripHeaderCardTest {
                 prediction = null,
                 vehicle = null,
                 routes = listOf(),
-                trackChangeAlert = trackChangeAlert,
+                trackChange = trackChange,
             ),
         )
     }
@@ -768,7 +769,7 @@ class TripHeaderCardTest {
         now: EasternTimeInstant,
         stop: Stop,
         trip: Trip,
-        trackChangeAlert: Alert?,
+        trackChange: TrackChange?,
     ): TripHeaderSpec.VehicleOnTrip {
         val vehicle = objects.vehicle {
             currentStatus = Vehicle.CurrentStatus.StoppedAt
@@ -788,7 +789,7 @@ class TripHeaderCardTest {
                 prediction = prediction,
                 vehicle = vehicle,
                 routes = listOf(),
-                trackChangeAlert = trackChangeAlert,
+                trackChange = trackChange,
             ),
             false,
         )
@@ -806,7 +807,7 @@ class TripHeaderCardTest {
         composeTestRule.setContent {
             TripHeaderCard(
                 trip,
-                scheduledSpec(objects, now, stop, trip, alert),
+                scheduledSpec(objects, now, stop, trip, TrackChange.Alert(alert)),
                 targeted = true,
                 route,
                 TripRouteAccents(route),
@@ -834,7 +835,7 @@ class TripHeaderCardTest {
         composeTestRule.setContent {
             TripHeaderCard(
                 trip,
-                vehicleSpec(objects, now, stop, trip, alert),
+                vehicleSpec(objects, now, stop, trip, TrackChange.Alert(alert)),
                 targeted = true,
                 route,
                 TripRouteAccents(route),
@@ -862,7 +863,7 @@ class TripHeaderCardTest {
         composeTestRule.setContent {
             TripHeaderCard(
                 trip,
-                scheduledSpec(objects, now, stop, trip, alert),
+                scheduledSpec(objects, now, stop, trip, TrackChange.Alert(alert)),
                 targeted = false,
                 route,
                 TripRouteAccents(route),
@@ -915,7 +916,7 @@ class TripHeaderCardTest {
         composeTestRule.setContent {
             TripHeaderCard(
                 trip,
-                scheduledSpec(objects, now, stop, trip, alert),
+                scheduledSpec(objects, now, stop, trip, TrackChange.Alert(alert)),
                 targeted = true,
                 route,
                 TripRouteAccents(route),
@@ -953,7 +954,7 @@ class TripHeaderCardTest {
         composeTestRule.setContent {
             TripHeaderCard(
                 trip,
-                vehicleSpec(objects, now, stop, trip, alert),
+                vehicleSpec(objects, now, stop, trip, TrackChange.Alert(alert)),
                 targeted = true,
                 route,
                 TripRouteAccents(route),

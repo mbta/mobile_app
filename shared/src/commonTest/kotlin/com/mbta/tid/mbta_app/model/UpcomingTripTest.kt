@@ -624,7 +624,17 @@ class UpcomingTripTest {
         }
 
         assertEquals(
-            listOf(UpcomingTrip(trip, schedule, null, null, null, cancellation, trackChange)),
+            listOf(
+                UpcomingTrip(
+                    trip,
+                    schedule,
+                    null,
+                    null,
+                    null,
+                    cancellation,
+                    TrackChange.Alert(trackChange),
+                )
+            ),
             UpcomingTrip.tripsFromData(
                 objects.stops,
                 listOf(schedule),
@@ -677,7 +687,7 @@ class UpcomingTripTest {
                 mapOf(trackChange.id to trackChange),
             )
 
-        assertEquals(listOf(null, trackChange), result.map { it.trackChangeAlert })
+        assertEquals(listOf(null, TrackChange.Alert(trackChange)), result.map { it.trackChange })
     }
 
     @Test
