@@ -1,12 +1,12 @@
 {
-  "images" : [
+  "images": [
     {
-      "filename" : "alert-cause-backgroundless-presense-of-whales.svg",
-      "idiom" : "universal"
+      "filename": "alert-cause-backgroundless-presense-of-whales.svg",
+      "idiom": "universal"
     }
   ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
+  "info": {
+    "author": "xcode",
+    "version": 1
   }
 }
