@@ -111,6 +111,9 @@ fun TripDetailsPage(
                 Column(Modifier.align(Alignment.Start), horizontalAlignment = Alignment.Start) {
                     Text("trip id: ${filter.tripId}")
                     Text("vehicle id: ${filter.vehicleId ?: "null"}")
+                    Text(
+                        "vehicle stop sequence: ${tripDetailsState.tripData?.vehicle?.currentStopSequence ?: "null"}"
+                    )
                 }
             }
         )
