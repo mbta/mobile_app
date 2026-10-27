@@ -93,6 +93,8 @@ fun ExplanationHeadline(type: ExplainerType, routeType: RouteType, modifier: Mod
                         if (it.isLowerCase()) it.titlecase(LocalLocale.current.platformLocale)
                         else it.toString()
                     }
+
+            ExplainerType.ScheduledTrackChange -> "TODO: Scheduled Track Change Header"
         },
         modifier,
         style = Typography.title2Bold,
@@ -160,6 +162,8 @@ fun ExplanationText(type: ExplainerType, routeType: RouteType, modifier: Modifie
                         if (it.isLowerCase()) it.titlecase(LocalLocale.current.platformLocale)
                         else it.toString()
                     }
+
+            ExplainerType.ScheduledTrackChange -> "TODO: Scheduled Track Change Text"
         },
         modifier,
         style = Typography.body,

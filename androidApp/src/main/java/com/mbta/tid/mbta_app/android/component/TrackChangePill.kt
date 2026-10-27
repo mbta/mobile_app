@@ -1,7 +1,9 @@
 package com.mbta.tid.mbta_app.android.component
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -16,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.Typography
@@ -52,8 +55,7 @@ fun TrackChangePill(
         when (pillType) {
             is TrackChangePillType.Alert ->
                 colorResource(R.color.track_change_pill_alert_background)
-            // TODO: Add finalized color for scheduled track number pill type
-            else -> colorResource(R.color.deemphasized)
+            else -> colorResource(R.color.halo)
         }
 
     Row(
@@ -78,8 +80,8 @@ fun TrackChangePill(
                     text =
                         when (pillType) {
                             is TrackChangePillType.Alert -> "Track change"
-                            // TODO: Add finalized text for scheduled track number pill type
-                            else -> ""
+                            is TrackChangePillType.Scheduled ->
+                                pillType.trackLabel ?: pillType.trackNumber
                         },
                     color = colorResource(R.color.text),
                     style = Typography.footnote,
@@ -96,5 +98,51 @@ fun TrackChangePill(
                     modifier = Modifier.size(16.dp),
                 )
         }
+    }
+}
+
+@Preview(showBackground = false)
+@Composable
+fun TrackChangePillPreview() {
+    Column(Modifier.background(colorResource(R.color.fill3))) {
+        TrackChangePill(
+            pillType = TrackChangePillType.Alert,
+            pillShape = TrackChangePillShape.Expanded,
+        )
+        TrackChangePill(
+            pillType = TrackChangePillType.Alert,
+            pillShape = TrackChangePillShape.Compact,
+        )
+        TrackChangePill(
+            pillType = TrackChangePillType.Scheduled("2", "Track 2"),
+            pillShape = TrackChangePillShape.Expanded,
+        )
+        TrackChangePill(
+            pillType = TrackChangePillType.Scheduled("2", "Track 2"),
+            pillShape = TrackChangePillShape.Compact,
+        )
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun TrackChangePillPreviewDark() {
+    Column(Modifier.background(colorResource(R.color.fill3))) {
+        TrackChangePill(
+            pillType = TrackChangePillType.Alert,
+            pillShape = TrackChangePillShape.Expanded,
+        )
+        TrackChangePill(
+            pillType = TrackChangePillType.Alert,
+            pillShape = TrackChangePillShape.Compact,
+        )
+        TrackChangePill(
+            pillType = TrackChangePillType.Scheduled("2", "Track 2"),
+            pillShape = TrackChangePillShape.Expanded,
+        )
+        TrackChangePill(
+            pillType = TrackChangePillType.Scheduled("2", "Track 2"),
+            pillShape = TrackChangePillShape.Compact,
+        )
     }
 }

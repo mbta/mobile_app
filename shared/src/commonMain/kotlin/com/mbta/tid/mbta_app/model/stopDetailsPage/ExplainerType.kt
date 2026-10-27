@@ -7,4 +7,5 @@ public enum class ExplainerType {
     NoPrediction,
     FinishingAnotherTrip,
     NoVehicle,
+    ScheduledTrackChange,
 }

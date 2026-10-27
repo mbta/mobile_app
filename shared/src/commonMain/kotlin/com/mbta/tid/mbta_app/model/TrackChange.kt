@@ -40,7 +40,7 @@ public sealed class TrackChange {
 
             if (schedule != null && schedule.isScheduledTrackChange(globalData)) {
                 val stop = globalData.stops[schedule.stopId]
-                return stop?.platformCode?.let { TrackChange.Scheduled(it, stop.platformName) }
+                return stop?.platformCode?.let { Scheduled(it, stop.platformName) }
             } else {
                 return null
             }

@@ -40,12 +40,17 @@ internal constructor(
         if (globalData.routes[routeId]?.type != (RouteType.COMMUTER_RAIL)) {
             return false
         }
-        val canonicalTrip =
+        val canonicalStopIds =
             globalData
                 .getPatternsFor(this.routeId, trip.directionId)
-                .firstOrNull { it.canonical }
-                ?.representativeTripId ?: return false
-        val canonicalStopIds = globalData.trips[canonicalTrip]?.stopIds?.toSet() ?: return false
+                .filter { it.canonical }
+                .flatMap {
+                    globalData.trips[it.representativeTripId]?.stopIds?.toSet() ?: emptySet()
+                }
+
+        if (canonicalStopIds.isEmpty()) {
+            return false
+        }
 
         return !canonicalStopIds.contains(stopId)
     }
