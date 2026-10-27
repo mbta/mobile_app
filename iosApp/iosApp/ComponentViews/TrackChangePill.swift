@@ -11,32 +11,65 @@ import SwiftUI
 struct TrackChangePill: View {
     @ObserveInjection var inject
 
-    enum Shape {
-        case compact
+    enum Style {
+        case compact(isDimmed: Bool = false)
         case expanded
     }
 
-    var shape: Shape
+    enum TrackChangeType {
+        case alert
+        case scheduled(trackNumber: String, trackLabel: String?)
+    }
+
+    var style: Style
+    var type: TrackChangeType
 
     private var horizontalPadding: CGFloat {
-        switch shape {
+        switch style {
         case .compact: 2
         case .expanded: 4
         }
     }
 
     private var contentSpacing: CGFloat {
-        switch shape {
+        switch style {
         case .compact: 0
         case .expanded: 8
         }
     }
 
     private var trackChangeText: Text {
-        Text(
-            "Track change",
-            comment: "Text in an info pill when there is an active track change alert affecting a trip"
-        )
+        switch type {
+        case .alert: Text(
+                "Track change",
+                comment: "Text in an info pill when there is an active track change alert affecting a trip"
+            )
+        case let .scheduled(trackNumber, trackLabel): Text(trackLabel ?? trackNumber)
+        }
+    }
+
+    var backgroundColor: Color {
+        switch type {
+        case .alert: .trackChangePillAlertBackground
+        case let .scheduled(_trackNumber, _trackLabel):
+            if case let .compact(isDimmed) = style, isDimmed {
+                Color.haloDark
+            } else {
+                Color.trackChangePillScheduledBackground
+            }
+        }
+    }
+
+    var textColor: Color {
+        switch type {
+        case .alert: .trackChangePillIcon
+        case let .scheduled(_trackNumber, _trackLabel):
+            if case let .compact(isDimmed) = style, isDimmed {
+                Color.white
+            } else {
+                Color.trackChangePillIcon
+            }
+        }
     }
 
     var body: some View {
@@ -45,7 +78,7 @@ struct TrackChangePill: View {
                 .resizable()
                 .frame(width: 16, height: 16)
                 .padding(2)
-            if shape == .expanded {
+            if case let .expanded = style {
                 trackChangeText
                     .font(Typography.footnote)
                     .multilineTextAlignment(.leading)
@@ -55,11 +88,11 @@ struct TrackChangePill: View {
                     .foregroundStyle(Color.deemphasized)
             }
         }
-        .foregroundStyle(Color.text)
+        .foregroundStyle(textColor)
         .padding(.horizontal, horizontalPadding)
         .padding(.vertical, 2)
         .frame(minWidth: 24, minHeight: 24)
-        .background(Color.trackChangePillAlertBackground, in: RoundedRectangle(cornerRadius: 88))
+        .background(backgroundColor, in: RoundedRectangle(cornerRadius: 88))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(trackChangeText)
         .enableInjection()
@@ -68,8 +101,8 @@ struct TrackChangePill: View {
 
 #Preview {
     VStack(alignment: .leading, spacing: 16) {
-        TrackChangePill(shape: .compact)
-        TrackChangePill(shape: .expanded)
+        TrackChangePill(style: .compact(), type: .alert)
+        TrackChangePill(style: .expanded, type: .alert)
     }
     .padding(16)
     .background(Color.fill3)

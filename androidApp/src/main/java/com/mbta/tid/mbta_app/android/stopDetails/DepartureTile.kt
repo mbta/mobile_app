@@ -36,7 +36,7 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.TrackChangePill
-import com.mbta.tid.mbta_app.android.component.TrackChangePillShape
+import com.mbta.tid.mbta_app.android.component.TrackChangePillStyle
 import com.mbta.tid.mbta_app.android.component.TrackChangePillType
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fromHex
@@ -107,7 +107,7 @@ fun DepartureTile(
                     is TrackChange.Alert -> {
                         TrackChangePill(
                             pillType = TrackChangePillType.Alert,
-                            pillShape = TrackChangePillShape.Compact,
+                            pillStyle = TrackChangePillStyle.Compact(),
                             modifier = Modifier.padding(end = 8.dp),
                         )
                     }
@@ -119,7 +119,7 @@ fun DepartureTile(
                                     trackChange.platformCode,
                                     trackChange.platformName,
                                 ),
-                            pillShape = TrackChangePillShape.Compact,
+                            pillStyle = TrackChangePillStyle.Compact(isDimmed = !isSelected),
                             modifier = Modifier.padding(end = 8.dp),
                         )
                     }

@@ -38,7 +38,6 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
         val routes: List<Route>,
         val elevatorAlerts: List<Alert> = emptyList(),
         // A track change  which is active at the scheduled time of this entry
-
         val trackChange: TrackChange? = null,
     ) {
         val trackNumber: Track? =

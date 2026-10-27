@@ -38,7 +38,6 @@ public sealed class TrackChange {
                 return TrackChange.Alert(trackChangeAlert)
             }
             val platformStopId = prediction?.stopId ?: schedule?.stopId
-
             if (
                 platformStopId != null &&
                     Stop.isPlatformNonCanonical(platformStopId, trip, globalData)
