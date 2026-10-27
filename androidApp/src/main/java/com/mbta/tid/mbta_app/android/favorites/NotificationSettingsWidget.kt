@@ -91,7 +91,6 @@ import com.mbta.tid.mbta_app.repositories.Settings as UserSettings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.INotificationSettingsViewModel
 import com.mbta.tid.mbta_app.viewModel.NotificationSettingsViewModel
-import kotlin.uuid.ExperimentalUuidApi
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import org.koin.compose.koinInject
@@ -99,12 +98,13 @@ import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import org.koin.mp.KoinPlatformTools
 
-@OptIn(ExperimentalUuidApi::class, ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun NotificationSettingsWidget(
     viewModel: INotificationSettingsViewModel = koinInject(),
     notificationPermissionState: PermissionState,
     hasRequestedPermission: Boolean,
+    showPresets: Boolean = true,
     now: EasternTimeInstant = EasternTimeInstant.now(),
 ) {
     val permissionStatus = notificationPermissionState.status
@@ -204,8 +204,7 @@ fun NotificationSettingsWidget(
                             padding = 4.dp,
                         ),
                 ) {
-                    if (presetWindowsEnabled) {
-
+                    if (presetWindowsEnabled && showPresets) {
                         PresetWindowSelector(
                             presetRows = presetOptions,
                             selectedPreset = notificationSettingsState.selectedPreset,
@@ -751,29 +750,35 @@ private fun NotificationSettingsWidgetPreview() {
         ) {
             NotificationSettingsWidget(
                 enabledNotificationSettingsViewModel,
-                ConstantPermissionState(
-                    Manifest.permission.POST_NOTIFICATIONS,
-                    PermissionStatus.Granted,
-                ),
-                true,
+                showPresets = true,
+                notificationPermissionState =
+                    ConstantPermissionState(
+                        Manifest.permission.POST_NOTIFICATIONS,
+                        PermissionStatus.Granted,
+                    ),
+                hasRequestedPermission = true,
             )
             HaloSeparator()
             NotificationSettingsWidget(
                 serviceDayNotificationSettingsViewModel,
-                ConstantPermissionState(
-                    Manifest.permission.POST_NOTIFICATIONS,
-                    PermissionStatus.Granted,
-                ),
-                true,
+                showPresets = true,
+                notificationPermissionState =
+                    ConstantPermissionState(
+                        Manifest.permission.POST_NOTIFICATIONS,
+                        PermissionStatus.Granted,
+                    ),
+                hasRequestedPermission = true,
             )
             HaloSeparator()
             NotificationSettingsWidget(
                 disabledNotificationSettingsViewModel,
-                ConstantPermissionState(
-                    Manifest.permission.POST_NOTIFICATIONS,
-                    PermissionStatus.Denied(false),
-                ),
-                true,
+                showPresets = true,
+                notificationPermissionState =
+                    ConstantPermissionState(
+                        Manifest.permission.POST_NOTIFICATIONS,
+                        PermissionStatus.Denied(false),
+                    ),
+                hasRequestedPermission = true,
             )
         }
     }

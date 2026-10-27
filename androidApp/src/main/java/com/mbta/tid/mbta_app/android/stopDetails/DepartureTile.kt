@@ -43,6 +43,7 @@ import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.TrackChange
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.UpcomingTrip
@@ -102,12 +103,28 @@ fun DepartureTile(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                data.upcoming.trackChangeAlert?.let { alert ->
-                    TrackChangePill(
-                        pillType = TrackChangePillType.Alert,
-                        pillShape = TrackChangePillShape.Compact,
-                        modifier = Modifier.padding(end = 8.dp),
-                    )
+                when (val trackChange = data.upcoming.trackChange) {
+                    is TrackChange.Alert -> {
+                        TrackChangePill(
+                            pillType = TrackChangePillType.Alert,
+                            pillShape = TrackChangePillShape.Compact,
+                            modifier = Modifier.padding(end = 8.dp),
+                        )
+                    }
+
+                    is TrackChange.Scheduled -> {
+                        TrackChangePill(
+                            pillType =
+                                TrackChangePillType.Scheduled(
+                                    trackChange.platformCode,
+                                    trackChange.platformName,
+                                ),
+                            pillShape = TrackChangePillShape.Compact,
+                            modifier = Modifier.padding(end = 8.dp),
+                        )
+                    }
+
+                    null -> {}
                 }
                 if (showRoutePill) {
                     Box(Modifier.padding(end = 8.dp)) {
@@ -126,6 +143,7 @@ private fun DepartureTilePreview() {
     val objects = ObjectCollectionBuilder("DepartureTilePreview")
     val route1 = objects.route()
     val routeB = objects.route {
+        id = "Green-B"
         color = "00843D"
         longName = "Green Line B"
         shortName = "B"

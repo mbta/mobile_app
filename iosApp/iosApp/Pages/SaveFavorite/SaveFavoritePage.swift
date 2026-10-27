@@ -9,6 +9,16 @@
 import Shared
 import SwiftUI
 
+enum SaveFavoriteMode {
+    case add
+    case edit
+}
+
+private struct AddingParams: Equatable {
+    let saveMode: SaveFavoriteMode
+    let favoritesLoaded: Bool
+}
+
 struct SaveFavoritePage: View {
     @ObserveInjection var inject
     var routeId: LineOrRoute.Id
@@ -65,7 +75,8 @@ struct SaveFavoritePage: View {
         RouteStopDirection(route: routeId, stop: stopId, direction: selectedDirection)
     }
 
-    var isFavorite: Bool { favorites.isFavorite(selectedRouteStopDirection) }
+    var savedFavorite: FavoriteSettings? { favorites.routeStopDirection[selectedRouteStopDirection] }
+    var saveMode: SaveFavoriteMode { if savedFavorite != nil { .edit } else { .add } }
     var allPatternsForStop: [RoutePattern] {
         if let globalResponse, let lineOrRoute, let stop {
             globalResponse.getPatternsFor(stopId: stop.id, lineOrRoute: lineOrRoute)
@@ -104,7 +115,7 @@ struct SaveFavoritePage: View {
         navCallbacks.onBack?()
 
         // If the selected route, stop, and direction wasn't already favorited, show confirmation toast
-        if !isFavorite {
+        if saveMode == .add {
             let toastText = if let labels = rsd.getLabels(globalResponse) {
                 String(format: NSLocalizedString(
                     "**%1$@ %2$@** at **%3$@** added to Favorites",
@@ -169,40 +180,48 @@ struct SaveFavoritePage: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             SaveFavoriteHeader(
-                isFavorite: isFavorite,
+                saveMode: saveMode,
                 onCancel: { navCallbacks.onBack?()
                     notificationSettingsVM.loadSavedSettings(settings: nil)
 
                 },
                 onSave: { updateCloseAndToast(selectedRouteStopDirection, pendingSettings) },
             )
-            HaloScrollView(alwaysShowHalo: true) {
-                if let lineOrRoute, let stop {
-                    VStack(spacing: 22) {
-                        FavoriteStopCard(
-                            lineOrRoute: lineOrRoute,
-                            stop: stop,
-                            direction: stopDirections.first(where: { $0.id == selectedDirection }),
-                            toggleDirection: showDirectionToggle ? {
-                                selectedDirection = 1 - selectedDirection
-                            } : nil,
-                        )
-                        NotificationSettingsWidget(
-                            vm: notificationSettingsVM,
-                            onUpdate: { newNotificationSettings in
-                                pendingSettings = pendingSettings.doCopy(notifications: newNotificationSettings)
-                            },
-                            notificationPermissionManager: notificationPermissionManager,
-                        )
-                        if isFavorite {
-                            HaloSeparator(height: 2)
-                            FavoriteDeleteButton {
-                                deleteCloseAndToast(selectedRouteStopDirection)
-                            }
+            ZStack(alignment: .bottom) {
+                HaloScrollView(alwaysShowHalo: true) {
+                    if let lineOrRoute, let stop {
+                        VStack(spacing: 16) {
+                            FavoriteStopCard(
+                                lineOrRoute: lineOrRoute,
+                                stop: stop,
+                                direction: stopDirections.first(where: { $0.id == selectedDirection }),
+                                toggleDirection: showDirectionToggle ? {
+                                    selectedDirection = 1 - selectedDirection
+                                } : nil,
+                            )
+                            NotificationSettingsWidget(
+                                vm: notificationSettingsVM,
+                                onUpdate: { newNotificationSettings in
+                                    pendingSettings = pendingSettings.doCopy(notifications: newNotificationSettings)
+                                },
+                                notificationPermissionManager: notificationPermissionManager,
+                                showPresets: saveMode == .add || savedFavorite?.notifications.enabled == false,
+                            )
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 24)
+                        .padding(.bottom, 69)
+                    }
+                }
+                if saveMode == .edit {
+                    VStack {
+                        FavoriteDeleteButton {
+                            deleteCloseAndToast(selectedRouteStopDirection)
                         }
                     }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 24)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 24)
+                    .background(.ultraThinMaterial)
                 }
             }
         }
@@ -217,8 +236,8 @@ struct SaveFavoritePage: View {
             resetPendingSettings()
             favoritesLoaded = true
         }
-        .onChange(of: [isFavorite, favoritesLoaded]) { _ in
-            if !isFavorite, favoritesLoaded { wasAdding = true }
+        .onChange(of: AddingParams(saveMode: saveMode, favoritesLoaded: favoritesLoaded)) { params in
+            if params.saveMode == .add, params.favoritesLoaded { wasAdding = true }
         }
         .frame(maxHeight: .infinity)
         .background(Color.fill2)

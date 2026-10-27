@@ -33,17 +33,21 @@ struct TripHeaderCard: View {
     @Environment(\.layoutDirection) var layoutDirection
 
     /// The track change alert for the stop shown in the header, if there is one and it is being displayed.
-    private var trackChangeAlert: Shared.Alert? {
+    private var trackChange: Shared.TrackChange? {
         guard targeted else { return nil }
         return switch spec {
-        case let .scheduled(_, entry): entry.trackChangeAlert
-        case let .vehicle(_, _, entry, _): entry?.trackChangeAlert
+        case let .scheduled(_, entry): entry.trackChange
+        case let .vehicle(_, _, entry, _): entry?.trackChange
         default: nil
         }
     }
 
     private var onTrackChangeTap: (() -> Void)? {
-        if let trackChangeAlert { { onOpenAlertDetails(trackChangeAlert) } } else { nil }
+        switch onEnum(of: trackChange) {
+        case let .some(.alert(alert)): { onOpenAlertDetails(alert.alert) }
+        case let .some(.scheduled(change)): {} // TODO:
+        default: nil
+        }
     }
 
     /// The whole card is only tappable if there's no competing track change tap handler.

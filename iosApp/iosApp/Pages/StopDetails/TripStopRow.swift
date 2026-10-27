@@ -51,8 +51,12 @@ struct TripStopRow: View {
     func onTapRow() {
         if !targeted {
             onTapLink(stop)
-        } else if let alert = stop.trackChangeAlert {
-            onOpenAlertDetails(alert)
+        } else {
+            switch onEnum(of: stop.trackChange) {
+            case let .some(.alert(alert)): onOpenAlertDetails(alert.alert)
+            case let .some(.scheduled(change)): break
+            default: break
+            }
         }
     }
 

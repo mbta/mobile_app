@@ -16,7 +16,7 @@ import XCTest
 final class SaveFavoriteHeaderTests: XCTestCase {
     @MainActor func testSaveHeader() {
         let sut = SaveFavoriteHeader(
-            isFavorite: false,
+            saveMode: .add,
             onCancel: {},
             onSave: {}
         )
@@ -29,7 +29,7 @@ final class SaveFavoriteHeaderTests: XCTestCase {
 
     @MainActor func testEditHeader() {
         let sut = SaveFavoriteHeader(
-            isFavorite: true,
+            saveMode: .edit,
             onCancel: {},
             onSave: {}
         )
@@ -44,7 +44,7 @@ final class SaveFavoriteHeaderTests: XCTestCase {
         let cancelExp = expectation(description: "called back")
 
         let sut = SaveFavoriteHeader(
-            isFavorite: true,
+            saveMode: .edit,
             onCancel: { cancelExp.fulfill() },
             onSave: { XCTFail("Should not save") }
         )
@@ -60,7 +60,7 @@ final class SaveFavoriteHeaderTests: XCTestCase {
         let saveExp = expectation(description: "called save")
 
         let sut = SaveFavoriteHeader(
-            isFavorite: true,
+            saveMode: .edit,
             onCancel: { XCTFail("Should not cancel") },
             onSave: { saveExp.fulfill() }
         )

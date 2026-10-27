@@ -51,7 +51,7 @@ private fun TakeoverAlertCard(
     modifier: Modifier = Modifier,
     interiorPadding: PaddingValues = PaddingValues(0.dp),
 ) {
-
+    val isPresenceOfWhalesAlert = alert.cause == Alert.Cause.PresenceOfWhales
     val alertState = alert.alertState
     val iconSize = 48.dp
     val formattedAlert = FormattedAlert(alert, alertSummaryEntity)
@@ -71,14 +71,21 @@ private fun TakeoverAlertCard(
         ) {
             AlertIcon(
                 alertState = alertState,
-                color = routeAccents.color,
+                color = if (isPresenceOfWhalesAlert) Color.Unspecified else routeAccents.color,
                 modifier =
                     Modifier.clearAndSetSemantics {}
                         .size(iconSize)
                         .align(Alignment.CenterVertically),
                 overrideIcon =
-                    if (alert.effect == Alert.Effect.Cancellation) routeSlashIcon(routeAccents.type)
-                    else null,
+                    when {
+                        isPresenceOfWhalesAlert ->
+                            painterResource(
+                                id = R.drawable.alert_cause_backgroundless_presense_of_whales
+                            )
+                        alert.effect == Alert.Effect.Cancellation ->
+                            routeSlashIcon(routeAccents.type)
+                        else -> null
+                    },
             )
             Text(
                 formattedAlert.alertCardHeader(AlertCardSpec.Takeover, routeAccents.type, now),
@@ -136,12 +143,15 @@ fun AlertCard(
         )
     } else {
         val formattedAlert = FormattedAlert(alert, alertSummaryEntity)
-
+        val alertState = if (alert.allClear(now)) StopAlertState.AllClear else alert.alertState
+        val isPresenceOfWhalesAlert = alert.cause == Alert.Cause.PresenceOfWhales
         val iconSize =
-            when (cardSpec) {
-                AlertCardSpec.Elevator -> 36.dp
+            when {
+                isPresenceOfWhalesAlert -> 32.dp
+                alertState == StopAlertState.AllClear || cardSpec == AlertCardSpec.Elevator -> 36.dp
                 else -> 20.dp
             }
+        val omitAlertIconColor = isPresenceOfWhalesAlert || alertState == StopAlertState.Elevator
 
         Column(
             modifier =
@@ -150,29 +160,31 @@ fun AlertCard(
                         if (onViewDetails != null) Modifier.clickable { onViewDetails() }
                         else Modifier
                     )
-                    .padding(horizontal = 12.dp, vertical = 10.dp)
+                    .padding(horizontal = 16.dp, vertical = 10.dp)
                     .padding(interiorPadding),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.Start,
         ) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement =
+                    Arrangement.spacedBy(if (isPresenceOfWhalesAlert) 12.dp else 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                val alertState =
-                    if (alert.allClear(now)) StopAlertState.AllClear else alert.alertState
-                val iconSize = if (alertState == StopAlertState.AllClear) 36.dp else iconSize
                 AlertIcon(
                     alertState = alertState,
-                    color = routeAccents.color,
+                    color = if (omitAlertIconColor) Color.Unspecified else routeAccents.color,
                     modifier =
                         Modifier.clearAndSetSemantics {}
                             .size(iconSize)
                             .align(Alignment.CenterVertically),
                     overrideIcon =
-                        if (alert.effect == Alert.Effect.Cancellation)
-                            routeSlashIcon(routeAccents.type)
-                        else null,
+                        when {
+                            isPresenceOfWhalesAlert ->
+                                painterResource(id = R.drawable.alert_cause_presence_of_whales)
+                            alert.effect == Alert.Effect.Cancellation ->
+                                routeSlashIcon(routeAccents.type)
+                            else -> null
+                        },
                 )
                 Text(
                     formattedAlert.alertCardHeader(cardSpec, routeAccents.type, now),
