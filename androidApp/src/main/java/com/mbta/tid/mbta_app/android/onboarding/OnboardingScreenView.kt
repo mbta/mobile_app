@@ -318,8 +318,8 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
     ) {
         Column(
             Modifier.align(Alignment.TopCenter)
-                .offset(y = (-180).dp)
-                .scale(0.8f)
+                .offset(y = (-200).dp)
+                .scale(0.6f)
                 .background(colorResource(R.color.key), RoundedCornerShape(32.dp))
                 .border(16.dp, Color.Black, RoundedCornerShape(32.dp))
                 .padding(16.dp)
