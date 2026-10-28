@@ -53,8 +53,8 @@ jobs:
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           SENTRY_ENVIRONMENT: staging
-          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY || 'AIzaSyA00000000000000000000000000000000' }}
-          GOOGLE_APP_ID_IOS: ${{ secrets.GOOGLE_APP_ID_IOS || '1:123456789000:ios:0123456789abcdef' }}
+          FIREBASE_KEY: ${{ 'NOT_A_REAL_FIREBASE_KEY' }}
+          GOOGLE_APP_ID_IOS: ${{ 'NOT_A_REAL_GOOGLE_APP_ID' }}
       - name: Get latest two iOS versions
         if: ${{ !inputs.skip-everything }}
         id: ios_versions
