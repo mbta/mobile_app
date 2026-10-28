@@ -65,6 +65,7 @@ fun ErrorBanner(vm: IErrorBannerViewModel, modifier: Modifier = Modifier) {
                         style = Typography.subheadline,
                     )
                     DebugView(
+                        withSocketInfo = false,
                         content = { Text(errorState.messages.joinToString()) },
                         details = { Text(errorState.details.joinToString()) },
                     )
