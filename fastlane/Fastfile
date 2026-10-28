@@ -28,8 +28,8 @@ platform :android do
     end
   end
 
-  def track(flavor)
-    if flavor == 'Prod'
+  def track(options)
+    if options[:flavor] == 'Prod' && options[:build_type] == 'Release'
       'production'
     else
       'internal'
@@ -47,7 +47,7 @@ platform :android do
         begin
           google_play_track_version_codes(
             package_name: package_name,
-            track: track(options[:flavor])
+            track: track(options)
           ).max
         rescue StandardError => e
           raise unless e.message == "Google Api Error: Invalid request - Package not found: #{package_name}."
@@ -69,8 +69,8 @@ platform :android do
           'android.injected.version.code' => next_version_code
         }
       end
-    if options[:build_type] != 'Prod'
-      UI.message 'Skipped creating Android Sentry release because build is not prod'
+    if options[:build_type] != 'Release'
+      UI.message 'Skipped creating Android Sentry release because build is not release'
     elsif ENV['SENTRY_AUTH_TOKEN'].nil?
       UI.important 'Skipped creating Android Sentry release because SENTRY_AUTH_TOKEN not set'
     else
@@ -103,7 +103,7 @@ platform :android do
     flavor = options[:flavor][0].downcase + options[:flavor][1..]
     upload_to_play_store(
       package_name: package_name,
-      track: track(options[:flavor]),
+      track: track(options),
       aab: "androidApp/build/outputs/bundle/#{flavor}Release/androidApp-#{flavor}-release.aab"
     )
   end

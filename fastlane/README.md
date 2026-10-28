@@ -23,13 +23,13 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Build an .apk and an .aab with an upcoming version code
 
-### android internal
+### android play_upload
 
 ```sh
-[bundle exec] fastlane android internal
+[bundle exec] fastlane android play_upload
 ```
 
-Deploy a new version to Google Play for internal testing
+Deploy a new version to Google Play
 
 ----
 
