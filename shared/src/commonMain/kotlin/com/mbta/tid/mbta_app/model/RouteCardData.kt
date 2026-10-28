@@ -1158,7 +1158,7 @@ public data class RouteCardData(
                     }
                     ?.filter {
                         it.isInTheFuture(filterAtTime) ||
-                            it.isVehicleAtTheStop() ||
+                            !it.hasPassedPredictionStop() ||
                             it.doesPredictionHaveStatus()
                     }
                     ?.take(if (isBus) TYPICAL_LEAF_ROWS else BRANCHING_LEAF_ROWS)
