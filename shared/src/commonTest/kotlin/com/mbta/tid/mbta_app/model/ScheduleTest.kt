@@ -27,7 +27,7 @@ internal class ScheduleTest {
             tripId = trip.id
         }
 
-        assertFalse(schedule.isScheduledTrackChange(GlobalResponse(objects)))
+        assertFalse(schedule.isScheduledTrackChange(trip, GlobalResponse(objects)))
     }
 
     @Test
@@ -51,7 +51,7 @@ internal class ScheduleTest {
             tripId = trip.id
         }
 
-        assertTrue(schedule.isScheduledTrackChange(GlobalResponse(objects)))
+        assertTrue(schedule.isScheduledTrackChange(trip, GlobalResponse(objects)))
     }
 
     @Test
@@ -75,6 +75,6 @@ internal class ScheduleTest {
             tripId = trip.id
         }
 
-        assertFalse(schedule.isScheduledTrackChange(GlobalResponse(objects)))
+        assertFalse(schedule.isScheduledTrackChange(trip, GlobalResponse(objects)))
     }
 }

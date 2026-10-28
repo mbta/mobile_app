@@ -35,8 +35,7 @@ internal constructor(
      * Is the scheduled stop id different from the canonically scheduled stop id. For commuter rail
      * trips only.
      */
-    public fun isScheduledTrackChange(globalData: GlobalResponse): Boolean {
-        val trip = globalData.trips[tripId] ?: return false
+    public fun isScheduledTrackChange(trip: Trip, globalData: GlobalResponse): Boolean {
         if (globalData.routes[routeId]?.type != (RouteType.COMMUTER_RAIL)) {
             return false
         }
