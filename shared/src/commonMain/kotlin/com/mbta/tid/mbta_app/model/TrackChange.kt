@@ -38,7 +38,7 @@ public sealed class TrackChange {
                 return Alert(trackChangeAlert)
             }
 
-            if (schedule != null && schedule.isScheduledTrackChange(globalData)) {
+            if (schedule != null && schedule.isScheduledTrackChange(trip, globalData)) {
                 val stop = globalData.stops[schedule.stopId]
                 return stop?.platformCode?.let { Scheduled(it, stop.platformName) }
             } else {
