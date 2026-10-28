@@ -21,7 +21,7 @@ fun TrackNumber(track: TripDetailsStopList.Track) {
                 is TrackChange.Alert ->
                     TrackChangePill(
                         pillType = TrackChangePillType.Alert,
-                        pillShape = TrackChangePillShape.Expanded,
+                        pillStyle = TrackChangePillStyle.Expanded,
                     )
 
                 is TrackChange.Scheduled ->
@@ -31,7 +31,7 @@ fun TrackNumber(track: TripDetailsStopList.Track) {
                                 trackChange.platformCode,
                                 trackChange.platformName,
                             ),
-                        pillShape = TrackChangePillShape.Expanded,
+                        pillStyle = TrackChangePillStyle.Expanded,
                     )
             }
             return

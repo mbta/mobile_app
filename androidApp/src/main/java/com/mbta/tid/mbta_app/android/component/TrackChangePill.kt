@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -23,10 +24,10 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.Typography
 
-sealed class TrackChangePillShape {
-    object Compact : TrackChangePillShape()
+sealed class TrackChangePillStyle {
+    class Compact(val isDimmed: Boolean = false) : TrackChangePillStyle()
 
-    object Expanded : TrackChangePillShape()
+    object Expanded : TrackChangePillStyle()
 }
 
 sealed class TrackChangePillType {
@@ -38,24 +39,43 @@ sealed class TrackChangePillType {
 @Composable
 fun TrackChangePill(
     pillType: TrackChangePillType,
-    pillShape: TrackChangePillShape,
+    pillStyle: TrackChangePillStyle,
     modifier: Modifier = Modifier,
 ) {
     val horizontalPadding =
-        when (pillShape) {
-            is TrackChangePillShape.Compact -> 2.dp
-            is TrackChangePillShape.Expanded -> 4.dp
+        when (pillStyle) {
+            is TrackChangePillStyle.Compact -> 2.dp
+            is TrackChangePillStyle.Expanded -> 4.dp
         }
     val horizontalArrangement =
-        when (pillShape) {
-            is TrackChangePillShape.Compact -> Arrangement.Center
-            is TrackChangePillShape.Expanded -> Arrangement.spacedBy(8.dp)
+        when (pillStyle) {
+            is TrackChangePillStyle.Compact -> Arrangement.Center
+            is TrackChangePillStyle.Expanded -> Arrangement.spacedBy(8.dp)
         }
     val backgroundColor =
         when (pillType) {
             is TrackChangePillType.Alert ->
                 colorResource(R.color.track_change_pill_alert_background)
-            else -> colorResource(R.color.halo)
+            is TrackChangePillType.Scheduled -> {
+                if (pillStyle is TrackChangePillStyle.Compact && pillStyle.isDimmed) {
+                    colorResource(R.color.halo_dark)
+                } else {
+                    colorResource(R.color.scheduled_track_change_background)
+                }
+            }
+        }
+
+    val iconColor =
+        when (pillType) {
+            is TrackChangePillType.Alert -> colorResource(R.color.track_change_pill_icon)
+
+            is TrackChangePillType.Scheduled -> {
+                if (pillStyle is TrackChangePillStyle.Compact && pillStyle.isDimmed) {
+                    Color.White
+                } else {
+                    colorResource(R.color.track_change_pill_icon)
+                }
+            }
         }
 
     Row(
@@ -71,11 +91,11 @@ fun TrackChangePill(
         Icon(
             painterResource(R.drawable.fa_shuffle),
             contentDescription = null,
-            tint = colorResource(R.color.text),
+            tint = iconColor,
             modifier = Modifier.size(16.dp),
         )
-        when (pillShape) {
-            is TrackChangePillShape.Expanded ->
+        when (pillStyle) {
+            is TrackChangePillStyle.Expanded ->
                 Text(
                     text =
                         when (pillType) {
@@ -83,14 +103,14 @@ fun TrackChangePill(
                             is TrackChangePillType.Scheduled ->
                                 pillType.trackLabel ?: pillType.trackNumber
                         },
-                    color = colorResource(R.color.text),
+                    color = iconColor,
                     style = Typography.footnote,
                 )
             else -> {}
         }
-        when (pillShape) {
-            is TrackChangePillShape.Compact -> {}
-            is TrackChangePillShape.Expanded ->
+        when (pillStyle) {
+            is TrackChangePillStyle.Compact -> {}
+            is TrackChangePillStyle.Expanded ->
                 Icon(
                     painterResource(R.drawable.fa_circle_info),
                     contentDescription = null,
@@ -107,20 +127,26 @@ fun TrackChangePillPreview() {
     Column(Modifier.background(colorResource(R.color.fill3))) {
         TrackChangePill(
             pillType = TrackChangePillType.Alert,
-            pillShape = TrackChangePillShape.Expanded,
+            pillStyle = TrackChangePillStyle.Expanded,
         )
         TrackChangePill(
             pillType = TrackChangePillType.Alert,
-            pillShape = TrackChangePillShape.Compact,
+            pillStyle = TrackChangePillStyle.Compact(),
         )
         TrackChangePill(
             pillType = TrackChangePillType.Scheduled("2", "Track 2"),
-            pillShape = TrackChangePillShape.Expanded,
+            pillStyle = TrackChangePillStyle.Expanded,
         )
         TrackChangePill(
             pillType = TrackChangePillType.Scheduled("2", "Track 2"),
-            pillShape = TrackChangePillShape.Compact,
+            pillStyle = TrackChangePillStyle.Compact(),
         )
+        Column(modifier = Modifier.background(colorResource(R.color.text))) {
+            TrackChangePill(
+                pillType = TrackChangePillType.Scheduled("2", "Track 2"),
+                pillStyle = TrackChangePillStyle.Compact(isDimmed = true),
+            )
+        }
     }
 }
 
@@ -130,19 +156,23 @@ fun TrackChangePillPreviewDark() {
     Column(Modifier.background(colorResource(R.color.fill3))) {
         TrackChangePill(
             pillType = TrackChangePillType.Alert,
-            pillShape = TrackChangePillShape.Expanded,
+            pillStyle = TrackChangePillStyle.Expanded,
         )
         TrackChangePill(
             pillType = TrackChangePillType.Alert,
-            pillShape = TrackChangePillShape.Compact,
+            pillStyle = TrackChangePillStyle.Compact(),
         )
         TrackChangePill(
             pillType = TrackChangePillType.Scheduled("2", "Track 2"),
-            pillShape = TrackChangePillShape.Expanded,
+            pillStyle = TrackChangePillStyle.Expanded,
         )
         TrackChangePill(
             pillType = TrackChangePillType.Scheduled("2", "Track 2"),
-            pillShape = TrackChangePillShape.Compact,
+            pillStyle = TrackChangePillStyle.Compact(),
+        )
+        TrackChangePill(
+            pillType = TrackChangePillType.Scheduled("2", "Track 2"),
+            pillStyle = TrackChangePillStyle.Compact(isDimmed = true),
         )
     }
 }
