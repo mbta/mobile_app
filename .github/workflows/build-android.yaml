@@ -119,9 +119,12 @@ jobs:
       - name: Lowercase build parameters
         id: lowercase
         run: |
+          build_type="${INPUTS_BUILD_TYPE}"
+          echo "build-type=${build_type,}" | tee -a "$GITHUB_OUTPUT"
           flavor="${INPUTS_FLAVOR}"
           echo "flavor=${flavor,}" | tee -a "$GITHUB_OUTPUT"
         env:
+          INPUTS_BUILD_TYPE: ${{ inputs.build-type }}
           INPUTS_FLAVOR: ${{ inputs.flavor }}
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
@@ -134,6 +137,7 @@ jobs:
           gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
       - name: Upload to Google Play
         run: |
-          bundle exec fastlane android internal flavor:${INPUTS_FLAVOR}
+          bundle exec fastlane android play_upload flavor:${INPUTS_FLAVOR} build_type:${INPUTS_BUILD_TYPE}
         env:
+          INPUTS_BUILD_TYPE: ${{ inputs.build-type }}
           INPUTS_FLAVOR: ${{ inputs.flavor }}
