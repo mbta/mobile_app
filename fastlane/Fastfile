@@ -28,14 +28,6 @@ platform :android do
     end
   end
 
-  def track(options)
-    if options[:flavor] == 'Prod' && options[:build_type] == 'Release'
-      'production'
-    else
-      'internal'
-    end
-  end
-
   desc 'Build an .apk and an .aab with an upcoming version code'
   lane :build do |options|
     package_name = package_name(options[:flavor])
@@ -47,7 +39,7 @@ platform :android do
         begin
           google_play_track_version_codes(
             package_name: package_name,
-            track: track(options)
+            track: 'internal'
           ).max
         rescue StandardError => e
           raise unless e.message == "Google Api Error: Invalid request - Package not found: #{package_name}."
@@ -103,7 +95,7 @@ platform :android do
     flavor = options[:flavor][0].downcase + options[:flavor][1..]
     upload_to_play_store(
       package_name: package_name,
-      track: track(options),
+      track: 'internal',
       aab: "androidApp/build/outputs/bundle/#{flavor}Release/androidApp-#{flavor}-release.aab"
     )
   end
