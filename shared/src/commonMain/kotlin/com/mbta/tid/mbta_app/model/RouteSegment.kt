@@ -33,13 +33,30 @@ public data class RouteSegment(
     /**
      * Split this route segment into one or more `AlertAwareRouteSegments` based on the alerts for
      * the stops within this segment.
+     *
+     * If [visibleRouteIds] is provided, only those routes are considered when
+     * [requireAllRoutesDisrupted] checks whether every route serving a stretch is disrupted, so
+     * that routes which aren't displayed on the map don't hide a disruption on the displayed ones.
      */
     internal fun splitAlertingSegments(
-        alertsByStop: Map<String, AlertAssociatedStop>
+        alertsByStop: Map<String, AlertAssociatedStop>,
+        requireAllRoutesDisrupted: Boolean = false,
+        visibleRouteIds: Set<Route.Id>? = null,
     ): List<AlertAwareRouteSegment> {
         val stopsAlertState = alertStateByStopId(alertsByStop)
 
-        val alertingSegments = alertingSegments(stopIds, stopsAlertState)
+        val otherRoutesByStopId =
+            if (visibleRouteIds == null) otherRoutesByStopId()
+            else otherRoutesByStopId().mapValues { (_, routes) -> routes intersect visibleRouteIds }
+
+        val alertingSegments =
+            alertingSegments(
+                stopIds,
+                sourceRouteId,
+                otherRoutesByStopId,
+                stopsAlertState,
+                requireAllRoutesDisrupted,
+            )
 
         return alertingSegments.mapIndexed { index, (alertState, segmentStops) ->
             val stopIdSet = segmentStops.toSet()
@@ -57,96 +74,122 @@ public data class RouteSegment(
         }
     }
 
-    internal data class StopAlertState(val hasSuspension: Boolean, val hasShuttle: Boolean)
+    internal data class StopAlertState(val hasSuspension: Boolean, val hasShuttle: Boolean) {
+        companion object {
+            val Normal = StopAlertState(hasSuspension = false, hasShuttle = false)
+        }
+    }
+
+    private fun otherRoutesByStopId(): Map<String, Set<Route.Id>> =
+        otherPatternsByStopId.mapValues { (_, patterns) ->
+            patterns.map { it.routeId }.toSet()
+        }
 
     /**
-     * Checks if each stop ID has a service alert relevant to this route segment. A service alert
-     * for a stop is relevant if it applies to the `sourceRouteId` for the segment or any route
-     * included in the `otherPatternsByStopId` for that stop.
+     * Checks if each stop ID has a service alert relevant to this route segment, tracked separately
+     * for each route. A route is relevant at a stop if it is the `sourceRouteId` for the segment or
+     * is included in the `otherPatternsByStopId` for that stop.
      *
-     * Only contains keys for stops with an alert.
+     * Only contains keys for stops with an alert, and for each stop only the routes with an alert.
      */
     internal fun alertStateByStopId(
         alertsByStop: Map<String, AlertAssociatedStop>
-    ): Map<String, StopAlertState> {
+    ): Map<String, Map<Route.Id, StopAlertState>> {
+        val otherRoutesByStopId = otherRoutesByStopId()
         return stopIds
             .associateWith { stopId ->
-                if (!alertsByStop.containsKey(stopId)) {
-                    StopAlertState(hasSuspension = false, hasShuttle = false)
-                } else {
+                val alertsForStop = alertsByStop[stopId] ?: return@associateWith emptyMap()
+                val routes = otherRoutesByStopId[stopId].orEmpty() + sourceRouteId
 
-                    var routes: Set<Route.Id> =
-                        otherPatternsByStopId
-                            .getOrElse(stopId) { listOf() }
-                            .map { it.routeId }
-                            .toSet()
-                    routes = routes.plus(sourceRouteId)
+                val allServiceAlerts =
+                    (alertsForStop.serviceAlerts +
+                            alertsForStop.childAlerts.values.flatMap { it.serviceAlerts })
+                        .distinct()
 
-                    val allServiceAlerts =
-                        (alertsByStop[stopId]?.serviceAlerts.orEmpty() +
-                                alertsByStop[stopId]
-                                    ?.childAlerts
-                                    ?.values
-                                    ?.flatMap { it.serviceAlerts }
-                                    .orEmpty())
-                            .distinct()
-                    val serviceAlerts = allServiceAlerts.filter { alert ->
-                        alert.anyInformedEntity { informedEntity ->
-                            informedEntity.route != null && routes.contains(informedEntity.route)
+                routes
+                    .associateWith { route ->
+                        val serviceAlerts = allServiceAlerts.filter { alert ->
+                            alert.anyInformedEntity { it.route == route }
                         }
+                        StopAlertState(
+                            hasSuspension =
+                                serviceAlerts.any { it.effect == Alert.Effect.Suspension },
+                            hasShuttle = serviceAlerts.any { it.effect == Alert.Effect.Shuttle },
+                        )
                     }
-
-                    // TODO determine effects that count
-                    StopAlertState(
-                        hasSuspension = serviceAlerts.any { it.effect == Alert.Effect.Suspension },
-                        hasShuttle = serviceAlerts.any { it.effect == Alert.Effect.Shuttle },
-                    )
-                }
+                    .filterValues { it.hasSuspension || it.hasShuttle }
             }
-            .filterValues { it.hasSuspension || it.hasShuttle }
+            .filterValues { it.isNotEmpty() }
     }
 
-    /**
-     * Split the list of stops into segments based on whether or not they are alerting. Stops on
-     * boundaries are included in both segments.
-     */
     internal companion object {
+        /**
+         * Split the list of stops into segments based on whether they are alerting. Stops on
+         * boundaries are included in both segments.
+         *
+         * By default, a stop is treated as alerting if any route serving it is disrupted.
+         *
+         * If [requireAllRoutesDisrupted] is set, a pair of adjacent stops is only alerting if every
+         * route serving both stops is disrupted between them. A stretch of track shared by multiple
+         * routes isn't shown as disrupted while other routes still provide service along it. If the
+         * routes have a mix of suspensions and shuttles, the stretch is shown as suspended.
+         */
         internal fun alertingSegments(
             stopIds: List<String>,
-            stopsAlertState: Map<String, StopAlertState>,
+            sourceRouteId: Route.Id,
+            otherRoutesByStopId: Map<String, Set<Route.Id>>,
+            stopsAlertState: Map<String, Map<Route.Id, StopAlertState>>,
+            requireAllRoutesDisrupted: Boolean = false,
         ): List<Pair<SegmentAlertState, List<String>>> {
 
             if (stopIds.isEmpty()) {
                 return listOf()
             }
 
+            fun pairState(first: StopAlertState, second: StopAlertState): SegmentAlertState =
+                if (first.hasSuspension && second.hasSuspension) {
+                    SegmentAlertState.Suspension
+                } else if (first.hasShuttle && second.hasShuttle) {
+                    SegmentAlertState.Shuttle
+                } else {
+                    SegmentAlertState.Normal
+                }
+
+            fun anyRouteState(stopId: String): StopAlertState {
+                val routeStates = stopsAlertState[stopId]?.values.orEmpty()
+                return StopAlertState(
+                    hasSuspension = routeStates.any { it.hasSuspension },
+                    hasShuttle = routeStates.any { it.hasShuttle },
+                )
+            }
+
             val stopPairSegments =
-                stopIds
-                    .map {
-                        Pair(
-                            it,
-                            stopsAlertState.getOrElse(it) {
-                                StopAlertState(hasSuspension = false, hasShuttle = false)
-                            },
+                stopIds.windowed(size = 2, step = 1) { (firstStopId, secondStopId) ->
+                    if (!requireAllRoutesDisrupted) {
+                        return@windowed Pair(
+                            pairState(anyRouteState(firstStopId), anyRouteState(secondStopId)),
+                            listOf(firstStopId, secondStopId),
                         )
                     }
-                    .windowed(size = 2, step = 1) { (firstStop, secondStop) ->
-                        val (firstStopId, firstStopAlerting) = firstStop
-                        val (secondStopId, secondStopAlerting) = secondStop
-                        val segmentState =
-                            if (
-                                firstStopAlerting.hasSuspension && secondStopAlerting.hasSuspension
-                            ) {
-                                SegmentAlertState.Suspension
-                            } else if (
-                                firstStopAlerting.hasShuttle && secondStopAlerting.hasShuttle
-                            ) {
-                                SegmentAlertState.Shuttle
-                            } else {
-                                SegmentAlertState.Normal
-                            }
-                        Pair(segmentState, listOf(firstStopId, secondStopId))
+                    val routes =
+                        (otherRoutesByStopId[firstStopId].orEmpty() intersect
+                            otherRoutesByStopId[secondStopId].orEmpty()) + sourceRouteId
+                    val routeStates = routes.map { route ->
+                        pairState(
+                            stopsAlertState[firstStopId]?.get(route) ?: StopAlertState.Normal,
+                            stopsAlertState[secondStopId]?.get(route) ?: StopAlertState.Normal,
+                        )
                     }
+                    val segmentState =
+                        when {
+                            routeStates.contains(SegmentAlertState.Normal) ->
+                                SegmentAlertState.Normal
+                            routeStates.contains(SegmentAlertState.Suspension) ->
+                                SegmentAlertState.Suspension
+                            else -> SegmentAlertState.Shuttle
+                        }
+                    Pair(segmentState, listOf(firstStopId, secondStopId))
+                }
 
             return stopPairSegments.fold(emptyList()) { prevSegments, currSegment ->
                 if (prevSegments.isEmpty()) {

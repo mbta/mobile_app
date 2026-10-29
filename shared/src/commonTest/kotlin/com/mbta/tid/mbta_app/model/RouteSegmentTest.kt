@@ -7,6 +7,18 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class RouteSegmentTest {
+    private val sourceRoute = Route.Id("sourceRoute")
+
+    private fun singleRouteAlertingSegments(
+        stopIds: List<String>,
+        stopsAlertState: Map<String, RouteSegment.StopAlertState>,
+    ) =
+        RouteSegment.alertingSegments(
+            stopIds,
+            sourceRoute,
+            emptyMap(),
+            stopsAlertState.mapValues { mapOf(sourceRoute to it.value) },
+        )
 
     @Test
     fun `alertStateByStopId excludes stops without alerts`() {
@@ -95,7 +107,10 @@ class RouteSegmentTest {
         assertEquals(
             mapOf(
                 "place-davis" to
-                    RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true)
+                    mapOf(
+                        sourceRoute to
+                            RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true)
+                    )
             ),
             segment.alertStateByStopId(mapOf("place-davis" to alertsForStop)),
         )
@@ -149,11 +164,20 @@ class RouteSegmentTest {
         assertEquals(
             mapOf(
                 "place-shuttle" to
-                    RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true),
+                    mapOf(
+                        sourceRoute to
+                            RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true)
+                    ),
                 "place-suspension" to
-                    RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false),
+                    mapOf(
+                        sourceRoute to
+                            RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false)
+                    ),
                 "place-both" to
-                    RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = true),
+                    mapOf(
+                        sourceRoute to
+                            RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = true)
+                    ),
             ),
             segment.alertStateByStopId(alerts),
         )
@@ -227,7 +251,10 @@ class RouteSegmentTest {
         assertEquals(
             mapOf(
                 "place-davis" to
-                    RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true)
+                    mapOf(
+                        sourceRoute to
+                            RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true)
+                    )
             ),
             segment.alertStateByStopId(mapOf("place-davis" to alertsForStop)),
         )
@@ -287,7 +314,10 @@ class RouteSegmentTest {
         assertEquals(
             mapOf(
                 "place-butlr" to
-                    RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true)
+                    mapOf(
+                        Route.Id("Mattapan") to
+                            RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true)
+                    )
             ),
             segment.alertStateByStopId(mapOf("place-butlr" to alertsForStop)),
         )
@@ -302,7 +332,7 @@ class RouteSegmentTest {
                 Pair(SegmentAlertState.Suspension, listOf("porter", "harvard")),
                 Pair(SegmentAlertState.Normal, listOf("harvard", "central")),
             ),
-            RouteSegment.alertingSegments(
+            singleRouteAlertingSegments(
                 listOf("alewife", "davis", "porter", "harvard", "central"),
                 mapOf(
                     "porter" to
@@ -322,7 +352,7 @@ class RouteSegmentTest {
                 Pair(SegmentAlertState.Suspension, listOf("alewife", "davis")),
                 Pair(SegmentAlertState.Normal, listOf("davis", "porter", "harvard", "central")),
             ),
-            RouteSegment.alertingSegments(
+            singleRouteAlertingSegments(
                 listOf("alewife", "davis", "porter", "harvard", "central"),
                 mapOf(
                     "alewife" to
@@ -346,7 +376,7 @@ class RouteSegmentTest {
                     listOf("alewife", "davis", "porter", "harvard", "central"),
                 )
             ),
-            RouteSegment.alertingSegments(
+            singleRouteAlertingSegments(
                 listOf("alewife", "davis", "porter", "harvard", "central"),
                 mapOf(
                     "alewife" to
@@ -374,7 +404,7 @@ class RouteSegmentTest {
                     listOf("alewife", "davis", "porter", "harvard", "central"),
                 )
             ),
-            RouteSegment.alertingSegments(
+            singleRouteAlertingSegments(
                 listOf("alewife", "davis", "porter", "harvard", "central"),
                 mapOf(),
             ),
@@ -390,7 +420,7 @@ class RouteSegmentTest {
                 Pair(SegmentAlertState.Shuttle, listOf("e", "f", "g")),
                 Pair(SegmentAlertState.Normal, listOf("g", "h", "i")),
             ),
-            RouteSegment.alertingSegments(
+            singleRouteAlertingSegments(
                 listOf("a", "b", "c", "d", "e", "f", "g", "h", "i"),
                 mapOf(
                     "c" to RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false),
@@ -575,6 +605,188 @@ class RouteSegmentTest {
                 )
             ),
             routeSegment.splitAlertingSegments(alertsForStop),
+        )
+    }
+
+    @Test
+    fun `alertStateByStopId tracks state separately for each route`() {
+        val otherRoute = Route.Id("otherRoute")
+        val segment =
+            RouteSegment(
+                id = "id",
+                sourceRouteId = sourceRoute,
+                sourceRoutePatternId = "sourceRoutePattern",
+                stopIds = listOf("place-sstat"),
+                otherPatternsByStopId =
+                    mapOf("place-sstat" to listOf(RoutePatternKey(otherRoute, "otherRp"))),
+            )
+
+        assertEquals(
+            mapOf(
+                "place-sstat" to
+                    mapOf(
+                        otherRoute to
+                            RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false)
+                    )
+            ),
+            segment.alertStateByStopId(
+                mapOf(
+                    "place-sstat" to
+                        serviceAlert("place-sstat", otherRoute, Alert.Effect.Suspension)
+                )
+            ),
+        )
+    }
+
+    @Test
+    fun `alertingSegments keeps shared stops normal when only one route is disrupted`() {
+        val otherRoute = Route.Id("otherRoute")
+        val suspended = RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false)
+        assertEquals(
+            listOf(
+                Pair(SegmentAlertState.Normal, listOf("a", "b", "c")),
+                Pair(SegmentAlertState.Suspension, listOf("c", "d", "e")),
+            ),
+            RouteSegment.alertingSegments(
+                listOf("a", "b", "c", "d", "e"),
+                sourceRoute,
+                mapOf("a" to setOf(otherRoute), "b" to setOf(otherRoute), "c" to setOf(otherRoute)),
+                listOf("a", "b", "c", "d", "e").associateWith { mapOf(sourceRoute to suspended) },
+                requireAllRoutesDisrupted = true,
+            ),
+        )
+    }
+
+    @Test
+    fun `alertingSegments shows shared stops as alerting when all routes are disrupted`() {
+        val otherRoute = Route.Id("otherRoute")
+        val suspended = RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false)
+        val shuttled = RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true)
+        val both = RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = true)
+        assertEquals(
+            listOf(
+                Pair(SegmentAlertState.Shuttle, listOf("a", "b")),
+                Pair(SegmentAlertState.Suspension, listOf("b", "c", "d")),
+            ),
+            RouteSegment.alertingSegments(
+                listOf("a", "b", "c", "d"),
+                sourceRoute,
+                mapOf("a" to setOf(otherRoute), "b" to setOf(otherRoute), "c" to setOf(otherRoute)),
+                mapOf(
+                    "a" to mapOf(sourceRoute to shuttled, otherRoute to shuttled),
+                    "b" to mapOf(sourceRoute to both, otherRoute to shuttled),
+                    "c" to mapOf(sourceRoute to suspended, otherRoute to shuttled),
+                    "d" to mapOf(sourceRoute to suspended),
+                ),
+                requireAllRoutesDisrupted = true,
+            ),
+        )
+    }
+
+    @Test
+    fun `alertingSegments by default shows shared stops as alerting when any route is disrupted`() {
+        val otherRoute = Route.Id("otherRoute")
+        val suspended = RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false)
+        assertEquals(
+            listOf(Pair(SegmentAlertState.Suspension, listOf("a", "b", "c", "d", "e"))),
+            RouteSegment.alertingSegments(
+                listOf("a", "b", "c", "d", "e"),
+                sourceRoute,
+                mapOf("a" to setOf(otherRoute), "b" to setOf(otherRoute), "c" to setOf(otherRoute)),
+                listOf("a", "b", "c", "d", "e").associateWith { mapOf(sourceRoute to suspended) },
+            ),
+        )
+    }
+
+    @Test
+    fun `splitAlertingSegments only shows disruption past shared stops for single route alert`() {
+        val otherRoute = Route.Id("otherRoute")
+        val otherPatterns = listOf(RoutePatternKey(otherRoute, "otherRp"))
+        val routeSegment =
+            RouteSegment(
+                id = "id",
+                sourceRouteId = sourceRoute,
+                sourceRoutePatternId = "sourceRoutePattern",
+                stopIds = listOf("sstat", "bbsta", "branch", "x", "y"),
+                otherPatternsByStopId =
+                    mapOf(
+                        "sstat" to otherPatterns,
+                        "bbsta" to otherPatterns,
+                        "branch" to otherPatterns,
+                    ),
+            )
+        val alertsForStop =
+            listOf("sstat", "bbsta", "branch", "x").associateWith {
+                serviceAlert(it, sourceRoute, Alert.Effect.Suspension)
+            }
+
+        assertEquals(
+            listOf(
+                listOf("sstat", "bbsta", "branch") to SegmentAlertState.Normal,
+                listOf("branch", "x") to SegmentAlertState.Suspension,
+                listOf("x", "y") to SegmentAlertState.Normal,
+            ),
+            routeSegment
+                .splitAlertingSegments(alertsForStop, requireAllRoutesDisrupted = true)
+                .map { it.stopIds to it.alertState },
+        )
+        assertEquals(
+            listOf(
+                listOf("sstat", "bbsta", "branch", "x") to SegmentAlertState.Suspension,
+                listOf("x", "y") to SegmentAlertState.Normal,
+            ),
+            routeSegment.splitAlertingSegments(alertsForStop).map { it.stopIds to it.alertState },
+        )
+    }
+
+    @Test
+    fun `splitAlertingSegments ignores shared routes that are not visible`() {
+        val otherRoute = Route.Id("otherRoute")
+        val otherPatterns = listOf(RoutePatternKey(otherRoute, "otherRp"))
+        val routeSegment =
+            RouteSegment(
+                id = "id",
+                sourceRouteId = sourceRoute,
+                sourceRoutePatternId = "sourceRoutePattern",
+                stopIds = listOf("sstat", "bbsta", "branch", "x", "y"),
+                otherPatternsByStopId =
+                    mapOf(
+                        "sstat" to otherPatterns,
+                        "bbsta" to otherPatterns,
+                        "branch" to otherPatterns,
+                    ),
+            )
+        val alertsForStop =
+            listOf("sstat", "bbsta", "branch", "x").associateWith {
+                serviceAlert(it, sourceRoute, Alert.Effect.Suspension)
+            }
+
+        assertEquals(
+            listOf(
+                listOf("sstat", "bbsta", "branch") to SegmentAlertState.Normal,
+                listOf("branch", "x") to SegmentAlertState.Suspension,
+                listOf("x", "y") to SegmentAlertState.Normal,
+            ),
+            routeSegment
+                .splitAlertingSegments(
+                    alertsForStop,
+                    requireAllRoutesDisrupted = true,
+                    visibleRouteIds = setOf(sourceRoute, otherRoute),
+                )
+                .map { it.stopIds to it.alertState },
+        )
+        assertEquals(
+            listOf(
+                listOf("sstat", "bbsta", "branch", "x") to SegmentAlertState.Suspension,
+                listOf("x", "y") to SegmentAlertState.Normal,
+            ),
+            routeSegment
+                .splitAlertingSegments(
+                    alertsForStop,
+                    requireAllRoutesDisrupted = true,
+                    visibleRouteIds = setOf(sourceRoute),
+                )
+                .map { it.stopIds to it.alertState },
         )
     }
 
