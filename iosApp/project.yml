@@ -93,7 +93,7 @@ packages:
     from: 1.6.0
   Lottie:
     url: https://github.com/airbnb/lottie-spm.git
-    from: 4.6.0
+    from: 4.6.1
   MapboxMaps:
     url: https://github.com/mapbox/mapbox-maps-ios.git
     from: 11.23.0
