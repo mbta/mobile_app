@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.TrackChange
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
+import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
 
 fun TripDetailsStopList.Entry.trackChangeTapCallback(
     route: Route,
@@ -30,9 +31,7 @@ fun TripDetailsStopList.Entry.trackChangeTapCallback(
                     {
                         openModal(
                             Explainer(
-                                type =
-                                    com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
-                                        .ScheduledTrackChange,
+                                type = ExplainerType.ScheduledTrackChange(trackChange),
                                 routeAccents = TripRouteAccents(route),
                             )
                         )

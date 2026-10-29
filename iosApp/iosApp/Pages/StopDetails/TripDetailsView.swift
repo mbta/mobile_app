@@ -198,6 +198,7 @@ struct TripDetailsView: View {
                     now: now,
                     onTapLink: onTapStop,
                     onOpenAlertDetails: onOpenAlertDetails,
+                    openExplainer: { type in explainer = .init(type: type, routeAccents: routeAccents) },
                     route: route,
                     routeAccents: routeAccents,
                     global: global
@@ -235,7 +236,10 @@ struct TripDetailsView: View {
                 onTap: onTap,
                 now: now,
                 onFollowTrip: context != .tripDetails ? onFollowTrip : nil,
-                onOpenAlertDetails: onOpenAlertDetails
+                onOpenAlertDetails: onOpenAlertDetails,
+                openExplainer: { explainerType in
+                    explainer = .init(type: explainerType, routeAccents: routeAccents)
+                }
             )
         }
     }

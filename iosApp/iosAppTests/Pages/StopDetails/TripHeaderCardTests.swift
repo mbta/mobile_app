@@ -759,4 +759,56 @@ final class TripHeaderCardTests: XCTestCase {
 
         wait(for: [alertTapped, followTapped], timeout: 1)
     }
+
+    func testTrackChangeScheduledTap() throws {
+        let now = EasternTimeInstant.now()
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in stop.name = "Stop Name" }
+        let route = objects.route { $0.type = .commuterRail }
+        let trip = objects.trip { _ in }
+        let scheduledTrackChange = TrackChange.Scheduled(platformCode: "2", platformName: "Track 2")
+
+        let schedule = objects.schedule { schedule in
+            schedule.departureTime = now.plus(minutes: 5)
+        }
+
+        let entry = TripDetailsStopList.Entry(
+            stop: stop,
+            stopSequence: 0,
+            disruption: nil,
+            schedule: schedule,
+            prediction: nil,
+            vehicle: nil,
+            routes: [],
+            elevatorAlerts: [],
+            trackChange: scheduledTrackChange
+        )
+
+        let explainerOpened = expectation(description: "scheduled track change explainer opened")
+
+        let sut = TripHeaderCard(
+            spec: .scheduled(stop, entry),
+            trip: trip,
+            targeted: true,
+            route: route,
+            routeAccents: .init(route: route),
+            onTap: nil,
+            now: now,
+            onFollowTrip: nil,
+            openExplainer: { type in
+                switch onEnum(of: type) {
+                case let .scheduledTrackChange(data):
+                    XCTAssertEqual("2", data.platformCode)
+                    XCTAssertEqual("Track 2", data.platformName)
+                    explainerOpened.fulfill()
+                default:
+                    XCTFail("expected scheduled track change explainer")
+                }
+            }
+        )
+
+        try XCTAssertNotNil(sut.inspect().find(TrackChangePill.self))
+        try sut.inspect().find(ViewType.Button.self).tap()
+        wait(for: [explainerOpened], timeout: 1)
+    }
 }
