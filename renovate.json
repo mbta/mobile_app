@@ -1,0 +1,44 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":prConcurrentLimit10"
+  ],
+  "minimumReleaseAge": "7 days",
+  "minimumReleaseAgeBehaviour": "timestamp-optional",
+  "packageRules": [
+    {
+      "description": "split out patches for Android Gradle plugin",
+      "matchPackageNames": [
+        "com.android.application",
+        "com.android.library"
+      ],
+      "separateMinorPatch": true,
+      "separateMultipleMinor": true
+    },
+    {
+      "description": "group Swift Firebase dependencies",
+      "groupName": "firebase",
+      "matchPackageNames": [
+        "github.com/firebase/*",
+        "github.com/google/*",
+        "github.com/googleads/*"
+      ]
+    },
+    {
+      "description": "group Swift Mapbox dependencies",
+      "groupName": "mapbox",
+      "matchPackageNames": [
+        "github.com/mapbox/*"
+      ]
+    },
+    {
+      "description": "ignore sentry-cocoa (lining it up with sentry-kmp would be really hard)",
+      "enabled": false,
+      "matchPackageNames": [
+        "github.com/getsentry/sentry-cocoa"
+      ]
+    }
+  ],
+  "rebaseWhen": "conflicted"
+}
