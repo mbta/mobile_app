@@ -60,7 +60,7 @@ fun TrackChangePill(
                 if (pillStyle is TrackChangePillStyle.Compact && pillStyle.isDimmed) {
                     colorResource(R.color.halo_dark)
                 } else {
-                    colorResource(R.color.scheduled_track_change_background)
+                    colorResource(R.color.track_change_pill_scheduled_background)
                 }
             }
         }
