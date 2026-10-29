@@ -39,6 +39,8 @@ internal constructor(
         if (globalData.routes[routeId]?.type != (RouteType.COMMUTER_RAIL)) {
             return false
         }
+        val stop = globalData.getStop(stopId) ?: return false
+
         val canonicalTrip =
             globalData
                 .getPatternsFor(this.routeId, trip.directionId)
@@ -46,6 +48,18 @@ internal constructor(
                 ?.representativeTripId ?: return false
         val canonicalStopIds = globalData.trips[canonicalTrip]?.stopIds?.toSet() ?: return false
 
-        return !canonicalStopIds.contains(stopId)
+        if (canonicalStopIds.contains(stopId)) {
+            return false
+        }
+
+        // If there is no canonical platformCode for this stop, then it is common for the
+        // track to be different between trips, and we don't need to treat it as a track change.
+        return !canonicalStopIds.any {
+            globalData.getStop(it)?.let { canonicalStop ->
+                stop.parentStationId != null &&
+                    canonicalStop.parentStationId == stop.parentStationId &&
+                    canonicalStop.platformCode == null
+            } ?: false
+        }
     }
 }
