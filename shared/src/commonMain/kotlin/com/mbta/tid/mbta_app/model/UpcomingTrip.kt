@@ -80,9 +80,16 @@ constructor(
     internal fun isInTheFuture(currentTime: EasternTimeInstant) =
         time != null && time >= currentTime
 
-    /** Check the vehicle and the prediction stop id are the same */
-    internal fun isVehicleAtTheStop() =
-        prediction != null && vehicle != null && prediction.stopId == vehicle.stopId
+    /** Check if the vehicle is past the prediction stop, falling back to true if data is missing */
+    internal fun hasPassedPredictionStop(): Boolean =
+        prediction?.let { resolvedPrediction ->
+            vehicle?.let { resolvedVehicle ->
+                resolvedVehicle.currentStopSequence?.let { vehicleStop ->
+                    resolvedVehicle.tripId == resolvedPrediction.tripId &&
+                        vehicleStop > resolvedPrediction.stopSequence
+                }
+            }
+        } ?: true
 
     /** Checks prediction status */
     internal fun doesPredictionHaveStatus() = prediction?.status?.isNotBlank() ?: false

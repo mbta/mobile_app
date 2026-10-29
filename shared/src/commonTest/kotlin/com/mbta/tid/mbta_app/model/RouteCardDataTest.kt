@@ -3320,12 +3320,14 @@ class RouteCardDataTest {
                 stopId = stop1.id
                 tripId = predictionBrdTrip.id
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
+                currentStopSequence = 9
             }
             val predictionBrdPrediction = objects.prediction {
                 stopId = stop1.id
                 trip = predictionBrdTrip
                 departureTime = time - 1.minutes
                 vehicleId = predictionBrdVehicle.id
+                stopSequence = 10
             }
             val predictionSoonPrediction = objects.prediction {
                 stopId = stop1.id
