@@ -10,11 +10,11 @@ on:
         type: boolean
     secrets:
       SENTRY_DSN:
-        required: true
+        required: false
       FIREBASE_KEY:
-        required: true
+        required: false
       GOOGLE_APP_ID_IOS:
-        required: true
+        required: false
 
 jobs:
   test-ios:
@@ -53,8 +53,10 @@ jobs:
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           SENTRY_ENVIRONMENT: staging
-          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
-          GOOGLE_APP_ID_IOS: ${{ secrets.GOOGLE_APP_ID_IOS }}
+          # Fallback value for FIREBASE_KEY if not set in secrets, not a real key
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY || 'AIzaSyA00000000000000000000000000000000' }}
+          # Fallback value for GOOGLE_APP_ID_IOS if not set in secrets, not a real key
+          GOOGLE_APP_ID_IOS: ${{ secrets.GOOGLE_APP_ID_IOS || '1:123456789000:ios:0123456789abcdef' }}
       - name: Get latest two iOS versions
         if: ${{ !inputs.skip-everything }}
         id: ios_versions
