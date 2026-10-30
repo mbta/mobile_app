@@ -111,7 +111,7 @@ class TripDetailsStopListTest {
             predictionStop: Stop? = null,
             vehicle: Vehicle? = null,
             routes: List<Route> = listOf(),
-            trackChange: TrackChange? = null,
+            trackChangeAlert: Alert? = null,
         ) =
             TripDetailsStopList.Entry(
                 stop(stopId),
@@ -122,7 +122,7 @@ class TripDetailsStopListTest {
                 predictionStop ?: objects.stops[prediction?.stopId],
                 vehicle,
                 routes,
-                trackChange = trackChange,
+                trackChange = trackChangeAlert?.let { TrackChange.Alert(it) },
             )
 
         fun globalData(patternIdsByStop: Map<String, List<String>> = emptyMap()) =
@@ -1196,7 +1196,7 @@ class TripDetailsStopListTest {
             stopSequence = 20
             departureTime = now + 90.minutes
         }
-        val trackChangeAlert =
+        val trackChange =
             alert(Alert.Effect.TrackChange) {
                 activePeriod(now + 1.hours, now + 2.hours)
                 informedEntity(route = route.id.idText, stop = "A")
@@ -1206,50 +1206,8 @@ class TripDetailsStopListTest {
         val result = fromPieces(schedulesResponseOf(sched1, sched2), null)
 
         assertEquals(
-            listOf(null, TrackChange.Alert(trackChangeAlert)),
-            result?.stops?.map { it.trackChange },
-        )
-        assertEquals(
-            listOf(null, Track.TrackChange(TrackChange.Alert(trackChangeAlert))),
+            listOf(null, Track.TrackChange(TrackChange.Alert(trackChange))),
             result?.stops?.map { it.trackNumber },
-        )
-    }
-
-    @Test
-    fun `fromPieces sets scheduled track changes`() = test {
-        val route = objects.route { type = RouteType.COMMUTER_RAIL }
-        val trip = trip {
-            routeId = route.id.idText
-            stopIds = listOf("A", "B")
-        }
-        val canonicalTrip = objects.trip {
-            routeId = route.id.idText
-            directionId = trip.directionId
-            stopIds = listOf("A", "C")
-        }
-        objects.routePattern(route) {
-            directionId = trip.directionId
-            canonical = true
-            representativeTripId = canonicalTrip.id
-        }
-        val stop = objects.stop {
-            id = "B"
-            platformCode = "2"
-            platformName = "Track 2"
-        }
-        val schedule = objects.schedule {
-            this.trip = trip
-            routeId = route.id.idText
-            stopId = stop.id
-            stopSequence = 20
-            departureTime = EasternTimeInstant.now() + 30.minutes
-        }
-
-        val result = fromPieces(schedulesResponseOf(schedule), null)
-
-        assertEquals(
-            listOf(TrackChange.Scheduled("2", "Track 2")),
-            result?.stops?.map { it.trackChange },
         )
     }
 

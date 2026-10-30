@@ -4,7 +4,6 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.prediction
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.schedule
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.trip
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.vehicle
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.parametric.ParametricTest
 import com.mbta.tid.mbta_app.parametric.parametricTest
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -506,13 +505,13 @@ class UpcomingTripTest {
 
         val result =
             UpcomingTrip.tripsFromData(
-                emptyMap(),
+                objects.stops,
                 objects.schedules.values.toList(),
                 objects.predictions.values.toList(),
                 objects.trips,
                 objects.vehicles,
                 EasternTimeInstant.now(),
-                GlobalResponse(objects),
+                emptyMap(),
             )
 
         assertEquals(
@@ -558,13 +557,13 @@ class UpcomingTripTest {
 
         val result =
             UpcomingTrip.tripsFromData(
-                emptyMap(),
+                objects.stops,
                 objects.schedules.values.toList(),
                 objects.predictions.values.toList(),
                 objects.trips,
                 objects.vehicles,
                 EasternTimeInstant.now(),
-                GlobalResponse(objects),
+                emptyMap(),
             )
 
         assertEquals(listOf(UpcomingTrip(trip, schedule, prediction)), result)
@@ -587,13 +586,13 @@ class UpcomingTripTest {
         assertEquals(
             listOf(UpcomingTrip(trip, sched1, pred1), UpcomingTrip(trip, sched2, pred2)),
             UpcomingTrip.tripsFromData(
-                objects.alerts,
+                objects.stops,
                 listOf(sched1, sched2),
                 listOf(pred1, pred2),
                 objects.trips,
                 emptyMap(),
                 EasternTimeInstant.now(),
-                GlobalResponse(objects),
+                objects.alerts,
             ),
         )
     }
@@ -637,17 +636,17 @@ class UpcomingTripTest {
                 )
             ),
             UpcomingTrip.tripsFromData(
-                mapOf(
-                    trackChange.id to trackChange,
-                    otherTripTrackChange.id to otherTripTrackChange,
-                    cancellation.id to cancellation,
-                ),
+                objects.stops,
                 listOf(schedule),
                 emptyList(),
                 objects.trips,
                 emptyMap(),
                 now,
-                GlobalResponse(objects),
+                mapOf(
+                    trackChange.id to trackChange,
+                    otherTripTrackChange.id to otherTripTrackChange,
+                    cancellation.id to cancellation,
+                ),
             ),
         )
     }
@@ -671,67 +670,24 @@ class UpcomingTripTest {
             stopSequence = 2
             departureTime = now + 90.minutes
         }
-        val trackChangeAlert = objects.alert {
+        val trackChange = objects.alert {
             effect = Alert.Effect.TrackChange
             activePeriod(now + 1.hours, now + 2.hours)
             informedEntity(route = route.id.idText, stop = stop.id)
         }
-        val trackChange = TrackChange.Alert(trackChangeAlert)
 
         val result =
             UpcomingTrip.tripsFromData(
-                mapOf(trackChangeAlert.id to trackChangeAlert),
+                objects.stops,
                 listOf(earlySchedule, lateSchedule),
                 emptyList(),
                 objects.trips,
                 emptyMap(),
                 now,
-                GlobalResponse(objects),
+                mapOf(trackChange.id to trackChange),
             )
 
-        assertEquals(listOf(null, trackChange), result.map { it.trackChange })
-    }
-
-    @Test
-    fun `tripsFromData checks scheduled track change at scheduled time`() {
-        val objects = ObjectCollectionBuilder()
-        val now = EasternTimeInstant.now()
-        val route = objects.route { type = RouteType.COMMUTER_RAIL }
-        val stop = objects.stop {
-            id = "stop-2"
-            platformCode = "2"
-        }
-        val canonicalTrip = objects.trip {
-            routeId = route.id.idText
-            stopIds = listOf("canonical-stop", "canonical-stop-2")
-        }
-        val trip = objects.trip {
-            routeId = route.id.idText
-            stopIds = listOf("canonical-stop", stop.id)
-        }
-        objects.routePattern(route) {
-            canonical = true
-            representativeTripId = canonicalTrip.id
-        }
-        val schedule = objects.schedule {
-            this.trip = trip
-            stopId = stop.id
-            stopSequence = 2
-            departureTime = now + 30.minutes
-        }
-
-        val result =
-            UpcomingTrip.tripsFromData(
-                emptyMap(),
-                listOf(schedule),
-                emptyList(),
-                objects.trips,
-                emptyMap(),
-                now,
-                GlobalResponse(objects),
-            )
-
-        assertEquals(listOf(TrackChange.Scheduled("2", null)), result.map { it.trackChange })
+        assertEquals(listOf(null, TrackChange.Alert(trackChange)), result.map { it.trackChange })
     }
 
     @Test
