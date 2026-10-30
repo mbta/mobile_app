@@ -213,7 +213,12 @@ public class FavoritesViewModel(
             }
         }
 
-        EventSink(eventHandlingTimeout = 2.seconds, sentryRepository = sentryRepository) { event ->
+        EventSink(
+            eventHandlingTimeout = { event ->
+                if (event == Event.ReloadFavorites) 4.seconds else 2.seconds
+            },
+            sentryRepository = sentryRepository,
+        ) { event ->
             when (event) {
                 Event.DismissNotificationsHint -> {
                     shouldShowNotificationsHint = false

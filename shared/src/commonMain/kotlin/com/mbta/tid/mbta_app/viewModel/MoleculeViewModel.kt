@@ -56,10 +56,19 @@ public abstract class MoleculeViewModel<Event, Model> : MoleculeScopeViewModel()
         sentryRepository: ISentryRepository,
         handleEvent: suspend (Event) -> Unit,
     ) {
+        EventSink({ eventHandlingTimeout }, sentryRepository, handleEvent)
+    }
+
+    @Composable
+    protected fun EventSink(
+        eventHandlingTimeout: (Event) -> Duration,
+        sentryRepository: ISentryRepository,
+        handleEvent: suspend (Event) -> Unit,
+    ) {
         LaunchedEffect(null) {
             events.collect { event ->
                 try {
-                    withTimeout(eventHandlingTimeout) { handleEvent(event) }
+                    withTimeout(eventHandlingTimeout(event)) { handleEvent(event) }
                 } catch (exc: TimeoutCancellationException) {
                     sentryRepository.captureException(
                         TimeoutException(this@MoleculeViewModel::class.simpleName, event, exc)
