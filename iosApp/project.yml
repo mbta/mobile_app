@@ -84,37 +84,37 @@ settingGroups:
 packages:
   CustomAlert:
     url: https://github.com/divadretlaw/CustomAlert.git
-    from: 6.0.1
+    exactVersion: 6.0.1
   Firebase:
     url: https://github.com/firebase/firebase-ios-sdk
-    from: 12.1.0
+    exactVersion: 12.19.2
   Inject:
     url: https://github.com/krzysztofzablocki/Inject.git
-    from: 1.6.0
+    exactVersion: 1.6.0
   Lottie:
     url: https://github.com/airbnb/lottie-spm.git
-    from: 4.6.0
+    exactVersion: 4.6.1
   MapboxMaps:
     url: https://github.com/mapbox/mapbox-maps-ios.git
-    from: 11.23.0
+    exactVersion: 11.31.1
   Reachability:
     url: https://github.com/ashleymills/Reachability.swift
-    from: 5.2.4
+    exactVersion: 5.2.4
   Sentry:
     url: https://github.com/getsentry/sentry-cocoa.git
     exactVersion: 8.58.2
   swift-collections:
     url: https://github.com/apple/swift-collections.git
-    from: 1.2.1
+    exactVersion: 1.7.2
   SwiftPhoenixClient:
     url: https://github.com/davidstump/SwiftPhoenixClient
-    from: 5.3.5
+    exactVersion: 5.3.5
   SwiftUI-Shimmer:
     url: https://github.com/markiv/SwiftUI-Shimmer
-    from: 1.5.1
+    exactVersion: 1.5.1
   ViewInspector:
     url: https://github.com/nalexn/ViewInspector
-    from: 0.10.5
+    exactVersion: 0.10.5
 targets:
   iosApp:
     type: application

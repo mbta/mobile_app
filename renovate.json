@@ -1,27 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "customManagers": [
-    {
-      "customType": "jsonata",
-      "datasourceTemplate": "github-tags",
-      "fileFormat": "json",
-      "managerFilePatterns": [
-        "/Package.resolved$/"
-      ],
-      "matchStrings": [
-        "pins.{ \"depName\": identity, \"packageName\": $substringBefore($substringAfter(location, \"https://github.com/\"), \".git\"), \"currentValue\": state.version, \"currentDigest\": state.revision }"
-      ]
-    }
-  ],
   "extends": [
     "config:recommended",
     ":prConcurrentLimit10"
-  ],
-  "hostRules": [
-    {
-      "enabled": true,
-      "matchHost": "https://api.mapbox.com"
-    }
   ],
   "minimumReleaseAge": "7 days",
   "minimumReleaseAgeBehaviour": "timestamp-optional",
@@ -39,8 +20,7 @@
       "description": "group Swift Firebase dependencies",
       "groupName": "firebase",
       "matchManagers": [
-        "xcodegen",
-        "custom.jsonata"
+        "xcodegen"
       ],
       "matchPackageNames": [
         "firebase/*",
@@ -52,8 +32,7 @@
       "description": "group Swift Mapbox dependencies",
       "groupName": "mapbox",
       "matchManagers": [
-        "xcodegen",
-        "custom.jsonata"
+        "xcodegen"
       ],
       "matchPackageNames": [
         "mapbox/*"
@@ -67,18 +46,28 @@
       ]
     },
     {
-      "description": "only touch xcodegen if actually necessary",
+      "description": "simplify Swift dependency identification",
       "matchManagers": [
         "xcodegen"
       ],
-      "overrideDepName": "{{ packageName }}",
-      "rangeStrategy": "widen"
+      "overrideDepName": "{{ packageName }}"
     },
     {
       "description": "ignore buildSrc (keeping in sync with Gradle would be hard)",
+      "enabled": false,
       "matchFileNames": [
-        "/buildSrc\\/*/"
+        "buildSrc/build.gradle.kts"
       ]
+    },
+    {
+      "description": "look up Mapbox Android versions in GitHub",
+      "extractVersion": "^v(?<version>.*)$",
+      "matchPackageNames": [
+        "com.mapbox.*",
+        "!com.mapbox.*:*-turf"
+      ],
+      "overrideDatasource": "github-releases",
+      "overridePackageName": "mapbox/mapbox-maps-android"
     }
   ],
   "rebaseWhen": "conflicted"
