@@ -8,6 +8,7 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.SubscriptionRequest
 import com.mbta.tid.mbta_app.model.WindowRequest
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.IdleGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
@@ -16,8 +17,10 @@ import com.mbta.tid.mbta_app.utils.buildFavorites
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import org.koin.test.KoinTest
@@ -50,6 +53,23 @@ class FavoritesUsecasesTests : KoinTest {
         assertEquals(
             mapOf(routeStopDirection to FavoriteSettings()),
             usecase.getRouteStopDirectionFavorites(),
+        )
+    }
+
+    @Test
+    fun testGetRouteStopDirectionFavoritesDoesNotWaitForGlobalData() = runBlocking {
+        val routeStopDirection = RouteStopDirection(Route.Id("Red"), "place-alfcl", 0)
+        val usecase =
+            FavoritesUsecases(
+                MockFavoritesRepository(buildFavorites { routeStopDirection(routeStopDirection) }),
+                IdleGlobalRepository(),
+                MockSettingsRepository(),
+                MockSubscriptionsRepository(),
+                MockAnalytics(),
+            )
+        assertEquals(
+            mapOf(routeStopDirection to FavoriteSettings()),
+            withTimeout(1.seconds) { usecase.getRouteStopDirectionFavorites() },
         )
     }
 
