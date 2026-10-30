@@ -19,6 +19,9 @@ jobs:
       pull-requests: read
     runs-on: ubuntu-latest
     steps:
+      # TODO: Remove once https://github.com/actions/runner-images/issues/15018 is resolved
+      - name: Upgrade CA certificates
+        run: sudo apt-get update && sudo apt-get install -y --only-upgrade ca-certificates
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
