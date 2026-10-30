@@ -21,21 +21,18 @@ struct GlobalModifier: ViewModifier {
         }
     }
 
-    private func loadGlobal() {
-        Task(priority: .high) {
-            await activateGlobalListener()
-        }
-        Task {
-            await fetchApi(
-                errorKey: errorKey.withSuffix(suffix: "loadGlobal"),
-                getData: { try await globalRepository.getGlobalData() },
-                onRefreshAfterError: loadGlobal
-            )
-        }
+    private func fetchGlobal() async {
+        await fetchApi(
+            errorKey: errorKey.withSuffix(suffix: "loadGlobal"),
+            getData: { try await globalRepository.getGlobalData() },
+            onRefreshAfterError: { Task { await fetchGlobal() } }
+        )
     }
 
     func body(content: Content) -> some View {
-        content.task { loadGlobal() }
+        content
+            .task(priority: .high) { await activateGlobalListener() }
+            .task { await fetchGlobal() }
             .enableInjection()
     }
 }
