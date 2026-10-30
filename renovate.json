@@ -67,7 +67,10 @@
         "!com.mapbox.*:*-turf"
       ],
       "overrideDatasource": "github-releases",
-      "overridePackageName": "mapbox/mapbox-maps-android"
+      "overridePackageName": "mapbox/mapbox-maps-android",
+      "registryUrls": [
+        "https://github.com"
+      ]
     }
   ],
   "rebaseWhen": "conflicted"
