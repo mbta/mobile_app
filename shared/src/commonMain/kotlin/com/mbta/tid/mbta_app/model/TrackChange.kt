@@ -35,7 +35,7 @@ public sealed class TrackChange {
                 )
 
             if (trackChangeAlert != null) {
-                return Alert(trackChangeAlert)
+                return TrackChange.Alert(trackChangeAlert)
             }
 
             if (schedule != null && schedule.isScheduledTrackChange(trip, globalData)) {

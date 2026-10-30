@@ -36,9 +36,8 @@ internal constructor(
      * trips only.
      */
     public fun isScheduledTrackChange(trip: Trip, globalData: GlobalResponse): Boolean {
-        if (globalData.routes[routeId]?.type != (RouteType.COMMUTER_RAIL)) {
-            return false
-        }
+        if (globalData.routes[routeId]?.type != RouteType.COMMUTER_RAIL) return false
+
         val stop = globalData.getStop(stopId) ?: return false
 
         val canonicalTrip =
@@ -48,9 +47,7 @@ internal constructor(
                 ?.representativeTripId ?: return false
         val canonicalStopIds = globalData.trips[canonicalTrip]?.stopIds?.toSet() ?: return false
 
-        if (canonicalStopIds.contains(stopId)) {
-            return false
-        }
+        if (canonicalStopIds.contains(stopId)) return false
 
         // If there is no canonical platformCode for this stop, then it is common for the
         // track to be different between trips, and we don't need to treat it as a track change.
