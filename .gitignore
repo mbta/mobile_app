@@ -17,7 +17,4 @@ fastlane/test_output
 /component-graphs
 /iosApp/secrets/*
 /androidApp/src/main/res/values/secrets*.xml
-/iosApp/iosApp.xcodeproj/*
-!/iosApp/iosApp.xcodeproj/project.xcworkspace
-/iosApp/iosApp.xcodeproj/project.xcworkspace/*
-!/iosApp/iosApp.xcodeproj/project.xcworkspace/xcshareddata
+/iosApp/iosApp.xcodeproj
