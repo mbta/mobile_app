@@ -61,6 +61,7 @@ final class FcmSubscriptionModifierTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         wait(for: [updateExp], timeout: 1)
     }
@@ -102,6 +103,7 @@ final class FcmSubscriptionModifierTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         wait(for: [updateExp], timeout: 1)
     }

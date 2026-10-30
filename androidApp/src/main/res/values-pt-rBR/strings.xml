@@ -50,6 +50,7 @@
     <string name="bike_issue_sentence_case">Problema com bicicleta</string>
     <string name="boarding_abbr">TRA</string>
     <string name="boarding_track">Embarque na plataforma %1$s</string>
+    <string name="boarding_track_tbd">Trajeto a ser definido</string>
     <string name="bus">Ônibus</string>
     <string name="bus_cancelled">Ônibus cancelado</string>
     <string name="bus_label">%1$s ônibus</string>
@@ -59,6 +60,7 @@
     <string name="cancel">Cancelar</string>
     <string name="cancellation">Cancelamento</string>
     <string name="cancelled">Cancelado</string>
+    <string name="clockwise">sentido horário</string>
     <string name="close_button_label">Fechar</string>
     <string name="coast_guard_restriction">Restrição da Guarda Costeira</string>
     <string name="coast_guard_restriction_lowercase">Restrição da Guarda Costeira</string>
@@ -70,6 +72,7 @@
     <string name="connections_to_and">Conexões para %1$s e %2$s</string>
     <string name="construction">Obras</string>
     <string name="construction_lowercase">construção</string>
+    <string name="counterclockwise">sentido anti-horário</string>
     <string name="crossing_issue">Problema de travessia</string>
     <string name="crossing_issue_lowercase">problema de travessia</string>
     <string name="crossing_malfunction">Problemas no cruzamento</string>
@@ -87,6 +90,7 @@
     <string name="delays_due_to_cause">&lt;b&gt;Atrasos&lt;/b&gt; devido a %1$s</string>
     <string name="delays_unknown_reason">&lt;b&gt;Atraso&lt;/b&gt;</string>
     <string name="delete">Excluir</string>
+    <string name="delete_time_period">excluir período de tempo</string>
     <string name="demonstration">Manifestação</string>
     <string name="demonstration_lowercase">manifestação</string>
     <string name="departure_tile_on_click_label">exibir mais informações sobre esta viagem</string>
@@ -114,6 +118,7 @@
     <string name="drawbridge_issue_lowercase">problema na ponte levadiça</string>
     <string name="eastbound">Sentido leste</string>
     <string name="edit">Editar</string>
+    <string name="edit_favorite">Editar favorito</string>
     <string name="edit_favorite_title">Editar favorito</string>
     <string name="edit_favorites">Editar Favoritos</string>
     <string name="effect" translatable="false">&lt;b&gt;%1$s&lt;/b&gt;</string>
@@ -199,8 +204,6 @@
     <string name="holiday">Feriado</string>
     <string name="holiday_lowercase">feriado</string>
     <string name="hr_min_abbr">&lt;b&gt;%1$d&lt;/b&gt; h &lt;b&gt;%2$d&lt;/b&gt; min</string>
-    <string name="hurricane">Furacão</string>
-    <string name="hurricane_lowercase">furacão</string>
     <string name="ice_in_harbor">Gelo no porto</string>
     <string name="ice_in_harbor_lowercase">gelo no porto</string>
     <string name="inbound">Entrada</string>
@@ -219,6 +222,7 @@
     <string name="location_settings_prompt_keep_off">Manter serviços de localização desativados</string>
     <string name="location_settings_prompt_title">O MBTA Go funciona melhor com os Serviços de Localização ativados</string>
     <string name="location_settings_prompt_turn_on">Ativar nas Configurações</string>
+    <string name="looping">Em loop</string>
     <string name="maintenance">Manutenção</string>
     <string name="maintenance_lowercase">manutenção</string>
     <string name="mechanical_issue">Problema mecânico</string>
@@ -248,6 +252,7 @@
     <string name="nearby_transit">Trânsito próximo</string>
     <string name="nearby_transit_link">Próximo</string>
     <string name="new_feature_screen_reader_header_prefix">Novo recurso. %1$s</string>
+    <string name="next_day">no dia seguinte</string>
     <string name="next_stop">Próxima parada</string>
     <string name="next_trip_at">Próxima viagem às &lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="next_trip_at_tomorrow">Próxima viagem às &lt;b&gt;%1$s&lt;/b&gt; amanhã</string>
@@ -268,6 +273,7 @@
     <string name="not_accessible_stop_card">Esta parada não é acessível</string>
     <string name="notice">Aviso</string>
     <string name="notifications_beta_toggle_label">Notificações de interrupções</string>
+    <string name="notification_settings_empty_state">Podemos enviar-lhe notificações push sobre problemas nesta rota antes de partir.</string>
     <string name="notifications_enabled">notificações ativadas</string>
     <string name="notifications_favorites_hint">Agora &lt;u&gt;edite seus favoritos&lt;/u&gt; para receber notificações de interrupções</string>
     <string name="notifications_settings_link">Permita as notificações nas configurações</string>
@@ -298,8 +304,6 @@
     <string name="parking_closure">Fechamento de estacionamento</string>
     <string name="parking_issue">Problema no estacionamento</string>
     <string name="parking_issue_sentence_case">Problema no estacionamento</string>
-    <string name="police_action">Ação policial</string>
-    <string name="police_action_lowercase">ação policial</string>
     <string name="police_activity">Atividade policial</string>
     <string name="police_activity_lowercase">atividade policial</string>
     <string name="policy_change">Alteração de política</string>
@@ -308,10 +312,12 @@
     <string name="power_problem_lowercase">problema de energia</string>
     <string name="predictions_unavailable_details">O serviço está funcionando, mas os horários de chegada previstos não estão disponíveis. Verifique no mapa onde %1$s estão no momento.</string>
     <string name="predictions_unavailable_details_hide_maps">O serviço está funcionando, mas os horários previstos de chegada não estão disponíveis.</string>
+    <string name="presence_of_whales">Presença de baleias</string>
+    <string name="presence_of_whales_lowercase">presença de baleias</string>
     <string name="promo_favorites_body">Agora salve suas paradas de uso frequente em &lt;b&gt;um lugar fácil&lt;/b&gt;.</string>
     <string name="promo_favorites_header">Adicionar seus Favoritos</string>
     <string name="promo_notifications_body">Avisaremos você sobre qualquer problema antes de sair!</string>
-    <string name="promo_notifications_header">Agora receba notificações de interrupções</string>
+    <string name="promo_notifications_header">Receba notificações sobre interrupções no serviço</string>
     <string name="promo_notifications_step1">Adicionar uma parada favorita</string>
     <string name="promo_notifications_step2">Defina sua própria programação</string>
     <string name="rail_defect">Defeito nos trilhos</string>
@@ -331,6 +337,8 @@
     <string name="resources_link_mticket_note">Aplicativo mTicket</string>
     <string name="resources_link_trip_planner">Planejador de trajetos</string>
     <string name="results_failed_to_load">Falha ao carregar resultados 🤔</string>
+    <string name="rough_seas">Mar agitado</string>
+    <string name="rough_seas_lowercase">mar agitado</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_mode_label">%1$s %2$s</string>
     <string name="routes">Rotas</string>
@@ -348,6 +356,8 @@
     <string name="serves_route_list">atende %1$s</string>
     <string name="service_change">Troca de serviço</string>
     <string name="service_change_sentence_case">Troca de serviço</string>
+    <string name="service_day_start">início do serviço</string>
+    <string name="service_day_end">fim do serviço</string>
     <string name="service_ended">Serviço encerrado</string>
     <string name="service_suspended">Serviço suspenso</string>
     <string name="setting_station_accessibility">Informações de acessibilidade da estação</string>
@@ -382,6 +392,8 @@
     <string name="star_route_hint">fixar rota no topo da lista</string>
     <string name="start">Início</string>
     <string name="start_of_service">início do serviço</string>
+    <string name="start_to_end_of_service">Do início ao fim do serviço</string>
+    <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">A partir de amanhã até novo aviso</string>
     <string name="station_closed">Estação fechada</string>
     <string name="station_closed_sentence_case">Estação fechada</string>
@@ -427,6 +439,7 @@
     <string name="track_change">Alteração de trilho</string>
     <string name="track_change_sentence_case">Alteração de trilho</string>
     <string name="track_number">Trilho %1$s</string>
+    <string name="track_tbd">Via a definir</string>
     <string name="track_problem">Problema de trilho</string>
     <string name="track_problem_lowercase">problema nos trilhos</string>
     <string name="track_work">Obras no trilho</string>
@@ -458,6 +471,8 @@
         <item quantity="one">Atualizado há %1$d minuto</item>
         <item quantity="other">Atualizado há %1$d minutos</item>
     </plurals>
+    <string name="utility_work">Serviços de utilidade pública</string>
+    <string name="utility_work_lowercase">trabalho nos trilhos</string>
     <string name="vehicle_arriving_first">%1$s chegando agora</string>
     <string name="vehicle_arriving_other">e chegando agora</string>
     <string name="vehicle_boarding_first">%1$s embarcando agora</string>
@@ -491,6 +506,10 @@
     <string name="vehicle_shuttled_other">e às %1$s substituído por ônibus de apoio</string>
     <string name="vehicle_skipped_first">%1$s chegando às %2$s sem parada</string>
     <string name="vehicle_skipped_other">e às %1$s ignorado</string>
+    <string name="vessel_substitution">Substituição de ônibus</string>
+    <string name="vessel_substitution_lowercase">Substituição de ônibus</string>
+    <string name="vessel_traffic">Tráfego</string>
+    <string name="vessel_traffic_lowercase">tráfego</string>
     <string name="view_details">Ver detalhes</string>
     <string name="waiting_to_depart">Esperando para partir</string>
     <string name="weather">Clima</string>
@@ -498,5 +517,6 @@
     <string name="weekdays">Dias úteis</string>
     <string name="weekends">Fins de semana</string>
     <string name="westbound">Sentido oeste</string>
+    <string name="when_do_you_want_notifications">Quando você quer receber notificações?</string>
     <string name="x_and_y">%1$s e %2$s</string>
 </resources>

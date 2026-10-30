@@ -23,6 +23,7 @@ kotlin {
     compilerOptions {
         jvmTarget = JvmTarget.JVM_11
         optIn.add("kotlin.time.ExperimentalTime")
+        optIn.add("kotlinx.coroutines.ExperimentalCoroutinesApi")
     }
 }
 
@@ -61,7 +62,7 @@ android {
         targetSdk = 36
         versionCode =
             Integer.parseInt((findProperty("android.injected.version.code") ?: "1") as String)
-        versionName = "2.1.5"
+        versionName = "2.2.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
@@ -146,6 +147,7 @@ dependencies {
     testImplementation(libs.koin.test)
     implementation(libs.koin.junit4)
     androidTestImplementation(platform(libs.compose.bom))
+    androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.test.monitor)
     androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.compose.ui.test.junit4)

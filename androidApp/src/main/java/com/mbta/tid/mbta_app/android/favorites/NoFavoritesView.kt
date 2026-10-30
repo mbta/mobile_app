@@ -38,7 +38,7 @@ fun NoFavoritesView(onAddStops: () -> Unit, showAddStops: Boolean = true) {
         Text(
             stringResource(R.string.no_stops_added),
             textAlign = TextAlign.Center,
-            style = Typography.title3,
+            style = Typography.body,
             color = colorResource(R.color.deemphasized),
         )
 

@@ -3,7 +3,7 @@ package com.mbta.tid.mbta_app.android.routeDetails
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.component.StopListContext
@@ -18,13 +18,15 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlin.test.assertTrue
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 
 @OptIn(ExperimentalTestApi::class)
 class CollapsableStopListTest {
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @OptIn(ExperimentalTestApi::class)
     @Test
@@ -58,6 +60,7 @@ class CollapsableStopListTest {
                         isTypical = false,
                     ),
                 onClick = { clicked = true },
+                globalData = GlobalResponse(objects),
                 isFirstSegment = false,
                 isLastSegment = false,
                 rightSideContent = { _, _ -> },
@@ -111,6 +114,7 @@ class CollapsableStopListTest {
                         isTypical = false,
                     ),
                 onClick = {},
+                globalData = GlobalResponse(objects),
                 isFirstSegment = false,
                 isLastSegment = false,
                 rightSideContent = { _, _ -> },

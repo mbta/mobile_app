@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.stopDetails.AlertCard
 import com.mbta.tid.mbta_app.android.stopDetails.StopDot
+import com.mbta.tid.mbta_app.android.stopDetails.StopIconDot
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
@@ -49,7 +50,10 @@ import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.SegmentAlertState
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.UpcomingFormat
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.isStopBlocklisted
 import com.mbta.tid.mbta_app.repositories.Settings
 import kotlinx.serialization.Serializable
 
@@ -87,6 +91,7 @@ fun StopListRow(
     onClick: () -> Unit,
     routeAccents: TripRouteAccents,
     stopListContext: StopListContext,
+    globalData: GlobalResponse?,
     modifier: Modifier = Modifier,
     activeElevatorAlerts: Int = 0,
     connectingRoutes: List<Route>? = null,
@@ -98,12 +103,15 @@ fun StopListRow(
     stopPlacement: StopPlacement = StopPlacement(),
     onOpenAlertDetails: (Alert) -> Unit = {},
     targeted: Boolean = false,
-    trackNumber: String? = null,
+    trackNumber: TripDetailsStopList.Track? = null,
     descriptor: @Composable () -> Unit = {},
     rightSideContent: @Composable RowScope.(Modifier) -> Unit = {},
 ) {
     val resources = LocalResources.current
-    val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
+    val showStationAccessibility =
+        SettingsCache.get(Settings.StationAccessibility) &&
+            !globalData.isStopBlocklisted(stop.parentStationId ?: stop.id)
+    val hasNoThroughOutDisruption = disruption?.alert?.hasNoThroughService ?: false
 
     Column {
         Box(
@@ -114,7 +122,7 @@ fun StopListRow(
                 .height(IntrinsicSize.Min)
                 .defaultMinSize(minHeight = 48.dp)
         ) {
-            if (!stopPlacement.isLast && !targeted && disruption == null) {
+            if (!stopPlacement.isLast && !targeted && !hasNoThroughOutDisruption) {
                 HaloSeparator(Modifier.align(Alignment.BottomCenter))
             }
             Row(
@@ -125,7 +133,14 @@ fun StopListRow(
                 horizontalArrangement = Arrangement.spacedBy(0.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                RouteLine(routeAccents, stopLane, stickConnections, targeted, getAlertState)
+                RouteLine(
+                    routeAccents,
+                    stopLane,
+                    stickConnections,
+                    targeted,
+                    getAlertState,
+                    disruption,
+                )
                 Column(Modifier.padding(vertical = 12.dp).padding(start = 6.dp)) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -183,17 +198,8 @@ fun StopListRow(
                                 color = colorResource(R.color.text),
                                 style = if (targeted) Typography.headlineBold else Typography.body,
                             )
-                            if (trackNumber != null) {
-                                val boardingTrackText =
-                                    stringResource(R.string.boarding_track, trackNumber)
-                                Text(
-                                    stringResource(R.string.track_number, trackNumber),
-                                    Modifier.semantics { contentDescription = boardingTrackText }
-                                        .placeholderIfLoading(),
-                                    color = colorResource(R.color.text),
-                                    style = Typography.footnote,
-                                )
-                            }
+
+                            trackNumber?.let { TrackNumber(it) }
                         }
                         rightSideContent(Modifier.padding(end = 2.dp))
                         // Adding the accessibility description into the stop label rather than on
@@ -244,7 +250,7 @@ fun StopListRow(
                 }
             }
         }
-        if (disruption != null) {
+        if (hasNoThroughOutDisruption) {
             Box(Modifier.height(IntrinsicSize.Min)) {
                 AlertCard(
                     disruption.alert,
@@ -327,6 +333,7 @@ private fun RouteLine(
     stickConnections: List<RouteBranchSegment.StickConnection>,
     targeted: Boolean,
     getAlertState: (fromStop: String, toStop: String) -> SegmentAlertState,
+    disruption: UpcomingFormat.Disruption?,
 ) {
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxHeight().width(40.dp)) {
         Column(Modifier.fillMaxHeight()) {
@@ -337,14 +344,17 @@ private fun RouteLine(
                 getAlertState = getAlertState,
             )
         }
-        StopDot(
-            routeAccents,
-            targeted,
+
+        val modifier =
             when (stopLane) {
                 RouteBranchSegment.Lane.Left -> Modifier.padding(end = 20.dp)
                 RouteBranchSegment.Lane.Center -> Modifier
                 RouteBranchSegment.Lane.Right -> Modifier.padding(start = 20.dp)
-            },
-        )
+            }
+        if (disruption?.alert?.effect?.stopSkipped == true) {
+            StopIconDot(disruption.iconName, targeted, 24.dp, modifier)
+        } else {
+            StopDot(routeAccents, targeted, modifier)
+        }
     }
 }

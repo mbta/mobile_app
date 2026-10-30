@@ -12,6 +12,9 @@ jobs:
       actions: write
     runs-on: ubuntu-latest
     steps:
+      # TODO: Remove once https://github.com/actions/runner-images/issues/15018 is resolved
+      - name: Upgrade CA certificates
+        run: sudo apt-get update && sudo apt-get install -y --only-upgrade ca-certificates
       - run: |
           gh cache list \
             --json id,lastAccessedAt,ref \

@@ -1,34 +1,34 @@
 package com.mbta.tid.mbta_app.android.pages
 
 import android.os.Build
-import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsOn
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.rule.GrantPermissionRule
-import com.mapbox.maps.extension.style.expressions.dsl.generated.not
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.utils.buildFavorites
 import com.mbta.tid.mbta_app.viewModel.MockNotificationSettingsViewModel
 import com.mbta.tid.mbta_app.viewModel.NotificationSettingsViewModel
 import kotlin.test.assertEquals
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import org.junit.Rule
 import org.junit.Test
 
-@OptIn(ExperimentalTestApi::class)
 class SaveFavoritePageTests {
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
     @get:Rule
     val runtimePermissionRule =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
@@ -206,6 +206,7 @@ class SaveFavoritePageTests {
 
         composeTestRule.onNodeWithText("Add Favorite").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Get disruption notifications").performClick()
+        composeTestRule.onNodeWithText("Midday").performClick()
         composeTestRule.onNodeWithText("Save").performClick()
         composeTestRule.waitForIdle()
         assertFavoritesEquals(
@@ -214,8 +215,8 @@ class SaveFavoritePageTests {
                     notifications {
                         enabled = true
                         window(
-                            LocalTime(8, 0),
-                            LocalTime(9, 0),
+                            LocalTime(10, 0),
+                            LocalTime(16, 0),
                             setOf(
                                 DayOfWeek.MONDAY,
                                 DayOfWeek.TUESDAY,
@@ -334,5 +335,48 @@ class SaveFavoritePageTests {
         composeTestRule.onNodeWithText("Only Northbound to").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Oak Grove").assertCanBeDisplayed()
         composeTestRule.onNodeWithContentDescription("toggle direction").assertDoesNotExist()
+    }
+
+    @Test
+    fun testExistingEnabledFavoriteHidesPresetButtons() {
+        val objects = TestData.clone()
+        val route = objects.getRoute("Orange")
+        val stop = objects.getStop("place-welln")
+
+        loadKoinMocks(objects) {
+            favorites =
+                MockFavoritesRepository(
+                    favorites =
+                        buildFavorites {
+                            routeStopDirection(route.id, stop.id, 0) {
+                                notifications {
+                                    enabled = true
+                                    window(
+                                        LocalTime(8, 0),
+                                        LocalTime(9, 0),
+                                        setOf(DayOfWeek.TUESDAY),
+                                    )
+                                }
+                            }
+                        }
+                )
+            settings = MockSettingsRepository(mapOf(Settings.NotificationPresetWindows to true))
+        }
+
+        composeTestRule.setContent {
+            SaveFavoritePage(route.id, stop.id, 0, EditFavoritesContext.StopDetails, {})
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Edit Favorite").assertCanBeDisplayed()
+        composeTestRule
+            .onNodeWithText("Get disruption notifications")
+            .assertCanBeDisplayed()
+            .assertIsOn()
+        composeTestRule.onNodeWithText("Add another time period").assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Morning").assertDoesNotExist()
+        composeTestRule.onNodeWithText("Midday").assertDoesNotExist()
+        composeTestRule.onNodeWithText("Evening").assertDoesNotExist()
+        composeTestRule.onNodeWithText("All day").assertDoesNotExist()
     }
 }

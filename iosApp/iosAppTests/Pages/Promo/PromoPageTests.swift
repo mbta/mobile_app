@@ -24,6 +24,7 @@ final class PromoPageTest: XCTestCase {
         )
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         try sut.inspect().find(button: "Got it").tap()
         wait(for: [finishExp], timeout: 2)

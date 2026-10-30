@@ -81,18 +81,20 @@ public fun loadKoinMocks(
     objects: ObjectCollectionBuilder,
     settings: Map<Settings, Boolean> = emptyMap(),
 ) {
-    loadKoinMocks(objects, settings, null, null)
+    loadKoinMocks(objects, settings, null, null, null)
 }
 
 public fun loadKoinMocks(
     objects: ObjectCollectionBuilder,
     settings: Map<Settings, Boolean> = emptyMap(),
+    selectedRouteId: String?,
     selectedTripId: String?,
     selectedVehicleId: String?,
 ) {
     val repositories = MockRepositories()
-    repositories.useObjects(objects, selectedTripId, selectedVehicleId)
+    repositories.useObjects(objects, selectedRouteId, selectedTripId, selectedVehicleId)
     repositories.settings = MockSettingsRepository(settings)
+
     loadKoinModules(listOf(repositoriesModule(repositories)))
 }
 
@@ -140,7 +142,7 @@ public fun startKoinE2E(settings: Map<Settings, Boolean> = emptyMap()) {
         )
     }
     val (objects, tripId, vehicleId) = endToEndMockData()
-    loadKoinMocks(objects, settings, tripId, vehicleId)
+    loadKoinMocks(objects, settings, "Red", tripId, vehicleId)
 }
 
 // rather than having 2^n variants of copy via SKIE, define the exact one we need

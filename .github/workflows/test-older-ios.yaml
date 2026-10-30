@@ -8,7 +8,7 @@ on:
 jobs:
   test-older-ios:
     name: Test for older iOS
-    runs-on: macos-15-xlarge
+    runs-on: xcode-27-xlarge
     permissions:
       contents: read
     steps:
@@ -18,18 +18,11 @@ jobs:
       - uses: $/.github/actions/setup
         with:
           for: ios-test
-      - name: Install CocoaPods dependencies
-        run: |
-          ./gradlew :shared:generateDummyFramework
-          pushd iosApp
-          bundle exec pod install
-          popd
-          bundle exec ./gradlew :shared:podInstallSyntheticIos
       - name: shared checks & unit tests
         run: ./gradlew shared:iosSimulatorArm64Test
         env:
           GH_TOKEN: ${{ github.token }}
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure()
         with:
           name: ios-shared-reports
@@ -60,7 +53,7 @@ jobs:
             device:"${IOS_DEVICE}"
         env:
           IOS_DEVICE: ${{ steps.ios_versions.outputs.SECOND_LATEST_DEVICE }}
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure()
         with:
           name: ios-ios-results

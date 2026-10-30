@@ -43,6 +43,7 @@ import com.mbta.tid.mbta_app.android.util.modifiers.loading
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.Alert.Effect
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single
 import com.mbta.tid.mbta_app.model.RouteType
@@ -448,6 +449,7 @@ fun UpcomingTripView(
                 iconName = state.iconName,
                 modifier,
                 maxTextAlpha,
+                hideDisruptionIcon = state.formattedAlert.alert.stopSkipped,
             )
         is UpcomingTripViewState.NoTrips ->
             when (state.format) {
@@ -525,6 +527,7 @@ fun DisruptionView(
     iconName: String,
     modifier: Modifier = Modifier,
     maxTextAlpha: Float = 1.0f,
+    hideDisruptionIcon: Boolean,
 ) {
     val icon = painterResource(drawableByName(iconName))
     Row(
@@ -543,7 +546,9 @@ fun DisruptionView(
                     ),
             style = Typography.footnoteSemibold,
         )
-        Image(icon, null, Modifier.size(20.dp))
+        if (!hideDisruptionIcon) {
+            Image(icon, null, Modifier.size(20.dp))
+        }
     }
 }
 

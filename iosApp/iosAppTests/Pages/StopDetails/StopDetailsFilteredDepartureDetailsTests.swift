@@ -207,6 +207,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [departuresExp], timeout: 2)
     }
 
@@ -472,6 +473,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [alertCardExp], timeout: 2)
     }
 
@@ -535,6 +537,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [departureTileExp, alertCardExp], timeout: 2)
     }
 
@@ -769,8 +772,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "5 min"))
         }
 
-        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
-        await fulfillment(of: [exp], timeout: 3)
+        try await ViewHosting.host(sut.environmentObject(ViewportProvider()).withFixedSettings([:])) {
+            await fulfillment(of: [exp], timeout: 3)
+        }
     }
 
     @MainActor func testLoadsNextTrip() {
@@ -817,6 +821,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         wait(for: [exp], timeout: 2)
     }
@@ -876,6 +881,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [directionChangeExp, reloadExp], timeout: 2)
         XCTAssertEqual(requestedDirections, [0, 1])
     }

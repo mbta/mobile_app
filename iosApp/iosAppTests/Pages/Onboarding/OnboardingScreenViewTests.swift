@@ -33,6 +33,7 @@ final class OnboardingScreenViewTests: XCTestCase {
             await self.fulfillment(of: [advanceExp], timeout: 1)
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 5)
     }
 
@@ -49,6 +50,7 @@ final class OnboardingScreenViewTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.environmentObject(SettingsCache(settingsRepo: settingsRepo)))
+        defer { ViewHosting.expel() }
 
         XCTAssertNotNil(try sut.inspect().find(where: { view in
             try view.text().string()
@@ -76,6 +78,7 @@ final class OnboardingScreenViewTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.environmentObject(SettingsCache(settingsRepo: settingsRepo)))
+        defer { ViewHosting.expel() }
 
         XCTAssertNotNil(try sut.inspect().find(
             text: "When using VoiceOver, we can hide maps to make the app easier to navigate."
@@ -96,7 +99,7 @@ final class OnboardingScreenViewTests: XCTestCase {
             screen: .notificationsBeta,
             advance: { advanceExp.fulfill() }
         ).withFixedSettings([:])
-        XCTAssertNotNil(try sut.inspect().find(text: "Now get disruption notifications"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Get disruption notifications"))
         XCTAssertNotNil(try sut.inspect().find(text: "Add a Favorite stop"))
         XCTAssertNotNil(try sut.inspect().find(text: "Set your own schedule"))
         XCTAssertNotNil(try sut.inspect().find(text: "We’ll tell you about any problems before you go!"))

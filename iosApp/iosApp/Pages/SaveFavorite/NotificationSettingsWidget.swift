@@ -9,45 +9,13 @@
 import Shared
 import SwiftUI
 
-private extension DateComponents {
-    var nextDate: Date {
-        get {
-            let calendar = Calendar(identifier: .iso8601)
-            let beforeDayStart = calendar.startOfDay(for: .now).addingTimeInterval(-0.01)
-            return calendar.nextDate(after: beforeDayStart, matching: self, matchingPolicy: .strict)!
-        }
-        set {
-            // in this file, we only use hour/minute/second
-            let components: Set<Calendar.Component> = [.hour, .minute, .second]
-            let calendar = Calendar(identifier: .iso8601)
-            self = calendar.dateComponents(components, from: newValue)
-        }
-    }
-
-    static func fromLocalTime(_ localTime: Kotlinx_datetimeLocalTime) -> Self {
-        .init(
-            hour: Int(localTime.hour),
-            minute: Int(localTime.minute),
-            second: Int(localTime.second)
-        )
-    }
-
-    func toLocalTime() -> Kotlinx_datetimeLocalTime {
-        .init(
-            hour: Int32(hour ?? 0),
-            minute: Int32(minute ?? 0),
-            second: Int32(second ?? 0),
-            nanosecond: Int32(nanosecond ?? 0)
-        )
-    }
-}
-
 struct NotificationSettingsWidget: View {
     @ObserveInjection var inject
     let vm: INotificationSettingsViewModel
     let onUpdate: (FavoriteSettings.Notifications) -> Void
 
     var notificationPermissionManager: INotificationPermissionManager
+    var showPresets: Bool
     var authorizationStatus: UNAuthorizationStatus? { notificationPermissionManager.authorizationStatus }
     var now: EasternTimeInstant = .now()
 
@@ -58,14 +26,15 @@ struct NotificationSettingsWidget: View {
     var body: some View {
         VStack(spacing: 0) {
             if let vmState {
-                NotificationSettingsWidgetPresetnationView(state: vmState,
-                                                           setEnabled: { enabled in vm.setEnabled(enabled: enabled) },
-                                                           setPreset: { preset in vm.setPreset(preset: preset) },
-                                                           setCustomWindows: { custom in
-                                                               vm.setCustomWindows(windows: custom)
-                                                           },
-                                                           addPlaceholderWindow: { vm.addPlaceholderWindow() },
-                                                           notificationPermissionManager: notificationPermissionManager)
+                NotificationSettingsWidgetPresentationView(
+                    state: vmState,
+                    showPresets: showPresets,
+                    setEnabled: { enabled in vm.setEnabled(enabled: enabled) },
+                    setPreset: { preset in vm.setPreset(preset: preset) },
+                    setWindows: { custom in vm.setWindows(windows: custom) },
+                    addPlaceholderWindow: { vm.addPlaceholderWindow() },
+                    notificationPermissionManager: notificationPermissionManager
+                )
             }
         }.manageVM(vm, $vmState, now)
             .onChange(of: vmState) { newState in
@@ -78,11 +47,12 @@ struct NotificationSettingsWidget: View {
     }
 }
 
-struct NotificationSettingsWidgetPresetnationView: View {
+struct NotificationSettingsWidgetPresentationView: View {
     let state: NotificationSettingsViewModel.State
+    var showPresets: Bool
     var setEnabled: (Bool) -> Void = { _ in }
     var setPreset: (Preset?) -> Void = { _ in }
-    var setCustomWindows: ([FavoriteSettings.NotificationsWindow]) -> Void = { _ in }
+    var setWindows: ([FavoriteSettings.NotificationsWindow]) -> Void = { _ in }
     var addPlaceholderWindow: () -> Void = {}
 
     var notificationPermissionManager: INotificationPermissionManager
@@ -113,58 +83,81 @@ struct NotificationSettingsWidgetPresetnationView: View {
                         notificationPermissionManager: notificationPermissionManager
                     )
 
+                    if !settings.enabled {
+                        Text("We can send you push notifications about problems on this route before you go")
+                            .font(Typography.callout)
+                            .foregroundColor(Color.deemphasized)
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.vertical, 8)
+                    }
+
                     if settings.enabled {
-                        if presetWindowsEnabled {
-                            PresetWindowSelector(
-                                presetRows: presetOptions,
-                                selectedPreset: state.selectedPreset,
-                                onSelect: { preset in
-                                    setPreset(preset)
-                                }
-                            )
-                        }
+                        Text("When do you want notifications?")
+                            .font(Typography.callout)
+                            .foregroundColor(Color.deemphasized)
+                            .accessibilityAddTraits(.isHeader)
+                            .accessibilityHeading(.h2)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.vertical, 8)
 
-                        ForEach(settings.windows, id: \.id) { window in
-                            WindowWidget(
-                                window: window,
-                                setWindow: { newWindow in
-                                    let windowIndex = settings.windows.firstIndex(of: window)
-                                    var newWindows = settings.windows
-                                    if let windowIndex {
-                                        newWindows[windowIndex] = newWindow
+                        VStack(spacing: 16) {
+                            if presetWindowsEnabled, showPresets {
+                                PresetWindowSelector(
+                                    presetRows: presetOptions,
+                                    selectedPreset: state.selectedPreset,
+                                    onSelect: { preset in
+                                        setPreset(preset)
                                     }
-                                    setCustomWindows(newWindows)
-                                },
-                                deleteWindow: settings.windows.count > 1 ? {
-                                    let nextWindows = settings.windows.filter { $0.id != window.id }
-                                    setCustomWindows(nextWindows)
-                                } : nil
-                            )
-                        }
-
-                        Button(action: {
-                            addPlaceholderWindow()
-                        }) {
-                            HStack(spacing: 12) {
-                                Image(.plus)
-                                    .resizable()
-                                    .padding(4)
-                                    .background(Color.text.opacity(0.6), in: .circle)
-                                    .foregroundStyle(Color.fill3)
-                                    .frame(width: 24, height: 24)
-                                Text("Add another time period")
-                                Spacer()
+                                )
                             }
+
+                            ForEach(settings.windows, id: \.id) { window in
+                                WindowWidget(
+                                    window: window,
+                                    setWindow: { newWindow in
+                                        let windowIndex = settings.windows.firstIndex(of: window)
+                                        var newWindows = settings.windows
+                                        if let windowIndex {
+                                            newWindows[windowIndex] = newWindow
+                                        }
+                                        setWindows(newWindows)
+                                    },
+                                    deleteWindow: settings.windows.count > 1 ? {
+                                        let nextWindows = settings.windows.filter { $0.id != window.id }
+                                        setWindows(nextWindows)
+                                    } : nil
+                                )
+                            }
+
+                            Button(action: {
+                                addPlaceholderWindow()
+                            }) {
+                                HStack(spacing: 12) {
+                                    Image(.plus)
+                                        .resizable()
+                                        .padding(4)
+                                        .background(Color.deemphasized, in: .circle)
+                                        .foregroundStyle(Color.fill3)
+                                        .frame(width: 24, height: 24)
+                                    Text("Add another time period")
+                                    Spacer()
+                                }
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.bottom, 16)
+                            .withRoundedBorder(color: .clear)
+                            .foregroundStyle(Color.deemphasized)
                         }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 10)
-                        .background(Color.fill3)
-                        .withRoundedBorder()
-                        .foregroundStyle(Color.text.opacity(0.6))
+                        .padding(4)
+                        .background(Color.fill1)
+                        .withRoundedBorder(radius: 12, color: .clear)
                     }
                 }
             }
         }
+        .onAppear { UIDatePicker.appearance().minuteInterval = 15 }
+        .onDisappear { UIDatePicker.appearance().minuteInterval = 1 }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .enableInjection()
     }
@@ -180,41 +173,52 @@ struct WindowWidget: View {
         HStack(spacing: 0) {
             if let deleteWindow {
                 Button(action: deleteWindow) {
-                    Image(.faDelete).accessibilityLabel(Text("Delete"))
+                    Image(.faDelete).accessibilityLabel(Text("Delete time period"))
+                        .padding(10)
                 }
-                .foregroundStyle(Color.error)
                 .frame(minWidth: 44)
+                .foregroundStyle(Color.error)
+                .accessibilitySortPriority(2)
             }
-            VStack {
-                HStack(spacing: 0) {
-                    TimeInput(
-                        label: Text("Select start time"),
-                        time: DateComponents.fromLocalTime(window.startTime),
-                        setTime: { time in
-                            let startTime = time.toLocalTime()
-                            setWindow(window.doCopy(
-                                startTime: startTime,
-                                endTime: FavoriteSettings.NotificationsWindow.companion
-                                    .safeEndTime(startTime: startTime, endTime: window.endTime),
-                                daysOfWeek: window.daysOfWeek
-                            ))
-                        },
-                        minimumTime: nil
-                    ).frame(maxWidth: .infinity)
-                    Text("to")
-                    TimeInput(
-                        label: Text("Select end time"),
-                        time: DateComponents.fromLocalTime(window.endTime),
-                        setTime: { time in setWindow(window.doCopy(
-                            startTime: window.startTime,
-                            endTime: time.toLocalTime(),
-                            daysOfWeek: window.daysOfWeek
-                        )) },
-                        minimumTime: DateComponents
-                            .fromLocalTime(FavoriteSettings.NotificationsWindow.companion
-                                .minimumEndTime(startTime: window.startTime))
-                    ).frame(maxWidth: .infinity)
-                }
+            VStack(spacing: 16) {
+                VStack(spacing: 0) {
+                    HStack(spacing: 8) {
+                        TimeInput(
+                            label: Text("Select start time"),
+                            time: DateComponents.fromLocalTime(window.startTime),
+                            type: window.startType,
+                            clampTime: nil,
+                            setTime: { time in
+                                let startTime = time.toLocalTime()
+                                setWindow(window.doCopy(
+                                    startTime: startTime,
+                                    endTime: FavoriteSettings.NotificationsWindow.companion
+                                        .safeEndTime(startTime: startTime, endTime: window.endTime),
+                                ))
+                            },
+                        )
+                        Text("to")
+                        TimeInput(
+                            label: Text("Select end time"),
+                            time: DateComponents.fromLocalTime(window.endTime),
+                            type: window.endType,
+                            clampTime: { time, roundUp in
+                                Date.fromLocalTime(FavoriteSettings.NotificationsWindow.companion
+                                    .safeEndTime(
+                                        startTime: window.startTime,
+                                        endTime: time.toLocalTime(),
+                                        roundUp: roundUp
+                                    ))
+                            },
+                            setTime: { time in setWindow(window.doCopy(endTime: time.toLocalTime())) },
+                        )
+                    }
+                    HStack(spacing: 0) {
+                        TimeNote(type: window.startType)
+                        Spacer()
+                        TimeNote(type: window.endType)
+                    }.frame(maxWidth: .infinity)
+                }.accessibilitySortPriority(1)
                 DaysOfWeekInput(
                     daysOfWeek: window.daysOfWeek,
                     setDaysOfWeek: { newDays in setWindow(window.doCopy(
@@ -222,15 +226,68 @@ struct WindowWidget: View {
                         endTime: window.endTime,
                         daysOfWeek: newDays
                     )) }
-                )
+                ).accessibilitySortPriority(0)
             }
+            .padding(12)
             .background(Color.fill3)
-            .clipShape(RoundedRectangle(cornerRadius: 7))
-            .padding(1)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
         }
         .background(Color.halo)
         .clipShape(RoundedRectangle(cornerRadius: 8))
+        .accessibilityElement(children: .contain)
         .enableInjection()
+    }
+}
+
+enum TimeIconPosition {
+    case before
+    case after
+}
+
+private func timeNoteText(_ type: FavoriteSettings.NotificationsWindowType) -> Text? {
+    switch onEnum(of: type) {
+    case .nextDay: Text("next day")
+    case .serviceEnd: Text("end of service")
+    case .serviceStart: Text("start of service")
+    default: nil
+    }
+}
+
+struct TimeIcon: View {
+    let type: FavoriteSettings.NotificationsWindowType
+    let position: TimeIconPosition
+
+    var icon: ImageResource? {
+        switch onEnum(of: type) {
+        case .serviceEnd, .nextDay: position == .after ? .serviceEndMoon : nil
+        case .serviceStart: position == .before ? .serviceStartSun : nil
+        default: nil
+        }
+    }
+
+    var body: some View {
+        if let icon {
+            Image(icon)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 24, height: 24)
+                .foregroundStyle(Color.deemphasized)
+                .accessibilityHidden(true)
+        }
+    }
+}
+
+struct TimeNote: View {
+    let type: FavoriteSettings.NotificationsWindowType
+
+    var body: some View {
+        if let text = timeNoteText(type) {
+            text
+                .accessibilityHidden(true)
+                .font(Typography.footnote)
+                .foregroundStyle(Color.deemphasized)
+                .padding(.horizontal, 8)
+        }
     }
 }
 
@@ -238,54 +295,73 @@ struct TimeInput: View {
     @ObserveInjection var inject
     let label: Text
     let time: DateComponents
+    let type: FavoriteSettings.NotificationsWindowType
+    let clampTime: ((Date, Bool) -> Date)?
     let setTime: (DateComponents) -> Void
-    let minimumTime: DateComponents?
 
-    init(
-        label: Text,
-        time: DateComponents,
-        setTime: @escaping (DateComponents) -> Void,
-        minimumTime: DateComponents? = nil
-    ) {
-        self.label = label
-        self.time = time
-        self.setTime = setTime
-        self.minimumTime = minimumTime
+    @State var roundUp: Bool = true
+
+    private var dateBinding: Binding<Date> {
+        Binding(
+            get: { time.nextDate },
+            set: { newDate in
+                var setDate = newDate
+                var components = time
+                if let clampTime {
+                    setDate = clampTime(newDate, roundUp)
+                    roundUp = if setDate == newDate { true } else { !roundUp }
+                }
+                components.nextDate = setDate
+                setTime(components)
+            }
+        )
     }
 
-    var dateRange: ClosedRange<Date> {
-        let calendar = Calendar(identifier: .iso8601)
-        let beforeDayStart = calendar.startOfDay(for: .now).addingTimeInterval(-0.01)
-        let minimum: DateComponents = minimumTime ?? .init(hour: 0, minute: 0, second: 0)
-        let start = calendar.nextDate(
-            after: beforeDayStart,
-            matching: minimum,
-            matchingPolicy: .strict
-        )!
-        let end = calendar.nextDate(
-            after: start,
-            matching: .init(hour: 23, minute: 59, second: 59),
-            matchingPolicy: .strict
-        )!
-        return start ... end
+    var alignment: Alignment {
+        switch onEnum(of: type) {
+        case .basic: .center
+        case .nextDay, .serviceEnd: .trailing
+        case .serviceStart: .leading
+        }
+    }
+
+    var timeString: String { dateBinding.wrappedValue.formatted(date: .omitted, time: .shortened) }
+    var timeNote: Text? { timeNoteText(type) }
+    var timeAccessibilityValue: Text {
+        if let timeNote { Text(timeString) + Text(verbatim: ", ") + timeNote } else { Text(timeString) }
     }
 
     var body: some View {
-        let timeBinding = Binding<DateComponents>(
-            get: {
-                time
-            },
-            set: { newValue in
-                setTime(newValue)
-            }
-        )
-
-        DatePicker(selection: timeBinding.nextDate, in: dateRange, displayedComponents: [.hourAndMinute]) { label }
-            .labelsHidden()
-            .datePickerStyle(.compact)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .enableInjection()
+        HStack(spacing: 10) {
+            TimeIcon(type: type, position: .before)
+            Text(timeString)
+                .font(Typography.bodySemibold)
+                .foregroundStyle(Color.text)
+                .accessibilityHidden(true)
+            TimeIcon(type: type, position: .after)
+        }
+        .padding(.horizontal, 8)
+        .frame(maxWidth: .infinity, minHeight: 40, alignment: alignment)
+        .overlay {
+            // This is a hack to get around the default date picker styling,
+            // the time is displayed with an invisible date picker on top of it.
+            DatePicker(selection: dateBinding, displayedComponents: [.hourAndMinute]) { label }
+                .labelsHidden()
+                .datePickerStyle(.compact)
+                .compositingGroup()
+                .scaleEffect(x: 2, y: 1.6)
+                .colorMultiply(.clear)
+                // SwiftUI's built in announcement makes it impossible to include the time note next to the time,
+                // so this reconstructs the built in behavior adding the note if it exists
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(label + Text(verbatim: ", ") + Text("time picker"))
+                .accessibilityValue(timeAccessibilityValue)
+                .accessibilityAddTraits(.isButton)
+                .accessibilityHint(Text("collapsed, double-tap to expand"))
+        }
+        .background(RoundedRectangle(cornerRadius: 6).fill(Color.fill2))
+        .contentShape(Rectangle())
+        .enableInjection()
     }
 }
 
@@ -324,9 +400,9 @@ struct DaysOfWeekInput: View {
                 .onTapGesture {
                     setDaysOfWeek(daysOfWeek.symmetricDifference([day]))
                 }
-                .background(isIncluded ? Color.key : Color.fill1)
+                .background(isIncluded ? Color.key : Color.fill2)
                 .clipShape(RoundedRectangle(cornerRadius: 6))
-                .foregroundStyle(isIncluded ? Color.fill3 : Color.text.opacity(0.6))
+                .foregroundStyle(isIncluded ? Color.fill3 : Color.deemphasized)
                 .accessibilityElement(children: .ignore)
                 .accessibilityChildren {
                     // .accessibilityAddTraits(.isToggle) is iOS 17+ only, so we use a real toggle
@@ -342,8 +418,6 @@ struct DaysOfWeekInput: View {
                 }
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
         .enableInjection()
     }
 }
@@ -452,10 +526,11 @@ struct NotificationSettingsWidget_Previews: PreviewProvider {
             NotificationSettingsWidget(
                 vm: vm,
                 onUpdate: { _ in },
-                notificationPermissionManager: MockNotificationPermissionManager()
+                notificationPermissionManager: MockNotificationPermissionManager(),
+                showPresets: true
             ).onAppear {
                 vm.setEnabled(enabled: true)
-                vm.setCustomWindows(windows: windows)
+                vm.setWindows(windows: windows)
             }
             .enableInjection()
         }

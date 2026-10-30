@@ -61,8 +61,8 @@ platform :android do
           'android.injected.version.code' => next_version_code
         }
       end
-    if options[:build_type] != 'Prod'
-      UI.message 'Skipped creating Android Sentry release because build is not prod'
+    if options[:build_type] != 'Release'
+      UI.message 'Skipped creating Android Sentry release because build is not release'
     elsif ENV['SENTRY_AUTH_TOKEN'].nil?
       UI.important 'Skipped creating Android Sentry release because SENTRY_AUTH_TOKEN not set'
     else
@@ -89,8 +89,8 @@ platform :android do
     )
   end
 
-  desc 'Deploy a new version to Google Play for internal testing'
-  lane :internal do |options|
+  desc 'Deploy a new version to Google Play'
+  lane :play_upload do |options|
     package_name = package_name(options[:flavor])
     flavor = options[:flavor][0].downcase + options[:flavor][1..]
     upload_to_play_store(
@@ -212,12 +212,15 @@ platform :ios do
   desc 'Run tests'
   lane :test do |options|
     run_tests(
-      workspace: 'iosApp/iosApp.xcworkspace',
+      project: 'iosApp/iosApp.xcodeproj',
       scheme: 'Staging',
-      device: options[:device]&.strip || 'iPhone 16 (26.2)',
+      device: options[:device]&.strip || 'iPhone 16 (27.0)',
       testplan: 'iosAppRetries',
       output_directory: options[:output_directory],
       include_simulator_logs: false,
+      # Switch this to `-collect-test-diagnostics on-failure` if you want to collect diagnostics
+      # to debug test failures in CI, but it's disabled because it can cause a 10 minute delay
+      xcargs: '-collect-test-diagnostics never',
       xcodebuild_formatter: options[:xcodebuild_formatter],
       result_bundle: true,
       number_of_retries: 3
@@ -227,12 +230,15 @@ platform :ios do
   desc 'Run smoke tests'
   lane :smoke_test do |options|
     run_tests(
-      workspace: 'iosApp/iosApp.xcworkspace',
+      project: 'iosApp/iosApp.xcodeproj',
       scheme: 'Staging',
       device: options[:device]&.strip || 'iPhone 15 (17.4)',
       testplan: 'iosAppSmokeTest',
       output_directory: options[:output_directory],
       include_simulator_logs: false,
+      # Switch this to `-collect-test-diagnostics on-failure` if you want to collect diagnostics
+      # to debug test failures in CI, but it's disabled because it can cause a 10 minute delay
+      xcargs: '-collect-test-diagnostics never',
       xcodebuild_formatter: options[:xcodebuild_formatter],
       result_bundle: true,
       number_of_retries: 3
@@ -248,7 +254,7 @@ platform :ios do
       xcodeproj: 'iosApp/iosApp.xcodeproj'
     )
     build_app(
-      workspace: 'iosApp/iosApp.xcworkspace',
+      project: 'iosApp/iosApp.xcodeproj',
       scheme: options[:scheme],
       output_directory: 'iosApp/build',
       output_name: 'iosApp.ipa',

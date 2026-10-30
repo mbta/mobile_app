@@ -57,14 +57,6 @@ export PATH="/usr/local/opt/ruby@3.2/bin:$PATH"
 retry gem install bundler:2.5.3 # match Gemfile.lock
 retry bundle install
 
-# Run cocoapods
-cd "${CI_PRIMARY_REPOSITORY_PATH}"
-retry ./gradlew :shared:generateDummyFramework
-cd "${CI_PRIMARY_REPOSITORY_PATH}/iosApp"
-retry bundle exec pod install
-cd ..
-retry bundle exec ./gradlew :shared:podInstallSyntheticIos
-
 # Install Node.js and GitHub CLI for codegen
 retry brew install node gh
 

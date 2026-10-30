@@ -51,6 +51,7 @@ import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.NextScheduleResponse
+import com.mbta.tid.mbta_app.model.response.isStopBlocklisted
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
 import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
@@ -88,7 +89,8 @@ fun StopDetailsFilteredDeparturesView(
     val lineOrRoute = leaf.lineOrRoute
     val stop = leaf.stop
 
-    val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
+    val showStationAccessibility =
+        SettingsCache.get(Settings.StationAccessibility) && !global.isStopBlocklisted(stopId)
 
     val displayAlerts =
         DisplayAlerts.forAlertsAtStop(

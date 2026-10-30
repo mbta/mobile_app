@@ -65,6 +65,7 @@ final class HomeMapViewTests: XCTestCase {
             XCTAssertNotNil(view)
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 2)
     }
 
@@ -196,6 +197,7 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [hasAppeared], timeout: 5)
 
         addTeardownBlock {
@@ -274,6 +276,7 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [hasAppeared, joinsVehiclesExp], timeout: 5)
     }
 
@@ -305,6 +308,7 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [hasAppeared, joinsVehiclesExp], timeout: 5)
     }
 
@@ -338,6 +342,7 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [hasAppeared, joinsVehiclesExp], timeout: 5)
     }
 
@@ -370,6 +375,7 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [hasAppeared, leavesVehiclesExp], timeout: 5)
     }
 
@@ -411,6 +417,7 @@ final class HomeMapViewTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [hasAppeared], timeout: 5)
     }
 
@@ -453,6 +460,7 @@ final class HomeMapViewTests: XCTestCase {
             XCTAssertTrue(locationFetcher.didRequestAuthorization)
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 2)
     }
 

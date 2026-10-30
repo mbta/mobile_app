@@ -19,6 +19,7 @@ struct TripStopRow: View {
     var route: Route
     var routeAccents: TripRouteAccents
     var stopListContext: StopListContext
+    var globalData: GlobalResponse?
     var showDownstreamAlert: Bool = false
     var targeted: Bool = false
     var firstStop: Bool = false
@@ -30,7 +31,7 @@ struct TripStopRow: View {
     }
 
     var disruption: UpcomingFormat.Disruption? {
-        if let disruption = stop.disruption, disruption.alert.hasNoThroughService, showDownstreamAlert {
+        if let disruption = stop.disruption, showDownstreamAlert {
             disruption
         } else {
             nil
@@ -47,14 +48,27 @@ struct TripStopRow: View {
         .compactMap { $0 }
     }
 
+    func onTapRow() {
+        if !targeted {
+            onTapLink(stop)
+        } else {
+            switch onEnum(of: stop.trackChange) {
+            case let .some(.alert(alert)): onOpenAlertDetails(alert.alert)
+            case let .some(.scheduled(change)): break
+            default: break
+            }
+        }
+    }
+
     var body: some View {
         StopListRow(
             stop: stop.stop,
             stopLane: .center,
             stickConnections: stickConnections,
-            onClick: { onTapLink(stop) },
+            onClick: onTapRow,
             routeAccents: routeAccents,
             stopListContext: stopListContext,
+            globalData: globalData,
             activeElevatorAlerts: activeElevatorAlerts.count,
             background: background,
             connectingRoutes: stop.routes,

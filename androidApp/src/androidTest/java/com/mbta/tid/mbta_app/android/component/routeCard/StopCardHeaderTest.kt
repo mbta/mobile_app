@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.android.component.routeCard
 
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.loadKoinMocks
@@ -11,24 +11,26 @@ import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 
-class StopSubheaderTest {
-    @get:Rule val composeTestRule = createComposeRule()
+class StopCardHeaderTest {
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Test
     fun testBasic() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
-        val stop = objects.stop {}
+        val stop = objects.stop { name = "Test Stop" }
 
         composeTestRule.setContent {
-            StopSubheader(
+            StopCardHeader(
                 RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
-                includeIcon = false,
+                GlobalResponse(objects),
             )
         }
         composeTestRule.onNodeWithText(stop.name).assertCanBeDisplayed()
@@ -38,15 +40,18 @@ class StopSubheaderTest {
     fun testAccessible() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
-        val stop = objects.stop { wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE }
+        val stop = objects.stop {
+            name = "Test stop"
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+        }
 
         loadKoinMocks {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            StopSubheader(
+            StopCardHeader(
                 RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
-                includeIcon = false,
+                GlobalResponse(objects),
             )
         }
         composeTestRule.onNodeWithText(stop.name).assertCanBeDisplayed()
@@ -57,15 +62,18 @@ class StopSubheaderTest {
     fun testNotAccessible() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
-        val stop = objects.stop { wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE }
+        val stop = objects.stop {
+            name = "Test stop"
+            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
+        }
 
         loadKoinMocks {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            StopSubheader(
+            StopCardHeader(
                 RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
-                includeIcon = false,
+                GlobalResponse(objects),
             )
         }
         composeTestRule.onNodeWithText(stop.name).assertCanBeDisplayed()
@@ -74,10 +82,39 @@ class StopSubheaderTest {
     }
 
     @Test
+    fun testNotAccessibleBlocklisted() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val stop = objects.stop {
+            name = "Test stop"
+            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE
+        }
+
+        loadKoinMocks {
+            settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
+        }
+        composeTestRule.setContent {
+            StopCardHeader(
+                RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
+                GlobalResponse(
+                    objects,
+                    patternIdsByStop = emptyMap(),
+                    stopBlocklist = listOf(stop.id),
+                ),
+            )
+        }
+        composeTestRule.onNodeWithText(stop.name).assertCanBeDisplayed()
+        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertDoesNotExist()
+    }
+
+    @Test
     fun testElevatorAlert() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
-        val stop = objects.stop { wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE }
+        val stop = objects.stop {
+            name = "Test stop"
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+        }
         val alert = objects.alert {
             effect = Alert.Effect.ElevatorClosure
             informedEntity()
@@ -88,7 +125,7 @@ class StopSubheaderTest {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            StopSubheader(
+            StopCardHeader(
                 RouteCardData.RouteStopData(
                     lineOrRoute,
                     stop,
@@ -109,7 +146,7 @@ class StopSubheaderTest {
                         )
                     ),
                 ),
-                includeIcon = false,
+                GlobalResponse(objects),
             )
         }
         composeTestRule.onNodeWithText(stop.name).assertCanBeDisplayed()

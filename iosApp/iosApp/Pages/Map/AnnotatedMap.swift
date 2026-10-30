@@ -82,7 +82,16 @@ struct AnnotatedMap: View {
                 handleAccessTokenLoaded: handleAccessTokenLoaded,
             )
         } else {
-            Image(.emptyMapGrid)
+            // Drawing the image in an overlay on top of a layout neutral `Color.clear` matches the size of the map,
+            // which is important for the position of the search bar
+            Color.clear
+                .overlay {
+                    Image(.emptyMapGrid)
+                        .resizable()
+                        .scaledToFill()
+                }
+                .clipped()
+                .ignoresSafeArea(.all)
                 .accessibilityIdentifier("emptyMapGrid")
         }
     }
@@ -185,7 +194,6 @@ struct AnnotatedMap: View {
             }
         }
         .additionalSafeAreaInsets(.bottom, sheetHeight + bottomSheetInsetPadding)
-        .additionalSafeAreaInsets(.top, 20)
         .ignoresSafeArea(.all)
         .onChange(of: showPuck) { _ in handleStyleLoaded() }
         .accessibilityIdentifier("transitMap")

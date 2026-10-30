@@ -6,12 +6,22 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlin.collections.orEmpty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 public data class TripDetailsStopList
 @DefaultArgumentInterop.Enabled
 constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entry? = null) {
+
+    public sealed class Track {
+        public data class Number(val number: String) : Track()
+
+        public object TBD : Track()
+
+        public data class TrackChange(val trackChange: com.mbta.tid.mbta_app.model.TrackChange) :
+            Track()
+    }
 
     public data class Entry
     @DefaultArgumentInterop.Enabled
@@ -27,9 +37,24 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
         val vehicle: Vehicle?,
         val routes: List<Route>,
         val elevatorAlerts: List<Alert> = emptyList(),
+        // A track change  which is active at the scheduled time of this entry
+
+        val trackChange: TrackChange? = null,
     ) {
-        val trackNumber: String? =
-            if (predictionStop?.shouldShowTrackNumber == true) predictionStop.platformCode else null
+        val trackNumber: Track? =
+            if (trackChange != null) Track.TrackChange(trackChange)
+            else
+                (predictionStop ?: stop).let { platformStop ->
+                    if (platformStop.shouldShowTrackNumber) {
+                        val trackNumber =
+                            platformStop.platformCode?.let { platform ->
+                                Track.Number(platform)
+                            }
+                        // If the stop does not have a platform code, show "TBD" for commuter rail
+                        // core stations, otherwise show nothing
+                        trackNumber ?: if (platformStop.isCRCore) Track.TBD else null
+                    } else null
+                }
 
         internal val isTruncating = disruption?.alert?.hasNoThroughService == true
 
@@ -141,7 +166,7 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
     public fun contextualTrip(
         filter: TripDetailsPageFilter,
         global: GlobalResponse?,
-    ): UpcomingTrip? {
+    ): UpcomingTrip {
         val entry = splitForTarget(filter.stopId, filter.stopSequence, global).targetStop
         return UpcomingTrip(
             trip,
@@ -149,6 +174,7 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
             entry?.prediction,
             entry?.predictionStop,
             entry?.vehicle,
+            trackChange = entry?.trackChange,
         )
     }
 
@@ -263,16 +289,26 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
                             trip.id,
                             trip.directionId,
                         )
+
                     return Entry(
                         stop,
                         working.stopSequence,
                         disruption,
                         working.schedule,
                         working.prediction,
-                        globalData.stops[working.prediction?.stopId],
+                        globalData.getStop(working.prediction?.stopId),
                         working.vehicle,
                         getTransferRoutes(working, globalData),
                         Alert.elevatorAlerts(allElevatorAlerts, parentAndChildStopIds),
+                        trackChange =
+                            TrackChange.calculate(
+                                alertsData.alerts,
+                                working.schedule,
+                                working.prediction,
+                                trip,
+                                parentAndChildStopIds,
+                                globalData,
+                            ),
                     )
                 }
 

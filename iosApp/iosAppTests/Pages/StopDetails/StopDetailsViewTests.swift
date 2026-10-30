@@ -68,6 +68,7 @@ final class StopDetailsViewTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         let routePills = try sut.inspect().find(StopDetailsFilterPills.self).findAll(RoutePill.self)
         XCTAssertEqual(2, routePills.count)
         XCTAssertNotNil(try routePills[0].find(text: "Should be first"))
@@ -112,6 +113,7 @@ final class StopDetailsViewTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         XCTAssertNil(try? sut.inspect().find(StopDetailsFilterPills.self))
         XCTAssertNil(try? sut.inspect().find(button: "All"))
     }
@@ -170,6 +172,7 @@ final class StopDetailsViewTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         XCTAssertNil(try? sut.inspect().find(AlertCard.self))
         XCTAssertNil(try? sut.inspect().find(text: try XCTUnwrap(alert.header)))
     }
@@ -235,6 +238,7 @@ final class StopDetailsViewTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         XCTAssertNotNil(try? sut.inspect().find(TripDetailsView.self))
     }
 
@@ -263,6 +267,7 @@ final class StopDetailsViewTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         try sut.inspect().find(viewWithAccessibilityLabel: "Close").button().tap()
         XCTAssert(closeCalled)
     }
@@ -299,6 +304,7 @@ final class StopDetailsViewTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         XCTAssertThrowsError(try sut.inspect().find(text: "stop id: FAKE_STOP_ID"))
     }
 
@@ -332,6 +338,7 @@ final class StopDetailsViewTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([.devDebugMode: true]))
+        defer { ViewHosting.expel() }
         try sut.inspect().findAll(ViewType.Text.self).forEach { view in try print(view.string()) }
         XCTAssertNotNil(try sut.inspect().find(text: "stop id: FAKE_STOP_ID"))
     }

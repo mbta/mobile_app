@@ -8,7 +8,7 @@ import com.mbta.tid.mbta_app.android.R
 @Composable
 fun ButtonDefaults.contrastTranslucent() =
     buttonColors(
-        containerColor = colorResource(R.color.text).copy(alpha = 0.6f),
+        containerColor = colorResource(R.color.deemphasized),
         contentColor = colorResource(R.color.fill2),
     )
 

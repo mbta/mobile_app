@@ -101,6 +101,7 @@ final class FavoritesViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "5 min"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 2)
     }
 
@@ -193,6 +194,7 @@ final class FavoritesViewTests: XCTestCase {
             try view.find(button: "Edit").tap()
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 2)
 
         XCTAssertEqual(navManager.navigationStack, [.editFavorites])
@@ -224,6 +226,7 @@ final class FavoritesViewTests: XCTestCase {
             XCTAssertThrowsError(try view.find(button: "Edit"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 2)
     }
 
@@ -242,6 +245,7 @@ final class FavoritesViewTests: XCTestCase {
             XCTAssertEqual(5, view.findAll(LoadingStopCard.self).count)
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 2)
     }
 
@@ -317,6 +321,7 @@ final class FavoritesViewTests: XCTestCase {
             viewportProvider: .init(),
         )
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [setAlertExp], timeout: 1)
     }
 
@@ -345,6 +350,7 @@ final class FavoritesViewTests: XCTestCase {
             viewportProvider: .init(),
         )
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [setFirstExp], timeout: 1)
         wait(for: [setSecondExp], timeout: 10)
     }
@@ -391,6 +397,7 @@ final class FavoritesViewTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [setToastShownExp, hideToast, isFirstExposureToFavoritesSet], timeout: 2)
     }
 
@@ -430,6 +437,7 @@ final class FavoritesViewTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))
+        defer { ViewHosting.expel() }
         wait(for: [dismissHint], timeout: 2)
     }
 
@@ -463,6 +471,7 @@ final class FavoritesViewTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))
+        defer { ViewHosting.expel() }
         wait(for: [dismissHint], timeout: 2)
     }
 }

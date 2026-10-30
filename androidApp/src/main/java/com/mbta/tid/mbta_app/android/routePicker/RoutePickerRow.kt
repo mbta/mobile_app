@@ -44,7 +44,7 @@ fun RoutePickerRow(route: LineOrRoute, onTap: () -> Unit) {
             painterResource(id = R.drawable.baseline_chevron_right_24),
             contentDescription = null,
             modifier = Modifier.padding(horizontal = 8.dp).widthIn(max = 8.dp),
-            colorFilter = ColorFilter.tint(colorResource(R.color.text).copy(alpha = 0.6f)),
+            colorFilter = ColorFilter.tint(colorResource(R.color.deemphasized)),
         )
     }
 }

@@ -40,6 +40,7 @@ class AlertsViewModel(private val alertsUsecase: AlertsUsecase) : ViewModel() {
     }
 
     class Factory(private val alertsUsecase: AlertsUsecase) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return AlertsViewModel(alertsUsecase) as T
         }

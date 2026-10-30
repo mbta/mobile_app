@@ -20,12 +20,17 @@ class DisplayAlertsTest {
     }
     val hereMinorNow = objects.alert {
         id = "hereMinorNow"
-        effect = Effect.TrackChange
+        effect = Effect.Cancellation
     }
 
     val hereElevatorNow = objects.alert {
         id = "hereElevatorNow"
         effect = Effect.ElevatorClosure
+    }
+
+    val hereTrackChangeNow = objects.alert {
+        id = "hereTrackChangeNow"
+        effect = Effect.TrackChange
     }
 
     val hereMajorLater = objects.alert {
@@ -35,7 +40,7 @@ class DisplayAlertsTest {
     }
     val hereMinorLater = objects.alert {
         id = "hereMinorLater"
-        effect = Effect.TrackChange
+        effect = Effect.Cancellation
         activePeriod(now.plus(10.minutes), null)
     }
 
@@ -51,6 +56,11 @@ class DisplayAlertsTest {
     }
     val downstreamMinorNow = objects.alert {
         id = "downstreamMinorNow"
+        effect = Effect.Cancellation
+    }
+
+    val downstreamTrackChangeNow = objects.alert {
+        id = "downstreamTrackChangeNow"
         effect = Effect.TrackChange
     }
 
@@ -61,18 +71,18 @@ class DisplayAlertsTest {
     }
     val downstreamMinorLater = objects.alert {
         id = "downstreamMinorLater"
-        effect = Effect.TrackChange
+        effect = Effect.Cancellation
         activePeriod(now.plus(10.minutes), null)
     }
 
     val downstreamMinorEvenLater = objects.alert {
         id = "downstreamMinorEvenLater"
-        effect = Effect.TrackChange
+        effect = Effect.Cancellation
         activePeriod(now.plus(20.minutes), null)
     }
 
     @Test
-    fun `forAlertsAtStop sorts and splits alerts in expected order no elevator `() = runBlocking {
+    fun `forAlertsAtStop sorts and splits alerts in expected order no elevator`() = runBlocking {
         val displayAlerts =
             DisplayAlerts.forAlertsAtStop(
                 listOf(
@@ -113,7 +123,39 @@ class DisplayAlertsTest {
     }
 
     @Test
-    fun `forAlertsAtStop sorts and splits alerts in expected order with elevator `() = runBlocking {
+    fun `forAlertsAtStop sorts and splits alerts in expected order with elevator`() = runBlocking {
+        val displayAlerts =
+            DisplayAlerts.forAlertsAtStop(
+                listOf(
+                    hereElevatorNow,
+                    hereMinorNow,
+                    hereMajorNow,
+                    hereTrackChangeNow,
+                ),
+                listOf(
+                    downstreamMinorNow,
+                    downstreamMajorNow,
+                    downstreamTrackChangeNow,
+                ),
+                true,
+                now,
+            )
+
+        assertEquals(
+            listOf(hereMajorNow, hereElevatorNow, hereMinorNow),
+            displayAlerts.highPriority.map { it.alert },
+        )
+        assertEquals(
+            listOf(
+                Pair(downstreamMajorNow, true),
+                Pair(downstreamMinorNow, true),
+            ),
+            displayAlerts.lowPriority.map { Pair(it.alert, it.isDownstream) },
+        )
+    }
+
+    @Test
+    fun `forAlertsAtStop filters out track change alerts`() = runBlocking {
         val displayAlerts =
             DisplayAlerts.forAlertsAtStop(
                 listOf(

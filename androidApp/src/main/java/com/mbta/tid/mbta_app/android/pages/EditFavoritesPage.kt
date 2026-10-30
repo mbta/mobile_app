@@ -59,7 +59,7 @@ import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.ScrollSeparatorColumn
 import com.mbta.tid.mbta_app.android.component.ScrollSeparatorLazyColumn
 import com.mbta.tid.mbta_app.android.component.SheetHeader
-import com.mbta.tid.mbta_app.android.component.routeCard.StopSubheader
+import com.mbta.tid.mbta_app.android.component.routeCard.StopCardHeader
 import com.mbta.tid.mbta_app.android.component.stopCard.LoadingStopCard
 import com.mbta.tid.mbta_app.android.favorites.NoFavoritesView
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
@@ -129,11 +129,11 @@ fun EditFavoritesPage(
     LaunchedEffect(Unit) { favoritesViewModel.setContext(FavoritesViewModel.Context.Edit) }
     DisposableEffect(Unit) { onDispose { toastViewModel.hideToast() } }
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column() {
         SheetHeader(
             title = stringResource(R.string.edit_favorites),
             closeText = stringResource(R.string.done),
-            navCallbacks = navCallbacks,
+            navCallbacks = navCallbacks.copy(onBack = null), // redundant to close
             buttonColors = ButtonDefaults.key(),
         )
         val deleteFavorite: (RouteStopDirection) -> Unit = { deletedFavorite ->
@@ -229,7 +229,7 @@ private fun EditFavoritesList(
         ) {
             items(displayedFavorites, key = { it.stop.id }) {
                 Column(Modifier.animateItem().haloContainer(1.dp)) {
-                    StopSubheader(it.stop, it.elevatorAlerts, includeIcon = true)
+                    StopCardHeader(it.stop, it.elevatorAlerts, global)
 
                     FavoriteDepartures(
                         favorites,

@@ -6,7 +6,6 @@ import android.os.Build
 import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -55,10 +53,15 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
+import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -88,7 +91,6 @@ import com.mbta.tid.mbta_app.repositories.Settings as UserSettings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.INotificationSettingsViewModel
 import com.mbta.tid.mbta_app.viewModel.NotificationSettingsViewModel
-import kotlin.uuid.ExperimentalUuidApi
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import org.koin.compose.koinInject
@@ -96,12 +98,13 @@ import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import org.koin.mp.KoinPlatformTools
 
-@OptIn(ExperimentalUuidApi::class, ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun NotificationSettingsWidget(
     viewModel: INotificationSettingsViewModel = koinInject(),
     notificationPermissionState: PermissionState,
     hasRequestedPermission: Boolean,
+    showPresets: Boolean = true,
     now: EasternTimeInstant = EasternTimeInstant.now(),
 ) {
     val permissionStatus = notificationPermissionState.status
@@ -163,61 +166,96 @@ fun NotificationSettingsWidget(
             )
             AnimatedVisibility(showPermissionSettingsLink) { PermissionSettingsLink() }
         }
+
+        AnimatedVisibility(!settings.enabled) {
+            Text(
+                stringResource(R.string.notification_settings_empty_state),
+                Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                style = Typography.callout,
+                textAlign = TextAlign.Center,
+                color = colorResource(R.color.deemphasized),
+            )
+        }
         AnimatedVisibility(settings.enabled && !permissionDenied) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                if (presetWindowsEnabled) {
-                    PresetWindowSelector(
-                        presetRows = presetOptions,
-                        selectedPreset = notificationSettingsState.selectedPreset,
-                        onSelect = { preset ->
-                            viewModel.setPreset(preset)
-                        },
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
+                ) {
+                    Text(
+                        stringResource(R.string.when_do_you_want_notifications),
+                        style = Typography.callout,
+                        color = colorResource(R.color.deemphasized),
+                        modifier =
+                            Modifier.semantics {
+                                heading()
+                            },
                     )
                 }
 
-                for (window in settings.windows) {
-                    WindowWidget(
-                        window,
-                        setWindow = { newWindow ->
-                            val windows = settings.windows.toMutableList()
-                            val index = windows.indexOf(window)
-                            if (index != -1) windows[index] = newWindow
-                            viewModel.setCustomWindows(windows)
-                        },
-                        deleteWindow =
-                            {
-                                    viewModel.setCustomWindows(settings.windows - window)
-                                }
-                                .takeIf { settings.windows.size > 1 },
-                    )
-                }
-                Surface(
-                    onClick = {
-                        viewModel.addPlaceholderWindow()
-                    },
-                    Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                    color = colorResource(R.color.fill3),
-                    border = BorderStroke(1.5.dp, colorResource(R.color.halo)),
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier =
+                        Modifier.haloContainer(
+                            borderWidth = 1.dp,
+                            outlineColor = Color.Transparent,
+                            backgroundColor = colorResource(R.color.fill1),
+                            borderRadius = 8.dp,
+                            padding = 4.dp,
+                        ),
                 ) {
-                    Row(
-                        Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
+                    if (presetWindowsEnabled && showPresets) {
+                        PresetWindowSelector(
+                            presetRows = presetOptions,
+                            selectedPreset = notificationSettingsState.selectedPreset,
+                            onSelect = { preset ->
+                                viewModel.setPreset(preset)
+                            },
+                        )
+                    }
+
+                    for (window in settings.windows) {
+                        WindowWidget(
+                            window,
+                            setWindow = { newWindow ->
+                                val windows = settings.windows.toMutableList()
+                                val index = windows.indexOf(window)
+                                if (index != -1) windows[index] = newWindow
+                                viewModel.setWindows(windows)
+                            },
+                            deleteWindow =
+                                {
+                                        viewModel.setWindows(settings.windows - window)
+                                    }
+                                    .takeIf { settings.windows.size > 1 },
+                        )
+                    }
+                    Surface(
+                        onClick = {
+                            viewModel.addPlaceholderWindow()
+                        },
+                        Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp),
                     ) {
-                        Icon(
-                            painterResource(R.drawable.plus),
-                            null,
-                            Modifier.background(
-                                colorResource(R.color.text).copy(alpha = 0.6f),
-                                CircleShape,
-                            ),
-                            tint = colorResource(R.color.fill3),
-                        )
-                        Text(
-                            stringResource(R.string.add_another_time_period),
-                            color = colorResource(R.color.text).copy(alpha = 0.6f),
-                        )
+                        Row(
+                            Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.plus),
+                                null,
+                                Modifier.background(
+                                    colorResource(R.color.deemphasized),
+                                    CircleShape,
+                                ),
+                                tint = colorResource(R.color.fill3),
+                            )
+                            Text(
+                                stringResource(R.string.add_another_time_period),
+                                color = colorResource(R.color.deemphasized),
+                            )
+                        }
                     }
                 }
             }
@@ -231,61 +269,166 @@ private fun WindowWidget(
     setWindow: (Window) -> Unit,
     deleteWindow: (() -> Unit)?,
 ) {
+    fun setStartTime(start: LocalTime) {
+        val end = Window.safeEndTime(start, window.endTime)
+        setWindow(window.copy(startTime = start, endTime = end))
+    }
+
+    fun setEndTime(end: LocalTime) =
+        setWindow(window.copy(endTime = Window.safeEndTime(window.startTime, end)))
+
     Row(
-        Modifier.haloContainer(1.dp, backgroundColor = colorResource(R.color.halo))
-            .height(IntrinsicSize.Min),
+        Modifier.haloContainer(
+                1.dp,
+                backgroundColor = colorResource(R.color.halo),
+                outlineColor = Color.Transparent,
+            )
+            .height(IntrinsicSize.Min)
+            .semantics {
+                isTraversalGroup = true
+            },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (deleteWindow != null) {
             Surface(
                 onClick = deleteWindow,
-                Modifier.minimumInteractiveComponentSize().fillMaxHeight().semantics {
+                Modifier.minimumInteractiveComponentSize().semantics {
                     role = Role.Button
+                    traversalIndex = -1f
                 },
                 color = Color.Transparent,
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         painterResource(R.drawable.fa_delete),
-                        stringResource(R.string.delete),
+                        stringResource(R.string.delete_time_period),
                         tint = colorResource(R.color.error),
                     )
                 }
             }
         }
-        Column(Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
+        Column(
+            Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))
+                .padding(horizontal = if (deleteWindow == null) 12.dp else 8.dp)
+                .padding(top = 8.dp, bottom = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                TimeInput(
-                    stringResource(R.string.select_start_time),
-                    window.startTime,
-                    setTime = {
-                        setWindow(
-                            window.copy(
-                                startTime = it,
-                                endTime = Window.safeEndTime(it, window.endTime),
-                            )
-                        )
-                    },
-                    modifier = Modifier.weight(1f),
-                )
-                Text(stringResource(R.string.to_lowercase))
-                TimeInput(
-                    stringResource(R.string.select_end_time),
-                    window.endTime,
-                    setTime = { setWindow(window.copy(endTime = it)) },
-                    minimumTime = Window.minimumEndTime(window.startTime),
-                    modifier = Modifier.weight(1f),
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement =
+                        Arrangement.spacedBy(
+                            if (deleteWindow == null) 16.dp else 8.dp,
+                            Alignment.CenterHorizontally,
+                        ),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    TimeInput(
+                        stringResource(R.string.select_start_time),
+                        window.startTime,
+                        window.startType,
+                        setTime = ::setStartTime,
+                        modifier = Modifier.weight(1f),
+                    )
+                    Text(stringResource(R.string.to_lowercase))
+                    TimeInput(
+                        stringResource(R.string.select_end_time),
+                        window.endTime,
+                        window.endType,
+                        setTime = ::setEndTime,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Top,
+                ) {
+                    TimeNote(window.startType)
+                    TimeNote(window.endType)
+                }
             }
             DaysOfWeekInput(
                 window.daysOfWeek,
                 setDaysOfWeek = { setWindow(window.copy(daysOfWeek = it)) },
             )
         }
+    }
+}
+
+@Composable
+private fun TimeNote(type: Window.Type) {
+    val arrangement =
+        when (type) {
+            Window.Type.ServiceStart -> Arrangement.Start
+            Window.Type.ServiceEnd,
+            Window.Type.NextDay -> Arrangement.End
+            Window.Type.Basic -> Arrangement.Center
+        }
+    // Semantics are cleared because the TimeIcons contain identical content descriptions,
+    // so that it can be colocated with the time text
+    Row(
+        Modifier.clearAndSetSemantics {}.padding(horizontal = 8.dp),
+        horizontalArrangement = arrangement,
+    ) {
+        if (type != Window.Type.Basic) {
+            Text(
+                stringResource(
+                    when (type) {
+                        Window.Type.ServiceStart -> R.string.service_day_start
+                        Window.Type.ServiceEnd -> R.string.service_day_end
+                        Window.Type.NextDay -> R.string.next_day
+                    }
+                ),
+                style = Typography.footnote,
+                color = colorResource(R.color.deemphasized),
+            )
+        }
+    }
+}
+
+private sealed class TimeIconPosition {
+    data object Before : TimeIconPosition()
+
+    data object After : TimeIconPosition()
+}
+
+private fun <T> ifPosition(position: TimeIconPosition, matches: TimeIconPosition, then: T): T? =
+    if (position == matches) then else null
+
+private fun <T> ifAfter(position: TimeIconPosition, then: T) =
+    ifPosition(position, TimeIconPosition.After, then)
+
+private fun <T> ifBefore(position: TimeIconPosition, then: T) =
+    ifPosition(position, TimeIconPosition.Before, then)
+
+@Composable
+private fun TimeIcon(type: Window.Type, position: TimeIconPosition) {
+    val resource =
+        when (type) {
+            Window.Type.ServiceStart -> ifBefore(position, R.drawable.service_start_sun)
+            Window.Type.ServiceEnd,
+            Window.Type.NextDay -> ifAfter(position, R.drawable.service_end_moon)
+            else -> null
+        }
+    val contentDescription =
+        when (type) {
+            Window.Type.ServiceStart -> ifBefore(position, R.string.service_day_start)
+            Window.Type.ServiceEnd -> ifAfter(position, R.string.service_day_end)
+            Window.Type.NextDay -> ifAfter(position, R.string.next_day)
+            else -> null
+        }?.let { stringResource(it) }
+    if (resource != null) {
+        Icon(
+            painterResource(resource),
+            contentDescription,
+            modifier = Modifier.size(24.dp),
+            tint = colorResource(R.color.deemphasized),
+        )
     }
 }
 
@@ -335,13 +478,23 @@ fun AdvancedTimePickerDialog(
 private fun TimeInput(
     modalTitle: String,
     time: LocalTime,
+    type: Window.Type,
     setTime: (LocalTime) -> Unit,
     modifier: Modifier = Modifier,
     minimumTime: LocalTime? = null,
 ) {
+    val timeArrangement =
+        when (type) {
+            Window.Type.ServiceStart -> Arrangement.spacedBy(10.dp, Alignment.Start)
+            Window.Type.ServiceEnd,
+            Window.Type.NextDay -> Arrangement.spacedBy(10.dp, Alignment.End)
+            else -> Arrangement.Center
+        }
+
     var isPicking by rememberSaveable { mutableStateOf(false) }
+
     Row(
-        modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+        modifier,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -350,16 +503,28 @@ private fun TimeInput(
             shape = RoundedCornerShape(6.dp),
             colors =
                 ButtonDefaults.buttonColors(
-                    containerColor = colorResource(R.color.fill1),
+                    containerColor = colorResource(R.color.fill2),
                     contentColor = colorResource(R.color.text),
                 ),
-            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+            contentPadding = PaddingValues(8.dp),
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text(
-                EasternTimeInstant(EasternTimeInstant.now().local.date, time).formattedTime(),
-                style = Typography.footnoteSemibold,
-            )
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = timeArrangement,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                TimeIcon(type, TimeIconPosition.Before)
+                Text(
+                    EasternTimeInstant(
+                            EasternTimeInstant.now().local.date,
+                            time,
+                        )
+                        .formattedTime(),
+                    style = Typography.bodySemibold,
+                )
+                TimeIcon(type, TimeIconPosition.After)
+            }
         }
     }
     if (isPicking) {
@@ -411,10 +576,7 @@ private fun TimeInput(
 
 @Composable
 private fun DaysOfWeekInput(daysOfWeek: Set<DayOfWeek>, setDaysOfWeek: (Set<DayOfWeek>) -> Unit) {
-    Row(
-        Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
-    ) {
+    Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
         // DayOfWeek.entries has Monday first and Sunday last
         for (day in
             listOf(
@@ -435,10 +597,10 @@ private fun DaysOfWeekInput(daysOfWeek: Set<DayOfWeek>, setDaysOfWeek: (Set<DayO
                         .weight(1f)
                         .height(IntrinsicSize.Max),
                 shape = RoundedCornerShape(6.dp),
-                color = colorResource(if (isIncluded) R.color.key else R.color.fill1),
+                color = colorResource(if (isIncluded) R.color.key else R.color.fill2),
                 contentColor =
                     if (isIncluded) colorResource(R.color.fill3)
-                    else colorResource(R.color.text).copy(alpha = 0.6f),
+                    else colorResource(R.color.deemphasized),
             ) {
                 Column(
                     Modifier.padding(top = 8.dp),
@@ -467,35 +629,37 @@ private fun NotificationSwitch(
     enabled: Boolean,
 ) {
 
-    LabeledSwitch(
-        Modifier.haloContainer(
-                outlineColor = Color.Transparent,
-                backgroundColor = Color.Transparent,
-                borderWidth = 1.dp,
-            )
-            .padding(horizontal = 12.dp, vertical = 8.dp),
-        label = {
-            if (settings.enabled) {
-                Icon(
-                    painterResource(R.drawable.fa_bell_filled),
-                    null,
-                    tint = colorResource(R.color.key),
+    Column() {
+        LabeledSwitch(
+            Modifier.haloContainer(
+                    outlineColor = Color.Transparent,
+                    backgroundColor = Color.Transparent,
+                    borderWidth = 1.dp,
                 )
-            } else {
-                Icon(painterResource(R.drawable.fa_bell), null)
-            }
-            Text(
-                stringResource(R.string.get_disruption_notifications),
-                Modifier.padding(start = 12.dp).weight(1f),
-            )
-        },
-        value = settings.enabled,
-        onValueChange = {
-            notificationPermissionState.launchPermissionRequest()
-            onValueChange(it)
-        },
-        enabled = enabled,
-    )
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            label = {
+                if (settings.enabled) {
+                    Icon(
+                        painterResource(R.drawable.fa_bell_filled),
+                        null,
+                        tint = colorResource(R.color.key),
+                    )
+                } else {
+                    Icon(painterResource(R.drawable.fa_bell), null)
+                }
+                Text(
+                    stringResource(R.string.get_disruption_notifications),
+                    Modifier.padding(start = 12.dp).weight(1f),
+                )
+            },
+            value = settings.enabled,
+            onValueChange = {
+                notificationPermissionState.launchPermissionRequest()
+                onValueChange(it)
+            },
+            enabled = enabled,
+        )
+    }
 }
 
 @Composable
@@ -531,14 +695,29 @@ private fun PermissionSettingsLink() {
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
-@Preview
+@Preview(fontScale = 2f)
 @Composable
 private fun NotificationSettingsWidgetPreview() {
 
     val enabledNotificationSettingsViewModel: INotificationSettingsViewModel by lazy {
         NotificationSettingsViewModel(MockSentryRepository()).apply {
             setEnabled(true)
-            setCustomWindows(listOf(Window.default(emptyList(), true, EasternTimeInstant.now())))
+            setWindows(listOf(Window.default(emptyList(), true, EasternTimeInstant.now())))
+        }
+    }
+
+    val serviceDayNotificationSettingsViewModel: INotificationSettingsViewModel by lazy {
+        NotificationSettingsViewModel(MockSentryRepository()).apply {
+            setEnabled(true)
+            setWindows(
+                listOf(
+                    Window(
+                        startTime = FavoriteSettings.Notifications.serviceBoundary,
+                        endTime = FavoriteSettings.Notifications.serviceBoundary,
+                        daysOfWeek = Window.weekend,
+                    )
+                )
+            )
         }
     }
 
@@ -567,24 +746,39 @@ private fun NotificationSettingsWidgetPreview() {
         Column(
             Modifier.background(colorResource(R.color.fill2))
                 .padding(horizontal = 16.dp, vertical = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             NotificationSettingsWidget(
                 enabledNotificationSettingsViewModel,
-                ConstantPermissionState(
-                    Manifest.permission.POST_NOTIFICATIONS,
-                    PermissionStatus.Granted,
-                ),
-                true,
+                showPresets = true,
+                notificationPermissionState =
+                    ConstantPermissionState(
+                        Manifest.permission.POST_NOTIFICATIONS,
+                        PermissionStatus.Granted,
+                    ),
+                hasRequestedPermission = true,
+            )
+            HaloSeparator()
+            NotificationSettingsWidget(
+                serviceDayNotificationSettingsViewModel,
+                showPresets = true,
+                notificationPermissionState =
+                    ConstantPermissionState(
+                        Manifest.permission.POST_NOTIFICATIONS,
+                        PermissionStatus.Granted,
+                    ),
+                hasRequestedPermission = true,
             )
             HaloSeparator()
             NotificationSettingsWidget(
                 disabledNotificationSettingsViewModel,
-                ConstantPermissionState(
-                    Manifest.permission.POST_NOTIFICATIONS,
-                    PermissionStatus.Denied(false),
-                ),
-                true,
+                showPresets = true,
+                notificationPermissionState =
+                    ConstantPermissionState(
+                        Manifest.permission.POST_NOTIFICATIONS,
+                        PermissionStatus.Denied(false),
+                    ),
+                hasRequestedPermission = true,
             )
         }
     }

@@ -1,199 +1,48 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    " at **%1$@**" : {
-      "comment" : "Alert summary location for a single stop in the format of \" at [Stop name]\" ex. \" at [Haymarket]\" or \" at [Green St @ Magazine St]\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
-      "extractionState" : "manual",
+    "" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " at **%1$@**"
-          }
-        },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : " en **%1$@**"
+            "state" : "needs_review",
+            "value" : ""
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : " à **%1$@**"
+            "state" : "needs_review",
+            "value" : ""
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : " nan **%1$@**"
+            "state" : "needs_review",
+            "value" : ""
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : " em **%1$@**"
+            "state" : "needs_review",
+            "value" : ""
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : " tại **%1$@**"
+            "state" : "needs_review",
+            "value" : ""
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : " 于**%1$@**到站"
+            "state" : "needs_review",
+            "value" : ""
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : " 在**%1$@**"
-          }
-        }
-      }
-    },
-    " daily%@" : {
-      "comment" : "Alert summary recurrence every day until the indicated date, e.g. “ daily until Friday”. The leading space must be retained.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " a diario%1$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " tous les jours%1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " chak jou%1$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " diariamente%1$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " hằng ngày%1$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 每日%1$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 每日%1$@"
-          }
-        }
-      }
-    },
-    " due to %@" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " debido a %1$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " en raison de %1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " akòz %1$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " devido a %1$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " do %1$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 由于%1$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 由於%1$@"
-          }
-        }
-      }
-    },
-    " from **%1$@** stops to **%2$@**" : {
-      "comment" : "Alert summary location for branching routes in the format of \" from [direction] stops to [Stop name]\" ex. \" from [Westbound] stops to [Kenmore]\" or \" from [Eastbound] stops to [Government Center]\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " desde paradas en **%1$@** hasta **%2$@**"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " depuis les arrêts en direction de **%1$@** jusqu’à **%2$@**"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " soti nan **%1$@** sispann rive nan **%2$@**"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " de **%1$@** paradas a **%2$@**"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " từ các điểm dừng **%1$@** đến **%2$@**"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 从**%1$@**站到**%2$@**"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 從**%1$@**站到**%2$@**"
+            "state" : "needs_review",
+            "value" : ""
           }
         }
       }
@@ -247,593 +96,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : " 從**%1$@**到**%2$@**"
-          }
-        }
-      }
-    },
-    " from **%1$@** to **%2$@** stops" : {
-      "comment" : "Alert summary location for branching routes in the format of \" from [Stop name] to [direction] stops\" ex. \" from [Kenmore] to [Westbound] stops\" or \" from [JFK/UMass] to [Southbound] stops\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " from **%1$@** to **%2$@** stops"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " desde **%1$@** hasta paradas en **%2$@**"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " de **%1$@** aux arrêts en direction de **%2$@**"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " soti nan **%1$@** rive nan **%2$@** sispann"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " de **%1$@** a **%2$@** paradas"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " từ **%1$@** đến các điểm dừng **%2$@**"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 从**%1$@**到**%2$@**站"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 從**%1$@**到**%2$@**站"
-          }
-        }
-      }
-    },
-    " from %@ to %@" : {
-      "comment" : "Alert summary timeframe with a range today that will recur in the future, e.g. “from 9:00 PM to end of service”. The leading space should be retained.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : " from %1$@ to %2$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " de %1$@ a %2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " de %1$@ à %2$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " soti nan %1$@ rive nan %2$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " das %1$@ até %2$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " từ %1$@ đến %2$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 从%1$@至%2$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 從%1$@至%2$@"
-          }
-        }
-      }
-    },
-    " on **%1$@**" : {
-      "comment" : "Alert summary location for an entire route in the format of \" on [RouteLabel]\" ex. \" on [Green Line C]\" or \" on [1 bus]\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " en **%1$@**"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " sur **%1$@**"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " sou **%1$@**"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " em **%1$@**"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " trên **%1$@**"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 在**%1$@**"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 在**%1$@**"
-          }
-        }
-      }
-    },
-    " replacing **%1$@**" : {
-      "comment" : "Alert summary location for an entire route with shuttle service in the format of \" replacing [RouteLabel]\" ex. \" replacing [Green Line C]\" or \" replacing [Orangle Line]\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " en reemplazo de **%1$@**"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " remplacer **%1$@**"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " ranplase **%1$@**"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " substituindo **%1$@**"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " thay thế **%1$@**"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 替代**%1$@**"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 替代**%1$@**"
-          }
-        }
-      }
-    },
-    " some days%@" : {
-      "comment" : "Alert summary recurrence on only certain days until the indicated date, e.g. “some days until Jan 16”. The leading space must be retained.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " algunos días%1$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " certains jours%1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " kèk jou%1$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " em alguns dias%1$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " một số ngày%1$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 部分日子%1$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 部分日子%1$@"
-          }
-        }
-      }
-    },
-    " starting **%@** today" : {
-      "comment" : "Alert summary timeframe starting on a specific time later today. ex. \" starting 10:00 PM today\". The time component is localized by the OS. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " a partir de la(s) **%1$@** de hoy"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " à partir de **%1$@** aujourd’hui"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " kòmanse **%1$@** jodi a"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " a partir das **%1$@** hoje"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " bắt đầu từ **%1$@** hôm nay"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 自今日**%1$@**起"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 自今日**%1$@**起"
-          }
-        }
-      }
-    },
-    " starting tomorrow" : {
-      "comment" : "Alert summary timeframe starting tomorrow. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " a partir de mañana"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " à partir de demain"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " kòmanse demen"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " a partir de amanhã"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " bắt đầu từ ngày mai"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 自明日起"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 自明日起"
-          }
-        }
-      }
-    },
-    " through end of service" : {
-      "comment" : "Alert summary timeframe ending at the end of service on the current day. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " hasta el final del servicio"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " jusqu’à la fin du service"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " jiska fen sèvis la"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " até o fim do serviço"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " đến cuối dịch vụ"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 直至服务结束"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 直至服務結束"
-          }
-        }
-      }
-    },
-    " through tomorrow" : {
-      "comment" : "Alert summary timeframe ending tomorrow. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " hasta mañana"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " jusqu’à demain"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " jiska demen"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " até amanhã"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " đến ngày mai"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 直至明天"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 直至明天"
-          }
-        }
-      }
-    },
-    " until further notice" : {
-      "comment" : "Alert summary timeframe with no known end. The leading space should be retained.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " hasta nuevo aviso"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " jusqu’à nouvel ordre"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " jiskaske yo bay lòt avi"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " até novo aviso"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " cho đến khi có thông báo mới"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 直至另行通知"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 直至另行通知"
-          }
-        }
-      }
-    },
-    " until later today" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " más tarde hoy"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " plus tard aujourd’hui"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " pita jodi a"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " mais tarde hoje"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " trong ngày hôm nay"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 今天晚些时候"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 今天晚些時候"
-          }
-        }
-      }
-    },
-    " until tomorrow" : {
-      "comment" : "Alert summary recurrence ending tomorrow. The leading space should be retained.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " hasta mañana"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " jusqu’à demain"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " jiska demen"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " até amanhã"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " cho đến ngày mai"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 截至明日"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 截至明日"
           }
         }
       }
@@ -932,60 +194,6 @@
         }
       }
     },
-    "**%@**%@%@%@%@" : {
-      "comment" : "Assemble a summary of an alert with the structure: \n**[Modified service]**[ from Porter to Havard][ starting today][ daily until Friday][ due to maintenance]",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@ **%2$@%3$@%4$@%5$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@ **%2$@%3$@%4$@%5$@"
-          }
-        }
-      }
-    },
     "**%1$@ %2$@** at **%3$@** added to Favorites" : {
       "comment" : "Favorite added toast text, the first value is the direction (southbound, inbound, etc),\nthe second is the route name (Red Line, 1 bus), and the third is a stop name (Ruggles, Alewife).\nThe asterisks surround bolded text. ex. \"[Southbound] [Red Line] at [Alewife] added to Favorites\"",
       "localizations" : {
@@ -1076,102 +284,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "**%1$@ %2$@**位於**%3$@**已從我的最愛中移除"
-          }
-        }
-      }
-    },
-    "**%1$@** %2$@ from **%3$@**" : {
-      "comment" : "Trip identity in the format of “[time] [vehicle] from [stop]”, ex “[12:13 PM] [train] from [South Station]“",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@** %2$@ de **%3$@**"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@** %2$@ de **%3$@**"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@** %2$@ soti nan **%3$@**"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@** %2$@ de **%3$@**"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@** %2$@ từ **%3$@**"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@**%2$@从**%3$@**"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@**%2$@從**%3$@**"
-          }
-        }
-      }
-    },
-    "**%1$@** %2$@ to **%3$@**" : {
-      "comment" : "Trip identity in the form of ”[time] [vehicle type] to [headsign]”, ex “[12:13 PM] [train] to [Stoughton]”",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@** %2$@ a **%3$@**"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@** %2$@ à **%3$@**"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@** %2$@ pou rive nan **%3$@**"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@** %2$@ para **%3$@**"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@** %2$@ đến **%3$@**"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@**%2$@至**%3$@**"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@**%2$@至**%3$@**"
           }
         }
       }
@@ -1350,13 +462,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "**%1$ld** afectó la atajada"
+                  "value" : "**%1$ld** parada afectada"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "**%1$ld** atajada afectadas"
+                  "value" : "**%1$ld** paradas afectadas"
                 }
               }
             }
@@ -1625,102 +737,6 @@
         }
       }
     },
-    "**All clear:** Normal service has resumed." : {
-      "comment" : "Alert summary in the format of \\\"All clear: Normal service has resumed.\\\"",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Todo despejado:** El servicio normal se reanudó."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Voie libre :** Le service normal a repris."
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**out bagay klè:** sèvis nòmal has resumed."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**tudo normal:** o serviço normal foi retomado."
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**tất cả ổn thỏa:** dịch vụ bình thường đã được tiếp tục."
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**通行正常：**服务已恢复正常。"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**通行正常：**服務已恢復正常。"
-          }
-        }
-      }
-    },
-    "**All clear:** Regular service%1$@" : {
-      "comment" : "Alert summary in the format of \"All clear: Regular service[at location]\", ex \"[All clear][Regular service][ from Alewife to Harvard]\"",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Todo despejado:** Servicio regular%1$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Alerte levé :** Service régulier %1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Tout bagay nòmal:** Sèvis regilye %1$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Situação normalizada:** serviço normal%1$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Đã thông thoáng:** Dịch vụ thường lệ%1$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**运行正常：**常规运营%1$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**運行正常：**常規營運%1$@"
-          }
-        }
-      }
-    },
     "**Delays**" : {
       "comment" : "Generic delay alert label when cause is unknown",
       "localizations" : {
@@ -1811,258 +827,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "因 **%1$@** 造成延誤"
-          }
-        }
-      }
-    },
-    "**Delays**%@%@%@%@%@" : {
-      "comment" : "Assemble a summary of an alert with the structure: \n**Delays**[ of about 15 minutes][ due to weather][ from Porter to Havard][ starting today][ daily until Friday][ due to maintenance]",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Delays**%1$@%2$@%3$@%4$@%5$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Retrasos**%1$@%2$@%3$@%4$@%5$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**retardé**%1$@%2$@%3$@%4$@%5$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**deta**%1$@%2$@%3$@%4$@%5$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**atraso**%1$@%2$@%3$@%4$@%5$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**trễ chuyến**%1$@%2$@%3$@%4$@%5$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**延误**%1$@%2$@%3$@%4$@%5$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**短暫**%1$@%2$@%3$@%4$@%5$@"
-          }
-        }
-      }
-    },
-    "**multiple stops**" : {
-      "comment" : "Used when more than 3 stops are affected",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**varias paradas**"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**plusieurs arrêts**"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**plizyè arè**"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**várias paradas**"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**nhiều điểm dừng**"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**多个站点**"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**多個網站**"
-          }
-        }
-      }
-    },
-    "**Update:** %1$@ has ended%2$@." : {
-      "comment" : "Alert summary in the format of \"Update: [Alert effect] has ended[ at location].\", ex \"[Update][Stop closure] has ended[ at Haymarket].\" or \\\"[Update][Service suspension] has ended[ from Alewife to Harvard]”.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Actualización:** %1$@ terminó%2$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Mise à jour :** %1$@ est terminée%2$@."
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Mizajou:** %1$@ fini%2$@."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Atualização:** %1$@ terminou%2$@."
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Cập nhật:** %1$@ đã kết thúc%2$@."
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**更新：** %1$@ 已结束%2$@。"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**更新：** %1$@ 已結束%2$@。"
-          }
-        }
-      }
-    },
-    "**Update:** %1$@ service has resumed%2$@." : {
-      "comment" : "Alert summary in the format of \"Update: [Vehicle type] service has resumed[ at location].\", ex \"Update: [Train] service has resumed[ from Riverside to Newton Highlands].\" or \"Update: [Bus] service has resumed[ at Market St @ Lothrop St].\"",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Actualización:** %1$@ servicio se reanudó%2$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Mise à jour :** %1$@ service a repris%2$@."
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Mizajou:** Sèvis %1$@ la rekòmanse%2$@."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Atualização:** o serviço %1$@ foi retomado%2$@."
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Cập nhật:** Dịch vụ %1$@ đã hoạt động trở lại%2$@."
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**更新：**%1$@ 服务已恢复%2$@。"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**更新：**%1$@ 服務已恢復%2$@。"
-          }
-        }
-      }
-    },
-    "**Update:** %1$@%2$@%3$@%4$@%5$@" : {
-      "comment" : "Alert summary in the format of \"Update: [Alert effect][at location][through timeframe][until recurrence][ due to cause], ex \"[Update][Stop closed][ at Haymarket][ through this Friday][]\" or \"[Update][Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday][due “to maintenance]",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "**Update:** %1$@%2$@%3$@%4$@%5$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Actualización:** %1$@%2$@%3$@%4$@%5$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Mise à jour :** %1$@%2$@%3$@%4$@%5$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Mizajou:** %1$@%2$@%3$@%4$@%5$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Atualização:** %1$@%2$@%3$@%4$@%5$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Cập nhật:** %1$@%2$@%3$@%4$@%5$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**最新消息：**%1$@%2$@%3$@%4$@%5$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**最新訊息：**%1$@%2$@%3$@%4$@%5$@"
           }
         }
       }
@@ -2221,222 +985,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ %2$@於%3$@"
-          }
-        }
-      }
-    },
-    "%@ %@%@%@" : {
-      "comment" : "Assemble a summary of an alert with the structure: \n[This trip] [will not stop at  stop A][ due to maintenance][ daily until friday]",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        }
-      }
-    },
-    "%@ affected by %@ %@%@%@" : {
-      "comment" : "Assemble a summary of an alert with the structure: \n[This trip] affected by [detour] [today][ due to maintenance][ daily until friday]",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ affected by %2$@ %3$@%4$@%5$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ afectado por %2$@ %3$@%4$@%5$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ affecté par %2$@ %3$@%4$@%5$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ afekte pa %2$@ %3$@%4$@%5$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ afetado por %2$@ %3$@%4$@%5$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ bị ảnh hưởng bởi %2$@ %3$@%4$@%5$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@受 影响%2$@%3$@%4$@%5$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@受 影響%2$@%3$@%4$@%5$@"
-          }
-        }
-      }
-    },
-    "%@ are cancelled %@%@%@" : {
-      "comment" : "Assemble a summary of an alert with the structure: \n[These trips] are cancelled [today][ due to maintenance][ daily until friday]",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ are cancelled %2$@%3$@%4$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ se cancelan %2$@%3$@%4$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ sont annulés %2$@%3$@%4$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ yo anile %2$@%3$@%4$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ são cancelados %2$@%3$@%4$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ bị hủy bỏ %2$@%3$@%4$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ 被取消 %2$@%3$@%4$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ 取消 %2$@%3$@%4$@"
-          }
-        }
-      }
-    },
-    "%@ are suspended %@%@%@" : {
-      "comment" : "Assemble a summary of an alert with the structure: \n[These trips] are suspended [today][ due to maintenance][ daily until friday]",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ are suspended %2$@%3$@%4$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ están suspendidos %2$@%3$@%4$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ sont suspendus %2$@%3$@%4$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ yo sispann %2$@%3$@%4$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ estão suspensas %2$@%3$@%4$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ bị đình chỉ %2$@%3$@%4$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@暂停%2$@%3$@%4$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@暫停%2$@%3$@%4$@"
           }
         }
       }
@@ -3065,60 +1613,6 @@
         }
       }
     },
-    "%@ experiencing delays%@ %@%@%@" : {
-      "comment" : "Assemble a summary of an alert with the structure: \n[Trip 101] experiencing delays[ of about 10 minutes][ today][ due to maintenance][ daily until Friday]",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ experiencing delays%2$@ %3$@%4$@%5$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ experimentando%2$@ %3$@%4$@%5$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ de ressentir des%2$@ %3$@%4$@%5$@retardés"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ ap fè fas ak reta%2$@ %3$@%4$@%5$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ enfrentando atraso%2$@ %3$@%4$@%5$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ trải nghiệm chuyến%2$@ %3$@%4$@%5$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ 经历延误%2$@ %3$@%4$@%5$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@經歷短暫%2$@ %3$@%4$@%5$@"
-          }
-        }
-      }
-    },
     "%@ is %ld stops away from %@" : {
       "comment" : "VoiceOver label for how many stops away a vehicle is from a stop,\nex 'bus is 4 stops away from Harvard'",
       "localizations" : {
@@ -3168,114 +1662,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@距離%3$@還有%2$ld站"
-          }
-        }
-      }
-    },
-    "%@ is cancelled %@%@%@" : {
-      "comment" : "Assemble a summary of an alert with the structure: \n[This trip] is cancelled [today][ due to maintenance][ daily until friday]",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ is cancelled %2$@%3$@%4$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        }
-      }
-    },
-    "%@ is suspended %@%@%@" : {
-      "comment" : "Assemble a summary of an alert with the structure: \n[This trip] is suspended [today][ due to maintenance][ daily until friday]",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ is suspended %2$@%3$@%4$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ está suspendido %2$@%3$@%4$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ est suspendu %2$@%3$@%4$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ sispann %2$@%3$@%4$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ está suspensa %2$@%3$@%4$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ bị đình chỉ %2$@%3$@%4$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@暂停%2$@%3$@%4$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@暫停%2$@%3$@%4$@"
           }
         }
       }
@@ -3427,60 +1813,6 @@
         }
       }
     },
-    "%@ will terminate at %@ %@%@%@" : {
-      "comment" : "Assemble a summary of an alert with the structure: \n[This trip] will terminate at [Porter][ today][ due to maintenance][ daily until friday]",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ will terminate at %2$@ %3$@%4$@%5$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ terminará su recorrido en %2$@ %3$@%4$@%5$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ se terminera à %2$@ %3$@%4$@%5$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ ap fini nan %2$@ %3$@%4$@%5$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ encerrará a viagem em %2$@ %3$@%4$@%5$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ sẽ kết thúc tại %2$@ %3$@%4$@%5$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@将在 终止运营%2$@%3$@%4$@%5$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@將在 終止營運%2$@%3$@%4$@%5$@"
-          }
-        }
-      }
-    },
     "%@, first stop" : {
       "comment" : "Screen reader text for a stop name on the stop details page when that stop is the first stop on the line",
       "localizations" : {
@@ -3622,102 +1954,6 @@
         }
       }
     },
-    "%@. See alert details." : {
-      "comment" : "Text in a notification prompting users to click to learn more",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ a Detalles de la alerta"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ vers Détails de l’alerte"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@. Detay Avètisman"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ para Detalhes do alerta"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ đến Chi tiết cảnh báo"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@。警报详情"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@至警報詳情"
-          }
-        }
-      }
-    },
-    "%1$@ %2$@" : {
-      "comment" : "Alert summary in the format of \"[trains/buses] will not stop at [affected stop(s)] [timeframe]\" ex \"[Trains ][will not stop at Back Bay and Ruggles until further notice]\"",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%2$@ %1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@"
-          }
-        }
-      }
-    },
     "%1$@ %2$@ delayed" : {
       "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing the delayed predicted time.\nThe first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry').\nex, '10:00 PM train delayed[, arriving at 10:05 PM]'",
       "localizations" : {
@@ -3808,102 +2044,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ %2$@提前"
-          }
-        }
-      }
-    },
-    "%1$@ %2$@%3$@%4$@" : {
-      "comment" : "Alert summary in the format of “[trip identity] [is affected][due to cause][until recurrence]”, ex “[12:13 PM from Ruggles] [is cancelled today][ due to a mechanical issue][ some days until Wednesday]” or “[Multiple trips] [are suspended today][][]”",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@%3$@%4$@"
-          }
-        }
-      }
-    },
-    "%1$@ and %2$@" : {
-      "comment" : "Joins two stops into a list, ex “[Back Bay] and [Ruggles]”",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ y %2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ et %2$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ ak %2$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ e %2$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ và %2$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@和%2$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@和%2$@"
           }
         }
       }
@@ -4049,54 +2189,6 @@
         }
       }
     },
-    "%1$@ is replaced by shuttle buses from **%2$@** to **%3$@**%4$@" : {
-      "comment" : "Alert summary in the format of “[trip identity] is replaced by shuttle buses from [stop] to [stop][until recurrence]”, ex “Shuttle buses replace [the 12:13 PM train] from [Ruggles] to [Forest Hills][ some days until Friday]”",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ se reemplaza por autobuses de enlace desde **%2$@** hasta **%3$@**%4$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ est remplacé par des navettes entre **%2$@** et **%3$@**%4$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yo ranplase %1$@ ak bis navèt soti **%2$@** pou rive **%3$@**%4$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ é substituído por ônibus de apoio entre **%2$@** e **%3$@**%4$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tuyến %1$@ được thay thế bằng xe buýt đưa đón từ **%2$@** đến **%3$@**%4$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@从**%2$@**至**%3$@**%4$@由接驳巴士替代运营"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@從**%2$@**至**%3$@**%4$@由接駁巴士替代營運"
-          }
-        }
-      }
-    },
     "%1$@ to %2$@ has departed %3$@" : {
       "comment" : "Screen reader text that is announced when a trip disappears from the screen.,\nin the format \"[train/bus/ferry] to [destination] has departed [stop name]\",\nex. \"[train] to [Alewife] has departed [Central]\", \"[bus] to [Nubian] has departed [Harvard]\"",
       "localizations" : {
@@ -4140,54 +2232,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@至%2$@已駛離%3$@"
-          }
-        }
-      }
-    },
-    "%1$@%2$@" : {
-      "comment" : "Alert summary in the format of \"[trains/buses] will not stop at [affected stop(s)] [timeframe]\" ex \"[Trains ][will not stop at Back Bay and Ruggles until further notice]\"",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@%2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@%2$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@%2$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@%2$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@%2$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@%2$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@%2$@"
           }
         }
       }
@@ -5340,7 +3384,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agrega atajada favoritas para facilitar el acceso y notificaciones de interrupciones"
+            "value" : "Agrega paradas a favoritos para acceder a ellas fácilmente y recibir notificaciones sobre incidentes"
           }
         },
         "fr" : {
@@ -5612,60 +3656,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "新增至我的最愛"
-          }
-        }
-      }
-    },
-    "affected by %@ %@" : {
-      "comment" : "Trip specific alert effect fallback, ex “affected by [snow route] [today]”",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "affected by %1$@ %2$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "afectado por %1$@ %2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "affecté par %1$@ %2$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "afekte pa %1$@ %2$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "afetado por %1$@ %2$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "bị ảnh hưởng bởi %1$@ %2$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "受%1$@%2$@影响"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "受%1$@%2$@影響"
           }
         }
       }
@@ -7327,102 +5317,6 @@
         }
       }
     },
-    "are cancelled %@" : {
-      "comment" : "Multiple trip specific alert effect denoting cancellation, will specify “today” or “tomorrow”",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "están cancelados %1$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "sont annulés %1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "yo anile %1$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "estão canceladas %1$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "bị hủy bỏ %1$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@取消"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@取消"
-          }
-        }
-      }
-    },
-    "are suspended %@" : {
-      "comment" : "Multiple trip specific alert effect denoting suspension, will specify “today” or “tomorrow”",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "están suspendidos %1$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "sont suspendus %1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "yo sispann %1$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "estão suspensas %1$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "bị đình chỉ %1$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@暂停"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@暫停"
-          }
-        }
-      }
-    },
     "ARR" : {
       "comment" : "Shorthand for arriving",
       "localizations" : {
@@ -8222,54 +6116,6 @@
         }
       }
     },
-    "Buses" : {
-      "comment" : "Mode of travel prefixing alert summary e.g.: \"Buses will not stop at...\"",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Autobuses"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les autobus"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bis"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ônibus"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Xe buýt"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "巴士"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "巴士"
-          }
-        }
-      }
-    },
     "By opting in, we can show you which stations are inaccessible or have elevator closures." : {
       "localizations" : {
         "es" : {
@@ -8651,6 +6497,53 @@
         }
       }
     },
+    "Clockwise" : {
+      "comment" : "A route direction label",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En sentido horario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans le sens des aiguilles d’une montre"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nan sans zegwi mont lan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sentido horário"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Theo chiều kim đồng hồ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "顺时针"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "順時針"
+          }
+        }
+      }
+    },
     "Close" : {
       "comment" : "VoiceOver label for a generic close button",
       "localizations" : {
@@ -8937,6 +6830,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "折疊網站"
+          }
+        }
+      }
+    },
+    "collapsed, double-tap to expand" : {
+      "comment" : "Screen reader hint for a time picker button, tapping it will open a modal",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "colapsado, doble toque para expandir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "effondré, double pression pour s’étendre"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "retresi, tape de fwa pou elaji"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recolhido, toque duas vezes para expandir"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(Thu gọn, chạm hai lần để mở rộng)"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已折叠，双击展开"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已折疊，雙擊展開"
           }
         }
       }
@@ -9319,6 +7259,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "繼續"
+          }
+        }
+      }
+    },
+    "Counterclockwise" : {
+      "comment" : "A route direction label",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En sentido antihorario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans le sens antihoraire"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nan sans kontrè zegwi mont lan (goch mont)"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sentido anti-horário"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ngược chiều kim đồng hồ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "逆时针"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "逆時針"
           }
         }
       }
@@ -9885,6 +7872,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "刪除"
+          }
+        }
+      }
+    },
+    "Delete time period" : {
+      "comment" : "A label for a button that deletes a notification window.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "eliminar período de tiempo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "supprimer la période"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "efase peryòd tan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "excluir período de tempo"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "chỉnh sửa mục yêu thích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑收藏"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除時段"
           }
         }
       }
@@ -11209,6 +9244,53 @@
         }
       }
     },
+    "Edit favorite" : {
+      "comment" : "VoiceOver hint for favorite button when a route is already favorited",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar favorito"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifier les Favoris"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifye Favorite yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar favorito"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chỉnh sửa mục yêu thích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑收藏"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "編輯收藏"
+          }
+        }
+      }
+    },
     "Edit Favorite" : {
       "comment" : "Title for editing an individual favorite’s settings",
       "localizations" : {
@@ -11440,54 +9522,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "電力作業"
-          }
-        }
-      }
-    },
-    "Elevator" : {
-      "comment" : "Elevator Service",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ascensor"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ascenseur"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Asansè"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elevador"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thang máy"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "电梯"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "電梯"
           }
         }
       }
@@ -12531,53 +10565,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "輪渡"
-          }
-        }
-      }
-    },
-    "Ferries" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Transbordadores"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ferries"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ferry"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Balsas"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Phà"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "渡轮"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "渡輪"
           }
         }
       }
@@ -14318,100 +12305,6 @@
         }
       }
     },
-    "hurricane" : {
-      "comment" : "Alert cause, used in 'Delays due to [cause]'",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "huracán"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ouragan"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "siklòn"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "furacão"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "cơn bão"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "飓风"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "颶風"
-          }
-        }
-      }
-    },
-    "Hurricane" : {
-      "comment" : "Possible alert cause",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Huracán"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ouragan"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Siklòn"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Furacão"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bão"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "飓风"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "颶風"
-          }
-        }
-      }
-    },
     "ice in harbor" : {
       "comment" : "Alert cause, used in 'Delays due to [cause]'",
       "localizations" : {
@@ -14553,102 +12446,6 @@
         }
       }
     },
-    "is cancelled %@" : {
-      "comment" : "Trip specific alert effect denoting cancellation, will specify “today” or “tomorrow”",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "está cancelado %1$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "est annulé %1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "anile %1$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "está cancelada %1$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "đã bị hủy %1$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@取消"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@取消"
-          }
-        }
-      }
-    },
-    "is suspended %@" : {
-      "comment" : "Trip specific alert effect denoting suspension, will specify “today” or “tomorrow”",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "está suspendido %1$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "est suspendu %1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "sispann %1$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "está suspensa %1$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "bị đình chỉ %1$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@暂停"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@暫停"
-          }
-        }
-      }
-    },
     "Keep Location Services Off" : {
       "comment" : "Prompt button to close the alert (and not change location service setting)",
       "localizations" : {
@@ -14696,224 +12493,8 @@
         }
       }
     },
-    "key/alert_summary_recurrence_end_day_later_date" : {
-      "comment" : "Alert summary recurrence ending on a specific date in the future. ex. \" until May 11\". The date component is localized by the OS. The leading space should be retained.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " until %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " hasta %1$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " jusqu’à %1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " jiska %1$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " até %1$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " cho đến khi %1$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 直至%1$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 直至%1$@"
-          }
-        }
-      }
-    },
-    "key/alert_summary_recurrence_end_day_this_week" : {
-      "comment" : "Alert summary recurrence ending on a specific day later this week. ex. \" until Thursday\". The weekday component is localized by the OS. The leading space should be retained.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " until %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " hasta %1$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " jusqu’à %1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " jiska %1$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " até %1$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " cho đến khi %1$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 直至%1$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 直至%1$@"
-          }
-        }
-      }
-    },
-    "key/alert_summary_timeframe_later_date" : {
-      "comment" : "Alert summary timeframe ending on a specific date in the future. ex. \" through May 11\". The date component is localized by the OS. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " through %1$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " hasta el %1$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " jusqu’au %1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " jiska %1$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " até %1$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " đến %1$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 至%1$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 至%1$@"
-          }
-        }
-      }
-    },
     "key/alert_summary_timeframe_this_week" : {
       "comment" : "Alert summary timeframe ending on a specific day later this week. ex. \" through Thursday\". The weekday component is localized by the OS. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " through %1$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " hasta las %1$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " jusqu’au %1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " jiska %1$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " até %1$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " đến %1$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 至%1$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " 至%1$@"
-          }
-        }
-      }
-    },
-    "key/alert_summary_timeframe_time" : {
-      "comment" : "Alert summary timeframe ending on a specific time later today. ex. \" through 10:00 PM\". The time component is localized by the OS. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -15494,6 +13075,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "定位服務已關閉"
+          }
+        }
+      }
+    },
+    "Looping" : {
+      "comment" : "A route direction label",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vuelta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boucle"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boukl"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Em loop"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lặp lại"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "循环"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "循環"
           }
         }
       }
@@ -16527,198 +14155,6 @@
         }
       }
     },
-    "Multiple routes" : {
-      "comment" : "Title displayed in notification for alert that applies to multiple subscribed routes",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Varias rutas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusieurs itinéraires"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plizyè wout"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Várias rotas"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nhiều tuyến đường"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "多条线路"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "多條線路"
-          }
-        }
-      }
-    },
-    "multiple stops" : {
-      "comment" : "Used when more than 3 stops are affected",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "varias paradas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "plusieurs arrêts"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "plizyè arè"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "várias paradas"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nhiều điểm dừng"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "多个站点"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "多個網站"
-          }
-        }
-      }
-    },
-    "multiple trips" : {
-      "comment" : "Trip identity referring to more than one specific trip",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "varios viajes"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "plusieurs voyages"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "plizyè vwayaj"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "várias viagens"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nhiều chuyến đi"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "多个班次"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "多個班次"
-          }
-        }
-      }
-    },
-    "Multiple trips" : {
-      "comment" : "Trip identity referring to more than one specific trip",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Varios viajes"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusieurs voyages"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plizyè vwayaj"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Várias viagens"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nhiều chuyến đi"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "多个班次"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "多個班次"
-          }
-        }
-      }
-    },
     "Nearby" : {
       "comment" : "The label for the Nearby Transit page in the navigation bar",
       "localizations" : {
@@ -16855,6 +14291,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "新增功能。%1$@"
+          }
+        }
+      }
+    },
+    "next day" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al día siguiente"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le lendemain"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "jou kap vini an"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "no dia seguinte"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ngày hôm sau"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "第二天"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "第二天"
           }
         }
       }
@@ -17849,6 +15331,7 @@
       }
     },
     "Now get disruption notifications" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -17937,342 +15420,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "現在將您常用的網站儲存到**一個便捷位置**。"
-          }
-        }
-      }
-    },
-    "of about 10 minutes" : {
-      "comment" : "Ex: delays [of about 10 minutes]",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "de unos 10 minutos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "d’environ 10 minutes"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "apeprè 10 minit"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "de cerca de 10 minutos"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "khoảng 10 phút"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "大约10分钟"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "大約10分鐘"
-          }
-        }
-      }
-    },
-    "of about 15 minutes" : {
-      "comment" : "Ex: delays [of about 15 minutes]",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "de unos 15 minutos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "d’environ 15 minutes"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "apeprè 15 minit"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "de cerca de 15 minutos"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "khoảng 15 phút"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "大约15分钟"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "大約15分鐘"
-          }
-        }
-      }
-    },
-    "of about 20 minutes" : {
-      "comment" : "Ex: delays [of about 20 minutes]",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "de unos 20 minutos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "d’environ 20 minutes"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "apeprè 20 minit"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "de cerca de 20 minutos"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "khoảng 20 phút"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "大约20分钟"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "大約20分鐘"
-          }
-        }
-      }
-    },
-    "of about 25 minutes" : {
-      "comment" : "Ex: delays [of about 25 minutes]",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "de unos 25 minutos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "d’environ 25 minutes"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "apeprè 25 minit"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "de cerca de 25 minutos"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "khoảng 25 phút"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "大约25分钟"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "大約25分鐘"
-          }
-        }
-      }
-    },
-    "of about 30 minutes" : {
-      "comment" : "Ex: delays [of about 30 minutes]",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "de unos 30 minutos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "d’environ 30 minutes"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "apeprè 30 minit"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "de cerca de 30 minutos"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "khoảng 30 phút"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "大约30分钟"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "大約30分鐘"
-          }
-        }
-      }
-    },
-    "of more than 30 minutes" : {
-      "comment" : "Ex: delays [of more than 30 minutes]",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "de más de 30 minutos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "de plus de 30 minutes"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "plis pase 30 minit"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "de mais de 30 minutos"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "hơn 30 phút"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "超过30分钟"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "超過30分鐘"
-          }
-        }
-      }
-    },
-    "of more than an hour" : {
-      "comment" : "Ex: delays [of more than an hour]",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "de más de una hora"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "de plus d’une heure"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "plis pase yon èdtan"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "de mais de uma hora"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "hơn một giờ"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "超过一个小时"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "超過一個小時"
           }
         }
       }
@@ -18940,100 +16087,6 @@
         }
       }
     },
-    "police action" : {
-      "comment" : "Alert cause, used in 'Delays due to [cause]'",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "acción policial"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "action policière"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "aksyon lapolis"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ação policial"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "hành động của cảnh sát"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "警方行动"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "警方行動"
-          }
-        }
-      }
-    },
-    "Police Action" : {
-      "comment" : "Possible alert cause",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Acción policial"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Intervention policière"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aksyon Polis"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ação policial"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hành động của cảnh sát"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "警方行动"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "警方行動"
-          }
-        }
-      }
-    },
     "police activity" : {
       "comment" : "Alert cause, used in 'Delays due to [cause]'",
       "localizations" : {
@@ -19406,6 +16459,100 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "預測不可用"
+          }
+        }
+      }
+    },
+    "presence of whales" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presencia de ballenas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Présence de baleines"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "prezans balèn yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "presença de baleias"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sự hiện diện của cá voi"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鲸鱼的出现"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鯨魚的出現"
+          }
+        }
+      }
+    },
+    "Presence of Whales" : {
+      "comment" : "Possible alert cause",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presencia de ballenas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Présence des baleines"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prezans Balèn yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presença de baleias"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sự hiện diện của cá voi"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鲸鱼的出现"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鯨魚的出現"
           }
         }
       }
@@ -20116,53 +17263,6 @@
         }
       }
     },
-    "Removes from favorites" : {
-      "comment" : "VoiceOver hint for favorite button when a route is already favorited",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elimina de favoritos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Supprime des Favoris"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Retire nan Favorites yo"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Remove dos favoritos"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Xóa khỏi mục yêu thích"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "从收藏夹中移除"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "從我的最愛中移除"
-          }
-        }
-      }
-    },
     "Removes selected filter so that arrivals from all routes are displayed" : {
       "comment" : "VoiceOver hint for the button to\nclear selected route to display all routes at a station",
       "localizations" : {
@@ -20300,6 +17400,100 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "結果載入失敗☹️"
+          }
+        }
+      }
+    },
+    "rough seas" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mares agitados"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mer agitée"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lanmè ajite"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mar agitado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "biển động"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "波涛汹涌的海面"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "波濤洶湧的海面"
+          }
+        }
+      }
+    },
+    "Rough Seas" : {
+      "comment" : "Possible alert cause",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mares agitados"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mer agitée"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lanmè ajite"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mar agitado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Biển động"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "波涛汹涌的海面"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "波濤洶湧"
           }
         }
       }
@@ -21880,54 +19074,6 @@
         }
       }
     },
-    "Shuttle buses replace %1$@ from **%2$@** to **%3$@**%4$@" : {
-      "comment" : "Alert summary in the format of “Shuttle buses replace [trip identity] from [stop] to [stop][until recurrence]”, ex “Shuttle buses replace [this train] from [Ruggles] to [Forest Hills][ some days until Friday]”",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Los autobuses de enlace reemplazan el servicio de %1$@ desde **%2$@** hasta **%3$@**%4$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Des navettes remplacent %1$@ de **%2$@** à **%3$@**%4$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Otobis navèt yo ranplase %1$@ soti **%2$@** pou rive **%3$@**%4$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ônibus de transporte substituem %1$@ de **%2$@** a **%3$@**%4$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Xe buýt đưa đón thay thế %1$@ từ **%2$@** đến **%3$@**%4$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "接驳巴士替代从**%2$@**至**%3$@**%4$@的%1$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "接駁巴士替代從**%2$@**至**%3$@**%4$@的%1$@"
-          }
-        }
-      }
-    },
     "Shuttle buses replace service" : {
       "comment" : "Shuttle alert VoiceOver text",
       "localizations" : {
@@ -23009,6 +20155,53 @@
         }
       }
     },
+    "start to end of service" : {
+      "comment" : "Description for the all-day notification preset",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "inicio del servicio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "début du service"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kòmansman sèvis"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "início do serviço"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bắt đầu dịch vụ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务开始"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服務開始"
+          }
+        }
+      }
+    },
     "Starting tomorrow until further notice" : {
       "comment" : "Date range for a recurring alert which hasn’t started yet and has an unknown end date; may be shown next to “Daily” or a list of weekdays",
       "localizations" : {
@@ -23103,56 +20296,9 @@
         }
       }
     },
-    "Station closed" : {
-      "comment" : "Possible alert effect",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estación cerrada"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Station fermée"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estasyon fèmen"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estação fechada"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nhà ga/trạm dừng đóng cửa"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "车站已关闭"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "車站已關閉"
-          }
-        }
-      }
-    },
     "Station Closed" : {
       "comment" : "Possible alert effect",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -23194,54 +20340,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "車站已關閉"
-          }
-        }
-      }
-    },
-    "Station Closure" : {
-      "comment" : "Possible alert effect",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cierre de estación"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fermeture de la station"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estasyon Fèmen"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fechamento de estação"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Đóng ga"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "车站关闭"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "車站關閉"
           }
         }
       }
@@ -23340,54 +20438,6 @@
         }
       }
     },
-    "Stop closed" : {
-      "comment" : "Possible alert effect",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Parada cerrada"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arrêt fermé"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arè a fèmen"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Parada fechada"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Điểm dừng bị đóng"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "站点已关闭"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "站點已關閉"
-          }
-        }
-      }
-    },
     "Stop Closed" : {
       "comment" : "Possible alert effect",
       "localizations" : {
@@ -23431,54 +20481,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "網站已關閉"
-          }
-        }
-      }
-    },
-    "Stop Closure" : {
-      "comment" : "Possible alert effect",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cierre de parada"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fermeture de l’arrêt"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fèmti Arè"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fechamento de parada"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Đóng điểm dừng"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "站点关闭"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "網站關閉"
           }
         }
       }
@@ -24659,60 +21661,6 @@
         }
       }
     },
-    "the **%@** %@" : {
-      "comment" : "Trip identity in the format of “the [time] [vehicle]”, ex “the [12:13 PM] [train]",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "the **%1$@** %2$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "el **%1$@** %2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "le **%1$@** %2$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@** %2$@ la"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "o **%1$@** %2$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@** %2$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@** %2$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@** %2$@"
-          }
-        }
-      }
-    },
     "The %@ assigned to this route is currently serving another trip. We’ll show it on the route once it starts this trip." : {
       "comment" : "Description on an explainer page about missing vehicle location,\nthe interpolated value can be either \"bus\" or \"train\"",
       "localizations" : {
@@ -24944,102 +21892,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "該%1$@尚未分配至任一車次。"
-          }
-        }
-      }
-    },
-    "this %1$@" : {
-      "comment" : "Trip identity in the form of ”this [vehicle type]”, ex ”this [train]”",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "este %1$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ce %1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ sa a"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "este %1$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ này"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "该%1$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "該%1$@"
-          }
-        }
-      }
-    },
-    "This %1$@" : {
-      "comment" : "Trip identity in the form of ”This [vehicle type]”, ex ”This [train]”",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Este %1$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ce %1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sa a %1$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Este %1$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cái này %1$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "该%1$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "該%1$@"
           }
         }
       }
@@ -25433,6 +22285,53 @@
         }
       }
     },
+    "time picker" : {
+      "comment" : "Screen reader label for a time picker button, tapping it will open a modal",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "selector de hora"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sélecteur d'heure"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "seleksyonè tan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "seletor de tempo"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bộ chọn thời gian"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "时间选择器"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "時間選擇器"
+          }
+        }
+      }
+    },
     "Time picker type toggle" : {
       "comment" : "Screen reader label for the button on Android that switches between the dial time picker and the text input time picker",
       "extractionState" : "manual",
@@ -25576,54 +22475,6 @@
         }
       }
     },
-    "To" : {
-      "comment" : "End time of a notification window",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jusqu’à"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pou"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Đến"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目的地"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目的地"
-          }
-        }
-      }
-    },
     "To find stops, select a route first" : {
       "comment" : "Hint text on the route picker page when a search term has been entered in the filter input, in case people are searching a stop name and are trying to understand why it isn't showing up",
       "extractionState" : "manual",
@@ -25668,53 +22519,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "要尋找網站，請先選擇路線"
-          }
-        }
-      }
-    },
-    "today" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "hoy"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "aujourd’hui"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "jodi a"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "hoje"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "hôm nay"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日"
           }
         }
       }
@@ -25767,53 +22571,6 @@
         }
       }
     },
-    "tomorrow" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "mañana"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "demain"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "demen"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "amanhã"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ngày mai"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "明日"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "明日"
-          }
-        }
-      }
-    },
     "Track %@" : {
       "comment" : "The platform that a commuter rail train is boarding at, ex. \"Track 1\", \"Track 8\" etc",
       "localizations" : {
@@ -25862,7 +22619,7 @@
       }
     },
     "Track change" : {
-      "comment" : "Possible alert effect",
+      "comment" : "Possible alert effect\nText in an info pill when there is an active track change alert affecting a trip",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -26045,6 +22802,98 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "軌道故障"
+          }
+        }
+      }
+    },
+    "Track TBD" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vía por definir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Piste à déterminer"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ray TBD"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Via a definir"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ray Chưa Rõ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轨道（待定）"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "軌道待定"
+          }
+        }
+      }
+    },
+    "Track to be determined" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ruta por determinar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Piste à déterminer"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tras la poko detèmine"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trajeto a ser definido"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lộ trình sẽ được xác định sau."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "赛道待定"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "賽道待定"
           }
         }
       }
@@ -26239,54 +23088,6 @@
     },
     "train" : {
       "comment" : "train",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "tren"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "train"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "tren"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "trem"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "tàu"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "列车"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "列車"
-          }
-        }
-      }
-    },
-    "Train" : {
-      "comment" : "Train",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -26596,54 +23397,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "tàu"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "列车"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "列車"
-          }
-        }
-      }
-    },
-    "Trains" : {
-      "comment" : "Mode of travel prefixing alert summary e.g.: \"Trains will not stop at...\"",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trenes"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trains"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tren yo"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trens"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tàu"
           }
         },
         "zh-Hans-CN" : {
@@ -27272,54 +24025,6 @@
         }
       }
     },
-    "Update: %1$@" : {
-      "comment" : "Example: “Update: Service has ended”",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Actualización: %1$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mise à jour : %1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mizajou: %1$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Atualização: %1$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cập nhật: %1$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "更新：%1$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "更新：%1$@"
-          }
-        }
-      }
-    },
     "Updated %ld minutes ago" : {
       "comment" : "Displayed when prediction data has not been able to update for an unexpected amount of time",
       "localizations" : {
@@ -27568,6 +24273,100 @@
         }
       }
     },
+    "utility work" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trabajo en la vía"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "travaux sur la voie"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "travay ap fèt sou ray"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trabalho nos trilhos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "thi công đường ray"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轨道作业"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "軌道作業"
+          }
+        }
+      }
+    },
+    "Utility Work" : {
+      "comment" : "Possible alert cause",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trabajo de servicios públicos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Travaux publics"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Travay sèvis piblik"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Serviços de utilidade pública"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Công việc tiện ích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "公用工程"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "公用工程"
+          }
+        }
+      }
+    },
     "version %@" : {
       "comment" : "Version number label on the More page",
       "localizations" : {
@@ -27664,6 +24463,194 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "版本%1$@(%2$@)"
+          }
+        }
+      }
+    },
+    "vessel substitution" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "cambio de barco"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remplacement par bus"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ranplasman bis"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Substituição de ônibus"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Xe buýt thay thế"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "巴士替代方案"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "巴士替代方案"
+          }
+        }
+      }
+    },
+    "Vessel Substitution" : {
+      "comment" : "Possible alert cause",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambio de Barco"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remplacement par bus"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ranplasman bis"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Substituição de ônibus"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Xe buýt thay thế"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "巴士替代方案"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "巴士替代方案"
+          }
+        }
+      }
+    },
+    "vessel traffic" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tráfico marítimo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trafic"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trafik"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tráfego"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "giao thông"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "交通"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "交通"
+          }
+        }
+      }
+    },
+    "Vessel Traffic" : {
+      "comment" : "Possible alert cause",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tráfico Marítimo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trafic"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sikilasyon"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tráfego"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Giao thông"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "交通"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "交通"
           }
         }
       }
@@ -27851,6 +24838,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "等待離開"
+          }
+        }
+      }
+    },
+    "We can send you push notifications about problems on this route before you go" : {
+      "comment" : "A description of the notification feature.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Podemos enviarte notificaciones push sobre problemas en esta ruta antes de que te vayas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous pouvons vous envoyer des notifications push concernant les problèmes sur cette ligne avant votre départ"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nou ka voye notifikasyon ba ou konsènan pwoblèm sou wout sa a anvan ou ale."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Podemos enviar-lhe notificações push sobre problemas nesta rota antes de partir."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chúng tôi có thể gửi cho bạn thông báo đẩy về các sự cố trên tuyến đường này trước khi bạn khởi hành."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们可以在您出发前向您发送有关此路线可能出现问题的推送通知。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我們可以在您出發前向您發送有關此路線可能出現問題的推播通知。"
           }
         }
       }
@@ -28275,6 +25310,54 @@
         }
       }
     },
+    "When do you want notifications?" : {
+      "comment" : "A label displayed under the notification switch.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Cuándo quieres recibir notificaciones?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quand souhaitez-vous recevoir des notifications ?"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ki lè ou vle resevwa notifikasyon?"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando você quer receber notificações?"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bạn muốn nhận thông báo khi nào?"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "您希望在什么时候接收通知？"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "您希望什麼時候接收通知？"
+          }
+        }
+      }
+    },
     "When using TalkBack, we can hide maps to make the app easier to navigate." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -28422,54 +25505,6 @@
         }
       }
     },
-    "will terminate at %1$@ %2$@" : {
-      "comment" : "Trip specific alert effect denoting suspension downstream, with interpolated stop name, ex: “will terminate at [Porter]“",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "terminará su recorrido en %1$@ %2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "se terminera à %1$@ %2$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ap fini nan %1$@ %2$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "encerrará a viagem em %1$@ %2$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "sẽ kết thúc tại %1$@ %2$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "将在%1$@%2$@终止运营"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "將在%1$@%2$@終止營運"
-          }
-        }
-      }
-    },
     "You can always change location settings later in the Settings app." : {
       "localizations" : {
         "es" : {
@@ -28609,5 +25644,5 @@
       }
     }
   },
-  "version" : "1.0"
+  "version" : "1.1"
 }

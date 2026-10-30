@@ -36,6 +36,12 @@ struct SheetHeader<Title: View, RightActionContents: View>: View {
     }
 
     var body: some View {
+        let topPadding = if #available(iOS 26.0, *) {
+            // extra padding due to wider sheet corder radius
+            19.0
+        } else {
+            16.0
+        }
         if navCallbacks.onBack != nil, navCallbacks.backButtonPresentation != .floating, navCallbacks.onClose != nil {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(spacing: 16) {
@@ -50,7 +56,7 @@ struct SheetHeader<Title: View, RightActionContents: View>: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 16)
-            .padding(.top, 16)
+            .padding(.top, topPadding)
         } else {
             HStack(alignment: .center, spacing: 16) {
                 backButton
@@ -61,7 +67,7 @@ struct SheetHeader<Title: View, RightActionContents: View>: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 16)
-            .padding(.top, 16)
+            .padding(.top, topPadding)
         }
     }
 

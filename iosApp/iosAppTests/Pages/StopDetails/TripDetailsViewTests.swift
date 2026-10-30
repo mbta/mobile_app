@@ -92,6 +92,7 @@ final class TripDetailsViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(TripHeaderCard.self).find(text: "Next stop"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 1)
     }
 
@@ -178,6 +179,7 @@ final class TripDetailsViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(TripHeaderCard.self).find(text: targetStop.name))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 1)
     }
 
@@ -255,6 +257,7 @@ final class TripDetailsViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(TripStops.self).find(text: targetStop.name))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 1)
     }
 
@@ -265,7 +268,8 @@ final class TripDetailsViewTests: XCTestCase {
         let route = objects.route { _ in }
         let pattern = objects.routePattern(route: route) { _ in }
         let trip = objects.trip(routePattern: pattern)
-        let targetStop = objects.stop { _ in }
+        let targetStop = objects.stop { stop in stop.name = "Target Stop" }
+        let nextStop = objects.stop { stop in stop.name = "Next Stop" }
         let vehicleStop = objects.stop { _ in }
         let vehicle = objects.vehicle { vehicle in
             vehicle.tripId = trip.id
@@ -277,6 +281,11 @@ final class TripDetailsViewTests: XCTestCase {
         let schedule = objects.schedule { schedule in
             schedule.routeId = route.id.idText
             schedule.stopId = targetStop.id
+            schedule.trip = trip
+        }
+        let nextSchedule = objects.schedule { schedule in
+            schedule.routeId = route.id.idText
+            schedule.stopId = nextStop.id
             schedule.trip = trip
         }
         objects.prediction(schedule: schedule) { prediction in
@@ -305,16 +314,28 @@ final class TripDetailsViewTests: XCTestCase {
                 tripPredictions: .init(objects: objects),
                 vehicle: vehicle
             ),
-            stopList: .init(trip: trip, stops: [.init(
-                stop: targetStop,
-                stopSequence: 0,
-                disruption: nil,
-                schedule: schedule,
-                prediction: nil,
-                predictionStop: targetStop,
-                vehicle: nil,
-                routes: [route]
-            )]),
+            stopList: .init(trip: trip, stops: [
+                .init(
+                    stop: targetStop,
+                    stopSequence: 0,
+                    disruption: nil,
+                    schedule: schedule,
+                    prediction: nil,
+                    predictionStop: targetStop,
+                    vehicle: nil,
+                    routes: [route]
+                ),
+                .init(
+                    stop: nextStop,
+                    stopSequence: 1,
+                    disruption: nil,
+                    schedule: nextSchedule,
+                    prediction: nil,
+                    predictionStop: nextStop,
+                    vehicle: nil,
+                    routes: [route]
+                )
+            ]),
             context: .stopDetails,
             awaitingPredictionsAfterBackground: false
         ))
@@ -332,14 +353,17 @@ final class TripDetailsViewTests: XCTestCase {
         )
 
         let newNavEntry: SheetNavigationStackEntry = .stopDetails(
-            stopId: targetStop.id,
+            stopId: nextStop.id,
             stopFilter: nil,
             tripFilter: nil
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         let exp = sut.inspection.inspect(after: 0.1) { view in
             try view.find(button: targetStop.name).tap()
+            XCTAssertEqual(navManager.navigationStack, [oldNavEntry])
+            try view.find(button: nextStop.name).tap()
             XCTAssertEqual(navManager.navigationStack, [oldNavEntry, newNavEntry])
         }
 
@@ -427,6 +451,7 @@ final class TripDetailsViewTests: XCTestCase {
             }
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 1)
     }
 
@@ -504,6 +529,7 @@ final class TripDetailsViewTests: XCTestCase {
             XCTAssertThrowsError(try view.find(TripHeaderCard.self).find(button: "Follow"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 1)
     }
 
@@ -581,6 +607,7 @@ final class TripDetailsViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "Trip complete"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 1)
     }
 
@@ -658,6 +685,7 @@ final class TripDetailsViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "Trip not available"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 1)
     }
 }

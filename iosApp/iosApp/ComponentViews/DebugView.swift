@@ -13,6 +13,7 @@ import SwiftUI
 struct DebugView<Content: View>: View {
     @ObserveInjection var inject
 
+    var withSocketInfo = true
     let content: () -> Content
     var details: (() -> Content)?
 
@@ -32,7 +33,7 @@ struct DebugView<Content: View>: View {
                     VStack(alignment: .leading) {
                         content()
 
-                        if let channelUpdates = debugState?.channelUpdates {
+                        if withSocketInfo, let channelUpdates = debugState?.channelUpdates {
                             Text(verbatim: "channel connections:")
                             ForEach(channelUpdates.keys.sorted(), id: \.self) { key in
                                 let trimmedKey = if key.count > 25 { "\(key.prefix(25))..." } else { key }
@@ -47,10 +48,11 @@ struct DebugView<Content: View>: View {
                                 Text(verbatim: "\(trimmedKey) last updated \(updateDuration) ago")
                             }
                         }
-                        if let socketConnected = debugState?.socketConnected {
+                        if withSocketInfo, let socketConnected = debugState?.socketConnected {
                             Text(verbatim: "socket connected: \(socketConnected)")
                         }
                     }
+                    .foregroundStyle(Color.text)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .font(Typography.footnote)

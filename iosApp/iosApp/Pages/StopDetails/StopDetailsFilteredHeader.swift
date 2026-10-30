@@ -61,7 +61,7 @@ struct StopDetailsFilteredHeader: View {
                 .accessibilityHeading(.h1)
                 .accessibilityLabel(accessibilityLabel)
             },
-            buttonColor: .text.opacity(0.6),
+            buttonColor: .deemphasized,
             buttonTextColor: .fill2,
             navCallbacks: navCallbacks,
             rightActionContents: {

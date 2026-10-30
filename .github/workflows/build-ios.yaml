@@ -34,7 +34,7 @@ concurrency:
 jobs:
   build-ios:
     name: Build for iOS
-    runs-on: macos-15-xlarge
+    runs-on: xcode-27-xlarge
     permissions:
       id-token: write
       contents: read
@@ -48,7 +48,7 @@ jobs:
           for: ios-build
           aws-role: ${{ secrets.AWS_ROLE_ARN }}
       - name: Fetch AWS secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3.0.1
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88 # v3.0.2
         with:
           secret-ids: |
             APP_STORE_CONNECT_API_KEY_ID, mobile-app-ios-app-store-connect-api-key-id
@@ -63,8 +63,6 @@ jobs:
           aws secretsmanager get-secret-value --secret-id mobile-app-ios-codesigning-p12 --output json | jq -r '.SecretBinary' | base64 --decode > "secrets/${MOBILE_APP_IOS_CODESIGNING_ID}.p12"
           popd
           bundle exec fastlane ios cert_load cert_id:"${MOBILE_APP_IOS_CODESIGNING_ID}"
-      - name: Install CocoaPods dependencies
-        run: bundle exec ./gradlew :shared:podInstallSyntheticIos
       - name: Add build environment variables
         run: |
           {
@@ -85,12 +83,12 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           INPUTS_SCHEME: ${{ inputs.scheme }}
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ failure() }}
         with:
           name: ios-build-log
           path: ~/Library/Logs/gym/iosApp-*.log
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ inputs.deploy }}
         with:
           name: ios-ipa
@@ -100,7 +98,7 @@ jobs:
     if: ${{ inputs.deploy }}
     needs:
       - build-ios
-    runs-on: macos-15-xlarge
+    runs-on: xcode-27-xlarge
     permissions:
       id-token: write
       contents: read
@@ -109,7 +107,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: ios-ipa
           path: iosApp/build
@@ -118,7 +116,7 @@ jobs:
           for: ios-deploy
           aws-role: ${{ secrets.AWS_ROLE_ARN }}
       - name: Fetch AWS secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3.0.1
+        uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88 # v3.0.2
         with:
           secret-ids: |
             APP_STORE_CONNECT_API_KEY_ID, mobile-app-ios-app-store-connect-api-key-id

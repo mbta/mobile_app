@@ -108,6 +108,16 @@ public sealed class TripInstantDisplay {
             val predictionTime = timeFor(prediction, isScheduledDeparture, now)
             val scheduleTime = timeFor(schedule, isScheduledDeparture, now)
             val isScheduleUpcoming = scheduleTime?.let { it >= now } ?: false
+            val hasPassedPredictionStop =
+                prediction?.let { resolvedPrediction ->
+                    vehicle?.let { resolvedVehicle ->
+                        resolvedVehicle.currentStopSequence?.let { vehicleStop ->
+                            resolvedVehicle.tripId == resolvedPrediction.tripId &&
+                                vehicleStop > resolvedPrediction.stopSequence
+                        }
+                    }
+                } ?: true // Fall back to true, since we can't know if the stop has passed
+
             scheduleTime
                 ?.takeIf {
                     isScheduleUpcoming &&
@@ -163,9 +173,8 @@ public sealed class TripInstantDisplay {
             }
 
             if (prediction == null) {
-                val scheduleTime = schedule?.stopTimeAfter(now)
                 return if (
-                    scheduleTime == null || (schedule.departureTime == null && !allowArrivalOnly)
+                    scheduleTime == null || (schedule?.departureTime == null && !allowArrivalOnly)
                 ) {
                     Hidden
                 } else {
@@ -188,7 +197,6 @@ public sealed class TripInstantDisplay {
             val minutes = timeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()
 
             if (forceAsTime) {
-                val scheduleTime = schedule?.stopTimeAfter(now)
                 val showDelayedSchedule =
                     context == Context.StopDetailsFiltered &&
                         scheduleTime?.let {
@@ -196,7 +204,7 @@ public sealed class TripInstantDisplay {
                                 it.local.hour != predictionTime.local.hour
                         } == true
 
-                return if (timeRemaining.isNegative()) {
+                return if (timeRemaining.isNegative() && hasPassedPredictionStop) {
                     Hidden
                 } else if (showDelayedSchedule) {
                     TimeWithSchedule(
@@ -215,7 +223,7 @@ public sealed class TripInstantDisplay {
              * different states doesn’t provide much rider value so we return Now instead
              */
             if (routeType == RouteType.BUS) {
-                return if (timeRemaining.isNegative()) {
+                return if (timeRemaining.isNegative() && hasPassedPredictionStop) {
                     Hidden
                 } else if (timeRemaining <= ARRIVAL_CUTOFF) {
                     Now(lastTrip)
@@ -231,7 +239,7 @@ public sealed class TripInstantDisplay {
             ) {
                 return Boarding(lastTrip)
             }
-            if (timeRemaining.isNegative()) {
+            if (timeRemaining.isNegative() && hasPassedPredictionStop) {
                 return Hidden
             }
             if (timeRemaining <= ARRIVAL_CUTOFF || prediction.hasArrivedButNotDeparted(now)) {

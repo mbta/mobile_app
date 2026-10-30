@@ -2,10 +2,13 @@ package com.mbta.tid.mbta_app.android.pages
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -26,12 +29,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -84,6 +90,11 @@ import org.koin.compose.koinInject
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 
+private enum class Mode {
+    Add,
+    Edit,
+}
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun SaveFavoritePage(
@@ -121,11 +132,14 @@ fun SaveFavoritePage(
     }
     val selectedRouteStopDirection = RouteStopDirection(routeId, stopId, selectedDirection)
 
-    val isFavorite = favorites?.containsKey(selectedRouteStopDirection) ?: false
-    var wasAdding by rememberSaveable { mutableStateOf(favorites != null && !isFavorite) }
+    val savedFavorite = favorites?.get(selectedRouteStopDirection)
+    val saveMode = if (savedFavorite != null) Mode.Edit else Mode.Add
+    var wasAdding by rememberSaveable { mutableStateOf(favorites != null && saveMode == Mode.Add) }
     val showDirectionToggle = stopDirections.size > 1 && wasAdding
 
-    LaunchedEffect(isFavorite, favorites) { if (favorites != null && !isFavorite) wasAdding = true }
+    LaunchedEffect(saveMode, favorites) {
+        if (favorites != null && saveMode == Mode.Add) wasAdding = true
+    }
 
     val existingSettings = favorites?.get(selectedRouteStopDirection) ?: FavoriteSettings()
     var updatedSettings by
@@ -271,52 +285,72 @@ fun SaveFavoritePage(
             }
             Text(
                 stringResource(
-                    if (isFavorite) R.string.edit_favorite_title else R.string.add_favorite_title
+                    if (saveMode == Mode.Edit) R.string.edit_favorite_title
+                    else R.string.add_favorite_title
                 ),
-                Modifier.padding(start = 16.dp),
+                Modifier.padding(start = 16.dp).semantics {
+                    heading()
+                },
                 style = Typography.title1Bold,
             )
         }
         HaloSeparator()
-        Column(
-            Modifier.fillMaxHeight()
-                .background(colorResource(R.color.fill2))
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 24.dp)
-                .navigationBarsPadding(),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-        ) {
-            FavoriteStopCard(
-                stop,
-                lineOrRoute,
-                stopDirections.find { it.id == selectedDirection } ?: stopDirections.first(),
-                toggleDirection =
-                    { selectedDirection = 1 - selectedDirection }.takeIf { showDirectionToggle },
-                onlyServingOppositeDirection =
-                    stopDirections.singleOrNull()?.id == 1 - initialDirection,
-            )
-            NotificationSettingsWidget(
-                viewModel = notificationSettingsViewModel,
-                notificationPermissionState = notificationPermissionState,
-                hasRequestedPermission = hasRequestedPermission,
-            )
-            if (isFavorite) {
-                HaloSeparator()
-                Button(
-                    onClick = { removeCloseAndToast(selectedRouteStopDirection) },
-                    Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                    colors =
-                        buttonColors(
-                            colorResource(R.color.delete),
-                            contentColor = colorResource(R.color.delete_background),
-                        ),
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+            Column(
+                Modifier.fillMaxHeight()
+                    .background(colorResource(R.color.fill2))
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp, vertical = 24.dp)
+                    .padding(bottom = 69.dp)
+                    .navigationBarsPadding(),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                FavoriteStopCard(
+                    stop,
+                    lineOrRoute,
+                    stopDirections.find { it.id == selectedDirection } ?: stopDirections.first(),
+                    toggleDirection =
+                        {
+                                selectedDirection = 1 - selectedDirection
+                            }
+                            .takeIf { showDirectionToggle },
+                    onlyServingOppositeDirection =
+                        stopDirections.singleOrNull()?.id == 1 - initialDirection,
+                )
+                NotificationSettingsWidget(
+                    viewModel = notificationSettingsViewModel,
+                    showPresets =
+                        saveMode == Mode.Add || savedFavorite?.notifications?.enabled == false,
+                    notificationPermissionState = notificationPermissionState,
+                    hasRequestedPermission = hasRequestedPermission,
+                )
+            }
+            if (saveMode == Mode.Edit) {
+                Column(
+                    Modifier.fillMaxWidth()
+                        .background(colorResource(R.color.fill2).copy(alpha = 0.9f))
+                        .padding(horizontal = 24.dp)
+                        .padding(top = 24.dp, bottom = 12.dp)
+                        .navigationBarsPadding(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    Text(
-                        stringResource(R.string.remove_from_favorites),
-                        style = Typography.bodySemibold,
-                    )
-                    Icon(painterResource(R.drawable.fa_delete), null)
+                    Button(
+                        onClick = { removeCloseAndToast(selectedRouteStopDirection) },
+                        Modifier.fillMaxWidth().heightIn(min = 45.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        colors =
+                            buttonColors(
+                                colorResource(R.color.delete),
+                                contentColor = colorResource(R.color.delete_background),
+                            ),
+                    ) {
+                        Text(
+                            stringResource(R.string.remove_from_favorites),
+                            Modifier.padding(end = 12.dp),
+                            style = Typography.bodySemibold,
+                        )
+                        Icon(painterResource(R.drawable.fa_delete), null)
+                    }
                 }
             }
         }
@@ -335,6 +369,7 @@ private fun SaveFavoritePagePreviewAdd() {
                 single {
                     FavoritesUsecases(
                         MockFavoritesRepository(),
+                        MockGlobalRepository(GlobalResponse(objects)),
                         MockSettingsRepository(),
                         MockSubscriptionsRepository(),
                         MockAnalytics(),
@@ -390,6 +425,7 @@ private fun SaveFavoritePagePreviewEdit() {
                                 )
                             )
                         ),
+                        MockGlobalRepository(GlobalResponse(objects)),
                         MockSettingsRepository(),
                         MockSubscriptionsRepository(),
                         MockAnalytics(),

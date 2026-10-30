@@ -72,10 +72,9 @@ fun SearchInputField(
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     colors: TextFieldColors = inputFieldColors(),
-    interactionSource: MutableInteractionSource? = null,
+    defaultInteractionSource: MutableInteractionSource? = null,
 ) {
-    @Suppress("NAME_SHADOWING")
-    val interactionSource = interactionSource ?: remember { MutableInteractionSource() }
+    val interactionSource = defaultInteractionSource ?: remember { MutableInteractionSource() }
 
     val focused = interactionSource.collectIsFocusedAsState().value
     val focusRequester = remember { FocusRequester() }

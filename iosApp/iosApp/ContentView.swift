@@ -39,7 +39,7 @@ struct ContentView: View {
     var includeAccessibility: Bool { settingsCache.get(.stationAccessibility) }
     var notificationsFlag: Bool { settingsCache.get(.notifications) }
 
-    let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
+    @State var transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     let analytics: Analytics = AnalyticsProvider.shared
 
     let inspection = Inspection<Self>()
@@ -114,12 +114,6 @@ struct ContentView: View {
             includeAccessibility: includeAccessibility,
             notificationsEnabled: notificationsFlag
         )
-        .onChange(of: fcmTokenContainer.token) { token in
-            favoritesVM.clearStaleFavorites(fcmToken: token)
-        }
-        .onChange(of: globalData) { _ in
-            favoritesVM.clearStaleFavorites(fcmToken: fcmTokenContainer.token)
-        }
         .onChange(of: contentVM.defaultTab) { newTab in
             // if we aren't on an entrypoint, then the default tab may have loaded after
             // we navigated via deeplink. Don't navigate away from the deeplinked location
@@ -137,8 +131,18 @@ struct ContentView: View {
                 updateTabBarVisibility()
             }
         }
-        .onChange(of: navManager.navigationStack.lastSafe()) { _ in
-            updateTabBarVisibility()
+        .onChange(of: navManager.navigationStack
+            .lastSafe()) { [oldVal = navManager.navigationStack.lastSafe()] newVal in
+                let sheetPair: Set<SheetNavigationStackEntry> = [oldVal, newVal]
+                let opacityTransitionPair: Set<SheetNavigationStackEntry> = [.favorites, .editFavorites]
+
+                if sheetPair == opacityTransitionPair {
+                    transition = .opacity
+                } else {
+                    transition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
+                }
+
+                updateTabBarVisibility()
         }
         .onChange(of: AnalyticsParams(
             stopId: navManager.navigationStack.lastSafe().stopId(),
@@ -599,21 +603,14 @@ struct ContentView: View {
                 )
             }
         }
-        .onChange(of: locationDataManager
-            .authorizationStatus) { [oldStatus = locationDataManager.authorizationStatus] status in
-                if oldStatus == nil, [.denied, .notDetermined, .restricted].contains(status) {
-                    let center = ViewportProvider.Defaults.center
-                    viewportProvider.initViewport(location: CLLocation(
-                        latitude: center.latitude,
-                        longitude: center.longitude
-                    ))
-                }
-        }
-        .onChange(of: locationDataManager
-            .currentLocation) { [oldLocation = locationDataManager.currentLocation] location in
-                if let location, oldLocation == nil {
-                    viewportProvider.initViewport(location: location)
-                }
+        .withLocationStateHandler(locationDataManager) { _, location in
+            guard viewportProvider.viewport == nil else { return }
+
+            let defaultCenter = ViewportProvider.Defaults.center
+            viewportProvider.initViewport(
+                location: location
+                    ?? CLLocation(latitude: defaultCenter.latitude, longitude: defaultCenter.longitude)
+            )
         }
     }
 

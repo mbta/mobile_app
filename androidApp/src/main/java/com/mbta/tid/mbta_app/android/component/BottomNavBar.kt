@@ -5,13 +5,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
@@ -56,7 +59,22 @@ fun BottomNavBar(
                 1f,
             )
     ) {
-        TabRow(selectedTabIndex = selectedTabIndex, indicator = {}) {
+        val outlineColor = MaterialTheme.colorScheme.outline
+
+        PrimaryTabRow(
+            selectedTabIndex = selectedTabIndex,
+            indicator = {},
+            modifier =
+                Modifier.drawBehind {
+                    val width = size.width
+                    drawLine(
+                        color = outlineColor,
+                        start = Offset(x = 0f, y = 0f),
+                        end = Offset(x = width, y = 0f),
+                        strokeWidth = 2.dp.toPx(),
+                    )
+                },
+        ) {
             BottomNavTab(
                 selected =
                     currentDestination is Routes.MapAndSheet &&

@@ -49,6 +49,7 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.isStopBlocklisted
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -56,7 +57,7 @@ import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.MockErrorBannerViewModel
 import kotlin.time.Duration.Companion.minutes
-import org.koin.compose.KoinContext
+import org.koin.compose.KoinIsolatedContext
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 
@@ -74,7 +75,9 @@ fun StopDetailsUnfilteredRoutesView(
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
 ) {
-    val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
+    val showStationAccessibility =
+        SettingsCache.get(Settings.StationAccessibility) &&
+            !globalData.isStopBlocklisted(stop.parentStationId ?: stop.id)
     val elevatorAlerts =
         routeCardData.flatMap { it.stopData.flatMap { it.elevatorAlerts } }.distinct()
     val hasAccessibilityWarning = elevatorAlerts.isNotEmpty() || !stop.isWheelchairAccessible
@@ -309,7 +312,7 @@ private fun StopDetailsRoutesViewPreview() {
     val errorBannerVM: IErrorBannerViewModel = MockErrorBannerViewModel()
 
     MyApplicationTheme {
-        KoinContext(koin.koin) {
+        KoinIsolatedContext(koin) {
             StopDetailsUnfilteredRoutesView(
                 stop,
                 routeCardData,

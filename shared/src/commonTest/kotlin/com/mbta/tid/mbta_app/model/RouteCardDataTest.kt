@@ -6,14 +6,10 @@ import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.parametric.parametricTest
-import com.mbta.tid.mbta_app.repositories.ISentryRepository
-import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.TestData
-import io.sentry.kotlin.multiplatform.Scope
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.fail
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -3324,12 +3320,14 @@ class RouteCardDataTest {
                 stopId = stop1.id
                 tripId = predictionBrdTrip.id
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
+                currentStopSequence = 9
             }
             val predictionBrdPrediction = objects.prediction {
                 stopId = stop1.id
                 trip = predictionBrdTrip
                 departureTime = time - 1.minutes
                 vehicleId = predictionBrdVehicle.id
+                stopSequence = 10
             }
             val predictionSoonPrediction = objects.prediction {
                 stopId = stop1.id
@@ -5658,158 +5656,6 @@ class RouteCardDataTest {
         }
 
     @Test
-    fun `RouteCardData routeCardsForStopList suppresses track change alerts at core CR stops`() =
-        runBlocking() {
-            val context = RouteCardData.Context.StopDetailsFiltered
-            val objects = ObjectCollectionBuilder()
-
-            val route = objects.route()
-            val southStation = objects.stop { id = "place-sstat" }
-            val providence = objects.stop { id = "place-NEC-1851" }
-            val wickfordJunction = objects.stop { id = "place-NEC-1659" }
-
-            val routePatternPvd =
-                objects.routePattern(route) {
-                    typicality = RoutePattern.Typicality.Typical
-                    directionId = 0
-                    representativeTrip {
-                        directionId = 0
-                        headsign = "Providence"
-                        stopIds = listOf(southStation.id, providence.id, wickfordJunction.id)
-                    }
-                }
-
-            val time = EasternTimeInstant.now()
-
-            val tripPvd = objects.trip(routePatternPvd)
-            val schedulePvd = objects.schedule {
-                trip = tripPvd
-                departureTime = time + 2.minutes
-            }
-            val upcomingTripPvd = objects.upcomingTrip(schedulePvd)
-
-            val southStationTrackChangeAlert = objects.alert {
-                effect = Alert.Effect.TrackChange
-                informedEntity(
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Ride,
-                    ),
-                    route = route.id.idText,
-                    stop = southStation.id,
-                )
-            }
-
-            val providenceTrackChangeAlert = objects.alert {
-                effect = Alert.Effect.TrackChange
-                informedEntity(
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Ride,
-                    ),
-                    route = route.id.idText,
-                    stop = providence.id,
-                )
-            }
-
-            val global =
-                GlobalResponse(
-                    objects,
-                    mapOf(
-                        Pair(southStation.id, listOf(routePatternPvd.id)),
-                        Pair(providence.id, listOf(routePatternPvd.id)),
-                    ),
-                )
-
-            val lineOrRoute = LineOrRoute.Route(route)
-            assertEquals(
-                listOf(
-                    RouteCardData(
-                        lineOrRoute = lineOrRoute,
-                        stopData =
-                            listOf(
-                                RouteCardData.RouteStopData(
-                                    route,
-                                    southStation,
-                                    listOf(
-                                        RouteCardData.Leaf(
-                                            lineOrRoute = lineOrRoute,
-                                            stop = southStation,
-                                            direction = Direction(0, route),
-                                            routePatterns = listOf(routePatternPvd),
-                                            stopIds = setOf(southStation.id),
-                                            upcomingTrips = emptyList(),
-                                            alertsHere = emptyList(),
-                                            allDataLoaded = true,
-                                            hasSchedulesTodayByPattern =
-                                                mapOf(routePatternPvd.id to true),
-                                            subwayServiceStartTime = null,
-                                            alertsDownstream = emptyList(),
-                                            context = context,
-                                        )
-                                    ),
-                                )
-                            ),
-                        time,
-                    )
-                ),
-                RouteCardData.routeCardsForStopList(
-                    stopIds = listOf(southStation.id),
-                    globalData = global,
-                    sortByDistanceFrom = southStation.position,
-                    schedules = ScheduleResponse(objects),
-                    predictions = PredictionsStreamDataResponse(objects),
-                    alerts = AlertsStreamDataResponse(objects),
-                    now = time,
-                    context = context,
-                ),
-            )
-
-            assertEquals(
-                listOf(
-                    RouteCardData(
-                        lineOrRoute = lineOrRoute,
-                        stopData =
-                            listOf(
-                                RouteCardData.RouteStopData(
-                                    route,
-                                    providence,
-                                    listOf(
-                                        RouteCardData.Leaf(
-                                            lineOrRoute = lineOrRoute,
-                                            stop = providence,
-                                            direction = Direction(0, route),
-                                            routePatterns = listOf(routePatternPvd),
-                                            stopIds = setOf(providence.id),
-                                            upcomingTrips = emptyList(),
-                                            alertsHere = listOf(providenceTrackChangeAlert),
-                                            allDataLoaded = true,
-                                            hasSchedulesTodayByPattern =
-                                                mapOf(routePatternPvd.id to true),
-                                            subwayServiceStartTime = null,
-                                            alertsDownstream = emptyList(),
-                                            context = context,
-                                        )
-                                    ),
-                                )
-                            ),
-                        time,
-                    )
-                ),
-                RouteCardData.routeCardsForStopList(
-                    stopIds = listOf(providence.id),
-                    globalData = global,
-                    sortByDistanceFrom = providence.position,
-                    schedules = ScheduleResponse(objects),
-                    predictions = PredictionsStreamDataResponse(objects),
-                    alerts = AlertsStreamDataResponse(objects),
-                    now = time,
-                    context = context,
-                ),
-            )
-        }
-
-    @Test
     fun `routeCardsForStaticStopList sorts by distance`(): Unit = runBlocking {
         val objects = ObjectCollectionBuilder()
 
@@ -6001,7 +5847,6 @@ class RouteCardDataTest {
                             closeSubwayPattern.directionId,
                         ),
                     ),
-                sentryRepository = MockSentryRepository(),
             )
 
         // Routes are sorted only by distance, no realtime or static information is referenced
@@ -6016,99 +5861,6 @@ class RouteCardDataTest {
             ),
             checkNotNull(staticRouteCardsSorted).flatMap { it.lineOrRoute.allRoutes },
         )
-    }
-
-    @Test
-    fun `routeCardsForStaticStopList sends sentry message for missing dir`(): Unit = runBlocking {
-        val objects = ObjectCollectionBuilder()
-
-        val busStop = objects.stop()
-        val subwayStop = objects.stop {
-            latitude = busStop.latitude + 0.1
-            longitude = busStop.longitude + 0.1
-        }
-
-        val busRoute = objects.route {
-            id = "bus"
-            type = RouteType.BUS
-        }
-        val subwayRoute = objects.route {
-            id = "subway"
-            type = RouteType.HEAVY_RAIL
-        }
-
-        val busPattern =
-            objects.routePattern(busRoute) {
-                sortOrder = 1
-                directionId = 1
-                representativeTrip {
-                    headsign = "Lincoln Lab"
-                    stopIds = listOf(busStop.id)
-                }
-                typicality = RoutePattern.Typicality.Typical
-            }
-        val subwayPattern =
-            objects.routePattern(subwayRoute) {
-                sortOrder = 1
-                directionId = 0
-                representativeTrip {
-                    headsign = "Alewife"
-                    stopIds = listOf(subwayStop.id)
-                }
-                typicality = RoutePattern.Typicality.Typical
-            }
-
-        val time = EasternTimeInstant(2024, Month.FEBRUARY, 21, 9, 30, 8)
-        val global =
-            GlobalResponse(
-                objects,
-                patternIdsByStop =
-                    mapOf(
-                        busStop.id to listOf(busPattern.id),
-                        subwayStop.id to listOf(subwayPattern.id),
-                    ),
-            )
-
-        var sentryMessage: String? = null
-        class TestSentryRepo : ISentryRepository {
-            override fun captureMessage(msg: String) {
-                fail("Should be called with a detail scope")
-            }
-
-            override fun captureMessage(msg: String, additionalDetails: Scope.() -> Unit) {
-                sentryMessage = msg
-            }
-
-            override fun captureException(throwable: Throwable) {
-                fail("Should be called with a message")
-            }
-        }
-
-        val staticRouteCardsSorted =
-            RouteCardData.routeCardsForStaticStopList(
-                listOf(busStop.id, subwayStop.id),
-                global,
-                context = RouteCardData.Context.Favorites,
-                now = time,
-                sortByDistanceFrom = busStop.position,
-                favorites =
-                    setOf(
-                        RouteStopDirection(busRoute.id, busStop.id, 0),
-                        RouteStopDirection(
-                            subwayRoute.id,
-                            subwayStop.id,
-                            subwayPattern.directionId,
-                        ),
-                    ),
-                sentryRepository = TestSentryRepo(),
-            )
-
-        // Routes are sorted only by distance, no realtime or static information is referenced
-        assertEquals(
-            listOf(busRoute, subwayRoute),
-            checkNotNull(staticRouteCardsSorted).flatMap { it.lineOrRoute.allRoutes },
-        )
-        assertEquals("Empty static RouteCardData", sentryMessage)
     }
 
     @Test

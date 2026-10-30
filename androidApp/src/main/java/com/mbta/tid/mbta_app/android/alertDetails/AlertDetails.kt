@@ -66,7 +66,6 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import com.mbta.tid.mbta_app.viewModel.ToastViewModel.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.DatePeriod

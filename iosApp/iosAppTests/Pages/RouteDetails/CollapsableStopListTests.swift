@@ -43,6 +43,7 @@ final class CollapsableStopListTests: XCTestCase {
                 isTypical: false
             ),
             onClick: { _ in clicked = true },
+            globalData: .init(objects: objects),
             isFirstSegment: false,
             isLastSegment: false,
             rightSideContent: { _ in EmptyView() }
@@ -84,6 +85,7 @@ final class CollapsableStopListTests: XCTestCase {
                 isTypical: false
             ),
             onClick: { _ in },
+            globalData: .init(objects: objects),
             rightSideContent: { _ in EmptyView() }
         )
 
@@ -99,6 +101,7 @@ final class CollapsableStopListTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: stop2.name))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 1)
     }
 }

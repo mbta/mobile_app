@@ -16,24 +16,26 @@ import XCTest
 final class SaveFavoriteHeaderTests: XCTestCase {
     @MainActor func testSaveHeader() {
         let sut = SaveFavoriteHeader(
-            isFavorite: false,
+            saveMode: .add,
             onCancel: {},
             onSave: {}
         )
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         XCTAssertNotNil(try? sut.inspect().find(text: "Add Favorite"))
     }
 
     @MainActor func testEditHeader() {
         let sut = SaveFavoriteHeader(
-            isFavorite: true,
+            saveMode: .edit,
             onCancel: {},
             onSave: {}
         )
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         XCTAssertNotNil(try? sut.inspect().find(text: "Edit Favorite"))
     }
@@ -42,12 +44,13 @@ final class SaveFavoriteHeaderTests: XCTestCase {
         let cancelExp = expectation(description: "called back")
 
         let sut = SaveFavoriteHeader(
-            isFavorite: true,
+            saveMode: .edit,
             onCancel: { cancelExp.fulfill() },
             onSave: { XCTFail("Should not save") }
         )
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         try? sut.inspect().find(button: "Cancel").tap()
         wait(for: [cancelExp], timeout: 1)
@@ -57,12 +60,13 @@ final class SaveFavoriteHeaderTests: XCTestCase {
         let saveExp = expectation(description: "called save")
 
         let sut = SaveFavoriteHeader(
-            isFavorite: true,
+            saveMode: .edit,
             onCancel: { XCTFail("Should not cancel") },
             onSave: { saveExp.fulfill() }
         )
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         try? sut.inspect().find(button: "Save").tap()
         wait(for: [saveExp], timeout: 1)

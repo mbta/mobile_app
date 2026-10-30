@@ -44,6 +44,7 @@ final class GlobalModifierTests: XCTestCase {
         let sut = Text("test").global(globalBinding, errorKey: ErrorKey(sheets: [], id: "ErrorKey"))
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         wait(for: [repoExp, setExp], timeout: 1)
     }

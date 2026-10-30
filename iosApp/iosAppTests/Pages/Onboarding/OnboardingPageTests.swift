@@ -13,7 +13,7 @@ import ViewInspector
 import XCTest
 
 final class OnboardingPageTests: XCTestCase {
-    @MainActor func testFlow() async {
+    @MainActor func testFlow() async throws {
         let onboardingRepository = MockOnboardingRepository()
         let finishExp = expectation(description: "calls onFinish")
         let stepChannel = PassthroughSubject<Void, Never>()
@@ -26,8 +26,6 @@ final class OnboardingPageTests: XCTestCase {
             // Actual button location dialogue handling is unit tested in OnboardingScreenView.testLocationFlow
             skipLocationDialogue: true
         )
-
-        ViewHosting.host(view: sut)
 
         let locationExp = sut.inspection.inspect(onReceive: stepChannel, after: 0.1) { view in
             try view.find(button: "Continue").tap()
@@ -47,11 +45,13 @@ final class OnboardingPageTests: XCTestCase {
         let feedbackExp = sut.inspection.inspect(onReceive: stepChannel.dropFirst(3), after: 0.1) { view in
             try view.find(button: "Get started").tap()
         }
-        stepChannel.send()
-        await fulfillment(
-            of: [locationExp, stationAccessibilityExp, hideMapsExp, hideMapsContExp, feedbackExp, finishExp],
-            timeout: 1
-        )
+        try await ViewHosting.host(sut) {
+            stepChannel.send()
+            await fulfillment(
+                of: [locationExp, stationAccessibilityExp, hideMapsExp, hideMapsContExp, feedbackExp, finishExp],
+                timeout: 1
+            )
+        }
         XCTAssertEqual(onboardingRepository.finished, [.location, .stationAccessibility, .hideMaps, .feedback])
     }
 

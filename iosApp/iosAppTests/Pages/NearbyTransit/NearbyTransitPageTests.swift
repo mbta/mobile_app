@@ -64,6 +64,7 @@ final class NearbyTransitPageTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.environmentObject(viewportProvider).withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [hasAppeared, locationChangeExpectation], timeout: 10)
     }
 

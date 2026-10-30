@@ -92,12 +92,12 @@ jobs:
           INPUTS_BUILD_TYPE: ${{ inputs.build-type }}
         run: |
           bundle exec fastlane android build flavor:${INPUTS_FLAVOR} build_type:${INPUTS_BUILD_TYPE}
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ inputs.deploy && !inputs.skip-everything }}
         with:
           name: android-apk
           path: androidApp/build/outputs/apk/${{ steps.lowercase.outputs.flavor }}/${{ steps.lowercase.outputs.build-type }}/androidApp-${{ steps.lowercase.outputs.flavor }}-${{ steps.lowercase.outputs.build-type }}.apk
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ inputs.deploy && !inputs.skip-everything }}
         with:
           name: android-aab
@@ -119,11 +119,14 @@ jobs:
       - name: Lowercase build parameters
         id: lowercase
         run: |
+          build_type="${INPUTS_BUILD_TYPE}"
+          echo "build-type=${build_type,}" | tee -a "$GITHUB_OUTPUT"
           flavor="${INPUTS_FLAVOR}"
           echo "flavor=${flavor,}" | tee -a "$GITHUB_OUTPUT"
         env:
+          INPUTS_BUILD_TYPE: ${{ inputs.build-type }}
           INPUTS_FLAVOR: ${{ inputs.flavor }}
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: android-aab
           path: androidApp/build/outputs/bundle/${{ steps.lowercase.outputs.flavor }}Release
@@ -134,6 +137,7 @@ jobs:
           gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
       - name: Upload to Google Play
         run: |
-          bundle exec fastlane android internal flavor:${INPUTS_FLAVOR}
+          bundle exec fastlane android play_upload flavor:${INPUTS_FLAVOR} build_type:${INPUTS_BUILD_TYPE}
         env:
+          INPUTS_BUILD_TYPE: ${{ inputs.build-type }}
           INPUTS_FLAVOR: ${{ inputs.flavor }}

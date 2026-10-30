@@ -14,17 +14,20 @@ struct AlertIcon: View {
 
     var color: Color
     var accessibilityHidden: Bool = false
+    var preserveOriginalColors: Bool
     let icon: Image?
 
     init(
         alertState: StopAlertState,
         color: Color? = nil,
         accessibilityHidden: Bool = false,
+        preserveOriginalColors: Bool = false,
         overrideIcon: Image? = nil
     ) {
         icon = overrideIcon ?? Self.icon(alertState: alertState)
         self.color = color ?? .text
         self.accessibilityHidden = accessibilityHidden
+        self.preserveOriginalColors = preserveOriginalColors
     }
 
     private static func icon(alertState: StopAlertState) -> Image? {
@@ -41,6 +44,7 @@ struct AlertIcon: View {
     var body: some View {
         if let icon {
             icon
+                .renderingMode(preserveOriginalColors ? .original : .template)
                 .resizable()
                 .foregroundStyle(color)
                 .accessibilityLabel(Text("Alert"))

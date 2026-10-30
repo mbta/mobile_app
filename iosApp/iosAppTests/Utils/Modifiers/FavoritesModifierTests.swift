@@ -47,6 +47,7 @@ final class FavoritesModifierTests: XCTestCase {
         let sut = Text("test").favorites(favoritesBinding)
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
         let viewModel = ViewModelDI().favorites
         viewModel.reloadFavorites()
 
@@ -71,6 +72,7 @@ final class FavoritesModifierTests: XCTestCase {
         let sut = Text("test").favorites(favoritesBinding)
 
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         wait(for: [setExp], timeout: 1)
     }

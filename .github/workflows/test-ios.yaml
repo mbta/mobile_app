@@ -10,16 +10,16 @@ on:
         type: boolean
     secrets:
       SENTRY_DSN:
-        required: true
+        required: false
       FIREBASE_KEY:
-        required: true
+        required: false
       GOOGLE_APP_ID_IOS:
-        required: true
+        required: false
 
 jobs:
   test-ios:
     name: Test for iOS
-    runs-on: macos-15-xlarge
+    runs-on: xcode-27-xlarge
     permissions:
       contents: read
     steps:
@@ -31,20 +31,12 @@ jobs:
         if: ${{ !inputs.skip-everything }}
         with:
           for: ios-test
-      - name: Install CocoaPods dependencies
-        if: ${{ !inputs.skip-everything }}
-        run: |
-          ./gradlew :shared:generateDummyFramework
-          pushd iosApp
-          bundle exec pod install
-          popd
-          bundle exec ./gradlew :shared:podInstallSyntheticIos
       - name: shared checks & unit tests
         if: ${{ !inputs.skip-everything }}
         run: ./gradlew shared:iosSimulatorArm64Test
         env:
           GH_TOKEN: ${{ github.token }}
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure() && !inputs.skip-everything
         with:
           name: ios-shared-reports
@@ -61,8 +53,10 @@ jobs:
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           SENTRY_ENVIRONMENT: staging
-          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
-          GOOGLE_APP_ID_IOS: ${{ secrets.GOOGLE_APP_ID_IOS }}
+          # Fallback value for FIREBASE_KEY if not set in secrets, not a real key
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY || 'AIzaSyA00000000000000000000000000000000' }}
+          # Fallback value for GOOGLE_APP_ID_IOS if not set in secrets, not a real key
+          GOOGLE_APP_ID_IOS: ${{ secrets.GOOGLE_APP_ID_IOS || '1:123456789000:ios:0123456789abcdef' }}
       - name: Get latest two iOS versions
         if: ${{ !inputs.skip-everything }}
         id: ios_versions
@@ -78,7 +72,7 @@ jobs:
             device:"${IOS_DEVICE}"
         env:
           IOS_DEVICE: ${{ steps.ios_versions.outputs.LATEST_DEVICE }}
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure() && !inputs.skip-everything
         with:
           name: ios-ios-results

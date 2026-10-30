@@ -29,8 +29,6 @@ module DiffCrawler
     def ignore_leaf_noise!(path)
       ignore_added_file_type!(path)
       ignore_object_version!(path)
-      ignore_pods_name!(path)
-      ignore_pods_frameworks!(path)
     end
 
     def ignore_added_file_type!(path)
@@ -42,18 +40,6 @@ module DiffCrawler
 
     def ignore_object_version!(path)
       return unless path == '.objectVersion'
-
-      replace({})
-    end
-
-    def ignore_pods_name!(path)
-      if (path == '.rootObject.mainGroup.children.Pods.name') && self['dirty'].nil? && (self['generated'] == 'Pods')
-        replace({})
-      end
-    end
-
-    def ignore_pods_frameworks!(path)
-      return unless path.include?('Embed Pods Frameworks') && self['dirty'] == [] && self['generated'].nil?
 
       replace({})
     end

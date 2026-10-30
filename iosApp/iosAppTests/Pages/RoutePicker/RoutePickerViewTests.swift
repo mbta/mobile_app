@@ -194,6 +194,7 @@ final class RoutePickerViewTests: XCTestCase {
             XCTAssertThrowsError(try view.find(text: "Mattapan Line"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 2)
     }
 
@@ -235,6 +236,7 @@ final class RoutePickerViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "Logan Airport Terminals - South Station"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 2)
     }
 
@@ -268,6 +270,7 @@ final class RoutePickerViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "Providence/Stoughton Line"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 2)
     }
 
@@ -301,6 +304,7 @@ final class RoutePickerViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "Lynn Ferry"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 2)
     }
 
@@ -340,6 +344,7 @@ final class RoutePickerViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "Mattapan Line"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 2)
     }
 
@@ -382,6 +387,7 @@ final class RoutePickerViewTests: XCTestCase {
             XCTAssertEqual(RouteDetailsContext.Favorites(), selectedContext)
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 2)
     }
 
@@ -431,6 +437,7 @@ final class RoutePickerViewTests: XCTestCase {
             XCTAssertThrowsError(try view.find(text: route71.longName))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 2)
     }
 
@@ -466,6 +473,7 @@ final class RoutePickerViewTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 2)
     }
 
@@ -516,6 +524,7 @@ final class RoutePickerViewTests: XCTestCase {
             XCTAssertThrowsError(try view.find(text: route71.longName))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 3)
     }
 }

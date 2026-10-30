@@ -97,7 +97,7 @@ struct RouteDetailsView: View {
                     Color.text
                 }
             }
-            StarIcon(starred: isFavorited, color: starColor)
+            StarIcon(starred: isFavorited, color: starColor, outlineColor: .deemphasized)
                 .padding(.trailing, 8)
                 .accessibilityLabel(isFavorited ? Text("favorite stop") : Text(verbatim: ""))
         }

@@ -165,6 +165,7 @@ fun TripDetailsView(
             now,
             globalResponse,
             isTripDetailsPage,
+            openModal,
             modifier,
         )
     } else if (tripData != null && trip == null && tripData.vehicle != null) {
@@ -204,6 +205,7 @@ fun TripDetailsView(
                     globalResponse
                         ?: GlobalResponse(ObjectCollectionBuilder("TripDetailsView.loading")),
                     isTripDetailsPage,
+                    openModal = openModal,
                 )
             }
         }
@@ -225,6 +227,7 @@ fun TripDetails(
     now: EasternTimeInstant,
     globalResponse: GlobalResponse,
     isTripDetailsPage: Boolean,
+    openModal: (ModalRoutes) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val routeAccents = TripRouteAccents(route)
@@ -235,16 +238,26 @@ fun TripDetails(
         if (isTripDetailsPage && vehicleOnOtherTrip) {
             MissingTripCard(MissingTripCardType.Complete, routeAccents)
         } else {
+            val isTargeted =
+                when (headerSpec) {
+                    is TripHeaderSpec.Scheduled -> headerSpec.entry.stop
+                    is TripHeaderSpec.VehicleOnTrip -> headerSpec.entry?.stop
+                    else -> null
+                }?.let { stop ->
+                    stop.resolveParent(globalResponse).id == tripFilter.stopId
+                } ?: false
+
             Column(Modifier.zIndex(1F)) {
                 TripHeaderCard(
                     trip,
                     headerSpec,
-                    tripFilter.stopId,
+                    isTargeted,
                     route,
                     routeAccents,
                     now,
                     onTap = onHeaderTap,
                     onFollowTrip = if (!isTripDetailsPage) onFollowTrip else null,
+                    openModal = openModal,
                 )
             }
             Column(Modifier.offset(y = (-16).dp)) {
@@ -259,6 +272,7 @@ fun TripDetails(
                     onOpenAlertDetails,
                     route,
                     routeAccents,
+                    openModal,
                 )
             }
         }

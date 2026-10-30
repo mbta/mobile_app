@@ -50,6 +50,7 @@ final class SearchResultViewTests: XCTestCase {
 
         let hasAppeared = sut.on(\.didAppear) { _ in }
         ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
 
         wait(for: [hasAppeared], timeout: 1)
         wait(for: [setQueryExp], timeout: 1)
@@ -95,6 +96,7 @@ final class SearchResultViewTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         // On init, only the search field should be displayed
         XCTAssertNotNil(try sut.inspect().find(SearchField.self))
@@ -189,6 +191,7 @@ final class SearchResultViewTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([.searchRouteResults: true]))
+        defer { ViewHosting.expel() }
 
         XCTAssertNoThrow(try sut.inspect().find(text: "Haymarket"))
         XCTAssertNoThrow(try sut.inspect().find(text: "Routes"))
@@ -212,6 +215,7 @@ final class SearchResultViewTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([.searchRouteResults: true]))
+        defer { ViewHosting.expel() }
 
         XCTAssertNoThrow(try sut.inspect().find(text: "Routes"))
         XCTAssertNoThrow(try sut.inspect().find(text: "428"))

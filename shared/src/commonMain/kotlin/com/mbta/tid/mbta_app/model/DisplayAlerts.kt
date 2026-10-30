@@ -32,6 +32,8 @@ public data class DisplayAlerts(
          * The sorted result is split into two lists
          * - Here & Now
          * - Later & Downstream
+         *
+         * Track change alerts are filtered out because they have a different display treatment
          */
         public fun forAlertsAtStop(
             alertsHere: List<Alert>,
@@ -43,7 +45,10 @@ public data class DisplayAlerts(
             val allAlerts = alertsHere + alertsDownstream
             val (tier1, tier2) =
                 allAlerts
-                    .filter { includeElevatorAlerts || it.effect != Effect.ElevatorClosure }
+                    .filter {
+                        (includeElevatorAlerts || it.effect != Effect.ElevatorClosure) &&
+                            it.effect != Effect.TrackChange
+                    }
                     .sortedWith(
                         compareByDescending<Alert> { it.isActive(now) }
                             .thenByDescending { idsHere.contains(it.id) }

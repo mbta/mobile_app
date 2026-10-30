@@ -26,14 +26,10 @@ internal constructor(
 ) : BackendObject<String> {
     val position: Position = Position(latitude = latitude, longitude = longitude)
 
-    /**
-     * Commuter Rail core stations have realtime track numbers displayed and track change alerts
-     * hidden.
-     */
+    /** Commuter Rail core stations have realtime track numbers displayed. */
     val isCRCore: Boolean = this.id in crCoreStations || this.parentStationId in crCoreStations
 
-    val shouldShowTrackNumber: Boolean =
-        this.vehicleType == RouteType.COMMUTER_RAIL && this.isCRCore
+    val shouldShowTrackNumber: Boolean = this.vehicleType == RouteType.COMMUTER_RAIL
 
     val isWheelchairAccessible: Boolean =
         wheelchairBoarding == WheelchairBoardingStatus.ACCESSIBLE ||

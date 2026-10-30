@@ -7,7 +7,7 @@ public enum class Preset(public val startTime: LocalTime, public val endTime: Lo
     Morning(LocalTime(6, 0), LocalTime(10, 0)),
     Midday(LocalTime(10, 0), LocalTime(16, 0)),
     Evening(LocalTime(16, 0), LocalTime(20, 0)),
-    AllDay(LocalTime(0, 0), LocalTime(23, 59));
+    AllDay(LocalTime(3, 0), LocalTime(3, 0));
 
     public companion object {
 
@@ -16,10 +16,7 @@ public enum class Preset(public val startTime: LocalTime, public val endTime: Lo
                 val targetWindow: Window = windows[0]
                 val presetMatch =
                     Preset.entries.firstOrNull {
-                        it.startTime == targetWindow.startTime &&
-                            it.endTime == targetWindow.endTime &&
-                            (targetWindow.daysOfWeek == Window.weekend ||
-                                targetWindow.daysOfWeek == Window.weekdays)
+                        it.startTime == targetWindow.startTime && it.endTime == targetWindow.endTime
                     }
                 return presetMatch
             }

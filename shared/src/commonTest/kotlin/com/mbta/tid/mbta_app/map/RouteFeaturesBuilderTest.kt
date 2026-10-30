@@ -2,20 +2,30 @@ package com.mbta.tid.mbta_app.map
 
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertAssociatedStop
+import com.mbta.tid.mbta_app.model.Direction
+import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.Line
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Route
+import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.RoutePatternKey
 import com.mbta.tid.mbta_app.model.RouteSegment
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SegmentAlertState
 import com.mbta.tid.mbta_app.model.SegmentedRouteShape
+import com.mbta.tid.mbta_app.model.Shape
 import com.mbta.tid.mbta_app.model.StopAlertState
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.ShapeWithStops
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.GreenLineTestHelper
+import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.utils.isRoughlyEqualTo
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -375,6 +385,281 @@ class RouteFeaturesBuilderTest {
     }
 
     @Test
+    fun `commuter rail keeps shared stops normal only when another visible route serves them`() =
+        runBlocking {
+            val now = EasternTimeInstant.now()
+
+            fun alertStatesFor(routeType: RouteType, otherRouteVisible: Boolean): List<String?> =
+                runBlocking {
+                    val objects = MapTestDataHelper.objects.clone()
+                    val route = objects.route { type = routeType }
+                    val otherRoute = objects.route { type = routeType }
+                    val stops =
+                        listOf(
+                            MapTestDataHelper.stopAlewife,
+                            MapTestDataHelper.stopDavis,
+                            MapTestDataHelper.stopPorter,
+                            MapTestDataHelper.stopHarvard,
+                            MapTestDataHelper.stopCentral,
+                        )
+                    val alert = objects.alert {
+                        effect = Alert.Effect.Suspension
+                        stops.take(4).forEach {
+                            informedEntity(
+                                listOf(Alert.InformedEntity.Activity.Board),
+                                route = route.id.idText,
+                                routeType = routeType,
+                                stop = it.id,
+                            )
+                        }
+                    }
+                    val alertsByStop =
+                        stops.take(4).associate {
+                            it.id to
+                                AlertAssociatedStop(
+                                    stop = it,
+                                    relevantAlerts = listOf(alert),
+                                    stateByRoute = emptyMap(),
+                                    now = now,
+                                )
+                        }
+
+                    fun routeWithShape(
+                        routeId: Route.Id,
+                        stopIds: List<String>,
+                        otherPatternsByStopId: Map<String, List<RoutePatternKey>>,
+                    ) =
+                        MapFriendlyRouteResponse.RouteWithSegmentedShapes(
+                            routeId = routeId,
+                            segmentedShapes =
+                                listOf(
+                                    SegmentedRouteShape(
+                                        sourceRoutePatternId = "$routeId-pattern",
+                                        sourceRouteId = routeId,
+                                        directionId = 0,
+                                        routeSegments =
+                                            listOf(
+                                                RouteSegment(
+                                                    id = "$routeId-segment",
+                                                    sourceRoutePatternId = "$routeId-pattern",
+                                                    sourceRouteId = routeId,
+                                                    stopIds = stopIds,
+                                                    otherPatternsByStopId = otherPatternsByStopId,
+                                                )
+                                            ),
+                                        shape = MapTestDataHelper.shapeRedC1,
+                                    )
+                                ),
+                        )
+
+                    val otherPatterns =
+                        listOf(RoutePatternKey(otherRoute.id, "${otherRoute.id}-pattern"))
+                    val routeData =
+                        listOfNotNull(
+                            routeWithShape(
+                                route.id,
+                                stops.map { it.id },
+                                stops.take(3).associate { it.id to otherPatterns },
+                            ),
+                            if (otherRouteVisible)
+                                routeWithShape(
+                                    otherRoute.id,
+                                    stops.take(3).map { it.id },
+                                    emptyMap(),
+                                )
+                            else null,
+                        )
+
+                    RouteFeaturesBuilder.generateRouteSources(
+                            routeData = routeData,
+                            globalData = GlobalResponse(objects),
+                            alertsByStop = alertsByStop,
+                        )
+                        .single { it.routeId == route.id }
+                        .features
+                        .features
+                        .map { it.properties[RouteFeaturesBuilder.propAlertStateKey] }
+                }
+
+            assertEquals(
+                listOf(
+                    SegmentAlertState.Normal.name,
+                    SegmentAlertState.Suspension.name,
+                    SegmentAlertState.Normal.name,
+                ),
+                alertStatesFor(RouteType.COMMUTER_RAIL, otherRouteVisible = true),
+            )
+            assertEquals(
+                listOf(SegmentAlertState.Suspension.name, SegmentAlertState.Normal.name),
+                alertStatesFor(RouteType.COMMUTER_RAIL, otherRouteVisible = false),
+            )
+            assertEquals(
+                listOf(SegmentAlertState.Suspension.name, SegmentAlertState.Normal.name),
+                alertStatesFor(RouteType.HEAVY_RAIL, otherRouteVisible = true),
+            )
+        }
+
+    @Test
+    fun `platform stop IDs show the full disruption in both directions unless a visible route serves it`() =
+        runBlocking {
+            val objects = TestData.clone()
+            val route = objects.getRoute("CR-Providence")
+            val otherRoute = objects.route { type = RouteType.COMMUTER_RAIL }
+            val now = EasternTimeInstant.now()
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                activePeriod(now, null)
+                for (direction in listOf(0, 1)) {
+                    for (stop in listOf("place-sstat", "NEC-2287")) {
+                        informedEntity(
+                            listOf(
+                                if (direction == 0) Alert.InformedEntity.Activity.Board
+                                else Alert.InformedEntity.Activity.Exit,
+                                Alert.InformedEntity.Activity.Ride,
+                            ),
+                            route = route.id.idText,
+                            routeType = route.type,
+                            stop = stop,
+                            directionId = direction,
+                        )
+                    }
+                    for (stop in
+                        listOf(
+                            "place-bbsta",
+                            "NEC-2276",
+                            "NEC-2276-01",
+                            "NEC-2276-02",
+                            "NEC-2276-03",
+                        )) {
+                        informedEntity(
+                            listOf(
+                                if (direction == 1) Alert.InformedEntity.Activity.Board
+                                else Alert.InformedEntity.Activity.Exit,
+                                Alert.InformedEntity.Activity.Ride,
+                            ),
+                            route = route.id.idText,
+                            routeType = route.type,
+                            stop = stop,
+                            directionId = direction,
+                        )
+                    }
+                }
+            }
+            val global = GlobalResponse(objects)
+            val globalMapData = GlobalMapData(global, AlertsStreamDataResponse(objects), now)
+            val shape = Shape("9890004", MapTestDataHelper.shapeRedC1.polyline!!)
+
+            for (direction in listOf(0, 1)) {
+                val platformStopIds =
+                    if (direction == 0)
+                        listOf(
+                            "NEC-2287",
+                            "NEC-2276-01",
+                            "NEC-2265-01",
+                            "NEC-2173-01",
+                            "SB-0150-04",
+                            "SB-0156-S",
+                            "SB-0189-S",
+                        )
+                    else
+                        listOf(
+                            "SB-0189-S",
+                            "SB-0156-S",
+                            "SB-0150-06",
+                            "NEC-2173-02",
+                            "NEC-2265-02",
+                            "NEC-2276-02",
+                            "NEC-2287",
+                        )
+                val patternId =
+                    if (direction == 0) "CR-Providence-9515a09b-0" else "CR-Providence-6cae46be-1"
+                val sharedPattern = RoutePatternKey(otherRoute.id, "other-pattern")
+                val segment =
+                    RouteSegment(
+                        id = "segment",
+                        sourceRoutePatternId = patternId,
+                        sourceRouteId = route.id,
+                        stopIds = platformStopIds,
+                        otherPatternsByStopId =
+                            mapOf(
+                                "NEC-2287" to listOf(sharedPattern),
+                                "NEC-2276-01" to listOf(sharedPattern),
+                                "NEC-2276-02" to listOf(sharedPattern),
+                                "place-bbsta" to
+                                    listOf(RoutePatternKey(route.id, "alternate-pattern")),
+                            ),
+                    )
+                val routeShape =
+                    SegmentedRouteShape(patternId, route.id, direction, listOf(segment), shape)
+                for (otherRouteVisible in listOf(false, true)) {
+                    val routeData =
+                        listOfNotNull(
+                            MapFriendlyRouteResponse.RouteWithSegmentedShapes(
+                                route.id,
+                                listOf(routeShape),
+                            ),
+                            if (otherRouteVisible)
+                                MapFriendlyRouteResponse.RouteWithSegmentedShapes(
+                                    otherRoute.id,
+                                    listOf(
+                                        routeShape.copy(
+                                            sourceRouteId = otherRoute.id,
+                                            routeSegments =
+                                                listOf(
+                                                    segment.copy(
+                                                        sourceRouteId = otherRoute.id,
+                                                        stopIds =
+                                                            listOf("place-sstat", "place-bbsta"),
+                                                        otherPatternsByStopId = emptyMap(),
+                                                    )
+                                                ),
+                                        )
+                                    ),
+                                )
+                            else null,
+                        )
+                    val source =
+                        RouteFeaturesBuilder.generateRouteSources(routeData, global, globalMapData)
+                            .single { it.routeId == route.id }
+                    val suspendedLines =
+                        source.lines.filter { it.alertState == SegmentAlertState.Suspension }
+
+                    if (otherRouteVisible) {
+                        assertTrue(suspendedLines.isEmpty())
+                    } else {
+                        val suspended = suspendedLines.single()
+                        val expectedStops =
+                            if (direction == 0) listOf("place-sstat", "place-bbsta")
+                            else listOf("place-bbsta", "place-sstat")
+                        assertEquals(expectedStops, suspended.stopIds)
+                        assertEquals(
+                            LineString(Polyline.decode(shape.polyline!!))
+                                .slice(
+                                    global.stops.getValue(expectedStops.first()).position,
+                                    global.stops.getValue(expectedStops.last()).position,
+                                ),
+                            suspended.line,
+                        )
+                    }
+                    assertEquals(
+                        StopAlertState.Suspension,
+                        globalMapData.mapStops
+                            .getValue("place-sstat")
+                            .alerts
+                            ?.get(MapStopRoute.COMMUTER),
+                    )
+                    assertEquals(
+                        StopAlertState.Suspension,
+                        globalMapData.mapStops
+                            .getValue("place-bbsta")
+                            .alerts
+                            ?.get(MapStopRoute.COMMUTER),
+                    )
+                }
+            }
+        }
+
+    @Test
     fun `transforms shapes with stops`() {
         val shapeWithStops =
             ShapeWithStops(
@@ -459,5 +744,110 @@ class RouteFeaturesBuilderTest {
             )
         assertEquals(glFilteredShapes.count(), 3)
         assertEquals(glFilteredShapes.get(0).segmentedShapes.count(), 1)
+    }
+
+    @Test
+    fun `filter keeps typical shapes if no upcoming trips`() {
+        val basicMapResponse =
+            StopMapResponse(
+                routeShapes = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
+                childStops = emptyMap(),
+            )
+        val filteredShapes =
+            RouteFeaturesBuilder.filteredRouteShapesForStop(
+                basicMapResponse,
+                StopDetailsFilter(
+                    MapTestDataHelper.routeRed.id,
+                    MapTestDataHelper.patternRed10.directionId,
+                ),
+                listOf(
+                    RouteCardData(
+                        LineOrRoute.Route(MapTestDataHelper.routeRed),
+                        listOf(
+                            RouteCardData.RouteStopData(
+                                MapTestDataHelper.routeRed,
+                                MapTestDataHelper.stopAlewife,
+                                listOf(
+                                    RouteCardData.Leaf(
+                                        LineOrRoute.Route(MapTestDataHelper.routeRed),
+                                        MapTestDataHelper.stopAlewife,
+                                        Direction(
+                                            MapTestDataHelper.patternRed10.directionId,
+                                            MapTestDataHelper.routeRed,
+                                        ),
+                                        listOf(
+                                            MapTestDataHelper.patternRed10,
+                                            MapTestDataHelper.patternRed30,
+                                        ),
+                                        setOf(MapTestDataHelper.stopAlewife.id),
+                                        emptyList(),
+                                        emptyList(),
+                                        true,
+                                        true,
+                                        null,
+                                        emptyList(),
+                                        RouteCardData.Context.StopDetailsFiltered,
+                                    )
+                                ),
+                            )
+                        ),
+                        EasternTimeInstant.now(),
+                    )
+                ),
+            )
+        assertEquals(filteredShapes.count(), 1)
+
+        val glLineOrRoute =
+            LineOrRoute.Line(
+                GreenLineTestHelper.line,
+                setOf(
+                    GreenLineTestHelper.routeB,
+                    GreenLineTestHelper.routeC,
+                    GreenLineTestHelper.objects.getRoute("Green-D"),
+                    GreenLineTestHelper.routeE,
+                ),
+            )
+        val glFilteredShapes =
+            RouteFeaturesBuilder.filteredRouteShapesForStop(
+                GreenLineTestHelper.stopMapResponse,
+                StopDetailsFilter(Line.Id("line-Green"), 0),
+                listOf(
+                    RouteCardData(
+                        glLineOrRoute,
+                        listOf(
+                            RouteCardData.RouteStopData(
+                                glLineOrRoute,
+                                GreenLineTestHelper.stopArlington,
+                                listOf(
+                                    RouteCardData.Leaf(
+                                        glLineOrRoute,
+                                        GreenLineTestHelper.stopArlington,
+                                        Direction(
+                                            GreenLineTestHelper.rpB0.directionId,
+                                            GreenLineTestHelper.routeB,
+                                        ),
+                                        listOf(
+                                            GreenLineTestHelper.rpB0,
+                                            GreenLineTestHelper.rpC0,
+                                            GreenLineTestHelper.rpE0,
+                                        ),
+                                        setOf(GreenLineTestHelper.stopArlington.id),
+                                        emptyList(),
+                                        emptyList(),
+                                        true,
+                                        true,
+                                        null,
+                                        emptyList(),
+                                        RouteCardData.Context.StopDetailsFiltered,
+                                    )
+                                ),
+                            )
+                        ),
+                        EasternTimeInstant.now(),
+                    )
+                ),
+            )
+        assertEquals(glFilteredShapes.count(), 3)
+        assertEquals(glFilteredShapes[0].segmentedShapes.count(), 1)
     }
 }

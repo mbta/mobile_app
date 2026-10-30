@@ -60,6 +60,7 @@ class RouteStopsViewModel(
         private val routeStopsRepository: IRouteStopsRepository,
         private val errorBannerRepository: IErrorBannerStateRepository,
     ) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return RouteStopsViewModel(routeStopsRepository, errorBannerRepository) as T
         }

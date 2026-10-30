@@ -83,7 +83,12 @@ struct EditFavoritesPage: View {
                     title: NSLocalizedString("Edit Favorites", comment: "Title for flow to edit favorites"),
                     buttonColor: Color.key,
                     buttonTextColor: Color.fill3,
-                    navCallbacks: navCallbacks,
+                    // back redundant to close
+                    navCallbacks: NavigationCallbacks(
+                        onBack: nil,
+                        onClose: navCallbacks.onClose,
+                        backButtonPresentation: navCallbacks.backButtonPresentation
+                    ),
                     closeText: NSLocalizedString("Done", comment: "Button text for closing flow")
                 )
                 EditFavoritesList(
@@ -136,7 +141,8 @@ struct EditFavoritesList: View {
                 LazyVStack(alignment: .center, spacing: 14) {
                     ForEach(stopCardData, id: \.stop.id) { cardData in
                         StopCardContainer(
-                            cardData: cardData
+                            cardData: cardData,
+                            globalData: global,
                         ) { stopData in
                             FavoriteDepartures(
                                 favorites: favorites,

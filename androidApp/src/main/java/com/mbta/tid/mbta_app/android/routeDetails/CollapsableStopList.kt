@@ -33,6 +33,7 @@ import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 
 @Composable
 fun CollapsableStopList(
@@ -40,6 +41,7 @@ fun CollapsableStopList(
     stopListContext: StopListContext,
     segment: RouteDetailsStopList.Segment,
     onClick: (RouteDetailsStopList.Entry) -> Unit,
+    globalData: GlobalResponse?,
     onClickLabel: @Composable (RouteDetailsStopList.Entry) -> String? = { null },
     isFirstSegment: Boolean = false,
     isLastSegment: Boolean = false,
@@ -58,6 +60,7 @@ fun CollapsableStopList(
             onClick = { onClick(stop) },
             routeAccents = routeAccents,
             stopListContext = stopListContext,
+            globalData = globalData,
             modifier =
                 Modifier.minimumInteractiveComponentSize().background(colorResource(R.color.fill1)),
             connectingRoutes = stop.connectingRoutes,
@@ -121,6 +124,7 @@ fun CollapsableStopList(
                         onClick = { onClick(stop) },
                         routeAccents = routeAccents,
                         stopListContext = stopListContext,
+                        globalData = globalData,
                         modifier =
                             Modifier.minimumInteractiveComponentSize()
                                 .background(colorResource(R.color.fill1)),

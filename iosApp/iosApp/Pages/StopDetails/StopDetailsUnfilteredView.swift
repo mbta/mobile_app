@@ -28,7 +28,6 @@ struct StopDetailsUnfilteredView: View {
     @ObservedObject var navManager: NavigationManager
 
     @EnvironmentObject var settingsCache: SettingsCache
-    var stationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
 
     var analytics: Analytics = AnalyticsProvider.shared
     let inspection = Inspection<Self>()
@@ -57,6 +56,10 @@ struct StopDetailsUnfilteredView: View {
 
     var stop: Stop? {
         global?.getStop(stopId: stopId)
+    }
+
+    var stationAccessibility: Bool {
+        settingsCache.get(.stationAccessibility) && !global.isStopBlocklisted(stop?.parentStationId ?? stopId)
     }
 
     var routeCardData: [RouteCardData]? {
@@ -89,7 +92,7 @@ struct StopDetailsUnfilteredView: View {
                 VStack(spacing: 0) {
                     SheetHeader(
                         title: stop?.name ?? "Invalid Stop",
-                        buttonColor: .text.opacity(0.6),
+                        buttonColor: .deemphasized,
                         buttonTextColor: .fill2,
                         navCallbacks: navCallbacks,
                     ).padding(.bottom, hasPillFilters ? 4 : 16)

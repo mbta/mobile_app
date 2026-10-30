@@ -18,12 +18,18 @@ struct FcmSubscriptionModifier: ViewModifier {
     @State var subscriptionsRepository: ISubscriptionsRepository = RepositoryDI().subscriptions
 
     @State var favorites: Favorites = LoadedFavorites.last
+    @State var globalData: GlobalResponse?
 
     func updateSubscriptions(_ fcmToken: String?, _ notificationsEnabled: Bool) {
         if let fcmToken {
             Task {
+                let validFavorites = if let globalData {
+                    FavoriteValidityKt.filterValidFavorites(favorites.routeStopDirection, global: globalData)
+                } else {
+                    favorites.routeStopDirection
+                }
                 let subscriptions = SubscriptionRequest.companion.fromFavorites(
-                    favorites: favorites.routeStopDirection,
+                    favorites: validFavorites,
                     includeAccessibility: includeAccessibility
                 )
                 try await subscriptionsRepository.updateSubscriptions(
@@ -39,9 +45,11 @@ struct FcmSubscriptionModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .favorites($favorites)
+            .global($globalData, errorKey: ErrorKey(sheets: [], id: "FcmSubscriptionModifier"))
             .onAppear { updateSubscriptions(fcmToken, notificationsEnabled) }
             .onChange(of: fcmToken) { newToken in updateSubscriptions(newToken, notificationsEnabled) }
             .onChange(of: notificationsEnabled) { newNotifications in updateSubscriptions(fcmToken, newNotifications) }
+            .onChange(of: globalData) { _ in updateSubscriptions(fcmToken, notificationsEnabled) }
             .enableInjection()
     }
 }

@@ -79,6 +79,10 @@ public object RouteFeaturesBuilder {
         coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
     ): List<RouteSourceData> =
         withContext(coroutineDispatcher) {
+            val visibleRouteIds =
+                routeData
+                    .flatMap { it.segmentedShapes.map { shape -> shape.sourceRouteId } }
+                    .toSet()
             routeData.mapNotNull {
                 // We can't use getLineOrRoute for Route.Ids, because for the Green Line that will
                 // fetch the Line object even when a Route.Id is passed in
@@ -94,6 +98,7 @@ public object RouteFeaturesBuilder {
                         routeShapes = it.segmentedShapes,
                         stopsById = globalData.stops,
                         alertsByStop,
+                        visibleRouteIds,
                     )
                 }
             }
@@ -104,8 +109,10 @@ public object RouteFeaturesBuilder {
         routeShapes: List<SegmentedRouteShape>,
         stopsById: Map<String, Stop>,
         alertsByStop: Map<String, AlertAssociatedStop>,
+        visibleRouteIds: Set<Route.Id>,
     ): RouteSourceData {
-        val routeLines = generateRouteLines(route.type, routeShapes, stopsById, alertsByStop)
+        val routeLines =
+            generateRouteLines(route.type, routeShapes, stopsById, alertsByStop, visibleRouteIds)
         val routeFeatures = routeLines.map { lineData ->
             Feature(
                 geometry = lineData.line,
@@ -161,17 +168,25 @@ public object RouteFeaturesBuilder {
         routeShapes: List<SegmentedRouteShape>,
         stopsById: Map<String, Stop>,
         alertsByStop: Map<String, AlertAssociatedStop>,
+        visibleRouteIds: Set<Route.Id>,
     ): List<RouteLineData> {
         return routeShapes.flatMap { routePatternShape ->
-            routeShapeToLineData(routePatternShape, routeType, stopsById, alertsByStop)
+            routeShapeToLineData(
+                routePatternShape,
+                routeType,
+                stopsById,
+                alertsByStop,
+                visibleRouteIds,
+            )
         }
     }
 
     private fun routeShapeToLineData(
         routePatternShape: SegmentedRouteShape,
         routeType: RouteType,
-        stopsById: Map<String, Stop>?,
+        stopsById: Map<String, Stop>,
         alertsByStop: Map<String, AlertAssociatedStop>?,
+        visibleRouteIds: Set<Route.Id>,
     ): List<RouteLineData> {
         val polyline = routePatternShape.shape.polyline ?: return emptyList()
         val coordinates = Polyline.decode(polyline)
@@ -179,7 +194,22 @@ public object RouteFeaturesBuilder {
         val fullLineString = LineString(coordinates)
         val alertAwareSegments =
             routePatternShape.routeSegments.flatMap { segment ->
-                segment.splitAlertingSegments(alertsByStop = alertsByStop ?: emptyMap())
+                val parentResolvedSegment =
+                    segment.copy(
+                        stopIds = segment.stopIds.map { stopsById.resolveParentId(it) },
+                        otherPatternsByStopId =
+                            segment.otherPatternsByStopId.entries
+                                .groupBy(
+                                    { stopsById.resolveParentId(it.key) },
+                                    { it.value },
+                                )
+                                .mapValues { (_, patterns) -> patterns.flatten().distinct() },
+                    )
+                parentResolvedSegment.splitAlertingSegments(
+                    alertsByStop = alertsByStop ?: emptyMap(),
+                    requireAllRoutesDisrupted = !routeType.isSubway(),
+                    visibleRouteIds = visibleRouteIds,
+                )
             }
         return alertAwareSegments.mapNotNull { segment ->
             routeSegmentToRouteLineData(
@@ -286,11 +316,26 @@ public object RouteFeaturesBuilder {
                         .flatMap { it.upcomingTrips }
                         .map { it.trip.routePatternId }
                         .toSet()
+                        .ifEmpty {
+                            val allRoutePatterns =
+                                routeCardData
+                                    .flatMap { it.stopData }
+                                    .flatMap { it.data }
+                                    .flatMap { it.routePatterns }
+                                    .toSet()
+                            val bestTypicality =
+                                allRoutePatterns.minOfWithOrNull(nullsLast()) { it.typicality }
+                            allRoutePatterns
+                                .filter { it.typicality == bestTypicality }
+                                .map { it.id }
+                                .toSet()
+                                .ifEmpty { null }
+                        }
                 targetRouteData.map { routeData ->
                     val filteredShapes =
                         routeData.segmentedShapes.filter {
                             it.directionId == filter.directionId &&
-                                targetRoutePatternIds.contains(it.sourceRoutePatternId)
+                                (targetRoutePatternIds?.contains(it.sourceRoutePatternId) ?: true)
                         }
                     MapFriendlyRouteResponse.RouteWithSegmentedShapes(
                         routeData.routeId,

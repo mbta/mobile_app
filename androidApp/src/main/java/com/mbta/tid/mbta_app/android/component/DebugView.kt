@@ -52,6 +52,7 @@ import org.koin.compose.koinInject
 fun DebugView(
     modifier: Modifier = Modifier,
     debugRepository: IDebugRepository = koinInject(),
+    withSocketInfo: Boolean = true,
     content: @Composable ColumnScope.() -> Unit,
     details: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
@@ -92,22 +93,24 @@ fun DebugView(
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
             ProvideTextStyle(Typography.footnote.copy(color = textColor)) {
                 content()
-                debugState?.channelUpdates?.let {
-                    Text("channel connections:")
-                    it.entries
-                        .sortedBy { it.key }
-                        .forEach { (key, value) ->
-                            val trimmedKey =
-                                if (key.length > 25) "${key.substring(0, 25)}..." else key
-                            val duration =
-                                (now - value)
-                                    .absoluteValue
-                                    .toString(DurationUnit.SECONDS, decimals = 0)
-                            Text("$trimmedKey last updated $duration ago")
-                        }
-                }
+                if (withSocketInfo) {
+                    debugState?.channelUpdates?.let {
+                        Text("channel connections:")
+                        it.entries
+                            .sortedBy { it.key }
+                            .forEach { (key, value) ->
+                                val trimmedKey =
+                                    if (key.length > 25) "${key.substring(0, 25)}..." else key
+                                val duration =
+                                    (now - value)
+                                        .absoluteValue
+                                        .toString(DurationUnit.SECONDS, decimals = 0)
+                                Text("$trimmedKey last updated $duration ago")
+                            }
+                    }
 
-                Text("socket connected: ${debugState?.socketConnected}")
+                    Text("socket connected: ${debugState?.socketConnected}")
+                }
             }
         }
         details?.let {

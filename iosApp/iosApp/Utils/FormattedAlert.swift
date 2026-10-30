@@ -35,7 +35,7 @@ struct FormattedAlert: Equatable {
                 accessibilityLabel: NSLocalizedString("Shuttle buses replace service",
                                                       comment: "Shuttle alert VoiceOver text")
             )
-        case .stationClosure: .init(text: NSLocalizedString("Station Closed", comment: "Possible alert effect"))
+        case .stationClosure: .init(text: NSLocalizedString("Stop skipped", comment: "Possible alert effect"))
         case .stopClosure: .init(text: NSLocalizedString("Stop Closed", comment: "Possible alert effect"))
         case .suspension: .init(
                 text: NSLocalizedString("Suspension", comment: "Possible alert effect"),
@@ -93,7 +93,7 @@ struct FormattedAlert: Equatable {
     var elevatorHeader: AttributedString {
         let facilities = alert.informedEntity.compactMap { entity in
             if let facilityId = entity.facility { alert.facilities?[facilityId] } else { nil }
-        }.filter { $0.type == .elevator }
+        }.filter { (facility: Facility) in facility.type == .elevator }
         let headerString =
             if let facility = Set(facilities).count == 1 ? facilities.first : nil,
             let facilityName = facility.shortName {

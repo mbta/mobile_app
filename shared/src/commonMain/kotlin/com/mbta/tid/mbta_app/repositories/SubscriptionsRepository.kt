@@ -39,7 +39,6 @@ internal class SubscriptionsRepository : ISubscriptionsRepository, KoinComponent
         locale: String?,
         notificationsEnabled: Boolean,
     ) {
-        val subscriptions = if (notificationsEnabled) subscriptions else emptyList()
         val requestBody = WriteSubscriptionsRequest(fcmToken, subscriptions, locale)
         ApiResult.runCatching {
             mobileBackendClient

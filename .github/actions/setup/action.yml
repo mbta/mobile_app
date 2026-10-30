@@ -16,6 +16,18 @@ inputs:
 runs:
   using: composite
   steps:
+    # TODO: Remove once https://github.com/actions/runner-images/issues/15018 is resolved
+    - name: Upgrade CA certificates
+      shell: bash
+      run: |
+        if [ "$(uname)" = "Darwin" ]; then
+          # https://support.apple.com/en-us/149555
+          [ -e /etc/ssl/cert.pem.orig ] || sudo cp -p /etc/ssl/cert.pem /etc/ssl/cert.pem.orig
+          t=$(mktemp) && awk -v s='=== /C=IN/OU=emSign PKI/O=eMudhra Technologies Limited/CN=emSign ECC Root CA - G3' '/^(===|###) /{skip=0} $0==s{skip=1} !skip' /etc/ssl/cert.pem > "$t" && [ -s "$t" ] && sudo install -m 0644 -o root -g wheel "$t" /etc/ssl/cert.pem; rm -f "$t"
+          t=$(mktemp) && awk -v s='=== /C=GB/ST=Greater Manchester/L=Salford/O=Comodo CA Limited/CN=AAA Certificate Services' '/^(===|###) /{skip=0} $0==s{skip=1} !skip' /etc/ssl/cert.pem > "$t" && [ -s "$t" ] && sudo install -m 0644 -o root -g wheel "$t" /etc/ssl/cert.pem; rm -f "$t"
+        else
+          sudo apt-get update && sudo apt-get install -y --only-upgrade ca-certificates
+        fi
     - name: Determine required tools
       id: settings
       shell: bash
@@ -93,7 +105,7 @@ runs:
         aws-region: us-east-1
     - name: Fetch AWS secrets for Android
       if: steps.settings.outputs.aws-secrets-android == 'true' && inputs.aws-role != ''
-      uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3.0.1
+      uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88 # v3.0.2
       with:
         secret-ids: |
           mobile-app-android-upload-key-passphrase
@@ -118,14 +130,14 @@ runs:
         aws-region: us-east-1
     - name: Set up Ruby
       if: steps.settings.outputs.ruby == 'true'
-      uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
+      uses: ruby/setup-ruby@26e5b7d197ebf60545ee9667bcbace0be11ccaec # v1.334.0
       with:
         bundler-cache: true
     - name: Configure Xcode version
       if: steps.settings.outputs.xcode == 'true'
       shell: bash
       run: |
-        sudo xcode-select --switch /Applications/Xcode_26.2.app/Contents/Developer
+        sudo xcode-select --switch /Applications/Xcode_27.0.app/Contents/Developer
     - name: Generate Xcode project
       if: steps.settings.outputs.xcode == 'true'
       shell: bash
@@ -136,17 +148,9 @@ runs:
         curl --location --output xcodegen.zip https://github.com/yonaskolb/XcodeGen/releases/download/${VERSION}/xcodegen.zip
         unzip -q xcodegen.zip
         popd
-        ./gradlew :shared:generateDummyFramework
         cd iosApp
         ${OUT}/xcodegen/bin/xcodegen generate
         rm -r ${OUT}
-    - name: Cache CocoaPods dependencies
-      if: steps.settings.outputs.xcode == 'true'
-      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-      with:
-        path: iosApp/Pods
-        key: cocoapods-${{ hashFiles('iosApp/Podfile.lock') }}
-        restore-keys: cocoapods-
     - name: Install SwiftLint and xcbeautify
       if: steps.settings.outputs.xcode == 'true'
       shell: bash

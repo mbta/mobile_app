@@ -50,6 +50,7 @@
     <string name="bike_issue_sentence_case">Bike issue</string>
     <string name="boarding_abbr">BRD</string>
     <string name="boarding_track">Boarding on track %1$s</string>
+    <string name="boarding_track_tbd">Track to be determined</string>
     <string name="bus">Bus</string>
     <string name="bus_cancelled">Bus cancelled</string>
     <string name="bus_label">%1$s bus</string>
@@ -59,6 +60,7 @@
     <string name="cancel">Cancel</string>
     <string name="cancellation">Cancellation</string>
     <string name="cancelled">Cancelled</string>
+    <string name="clockwise">Clockwise</string>
     <string name="close_button_label">Close</string>
     <string name="coast_guard_restriction">Coast Guard Restriction</string>
     <string name="coast_guard_restriction_lowercase">Coast Guard restriction</string>
@@ -70,6 +72,7 @@
     <string name="connections_to_and">Connections to %1$s and %2$s</string>
     <string name="construction">Construction</string>
     <string name="construction_lowercase">construction</string>
+    <string name="counterclockwise">Counterclockwise</string>
     <string name="crossing_issue">Crossing Issue</string>
     <string name="crossing_issue_lowercase">crossing issue</string>
     <string name="crossing_malfunction">Crossing Malfunction</string>
@@ -87,6 +90,7 @@
     <string name="delays_due_to_cause">&lt;b&gt;Delays&lt;/b&gt; due to %1$s</string>
     <string name="delays_unknown_reason">&lt;b&gt;Delays&lt;/b&gt;</string>
     <string name="delete">Delete</string>
+    <string name="delete_time_period">Delete time period</string>
     <string name="demonstration">Demonstration</string>
     <string name="demonstration_lowercase">demonstration</string>
     <string name="departure_tile_on_click_label">display more information about this trip</string>
@@ -114,6 +118,7 @@
     <string name="drawbridge_issue_lowercase">drawbridge issue</string>
     <string name="eastbound">Eastbound</string>
     <string name="edit">Edit</string>
+    <string name="edit_favorite">edit favorite</string>
     <string name="edit_favorite_title">Edit Favorite</string>
     <string name="edit_favorites">Edit Favorites</string>
     <string name="effect" translatable="false">&lt;b&gt;%1$s&lt;/b&gt;</string>
@@ -199,8 +204,6 @@
     <string name="holiday">Holiday</string>
     <string name="holiday_lowercase">holiday</string>
     <string name="hr_min_abbr">&lt;b&gt;%1$d&lt;/b&gt; hr &lt;b&gt;%2$d&lt;/b&gt; min</string>
-    <string name="hurricane">Hurricane</string>
-    <string name="hurricane_lowercase">hurricane</string>
     <string name="ice_in_harbor">Ice In Harbor</string>
     <string name="ice_in_harbor_lowercase">ice in harbor</string>
     <string name="inbound">Inbound</string>
@@ -219,6 +222,7 @@
     <string name="location_settings_prompt_keep_off">Keep Location Services Off</string>
     <string name="location_settings_prompt_title">MBTA Go works best with Location Services turned on</string>
     <string name="location_settings_prompt_turn_on">Turn On in Settings</string>
+    <string name="looping">Looping</string>
     <string name="maintenance">Maintenance</string>
     <string name="maintenance_lowercase">maintenance</string>
     <string name="mechanical_issue">Mechanical Issue</string>
@@ -248,6 +252,7 @@
     <string name="nearby_transit">Nearby Transit</string>
     <string name="nearby_transit_link">Nearby</string>
     <string name="new_feature_screen_reader_header_prefix">New feature. %1$s</string>
+    <string name="next_day">next day</string>
     <string name="next_stop">Next stop</string>
     <string name="next_trip_at">Next trip at &lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="next_trip_at_tomorrow">Next trip at &lt;b&gt;%1$s&lt;/b&gt; tomorrow</string>
@@ -268,6 +273,7 @@
     <string name="not_accessible_stop_card">This stop is not accessible</string>
     <string name="notice">Notice</string>
     <string name="notifications_beta_toggle_label">Disruption Notifications</string>
+    <string name="notification_settings_empty_state">We can send you push notifications about problems on this route before you go</string>
     <string name="notifications_enabled">notifications enabled</string>
     <string name="notifications_favorites_hint">Now &lt;u>edit your favorites&lt;/u> to get disruption notifications</string>
     <string name="notifications_settings_link">Allow Notifications in Settings</string>
@@ -298,8 +304,6 @@
     <string name="parking_closure">Parking Closure</string>
     <string name="parking_issue">Parking Issue</string>
     <string name="parking_issue_sentence_case">Parking issue</string>
-    <string name="police_action">Police Action</string>
-    <string name="police_action_lowercase">police action</string>
     <string name="police_activity">Police Activity</string>
     <string name="police_activity_lowercase">police activity</string>
     <string name="policy_change">Policy Change</string>
@@ -308,10 +312,12 @@
     <string name="power_problem_lowercase">power problem</string>
     <string name="predictions_unavailable_details">Service is running, but predicted arrival times aren’t available. Check the map to see where %1$s are right now.</string>
     <string name="predictions_unavailable_details_hide_maps">Service is running, but predicted arrival times aren’t available.</string>
+    <string name="presence_of_whales">Presence of Whales</string>
+    <string name="presence_of_whales_lowercase">presence of whales</string>
     <string name="promo_favorites_body">Now save your frequently used stops to &lt;b&gt;one easy place&lt;/b&gt;.</string>
     <string name="promo_favorites_header">Add your favorites</string>
     <string name="promo_notifications_body">We’ll tell you about any problems before you go!</string>
-    <string name="promo_notifications_header">Now get disruption notifications</string>
+    <string name="promo_notifications_header">Get disruption notifications</string>
     <string name="promo_notifications_step1">Add a Favorite stop</string>
     <string name="promo_notifications_step2">Set your own schedule</string>
     <string name="rail_defect">Rail Defect</string>
@@ -331,6 +337,8 @@
     <string name="resources_link_mticket_note">mTicket App</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="results_failed_to_load">Results failed to load ☹️</string>
+    <string name="rough_seas">Rough Seas</string>
+    <string name="rough_seas_lowercase">rough seas</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_mode_label">%1$s %2$s</string>
     <string name="routes">Routes</string>
@@ -348,6 +356,8 @@
     <string name="serves_route_list">serves %1$s</string>
     <string name="service_change">Service Change</string>
     <string name="service_change_sentence_case">Service change</string>
+    <string name="service_day_start">start of service</string>
+    <string name="service_day_end">end of service</string>
     <string name="service_ended">Service ended</string>
     <string name="service_suspended">Service suspended</string>
     <string name="setting_station_accessibility">Station Accessibility Info</string>
@@ -382,6 +392,8 @@
     <string name="star_route_hint">pin route to the top of the list</string>
     <string name="start">Start</string>
     <string name="start_of_service">start of service</string>
+    <string name="start_to_end_of_service">start to end of service</string>
+    <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">Starting tomorrow until further notice</string>
     <string name="station_closed">Station Closed</string>
     <string name="station_closed_sentence_case">Station closed</string>
@@ -427,6 +439,7 @@
     <string name="track_change">Track Change</string>
     <string name="track_change_sentence_case">Track change</string>
     <string name="track_number">Track %1$s</string>
+    <string name="track_tbd">Track TBD</string>
     <string name="track_problem">Track Problem</string>
     <string name="track_problem_lowercase">track problem</string>
     <string name="track_work">Track Work</string>
@@ -458,6 +471,8 @@
         <item quantity="one">Updated %1$d minute ago</item>
         <item quantity="other">Updated %1$d minutes ago</item>
     </plurals>
+    <string name="utility_work">Utility Work</string>
+    <string name="utility_work_lowercase">utility work</string>
     <string name="vehicle_arriving_first">%1$s arriving now</string>
     <string name="vehicle_arriving_other">and arriving now</string>
     <string name="vehicle_boarding_first">%1$s boarding now</string>
@@ -491,6 +506,10 @@
     <string name="vehicle_shuttled_other">and at %1$s replaced by shuttle bus</string>
     <string name="vehicle_skipped_first">%1$s arriving at %2$s skipped</string>
     <string name="vehicle_skipped_other">and at %1$s skipped</string>
+    <string name="vessel_substitution">Vessel Substitution</string>
+    <string name="vessel_substitution_lowercase">vessel substitution</string>
+    <string name="vessel_traffic">Vessel Traffic</string>
+    <string name="vessel_traffic_lowercase">vessel traffic</string>
     <string name="view_details">View details</string>
     <string name="waiting_to_depart">Waiting to depart</string>
     <string name="weather">Weather</string>
@@ -498,5 +517,6 @@
     <string name="weekdays">Weekdays</string>
     <string name="weekends">Weekends</string>
     <string name="westbound">Westbound</string>
+    <string name="when_do_you_want_notifications">When do you want notifications?</string>
     <string name="x_and_y">%1$s and %2$s</string>
 </resources>

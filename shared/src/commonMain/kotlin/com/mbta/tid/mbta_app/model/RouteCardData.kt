@@ -6,9 +6,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
-import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
 import kotlin.jvm.JvmName
 import kotlin.math.max
 import kotlinx.coroutines.CoroutineDispatcher
@@ -667,7 +665,6 @@ public data class RouteCardData(
             sortByDistanceFrom: Position? = null,
             favorites: Set<RouteStopDirection>? = null,
             coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
-            sentryRepository: ISentryRepository,
         ): List<RouteCardData>? =
             withContext(coroutineDispatcher) {
                 // if global data was still loading, there'd be no nearby data, and null handling is
@@ -685,33 +682,6 @@ public data class RouteCardData(
                     )
                     .build(sortByDistanceFrom)
                     .sort(sortByDistanceFrom, context)
-                    .map {
-                        // Send a Sentry message if data is empty for a route
-                        val emptyStops = it.stopData.filter { stop -> stop.data.isEmpty() }
-                        if (it.stopData.isEmpty() || emptyStops.isNotEmpty()) {
-                            val route = it.id.idText
-                            sentryRepository.captureMessage("Empty static RouteCardData") {
-                                addBreadcrumb(
-                                    Breadcrumb(
-                                        message =
-                                            if (emptyStops.isEmpty()) "No stops for $route"
-                                            else
-                                                "${emptyStops.size} stop(s) missing leaves for $route",
-                                        data =
-                                            mutableMapOf(
-                                                "route" to route,
-                                                "emptyStops" to
-                                                    emptyStops.map { stop ->
-                                                        mapOf("stop" to stop.id)
-                                                    },
-                                            ),
-                                    )
-                                )
-                            }
-                        }
-
-                        return@map it
-                    }
             }
 
         internal fun filterStopsByPatterns(
@@ -845,13 +815,13 @@ public data class RouteCardData(
 
             val upcomingTrips =
                 UpcomingTrip.tripsFromData(
-                    globalData.stops,
+                    alerts.alerts,
                     schedules?.schedules.orEmpty(),
                     predictions.predictions.values.toList(),
                     schedules?.trips.orEmpty() + predictions.trips,
                     predictions.vehicles,
                     filterAtTime,
-                    alerts.alerts,
+                    globalData,
                 )
 
             val upcomingTripsBySlot = mutableMapOf<HierarchyPath, MutableList<UpcomingTrip>>()
@@ -947,17 +917,15 @@ public data class RouteCardData(
                     val routeType: RouteType =
                         routes.firstOrNull()?.let { globalData.getRoute(it)?.type }
                             ?: return@forEachLeaf
-                    val isCRCore = globalData.getStop(path.stopId)?.isCRCore ?: false
                     val applicableAlerts =
                         Alert.applicableAlerts(
-                                activeRelevantAlerts,
-                                path.directionId,
-                                routes,
-                                routeType,
-                                leafBuilder.stopIds,
-                                null,
-                            )
-                            .discardTrackChangesAtCRCore(isCRCore)
+                            activeRelevantAlerts,
+                            path.directionId,
+                            routes,
+                            routeType,
+                            leafBuilder.stopIds,
+                            null,
+                        )
                     val elevatorAlerts =
                         Alert.elevatorAlerts(activeRelevantAlerts, leafBuilder.stopIds.orEmpty())
                     val alertsHere = (applicableAlerts + elevatorAlerts).distinct()
@@ -1190,7 +1158,7 @@ public data class RouteCardData(
                     }
                     ?.filter {
                         it.isInTheFuture(filterAtTime) ||
-                            it.isVehicleAtTheStop() ||
+                            !it.hasPassedPredictionStop() ||
                             it.doesPredictionHaveStatus()
                     }
                     ?.take(if (isBus) TYPICAL_LEAF_ROWS else BRANCHING_LEAF_ROWS)

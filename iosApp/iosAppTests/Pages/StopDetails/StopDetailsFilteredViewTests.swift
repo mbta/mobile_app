@@ -42,7 +42,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
-            navManager: .init(),
+            navManager: .init()
         )
 
         let tappedPublisher = PassthroughSubject<Void, Never>()
@@ -52,14 +52,21 @@ final class StopDetailsFilteredViewTests: XCTestCase {
                 .tap()
             tappedPublisher.send()
         }
-        let confirmationDialogExp = sut.inspection.inspect(onReceive: tappedPublisher, after: 1) { view in
-            XCTAssertTrue(try view.actualView().inSaveFavoritesFlow)
+
+        try? sut.inspect().find(button: "Save").tap()
+
+        let starButtonExp = sut.inspection.inspect(after: 1) { view in
+            let button = try view.find(StarButton.self).find(ViewType.Button.self)
+
+            XCTAssertFalse(button.isDisabled())
         }
 
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([
             .devDebugMode: false,
         ]))
-        wait(for: [tapButtonExp, confirmationDialogExp], timeout: 4)
+
+        defer { ViewHosting.expel() }
+        wait(for: [tapButtonExp, starButtonExp], timeout: 1)
     }
 
     @MainActor func testShowsDataWhenStopAndRouteMatchFilterButDirectionDoesnt() {
@@ -164,7 +171,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
-            navManager: .init(),
+            navManager: .init()
         )
 
         let exp = sut.inspection.inspect(after: 2) { view in
@@ -173,6 +180,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([
             .devDebugMode: false,
         ]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 4)
     }
 
@@ -248,7 +256,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
-            navManager: .init(),
+            navManager: .init()
         )
 
         let exp = sut.inspection.inspect(after: 2) { view in
@@ -257,6 +265,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([
             .devDebugMode: false,
         ]))
+        defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 4)
     }
 
@@ -339,17 +348,19 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},
-            setStopFilter: { filter in if filter?.directionId == 1, filter?.routeId.idText == "line-Green" {
-                setStopFilterExp.fulfill()
-            } else {
-                XCTFail("setStopFilter called with wrong params \(filter?.directionId) \(filter?.routeId)")
-            } },
+            setStopFilter: {
+                filter in if filter?.directionId == 1, filter?.routeId.idText == "line-Green" {
+                    setStopFilterExp.fulfill()
+                } else {
+                    XCTFail("setStopFilter called with wrong params \(filter?.directionId) \(filter?.routeId)")
+                }
+            },
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
-            navManager: .init(),
+            navManager: .init()
         )
 
         let exp = sut.inspection.inspect(after: 2) { view in
@@ -358,6 +369,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([
             .devDebugMode: false,
         ]))
+        defer { ViewHosting.expel() }
         wait(for: [exp, setStopFilterExp], timeout: 4)
     }
 }

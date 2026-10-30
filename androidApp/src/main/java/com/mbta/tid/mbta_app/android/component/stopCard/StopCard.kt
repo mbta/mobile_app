@@ -21,7 +21,7 @@ import com.mbta.tid.mbta_app.android.component.NavDrilldownRow
 import com.mbta.tid.mbta_app.android.component.PillDecoration
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
-import com.mbta.tid.mbta_app.android.component.routeCard.StopSubheader
+import com.mbta.tid.mbta_app.android.component.routeCard.StopCardHeader
 import com.mbta.tid.mbta_app.android.component.warningIcon
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
@@ -40,10 +40,11 @@ import org.koin.compose.koinInject
 fun StopCardContainer(
     modifier: Modifier = Modifier,
     data: StopCardData,
+    globalData: GlobalResponse?,
     departureContent: @Composable (StopCardData) -> Unit,
 ) {
     Column(modifier.haloContainer(1.dp).semantics { testTag = "StopCard" }) {
-        StopSubheader(data.stop, data.elevatorAlerts, includeIcon = true)
+        StopCardHeader(data.stop, data.elevatorAlerts, globalData)
 
         departureContent(data)
     }
@@ -59,6 +60,7 @@ fun StopCard(
 ) {
     StopCardContainer(
         data = data,
+        globalData = globalData,
         departureContent = {
             Departures(
                 it,

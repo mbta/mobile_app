@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,7 +41,7 @@ fun DirectionPicker(
         val deselectedBackgroundColor =
             colorResource(R.color.route_color_contrast).compositeOver(Color.fromHex(route.color))
 
-        TabRow(
+        PrimaryTabRow(
             modifier =
                 modifier
                     .haloContainer(2.dp, deselectedBackgroundColor, Color.Transparent, 6.dp)

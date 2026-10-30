@@ -19,10 +19,12 @@
   },
   "testTargets" : [
     {
+      "parallelizable" : false,
       "skippedTests" : [
         "FavoritesModifierTests\/testLoadsFromRepo()",
         "HomeMapViewTests\/testFollowsPuckWhenUserLocationIsKnown()",
-        "OnboardingPageTests\/testFlow()"
+        "OnboardingPageTests\/testFlow()",
+        "SaveFavoritesFlowTest\/testFavoritingOnlyDirectionPresentsDialogWhenNonBus()"
       ],
       "target" : {
         "containerPath" : "container:iosApp.xcodeproj",

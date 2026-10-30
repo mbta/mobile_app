@@ -31,6 +31,7 @@ final class SaveFavoritePageTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         sut.inspection.inspect(after: 0.1) { view in
             XCTAssertNotNil(try view.find(text: "Alewife"))
@@ -55,6 +56,7 @@ final class SaveFavoritePageTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         sut.inspection.inspect(after: 1) { view in
             XCTAssertNotNil(try sut.inspect().find(text: "Alewife"))
@@ -91,6 +93,7 @@ final class SaveFavoritePageTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         sut.inspection.inspect(after: 1) { view in
             XCTAssertNotNil(try sut.inspect().find(text: "Alewife"))
@@ -142,6 +145,7 @@ final class SaveFavoritePageTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         wait(for: [exp1], timeout: 5)
     }
@@ -177,6 +181,7 @@ final class SaveFavoritePageTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         wait(for: [exp1], timeout: 5)
     }
@@ -212,7 +217,48 @@ final class SaveFavoritePageTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
 
         wait(for: [exp1], timeout: 5)
+    }
+
+    @MainActor func testHidesPresetButtonsWhenEditingEnabledFavorite() {
+        let objects = TestData.clone()
+        let route = objects.getRoute(id: "Orange")
+        let stop = objects.getStop(id: "place-welln")
+
+        let repositories = MockRepositories()
+        repositories.useObjects(objects: objects)
+        repositories.favorites = MockFavoritesRepository(
+            favorites: Favorites(routeStopDirection: [
+                RouteStopDirection(route: route.id, stop: stop.id, direction: 0): FavoriteSettings(
+                    notifications: FavoriteSettings.Notifications(
+                        enabled: true,
+                        windows: [.init(preset: .morning, daysOfWeek: [.monday])]
+                    )
+                )
+            ])
+        )
+
+        loadKoinMocks(repositories: repositories)
+
+        let sut = SaveFavoritePage(
+            routeId: route.id,
+            stopId: stop.id,
+            initialSelectedDirection: 0,
+            context: .stopDetails,
+            updateFavorites: { _ in },
+            navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
+        )
+
+        ViewHosting.host(view: sut.withFixedSettings([.notificationPresetWindows: true]))
+        defer { ViewHosting.expel() }
+
+        sut.inspection.inspect(after: 1) { view in
+            XCTAssertThrowsError(try view.find(button: "Morning"))
+            XCTAssertThrowsError(try view.find(button: "Midday"))
+            XCTAssertThrowsError(try view.find(button: "Evening"))
+            XCTAssertThrowsError(try view.find(button: "All day"))
+        }
     }
 }

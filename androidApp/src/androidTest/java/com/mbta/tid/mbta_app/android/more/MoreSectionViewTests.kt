@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.android.more
 
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
@@ -13,12 +13,13 @@ import com.mbta.tid.mbta_app.utils.SharedString
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 
 class MoreSectionViewTests {
 
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
 
     @Test
     fun testToggleItem() {
@@ -56,7 +57,7 @@ class MoreSectionViewTests {
                     MoreSection(
                         MoreSection.Category.PublicBetas,
                         SharedString.BetaSection,
-                        listOf(MoreItem.Toggle(SharedString.Notifications, Settings.Notifications)),
+                        listOf(MoreItem.Toggle(SharedString.MapDisplay, Settings.HideMaps)),
                     ),
                 highlighted = false,
                 settingsCache =
@@ -75,11 +76,10 @@ class MoreSectionViewTests {
             )
         }
 
-        composeTestRule.onNodeWithText("Test New Features").assertCanBeDisplayed()
-        composeTestRule.onNodeWithText("Disruption Notifications").performClick()
+        composeTestRule.onNodeWithText("Map Display").performClick()
         composeTestRule.waitForIdle()
 
         assertTrue(wasWritten)
-        assertEquals(Pair(Settings.Notifications, true), onChangeArgs)
+        assertEquals(Pair(Settings.HideMaps, true), onChangeArgs)
     }
 }

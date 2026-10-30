@@ -78,6 +78,7 @@ fun RouteDetailsView(
                     StarIcon(
                         rowContext.isFavorited,
                         Color.fromHex(lineOrRoute.backgroundColor),
+                        outlineColor = colorResource(R.color.deemphasized),
                         contentDescription = if (rowContext.isFavorited) favoriteCD else "",
                     )
                 }

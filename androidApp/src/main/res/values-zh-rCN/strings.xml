@@ -49,6 +49,7 @@
     <string name="bike_issue_sentence_case">自行车问题</string>
     <string name="boarding_abbr">上客</string>
     <string name="boarding_track">在轨道%1$s登车</string>
+    <string name="boarding_track_tbd">赛道待定</string>
     <string name="bus">巴士</string>
     <string name="bus_cancelled">巴士线路已取消</string>
     <string name="bus_label">%1$s巴士</string>
@@ -58,6 +59,7 @@
     <string name="cancel">取消</string>
     <string name="cancellation">取消</string>
     <string name="cancelled">已取消</string>
+    <string name="clockwise">顺时针</string>
     <string name="close_button_label">关闭</string>
     <string name="coast_guard_restriction">海岸警卫队警戒</string>
     <string name="coast_guard_restriction_lowercase">海岸警卫队警戒</string>
@@ -69,6 +71,7 @@
     <string name="connections_to_and">连接到%1$s和%2$s</string>
     <string name="construction">建筑施工</string>
     <string name="construction_lowercase">建筑施工</string>
+    <string name="counterclockwise">逆时针</string>
     <string name="crossing_issue">交通信号灯问题</string>
     <string name="crossing_issue_lowercase">交通信号灯问题</string>
     <string name="crossing_malfunction">交通信号灯故障</string>
@@ -86,6 +89,7 @@
     <string name="delays_due_to_cause">由于%1$s造成&lt;b&gt;延误&lt;/b&gt;</string>
     <string name="delays_unknown_reason">&lt;b&gt;延误&lt;/b&gt;</string>
     <string name="delete">删除</string>
+    <string name="delete_time_period">删除时间段</string>
     <string name="demonstration">示威</string>
     <string name="demonstration_lowercase">示威</string>
     <string name="departure_tile_on_click_label">显示有关此行程的更多信息</string>
@@ -113,6 +117,7 @@
     <string name="drawbridge_issue_lowercase">开合桥故障</string>
     <string name="eastbound">东行</string>
     <string name="edit">编辑</string>
+    <string name="edit_favorite">编辑收藏</string>
     <string name="edit_favorite_title">编辑收藏</string>
     <string name="edit_favorites">编辑收藏夹</string>
     <string name="effect" translatable="false">&lt;b&gt;%1$s&lt;/b&gt;</string>
@@ -196,8 +201,6 @@
     <string name="holiday">节假日</string>
     <string name="holiday_lowercase">节假日</string>
     <string name="hr_min_abbr">&lt;b&gt;%1$d&lt;/b&gt;小时&lt;b&gt;%2$d&lt;/b&gt;分钟</string>
-    <string name="hurricane">飓风</string>
-    <string name="hurricane_lowercase">飓风</string>
     <string name="ice_in_harbor">港口结冰</string>
     <string name="ice_in_harbor_lowercase">港口结冰</string>
     <string name="inbound">进站</string>
@@ -216,6 +219,7 @@
     <string name="location_settings_prompt_keep_off">保持关闭定位服务</string>
     <string name="location_settings_prompt_title">MBTA Go在定位服务开启时效果最佳</string>
     <string name="location_settings_prompt_turn_on">在设置中打开</string>
+    <string name="looping">循环</string>
     <string name="maintenance">维护</string>
     <string name="maintenance_lowercase">维护</string>
     <string name="mechanical_issue">机械问题</string>
@@ -245,6 +249,7 @@
     <string name="nearby_transit">附近的交通</string>
     <string name="nearby_transit_link">附近</string>
     <string name="new_feature_screen_reader_header_prefix">新增功能。%1$s</string>
+    <string name="next_day">第二天</string>
     <string name="next_stop">下一站</string>
     <string name="next_trip_at">下一班次时间&lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="next_trip_at_tomorrow">明日下一班次时间&lt;b&gt;%1$s&lt;/b&gt;</string>
@@ -265,6 +270,7 @@
     <string name="not_accessible_stop_card">此车站不适合轮椅通行</string>
     <string name="notice">通知</string>
     <string name="notifications_beta_toggle_label">运营变动通知</string>
+    <string name="notification_settings_empty_state">我们可以在您出发前向您发送有关此路线可能出现问题的推送通知。</string>
     <string name="notifications_enabled">通知已开启</string>
     <string name="notifications_favorites_hint">立即&lt;u&gt;编辑您的收藏&lt;/u&gt;以接收运营变动通知</string>
     <string name="notifications_settings_link">在“设置”中开启“通知”权限</string>
@@ -295,8 +301,6 @@
     <string name="parking_closure">停车关闭</string>
     <string name="parking_issue">停车问题</string>
     <string name="parking_issue_sentence_case">停车问题</string>
-    <string name="police_action">警方行动</string>
-    <string name="police_action_lowercase">警方行动</string>
     <string name="police_activity">警方活动</string>
     <string name="police_activity_lowercase">警方活动</string>
     <string name="policy_change">政策变化</string>
@@ -305,10 +309,12 @@
     <string name="power_problem_lowercase">电力故障</string>
     <string name="predictions_unavailable_details">服务运行中，暂无预计到达时间。请查看地图获取%1$s当前的位置信息。</string>
     <string name="predictions_unavailable_details_hide_maps">服务运行中，暂无预计到达时间。</string>
+    <string name="presence_of_whales">鲸鱼的出现</string>
+    <string name="presence_of_whales_lowercase">鲸鱼的出现</string>
     <string name="promo_favorites_body">现在将您常用的站点保存到&lt;b&gt;一个便捷位置&lt;/b&gt;。</string>
     <string name="promo_favorites_header">添加您的收藏夹</string>
     <string name="promo_notifications_body">出行前我们将为您推送各类运营异常信息！</string>
-    <string name="promo_notifications_header">立即开启运营变动通知</string>
+    <string name="promo_notifications_header">接收运营变动通知</string>
     <string name="promo_notifications_step1">添加收藏站点</string>
     <string name="promo_notifications_step2">自定义行程规划</string>
     <string name="rail_defect">轨道缺陷</string>
@@ -328,6 +334,8 @@
     <string name="resources_link_mticket_note">mTicket应用程序</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="results_failed_to_load">结果加载失败☹️</string>
+    <string name="rough_seas">波涛汹涌的海面</string>
+    <string name="rough_seas_lowercase">波涛汹涌的海面</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_mode_label">%1$s %2$s</string>
     <string name="routes">线路</string>
@@ -345,6 +353,8 @@
     <string name="serves_route_list">服务%1$s</string>
     <string name="service_change">服务变更</string>
     <string name="service_change_sentence_case">服务变更</string>
+    <string name="service_day_start">服务开始</string>
+    <string name="service_day_end">服务结束</string>
     <string name="service_ended">服务已结束</string>
     <string name="service_suspended">服务暂停</string>
     <string name="setting_station_accessibility">车站无障碍信息</string>
@@ -379,6 +389,8 @@
     <string name="star_route_hint">在列表中置顶路线</string>
     <string name="start">开始日期</string>
     <string name="start_of_service">服务开始</string>
+    <string name="start_to_end_of_service">从服务开始到结束</string>
+    <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">自明日起，直至另行通知</string>
     <string name="station_closed">车站已关闭</string>
     <string name="station_closed_sentence_case">车站已关闭</string>
@@ -423,6 +435,7 @@
     <string name="track_change">轨道变更</string>
     <string name="track_change_sentence_case">轨道变更</string>
     <string name="track_number">追踪%1$s</string>
+    <string name="track_tbd">轨道（待定）</string>
     <string name="track_problem">轨道故障</string>
     <string name="track_problem_lowercase">轨道故障</string>
     <string name="track_work">轨道作业</string>
@@ -453,6 +466,8 @@
     <plurals name="updated_mins_ago">
         <item quantity="other">%1$d分钟前更新</item>
     </plurals>
+    <string name="utility_work">公用工程</string>
+    <string name="utility_work_lowercase">轨道作业</string>
     <string name="vehicle_arriving_first">%1$s现已到站</string>
     <string name="vehicle_arriving_other">下一趟车现已到站</string>
     <string name="vehicle_boarding_first">%1$s正在上客</string>
@@ -486,6 +501,10 @@
     <string name="vehicle_shuttled_other">并且于%1$s抵达的班次由接驳巴士替代</string>
     <string name="vehicle_skipped_first">于%2$s抵达的%1$s的班次不停靠</string>
     <string name="vehicle_skipped_other">于%1$s跳停</string>
+    <string name="vessel_substitution">巴士替代方案</string>
+    <string name="vessel_substitution_lowercase">巴士替代方案</string>
+    <string name="vessel_traffic">交通</string>
+    <string name="vessel_traffic_lowercase">交通</string>
     <string name="view_details">查看详情</string>
     <string name="waiting_to_depart">等待出发</string>
     <string name="weather">天气</string>
@@ -493,5 +512,6 @@
     <string name="weekdays">工作日</string>
     <string name="weekends">周末</string>
     <string name="westbound">西行</string>
+    <string name="when_do_you_want_notifications">您希望在什么时候接收通知？</string>
     <string name="x_and_y">%1$s和%2$s</string>
 </resources>

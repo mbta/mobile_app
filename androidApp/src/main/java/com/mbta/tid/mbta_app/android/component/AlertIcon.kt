@@ -35,8 +35,6 @@ fun AlertIcon(
         icon,
         contentDescription = stringResource(R.string.alert),
         modifier,
-        tint =
-            if (alertState == StopAlertState.Elevator) Color.Unspecified
-            else color ?: colorResource(R.color.text),
+        tint = color ?: colorResource(R.color.text),
     )
 }
