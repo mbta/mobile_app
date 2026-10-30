@@ -20,27 +20,21 @@ struct FavoritesModifier: ViewModifier {
     @MainActor
     func activateListener() async {
         for await state in favoritesVM.models {
-            favorites = if let nextFavorites = state.favorites {
-                Favorites(routeStopDirection: nextFavorites)
-            } else {
-                Favorites(routeStopDirection: [:])
-            }
-            LoadedFavorites.last = favorites
-        }
-    }
-
-    func loadFavorites() {
-        favorites = LoadedFavorites.last
-        Task(priority: .high) {
-            await activateListener()
-        }
-        Task {
-            favoritesVM.reloadFavorites()
+            let nextFavorites = Favorites(routeStopDirection: state.favorites ?? [:])
+            // The shared favorites VM emits on every prediction update, skip unchanged favorites
+            guard nextFavorites != favorites else { continue }
+            favorites = nextFavorites
+            LoadedFavorites.last = nextFavorites
         }
     }
 
     func body(content: Content) -> some View {
-        content.onAppear { loadFavorites() }
+        content
+            .onAppear {
+                favorites = LoadedFavorites.last
+                favoritesVM.reloadFavorites()
+            }
+            .task(priority: .high) { await activateListener() }
             .enableInjection()
     }
 }

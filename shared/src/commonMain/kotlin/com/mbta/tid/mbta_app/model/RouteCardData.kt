@@ -815,13 +815,13 @@ public data class RouteCardData(
 
             val upcomingTrips =
                 UpcomingTrip.tripsFromData(
-                    globalData.stops,
+                    alerts.alerts,
                     schedules?.schedules.orEmpty(),
                     predictions.predictions.values.toList(),
                     schedules?.trips.orEmpty() + predictions.trips,
                     predictions.vehicles,
                     filterAtTime,
-                    alerts.alerts,
+                    globalData,
                 )
 
             val upcomingTripsBySlot = mutableMapOf<HierarchyPath, MutableList<UpcomingTrip>>()
@@ -1158,7 +1158,7 @@ public data class RouteCardData(
                     }
                     ?.filter {
                         it.isInTheFuture(filterAtTime) ||
-                            it.isVehicleAtTheStop() ||
+                            !it.hasPassedPredictionStop() ||
                             it.doesPredictionHaveStatus()
                     }
                     ?.take(if (isBus) TYPICAL_LEAF_ROWS else BRANCHING_LEAF_ROWS)

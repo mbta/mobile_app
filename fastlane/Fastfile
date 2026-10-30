@@ -61,8 +61,8 @@ platform :android do
           'android.injected.version.code' => next_version_code
         }
       end
-    if options[:build_type] != 'Prod'
-      UI.message 'Skipped creating Android Sentry release because build is not prod'
+    if options[:build_type] != 'Release'
+      UI.message 'Skipped creating Android Sentry release because build is not release'
     elsif ENV['SENTRY_AUTH_TOKEN'].nil?
       UI.important 'Skipped creating Android Sentry release because SENTRY_AUTH_TOKEN not set'
     else
@@ -89,8 +89,8 @@ platform :android do
     )
   end
 
-  desc 'Deploy a new version to Google Play for internal testing'
-  lane :internal do |options|
+  desc 'Deploy a new version to Google Play'
+  lane :play_upload do |options|
     package_name = package_name(options[:flavor])
     flavor = options[:flavor][0].downcase + options[:flavor][1..]
     upload_to_play_store(

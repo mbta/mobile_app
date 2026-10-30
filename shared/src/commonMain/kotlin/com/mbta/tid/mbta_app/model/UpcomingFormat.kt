@@ -86,6 +86,8 @@ public sealed class UpcomingFormat {
             val id: String
                 get() = trip.id
 
+            val debugTime: EasternTimeInstant? = trip.time
+
             public constructor(
                 trip: UpcomingTrip,
                 routeType: RouteType,

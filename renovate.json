@@ -1,0 +1,85 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "customManagers": [
+    {
+      "customType": "jsonata",
+      "datasourceTemplate": "github-tags",
+      "fileFormat": "json",
+      "managerFilePatterns": [
+        "/Package.resolved$/"
+      ],
+      "matchStrings": [
+        "pins.{ \"depName\": identity, \"packageName\": $substringBefore($substringAfter(location, \"https://github.com/\"), \".git\"), \"currentValue\": state.version, \"currentDigest\": state.revision }"
+      ]
+    }
+  ],
+  "extends": [
+    "config:recommended",
+    ":prConcurrentLimit10"
+  ],
+  "hostRules": [
+    {
+      "enabled": true,
+      "matchHost": "https://api.mapbox.com"
+    }
+  ],
+  "minimumReleaseAge": "7 days",
+  "minimumReleaseAgeBehaviour": "timestamp-optional",
+  "packageRules": [
+    {
+      "description": "split out patches for Android Gradle plugin",
+      "matchPackageNames": [
+        "com.android.application",
+        "com.android.library"
+      ],
+      "separateMinorPatch": true,
+      "separateMultipleMinor": true
+    },
+    {
+      "description": "group Swift Firebase dependencies",
+      "groupName": "firebase",
+      "matchManagers": [
+        "xcodegen",
+        "custom.jsonata"
+      ],
+      "matchPackageNames": [
+        "firebase/*",
+        "google/*",
+        "googleads/*"
+      ]
+    },
+    {
+      "description": "group Swift Mapbox dependencies",
+      "groupName": "mapbox",
+      "matchManagers": [
+        "xcodegen",
+        "custom.jsonata"
+      ],
+      "matchPackageNames": [
+        "mapbox/*"
+      ]
+    },
+    {
+      "description": "ignore sentry-cocoa (lining it up with sentry-kmp would be really hard)",
+      "enabled": false,
+      "matchPackageNames": [
+        "getsentry/sentry-cocoa"
+      ]
+    },
+    {
+      "description": "only touch xcodegen if actually necessary",
+      "matchManagers": [
+        "xcodegen"
+      ],
+      "overrideDepName": "{{ packageName }}",
+      "rangeStrategy": "widen"
+    },
+    {
+      "description": "ignore buildSrc (keeping in sync with Gradle would be hard)",
+      "matchFileNames": [
+        "/buildSrc\\/*/"
+      ]
+    }
+  ],
+  "rebaseWhen": "conflicted"
+}

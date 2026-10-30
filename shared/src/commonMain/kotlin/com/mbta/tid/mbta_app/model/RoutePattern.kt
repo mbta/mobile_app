@@ -14,6 +14,7 @@ internal constructor(
     val name: String,
     @SerialName("sort_order") val sortOrder: Int,
     val typicality: Typicality?,
+    val canonical: Boolean,
     @SerialName("representative_trip_id") val representativeTripId: String,
     @SerialName("route_id") val routeId: Route.Id,
 ) : Comparable<RoutePattern>, BackendObject<String> {

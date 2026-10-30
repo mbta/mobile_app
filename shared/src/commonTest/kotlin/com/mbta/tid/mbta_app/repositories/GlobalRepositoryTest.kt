@@ -189,6 +189,7 @@ class GlobalRepositoryTest : KoinTest {
                     sortOrder = 503900000,
                     typicality = RoutePattern.Typicality.Typical,
                     representativeTripId = "61945832",
+                    canonical = false,
                 )
             val stop =
                 Stop(
