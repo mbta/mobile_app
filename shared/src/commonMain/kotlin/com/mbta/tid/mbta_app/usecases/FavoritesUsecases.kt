@@ -41,11 +41,17 @@ public class FavoritesUsecases(
             favorites.filterValidFavorites(globalData)
         }
 
-    public suspend fun getRouteStopDirectionFavorites(): Map<RouteStopDirection, FavoriteSettings> =
-        filteredFavorites(repository.getFavorites().routeStopDirection)?.let { favorites ->
-            flow.update { favorites }
-            return@let favorites
-        } ?: emptyMap()
+    /**
+     * Filters with already-loaded global data or returns unfiltered favorites if global data is not
+     * yet available.
+     */
+    public suspend fun getRouteStopDirectionFavorites(): Map<RouteStopDirection, FavoriteSettings> {
+        val stored = repository.getFavorites().routeStopDirection
+        val favorites =
+            globalRepository.state.value?.let { stored.filterValidFavorites(it) } ?: stored
+        flow.update { favorites }
+        return favorites
+    }
 
     @OptIn(ExperimentalObjCRefinement::class)
     @ShouldRefineInSwift
@@ -79,12 +85,12 @@ public class FavoritesUsecases(
         repository.setFavorites(storedFavorites.copy(routeStopDirection = currentFavorites))
         fcmToken?.let {
             val settings = settingsRepository.getSettings()
-            val subs =
-                SubscriptionRequest.fromFavorites(
-                    filteredFavorites(currentFavorites) ?: currentFavorites,
-                    includeAccessibility = settings[Settings.StationAccessibility] ?: false,
-                )
             CoroutineScope(Dispatchers.IO).launch {
+                val subs =
+                    SubscriptionRequest.fromFavorites(
+                        filteredFavorites(currentFavorites) ?: currentFavorites,
+                        includeAccessibility = settings[Settings.StationAccessibility] ?: false,
+                    )
                 subscriptionsRepository.updateSubscriptions(
                     fcmToken,
                     subs,
