@@ -1,10 +1,8 @@
 package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.resolveParentId
-import kotlin.collections.orEmpty
 
 /**
  * Conceptually, an [UpcomingTrip] represents a trip's future arrival and departure at a stop.
@@ -183,50 +181,47 @@ constructor(
         val format: UpcomingFormat.Some.FormattedTrip?,
     )
 
-    internal data class UpcomingTripKey(
-        val routeId: Route.Id,
-        val tripId: String,
-        val rootStopId: String?,
-        val stopSequence: Int?,
-    ) {
-        constructor(
-            schedule: Schedule,
-            rootStopId: String?,
-        ) : this(
-            schedule.routeId,
-            schedule.tripId,
-            rootStopId,
-            schedule.stopSequence,
-        )
-
-        constructor(
-            prediction: Prediction,
-            rootStopId: String?,
-        ) : this(
-            prediction.routeId,
-            prediction.tripId,
-            rootStopId,
-            prediction.stopSequence,
-        )
-
-        fun dropStopSequenceIfCancelled(cancelledTrips: Set<String>): UpcomingTripKey =
-            if (tripId in cancelledTrips) this.copy(stopSequence = null) else this
-    }
-
     internal companion object {
         /**
          * Gets the list of [UpcomingTrip]s from the given [schedules], [predictions] and
          * [vehicles]. Matches by trip ID, parent stop ID, and stop sequence.
          */
         fun tripsFromData(
-            alerts: Map<String, Alert>,
+            stops: Map<String, Stop>,
             schedules: List<Schedule>,
             predictions: List<Prediction>,
             trips: Map<String, Trip>,
             vehicles: Map<String, Vehicle>,
             filterAtTime: EasternTimeInstant,
-            globalData: GlobalResponse,
+            alerts: Map<String, Alert>,
         ): List<UpcomingTrip> {
+            data class UpcomingTripKey(
+                val routeId: Route.Id,
+                val tripId: String,
+                val rootStopId: String?,
+                val stopSequence: Int?,
+            ) {
+                constructor(
+                    schedule: Schedule
+                ) : this(
+                    schedule.routeId,
+                    schedule.tripId,
+                    stops.resolveParentId(schedule.stopId),
+                    schedule.stopSequence,
+                )
+
+                constructor(
+                    prediction: Prediction
+                ) : this(
+                    prediction.routeId,
+                    prediction.tripId,
+                    stops.resolveParentId(prediction.stopId),
+                    prediction.stopSequence,
+                )
+
+                fun dropStopSequenceIfCancelled(cancelledTrips: Set<String>): UpcomingTripKey =
+                    if (tripId in cancelledTrips) this.copy(stopSequence = null) else this
+            }
 
             // apparently, one of the differences between Skipped and Cancelled is that Cancelled
             // only ever applies to the entire trip. predictions for cancelled bus trips sometimes
@@ -241,14 +236,11 @@ constructor(
                         }
                     }
                     .toSet()
-
             val schedulesMap = schedules.associateBy {
-                UpcomingTripKey(it, globalData.stops.resolveParentId(it.stopId))
-                    .dropStopSequenceIfCancelled(cancelledTrips)
+                UpcomingTripKey(it).dropStopSequenceIfCancelled(cancelledTrips)
             }
             val predictionsMap = predictions.associateBy {
-                UpcomingTripKey(it, globalData.stops.resolveParentId(it.stopId))
-                    .dropStopSequenceIfCancelled(cancelledTrips)
+                UpcomingTripKey(it).dropStopSequenceIfCancelled(cancelledTrips)
             }
 
             val keys = schedulesMap.keys + predictionsMap.keys
@@ -264,32 +256,28 @@ constructor(
                             alert.effect != Alert.Effect.TrackChange &&
                                 alert.anyInformedEntity {
                                     val stopId =
-                                        it.stop?.let { stopId ->
-                                            globalData.stops.resolveParentId(stopId)
-                                        }
+                                        it.stop?.let { stopId -> stops.resolveParentId(stopId) }
                                     it.trip == trip.id && stopId == key.rootStopId
                                 }
                         }
-
-                    val stopIds =
-                        setOfNotNull(key.rootStopId) +
-                            key.rootStopId?.let { globalData.stops[it]?.childStopIds }.orEmpty()
-
+                    val trackChangeAlert =
+                        Alert.trackChangeAlert(
+                            alerts.values,
+                            schedule?.departureBasedStopTime ?: prediction?.departureBasedStopTime,
+                            trip.directionId,
+                            trip.routeId,
+                            setOfNotNull(key.rootStopId) +
+                                key.rootStopId?.let { stops[it]?.childStopIds }.orEmpty(),
+                            trip.id,
+                        )
                     UpcomingTrip(
                         trip,
                         schedule,
                         prediction,
-                        globalData.stops[prediction?.stopId],
+                        stops[prediction?.stopId],
                         predictionsMap[key]?.let { vehicles[it.vehicleId] },
                         alert,
-                        TrackChange.calculate(
-                            alerts,
-                            schedule,
-                            prediction,
-                            trip,
-                            stopIds,
-                            globalData,
-                        ),
+                        trackChangeAlert?.let { TrackChange.Alert(it) },
                     )
                 }
                 .sorted()

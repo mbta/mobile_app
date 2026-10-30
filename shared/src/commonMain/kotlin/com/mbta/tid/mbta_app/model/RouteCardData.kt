@@ -815,13 +815,13 @@ public data class RouteCardData(
 
             val upcomingTrips =
                 UpcomingTrip.tripsFromData(
-                    alerts.alerts,
+                    globalData.stops,
                     schedules?.schedules.orEmpty(),
                     predictions.predictions.values.toList(),
                     schedules?.trips.orEmpty() + predictions.trips,
                     predictions.vehicles,
                     filterAtTime,
-                    globalData,
+                    alerts.alerts,
                 )
 
             val upcomingTripsBySlot = mutableMapOf<HierarchyPath, MutableList<UpcomingTrip>>()
