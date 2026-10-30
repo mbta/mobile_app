@@ -108,39 +108,5 @@ internal constructor(
                 .groupBy({ it.first }, { it.second.id })
                 .mapValues { it.value.toSet().plus(it.key.id) }
         }
-
-        /**
-         * Is the platform stop id different from the canonically scheduled platform stop id. For
-         * commuter rail trips only. Note: if the canonically scheduled stop doesn't have a platform
-         * code, then there is no canonical platform id and this will return false.
-         */
-        public fun isPlatformNonCanonical(
-            targetStopId: String,
-            trip: Trip,
-            globalData: GlobalResponse,
-        ): Boolean {
-            if (globalData.routes[trip.routeId]?.type != RouteType.COMMUTER_RAIL) return false
-
-            val targetStop = globalData.getStop(targetStopId) ?: return false
-
-            val canonicalTrip =
-                globalData
-                    .getPatternsFor(trip.routeId, trip.directionId)
-                    .firstOrNull { it.canonical }
-                    ?.representativeTripId ?: return false
-            val canonicalStopIds = globalData.trips[canonicalTrip]?.stopIds?.toSet() ?: return false
-
-            if (canonicalStopIds.contains(targetStopId)) return false
-
-            // If there is no canonical platformCode for this stop, then it is common for the
-            // track to be different between trips, and we don't need to treat it as a track change.
-            return !canonicalStopIds.any {
-                globalData.getStop(it)?.let { canonicalStop ->
-                    targetStop.parentStationId != null &&
-                        canonicalStop.parentStationId == targetStop.parentStationId &&
-                        canonicalStop.platformCode == null
-                } ?: false
-            }
-        }
     }
 }
