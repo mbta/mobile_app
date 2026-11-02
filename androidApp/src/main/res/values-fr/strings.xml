@@ -14,8 +14,8 @@
     <string name="additional_service">Service supplémentaire</string>
     <string name="additional_service_sentence_case">Service supplémentaire</string>
     <plurals name="affected_stops">
-        <item quantity="one">&lt;b&gt;%1$d&lt;/b&gt; arrêt concerné</item>
-        <item quantity="other">&lt;b&gt;%1$d&lt;/b&gt; arrêts concernés</item>
+        <item quantity="one">&lt;b&gt;%1$d&lt;/b&gt; arrêt affecté</item>
+        <item quantity="other">&lt;b&gt;%1$d&lt;/b&gt; arrêts affectés</item>
     </plurals>
     <string name="alert">Alerte</string>
     <string name="alert_details">Détails de l’alerte</string>
@@ -124,12 +124,12 @@
     <string name="elevator_closed_sentence_case">Ascenseur fermé</string>
     <string name="elevator_closure">Fermeture de l’ascenseur</string>
     <plurals name="elevator_closure_count">
-        <item quantity="one">Ascenseur %1$d fermé</item>
+        <item quantity="one">%1$d ascenseur fermé</item>
         <item quantity="other">%1$d ascenseurs fermés</item>
     </plurals>
     <plurals name="elevator_closure_count_accessibility_description">
-        <item quantity="one">Cet arrêt comporte %1$d ascenseur fermé</item>
-        <item quantity="other">Cet arrêt comporte %1$d ascenseurs fermés</item>
+        <item quantity="one">Cet arrêt %1$d ascenseur fermé</item>
+        <item quantity="other">Cet arrêt compte %1$d ascenseurs fermés</item>
     </plurals>
     <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">Fin</string>
@@ -220,7 +220,7 @@
     <string name="location_settings_prompt_turn_on">Activer dans les paramètres</string>
     <string name="looping">En boucle</string>
     <string name="maintenance">Maintenance</string>
-    <string name="maintenance_lowercase">maintenance</string>
+    <string name="maintenance_lowercase">entretien</string>
     <string name="mechanical_issue">Problème mécanique</string>
     <string name="mechanical_issue_lowercase">problème mécanique</string>
     <string name="mechanical_problem">Problème mécanique</string>
@@ -335,8 +335,8 @@
     <string name="results_failed_to_load">Échec du chargement des résultats ☹️</string>
     <string name="rough_seas">Mer agitée</string>
     <string name="rough_seas_lowercase">mer agitée</string>
-    <string name="route_effect">%1$s %2$s</string>
-    <string name="route_mode_label">%1$s %2$s</string>
+    <string name="route_effect">%2$s %1$s</string>
+    <string name="route_mode_label">%2$s %1$s</string>
     <string name="routes">Trajets</string>
     <string name="save">Sauvegarder</string>
     <string name="schedule_change">Changement d’horaire</string>
@@ -387,7 +387,7 @@
     <string name="star_route">Route préférée</string>
     <string name="star_route_hint">épingler le trajet en haut de la liste</string>
     <string name="start">Commencer</string>
-    <string name="start_of_service">début de service</string>
+    <string name="start_of_service">début du service</string>
     <string name="start_to_end_of_service">Du début à la fin du service</string>
     <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">À compter de demain et jusqu’à nouvel ordre</string>
@@ -407,8 +407,8 @@
     <string name="stop_skipped_sentence_case">Arrêt ignoré</string>
     <string name="stops">Arrêts</string>
     <plurals name="stops_away">
-        <item quantity="one">%1$d arrêt restant</item>
-        <item quantity="other">%1$d arrêts restants</item>
+        <item quantity="one">%1$darrêt de route</item>
+        <item quantity="other">%1$darrêts de route</item>
     </plurals>
     <string name="strike">Grève</string>
     <string name="strike_lowercase">grève</string>
@@ -463,8 +463,8 @@
     <string name="until_further_notice">Jusqu’à nouvel ordre</string>
     <string name="updated_at">Mis à jour : %1$s</string>
     <plurals name="updated_mins_ago">
-        <item quantity="one">Mis à jour il y a %1$d minute</item>
-        <item quantity="other">Mis à jour il y a %1$d minutes</item>
+        <item quantity="one">Mise à jour il y a %1$d minute</item>
+        <item quantity="other">Mise à jour il y a %1$d minutes</item>
     </plurals>
     <string name="utility_work">Travaux sur les réseaux</string>
     <string name="utility_work_lowercase">travaux sur les réseaux</string>
