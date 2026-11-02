@@ -53,7 +53,7 @@ public data class DisplayAlerts(
                         compareByDescending<Alert> { it.isActive(now) }
                             .thenByDescending { idsHere.contains(it.id) }
                             .thenByDescending { it.intrinsicSignificance }
-                            .thenBy { it.currentOrNextPeriod(now)?.start?.instant }
+                            .thenBy { it.currentOrNextPeriod(now)?.start?.instant },
                     )
                     .map { DisplayAlert(it, !idsHere.contains(it.id)) }
                     .partition { it.alert.isActive(now) && !it.isDownstream }

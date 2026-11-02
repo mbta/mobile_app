@@ -206,7 +206,7 @@ public class StopDetailsViewModel(
                         currentFilters.stopId,
                         stopDetailsFilterOverride ?: currentFilters.stopFilter,
                         autoTripFilter,
-                    )
+                    ),
                 )
             }
         }

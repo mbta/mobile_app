@@ -332,7 +332,7 @@ class UpcomingTripTest {
                             routeType = RouteType.COMMUTER_RAIL,
                             stop = stop.id,
                             trip = trip.id,
-                        )
+                        ),
                     )
             }
             assertEquals(
@@ -633,7 +633,7 @@ class UpcomingTripTest {
                     null,
                     cancellation,
                     TrackChange.Alert(trackChange),
-                )
+                ),
             ),
             UpcomingTrip.tripsFromData(
                 objects.stops,

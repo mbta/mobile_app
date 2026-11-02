@@ -172,7 +172,7 @@ public object MapTestDataHelper {
                                     patternRed10.routeId,
                                     listOf(stopAlewife.id, stopDavis.id),
                                     emptyMap(),
-                                )
+                                ),
                             ),
                             shapeRedC1,
                         ),
@@ -187,7 +187,7 @@ public object MapTestDataHelper {
                                     patternRed30.routeId,
                                     listOf(stopPorter.id, stopHarvard.id, stopCentral.id),
                                     emptyMap(),
-                                )
+                                ),
                             ),
                             shapeRedC1,
                         ),
@@ -207,13 +207,13 @@ public object MapTestDataHelper {
                                     patternOrange30.routeId,
                                     listOf(stopAssembly.id, stopSullivan.id),
                                     emptyMap(),
-                                )
+                                ),
                             ),
                             shapeOrangeC1,
-                        )
+                        ),
                     ),
                 ),
-            )
+            ),
         )
 
     internal val global = GlobalResponse(objects)

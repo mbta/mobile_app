@@ -545,8 +545,8 @@ fun MapAndSheetPage(
                 .padding(top = 12.dp)
                 .fillMaxSize()
                 .then(
-                    if (sheetState != SheetValue.Large) Modifier else Modifier.statusBarsPadding()
-                )
+                    if (sheetState != SheetValue.Large) Modifier else Modifier.statusBarsPadding(),
+                ),
         ) {
             body()
         }
@@ -650,7 +650,7 @@ fun MapAndSheetPage(
 
         val global =
             getGlobalData(
-                ErrorKey(setOf(SheetRoutes.TripDetails::class), "TripDetailsSheetContents")
+                ErrorKey(setOf(SheetRoutes.TripDetails::class), "TripDetailsSheetContents"),
             )
         val lineOrRoute = global?.getLineOrRoute(navRoute.filter.routeId)
         val routeColor = lineOrRoute?.backgroundColor?.let { Color.fromHex(it) }
@@ -707,7 +707,7 @@ fun MapAndSheetPage(
 
         SheetPage(
             lineOrRoute?.backgroundColor?.let { Color.fromHex(it) }
-                ?: colorResource(R.color.sheet_background)
+                ?: colorResource(R.color.sheet_background),
         ) {
             RouteDetailsView(
                 selectionId = navRoute.routeId,
@@ -864,8 +864,8 @@ fun MapAndSheetPage(
                                 .padding(outerSheetPadding)
                                 .padding(
                                     top =
-                                        if (showSearchBar && !shouldShowAuthButton) 64.dp else 0.dp
-                                )
+                                        if (showSearchBar && !shouldShowAuthButton) 64.dp else 0.dp,
+                                ),
                         )
                     }
                 }
@@ -891,7 +891,7 @@ fun MapAndSheetPage(
                     onBarGloballyPositioned = { layoutCoordinates ->
                         with(density) {
                             nearbyTabViewModel.setSearchBarHeight(
-                                layoutCoordinates.size.height.toDp()
+                                layoutCoordinates.size.height.toDp(),
                             )
                         }
                     },
@@ -906,7 +906,7 @@ fun MapAndSheetPage(
                                     end = 0.dp,
                                     top = (searchBarHeight ?: 0.dp),
                                     bottom = 0.dp,
-                                )
+                                ),
                             )
                         }
                     HomeMapView(

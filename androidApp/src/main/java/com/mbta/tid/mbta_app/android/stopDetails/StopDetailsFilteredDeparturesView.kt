@@ -79,7 +79,7 @@ fun StopDetailsFilteredDeparturesView(
 ) {
     val global =
         getGlobalData(
-            ErrorKey(setOf(SheetRoutes.StopDetails::class), "StopDetailsFilteredDeparturesView")
+            ErrorKey(setOf(SheetRoutes.StopDetails::class), "StopDetailsFilteredDeparturesView"),
         )
     val leafFormat = remember(leaf, now, global) { leaf.format(now, global) }
     val tileData = leafFormat.tileData(selectedDirection.destination)
@@ -133,7 +133,7 @@ fun StopDetailsFilteredDeparturesView(
                 lineId = if (spec == AlertCardSpec.Elevator) null else lineId,
                 routeIds = if (spec == AlertCardSpec.Elevator) null else routeIds,
                 stopId = stop.id,
-            )
+            ),
         )
     }
 
@@ -317,7 +317,7 @@ private fun DepartureTiles(
                             vehicleId = upcoming.prediction?.vehicleId,
                             stopSequence = upcoming.stopSequence,
                             selectionLock = false,
-                        )
+                        ),
                     )
                     analytics.tappedDeparture(
                         routeId = lineOrRoute.id,

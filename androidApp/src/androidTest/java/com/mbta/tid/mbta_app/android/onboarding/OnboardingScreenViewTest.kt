@@ -118,7 +118,7 @@ class OnboardingScreenViewTest {
         }
         composeTestRule
             .onNodeWithText(
-                "When using TalkBack, we can hide maps to make the app easier to navigate."
+                "When using TalkBack, we can hide maps to make the app easier to navigate.",
             )
             .assertCanBeDisplayed()
 
@@ -175,7 +175,7 @@ class OnboardingScreenViewTest {
         composeTestRule
             .onNodeWithText(
                 "MBTA Go is in the early stages! We want your feedback" +
-                    " as we continue making improvements and adding new features."
+                    " as we continue making improvements and adding new features.",
             )
             .assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Get started").performClick()

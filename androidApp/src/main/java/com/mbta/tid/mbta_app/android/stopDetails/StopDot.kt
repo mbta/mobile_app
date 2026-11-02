@@ -22,7 +22,7 @@ fun StopDot(routeAccents: TripRouteAccents, targeted: Boolean, modifier: Modifie
             modifier
                 .background(routeAccents.color, CircleShape)
                 .border(1.dp, colorResource(R.color.stop_dot_halo), CircleShape)
-                .size(14.dp)
+                .size(14.dp),
         ) {}
 
         if (targeted) {

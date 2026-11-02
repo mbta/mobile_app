@@ -196,9 +196,9 @@ class EditFavoritesPageTest : KoinTest {
                             null,
                             emptyList(),
                             RouteCardData.Context.Favorites,
-                        )
+                        ),
                     ),
-                )
+                ),
             ),
             now,
         )
@@ -224,9 +224,9 @@ class EditFavoritesPageTest : KoinTest {
                             null,
                             emptyList(),
                             RouteCardData.Context.Favorites,
-                        )
+                        ),
                     ),
-                )
+                ),
             ),
             now,
         )
@@ -265,7 +265,7 @@ class EditFavoritesPageTest : KoinTest {
                     routeCardData,
                     stopCardData,
                     null,
-                )
+                ),
             )
 
         composeTestRule.setContent {
@@ -301,7 +301,7 @@ class EditFavoritesPageTest : KoinTest {
                     emptyList(),
                     emptyList(),
                     null,
-                )
+                ),
             )
 
         composeTestRule.setContent {
@@ -315,7 +315,7 @@ class EditFavoritesPageTest : KoinTest {
 
         composeTestRule.waitForIdle()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasText("Add favorite stops for easy access and disruption notifications")
+            hasText("Add favorite stops for easy access and disruption notifications"),
         )
         composeTestRule
             .onNodeWithText("Add favorite stops for easy access and disruption notifications")
@@ -344,7 +344,7 @@ class EditFavoritesPageTest : KoinTest {
                     combinedRouteCardData,
                     combinedStopCardData,
                     null,
-                )
+                ),
             )
 
         loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to true)) }
@@ -391,7 +391,7 @@ class EditFavoritesPageTest : KoinTest {
                         now.local.time,
                         now.local.time,
                         setOf(DayOfWeek.SATURDAY),
-                    )
+                    ),
                 ),
             )
         val favorites =
@@ -412,7 +412,7 @@ class EditFavoritesPageTest : KoinTest {
                     combinedRouteCardData,
                     combinedStopCardData,
                     null,
-                )
+                ),
             )
 
         loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to true)) }
@@ -427,7 +427,7 @@ class EditFavoritesPageTest : KoinTest {
         }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasContentDescription("notifications enabled")
+            hasContentDescription("notifications enabled"),
         )
         composeTestRule.onNodeWithText("66").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Downtown").assertCanBeDisplayed()

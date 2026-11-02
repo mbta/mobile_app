@@ -370,10 +370,10 @@ class RouteDetailsStopListTest {
                                 RouteBranchSegment.Lane.Center,
                                 stickConnections = emptyList(),
                                 connectingRoutes = listOf(connectingRoute),
-                            )
+                            ),
                         ),
                         isTypical = true,
-                    )
+                    ),
                 ),
             ),
             RouteDetailsStopList.fromPieces(
@@ -389,11 +389,11 @@ class RouteDetailsStopListTest {
                                     mainStop.id,
                                     RouteBranchSegment.Lane.Center,
                                     connections = emptyList(),
-                                )
+                                ),
                             ),
                             name = null,
                             isTypical = true,
-                        )
+                        ),
                     ),
                 ),
                 globalData,
@@ -423,15 +423,15 @@ class RouteDetailsStopListTest {
                                     mainStop.id,
                                     RouteBranchSegment.Lane.Center,
                                     emptyList(),
-                                )
+                                ),
                             ),
                             name = null,
                             isTypical = true,
-                        )
+                        ),
                     ),
                 ),
                 globalData,
-            )
+            ),
         )
     }
 
@@ -495,7 +495,7 @@ class RouteDetailsStopListTest {
                                 RouteBranchSegment.Lane.Center,
                                 stickConnections = emptyList(),
                                 connectingRoutes = listOf(),
-                            )
+                            ),
                         ),
                         isTypical = true,
                     ),
@@ -506,7 +506,7 @@ class RouteDetailsStopListTest {
                                 RouteBranchSegment.Lane.Center,
                                 stickConnections = emptyList(),
                                 connectingRoutes = listOf(),
-                            )
+                            ),
                         ),
                         isTypical = false,
                     ),
@@ -517,7 +517,7 @@ class RouteDetailsStopListTest {
                                 RouteBranchSegment.Lane.Center,
                                 stickConnections = emptyList(),
                                 connectingRoutes = listOf(),
-                            )
+                            ),
                         ),
                         isTypical = true,
                     ),
@@ -552,7 +552,7 @@ class RouteDetailsStopListTest {
                                     stop2NonTypical.id,
                                     RouteBranchSegment.Lane.Center,
                                     emptyList(),
-                                )
+                                ),
                             ),
                             name = null,
                             isTypical = false,
@@ -563,7 +563,7 @@ class RouteDetailsStopListTest {
                                     stop3NonTypical.id,
                                     RouteBranchSegment.Lane.Center,
                                     emptyList(),
-                                )
+                                ),
                             ),
                             name = null,
                             isTypical = false,
@@ -574,7 +574,7 @@ class RouteDetailsStopListTest {
                                     stop4.id,
                                     RouteBranchSegment.Lane.Center,
                                     emptyList(),
-                                )
+                                ),
                             ),
                             name = null,
                             isTypical = true,
@@ -585,7 +585,7 @@ class RouteDetailsStopListTest {
                                     stop5NonTypical.id,
                                     RouteBranchSegment.Lane.Center,
                                     emptyList(),
-                                )
+                                ),
                             ),
                             name = null,
                             isTypical = false,
@@ -596,7 +596,7 @@ class RouteDetailsStopListTest {
                                     stop6.id,
                                     RouteBranchSegment.Lane.Center,
                                     emptyList(),
-                                )
+                                ),
                             ),
                             name = null,
                             isTypical = true,

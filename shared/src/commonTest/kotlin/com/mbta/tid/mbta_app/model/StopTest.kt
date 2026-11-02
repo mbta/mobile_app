@@ -120,7 +120,7 @@ class StopTest {
         val global = GlobalResponse(objects)
 
         assertTrue(
-            targetParent.isLastStopForAllPatterns(0, listOf(rp1, rp1Direction1, rp2), global)
+            targetParent.isLastStopForAllPatterns(0, listOf(rp1, rp1Direction1, rp2), global),
         )
     }
 
@@ -174,7 +174,7 @@ class StopTest {
         val global = GlobalResponse(objects)
 
         assertFalse(
-            targetParent.isLastStopForAllPatterns(0, listOf(rp1, rp1Direction1, rp2), global)
+            targetParent.isLastStopForAllPatterns(0, listOf(rp1, rp1Direction1, rp2), global),
         )
     }
 }

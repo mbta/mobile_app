@@ -69,7 +69,7 @@ class AlertsChannelTest {
                             put("updated_at", "2023-05-26T16:46:13-04:00")
                         }
                     }
-                }
+                },
             )
 
         val parsed = AlertsChannel.parseMessage(payload)
@@ -85,7 +85,7 @@ class AlertsChannelTest {
                                 Alert.ActivePeriod(
                                     EasternTimeInstant(2023, Month.MAY, 26, 16, 46, 13),
                                     null,
-                                )
+                                ),
                             ),
                             Alert.Cause.Parade,
                             "Description",
@@ -111,7 +111,7 @@ class AlertsChannelTest {
                             10,
                             listOf(AlertSummaryEntity("Ceci n’est pas un alert")),
                             EasternTimeInstant(2023, Month.MAY, 26, 16, 46, 13),
-                        )
+                        ),
                 ),
             ),
             parsed,
@@ -161,7 +161,7 @@ class AlertsChannelTest {
                             put("updated_at", "2023-05-26T16:46:13-04:00")
                         }
                     }
-                }
+                },
             )
 
         val parsed = AlertsChannel.parseMessage(payload)
@@ -177,7 +177,7 @@ class AlertsChannelTest {
                                 Alert.ActivePeriod(
                                     EasternTimeInstant(2023, Month.MAY, 26, 16, 46, 13),
                                     null,
-                                )
+                                ),
                             ),
                             Alert.Cause.UnknownCause,
                             "Description",
@@ -191,13 +191,13 @@ class AlertsChannelTest {
                                     route = Route.Id("Red"),
                                     routeType = RouteType.HEAVY_RAIL,
                                     stop = "place-pktrm",
-                                )
+                                ),
                             ),
                             Alert.Lifecycle.Ongoing,
                             10,
                             listOf(AlertSummaryEntity("Ceci n’est pas un alert")),
                             EasternTimeInstant(2023, Month.MAY, 26, 16, 46, 13),
-                        )
+                        ),
                 ),
             ),
             parsed,

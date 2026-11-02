@@ -207,12 +207,12 @@ class RouteFeaturesBuilderTest {
                                                     MapTestDataHelper.stopAlewife.id,
                                                 ),
                                             otherPatternsByStopId = emptyMap(),
-                                        )
+                                        ),
                                     ),
                                 shape = MapTestDataHelper.shapeRedC1,
-                            )
+                            ),
                         ),
-                )
+                ),
             )
 
         val routeSources =
@@ -250,12 +250,12 @@ class RouteFeaturesBuilderTest {
                                                     MapTestDataHelper.stopDavis.id,
                                                 ),
                                             otherPatternsByStopId = emptyMap(),
-                                        )
+                                        ),
                                     ),
                                 shape = MapTestDataHelper.shapeRedC1,
-                            )
+                            ),
                         ),
-                )
+                ),
             )
 
         val routeSources =
@@ -334,12 +334,12 @@ class RouteFeaturesBuilderTest {
                                                     MapTestDataHelper.stopCentral.id,
                                                 ),
                                             otherPatternsByStopId = emptyMap(),
-                                        )
+                                        ),
                                     ),
                                 shape = MapTestDataHelper.shapeRedC1,
-                            )
+                            ),
                         ),
-                )
+                ),
             )
 
         val routeSources =
@@ -445,10 +445,10 @@ class RouteFeaturesBuilderTest {
                                                     sourceRouteId = routeId,
                                                     stopIds = stopIds,
                                                     otherPatternsByStopId = otherPatternsByStopId,
-                                                )
+                                                ),
                                             ),
                                         shape = MapTestDataHelper.shapeRedC1,
-                                    )
+                                    ),
                                 ),
                         )
 
@@ -611,9 +611,9 @@ class RouteFeaturesBuilderTest {
                                                         stopIds =
                                                             listOf("place-sstat", "place-bbsta"),
                                                         otherPatternsByStopId = emptyMap(),
-                                                    )
+                                                    ),
                                                 ),
-                                        )
+                                        ),
                                     ),
                                 )
                             else null,
@@ -708,12 +708,12 @@ class RouteFeaturesBuilderTest {
                                                     MapTestDataHelper.stopDavis.id,
                                                 ),
                                             otherPatternsByStopId = emptyMap(),
-                                        )
+                                        ),
                                     ),
                                 shape = shapeWithStops.shape,
-                            )
+                            ),
                         ),
-                )
+                ),
             ),
         )
     }
@@ -787,12 +787,12 @@ class RouteFeaturesBuilderTest {
                                         null,
                                         emptyList(),
                                         RouteCardData.Context.StopDetailsFiltered,
-                                    )
+                                    ),
                                 ),
-                            )
+                            ),
                         ),
                         EasternTimeInstant.now(),
-                    )
+                    ),
                 ),
             )
         assertEquals(filteredShapes.count(), 1)
@@ -839,12 +839,12 @@ class RouteFeaturesBuilderTest {
                                         null,
                                         emptyList(),
                                         RouteCardData.Context.StopDetailsFiltered,
-                                    )
+                                    ),
                                 ),
-                            )
+                            ),
                         ),
                         EasternTimeInstant.now(),
-                    )
+                    ),
                 ),
             )
         assertEquals(glFilteredShapes.count(), 3)

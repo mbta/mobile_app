@@ -74,7 +74,7 @@ class ManageFavoritesTest {
                                 1,
                             )
                         }
-                    }
+                    },
                 ) {
                     Text("Click me")
                 }

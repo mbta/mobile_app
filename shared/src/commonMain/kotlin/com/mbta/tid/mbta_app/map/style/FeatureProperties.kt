@@ -69,18 +69,18 @@ public data class FeatureProperties internal constructor(val data: JSONObject) {
 
     @JvmName("getMapStringString")
     internal operator fun get(
-        property: FeatureProperty<Map<String, String>>
+        property: FeatureProperty<Map<String, String>>,
     ): Map<String, String>? = data[property.key]?.`object`?.mapValues { it.value.string }
 
     @JvmName("getMapStringListString")
     internal operator fun get(
-        property: FeatureProperty<Map<String, List<String>>>
+        property: FeatureProperty<Map<String, List<String>>>,
     ): Map<String, List<String>>? =
         data[property.key]?.`object`?.mapValues { it.value.array.map { it.string } }
 }
 
 internal class FeaturePropertiesBuilder(
-    private val data: MutableMap<String, JSONValue> = mutableMapOf()
+    private val data: MutableMap<String, JSONValue> = mutableMapOf(),
 ) {
     fun put(property: FeatureProperty<Boolean>, value: Boolean) {
         data[property.key] = JSONValue.Boolean(value)
@@ -114,7 +114,7 @@ internal class FeaturePropertiesBuilder(
     ) {
         data[property.key] =
             JSONValue.Object(
-                value.mapValues { JSONValue.Array(it.value.map { JSONValue.String(it) }) }
+                value.mapValues { JSONValue.Array(it.value.map { JSONValue.String(it) }) },
             )
     }
 
@@ -122,7 +122,7 @@ internal class FeaturePropertiesBuilder(
 }
 
 internal inline fun buildFeatureProperties(
-    block: FeaturePropertiesBuilder.() -> Unit
+    block: FeaturePropertiesBuilder.() -> Unit,
 ): FeatureProperties {
     val builder = FeaturePropertiesBuilder()
     builder.block()

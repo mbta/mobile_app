@@ -247,11 +247,11 @@ public class MockRepositories : IRepositories {
                         .filter {
                             selectedTripId?.let { selected -> it.tripId == selected } ?: true
                         }
-                        .toList()
+                        .toList(),
                 ),
                 TripResponse(
                     selectedTripId?.let { objects.getTrip(it) }
-                        ?: ObjectCollectionBuilder.Single.trip()
+                        ?: ObjectCollectionBuilder.Single.trip(),
                 ),
             )
         tripPredictions =
@@ -260,8 +260,10 @@ public class MockRepositories : IRepositories {
             MockVehicleRepository(
                 outcome =
                     ApiResult.Ok(
-                        VehicleStreamDataResponse(selectedVehicleId?.let { objects.getVehicle(it) })
-                    )
+                        VehicleStreamDataResponse(
+                            selectedVehicleId?.let { objects.getVehicle(it) },
+                        ),
+                    ),
             )
         vehicles = MockVehiclesRepository(objects)
     }

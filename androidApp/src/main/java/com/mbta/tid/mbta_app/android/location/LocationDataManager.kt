@@ -66,7 +66,7 @@ open class LocationDataManager {
                     .setPriority(
                         if (finePermission?.status?.isGranted == true)
                             Priority.PRIORITY_HIGH_ACCURACY
-                        else Priority.PRIORITY_BALANCED_POWER_ACCURACY
+                        else Priority.PRIORITY_BALANCED_POWER_ACCURACY,
                     )
                     .build()
             }

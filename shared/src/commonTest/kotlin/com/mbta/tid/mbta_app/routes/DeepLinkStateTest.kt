@@ -56,7 +56,7 @@ class DeepLinkStateTest {
         assertEquals(
             DeepLinkState.Stop("place-chill", "Green-B", 1, "12345"),
             DeepLinkState.from(
-                "${variant?.backendRoot ?: ""}/stop/place-chill/route/Green-B/direction/1/trip/12345"
+                "${variant?.backendRoot ?: ""}/stop/place-chill/route/Green-B/direction/1/trip/12345",
             ),
         )
     }

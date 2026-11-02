@@ -62,7 +62,7 @@ public abstract class MoleculeViewModel<Event, Model> : MoleculeScopeViewModel()
                     withTimeout(eventHandlingTimeout) { handleEvent(event) }
                 } catch (exc: TimeoutCancellationException) {
                     sentryRepository.captureException(
-                        TimeoutException(this@MoleculeViewModel::class.simpleName, event, exc)
+                        TimeoutException(this@MoleculeViewModel::class.simpleName, event, exc),
                     )
                 }
             }

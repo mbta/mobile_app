@@ -51,7 +51,7 @@ internal class MobileBackendClient(
             defaultRequest {
                 url(appVariant.backendRoot)
                 userAgent(
-                    "MBTA Go/${currentAppVersionRepository?.getCurrentAppVersion() ?: "?.?.?"} (${getPlatform().type})"
+                    "MBTA Go/${currentAppVersionRepository?.getCurrentAppVersion() ?: "?.?.?"} (${getPlatform().type})",
                 )
             }
             HttpResponseValidator {

@@ -14,7 +14,7 @@ public data class AlertsStreamUpdateResponse(
     public fun mergeInto(alertsData: AlertsStreamDataResponse?): AlertsStreamDataResponse =
         alertsData?.let {
             AlertsStreamDataResponse(
-                it.alerts.filter { (key, _) -> !remove.contains(key) } + update
+                it.alerts.filter { (key, _) -> !remove.contains(key) } + update,
             )
         } ?: AlertsStreamDataResponse(update)
 }
@@ -36,7 +36,7 @@ public data class AlertsStreamDataResponse(internal val alerts: Map<String, Aler
                             .mapNotNull { entity -> global.getFacility(entity.facility) }
                             .associateBy { it.id }
                     if (facilities.isEmpty()) alert else alert.copy(facilities = facilities)
-                }
+                },
             )
         } ?: this
 

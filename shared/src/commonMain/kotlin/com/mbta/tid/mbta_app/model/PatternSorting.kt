@@ -58,7 +58,7 @@ internal object PatternSorting {
         )
 
     fun compareStopsOnRoute(
-        sortByDistanceFrom: Position?
+        sortByDistanceFrom: Position?,
     ): Comparator<RouteCardData.RouteStopData> =
         compareBy(
             if (sortByDistanceFrom != null) {

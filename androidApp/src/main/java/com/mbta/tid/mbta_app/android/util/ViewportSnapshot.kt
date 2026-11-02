@@ -7,7 +7,7 @@ import com.mapbox.maps.plugin.viewport.CompletionListener
 
 class ViewportSnapshot(val isFollowingPuck: Boolean?, val camera: CameraState?) {
     constructor(
-        mapViewportState: MapViewportState
+        mapViewportState: MapViewportState,
     ) : this(
         isFollowingPuck = mapViewportState.isFollowingPuck,
         camera = mapViewportState.cameraState,

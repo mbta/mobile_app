@@ -32,7 +32,7 @@ fun AlertListContainer(
     Column(
         modifier =
             Modifier.background(colorResource(R.color.halo), RoundedCornerShape(outerCornerRadius))
-                .clip(RoundedCornerShape(outerCornerRadius))
+                .clip(RoundedCornerShape(outerCornerRadius)),
     ) {
         Column(
             modifier = Modifier.padding(2.dp),
@@ -56,7 +56,7 @@ fun AlertListContainer(
                             bottomStart = bottomRadius,
                             bottomEnd = bottomRadius,
                         ),
-                    )
+                    ),
                 )
             }
 
@@ -74,7 +74,7 @@ fun AlertListContainer(
                         bottomStart = middleContentBottomRadius,
                         bottomEnd = middleContentBottomRadius,
                     ),
-                )
+                ),
             )
 
             lowPriority.forEachIndexed { index, content ->
@@ -93,7 +93,7 @@ fun AlertListContainer(
                             bottomStart = bottomRadius,
                             bottomEnd = bottomRadius,
                         ),
-                    )
+                    ),
                 )
             }
         }
@@ -109,86 +109,102 @@ fun AlertListContainerPreview() {
     ) {
         AlertListContainer(
             highPriority =
-                listOf({ modifier ->
-                    AlertCard(
-                        ObjectCollectionBuilder.Single.alert({
-                            effect = Alert.Effect.ServiceChange
-                        }),
-                        null,
-                        AlertCardSpec.Basic,
-                        routeAccents =
-                            TripRouteAccents(
-                                color = Color.fromHex("80276C"),
-                                textColor = Color.fromHex("FFFFFF"),
-                                type = RouteType.COMMUTER_RAIL,
+                listOf(
+                    { modifier ->
+                        AlertCard(
+                            ObjectCollectionBuilder.Single.alert(
+                                {
+                                    effect = Alert.Effect.ServiceChange
+                                },
                             ),
-                        modifier = modifier,
-                        onViewDetails = {},
-                    )
-                }),
+                            null,
+                            AlertCardSpec.Basic,
+                            routeAccents =
+                                TripRouteAccents(
+                                    color = Color.fromHex("80276C"),
+                                    textColor = Color.fromHex("FFFFFF"),
+                                    type = RouteType.COMMUTER_RAIL,
+                                ),
+                            modifier = modifier,
+                            onViewDetails = {},
+                        )
+                    },
+                ),
             middleContent = { modifier -> NotAccessibleCard(modifier) },
             lowPriority =
-                listOf({ modifier ->
-                    AlertCard(
-                        ObjectCollectionBuilder.Single.alert({
-                            effect = Alert.Effect.ElevatorClosure
-                            header =
-                                "Ruggles Elevator 848 (Lobby to lower busway side platform) unavailable due to maintenance"
-                        }),
-                        null,
-                        AlertCardSpec.Elevator,
-                        routeAccents =
-                            TripRouteAccents(
-                                color = Color.fromHex("ED8B00"),
-                                textColor = Color.fromHex("FFFFFF"),
-                                type = RouteType.HEAVY_RAIL,
+                listOf(
+                    { modifier ->
+                        AlertCard(
+                            ObjectCollectionBuilder.Single.alert(
+                                {
+                                    effect = Alert.Effect.ElevatorClosure
+                                    header =
+                                        "Ruggles Elevator 848 (Lobby to lower busway side platform) unavailable due to maintenance"
+                                },
                             ),
-                        modifier = modifier,
-                        onViewDetails = {},
-                    )
-                }),
+                            null,
+                            AlertCardSpec.Elevator,
+                            routeAccents =
+                                TripRouteAccents(
+                                    color = Color.fromHex("ED8B00"),
+                                    textColor = Color.fromHex("FFFFFF"),
+                                    type = RouteType.HEAVY_RAIL,
+                                ),
+                            modifier = modifier,
+                            onViewDetails = {},
+                        )
+                    },
+                ),
         )
 
         AlertListContainer(
             highPriority =
-                listOf({ modifier ->
-                    AlertCard(
-                        ObjectCollectionBuilder.Single.alert({
-                            effect = Alert.Effect.ServiceChange
-                        }),
-                        null,
-                        AlertCardSpec.Basic,
-                        routeAccents =
-                            TripRouteAccents(
-                                color = Color.fromHex("80276C"),
-                                textColor = Color.fromHex("FFFFFF"),
-                                type = RouteType.COMMUTER_RAIL,
+                listOf(
+                    { modifier ->
+                        AlertCard(
+                            ObjectCollectionBuilder.Single.alert(
+                                {
+                                    effect = Alert.Effect.ServiceChange
+                                },
                             ),
-                        modifier = modifier,
-                        onViewDetails = {},
-                    )
-                })
+                            null,
+                            AlertCardSpec.Basic,
+                            routeAccents =
+                                TripRouteAccents(
+                                    color = Color.fromHex("80276C"),
+                                    textColor = Color.fromHex("FFFFFF"),
+                                    type = RouteType.COMMUTER_RAIL,
+                                ),
+                            modifier = modifier,
+                            onViewDetails = {},
+                        )
+                    },
+                ),
         )
 
         AlertListContainer(
             lowPriority =
-                listOf({ modifier ->
-                    AlertCard(
-                        ObjectCollectionBuilder.Single.alert({
-                            effect = Alert.Effect.ServiceChange
-                        }),
-                        null,
-                        AlertCardSpec.Basic,
-                        routeAccents =
-                            TripRouteAccents(
-                                color = Color.fromHex("80276C"),
-                                textColor = Color.fromHex("FFFFFF"),
-                                type = RouteType.COMMUTER_RAIL,
+                listOf(
+                    { modifier ->
+                        AlertCard(
+                            ObjectCollectionBuilder.Single.alert(
+                                {
+                                    effect = Alert.Effect.ServiceChange
+                                },
                             ),
-                        modifier = modifier,
-                        onViewDetails = {},
-                    )
-                })
+                            null,
+                            AlertCardSpec.Basic,
+                            routeAccents =
+                                TripRouteAccents(
+                                    color = Color.fromHex("80276C"),
+                                    textColor = Color.fromHex("FFFFFF"),
+                                    type = RouteType.COMMUTER_RAIL,
+                                ),
+                            modifier = modifier,
+                            onViewDetails = {},
+                        )
+                    },
+                ),
         )
     }
 }

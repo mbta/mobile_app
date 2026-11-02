@@ -198,7 +198,7 @@ public data class Direction(val name: String?, val destination: String?, val id:
         // served at the stop, it has non-null Direction objects with Gov Center destinations. This
         // checks if we have this specific case, and returns the North direction if we do.
         private fun govCenterSpecialCase(
-            directionsByDestination: Map<String?, Direction>
+            directionsByDestination: Map<String?, Direction>,
         ): Direction? {
             val govCenterDestinations = setOf("Government Center", northStationDestination)
             if (directionsByDestination.keys == govCenterDestinations) {

@@ -40,11 +40,13 @@ public fun RouteStopDirection.validityIssue(global: GlobalResponse): FavoriteVal
 
 /** Returns the subset of this set which are not valid according to [global], with the reason */
 public fun Set<RouteStopDirection>.invalidFavorites(
-    global: GlobalResponse
-): Map<RouteStopDirection, FavoriteValidityIssue> =
-    mapNotNull { rsd -> rsd.validityIssue(global)?.let { rsd to it } }.toMap()
+    global: GlobalResponse,
+): Map<RouteStopDirection, FavoriteValidityIssue> = mapNotNull { rsd ->
+    rsd.validityIssue(global)?.let { rsd to it }
+}
+    .toMap()
 
 /** Returns a copy of this map without any favorites whose route, stop, or direction is invalid */
 public fun Map<RouteStopDirection, FavoriteSettings>.filterValidFavorites(
-    global: GlobalResponse
+    global: GlobalResponse,
 ): Map<RouteStopDirection, FavoriteSettings> = filterKeys { it.validityIssue(global) == null }

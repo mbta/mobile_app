@@ -153,7 +153,7 @@ internal class ResponseCache<T : Any>(
                         this.putData(httpResponse, postprocess)
                         ApiResult.Ok(
                             this.getData()?.body
-                                ?: throw RuntimeException("Failed to set cached data")
+                                ?: throw RuntimeException("Failed to set cached data"),
                         )
                     }
                     else ->

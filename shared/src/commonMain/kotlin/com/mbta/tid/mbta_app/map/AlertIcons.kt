@@ -32,7 +32,7 @@ public object AlertIcons {
     // Expression that's true if the specified route index has no service status set
     private fun alertEmpty(index: Int): Exp<Boolean> {
         return Exp.not(
-            Exp.has(MapExp.routeAt(index), Exp.get(StopFeaturesBuilder.propServiceStatusKey))
+            Exp.has(MapExp.routeAt(index), Exp.get(StopFeaturesBuilder.propServiceStatusKey)),
         )
     }
 

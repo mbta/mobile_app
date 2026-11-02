@@ -37,7 +37,7 @@ class OnboardingRepositoryTest : KoinTest {
                     }
                     single<ISettingsRepository> { MockSettingsRepository(settings) }
                     single<DataStore<Preferences>> { PreferenceDataStoreFactory.create(storage) }
-                }
+                },
             )
         }
     }
@@ -71,7 +71,7 @@ class OnboardingRepositoryTest : KoinTest {
         assertEquals(
             preferencesOf(
                 stringSetPreferencesKey("onboardingScreensCompleted") to
-                    setOf(OnboardingScreen.Location.name)
+                    setOf(OnboardingScreen.Location.name),
             ),
             storage.preferences,
         )
@@ -83,7 +83,7 @@ class OnboardingRepositoryTest : KoinTest {
         storage.preferences =
             preferencesOf(
                 stringSetPreferencesKey("onboardingScreensCompleted") to
-                    setOf(OnboardingScreen.Location.name)
+                    setOf(OnboardingScreen.Location.name),
             )
         startKoin(isScreenReaderEnabled = true, storage = storage)
         val repo = OnboardingRepository()
@@ -131,7 +131,7 @@ class OnboardingRepositoryTest : KoinTest {
         storage.preferences =
             preferencesOf(
                 stringSetPreferencesKey("onboardingScreensCompleted") to
-                    setOf("a screen that is not known to exist")
+                    setOf("a screen that is not known to exist"),
             )
         startKoin(isScreenReaderEnabled = false, storage = storage)
         val repo = OnboardingRepository()

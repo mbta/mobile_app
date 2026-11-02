@@ -85,7 +85,7 @@ class MapHttpInterceptorTests {
                 1,
                 fakeRequest,
                 ExpectedFactory.createError(
-                    HttpRequestError(HttpRequestErrorType.REQUEST_CANCELLED, "cancelled")
+                    HttpRequestError(HttpRequestErrorType.REQUEST_CANCELLED, "cancelled"),
                 ),
             )
 

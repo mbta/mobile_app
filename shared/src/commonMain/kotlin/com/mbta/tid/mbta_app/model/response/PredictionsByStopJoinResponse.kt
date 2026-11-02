@@ -16,7 +16,7 @@ public data class PredictionsByStopJoinResponse(
 ) {
 
     public constructor(
-        objects: ObjectCollectionBuilder
+        objects: ObjectCollectionBuilder,
     ) : this(
         objects.predictions.values
             .groupBy { it.stopId }
@@ -26,7 +26,7 @@ public data class PredictionsByStopJoinResponse(
     )
 
     public constructor(
-        partialResponse: PredictionsByStopMessageResponse
+        partialResponse: PredictionsByStopMessageResponse,
     ) : this(
         mapOf(partialResponse.stopId to partialResponse.predictions),
         partialResponse.trips,
@@ -38,7 +38,7 @@ public data class PredictionsByStopJoinResponse(
      * vehicles & trips that are no longer referenced in any predictions
      */
     public fun mergePredictions(
-        updatedPredictions: PredictionsByStopMessageResponse
+        updatedPredictions: PredictionsByStopMessageResponse,
     ): PredictionsByStopJoinResponse {
 
         val updatedPredictionsByStop: Map<String, Map<String, Prediction>> =

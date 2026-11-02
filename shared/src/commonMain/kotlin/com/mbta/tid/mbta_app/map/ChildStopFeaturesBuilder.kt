@@ -22,7 +22,7 @@ internal object ChildStopFeaturesBuilder {
             return FeatureCollection(
                 stopsInOrder.mapIndexedNotNull { index, stop ->
                     generateChildStopFeature(childStop = stop, index = index)
-                }
+                },
             )
         } else {
             return FeatureCollection(emptyList())

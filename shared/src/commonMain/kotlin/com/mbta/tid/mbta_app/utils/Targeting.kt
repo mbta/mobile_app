@@ -4,7 +4,7 @@ import kotlin.math.absoluteValue
 
 public class Targeting {
     public enum class Target {
-        NotificationsBeta
+        NotificationsBeta,
     }
 
     public companion object {

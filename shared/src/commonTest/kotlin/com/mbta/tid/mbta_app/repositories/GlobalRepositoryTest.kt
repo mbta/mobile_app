@@ -129,7 +129,7 @@ class GlobalRepositoryTest : KoinTest {
                           }
                         }
                         """
-                            .trimIndent()
+                            .trimIndent(),
                     ),
                 status = HttpStatusCode.OK,
                 headers = headersOf(HttpHeaders.ContentType, "application/json"),
@@ -141,7 +141,7 @@ class GlobalRepositoryTest : KoinTest {
                 module {
                     single { MobileBackendClient(mockEngine, AppVariant.Staging) }
                     single { mockJsonPersistence() }
-                }
+                },
             )
         }
         runBlocking {

@@ -37,7 +37,7 @@ private constructor(
     public val vehicles: MutableMap<String, Vehicle>,
 ) {
     public constructor(
-        namespace: String
+        namespace: String,
     ) : this(
         namespace = namespace,
         alerts = mutableMapOf(),
@@ -147,7 +147,7 @@ private constructor(
                     routeType,
                     stop,
                     trip,
-                )
+                ),
             )
         }
 

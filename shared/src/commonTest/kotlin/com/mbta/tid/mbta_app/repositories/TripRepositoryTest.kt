@@ -134,35 +134,35 @@ class TripRepositoryTest : KoinTest {
                                                                             RoutePatternKey(
                                                                                 routeId,
                                                                                 "66_rp_2",
-                                                                            )
+                                                                            ),
                                                                         ),
                                                                     "2" to
                                                                         listOf(
                                                                             RoutePatternKey(
                                                                                 routeId,
                                                                                 "66_rp_2",
-                                                                            )
+                                                                            ),
                                                                         ),
                                                                     "3" to
                                                                         listOf(
                                                                             RoutePatternKey(
                                                                                 routeId,
                                                                                 "66_rp_2",
-                                                                            )
+                                                                            ),
                                                                         ),
                                                                 ),
-                                                        )
+                                                        ),
                                                     ),
                                                 shape =
                                                     Shape(
                                                         id = "shape_id",
                                                         polyline = "shape_polyline",
                                                     ),
-                                            )
+                                            ),
                                         ),
-                                )
-                            )
-                    )
+                                ),
+                            ),
+                    ),
                 ),
                 response,
             )

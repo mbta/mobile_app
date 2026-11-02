@@ -58,7 +58,7 @@ class RouteSegmentTest {
                                 routeType = RouteType.HEAVY_RAIL,
                                 stop = "place-davis",
                             )
-                        }
+                        },
                     ),
                 stateByRoute = mapOf(Pair(MapStopRoute.RED, StopAlertState.Normal)),
                 now = EasternTimeInstant.now(),
@@ -109,8 +109,8 @@ class RouteSegmentTest {
                 "place-davis" to
                     mapOf(
                         sourceRoute to
-                            RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true)
-                    )
+                            RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true),
+                    ),
             ),
             segment.alertStateByStopId(mapOf("place-davis" to alertsForStop)),
         )
@@ -166,17 +166,17 @@ class RouteSegmentTest {
                 "place-shuttle" to
                     mapOf(
                         sourceRoute to
-                            RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true)
+                            RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true),
                     ),
                 "place-suspension" to
                     mapOf(
                         sourceRoute to
-                            RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false)
+                            RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false),
                     ),
                 "place-both" to
                     mapOf(
                         sourceRoute to
-                            RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = true)
+                            RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = true),
                     ),
             ),
             segment.alertStateByStopId(alerts),
@@ -206,7 +206,7 @@ class RouteSegmentTest {
                                 routeType = RouteType.HEAVY_RAIL,
                                 stop = "place-davis",
                             )
-                        }
+                        },
                     ),
                 stateByRoute = mapOf(Pair(MapStopRoute.RED, StopAlertState.Normal)),
                 now = EasternTimeInstant.now(),
@@ -226,7 +226,7 @@ class RouteSegmentTest {
                 otherPatternsByStopId =
                     mapOf(
                         "place-davis" to
-                            listOf(RoutePatternKey(Route.Id("otherRoute"), "otherRoutePattern"))
+                            listOf(RoutePatternKey(Route.Id("otherRoute"), "otherRoutePattern")),
                     ),
             )
 
@@ -242,7 +242,7 @@ class RouteSegmentTest {
                                 routeType = RouteType.HEAVY_RAIL,
                                 stop = "place-davis",
                             )
-                        }
+                        },
                     ),
                 stateByRoute = mapOf(Pair(MapStopRoute.RED, StopAlertState.Normal)),
                 now = EasternTimeInstant.now(),
@@ -253,8 +253,8 @@ class RouteSegmentTest {
                 "place-davis" to
                     mapOf(
                         sourceRoute to
-                            RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true)
-                    )
+                            RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true),
+                    ),
             ),
             segment.alertStateByStopId(mapOf("place-davis" to alertsForStop)),
         )
@@ -316,8 +316,8 @@ class RouteSegmentTest {
                 "place-butlr" to
                     mapOf(
                         Route.Id("Mattapan") to
-                            RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true)
-                    )
+                            RouteSegment.StopAlertState(hasSuspension = false, hasShuttle = true),
+                    ),
             ),
             segment.alertStateByStopId(mapOf("place-butlr" to alertsForStop)),
         )
@@ -374,7 +374,7 @@ class RouteSegmentTest {
                 Pair(
                     SegmentAlertState.Suspension,
                     listOf("alewife", "davis", "porter", "harvard", "central"),
-                )
+                ),
             ),
             singleRouteAlertingSegments(
                 listOf("alewife", "davis", "porter", "harvard", "central"),
@@ -402,7 +402,7 @@ class RouteSegmentTest {
                 Pair(
                     SegmentAlertState.Normal,
                     listOf("alewife", "davis", "porter", "harvard", "central"),
-                )
+                ),
             ),
             singleRouteAlertingSegments(
                 listOf("alewife", "davis", "porter", "harvard", "central"),
@@ -448,8 +448,8 @@ class RouteSegmentTest {
                                 RoutePatternKey(
                                     routeId = Route.Id("otherRoute"),
                                     routePatternId = "otherRp",
-                                )
-                            )
+                                ),
+                            ),
                     ),
             )
 
@@ -476,8 +476,8 @@ class RouteSegmentTest {
                                     RoutePatternKey(
                                         routeId = Route.Id("otherRoute"),
                                         routePatternId = "otherRp",
-                                    )
-                                )
+                                    ),
+                                ),
                         ),
                     alertState = SegmentAlertState.Normal,
                 ),
@@ -518,8 +518,8 @@ class RouteSegmentTest {
                                 RoutePatternKey(
                                     routeId = Route.Id("otherRoute"),
                                     routePatternId = "otherRp",
-                                )
-                            )
+                                ),
+                            ),
                     ),
             )
 
@@ -549,11 +549,11 @@ class RouteSegmentTest {
                                     RoutePatternKey(
                                         routeId = Route.Id("otherRoute"),
                                         routePatternId = "otherRp",
-                                    )
-                                )
+                                    ),
+                                ),
                         ),
                     alertState = SegmentAlertState.Suspension,
-                )
+                ),
             ),
             routeSegment.splitAlertingSegments(alertsForStop),
         )
@@ -575,8 +575,8 @@ class RouteSegmentTest {
                                 RoutePatternKey(
                                     routeId = Route.Id("otherRoute"),
                                     routePatternId = "otherRp",
-                                )
-                            )
+                                ),
+                            ),
                     ),
             )
 
@@ -598,11 +598,11 @@ class RouteSegmentTest {
                                     RoutePatternKey(
                                         routeId = Route.Id("otherRoute"),
                                         routePatternId = "otherRp",
-                                    )
-                                )
+                                    ),
+                                ),
                         ),
                     alertState = SegmentAlertState.Normal,
-                )
+                ),
             ),
             routeSegment.splitAlertingSegments(alertsForStop),
         )
@@ -626,14 +626,14 @@ class RouteSegmentTest {
                 "place-sstat" to
                     mapOf(
                         otherRoute to
-                            RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false)
-                    )
+                            RouteSegment.StopAlertState(hasSuspension = true, hasShuttle = false),
+                    ),
             ),
             segment.alertStateByStopId(
                 mapOf(
                     "place-sstat" to
-                        serviceAlert("place-sstat", otherRoute, Alert.Effect.Suspension)
-                )
+                        serviceAlert("place-sstat", otherRoute, Alert.Effect.Suspension),
+                ),
             ),
         )
     }
@@ -809,7 +809,7 @@ class RouteSegmentTest {
                             routeType = RouteType.HEAVY_RAIL,
                             stop = stopId,
                         )
-                    }
+                    },
                 ),
             stateByRoute = mapOf(Pair(MapStopRoute.RED, StopAlertState.Normal)),
             now = EasternTimeInstant.now(),

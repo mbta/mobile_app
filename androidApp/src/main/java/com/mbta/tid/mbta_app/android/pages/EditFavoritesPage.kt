@@ -164,7 +164,7 @@ fun EditFavoritesPage(
                                 toastViewModel.hideToast()
                             },
                         ),
-                )
+                ),
             )
         }
         val editFavorite: (RouteStopDirection) -> Unit = { selectedFavorite ->
@@ -174,7 +174,7 @@ fun EditFavoritesPage(
                     selectedFavorite.stop,
                     selectedFavorite.direction,
                     EditFavoritesContext.Favorites,
-                )
+                ),
             ) {
                 favoritesViewModel.reloadFavorites()
             }

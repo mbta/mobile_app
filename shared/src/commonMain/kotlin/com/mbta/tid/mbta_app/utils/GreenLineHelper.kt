@@ -89,7 +89,7 @@ public class GreenLineTestHelper {
                                             "place-lake",
                                         ),
                                         emptyMap(),
-                                    )
+                                    ),
                                 ),
                                 shapeB0,
                             ),
@@ -109,7 +109,7 @@ public class GreenLineTestHelper {
                                             "place-gover",
                                         ),
                                         emptyMap(),
-                                    )
+                                    ),
                                 ),
                                 shapeB1,
                             ),
@@ -134,7 +134,7 @@ public class GreenLineTestHelper {
                                             "place-clmnl",
                                         ),
                                         emptyMap(),
-                                    )
+                                    ),
                                 ),
                                 shapeC0,
                             ),
@@ -154,7 +154,7 @@ public class GreenLineTestHelper {
                                             "place-gover",
                                         ),
                                         emptyMap(),
-                                    )
+                                    ),
                                 ),
                                 shapeC1,
                             ),
@@ -179,7 +179,7 @@ public class GreenLineTestHelper {
                                             "place-hsmnl",
                                         ),
                                         emptyMap(),
-                                    )
+                                    ),
                                 ),
                                 shapeE0,
                             ),
@@ -199,7 +199,7 @@ public class GreenLineTestHelper {
                                             "place-gover",
                                         ),
                                         emptyMap(),
-                                    )
+                                    ),
                                 ),
                                 shapeE1,
                             ),

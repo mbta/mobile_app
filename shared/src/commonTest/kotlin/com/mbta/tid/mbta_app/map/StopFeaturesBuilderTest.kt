@@ -161,7 +161,8 @@ class StopFeaturesBuilderTest {
                                 stop = stops.getValue("place-astao"),
                                 routes =
                                     mapOf(
-                                        MapStopRoute.ORANGE to listOf(MapTestDataHelper.routeOrange)
+                                        MapStopRoute.ORANGE to
+                                            listOf(MapTestDataHelper.routeOrange),
                                     ),
                                 routeTypes = listOf(MapStopRoute.ORANGE),
                                 routeDirections =

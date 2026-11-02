@@ -73,7 +73,7 @@ fun SemanticsNodeInteraction.assertHasColor(targetColor: Color) {
                         "grey" -> 2
                         else -> 3
                     }
-                }
+                },
             )
 
     Assert.fail("Did not contain specified color, but did have $legibleResult")

@@ -17,7 +17,7 @@ internal object MapExp {
     // string if there's nothing in the array
     val topRouteExp =
         Exp.string(
-            Exp.case(Exp.eq(Exp.length(routesExp), Exp(0)) to Exp(""), Exp.at(Exp(0), routesExp))
+            Exp.case(Exp.eq(Exp.length(routesExp), Exp(0)) to Exp(""), Exp.at(Exp(0), routesExp)),
         )
 
     // Returns true if there's both a single type of route, and only a single route ID

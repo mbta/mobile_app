@@ -96,7 +96,7 @@ fun VehiclePuck(
                     painterResource(
                         id =
                             if (vehicle.bearing != null) R.drawable.vehicle_halo_teardrop
-                            else R.drawable.vehicle_halo_circle
+                            else R.drawable.vehicle_halo_circle,
                     ),
                 contentDescription = null,
             )
@@ -105,7 +105,7 @@ fun VehiclePuck(
                 if (vehicle.bearing == null) puckPath.addOval(Rect(Offset(14f, 14f), 14f))
                 else
                     puckPath.addSvg(
-                        "m-0,14c-0,-2.908 -0,-10.308 -0,-13.001 -0,-0.552 0.445,-0.999 0.997,-0.999 2.608,-0 9.66,-0 13.003,-0 7.732,-0 14,6.268 14,14 0,7.732 -6.268,14 -14,14 -7.732,0 -14,-6.268 -14,-14z"
+                        "m-0,14c-0,-2.908 -0,-10.308 -0,-13.001 -0,-0.552 0.445,-0.999 0.997,-0.999 2.608,-0 9.66,-0 13.003,-0 7.732,-0 14,6.268 14,14 0,7.732 -6.268,14 -14,14 -7.732,0 -14,-6.268 -14,-14z",
                     )
                 Box(
                     Modifier.size(28.dp).drawWithCache {
@@ -150,7 +150,7 @@ fun VehiclePuck(
                                 )
                             }
                         }
-                    }
+                    },
                 )
             } else {
                 Image(
@@ -158,7 +158,7 @@ fun VehiclePuck(
                         painterResource(
                             id =
                                 if (vehicle.bearing != null) R.drawable.vehicle_puck_teardrop
-                                else R.drawable.vehicle_puck_circle
+                                else R.drawable.vehicle_puck_circle,
                         ),
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(routeColor),

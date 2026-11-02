@@ -24,7 +24,7 @@ public interface IGlobalRepository {
 
 internal class GlobalRepository(
     val cache: ResponseCache<GlobalResponse> =
-        ResponseCache.create(cacheKey = "global", invalidationKey = "2025-03-19")
+        ResponseCache.create(cacheKey = "global", invalidationKey = "2025-03-19"),
 ) : IGlobalRepository, KoinComponent {
     private val mobileBackendClient: MobileBackendClient by inject()
     override val state = cache.state
@@ -64,7 +64,7 @@ constructor(private val result: ApiResult<GlobalResponse>, private val onGet: ()
             when (result) {
                 is ApiResult.Error -> null
                 is ApiResult.Ok -> result.data
-            }
+            },
         )
 
     override suspend fun getGlobalData(): ApiResult<GlobalResponse> {

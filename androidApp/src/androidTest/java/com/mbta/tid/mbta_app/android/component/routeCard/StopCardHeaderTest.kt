@@ -143,7 +143,7 @@ class StopCardHeaderTest {
                             null,
                             emptyList(),
                             RouteCardData.Context.StopDetailsUnfiltered,
-                        )
+                        ),
                     ),
                 ),
                 GlobalResponse(objects),

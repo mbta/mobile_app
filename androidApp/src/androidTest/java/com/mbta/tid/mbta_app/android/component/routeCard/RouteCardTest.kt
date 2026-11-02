@@ -32,7 +32,7 @@ class RouteCardTest {
                 RouteCardData(
                     LineOrRoute.Route(route),
                     listOf(
-                        RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList())
+                        RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
                     ),
                     now,
                 ),
@@ -63,7 +63,7 @@ class RouteCardTest {
                 RouteCardData(
                     LineOrRoute.Route(route),
                     listOf(
-                        RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList())
+                        RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
                     ),
                     now,
                 ),
@@ -96,7 +96,7 @@ class RouteCardTest {
                 RouteCardData(
                     LineOrRoute.Route(route),
                     listOf(
-                        RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList())
+                        RouteCardData.RouteStopData(LineOrRoute.Route(route), stop, emptyList()),
                     ),
                     now,
                 ),

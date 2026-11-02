@@ -58,7 +58,7 @@ class TripDetailsViewModelTest : KoinTest {
                         useObjects(objects)
                         pinnedRoutes = MockPinnedRoutesRepository()
                         repositoriesBlock()
-                    }
+                    },
                 ),
                 viewModelModule(),
                 module {
@@ -304,7 +304,7 @@ class TripDetailsViewModelTest : KoinTest {
                                 this.stopSequence = index
                                 this.routeId = route.id.idText
                             }
-                        }
+                        },
                     ),
                 tripResponse = TripResponse(trip),
             )

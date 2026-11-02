@@ -166,7 +166,7 @@ class MapLayerManager(val map: MapboxMap, val context: Context) : IMapLayerManag
     }
 
     override suspend fun updateStopSourceData(
-        stopData: com.mbta.tid.mbta_app.map.style.FeatureCollection
+        stopData: com.mbta.tid.mbta_app.map.style.FeatureCollection,
     ) {
         updateSourceData(StopFeaturesBuilder.stopSourceId, stopData.toMapbox())
     }

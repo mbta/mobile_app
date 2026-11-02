@@ -105,7 +105,7 @@ public class TripDetailsPageViewModel(private val tripDetailsVM: ITripDetailsVie
 }
 
 public class MockTripDetailsPageViewModel(
-    initialState: TripDetailsPageViewModel.State = TripDetailsPageViewModel.State(null, null)
+    initialState: TripDetailsPageViewModel.State = TripDetailsPageViewModel.State(null, null),
 ) : ITripDetailsPageViewModel {
     public var onSetAlerts: (AlertsStreamDataResponse?) -> Unit = {}
     public var onSetContextualTrip: (UpcomingTrip?) -> Unit = {}

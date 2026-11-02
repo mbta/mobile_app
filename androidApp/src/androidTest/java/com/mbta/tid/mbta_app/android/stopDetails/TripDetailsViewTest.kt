@@ -87,7 +87,7 @@ class TripDetailsViewTest {
         val loggedEvents = mutableListOf<Pair<String, Map<String, String>>>()
         val analytics =
             MockAnalytics(
-                onLogEvent = { event, properties -> loggedEvents.add(event to properties) }
+                onLogEvent = { event, properties -> loggedEvents.add(event to properties) },
             )
         val tripDetailsStopList = runBlocking {
             TripDetailsStopList.fromPieces(
@@ -134,7 +134,7 @@ class TripDetailsViewTest {
                         "trip_id" to trip.id,
                         "connecting_route_id" to "",
                     ),
-                )
+                ),
             ),
             loggedEvents,
         )
@@ -146,7 +146,7 @@ class TripDetailsViewTest {
         val loggedEvents = mutableListOf<Pair<String, Map<String, String>>>()
         val analytics =
             MockAnalytics(
-                onLogEvent = { event, properties -> loggedEvents.add(event to properties) }
+                onLogEvent = { event, properties -> loggedEvents.add(event to properties) },
             )
 
         objects.alert {
@@ -276,7 +276,7 @@ class TripDetailsViewTest {
         val loggedEvents = mutableListOf<Pair<String, Map<String, String>>>()
         val analytics =
             MockAnalytics(
-                onLogEvent = { event, properties -> loggedEvents.add(event to properties) }
+                onLogEvent = { event, properties -> loggedEvents.add(event to properties) },
             )
 
         val unavailableTripData = TripData(tripFilter, null, null, null, vehicle)

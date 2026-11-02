@@ -25,7 +25,7 @@ public fun feedbackFormUrl(
                         else -> "Android"
                     },
                 ),
-            )
+            ),
         )
         .appendAll(settings.entries.associate { it.key.name to it.value.toString() })
         .build()

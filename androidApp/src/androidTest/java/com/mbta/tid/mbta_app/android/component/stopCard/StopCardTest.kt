@@ -46,7 +46,7 @@ class StopCardTest {
                             null,
                             emptyList(),
                             RouteCardData.Context.Favorites,
-                        )
+                        ),
                     ),
                 ),
                 GlobalResponse(objects),

@@ -40,7 +40,7 @@ private fun format(
     val formattedDate =
         instant.formattedServiceDayAndDate(
             if (isStart) EasternTimeInstant.ServiceDateRounding.FORWARDS
-            else EasternTimeInstant.ServiceDateRounding.BACKWARDS
+            else EasternTimeInstant.ServiceDateRounding.BACKWARDS,
         )
     var formattedTime = instant.formattedTime()
 

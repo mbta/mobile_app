@@ -85,7 +85,7 @@ class StopLayerGeneratorTest {
                                 MapStopRoute.COMMUTER to StopAlertState.Normal,
                                 MapStopRoute.BUS to StopAlertState.Normal,
                             ),
-                    )
+                    ),
             )
 
         val feature = StopFeaturesBuilder.buildCollection(mapStops, emptyList()).features.single()
@@ -161,7 +161,7 @@ class StopLayerGeneratorTest {
             StopLayerGenerator.createStopLayers(
                 ColorPalette.light,
                 StopLayerGenerator.State.StopDetails(
-                    selectedStopId = checkNotNull(alewifeFeature.id)
+                    selectedStopId = checkNotNull(alewifeFeature.id),
                 ),
             )
 

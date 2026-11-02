@@ -134,12 +134,12 @@ fun Departures(
                         formatted is LeafFormat.Single -> {
                             DirectionRowView(
                                 direction.copy(
-                                    destination = formatted.headsign ?: direction.destination
+                                    destination = formatted.headsign ?: direction.destination,
                                 ),
                                 formatted.format,
                                 pillDecoration =
                                     PillDecoration.OnRow(
-                                        formatted.route ?: leaf.lineOrRoute.sortRoute
+                                        formatted.route ?: leaf.lineOrRoute.sortRoute,
                                     ),
                             )
                         }

@@ -46,14 +46,14 @@ class ContentViewModelTests : KoinTest {
                                             MockCurrentAppVersionRepository(AppVersion(4u, 0u, 0u)),
                                             // Favorites promo in version 2.0.0
                                             MockLastLaunchedAppVersionRepository(
-                                                AppVersion(3u, 0u, 0u)
+                                                AppVersion(3u, 0u, 0u),
                                             ),
                                         ),
                                     onboardingRepository = MockOnboardingRepository(),
                                     tabPreferencesRepository = tabPreferencesRepository,
                                 )
                             }
-                        }
+                        },
                 )
         }
 
@@ -77,14 +77,14 @@ class ContentViewModelTests : KoinTest {
                                             MockCurrentAppVersionRepository(AppVersion(4u, 0u, 0u)),
                                             // Favorites promo in version 2.0.0
                                             MockLastLaunchedAppVersionRepository(
-                                                AppVersion(3u, 0u, 0u)
+                                                AppVersion(3u, 0u, 0u),
                                             ),
                                         ),
                                     onboardingRepository = MockOnboardingRepository(),
                                     tabPreferencesRepository = tabPreferencesRepository,
                                 )
                             }
-                        }
+                        },
                 )
         }
 
@@ -112,14 +112,14 @@ class ContentViewModelTests : KoinTest {
                                                     3u,
                                                     0u,
                                                     0u,
-                                                )
+                                                ),
                                             ),
                                         ),
                                     onboardingRepository = MockOnboardingRepository(),
                                     tabPreferencesRepository = tabPreferencesRepository,
                                 )
                             }
-                        }
+                        },
                 )
         }
 
@@ -151,14 +151,14 @@ class ContentViewModelTests : KoinTest {
                                         FeaturePromoUseCase(
                                             MockCurrentAppVersionRepository(AppVersion(2u, 0u, 0u)),
                                             MockLastLaunchedAppVersionRepository(
-                                                AppVersion(1u, 0u, 0u)
+                                                AppVersion(1u, 0u, 0u),
                                             ),
                                         ),
                                     onboardingRepository = MockOnboardingRepository(),
                                     tabPreferencesRepository = tabPreferencesRepository,
                                 )
                             }
-                        }
+                        },
                 )
         }
 

@@ -257,8 +257,8 @@ class ResponseCacheTest {
                     ResponseMetadata(
                         null,
                         TimeSource.Monotonic.markNow().minus(cache.maxAge - 1.minutes),
-                    )
-                )
+                    ),
+                ),
             )
         }
         fileSystem.write(directory / "test.json") { writeUtf8(json.encodeToString(globalData)) }
@@ -307,8 +307,8 @@ class ResponseCacheTest {
                     ResponseMetadata(
                         null,
                         TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes),
-                    )
-                )
+                    ),
+                ),
             )
         }
         fileSystem.write(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json") {
@@ -362,8 +362,8 @@ class ResponseCacheTest {
                     ResponseMetadata(
                         null,
                         TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes),
-                    )
-                )
+                    ),
+                ),
             )
         }
         fileSystem.write(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json") {
@@ -437,10 +437,10 @@ class ResponseCacheTest {
             json
                 .decodeFromString<ResponseMetadata>(
                     fileSystem.read(
-                        mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test-meta.json"
+                        mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test-meta.json",
                     ) {
                         readUtf8()
-                    }
+                    },
                 )
                 .etag,
         )
@@ -449,7 +449,7 @@ class ResponseCacheTest {
             json.decodeFromString(
                 fileSystem.read(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json") {
                     readUtf8()
-                }
+                },
             ),
         )
     }
@@ -505,7 +505,7 @@ class ResponseCacheTest {
             json.decodeFromString(
                 fileSystem.read(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json") {
                     readUtf8()
-                }
+                },
             ),
         )
 
@@ -563,10 +563,10 @@ class ResponseCacheTest {
         fun metadataFromDisk() =
             json.decodeFromString<ResponseMetadata>(
                 fileSystem.read(
-                    mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test-meta.json"
+                    mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test-meta.json",
                 ) {
                     readUtf8()
-                }
+                },
             )
 
         assertEquals(responseEtag, metadataFromDisk().etag)

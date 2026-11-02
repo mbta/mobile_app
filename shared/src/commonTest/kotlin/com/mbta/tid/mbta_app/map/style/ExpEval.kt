@@ -44,7 +44,7 @@ private data class EvaluationContext(
                         "number" ->
                             value.forEach {
                                 checkNotNull(
-                                    it.jsonPrimitive.longOrNull ?: it.jsonPrimitive.doubleOrNull
+                                    it.jsonPrimitive.longOrNull ?: it.jsonPrimitive.doubleOrNull,
                                 )
                             }
                         "string" -> value.forEach { check(it.jsonPrimitive.isString) }
@@ -93,7 +93,7 @@ private data class EvaluationContext(
                         JsonPrimitive(haystack.contains(needle))
                     } else {
                         JsonPrimitive(
-                            haystack.jsonPrimitive.content.contains(needle.jsonPrimitive.content)
+                            haystack.jsonPrimitive.content.contains(needle.jsonPrimitive.content),
                         )
                     }
                 }
@@ -189,7 +189,7 @@ private data class EvaluationContext(
                             }
                             else ->
                                 throw IllegalArgumentException(
-                                    "interpolate with spec $interpolationSpec not implemented in ExpEval"
+                                    "interpolate with spec $interpolationSpec not implemented in ExpEval",
                                 )
                         }
                     val input = evaluate(json[2]).jsonPrimitive.double
@@ -259,12 +259,15 @@ private data class EvaluationContext(
                             for (input in json.drop(1)) {
                                 append(evaluate(input).jsonPrimitive.content)
                             }
-                        }
+                        },
                     )
                 "downcase" -> JsonPrimitive(evaluate(json[1]).jsonPrimitive.content.lowercase())
                 "*" ->
                     JsonPrimitive(
-                        json.drop(1).map { evaluate(it).jsonPrimitive.double }.reduce(Double::times)
+                        json
+                            .drop(1)
+                            .map { evaluate(it).jsonPrimitive.double }
+                            .reduce(Double::times),
                     )
                 "zoom" -> JsonPrimitive(zoom)
                 "collator",

@@ -1132,13 +1132,13 @@ class AlertTest {
             alert.anyInformedEntityMatches(
                 routeId = Matcher.Data(Route.Id("1")),
                 routeType = Matcher.Data(RouteType.BUS),
-            )
+            ),
         )
         assertFalse(
             alert.anyInformedEntityMatches(
                 routeId = Matcher.Data(Route.Id("CR")),
                 routeType = Matcher.Data(RouteType.COMMUTER_RAIL),
-            )
+            ),
         )
     }
 
@@ -1242,7 +1242,7 @@ class AlertTest {
                 Route.Id("CR-Providence"),
                 setOf("place-bbsta"),
                 "trip",
-            )
+            ),
         )
     }
 }

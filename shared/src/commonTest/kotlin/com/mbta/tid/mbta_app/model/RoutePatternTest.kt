@@ -44,7 +44,7 @@ internal class RoutePatternTest {
                                 allPatterns = listOf(rp1, rp2),
                                 patternsNotSeenAtEarlierStops = setOf(rp2.id),
                             ),
-                    )
+                    ),
             )
 
         assertEquals(
@@ -80,7 +80,7 @@ internal class RoutePatternTest {
                                 allPatterns = listOf(rp1, rp2),
                                 patternsNotSeenAtEarlierStops = setOf(rp1.id, rp2.id),
                             ),
-                    )
+                    ),
             )
         assertEquals(
             expected,
@@ -110,7 +110,7 @@ internal class RoutePatternTest {
                                 allPatterns = listOf(rp2),
                                 patternsNotSeenAtEarlierStops = setOf(rp1.id, rp2.id),
                             ),
-                    )
+                    ),
             )
         assertEquals(
             expected,

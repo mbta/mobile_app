@@ -196,8 +196,8 @@ class AlertCardTests {
         composeTestRule
             .onNode(
                 hasTextMatching(
-                    Regex("Delay on Red Line starting 9:00\\sAM today", RegexOption.IGNORE_CASE)
-                )
+                    Regex("Delay on Red Line starting 9:00\\sAM today", RegexOption.IGNORE_CASE),
+                ),
             )
             .assertCanBeDisplayed()
     }
@@ -291,7 +291,7 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 AlertSummaryEntity(
-                    "**All clear:** Regular service from **Start Stop** to **End Stop**"
+                    "**All clear:** Regular service from **Start Stop** to **End Stop**",
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents,
@@ -314,7 +314,7 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 AlertSummaryEntity(
-                    "**Update:** Shuttle buses from **Start Stop** to **End Stop** through tomorrow"
+                    "**Update:** Shuttle buses from **Start Stop** to **End Stop** through tomorrow",
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents,
@@ -339,7 +339,7 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 AlertSummaryEntity(
-                    "**12:13\u202FPM** train from **Ruggles** is cancelled today due to mechanical issue"
+                    "**12:13\u202FPM** train from **Ruggles** is cancelled today due to mechanical issue",
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
@@ -354,8 +354,8 @@ class AlertCardTests {
                     Regex(
                         "12:13\\sPM train from Ruggles is cancelled today due to mechanical issue",
                         RegexOption.IGNORE_CASE,
-                    )
-                )
+                    ),
+                ),
             )
             .assertCanBeDisplayed()
     }
@@ -395,7 +395,7 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 AlertSummaryEntity(
-                    "**12:13\u202FPM** train from **Oak Grove** is replaced by shuttle buses from **Ruggles** to **Forest Hills**"
+                    "**12:13\u202FPM** train from **Oak Grove** is replaced by shuttle buses from **Ruggles** to **Forest Hills**",
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
@@ -410,8 +410,8 @@ class AlertCardTests {
                     Regex(
                         "12:13\\sPM train from Oak Grove is replaced by shuttle buses from Ruggles to Forest Hills",
                         RegexOption.IGNORE_CASE,
-                    )
-                )
+                    ),
+                ),
             )
             .assertCanBeDisplayed()
     }
@@ -427,7 +427,7 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 AlertSummaryEntity(
-                    "Shuttle buses replace the **12:13\u202FPM** train from **Ruggles** to **Forest Hills**"
+                    "Shuttle buses replace the **12:13\u202FPM** train from **Ruggles** to **Forest Hills**",
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
@@ -442,8 +442,8 @@ class AlertCardTests {
                     Regex(
                         "Shuttle buses replace the 12:13\\sPM train from Ruggles to Forest Hills",
                         RegexOption.IGNORE_CASE,
-                    )
-                )
+                    ),
+                ),
             )
             .assertCanBeDisplayed()
     }
@@ -459,7 +459,7 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 AlertSummaryEntity(
-                    "**12:13\u202FPM** train to **Stoughton** will not stop at **Back Bay** and **Ruggles** today"
+                    "**12:13\u202FPM** train to **Stoughton** will not stop at **Back Bay** and **Ruggles** today",
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
@@ -474,8 +474,8 @@ class AlertCardTests {
                     Regex(
                         "12:13\\sPM train to Stoughton will not stop at Back Bay and Ruggles today",
                         RegexOption.IGNORE_CASE,
-                    )
-                )
+                    ),
+                ),
             )
             .assertCanBeDisplayed()
     }
@@ -488,7 +488,7 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 AlertSummaryEntity(
-                    "Trains will not stop at **Back Bay** and **Ruggles** until further notice"
+                    "Trains will not stop at **Back Bay** and **Ruggles** until further notice",
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
@@ -510,7 +510,7 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 AlertSummaryEntity(
-                    "Buses will not stop at **Back Bay** and **Ruggles** until further notice"
+                    "Buses will not stop at **Back Bay** and **Ruggles** until further notice",
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.BUS),
@@ -536,7 +536,7 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 AlertSummaryEntity(
-                    "**12:13\u202FPM** train from **Ruggles** is cancelled tomorrow due to mechanical issue"
+                    "**12:13\u202FPM** train from **Ruggles** is cancelled tomorrow due to mechanical issue",
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
@@ -551,8 +551,8 @@ class AlertCardTests {
                     Regex(
                         "12:13\\sPM train from Ruggles is cancelled tomorrow due to mechanical issue",
                         RegexOption.IGNORE_CASE,
-                    )
-                )
+                    ),
+                ),
             )
             .assertCanBeDisplayed()
     }
@@ -568,7 +568,7 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 AlertSummaryEntity(
-                    "**12:13\u202FPM** train from **Oak Grove** is replaced by shuttle buses from **Ruggles** to **Forest Hills** daily until Thursday"
+                    "**12:13\u202FPM** train from **Oak Grove** is replaced by shuttle buses from **Ruggles** to **Forest Hills** daily until Thursday",
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
@@ -583,8 +583,8 @@ class AlertCardTests {
                     Regex(
                         "12:13\\sPM train from Oak Grove is replaced by shuttle buses from Ruggles to Forest Hills daily until Thursday",
                         RegexOption.IGNORE_CASE,
-                    )
-                )
+                    ),
+                ),
             )
             .assertCanBeDisplayed()
     }
@@ -600,7 +600,7 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 AlertSummaryEntity(
-                    "Shuttle buses replace this train from **Ruggles** to **Forest Hills** daily until Thursday"
+                    "Shuttle buses replace this train from **Ruggles** to **Forest Hills** daily until Thursday",
                 ),
                 AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
@@ -613,9 +613,9 @@ class AlertCardTests {
             .onNode(
                 hasTextMatching(
                     Regex(
-                        "Shuttle buses replace this train from Ruggles to Forest Hills daily until Thursday"
-                    )
-                )
+                        "Shuttle buses replace this train from Ruggles to Forest Hills daily until Thursday",
+                    ),
+                ),
             )
             .assertCanBeDisplayed()
     }

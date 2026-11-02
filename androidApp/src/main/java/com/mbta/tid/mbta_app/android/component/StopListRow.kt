@@ -116,11 +116,11 @@ fun StopListRow(
     Column {
         Box(
             Modifier.padding(
-                    horizontal = if (stopListContext is StopListContext.Trip) 6.dp else 0.dp
+                    horizontal = if (stopListContext is StopListContext.Trip) 6.dp else 0.dp,
                 )
                 .then(modifier)
                 .height(IntrinsicSize.Min)
-                .defaultMinSize(minHeight = 48.dp)
+                .defaultMinSize(minHeight = 48.dp),
         ) {
             if (!stopPlacement.isLast && !targeted && !hasNoThroughOutDisruption) {
                 HaloSeparator(Modifier.align(Alignment.BottomCenter))
@@ -170,7 +170,7 @@ fun StopListRow(
                                                 .placeholderIfLoading(),
                                         painter =
                                             painterResource(
-                                                R.drawable.accessibility_icon_not_accessible
+                                                R.drawable.accessibility_icon_not_accessible,
                                             ),
                                         contentDescription = null,
                                     )

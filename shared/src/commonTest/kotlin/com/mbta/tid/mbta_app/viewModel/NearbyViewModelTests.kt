@@ -98,7 +98,7 @@ internal class NearbyViewModelTests : KoinTest {
                     MockRepositories().apply {
                         useObjects(objects)
                         repositoriesBlock()
-                    }
+                    },
                 ),
                 viewModelModule(),
                 module {
@@ -203,8 +203,8 @@ internal class NearbyViewModelTests : KoinTest {
                                                 predictions
                                                     .getValue(stop1)
                                                     .getValue(route1)
-                                                    .getValue(0)
-                                            )
+                                                    .getValue(0),
+                                            ),
                                         ),
                                     alertsHere = emptyList(),
                                     allDataLoaded = true,
@@ -225,8 +225,8 @@ internal class NearbyViewModelTests : KoinTest {
                                                 predictions
                                                     .getValue(stop1)
                                                     .getValue(route1)
-                                                    .getValue(1)
-                                            )
+                                                    .getValue(1),
+                                            ),
                                         ),
                                     alertsHere = emptyList(),
                                     allDataLoaded = true,
@@ -236,7 +236,7 @@ internal class NearbyViewModelTests : KoinTest {
                                     context = RouteCardData.Context.NearbyTransit,
                                 ),
                             ),
-                        )
+                        ),
                     ),
                     now,
                 ),
@@ -259,8 +259,8 @@ internal class NearbyViewModelTests : KoinTest {
                                                 predictions
                                                     .getValue(stop2)
                                                     .getValue(route2)
-                                                    .getValue(0)
-                                            )
+                                                    .getValue(0),
+                                            ),
                                         ),
                                     alertsHere = emptyList(),
                                     allDataLoaded = true,
@@ -281,8 +281,8 @@ internal class NearbyViewModelTests : KoinTest {
                                                 predictions
                                                     .getValue(stop2)
                                                     .getValue(route2)
-                                                    .getValue(1)
-                                            )
+                                                    .getValue(1),
+                                            ),
                                         ),
                                     alertsHere = emptyList(),
                                     allDataLoaded = true,
@@ -292,7 +292,7 @@ internal class NearbyViewModelTests : KoinTest {
                                     context = RouteCardData.Context.NearbyTransit,
                                 ),
                             ),
-                        )
+                        ),
                     ),
                     now,
                 ),

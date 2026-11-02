@@ -89,7 +89,7 @@ fun BarAndToastScaffold(
                 AnnotatedString.fromHtml(
                         if (state.toast.isTip)
                             stringResource(R.string.toast_tip_prefix, state.toast.message)
-                        else state.toast.message
+                        else state.toast.message,
                     )
                     .text
         }
@@ -149,7 +149,7 @@ fun BarAndToastScaffold(
                             .navigationBarsPadding()
                             .then(
                                 bodyAction?.let { action -> Modifier.clickable(onClick = action) }
-                                    ?: Modifier
+                                    ?: Modifier,
                             )
                             .clearAndSetSemantics {
                                 contentDescription = overriddenContentDescription

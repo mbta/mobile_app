@@ -36,7 +36,7 @@ constructor(
                             result.data
                                 .mergeInto(currentAlerts)
                                 .also { currentAlerts = it }
-                                .injectFacilities(globalState.value)
+                                .injectFacilities(globalState.value),
                         )
 
                     is ApiResult.Error -> ApiResult.Error(result.code, result.message)

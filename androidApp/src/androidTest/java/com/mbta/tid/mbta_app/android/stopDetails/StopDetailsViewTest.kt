@@ -146,15 +146,15 @@ class StopDetailsViewTest {
                                                 alertsDownstream = emptyList(),
                                                 context =
                                                     RouteCardData.Context.StopDetailsUnfiltered,
-                                            )
+                                            ),
                                         ),
-                                    )
+                                    ),
                                 ),
                                 now,
-                            )
+                            ),
                         ),
-                    )
-                )
+                    ),
+                ),
             )
 
         loadKoinModules(module { single { unfilteredVM }.bind(IStopDetailsViewModel::class) })
@@ -213,11 +213,11 @@ class StopDetailsViewTest {
                                     subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     context = RouteCardData.Context.StopDetailsFiltered,
-                                )
+                                ),
                             ),
                         ),
-                    )
-                )
+                    ),
+                ),
             )
 
         loadKoinModules(module { single { filteredVM }.bind(IStopDetailsViewModel::class) })
@@ -296,15 +296,15 @@ class StopDetailsViewTest {
                                                 alertsDownstream = emptyList(),
                                                 context =
                                                     RouteCardData.Context.StopDetailsUnfiltered,
-                                            )
+                                            ),
                                         ),
-                                    )
+                                    ),
                                 ),
                                 now,
-                            )
+                            ),
                         ),
-                    )
-                )
+                    ),
+                ),
             )
 
         loadKoinModules(module { single { unfilteredVM }.bind(IStopDetailsViewModel::class) })
@@ -363,11 +363,11 @@ class StopDetailsViewTest {
                                     subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     context = RouteCardData.Context.StopDetailsFiltered,
-                                )
+                                ),
                             ),
                         ),
-                    )
-                )
+                    ),
+                ),
             )
         loadKoinModules(module { single { filteredVM }.bind(IStopDetailsViewModel::class) })
         composeTestRule.setContent {

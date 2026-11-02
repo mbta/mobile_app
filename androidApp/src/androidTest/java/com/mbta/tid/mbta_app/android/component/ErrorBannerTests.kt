@@ -38,7 +38,7 @@ class ErrorBannerTests {
             ErrorBannerState.StalePredictions(
                 lastUpdated = EasternTimeInstant.now().minus(2.minutes),
                 action = {},
-            )
+            ),
         )
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Updated 2 minutes ago"))
@@ -65,7 +65,7 @@ class ErrorBannerTests {
                         messages = emptySet(),
                         details = emptySet(),
                         action = {},
-                    )
+                    ),
             )
         val dataErrorVM = ErrorBannerViewModel(dataErrorRepo, MockSentryRepository(), Clock.System)
         composeTestRule.setContent { ErrorBanner(dataErrorVM) }
@@ -81,7 +81,7 @@ class ErrorBannerTests {
                     ErrorBannerState.StalePredictions(
                         lastUpdated = EasternTimeInstant.now().minus(2.minutes),
                         action = {},
-                    )
+                    ),
             )
         val staleVM = ErrorBannerViewModel(staleRepo, MockSentryRepository(), Clock.System)
         composeTestRule.setContent { ErrorBanner(staleVM) }
@@ -97,7 +97,7 @@ class ErrorBannerTests {
                     ErrorBannerState.StalePredictions(
                         lastUpdated = EasternTimeInstant.now().minus(1.minutes),
                         action = {},
-                    )
+                    ),
             )
         val staleVM = ErrorBannerViewModel(staleRepo, MockSentryRepository(), Clock.System)
         composeTestRule.setContent { ErrorBanner(staleVM) }
@@ -113,7 +113,7 @@ class ErrorBannerTests {
                     ErrorBannerState.StalePredictions(
                         lastUpdated = EasternTimeInstant.now().minus(2.minutes),
                         action = {},
-                    )
+                    ),
             )
         val staleVM = ErrorBannerViewModel(staleRepo, MockSentryRepository(), Clock.System)
         staleVM.setIsLoadingWhenPredictionsStale(true)

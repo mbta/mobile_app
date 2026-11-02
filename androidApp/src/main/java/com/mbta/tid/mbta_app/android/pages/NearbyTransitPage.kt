@@ -65,7 +65,7 @@ fun NearbyTransitPage(
 
     LaunchedEffect(state.awaitingPredictionsAfterBackground) {
         errorBannerViewModel.setIsLoadingWhenPredictionsStale(
-            state.awaitingPredictionsAfterBackground
+            state.awaitingPredictionsAfterBackground,
         )
     }
 

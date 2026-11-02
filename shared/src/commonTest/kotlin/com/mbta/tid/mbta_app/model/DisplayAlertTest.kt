@@ -62,7 +62,7 @@ class DisplayAlertTest {
                                 Alert.InformedEntity.Activity.Exit,
                                 Alert.InformedEntity.Activity.Ride,
                             ),
-                    )
+                    ),
                 )
         }
         assertEquals(AlertCardSpec.Takeover, DisplayAlert(tripAlert).cardSpec(now, true, "trip1"))
@@ -100,8 +100,8 @@ class DisplayAlertTest {
                                     Alert.InformedEntity.Activity.Board,
                                     Alert.InformedEntity.Activity.Exit,
                                     Alert.InformedEntity.Activity.Ride,
-                                )
-                        )
+                                ),
+                        ),
                     )
             }
             assertEquals(
@@ -126,7 +126,7 @@ class DisplayAlertTest {
                                 Alert.InformedEntity.Activity.Exit,
                                 Alert.InformedEntity.Activity.Ride,
                             ),
-                    )
+                    ),
                 )
         }
         assertEquals(AlertCardSpec.Takeover, DisplayAlert(tripAlert).cardSpec(now, true, "trip1"))

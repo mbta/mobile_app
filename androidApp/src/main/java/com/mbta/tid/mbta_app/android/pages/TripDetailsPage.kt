@@ -66,13 +66,13 @@ fun TripDetailsPage(
     LaunchedEffect(allAlerts) { tripDetailsPageVM.setAlerts(allAlerts) }
     LaunchedEffect(filter, tripDetailsState) {
         tripDetailsPageVM.setContextualTrip(
-            tripDetailsState.stopList?.contextualTrip(filter, global)
+            tripDetailsState.stopList?.contextualTrip(filter, global),
         )
     }
     LaunchedEffect(filter) { tripDetailsPageVM.setFilter(filter) }
     LaunchedEffect(tripDetailsState.awaitingPredictionsAfterBackground) {
         errorBannerViewModel.setIsLoadingWhenPredictionsStale(
-            tripDetailsState.awaitingPredictionsAfterBackground
+            tripDetailsState.awaitingPredictionsAfterBackground,
         )
     }
 
@@ -85,7 +85,7 @@ fun TripDetailsPage(
                 lineId = null,
                 routeIds = if (spec == AlertCardSpec.Elevator) null else listOfNotNull(route?.id),
                 stopId = filter.stopId,
-            )
+            ),
         )
     }
 
@@ -112,10 +112,10 @@ fun TripDetailsPage(
                     Text("trip id: ${filter.tripId}")
                     Text("vehicle id: ${filter.vehicleId ?: "null"}")
                     Text(
-                        "vehicle stop sequence: ${tripDetailsState.tripData?.vehicle?.currentStopSequence ?: "null"}"
+                        "vehicle stop sequence: ${tripDetailsState.tripData?.vehicle?.currentStopSequence ?: "null"}",
                     )
                 }
-            }
+            },
         )
         ScrollSeparatorColumn {
             TripDetailsView(

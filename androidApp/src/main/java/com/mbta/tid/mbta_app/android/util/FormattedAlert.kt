@@ -90,7 +90,7 @@ data class FormattedAlert(
                 ?.shortName
                 ?.let { facilityName ->
                     resources.getString(R.string.alert_elevator_header, facilityName)
-                } ?: alert.header ?: effect(resources)
+                } ?: alert.header ?: effect(resources),
         )
 
     private fun summary(): AnnotatedString? =

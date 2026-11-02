@@ -48,7 +48,7 @@ private constructor(internal val instant: Instant, public val local: LocalDateTi
 
     /** The time component becomes irrelevant after this coercion and should be ignored */
     public fun coerceInServiceDay(
-        rounding: ServiceDateRounding = ServiceDateRounding.FORWARDS
+        rounding: ServiceDateRounding = ServiceDateRounding.FORWARDS,
     ): EasternTimeInstant {
         if (local.date == serviceDate(rounding = rounding)) return this
         val instant = this.instant - 24.hours

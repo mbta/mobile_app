@@ -34,7 +34,7 @@ fun StopHeader(stop: Stop, modifier: Modifier = Modifier, subheader: @Composable
         Image(
             painterResource(
                 if (stop.locationType == LocationType.STATION) R.drawable.mbta_logo
-                else R.drawable.stop_bus
+                else R.drawable.stop_bus,
             ),
             null,
             Modifier.placeholderIfLoading().width(24.dp),

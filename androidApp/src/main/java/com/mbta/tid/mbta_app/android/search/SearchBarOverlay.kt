@@ -70,7 +70,7 @@ fun SearchBarOverlay(
                     colors =
                         SearchBarDefaults.colors(
                             containerColor =
-                                if (expanded) colorResource(R.color.fill1) else Color.Transparent
+                                if (expanded) colorResource(R.color.fill1) else Color.Transparent,
                         ),
                     inputField = {
                         SearchInput(

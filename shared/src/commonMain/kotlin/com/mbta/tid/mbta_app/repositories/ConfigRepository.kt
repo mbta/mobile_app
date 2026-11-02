@@ -26,7 +26,7 @@ internal class ConfigRepository : IConfigRepository, KoinComponent {
 
 public class MockConfigRepository(
     private var response: ApiResult<ConfigResponse> =
-        ApiResult.Ok(ConfigResponse(mapboxPublicToken = "fake_mapbox_token"))
+        ApiResult.Ok(ConfigResponse(mapboxPublicToken = "fake_mapbox_token")),
 ) : IConfigRepository, KoinComponent {
 
     override suspend fun getConfig(): ApiResult<ConfigResponse> {

@@ -13,7 +13,7 @@ public data class PredictionsStreamDataResponse(
     internal val vehicles: Map<String, Vehicle>,
 ) {
     public constructor(
-        objects: ObjectCollectionBuilder
+        objects: ObjectCollectionBuilder,
     ) : this(objects.predictions.toMap(), objects.trips.toMap(), objects.vehicles.toMap())
 
     public fun predictionQuantity(): Int = predictions.size

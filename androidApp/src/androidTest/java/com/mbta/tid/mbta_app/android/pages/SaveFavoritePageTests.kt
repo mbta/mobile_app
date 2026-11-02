@@ -69,7 +69,7 @@ class SaveFavoritePageTests {
                 NotificationSettingsViewModel.State(
                     FavoriteSettings.Notifications(false, emptyList()),
                     null,
-                )
+                ),
             )
         notificationSettingsVM.onLoadSavedSettings = {
             if (it == null) {
@@ -165,8 +165,8 @@ class SaveFavoritePageTests {
                 MockFavoritesRepository(
                     favorites =
                         Favorites(
-                            mapOf(RouteStopDirection(route.id, stop.id, 1) to FavoriteSettings())
-                        )
+                            mapOf(RouteStopDirection(route.id, stop.id, 1) to FavoriteSettings()),
+                        ),
                 )
         }
 
@@ -294,7 +294,7 @@ class SaveFavoritePageTests {
                 NotificationSettingsViewModel.State(
                     FavoriteSettings.Notifications(false, emptyList()),
                     null,
-                )
+                ),
             )
         notificationSettingsVM.onSavedSettings = { savedSettings = true }
 
@@ -358,7 +358,7 @@ class SaveFavoritePageTests {
                                     )
                                 }
                             }
-                        }
+                        },
                 )
             settings = MockSettingsRepository(mapOf(Settings.NotificationPresetWindows to true))
         }

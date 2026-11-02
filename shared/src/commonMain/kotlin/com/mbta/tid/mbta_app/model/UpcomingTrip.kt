@@ -202,7 +202,7 @@ constructor(
                 val stopSequence: Int?,
             ) {
                 constructor(
-                    schedule: Schedule
+                    schedule: Schedule,
                 ) : this(
                     schedule.routeId,
                     schedule.tripId,
@@ -211,7 +211,7 @@ constructor(
                 )
 
                 constructor(
-                    prediction: Prediction
+                    prediction: Prediction,
                 ) : this(
                     prediction.routeId,
                     prediction.tripId,

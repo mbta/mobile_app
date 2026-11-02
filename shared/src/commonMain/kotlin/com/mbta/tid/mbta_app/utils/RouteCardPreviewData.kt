@@ -179,25 +179,25 @@ public open class RouteCardPreviewData {
                     objects.prediction {
                         trip = objects.trip(orangeLineSouthbound) { headsign = "Jackson Square" }
                         departureTime = now + 5.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(orangeLineSouthbound) { headsign = "Jackson Square" }
                         departureTime = now + 16.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(orangeLineNorthbound)
                         departureTime = now + 7.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(orangeLineNorthbound)
                         departureTime = now + 12.minutes
-                    }
+                    },
                 ),
             ),
             alertDownstream = mapOf(0 to shuttleAlert),
@@ -225,31 +225,31 @@ public open class RouteCardPreviewData {
                     objects.prediction {
                         trip = objects.trip(redLineAshmontSouthbound)
                         departureTime = now + 1.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineBraintreeSouthbound)
                         departureTime = now + 2.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineAshmontSouthbound)
                         departureTime = now + 9.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineAshmontNorthbound)
                         departureTime = now + 3.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineBraintreeNorthbound)
                         departureTime = now + 12.minutes
-                    }
+                    },
                 ),
             ),
         )
@@ -264,37 +264,37 @@ public open class RouteCardPreviewData {
                     objects.prediction {
                         trip = objects.trip(redLineAshmontSouthbound)
                         departureTime = now + 2.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineAshmontSouthbound)
                         departureTime = now + 5.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineAshmontSouthbound)
                         departureTime = now + 9.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineBraintreeSouthbound)
                         departureTime = now + 15.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineAshmontNorthbound)
                         departureTime = now + 3.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineBraintreeNorthbound)
                         departureTime = now + 12.minutes
-                    }
+                    },
                 ),
             ),
         )
@@ -309,31 +309,31 @@ public open class RouteCardPreviewData {
                     objects.prediction {
                         trip = objects.trip(redLineAshmontSouthbound)
                         departureTime = now + 2.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineAshmontSouthbound)
                         departureTime = now + 5.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineAshmontSouthbound)
                         departureTime = now + 9.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineAshmontNorthbound)
                         departureTime = now + 3.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineBraintreeNorthbound)
                         departureTime = now + 12.minutes
-                    }
+                    },
                 ),
             ),
         )
@@ -351,31 +351,31 @@ public open class RouteCardPreviewData {
                     objects.prediction {
                         trip = objects.trip(redLineAshmontSouthbound)
                         departureTime = now + 2.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineAshmontSouthbound)
                         departureTime = now + 5.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineAshmontSouthbound)
                         departureTime = now + 9.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineAshmontNorthbound)
                         departureTime = now + 3.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineBraintreeNorthbound)
                         departureTime = now + 12.minutes
-                    }
+                    },
                 ),
             ),
             alertDownstream = mapOf(0 to shuttleAlert),
@@ -391,31 +391,31 @@ public open class RouteCardPreviewData {
                     objects.prediction {
                         trip = objects.trip(redLineAshmontSouthbound)
                         departureTime = now + 1.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineBraintreeSouthbound) { headsign = "Wollaston" }
                         departureTime = now + 2.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineAshmontSouthbound)
                         departureTime = now + 9.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineAshmontNorthbound)
                         departureTime = now + 3.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineBraintreeNorthbound)
                         departureTime = now + 12.minutes
-                    }
+                    },
                 ),
             ),
             alertDownstream = mapOf(0 to suspensionAlert),
@@ -431,37 +431,37 @@ public open class RouteCardPreviewData {
                     objects.prediction {
                         trip = objects.trip(greenLineCWestbound)
                         departureTime = now + 3.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineBWestbound)
                         departureTime = now + 5.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineDWestbound)
                         departureTime = now + 10.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineDEastbound)
                         departureTime = now + 1.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineBEastbound)
                         departureTime = now + 6.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineCEastbound)
                         departureTime = now + 12.minutes
-                    }
+                    },
                 ),
             ),
         )
@@ -476,37 +476,37 @@ public open class RouteCardPreviewData {
                     objects.prediction {
                         trip = objects.trip(greenLineCWestbound)
                         departureTime = now + 3.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineBWestbound)
                         departureTime = now + 5.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineDWestbound)
                         departureTime = now + 10.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineDEastbound)
                         departureTime = now + 1.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineBEastbound)
                         departureTime = now + 6.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineCEastbound)
                         departureTime = now + 12.minutes
-                    }
+                    },
                 ),
             ),
             alertDownstream = mapOf(0 to suspensionAlert),
@@ -529,10 +529,10 @@ public open class RouteCardPreviewData {
                                     directionId = 1
                                     typicality = RoutePattern.Typicality.Typical
                                     representativeTrip { headsign = "South Station" }
-                                }
+                                },
                             )
                         departureTime = now + 5.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
@@ -542,10 +542,10 @@ public open class RouteCardPreviewData {
                                     directionId = 1
                                     typicality = RoutePattern.Typicality.Typical
                                     representativeTrip { headsign = "South Station" }
-                                }
+                                },
                             )
                         departureTime = now + 7.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
@@ -555,10 +555,10 @@ public open class RouteCardPreviewData {
                                     directionId = 0
                                     typicality = RoutePattern.Typicality.Typical
                                     representativeTrip { headsign = "Logan Airport" }
-                                }
+                                },
                             )
                         departureTime = now + 5.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
@@ -568,10 +568,10 @@ public open class RouteCardPreviewData {
                                     directionId = 0
                                     typicality = RoutePattern.Typicality.Typical
                                     representativeTrip { headsign = "Design Center" }
-                                }
+                                },
                             )
                         departureTime = now + 7.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
@@ -581,10 +581,10 @@ public open class RouteCardPreviewData {
                                     directionId = 0
                                     typicality = RoutePattern.Typicality.Typical
                                     representativeTrip { headsign = "Chelsea" }
-                                }
+                                },
                             )
                         departureTime = now + 9.minutes
-                    }
+                    },
                 ),
             ),
         )
@@ -603,10 +603,10 @@ public open class RouteCardPreviewData {
                                     directionId = 0
                                     typicality = RoutePattern.Typicality.CanonicalOnly
                                     representativeTrip { headsign = "Stoughton" }
-                                }
+                                },
                             )
                         departureTime = EasternTimeInstant(today.atTime(12, 5))
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.schedule {
@@ -616,10 +616,10 @@ public open class RouteCardPreviewData {
                                     directionId = 0
                                     typicality = RoutePattern.Typicality.Typical
                                     representativeTrip { headsign = "Providence" }
-                                }
+                                },
                             )
                         departureTime = EasternTimeInstant(today.atTime(15, 28))
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.schedule {
@@ -629,10 +629,10 @@ public open class RouteCardPreviewData {
                                     directionId = 0
                                     typicality = RoutePattern.Typicality.CanonicalOnly
                                     representativeTrip { headsign = "Wickford Junction" }
-                                }
+                                },
                             )
                         departureTime = EasternTimeInstant(today.atTime(16, 1))
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
@@ -642,10 +642,10 @@ public open class RouteCardPreviewData {
                                     directionId = 1
                                     typicality = RoutePattern.Typicality.CanonicalOnly
                                     representativeTrip { headsign = "South Station" }
-                                }
+                                },
                             )
                         departureTime = EasternTimeInstant(today.atTime(15, 31))
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
@@ -655,10 +655,10 @@ public open class RouteCardPreviewData {
                                     directionId = 1
                                     typicality = RoutePattern.Typicality.Typical
                                     representativeTrip { headsign = "South Station" }
-                                }
+                                },
                             )
                         departureTime = EasternTimeInstant(today.atTime(15, 53))
-                    }
+                    },
                 ),
             ),
         )
@@ -670,7 +670,7 @@ public open class RouteCardPreviewData {
                     directionId = 0
                     typicality = RoutePattern.Typicality.Typical
                     representativeTrip { headsign = "Providence" }
-                }
+                },
             )
         val providenceUpcomingTrip =
             objects.upcomingTrip(
@@ -689,7 +689,7 @@ public open class RouteCardPreviewData {
                     directionId = 0
                     typicality = RoutePattern.Typicality.CanonicalOnly
                     representativeTrip { headsign = "Stoughton" }
-                }
+                },
             )
         val stoughtonUpcomingTrip =
             objects.upcomingTrip(
@@ -708,14 +708,14 @@ public open class RouteCardPreviewData {
                     directionId = 0
                     typicality = RoutePattern.Typicality.CanonicalOnly
                     representativeTrip { headsign = "Wickford Junction" }
-                }
+                },
             )
         val wickfordUcomingTrip =
             objects.upcomingTrip(
                 objects.schedule {
                     trip = wickfordTrip
                     departureTime = EasternTimeInstant(today.atTime(16, 1))
-                }
+                },
             )
         val wickfordShuttle = objects.alert {
             effect = Alert.Effect.Shuttle
@@ -733,7 +733,7 @@ public open class RouteCardPreviewData {
                         routeType = RouteType.COMMUTER_RAIL,
                         stop = ruggles.id,
                         trip = wickfordTrip.id,
-                    )
+                    ),
                 )
         }
         return card(
@@ -759,13 +759,13 @@ public open class RouteCardPreviewData {
                             objects.prediction {
                                 trip = objects.trip(arlingtonInbound)
                                 departureTime = now + 16.minutes
-                            }
+                            },
                         ),
                         objects.upcomingTrip(
                             objects.prediction {
                                 trip = objects.trip(clarendonInbound)
                                 departureTime = now + 42.minutes
-                            }
+                            },
                         ),
                     ),
                     emptyMap(),
@@ -780,19 +780,19 @@ public open class RouteCardPreviewData {
                             objects.prediction {
                                 trip = objects.trip(arlingtonOutbound)
                                 departureTime = now + 3.minutes
-                            }
+                            },
                         ),
                         objects.upcomingTrip(
                             objects.prediction {
                                 trip = objects.trip(arlingtonOutbound)
                                 departureTime = now + 12.minutes
-                            }
+                            },
                         ),
                         objects.upcomingTrip(
                             objects.prediction {
                                 trip = objects.trip(clarendonOutbound)
                                 departureTime = now + 45.minutes
-                            }
+                            },
                         ),
                     ),
                     emptyMap(),
@@ -818,13 +818,13 @@ public open class RouteCardPreviewData {
                             objects.prediction {
                                 trip = objects.trip(arlingtonInbound)
                                 departureTime = now + 16.minutes
-                            }
+                            },
                         ),
                         objects.upcomingTrip(
                             objects.prediction {
                                 trip = objects.trip(clarendonInbound)
                                 departureTime = now + 42.minutes
-                            }
+                            },
                         ),
                     ),
                     emptyMap(),
@@ -839,13 +839,13 @@ public open class RouteCardPreviewData {
                             objects.prediction {
                                 trip = objects.trip(arlingtonOutbound)
                                 departureTime = now + 1.minutes
-                            }
+                            },
                         ),
                         objects.upcomingTrip(
                             objects.prediction {
                                 trip = objects.trip(clarendonOutbound)
                                 departureTime = now + 32.minutes
-                            }
+                            },
                         ),
                     ),
                     emptyMap(),
@@ -872,10 +872,10 @@ public open class RouteCardPreviewData {
                                 objects.routePattern(bus15) {
                                     directionId = 0
                                     representativeTrip { headsign = "St Peter's Square" }
-                                }
+                                },
                             )
                         departureTime = now + 8.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
@@ -884,10 +884,10 @@ public open class RouteCardPreviewData {
                                 objects.routePattern(bus15) {
                                     directionId = 0
                                     representativeTrip { headsign = "Kane Square" }
-                                }
+                                },
                             )
                         departureTime = now + 12.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
@@ -896,10 +896,10 @@ public open class RouteCardPreviewData {
                                 objects.routePattern(bus15) {
                                     directionId = 1
                                     representativeTrip { headsign = "Ruggles" }
-                                }
+                                },
                             )
                         departureTime = now + 15.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
@@ -908,10 +908,10 @@ public open class RouteCardPreviewData {
                                 objects.routePattern(bus15) {
                                     directionId = 1
                                     representativeTrip { headsign = "Ruggles" }
-                                }
+                                },
                             )
                         departureTime = now + 23.minutes
-                    }
+                    },
                 ),
             ),
         )
@@ -926,25 +926,25 @@ public open class RouteCardPreviewData {
                     objects.prediction {
                         trip = objects.trip(redLineAshmontSouthbound)
                         departureTime = now + 1.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineAshmontSouthbound)
                         departureTime = now + 2.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineAshmontNorthbound)
                         departureTime = now + 3.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineBraintreeNorthbound)
                         departureTime = now + 12.minutes
-                    }
+                    },
                 ),
             ),
         )
@@ -959,13 +959,13 @@ public open class RouteCardPreviewData {
                     objects.prediction {
                         trip = objects.trip(redLineAshmontNorthbound)
                         departureTime = now + 3.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(redLineBraintreeNorthbound)
                         departureTime = now + 12.minutes
-                    }
+                    },
                 ),
             ),
         )
@@ -980,43 +980,43 @@ public open class RouteCardPreviewData {
                     objects.prediction {
                         trip = objects.trip(greenLineCWestbound)
                         departureTime = now + 3.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineBWestbound)
                         departureTime = now + 5.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineBWestbound)
                         departureTime = now + 10.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.schedule {
                         trip = objects.trip(greenLineDWestbound)
                         departureTime = now + 2.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineDEastbound)
                         departureTime = now + 1.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineBEastbound)
                         departureTime = now + 6.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineCEastbound)
                         departureTime = now + 12.minutes
-                    }
+                    },
                 ),
             ),
         )
@@ -1031,37 +1031,37 @@ public open class RouteCardPreviewData {
                     objects.schedule {
                         trip = objects.trip(greenLineCWestbound)
                         departureTime = now + 3.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.schedule {
                         trip = objects.trip(greenLineBWestbound)
                         departureTime = now + 5.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.schedule {
                         trip = objects.trip(greenLineDWestbound)
                         departureTime = now + 10.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineDEastbound)
                         departureTime = now + 1.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineBEastbound)
                         departureTime = now + 6.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineCEastbound)
                         departureTime = now + 12.minutes
-                    }
+                    },
                 ),
             ),
         )
@@ -1079,7 +1079,7 @@ public open class RouteCardPreviewData {
                         routeType = RouteType.LIGHT_RAIL,
                         stop = kenmore.id,
                         trip = null,
-                    )
+                    ),
                 )
         }
 
@@ -1091,25 +1091,25 @@ public open class RouteCardPreviewData {
                     objects.prediction {
                         trip = objects.trip(greenLineCWestbound)
                         departureTime = now + 3.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineBWestbound)
                         departureTime = now + 5.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineBEastbound)
                         departureTime = now + 6.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineCEastbound)
                         departureTime = now + 12.minutes
-                    }
+                    },
                 ),
             ),
             alertHere = mapOf(0 to kenmoreShuttleToRiverside),
@@ -1129,7 +1129,7 @@ public open class RouteCardPreviewData {
                         routeType = RouteType.LIGHT_RAIL,
                         stop = boylston.id,
                         trip = null,
-                    )
+                    ),
                 )
         }
         return card(
@@ -1140,25 +1140,25 @@ public open class RouteCardPreviewData {
                     objects.schedule {
                         trip = objects.trip(greenLineCWestbound)
                         departureTime = now + 3.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.schedule {
                         trip = objects.trip(greenLineBWestbound)
                         departureTime = now + 5.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineBEastbound)
                         departureTime = now + 6.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.prediction {
                         trip = objects.trip(greenLineCEastbound)
                         departureTime = now + 12.minutes
-                    }
+                    },
                 ),
             ),
             alertHere = mapOf(0 to boylstonShuttleToRiverside),
@@ -1207,19 +1207,19 @@ public open class RouteCardPreviewData {
                     objects.schedule {
                         trip = objects.trip(greenLineDEastbound)
                         departureTime = now + 1.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.schedule {
                         trip = objects.trip(greenLineBEastbound)
                         departureTime = now + 6.minutes
-                    }
+                    },
                 ),
                 objects.upcomingTrip(
                     objects.schedule {
                         trip = objects.trip(greenLineCEastbound)
                         departureTime = now + 12.minutes
-                    }
+                    },
                 ),
             ),
             alertHere = mapOf(0 to shuttleAllBranches),

@@ -100,7 +100,7 @@ internal fun subscribeToPredictions(
             active &&
                 predictions != null &&
                 predictionsRepository.shouldForgetPredictions(
-                    predictions?.predictionQuantity() ?: 0
+                    predictions?.predictionQuantity() ?: 0,
                 )
         ) {
             predictions = null

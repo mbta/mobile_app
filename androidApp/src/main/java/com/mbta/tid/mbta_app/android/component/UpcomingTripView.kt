@@ -469,7 +469,7 @@ fun UpcomingTripView(
                                 stringResource(
                                     R.string.subway_early_am_first_time,
                                     state.format.scheduledTime.formattedTime(),
-                                )
+                                ),
                             ),
                             textAlign = TextAlign.End,
                             style = Typography.footnote,
@@ -542,7 +542,7 @@ fun DisruptionView(
                     .then(
                         spec.contentDescription?.let {
                             Modifier.semantics { contentDescription = it }
-                        } ?: Modifier
+                        } ?: Modifier,
                     ),
             style = Typography.footnoteSemibold,
         )
@@ -567,8 +567,8 @@ fun UpcomingTripViewPreview() {
                     TripInstantDisplay.ScheduleTimeWithStatusRow(
                         EasternTimeInstant.now() + 10.minutes,
                         "All aboard",
-                    )
-                )
+                    ),
+                ),
             )
             UpcomingTripView(
                 UpcomingTripViewState.Some(
@@ -576,36 +576,36 @@ fun UpcomingTripViewPreview() {
                         EasternTimeInstant.now() + 10.minutes,
                         last = false,
                         headline = true,
-                    )
-                )
+                    ),
+                ),
             )
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.ScheduleTime(EasternTimeInstant.now() + 10.minutes, false)
-                )
+                    TripInstantDisplay.ScheduleTime(EasternTimeInstant.now() + 10.minutes, false),
+                ),
             )
             UpcomingTripView(
                 UpcomingTripViewState.NoTrips(
                     UpcomingFormat.NoTripsFormat.SubwayEarlyMorning(
-                        EasternTimeInstant.now() + 10.minutes
-                    )
-                )
+                        EasternTimeInstant.now() + 10.minutes,
+                    ),
+                ),
             )
             UpcomingTripView(UpcomingTripViewState.Loading)
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.Cancelled(EasternTimeInstant.now() + 10.minutes)
-                )
+                    TripInstantDisplay.Cancelled(EasternTimeInstant.now() + 10.minutes),
+                ),
             )
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.Skipped(EasternTimeInstant.now() + 10.minutes)
-                )
+                    TripInstantDisplay.Skipped(EasternTimeInstant.now() + 10.minutes),
+                ),
             )
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.Shuttle(EasternTimeInstant.now() + 10.minutes)
-                )
+                    TripInstantDisplay.Shuttle(EasternTimeInstant.now() + 10.minutes),
+                ),
             )
         }
     }
@@ -654,8 +654,8 @@ fun LastTripsPreview() {
                         EasternTimeInstant.now() + 7.minutes,
                         "Now boarding",
                         true,
-                    )
-                )
+                    ),
+                ),
             )
             UpcomingTripView(
                 UpcomingTripViewState.Some(
@@ -663,13 +663,13 @@ fun LastTripsPreview() {
                         EasternTimeInstant.now() + 7.minutes,
                         EasternTimeInstant.now() + 10.minutes,
                         true,
-                    )
-                )
+                    ),
+                ),
             )
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.Overridden("Stopped 10 stops away", true)
-                )
+                    TripInstantDisplay.Overridden("Stopped 10 stops away", true),
+                ),
             )
             UpcomingTripView(
                 UpcomingTripViewState.Some(
@@ -677,13 +677,13 @@ fun LastTripsPreview() {
                         EasternTimeInstant.now() + 10.minutes,
                         last = true,
                         headline = true,
-                    )
-                )
+                    ),
+                ),
             )
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.ScheduleTime(EasternTimeInstant.now() + 10.minutes, true)
-                )
+                    TripInstantDisplay.ScheduleTime(EasternTimeInstant.now() + 10.minutes, true),
+                ),
             )
             UpcomingTripView(
                 UpcomingTripViewState.Some(
@@ -691,11 +691,11 @@ fun LastTripsPreview() {
                         EasternTimeInstant.now() + 10.minutes,
                         "All aboard",
                         true,
-                    )
-                )
+                    ),
+                ),
             )
             UpcomingTripView(
-                UpcomingTripViewState.Some(TripInstantDisplay.ScheduleMinutes(18, true))
+                UpcomingTripViewState.Some(TripInstantDisplay.ScheduleMinutes(18, true)),
             )
         }
     }

@@ -15,7 +15,7 @@ class SheetRouteTest {
             SheetRoutes.pageChanged(
                 SheetRoutes.NearbyTransit,
                 SheetRoutes.StopDetails("a", null, null),
-            )
+            ),
         )
     }
 
@@ -25,7 +25,7 @@ class SheetRouteTest {
             SheetRoutes.pageChanged(
                 SheetRoutes.StopDetails("a", null, null),
                 SheetRoutes.StopDetails("b", null, null),
-            )
+            ),
         )
     }
 
@@ -35,7 +35,7 @@ class SheetRouteTest {
             SheetRoutes.pageChanged(
                 SheetRoutes.StopDetails("a", null, null),
                 SheetRoutes.StopDetails("a", StopDetailsFilter(Route.Id("route1"), 1), null),
-            )
+            ),
         )
     }
 
@@ -45,7 +45,7 @@ class SheetRouteTest {
             SheetRoutes.retainSheetSize(
                 SheetRoutes.StopDetails("a", null, null),
                 SheetRoutes.NearbyTransit,
-            )
+            ),
         )
 
         assertFalse(SheetRoutes.retainSheetSize(SheetRoutes.NearbyTransit, SheetRoutes.Favorites))
@@ -54,7 +54,7 @@ class SheetRouteTest {
             SheetRoutes.retainSheetSize(
                 SheetRoutes.RoutePicker(RoutePickerPath.Bus, RouteDetailsContext.Favorites),
                 SheetRoutes.Favorites,
-            )
+            ),
         )
 
         assertTrue(SheetRoutes.retainSheetSize(SheetRoutes.EditFavorites, SheetRoutes.Favorites))
@@ -66,53 +66,53 @@ class SheetRouteTest {
             SheetRoutes.shouldResetSheetHeight(
                 SheetRoutes.StopDetails("a", null, null),
                 SheetRoutes.StopDetails("b", null, null),
-            )
+            ),
         )
 
         assertFalse(
             SheetRoutes.shouldResetSheetHeight(
                 SheetRoutes.StopDetails("a", StopDetailsFilter(Route.Id("b"), 0), null),
                 SheetRoutes.StopDetails("a", StopDetailsFilter(Route.Id("b"), 1), null),
-            )
+            ),
         )
 
         assertTrue(
             SheetRoutes.shouldResetSheetHeight(
                 SheetRoutes.NearbyTransit,
                 SheetRoutes.StopDetails("a", StopDetailsFilter(Route.Id("b"), 1), null),
-            )
+            ),
         )
 
         assertTrue(
             SheetRoutes.shouldResetSheetHeight(
                 SheetRoutes.Favorites,
                 SheetRoutes.StopDetails("a", StopDetailsFilter(Route.Id("b"), 1), null),
-            )
+            ),
         )
     }
 
     @Test
     fun testShouldRestSheetHeightAddOrEditFavorites() {
         assertFalse(
-            SheetRoutes.shouldResetSheetHeight(SheetRoutes.Favorites, SheetRoutes.EditFavorites)
+            SheetRoutes.shouldResetSheetHeight(SheetRoutes.Favorites, SheetRoutes.EditFavorites),
         )
         assertFalse(
             SheetRoutes.shouldResetSheetHeight(
                 SheetRoutes.Favorites,
                 SheetRoutes.RoutePicker(RoutePickerPath.Bus, RouteDetailsContext.Favorites),
-            )
+            ),
         )
         assertFalse(
             SheetRoutes.shouldResetSheetHeight(
                 SheetRoutes.RoutePicker(RoutePickerPath.Bus, RouteDetailsContext.Favorites),
                 SheetRoutes.RouteDetails(Route.Id("a"), RouteDetailsContext.Favorites),
-            )
+            ),
         )
         assertFalse(
             SheetRoutes.shouldResetSheetHeight(
                 SheetRoutes.RouteDetails(Route.Id("a"), RouteDetailsContext.Favorites),
                 SheetRoutes.Favorites,
-            )
+            ),
         )
     }
 }

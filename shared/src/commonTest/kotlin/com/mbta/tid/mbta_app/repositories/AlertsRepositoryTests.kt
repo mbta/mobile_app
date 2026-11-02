@@ -117,7 +117,7 @@ class AlertsRepositoryTests {
                     MockMessage(
                         subject = AlertsChannel.topic,
                         jsonBody = "{\"remove\": [], \"update\": {}}",
-                    )
+                    ),
                 )
             }
 
@@ -145,7 +145,7 @@ class AlertsRepositoryTests {
                 val expectedResponse =
                     AlertsStreamUpdateResponse(remove = emptyList(), update = emptyMap())
                 assertEquals(expectedResponse, data)
-            }
+            },
         )
     }
 
@@ -184,7 +184,7 @@ class AlertsRepositoryTests {
                 assertIs<ApiResult.Error<*>>(outcome)
                 assertNotNull(outcome.message)
                 assertContains(outcome.message, SocketError.FAILURE)
-            }
+            },
         )
     }
 }

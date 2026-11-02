@@ -18,7 +18,7 @@ import kotlinx.serialization.encoding.Encoder
 
 @Serializable(with = Favorites.Serializer::class)
 public data class Favorites(
-    val routeStopDirection: Map<RouteStopDirection, FavoriteSettings> = emptyMap()
+    val routeStopDirection: Map<RouteStopDirection, FavoriteSettings> = emptyMap(),
 ) {
     @OptIn(ExperimentalObjCName::class)
     public fun isFavorite(@ObjCName(swiftName = "_") rsd: RouteStopDirection): Boolean =

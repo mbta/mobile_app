@@ -175,7 +175,7 @@ class ErrorBannerPreviews() {
                     messages = setOf("foo"),
                     details = setOf("bar"),
                     action = {},
-                )
+                ),
         )
     val dataErrorVM = ErrorBannerViewModel(dataErrorRepo, MockSentryRepository(), Clock.System)
 
@@ -189,7 +189,7 @@ class ErrorBannerPreviews() {
                 ErrorBannerState.StalePredictions(
                     lastUpdated = EasternTimeInstant.now().minus(2.minutes),
                     action = {},
-                )
+                ),
         )
     val staleVM = ErrorBannerViewModel(staleRepo, MockSentryRepository(), Clock.System)
     val staleLoadingVM = ErrorBannerViewModel(staleRepo, MockSentryRepository(), Clock.System)

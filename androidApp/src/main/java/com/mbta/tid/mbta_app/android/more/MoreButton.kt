@@ -37,7 +37,7 @@ fun MoreButton(
                             colorResource(R.color.key)
                         } else {
                             colorResource(R.color.fill3)
-                        }
+                        },
                 ),
         verticalAlignment = Alignment.CenterVertically,
     ) {

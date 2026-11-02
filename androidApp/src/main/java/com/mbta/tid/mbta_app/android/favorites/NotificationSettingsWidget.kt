@@ -147,7 +147,7 @@ fun NotificationSettingsWidget(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Column(
             Modifier.haloContainer(borderWidth = 1.dp).clickable(
-                enabled = showPermissionSettingsLink
+                enabled = showPermissionSettingsLink,
             ) {
                 val openNotificationSettings =
                     Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
@@ -223,10 +223,9 @@ fun NotificationSettingsWidget(
                                 if (index != -1) windows[index] = newWindow
                                 viewModel.setWindows(windows)
                             },
-                            deleteWindow =
-                                {
-                                        viewModel.setWindows(settings.windows - window)
-                                    }
+                            deleteWindow = {
+                                    viewModel.setWindows(settings.windows - window)
+                                }
                                     .takeIf { settings.windows.size > 1 },
                         )
                     }
@@ -382,7 +381,7 @@ private fun TimeNote(type: Window.Type) {
                         Window.Type.ServiceStart -> R.string.service_day_start
                         Window.Type.ServiceEnd -> R.string.service_day_end
                         Window.Type.NextDay -> R.string.next_day
-                    }
+                    },
                 ),
                 style = Typography.footnote,
                 color = colorResource(R.color.deemphasized),
@@ -557,7 +556,7 @@ private fun TimeInput(
                     Icon(
                         painterResource(
                             if (isDial) R.drawable.baseline_edit_calendar_24
-                            else R.drawable.baseline_access_time_24
+                            else R.drawable.baseline_access_time_24,
                         ),
                         stringResource(R.string.time_picker_type_toggle),
                     )
@@ -565,7 +564,7 @@ private fun TimeInput(
             },
             content = {
                 CompositionLocalProvider(
-                    LocalContentColor provides AlertDialogDefaults.textContentColor
+                    LocalContentColor provides AlertDialogDefaults.textContentColor,
                 ) {
                     if (isDial) TimePicker(timePickerState) else TimeInput(timePickerState)
                 }
@@ -667,8 +666,8 @@ private fun PermissionSettingsLink() {
     Row(
         modifier =
             Modifier.padding(horizontal = 12.dp, vertical = 10.dp).semantics(
-                mergeDescendants = true
-            ) {}
+                mergeDescendants = true,
+            ) {},
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -715,8 +714,8 @@ private fun NotificationSettingsWidgetPreview() {
                         startTime = FavoriteSettings.Notifications.serviceBoundary,
                         endTime = FavoriteSettings.Notifications.serviceBoundary,
                         daysOfWeek = Window.weekend,
-                    )
-                )
+                    ),
+                ),
             )
         }
     }
@@ -734,11 +733,11 @@ private fun NotificationSettingsWidgetPreview() {
                     single {
                         SettingsCache(
                             MockSettingsRepository(
-                                mapOf(UserSettings.NotificationPresetWindows to true)
-                            )
+                                mapOf(UserSettings.NotificationPresetWindows to true),
+                            ),
                         )
                     }
-                }
+                },
             )
         }
     }

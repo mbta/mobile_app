@@ -168,7 +168,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     now,
                     context = RouteCardData.Context.StopDetailsFiltered,
-                )
+                ),
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.direction.id == 0 }
@@ -209,7 +209,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     now,
                     context = RouteCardData.Context.StopDetailsFiltered,
-                )
+                ),
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.direction.id == 0 }
@@ -479,8 +479,8 @@ class StopDetailsFilteredDeparturesViewTest {
             summaries =
                 listOf(
                     AlertSummaryEntity(
-                        "**Service suspended** at **${stop.name}** through 6:45\u202FPM"
-                    )
+                        "**Service suspended** at **${stop.name}** through 6:45\u202FPM",
+                    ),
                 )
         }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
@@ -498,7 +498,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     alertResponse,
                     now,
                     context = RouteCardData.Context.StopDetailsFiltered,
-                )
+                ),
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.direction.id == 0 }
@@ -522,7 +522,7 @@ class StopDetailsFilteredDeparturesViewTest {
 
         composeTestRule.waitForIdle()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasText("Service suspended at ${stop.name}", true)
+            hasText("Service suspended at ${stop.name}", true),
         )
         composeTestRule.onNodeWithText("View details").assertHasClickAction()
     }
@@ -546,7 +546,9 @@ class StopDetailsFilteredDeparturesViewTest {
             informedEntity(directionId = 0, route = routeC.id.idText, stop = "70151")
             summaries =
                 listOf(
-                    AlertSummaryEntity("**Shuttle buses** at **${stop.name}** through 6:45\u202FPM")
+                    AlertSummaryEntity(
+                        "**Shuttle buses** at **${stop.name}** through 6:45\u202FPM",
+                    ),
                 )
         }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
@@ -560,7 +562,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     routeId = routeD.id.idText
                     routePatternId = tripPattern.id
                 }
-            }
+            },
         )
 
         val filterState = StopDetailsFilter(routeId = line.id, directionId = 0)
@@ -576,7 +578,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     alertResponse,
                     now,
                     context = RouteCardData.Context.StopDetailsFiltered,
-                )
+                ),
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.direction.id == 0 }
@@ -603,7 +605,7 @@ class StopDetailsFilteredDeparturesViewTest {
 
         composeTestRule.onNodeWithText("5 min").assertExists()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasText("Shuttle buses at ${stop.name}", true)
+            hasText("Shuttle buses at ${stop.name}", true),
         )
     }
 
@@ -616,8 +618,8 @@ class StopDetailsFilteredDeparturesViewTest {
             summaries =
                 listOf(
                     AlertSummaryEntity(
-                        "**Service suspended** at **Sample Stop 2** through 6:25\u202FPM"
-                    )
+                        "**Service suspended** at **Sample Stop 2** through 6:25\u202FPM",
+                    ),
                 )
         }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
@@ -635,7 +637,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     alertResponse,
                     now,
                     context = RouteCardData.Context.StopDetailsFiltered,
-                )
+                ),
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.direction.id == 0 }
@@ -682,7 +684,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     AlertsStreamDataResponse(builder),
                     now,
                     context = RouteCardData.Context.StopDetailsFiltered,
-                )
+                ),
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.direction.id == 0 }
@@ -738,7 +740,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     alertResponse,
                     now,
                     context = RouteCardData.Context.StopDetailsFiltered,
-                )
+                ),
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.direction.id == 0 }
@@ -779,7 +781,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     now,
                     RouteCardData.Context.StopDetailsFiltered,
-                )
+                ),
             )
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.direction.id == 0 }

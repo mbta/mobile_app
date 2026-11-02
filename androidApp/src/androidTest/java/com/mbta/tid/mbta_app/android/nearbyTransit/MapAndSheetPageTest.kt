@@ -210,7 +210,7 @@ class MapAndSheetPageTest : KoinTest {
             repositoryOverrides = {
                 nearby =
                     MockNearbyRepository(
-                        response = NearbyResponse(listOf(sampleStop.id, greenLineStop.id))
+                        response = NearbyResponse(listOf(sampleStop.id, greenLineStop.id)),
                     )
                 settings = MockSettingsRepository(mapOf(Settings.HideMaps to hideMaps))
             },
@@ -268,7 +268,7 @@ class MapAndSheetPageTest : KoinTest {
                                                 RouteCardData.Context.NearbyTransit,
                                             ),
                                         ),
-                                )
+                                ),
                             ),
                             now,
                         ),
@@ -290,7 +290,7 @@ class MapAndSheetPageTest : KoinTest {
                                                     UpcomingTrip(
                                                         greenLineTrip,
                                                         prediction = greenLinePrediction,
-                                                    )
+                                                    ),
                                                 ),
                                                 emptyList(),
                                                 true,
@@ -298,16 +298,16 @@ class MapAndSheetPageTest : KoinTest {
                                                 subwayServiceStartTime = null,
                                                 emptyList(),
                                                 RouteCardData.Context.NearbyTransit,
-                                            )
+                                            ),
                                         ),
-                                )
+                                ),
                             ),
                             now,
                         ),
                     ),
                     loadedLocation = Position(0.0, 0.0),
                     loadedStopIds = listOf(sampleStop.id, greenLineStop.id),
-                )
+                ),
             )
         val flow = MutableStateFlow(null).asStateFlow()
         every { mockMapVM.models } returns
@@ -315,7 +315,7 @@ class MapAndSheetPageTest : KoinTest {
         loadMocks()
         composeTestRule.setContent {
             CompositionLocalProvider(
-                LocalLocationClient provides MockFusedLocationProviderClient()
+                LocalLocationClient provides MockFusedLocationProviderClient(),
             ) {
                 ManageMapboxConfig()
                 MapAndSheetPage(
@@ -345,7 +345,7 @@ class MapAndSheetPageTest : KoinTest {
         composeTestRule.waitUntilDoesNotExistDefaultTimeout(hasContentDescription("Loading…"))
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasContentDescription("Mapbox Attribution")
+            hasContentDescription("Mapbox Attribution"),
         )
         composeTestRule.onNodeWithContentDescription("Mapbox Attribution").assertCanBeDisplayed()
 
@@ -385,7 +385,7 @@ class MapAndSheetPageTest : KoinTest {
             }
 
             CompositionLocalProvider(
-                LocalLocationClient provides MockFusedLocationProviderClient()
+                LocalLocationClient provides MockFusedLocationProviderClient(),
             ) {
                 MapAndSheetPage(
                     Modifier,
@@ -443,7 +443,7 @@ class MapAndSheetPageTest : KoinTest {
         loadMocks()
         composeTestRule.setContent {
             CompositionLocalProvider(
-                LocalLocationClient provides MockFusedLocationProviderClient()
+                LocalLocationClient provides MockFusedLocationProviderClient(),
             ) {
                 ManageMapboxConfig(mapboxConfigManager = mockConfigManager)
                 MapAndSheetPage(
@@ -471,7 +471,7 @@ class MapAndSheetPageTest : KoinTest {
         }
 
         composeTestRule.waitUntilDoesNotExistDefaultTimeout(
-            hasContentDescription("Loading…", substring = true)
+            hasContentDescription("Loading…", substring = true),
         )
 
         composeTestRule.waitUntilDefaultTimeout { mockConfigManager.loadConfigCalledCount == 1 }
@@ -490,7 +490,7 @@ class MapAndSheetPageTest : KoinTest {
         loadMocks(hideMaps = true)
         composeTestRule.setContent {
             CompositionLocalProvider(
-                LocalLocationClient provides MockFusedLocationProviderClient()
+                LocalLocationClient provides MockFusedLocationProviderClient(),
             ) {
                 MapAndSheetPage(
                     Modifier,
@@ -527,7 +527,7 @@ class MapAndSheetPageTest : KoinTest {
         loadMocks(hideMaps = true)
         composeTestRule.setContent {
             CompositionLocalProvider(
-                LocalLocationClient provides MockFusedLocationProviderClient()
+                LocalLocationClient provides MockFusedLocationProviderClient(),
             ) {
                 MapAndSheetPage(
                     Modifier,
@@ -590,9 +590,9 @@ class MapAndSheetPageTest : KoinTest {
                             /* zoom = */ ViewportProvider.Companion.Defaults.zoom,
                             /* bearing = */ 0.0,
                             /* pitch = */ 0.0,
-                        )
-                    )
-                )
+                        ),
+                    ),
+                ),
             )
         // setting to false so that the only calls to `follow()` will come from backgrounding.
         // Otherwise, HomeMapView LaunchedEffect will sometimes also call `follow()` within the

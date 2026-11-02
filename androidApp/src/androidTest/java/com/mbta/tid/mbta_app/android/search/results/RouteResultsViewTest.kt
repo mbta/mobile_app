@@ -26,7 +26,7 @@ class RouteResultsViewTest {
             RouteResultsView(
                 RoundedCornerShape(0.dp),
                 checkNotNull(
-                    SearchViewModel.RouteResult.forLineOrRoute(route.id, GlobalResponse(TestData))
+                    SearchViewModel.RouteResult.forLineOrRoute(route.id, GlobalResponse(TestData)),
                 ),
                 handleSearch = {},
             )
@@ -43,7 +43,7 @@ class RouteResultsViewTest {
             RouteResultsView(
                 RoundedCornerShape(0.dp),
                 checkNotNull(
-                    SearchViewModel.RouteResult.forLineOrRoute(route.id, GlobalResponse(TestData))
+                    SearchViewModel.RouteResult.forLineOrRoute(route.id, GlobalResponse(TestData)),
                 ),
                 handleSearch = { taps.add(it) },
             )

@@ -47,7 +47,7 @@ public class MoreViewModel(
                 id = MoreSection.Category.Feedback,
                 items =
                     listOf(
-                        MoreItem.Link(label = SharedString.SendAppFeedback, url = feedbackFormUrl)
+                        MoreItem.Link(label = SharedString.SendAppFeedback, url = feedbackFormUrl),
                     ),
             ),
             MoreSection(

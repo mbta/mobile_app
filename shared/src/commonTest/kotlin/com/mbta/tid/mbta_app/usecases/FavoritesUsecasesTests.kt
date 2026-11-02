@@ -91,7 +91,7 @@ class FavoritesUsecasesTests : KoinTest {
     fun testUpdateFavoritesRecordsAnalytics() = runBlocking {
         val repository =
             MockFavoritesRepository(
-                buildFavorites { routeStopDirection(Route.Id("route_1"), "stop_1", 0) }
+                buildFavorites { routeStopDirection(Route.Id("route_1"), "stop_1", 0) },
             )
 
         var eventLogged: String? = null
@@ -122,7 +122,7 @@ class FavoritesUsecasesTests : KoinTest {
     fun testUpdateFavoritesUpdatesSubscriptions() = runBlocking {
         val repository =
             MockFavoritesRepository(
-                buildFavorites { routeStopDirection(Route.Id("route_1"), "stop_1", 0) }
+                buildFavorites { routeStopDirection(Route.Id("route_1"), "stop_1", 0) },
             )
         var token: String? = null
         var subs: List<SubscriptionRequest>? = null
@@ -133,7 +133,7 @@ class FavoritesUsecasesTests : KoinTest {
                     token = fcmToken
                     subs = subscriptions
                     locale = l
-                }
+                },
             )
 
         val objects = ObjectCollectionBuilder()
@@ -177,7 +177,7 @@ class FavoritesUsecasesTests : KoinTest {
                             startTime = LocalTime(9, 0),
                             endTime = LocalTime(17, 0),
                             listOf(2, 3),
-                        )
+                        ),
                     ),
                 ),
                 SubscriptionRequest(
@@ -190,7 +190,7 @@ class FavoritesUsecasesTests : KoinTest {
                             startTime = LocalTime(8, 0),
                             endTime = LocalTime(9, 0),
                             listOf(1),
-                        )
+                        ),
                     ),
                 ),
             )
@@ -204,7 +204,7 @@ class FavoritesUsecasesTests : KoinTest {
                             startTime = LocalTime(9, 0),
                             endTime = LocalTime(17, 0),
                             setOf(DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY),
-                        )
+                        ),
                     ),
             )
 
@@ -217,7 +217,7 @@ class FavoritesUsecasesTests : KoinTest {
                             startTime = LocalTime(8, 0),
                             endTime = LocalTime(9, 0),
                             setOf(DayOfWeek.MONDAY),
-                        )
+                        ),
                     ),
             )
 

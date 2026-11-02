@@ -868,7 +868,7 @@ class StopDetailsUtilsTest {
                     vehicleC.id to vehicleC,
                     vehicleD.id to vehicleD,
                     vehicleE.id to vehicleE,
-                )
+                ),
             )
 
         val global =

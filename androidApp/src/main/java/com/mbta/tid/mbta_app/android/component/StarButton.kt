@@ -83,7 +83,7 @@ private fun <T> starringKeyframes(config: KeyframesSpec.KeyframesSpecConfig<T>.(
 fun <T> KeyframesSpec.KeyframesSpecConfig<T>.starringStart(value: T) = value at 0 using easeOut
 
 fun <T> KeyframesSpec.KeyframesSpecConfig<T>.starringPeak(
-    value: T
+    value: T,
 ): KeyframesSpec.KeyframeEntity<T> {
     value at 200
     return value at 250 using easeIn
@@ -122,7 +122,7 @@ fun StarIcon(
                         }
                     else -> unstarring()
                 }
-            }
+            },
         ) { state ->
             if (state == true) deemphasized.copy(alpha = 0.1f) else color
         }
@@ -138,7 +138,7 @@ fun StarIcon(
                         }
                     else -> unstarring(stepAtEnd)
                 }
-            }
+            },
         ) { state ->
             if (state == true) color else Color.Transparent
         }
@@ -159,7 +159,7 @@ fun StarIcon(
                             1f at unstarringDuration using stepAtEnd
                         }
                 }
-            }
+            },
         ) { state ->
             if (state == true) 0f else 0f
         }
@@ -176,7 +176,7 @@ fun StarIcon(
                         }
                     else -> unstarring()
                 }
-            }
+            },
         ) { state ->
             if (state == true) 2f else 2f
         }
@@ -193,7 +193,7 @@ fun StarIcon(
                         }
                     else -> unstarring(stepAtEnd)
                 }
-            }
+            },
         ) { state ->
             if (state == true) 0f else 1f
         }
@@ -234,7 +234,7 @@ fun StarIcon(
                         drawPath(
                             outerPath,
                             strokeColor.copy(
-                                alpha = strokeColor.alpha * strokeProportionBehindFill
+                                alpha = strokeColor.alpha * strokeProportionBehindFill,
                             ),
                             style =
                                 Stroke(
@@ -253,7 +253,7 @@ fun StarIcon(
                         drawPath(
                             outerPath,
                             strokeColor.copy(
-                                alpha = strokeColor.alpha * (1 - strokeProportionBehindFill)
+                                alpha = strokeColor.alpha * (1 - strokeProportionBehindFill),
                             ),
                             style =
                                 Stroke(
@@ -266,7 +266,7 @@ fun StarIcon(
                 }
             }
             .requiredSize(size)
-            .placeholderIfLoading()
+            .placeholderIfLoading(),
     )
 }
 

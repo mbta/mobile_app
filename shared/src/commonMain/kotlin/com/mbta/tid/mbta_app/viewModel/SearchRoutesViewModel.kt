@@ -114,7 +114,7 @@ internal constructor(
                                                     if (it in silverRoutes) 1 else 0
                                                 else -> 0
                                             }
-                                        }
+                                        },
                                 )
                         is ApiResult.Error -> {
                             // Only set to error if there's a backend error code, otherwise this

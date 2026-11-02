@@ -106,7 +106,7 @@ private fun FavoriteStopCardPreview() {
                 longName = "Blue Line"
                 textColor = "FFFFFF"
                 type = RouteType.HEAVY_RAIL
-            }
+            },
         )
     val bus66 =
         LineOrRoute.Route(
@@ -118,7 +118,7 @@ private fun FavoriteStopCardPreview() {
                 shortName = "66"
                 textColor = "000000"
                 type = RouteType.BUS
-            }
+            },
         )
     val gl =
         LineOrRoute.Line(

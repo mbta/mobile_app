@@ -57,7 +57,7 @@ internal fun createDataStore(): DataStore<Preferences> =
                     error = null,
                 )
             requireNotNull(documentDirectory).path + "/$dataStoreFileName"
-        }
+        },
     )
 
 public fun initKoin(appVariant: AppVariant, nativeModule: Module) {
@@ -121,7 +121,7 @@ public fun startKoinIOSTestApp() {
                         Dispatchers.Default
                     }
                     single<CoroutineDispatcher>(named("coroutineDispatcherIO")) { Dispatchers.IO }
-                }
+                },
         )
     }
     loadDefaultRepoModules()
@@ -138,7 +138,7 @@ public fun startKoinE2E(settings: Map<Settings, Boolean> = emptyMap()) {
                         Dispatchers.Default
                     }
                     single<CoroutineDispatcher>(named("coroutineDispatcherIO")) { Dispatchers.IO }
-                }
+                },
         )
     }
     val (objects, tripId, vehicleId) = endToEndMockData()

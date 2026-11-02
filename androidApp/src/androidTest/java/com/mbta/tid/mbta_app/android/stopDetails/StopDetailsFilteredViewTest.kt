@@ -153,7 +153,7 @@ class StopDetailsFilteredViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     now,
                     context = RouteCardData.Context.StopDetailsFiltered,
-                )
+                ),
             )
         val routeStopData = routeCardData.single().stopData.single()
 
@@ -179,8 +179,8 @@ class StopDetailsFilteredViewTest {
                             RouteData.Filtered(
                                 StopDetailsPageFilters(stop.id, filterState, null),
                                 routeStopData,
-                            )
-                        )
+                            ),
+                        ),
                     ),
             )
         }
@@ -206,7 +206,7 @@ class StopDetailsFilteredViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     now,
                     context = RouteCardData.Context.StopDetailsFiltered,
-                )
+                ),
             )
         val routeStopData = routeCardData.single().stopData.single()
 
@@ -232,8 +232,8 @@ class StopDetailsFilteredViewTest {
                             RouteData.Filtered(
                                 StopDetailsPageFilters(stop.id, filterState, null),
                                 routeStopData,
-                            )
-                        )
+                            ),
+                        ),
                     ),
             )
         }
@@ -267,7 +267,7 @@ class StopDetailsFilteredViewTest {
                     AlertsStreamDataResponse(builder),
                     now,
                     context = RouteCardData.Context.StopDetailsFiltered,
-                )
+                ),
             )
         val routeStopData = routeCardData.single().stopData.single()
 
@@ -293,8 +293,8 @@ class StopDetailsFilteredViewTest {
                             RouteData.Filtered(
                                 StopDetailsPageFilters(stop.id, filterState, null),
                                 routeStopData,
-                            )
-                        )
+                            ),
+                        ),
                     ),
             )
         }
@@ -318,7 +318,7 @@ class StopDetailsFilteredViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     now,
                     RouteCardData.Context.StopDetailsFiltered,
-                )
+                ),
             )
         val routeStopData = routeCardData.single().stopData.single()
 
@@ -344,8 +344,8 @@ class StopDetailsFilteredViewTest {
                             RouteData.Filtered(
                                 StopDetailsPageFilters(stop.id, filterState, null),
                                 routeStopData,
-                            )
-                        )
+                            ),
+                        ),
                     ),
             )
         }

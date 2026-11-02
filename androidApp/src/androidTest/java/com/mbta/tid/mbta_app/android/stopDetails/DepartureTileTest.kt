@@ -46,7 +46,7 @@ class DepartureTileTest {
                                     route.type,
                                     TripInstantDisplay.Minutes(5, false),
                                     false,
-                                )
+                                ),
                             ),
                         warningAlert = null,
                     ),
@@ -85,7 +85,7 @@ class DepartureTileTest {
                                     route.type,
                                     TripInstantDisplay.Minutes(5, false),
                                     false,
-                                )
+                                ),
                             ),
                         warningAlert = null,
                     ),
@@ -120,7 +120,7 @@ class DepartureTileTest {
                                     route.type,
                                     TripInstantDisplay.Minutes(5, false),
                                     false,
-                                )
+                                ),
                             ),
                         warningAlert = null,
                     ),
@@ -157,7 +157,7 @@ class DepartureTileTest {
                                     route.type,
                                     TripInstantDisplay.Minutes(5, false),
                                     false,
-                                )
+                                ),
                             ),
                         warningAlert = null,
                     ),
@@ -198,7 +198,7 @@ class DepartureTileTest {
                                     route.type,
                                     TripInstantDisplay.Minutes(5, false),
                                     false,
-                                )
+                                ),
                             ),
                         warningAlert = null,
                     ),
@@ -242,7 +242,7 @@ class DepartureTileTest {
                                     route.type,
                                     TripInstantDisplay.Minutes(5, false),
                                     false,
-                                )
+                                ),
                             ),
                         warningAlert = null,
                     ),
@@ -281,7 +281,7 @@ class DepartureTileTest {
                                     route.type,
                                     TripInstantDisplay.Minutes(5, false),
                                     false,
-                                )
+                                ),
                             ),
                         warningAlert = null,
                     ),

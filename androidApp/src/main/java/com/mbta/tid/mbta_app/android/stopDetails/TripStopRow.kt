@@ -111,8 +111,8 @@ fun TripStopRow(
                         state,
                         rightSideModifier.then(
                             DestinationPredictionBalance.predictionWidth(
-                                state.containsWrappableText()
-                            )
+                                state.containsWrappableText(),
+                            ),
                         ),
                         routeType = routeAccents.type,
                         hideRealtimeIndicators = true,
@@ -271,7 +271,7 @@ private fun TripStopRowDisruptionsPreview() {
                 Box(
                     Modifier.matchParentSize()
                         .padding(6.dp)
-                        .background(colorResource(R.color.fill3))
+                        .background(colorResource(R.color.fill3)),
                 )
                 Column(Modifier.padding(top = 6.dp)) {
                     TripStopRow(

@@ -55,7 +55,7 @@ internal class ErrorBannerViewModelTest : KoinTest {
                     MockRepositories().apply {
                         useObjects(ObjectCollectionBuilder())
                         repositoriesBlock()
-                    }
+                    },
                 ),
                 viewModelModule(),
             )

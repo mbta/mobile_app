@@ -138,7 +138,7 @@ spotless {
                         val column = line.value.indexOf("getValue(")
                         if (column != -1) {
                             throw IllegalStateException(
-                                "${file.path}:${line.index + 1}:${column + 1} calls getValue"
+                                "${file.path}:${line.index + 1}:${column + 1} calls getValue",
                             )
                         }
                     }
@@ -226,7 +226,7 @@ tasks.register<DependencyCodegenTask>("bomCodegenAndroid") {
     inputPath = layout.buildDirectory.file("boms/bom-android.json")
     outputPath =
         layout.projectDirectory.file(
-            "src/androidMain/kotlin/com/mbta/tid/mbta_app/model/Dependency.android.kt"
+            "src/androidMain/kotlin/com/mbta/tid/mbta_app/model/Dependency.android.kt",
         )
 }
 
@@ -235,7 +235,7 @@ tasks.register<DependencyCodegenTask>("bomCodegenIos") {
     inputPath = layout.buildDirectory.file("boms/bom-ios.xml")
     outputPath =
         layout.projectDirectory.file(
-            "src/iosMain/kotlin/com/mbta/tid/mbta_app/model/Dependency.ios.kt"
+            "src/iosMain/kotlin/com/mbta/tid/mbta_app/model/Dependency.ios.kt",
         )
 }
 
@@ -293,9 +293,9 @@ apply
          (C) Copyright 2006 Intel Corporation
                                 """
                                     .trim()
-                        }
+                        },
                     )
-                }
+                },
             )
     }
 }
@@ -408,7 +408,7 @@ tasks.register<CycloneDxBomTransformTask>("bomIosSwiftPM") {
                                 else -> append("install it")
                             }
                             append(" and try `gh auth login`")
-                        }
+                        },
                     )
                 }
                 gh.standardOutput.asText.get()
@@ -427,7 +427,7 @@ tasks.register<CycloneDxBomTransformTask>("bomIosSwiftPM") {
                             if (knownLicense != "NOASSERTION") {
                                 id = knownLicense
                             }
-                        }
+                        },
                     )
                 }
             if (component.licenses == null) {
@@ -442,7 +442,7 @@ tasks.register<CycloneDxBomTransformTask>("bomIosSwiftPM") {
 tasks.register<CachedExecTask>("bomIosSwiftPMRaw") {
     inputFiles =
         layout.projectDirectory.files(
-            "../iosApp/iosApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved"
+            "../iosApp/iosApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved",
         )
     outputFile = layout.buildDirectory.file("boms/bom-ios-swiftpm-raw.json")
     workingDir = provider { layout.projectDirectory.dir("../iosApp") }

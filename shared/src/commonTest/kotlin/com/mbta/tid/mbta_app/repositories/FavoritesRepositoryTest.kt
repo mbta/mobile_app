@@ -54,7 +54,7 @@ class FavoritesRepositoryTest {
                 module {
                     single<DataStore<Preferences>> { dataStore }
                     single { jsonPersistence }
-                }
+                },
             )
         }
         val repo = FavoritesRepository()
@@ -81,8 +81,8 @@ class FavoritesRepositoryTest {
                                 add(json.encodeToJsonElement(rsd1))
                                 add(json.encodeToJsonElement(rsd2))
                             }
-                        }
-                    )
+                        },
+                    ),
             )
 
         val dataStore = DataStoreFactory.create(storage)
@@ -92,7 +92,7 @@ class FavoritesRepositoryTest {
                 module {
                     single<DataStore<Preferences>> { dataStore }
                     single { jsonPersistence }
-                }
+                },
             )
         }
         val repo = FavoritesRepository()
@@ -132,7 +132,7 @@ class FavoritesRepositoryTest {
                 module {
                     single { DataStoreFactory.create(MockDatastoreStorage()) }
                     single { jsonPersistence }
-                }
+                },
             )
         }
         val repo = FavoritesRepository()

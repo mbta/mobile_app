@@ -97,7 +97,7 @@ fun FavoritesPage(
 
     LaunchedEffect(state.awaitingPredictionsAfterBackground) {
         errorBannerViewModel.setIsLoadingWhenPredictionsStale(
-            state.awaitingPredictionsAfterBackground
+            state.awaitingPredictionsAfterBackground,
         )
     }
 
@@ -131,9 +131,9 @@ fun FavoritesPage(
                             onClose = {
                                 favoritesViewModel.setIsFirstExposureToNewFavorites(false)
                                 toastViewModel.hideToast()
-                            }
+                            },
                         ),
-                )
+                ),
             )
         }
     }

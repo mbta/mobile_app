@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 public data class MapFriendlyRouteResponse(
     @SerialName("map_friendly_route_shapes")
-    val routesWithSegmentedShapes: List<RouteWithSegmentedShapes>
+    val routesWithSegmentedShapes: List<RouteWithSegmentedShapes>,
 ) {
 
     @Serializable

@@ -124,7 +124,7 @@ class RailRouteShapeRepositoryTest : KoinTest {
     }
   ]
 }
-                    """
+                    """,
                     ),
                 status = HttpStatusCode.OK,
                 headers = headersOf(HttpHeaders.ContentType, "application/json"),
@@ -136,7 +136,7 @@ class RailRouteShapeRepositoryTest : KoinTest {
                 module {
                     single { MobileBackendClient(mockEngine, AppVariant.Staging) }
                     single { mockJsonPersistence() }
-                }
+                },
             )
         }
         runBlocking {
@@ -202,8 +202,8 @@ class RailRouteShapeRepositoryTest : KoinTest {
                         MapFriendlyRouteResponse.RouteWithSegmentedShapes(
                             Route.Id("Red"),
                             listOf(segmentedRouteShape),
-                        )
-                    )
+                        ),
+                    ),
                 )
             assertEquals(ApiResult.Ok(expectedResponse), response)
             assertEquals(expectedResponse, repo.state.value)

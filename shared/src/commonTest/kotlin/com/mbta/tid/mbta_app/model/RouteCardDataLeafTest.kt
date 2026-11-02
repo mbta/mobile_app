@@ -182,7 +182,7 @@ class RouteCardDataLeafTest {
                         directionId = trip.directionId,
                         route = route.id,
                         trip = trip.id,
-                    )
+                    ),
                 )
         }
 
@@ -202,7 +202,7 @@ class RouteCardDataLeafTest {
                                     headline = true,
                                 ),
                                 lastTrip = true,
-                            )
+                            ),
                         ),
                     warningAlert =
                         UpcomingFormat.WarningAlert(StopAlertState.Issue, MapStopRoute.COMMUTER),
@@ -258,7 +258,7 @@ class RouteCardDataLeafTest {
                                 headline = true,
                             ),
                             lastTrip = true,
-                        )
+                        ),
                     ),
                     warningAlert = null,
                 ),
@@ -317,7 +317,7 @@ class RouteCardDataLeafTest {
                                 headline = true,
                             ),
                             lastTrip = true,
-                        )
+                        ),
                     ),
                     warningAlert = null,
                 ),
@@ -369,7 +369,7 @@ class RouteCardDataLeafTest {
                             route.type,
                             TripInstantDisplay.Minutes(1, true),
                             lastTrip = true,
-                        )
+                        ),
                     ),
                     UpcomingFormat.WarningAlert("alert-large-bus-issue"),
                 ),
@@ -419,7 +419,7 @@ class RouteCardDataLeafTest {
                             route.type,
                             TripInstantDisplay.Minutes(1, true),
                             lastTrip = true,
-                        )
+                        ),
                     ),
                     UpcomingFormat.WarningAlert("alert-large-bus-issue"),
                 ),
@@ -487,7 +487,7 @@ class RouteCardDataLeafTest {
                     route = null,
                     headsign = null,
                     UpcomingFormat.NoTrips(
-                        UpcomingFormat.NoTripsFormat.SubwayEarlyMorning(serviceStart)
+                        UpcomingFormat.NoTripsFormat.SubwayEarlyMorning(serviceStart),
                     ),
                 ),
                 RouteCardData.Leaf(
@@ -601,7 +601,7 @@ class RouteCardDataLeafTest {
                         null,
                         "A",
                         UpcomingFormat.NoTrips(
-                            noTripsFormat = UpcomingFormat.NoTripsFormat.PredictionsUnavailable
+                            noTripsFormat = UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
                         ),
                     )
                     branchRow(
@@ -734,7 +734,7 @@ class RouteCardDataLeafTest {
                             route.type,
                             TripInstantDisplay.Minutes(5, !route.type.isSubway()),
                             lastTrip = !route.type.isSubway(),
-                        )
+                        ),
                     ),
                     null,
                 ),
@@ -791,7 +791,7 @@ class RouteCardDataLeafTest {
                             subwayRoute.type,
                             TripInstantDisplay.Minutes(5, false),
                             lastTrip = false,
-                        )
+                        ),
                     ),
                     null,
                 ),
@@ -1321,7 +1321,7 @@ class RouteCardDataLeafTest {
                             "Braintree",
                             UpcomingFormat.Disruption(alert, mapStopRoute),
                         ),
-                    )
+                    ),
                 ),
                 RouteCardData.Leaf(
                         RedLine.lineOrRoute,
@@ -1439,7 +1439,7 @@ class RouteCardDataLeafTest {
                             "Braintree",
                             UpcomingFormat.Disruption(alert, mapStopRoute),
                         ),
-                    )
+                    ),
                 ),
                 RouteCardData.Leaf(
                         RedLine.lineOrRoute,
@@ -2745,7 +2745,7 @@ class RouteCardDataLeafTest {
                             routeType = RouteType.LIGHT_RAIL,
                             stop = GreenLine.kenmore.id,
                             trip = null,
-                        )
+                        ),
                     )
             }
 
@@ -2919,7 +2919,7 @@ class RouteCardDataLeafTest {
                             routeType = RouteType.LIGHT_RAIL,
                             stop = GreenLine.boylston.id,
                             trip = null,
-                        )
+                        ),
                     )
             }
 
@@ -3134,7 +3134,7 @@ class RouteCardDataLeafTest {
                             routeType = RouteType.FERRY,
                             stop = stop1.id,
                             trip = null,
-                        )
+                        ),
                     )
             }
 

@@ -48,7 +48,7 @@ fun StopDetailsAlertHeader(
         )
         if (showInfoIcon) {
             Box(
-                Modifier.padding(4.dp).height(IntrinsicSize.Max).align(Alignment.CenterVertically)
+                Modifier.padding(4.dp).height(IntrinsicSize.Max).align(Alignment.CenterVertically),
             ) {
                 InfoCircle()
             }

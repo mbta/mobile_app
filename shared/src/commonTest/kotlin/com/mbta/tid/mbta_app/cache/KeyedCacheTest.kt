@@ -102,7 +102,7 @@ class KeyedCacheTest {
                 .decodeFromString(
                     json.serializersModule.serializer<TestCacheEntry>(),
                     fileSystem.read(
-                        mockPaths.cache / CACHE_GROUP / "$CACHE_PREFIX-${cachedEntry.key}.json"
+                        mockPaths.cache / CACHE_GROUP / "$CACHE_PREFIX-${cachedEntry.key}.json",
                     ) {
                         readUtf8()
                     },

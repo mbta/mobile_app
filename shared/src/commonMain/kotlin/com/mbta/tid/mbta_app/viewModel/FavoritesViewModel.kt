@@ -192,7 +192,7 @@ public class FavoritesViewModel(
             if (invalid.isEmpty()) return@LaunchedEffect
             sentryRepository.captureMessage(
                 "FavoritesViewModel: ${invalid.size} favorite(s) are currently invalid and " +
-                    "hidden from display"
+                    "hidden from display",
             ) {
                 addBreadcrumb(
                     Breadcrumb(
@@ -208,7 +208,7 @@ public class FavoritesViewModel(
                                         "reason" to entry.value,
                                     )
                             },
-                    )
+                    ),
                 )
             }
         }
@@ -381,7 +381,7 @@ public class FavoritesViewModel(
         locale: String?,
     ) {
         fireEvent(
-            Event.UpdateFavorites(updatedFavorites, context, defaultDirection, fcmToken, locale)
+            Event.UpdateFavorites(updatedFavorites, context, defaultDirection, fcmToken, locale),
         )
     }
 }

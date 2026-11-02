@@ -21,7 +21,7 @@ fun RouteStopDirection.getLabels(
 
     val directionLabel =
         resources.getString(
-            directionNameFormatted(Direction(this.direction, lineOrRoute.sortRoute))
+            directionNameFormatted(Direction(this.direction, lineOrRoute.sortRoute)),
         )
 
     return RouteStopDirectionLabels(routeLabel, stop.name, directionLabel)

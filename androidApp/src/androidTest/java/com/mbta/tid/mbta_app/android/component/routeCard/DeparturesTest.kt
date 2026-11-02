@@ -60,7 +60,7 @@ class DeparturesTest {
                             UpcomingTrip(
                                 aTrip,
                                 objects.prediction { departureTime = now.plus(5.minutes) },
-                            )
+                            ),
                         ),
                         emptyList(),
                         true,
@@ -79,7 +79,7 @@ class DeparturesTest {
                             UpcomingTrip(
                                 bTrip,
                                 objects.prediction { departureTime = now.plus(20.minutes) },
-                            )
+                            ),
                         ),
                         emptyList(),
                         true,
@@ -138,7 +138,7 @@ class DeparturesTest {
                                 aTrip,
                                 aSchedule,
                                 objects.prediction { departureTime = now.plus(5.minutes) },
-                            )
+                            ),
                         ),
                         emptyList(),
                         true,
@@ -157,7 +157,7 @@ class DeparturesTest {
                             UpcomingTrip(
                                 bTrip,
                                 objects.prediction { departureTime = now.plus(20.minutes) },
-                            )
+                            ),
                         ),
                         emptyList(),
                         true,
@@ -193,7 +193,7 @@ class DeparturesTest {
                 objects.prediction {
                     trip = objects.trip(routePattern)
                     departureTime = now + 5.minutes
-                }
+                },
             )
 
         val lineOrRoute = LineOrRoute.Line(line, setOf(route))
@@ -216,7 +216,7 @@ class DeparturesTest {
                         null,
                         emptyList(),
                         context,
-                    )
+                    ),
                 ),
             )
 
@@ -258,7 +258,7 @@ class DeparturesTest {
                             UpcomingTrip(
                                 aTrip,
                                 objects.prediction { departureTime = now.plus(5.minutes) },
-                            )
+                            ),
                         ),
                         emptyList(),
                         true,
@@ -277,7 +277,7 @@ class DeparturesTest {
                             UpcomingTrip(
                                 bTrip,
                                 objects.prediction { departureTime = now.plus(20.minutes) },
-                            )
+                            ),
                         ),
                         emptyList(),
                         true,
@@ -293,7 +293,7 @@ class DeparturesTest {
         var onClickCalled = false
 
         loadKoinMocks(
-            analytics = MockAnalytics({ event, props -> tapAnalytics = Pair(event, props) })
+            analytics = MockAnalytics({ event, props -> tapAnalytics = Pair(event, props) }),
         )
 
         composeTestRule.setContent {

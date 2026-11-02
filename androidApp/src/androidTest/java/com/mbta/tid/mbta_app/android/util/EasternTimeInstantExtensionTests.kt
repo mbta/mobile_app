@@ -58,7 +58,7 @@ class EasternTimeInstantExtensionTests {
         assertMatches(
             Regex("Saturday, (Jan 10|10 Jan)"),
             serviceThreshold.formattedServiceDayAndDate(
-                EasternTimeInstant.ServiceDateRounding.BACKWARDS
+                EasternTimeInstant.ServiceDateRounding.BACKWARDS,
             ),
         )
     }
@@ -82,7 +82,7 @@ class EasternTimeInstantExtensionTests {
         assertMatches(
             Regex("Fri, (Oct 3|3 Oct)"),
             serviceThreshold.formattedShortServiceDayAndDate(
-                EasternTimeInstant.ServiceDateRounding.BACKWARDS
+                EasternTimeInstant.ServiceDateRounding.BACKWARDS,
             ),
         )
     }

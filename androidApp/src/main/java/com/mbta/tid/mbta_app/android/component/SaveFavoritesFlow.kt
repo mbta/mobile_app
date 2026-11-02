@@ -119,7 +119,7 @@ fun SaveFavoritesFlow(
 
         toastText?.let {
             toastViewModel.showToast(
-                ToastViewModel.Toast(it, duration = ToastViewModel.Duration.Short)
+                ToastViewModel.Toast(it, duration = ToastViewModel.Duration.Short),
             )
         }
     }
@@ -189,7 +189,7 @@ fun FavoriteConfirmation(
 
     Column(
         modifier =
-            Modifier.background(colorResource(R.color.fill1), shape = RoundedCornerShape(28.dp))
+            Modifier.background(colorResource(R.color.fill1), shape = RoundedCornerShape(28.dp)),
     ) {
         val headerText =
             if (context == EditFavoritesContext.Favorites) {

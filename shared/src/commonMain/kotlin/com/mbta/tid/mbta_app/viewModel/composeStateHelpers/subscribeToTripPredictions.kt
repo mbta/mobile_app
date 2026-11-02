@@ -94,7 +94,7 @@ internal fun subscribeToTripPredictions(
             active &&
                 predictions != null &&
                 tripPredictionsRepository.shouldForgetPredictions(
-                    predictions?.predictionQuantity() ?: 0
+                    predictions?.predictionQuantity() ?: 0,
                 )
         ) {
             predictions = null

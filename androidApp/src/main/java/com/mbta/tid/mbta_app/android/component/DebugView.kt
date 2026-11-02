@@ -82,7 +82,7 @@ fun DebugView(
                             width = with(density) { 2.dp.toPx() },
                             pathEffect =
                                 PathEffect.dashPathEffect(
-                                    with(density) { floatArrayOf(10.dp.toPx(), 10.dp.toPx()) }
+                                    with(density) { floatArrayOf(10.dp.toPx(), 10.dp.toPx()) },
                                 ),
                         ),
                 )

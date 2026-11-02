@@ -55,7 +55,7 @@ class CollapsableStopListTest {
                                 RouteBranchSegment.Lane.Center,
                                 stickConnections = emptyList(),
                                 connectingRoutes = emptyList(),
-                            )
+                            ),
                         ),
                         isTypical = false,
                     ),

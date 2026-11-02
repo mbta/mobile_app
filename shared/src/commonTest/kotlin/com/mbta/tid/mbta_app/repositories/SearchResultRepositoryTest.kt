@@ -80,7 +80,7 @@ class SearchResultRepositoryTest : KoinTest {
     ]
   }
 }
-                        """
+                        """,
                     ),
                 status = HttpStatusCode.OK,
                 headers = headersOf(HttpHeaders.ContentType, "application/json"),
@@ -154,7 +154,7 @@ class SearchResultRepositoryTest : KoinTest {
     "stops": []
   }
 }
-                        """
+                        """,
                     ),
                 status = HttpStatusCode.OK,
                 headers = headersOf(HttpHeaders.ContentType, "application/json"),

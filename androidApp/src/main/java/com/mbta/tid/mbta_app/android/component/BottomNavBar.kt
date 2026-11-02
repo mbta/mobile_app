@@ -57,7 +57,7 @@ fun BottomNavBar(
                 // display sizes
                 // https://stackoverflow.com/a/74290870
                 1f,
-            )
+            ),
     ) {
         val outlineColor = MaterialTheme.colorScheme.outline
 
@@ -121,7 +121,7 @@ private fun BottomNavTab(selected: Boolean, onClick: () -> Unit, icon: Painter, 
                 text,
                 style =
                     Typography.caption2.copy(
-                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
+                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
                     ),
             )
         }

@@ -21,12 +21,12 @@ abstract class CheckMapboxBridgeTask : DefaultTask() {
 
         val lineLayerBridge =
             checkNotNull(
-                mapboxBridgePieces.find { it.startsWith("suspend fun LineLayer.toMapbox()") }
+                mapboxBridgePieces.find { it.startsWith("suspend fun LineLayer.toMapbox()") },
             )
         val lineLayerIdentifiers = identifiersInCode(lineLayerBridge)
         val symbolLayerBridge =
             checkNotNull(
-                mapboxBridgePieces.find { it.startsWith("suspend fun SymbolLayer.toMapbox()") }
+                mapboxBridgePieces.find { it.startsWith("suspend fun SymbolLayer.toMapbox()") },
             )
         val symbolLayerIdentifiers = identifiersInCode(symbolLayerBridge)
 

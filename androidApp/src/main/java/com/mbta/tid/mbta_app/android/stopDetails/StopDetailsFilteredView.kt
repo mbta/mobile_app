@@ -135,7 +135,7 @@ fun StopDetailsFilteredView(
                         Text("trip id: ${tripFilter?.tripId ?: "null"}")
                         Text("vehicle id: ${tripFilter?.vehicleId ?: "null"}")
                     }
-                }
+                },
             )
         }
     }
@@ -196,7 +196,7 @@ fun StopDetailsFilteredView(
             Header(lineOrRoute, stop, availableDirections)
             Box(Modifier.fillMaxSize().background(routeColor)) {
                 HorizontalDivider(
-                    Modifier.fillMaxWidth().zIndex(1f).border(2.dp, colorResource(R.color.halo))
+                    Modifier.fillMaxWidth().zIndex(1f).border(2.dp, colorResource(R.color.halo)),
                 )
                 Column(
                     Modifier.fillMaxSize()

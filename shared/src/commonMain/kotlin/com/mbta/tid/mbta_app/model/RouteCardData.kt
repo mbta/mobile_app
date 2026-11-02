@@ -180,14 +180,14 @@ public data class RouteCardData(
 
         public fun alertsHere(tripId: String? = null): List<Alert> = alertsHere.filter { alert ->
             alert.anyInformedEntityMatches(
-                tripId = tripId?.let { Matcher.Data(it) } ?: Matcher.Wildcard()
+                tripId = tripId?.let { Matcher.Data(it) } ?: Matcher.Wildcard(),
             )
         }
 
         public fun alertsDownstream(tripId: String? = null): List<Alert> =
             alertsDownstream.filter { alert ->
                 alert.anyInformedEntityMatches(
-                    tripId = tripId?.let { Matcher.Data(it) } ?: Matcher.Wildcard()
+                    tripId = tripId?.let { Matcher.Data(it) } ?: Matcher.Wildcard(),
                 )
             }
 
@@ -409,7 +409,7 @@ public data class RouteCardData(
                         val route =
                             if (shouldIncludeRoute)
                                 globalData?.getRoute(
-                                    groupedData.routePatterns.firstOrNull()?.routeId
+                                    groupedData.routePatterns.firstOrNull()?.routeId,
                                 )
                             else null
                         LeafFormat.Branched.BranchRow(
@@ -446,7 +446,7 @@ public data class RouteCardData(
                             val route =
                                 if (shouldIncludeRoute)
                                     globalData?.getRoute(
-                                        groupedData.routePatterns.firstOrNull()?.routeId
+                                        groupedData.routePatterns.firstOrNull()?.routeId,
                                     )
                                 else null
                             val noTripsFormat =
@@ -778,14 +778,14 @@ public data class RouteCardData(
                                                                         .toSet()
                                                                         .intersect(
                                                                             patternsForStop
-                                                                                .patternsNotSeenAtEarlierStops
+                                                                                .patternsNotSeenAtEarlierStops,
                                                                         ),
                                                                 stopIds =
                                                                     filterStopsByPatterns(
                                                                         patterns,
                                                                         globalData,
                                                                         parentToAllStops.getOrElse(
-                                                                            stop
+                                                                            stop,
                                                                         ) {
                                                                             setOf(stop.id)
                                                                         },
@@ -957,7 +957,7 @@ public data class RouteCardData(
 
                     leafBuilder.alertsHere = alertsHere
                     leafBuilder.alertsDownstream = downstreamAlerts
-                }
+                },
             )
             return this
         }
@@ -1232,7 +1232,7 @@ internal fun List<RouteCardData>.sort(
 ): List<RouteCardData> = this.sortedWith(PatternSorting.compareRouteCards(distanceFrom, context))
 
 internal fun List<RouteCardData.RouteStopData>.sort(
-    distanceFrom: Position?
+    distanceFrom: Position?,
 ): List<RouteCardData.RouteStopData> =
     this.sortedWith(PatternSorting.compareStopsOnRoute(distanceFrom))
 
