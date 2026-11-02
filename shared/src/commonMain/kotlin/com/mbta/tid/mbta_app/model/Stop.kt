@@ -132,14 +132,15 @@ internal constructor(
 
             if (canonicalStopIds.contains(targetStopId)) return false
 
+            // target stop isn't canonical and it doesn't have a parent, so it is non-canonical
+            if (targetStop.parentStationId == null) return true
+
             // If there is no canonical platformCode for this stop, then it is common for the
             // track to be different between trips, and we don't need to treat it as a track change.
-            return !canonicalStopIds.any {
-                globalData.getStop(it)?.let { canonicalStop ->
-                    targetStop.parentStationId != null &&
-                        canonicalStop.parentStationId == targetStop.parentStationId &&
-                        canonicalStop.platformCode == null
-                } ?: false
+            return canonicalStopIds.any {
+                val canonicalStop = globalData.getStop(it) ?: return@any false
+                canonicalStop.parentStationId == targetStop.parentStationId &&
+                    canonicalStop.platformCode != null
             }
         }
     }
