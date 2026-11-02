@@ -153,7 +153,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$@** adelantado"
+            "value" : "**%1$@** más adelante"
           }
         },
         "fr" : {
@@ -200,7 +200,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$@ %2$@** a la(s) **%3$@** se agregó a Favoritos"
+            "value" : "**%1$@ %2$@** en **%3$@** se agregó a Favoritos"
           }
         },
         "fr" : {
@@ -247,7 +247,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$@ %2$@** a la(s) **%3$@** se eliminó de Favoritos"
+            "value" : "**%1$@ %2$@** en **%3$@** se eliminó de Favoritos"
           }
         },
         "fr" : {
@@ -295,7 +295,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$@** a la(s) **%2$@** se agregó a Favoritos"
+            "value" : "**%1$@** en **%2$@** se agregó a Favoritos"
           }
         },
         "fr" : {
@@ -744,7 +744,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Retrasos**"
+            "value" : "**Demoras**"
           }
         },
         "fr" : {
@@ -791,7 +791,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Retrasos** debido a %1$@"
+            "value" : "**Demoras** debido a %1$@"
           }
         },
         "fr" : {
@@ -949,7 +949,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$@ a %3$@"
+            "value" : "%1$@ %2$@ en %3$@"
           }
         },
         "fr" : {
@@ -1002,7 +1002,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ que llega a las %2$@ cancelado"
+            "value" : "%1$@ con llegada a la(s) %2$@ cancelado"
           }
         },
         "fr" : {
@@ -1108,7 +1108,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ llegará a la(s) %2$@ como se programó"
+            "value" : "%1$@ llegando a la(s) %2$@ como se programó"
           }
         },
         "fr" : {
@@ -1426,7 +1426,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ llegará en %2$d min."
+            "value" : "%1$@ llegando en %2$d min"
           }
         },
         "fr" : {
@@ -1479,7 +1479,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ llegará en %2$d min programado"
+            "value" : "%1$@ llegando en %2$d min programado"
           }
         },
         "fr" : {
@@ -1573,7 +1573,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ abordando ahora"
+            "value" : "%1$@ está abordando ahora"
           }
         },
         "fr" : {
@@ -1626,7 +1626,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ está a %2$ld parada(s) antes de %3$@"
+            "value" : "%1$@ está a %2$ld parada(s) de %3$@"
           }
         },
         "fr" : {
@@ -1908,7 +1908,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$@ retrasado"
+            "value" : "%2$@ de la(s) %1$@ retrasado"
           }
         },
         "fr" : {
@@ -1955,7 +1955,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$@ adelantado"
+            "value" : "%2$@ de la(s) %1$@ adelantado"
           }
         },
         "fr" : {
@@ -2002,7 +2002,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ llegará a la(s) %2$@"
+            "value" : "%1$@ llegando a la(s) %2$@"
           }
         },
         "fr" : {
@@ -2049,7 +2049,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ autobús"
+            "value" : "autobús %1$@"
           }
         },
         "fr" : {
@@ -2413,13 +2413,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "A %1$ld atajada"
+                  "value" : "a %1$ld parada de distancia"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld atajada de distancia"
+                  "value" : "a %1$ld paradas de distancia"
                 }
               }
             }
@@ -2568,13 +2568,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ldatajada de distancia"
+                  "value" : "%1$ldparada"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ldatajada de distancia"
+                  "value" : "%1$ldparadas"
                 }
               }
             }
@@ -2702,7 +2702,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "711 para usuarios de TTY; VRS para usuarios de ASL"
+            "value" : "711 para usuarios de relé telefónico de texto (TTY), servicio de retransmisión de video (VRS) para usuarios de lengua de señas estadounidense (ASL)"
           }
         },
         "fr" : {
@@ -2749,7 +2749,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Problema de accesibilidad"
+            "value" : "Problema de acceso"
           }
         },
         "fr" : {
@@ -2796,7 +2796,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Problema de accesibilidad"
+            "value" : "Problema de acceso"
           }
         },
         "fr" : {
@@ -3079,7 +3079,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agregar a favorito"
+            "value" : "Agregar favorito"
           }
         },
         "fr" : {
@@ -3191,13 +3191,13 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adicione pontos favoritos para acessá-los facilmente e receber notificações sobre interrupções"
+            "value" : "Adicione paradas favoritas para acessá-las facilmente e receber notificações sobre interrupções"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thêm các điểm dừng yêu thích để dễ dàng truy cập và nhận thông báo khi có sự cố."
+            "value" : "Thêm điểm dừng yêu thích để dễ dàng truy cập và nhận thông báo khi có sự cố gián đoạn"
           }
         },
         "zh-Hans-CN" : {
@@ -3220,7 +3220,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agregar sus favoritos"
+            "value" : "Agregue sus favoritos"
           }
         },
         "fr" : {
@@ -3408,7 +3408,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agregar a favoritos"
+            "value" : "Agrega a Favoritos"
           }
         },
         "fr" : {
@@ -4019,7 +4019,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "tráfico de trenes de Amtrak"
+            "value" : "tránsito de trenes de Amtrak"
           }
         },
         "fr" : {
@@ -4066,7 +4066,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tráfico de trenes de Amtrak"
+            "value" : "Tránsito de trenes de Amtrak"
           }
         },
         "fr" : {
@@ -4301,7 +4301,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "y %1$@ %2$@ retrasados"
+            "value" : "y %2$@ de la(s) %1$@ retrasado"
           }
         },
         "fr" : {
@@ -4348,7 +4348,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "y %1$@ %2$@ adelantados"
+            "value" : "y %2$@ de la(s) %1$@ adelantado"
           }
         },
         "fr" : {
@@ -4442,7 +4442,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "y a las %1$@ cancelado"
+            "value" : "y a la(s) %1$@ cancelado"
           }
         },
         "fr" : {
@@ -4489,7 +4489,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "y en %1$@ se reemplazará por un autobús de enlace"
+            "value" : "y a la(s) %1$@ se reemplazará por un autobús de enlace"
           }
         },
         "fr" : {
@@ -4583,7 +4583,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "y en %1$@ no parará"
+            "value" : "y a la(s) %1$@ no parará"
           }
         },
         "fr" : {
@@ -4677,7 +4677,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "abordando ahora"
+            "value" : "y abordando ahora"
           }
         },
         "fr" : {
@@ -5065,7 +5065,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acercándose"
+            "value" : "Próximo a llegar"
           }
         },
         "fr" : {
@@ -5112,7 +5112,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "LLEGAN."
+            "value" : "LLEG."
           }
         },
         "fr" : {
@@ -5301,7 +5301,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "autos que impiden el servicio"
+            "value" : "automóviles que obstaculizan el servicio"
           }
         },
         "fr" : {
@@ -5771,7 +5771,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sustitución de autobús"
+            "value" : "Sustitución por autobús"
           }
         },
         "fr" : {
@@ -5910,7 +5910,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al suscribirse, podemos mostrarle qué estaciones son inaccesibles o tienen cierres de ascensores."
+            "value" : "Si acepta, podemos mostrarle qué estaciones no son accesibles o tienen cierres de ascensores."
           }
         },
         "fr" : {
@@ -6151,7 +6151,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vea la vista de parada nueva"
+            "value" : "Conozca la nueva vista de paradas"
           }
         },
         "fr" : {
@@ -6198,7 +6198,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Despejar"
+            "value" : "Borrar"
           }
         },
         "fr" : {
@@ -6245,7 +6245,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "limpiar texto de búsqueda"
+            "value" : "borrar texto de búsqueda"
           }
         },
         "fr" : {
@@ -6528,7 +6528,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "colapsar paradas restantes"
+            "value" : "contraer paradas restantes"
           }
         },
         "fr" : {
@@ -6582,7 +6582,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "colapsar paradas"
+            "value" : "contraer paradas"
           }
         },
         "fr" : {
@@ -6653,7 +6653,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "(Thu gọn, chạm hai lần để mở rộng)"
+            "value" : "đã thu gọn, nhấn đúp để mở rộng"
           }
         },
         "zh-Hans-CN" : {
@@ -6676,7 +6676,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Boletos de tren de cercanías y ferry"
+            "value" : "Boletos de Commuter Rail y ferry"
           }
         },
         "fr" : {
@@ -7199,7 +7199,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "mal funcionamiento del cruce"
+            "value" : "falla en el cruce"
           }
         },
         "fr" : {
@@ -7246,7 +7246,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fallo en el cruce"
+            "value" : "Falla en el cruce"
           }
         },
         "fr" : {
@@ -7388,7 +7388,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Personalizar"
+            "value" : "Personalizado"
           }
         },
         "fr" : {
@@ -7529,7 +7529,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retraso"
+            "value" : "Demora"
           }
         },
         "fr" : {
@@ -7673,7 +7673,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "eliminar período de tiempo"
+            "value" : "Eliminar período de tiempo"
           }
         },
         "fr" : {
@@ -7815,7 +7815,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En ruta"
+            "value" : "Partió"
           }
         },
         "fr" : {
@@ -8428,7 +8428,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dársena cerrada"
+            "value" : "Muelle cerrado"
           }
         },
         "fr" : {
@@ -8475,7 +8475,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dársena cerrada"
+            "value" : "Muelle cerrado"
           }
         },
         "fr" : {
@@ -8569,7 +8569,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Problema con dársena"
+            "value" : "Problema en el muelle"
           }
         },
         "fr" : {
@@ -8616,7 +8616,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Problema con dársena"
+            "value" : "Problema en el muelle"
           }
         },
         "fr" : {
@@ -8711,7 +8711,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Palanca de arrastre"
+            "value" : "Controlador de arrastre"
           }
         },
         "fr" : {
@@ -8758,7 +8758,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "puente levadizo levantado"
+            "value" : "puente levadizo en elevación"
           }
         },
         "fr" : {
@@ -9181,7 +9181,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "editar sus favoritos"
+            "value" : "edite sus favoritos"
           }
         },
         "fr" : {
@@ -9322,7 +9322,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ascensor fuera de servicio"
+            "value" : "Ascensor cerrado"
           }
         },
         "fr" : {
@@ -9416,7 +9416,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cierre del elevador (%1$@)"
+            "value" : "Cierre del ascensor (%1$@)"
           }
         },
         "fr" : {
@@ -9651,7 +9651,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escalera mecánica fuera de servicio"
+            "value" : "Cierre de la escalera mecánica"
           }
         },
         "fr" : {
@@ -9746,7 +9746,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ampliar las paradas restantes"
+            "value" : "expandir paradas restantes"
           }
         },
         "fr" : {
@@ -9800,7 +9800,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ampliar paradas"
+            "value" : "expandir paradas"
           }
         },
         "fr" : {
@@ -10177,7 +10177,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las paradas favoritas reemplazan la función anterior de rutas marcadas con asterisco."
+            "value" : "La función de paradas favoritas reemplaza la función anterior de rutas marcadas con estrella."
           }
         },
         "fr" : {
@@ -10271,7 +10271,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Banderas de características"
+            "value" : "Indicadores de funciones"
           }
         },
         "fr" : {
@@ -10318,7 +10318,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ferris"
+            "value" : "ferries"
           }
         },
         "fr" : {
@@ -10458,7 +10458,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Servicio de ferry cancelado"
+            "value" : "Ferry cancelado"
           }
         },
         "fr" : {
@@ -10646,7 +10646,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "fuego"
+            "value" : "incendio"
           }
         },
         "fr" : {
@@ -10787,7 +10787,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Actividad del Departamento de Incendios"
+            "value" : "Actividad del Departamento de Bomberos"
           }
         },
         "fr" : {
@@ -11116,7 +11116,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "interferencia del tren de mercancías"
+            "value" : "interferencia con trenes de carga"
           }
         },
         "fr" : {
@@ -11304,7 +11304,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Información general y soporte de MBTA"
+            "value" : "Información general y asistencia de MBTA"
           }
         },
         "fr" : {
@@ -11351,7 +11351,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recibir notificaciones de interrupciones"
+            "value" : "Recibir notificaciones sobre interrupciones del servicio"
           }
         },
         "fr" : {
@@ -11398,7 +11398,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obtenga acceso anticipado para probar nuevas funciones y envíe sus comentarios"
+            "value" : "Obtenga acceso anticipado para probar nuevas funciones y enviar sus comentarios"
           }
         },
         "fr" : {
@@ -11491,7 +11491,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Buen día!"
+            "value" : "Buenos días"
           }
         },
         "fr" : {
@@ -11913,7 +11913,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "fuertes vientos"
+            "value" : "vientos fuertes"
           }
         },
         "fr" : {
@@ -12195,7 +12195,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entrante"
+            "value" : "Entrada a la ciudad"
           }
         },
         "fr" : {
@@ -12295,7 +12295,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : " hasta las %1$@"
+            "value" : " hasta el %1$@"
           }
         },
         "fr" : {
@@ -12781,7 +12781,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ubicación no disponible aún"
+            "value" : "Ubicación aún no disponible"
           }
         },
         "fr" : {
@@ -13200,7 +13200,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MBTA Go está en su etapa inicial. Queremos recibir sus comentarios mientras seguimos realizando mejoras y agregando nuevas características."
+            "value" : "MBTA Go está en su etapa inicial. Queremos recibir sus comentarios mientras seguimos realizando mejoras y agregando nuevas funciones."
           }
         },
         "fr" : {
@@ -13246,7 +13246,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MBTA Go funciona mejor con los Servicios de Ubicación activados"
+            "value" : "MBTA Go funciona mejor con los servicios de ubicación activados"
           }
         },
         "fr" : {
@@ -13528,7 +13528,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "emergencia médica"
+            "value" : "situación de emergencia médica"
           }
         },
         "fr" : {
@@ -13575,7 +13575,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Emergencia médica"
+            "value" : "Situación de emergencia médica"
           }
         },
         "fr" : {
@@ -13763,7 +13763,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De lunes a viernes de 6:30 a. m. a 8:00 p. m."
+            "value" : "De lunes a viernes de 6:30 AM a 8:00 PM"
           }
         },
         "fr" : {
@@ -13904,7 +13904,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "mTicket App"
+            "value" : "Aplicación mTicket"
           }
         },
         "fr" : {
@@ -13998,7 +13998,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tránsito cercano"
+            "value" : "Transporte público cercano"
           }
         },
         "fr" : {
@@ -14326,7 +14326,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hay rutas %1$@ coincidentes"
+            "value" : "No hay rutas de %1$@ coincidentes"
           }
         },
         "fr" : {
@@ -15220,7 +15220,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bien"
+            "value" : "Aceptar"
           }
         },
         "fr" : {
@@ -15415,7 +15415,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abierto para más llegadas"
+            "value" : "Abrir para ver más llegadas"
           }
         },
         "fr" : {
@@ -15462,7 +15462,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Saliente"
+            "value" : "Salida de la ciudad"
           }
         },
         "fr" : {
@@ -16072,7 +16072,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "problema con el suministro de electricidad"
+            "value" : "problema de energía"
           }
         },
         "fr" : {
@@ -16213,7 +16213,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las predicciones no están disponibles"
+            "value" : "Predicciones no disponibles"
           }
         },
         "fr" : {
@@ -16682,7 +16682,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Refrescar"
+            "value" : "Actualizar"
           }
         },
         "fr" : {
@@ -16729,7 +16729,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Refrescar predicciones"
+            "value" : "Actualizar predicciones"
           }
         },
         "fr" : {
@@ -16919,7 +16919,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eliminar de favoritos"
+            "value" : "Eliminar de Favoritos"
           }
         },
         "fr" : {
@@ -17620,7 +17620,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver tráfico cerca de usted"
+            "value" : "Ver transporte público cerca de usted"
           }
         },
         "fr" : {
@@ -17869,7 +17869,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$@ %3$@ seleccionada, parada seleccionada"
+            "value" : "%1$@ %2$@ %3$@ seleccionado, parada seleccionada"
           }
         },
         "fr" : {
@@ -17922,7 +17922,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ seleccionado programado para salir %2$@"
+            "value" : "%1$@ seleccionado, programado para salir %2$@"
           }
         },
         "fr" : {
@@ -17975,7 +17975,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ seleccionado programado para salir %2$@, parada seleccionada"
+            "value" : "%1$@ seleccionado, programado para salir %2$@, parada seleccionada"
           }
         },
         "fr" : {
@@ -18075,7 +18075,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "sirve %1$@"
+            "value" : "da servicio a %1$@"
           }
         },
         "fr" : {
@@ -18263,7 +18263,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El servicio está funcionando, pero los horarios de llegada previstos no están disponibles."
+            "value" : "El servicio está en funcionamiento, pero los horarios de llegada previstos no están disponibles."
           }
         },
         "fr" : {
@@ -18310,7 +18310,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El servicio está en funcionamiento, pero no hay horarios de llegada previstos. Consulte el mapa para ver dónde se encuentra %1$@ en este momento."
+            "value" : "El servicio está en funcionamiento, pero los horarios de llegada previstos no están disponibles. Consulte el mapa para ver dónde se encuentran los %1$@ en este momento."
           }
         },
         "fr" : {
@@ -19106,7 +19106,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "seguimiento único"
+            "value" : "operación en vía única"
           }
         },
         "fr" : {
@@ -19153,7 +19153,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seguimiento único"
+            "value" : "Operación en vía única"
           }
         },
         "fr" : {
@@ -19200,7 +19200,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "carril resbaladizo"
+            "value" : "riel resbaloso"
           }
         },
         "fr" : {
@@ -19388,7 +19388,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ruta de nieve"
+            "value" : "Ruta para nieve"
           }
         },
         "fr" : {
@@ -19435,7 +19435,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ruta con nieve"
+            "value" : "Ruta para nieve"
           }
         },
         "fr" : {
@@ -19811,7 +19811,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Marcar ruta favorita"
+            "value" : "Marcar ruta con estrella"
           }
         },
         "fr" : {
@@ -20282,7 +20282,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Detalles de parada"
+            "value" : "Detalles de la parada"
           }
         },
         "fr" : {
@@ -20423,7 +20423,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trabajo de paleo en la parada"
+            "value" : "Remoción de nieve en la parada"
           }
         },
         "fr" : {
@@ -20470,7 +20470,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trabajo de paleo en la parada"
+            "value" : "Remoción de nieve en la parada"
           }
         },
         "fr" : {
@@ -20848,7 +20848,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Metro"
+            "value" : "Subterráneo"
           }
         },
         "fr" : {
@@ -20989,7 +20989,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "problema de cambio de carril"
+            "value" : "problema con el cambio de vía"
           }
         },
         "fr" : {
@@ -21036,7 +21036,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Problema de cambio de carril"
+            "value" : "Problema con el cambio de vía"
           }
         },
         "fr" : {
@@ -21083,7 +21083,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "problema del interruptor"
+            "value" : "problema con el cambio de vía"
           }
         },
         "fr" : {
@@ -21130,7 +21130,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Problema de cambio de carril"
+            "value" : "Problema con el cambio de vía"
           }
         },
         "fr" : {
@@ -21223,7 +21223,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toque las paradas para agregarlas a favoritos"
+            "value" : "Toque las paradas para agregarlas a Favoritos"
           }
         },
         "fr" : {
@@ -21505,7 +21505,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Es posible que la ubicación de %1$@ no esté disponible con anticipación si aún no se ha asignado un vehículo. Una vez que el conductor comience el viaje, comenzaremos a mostrar la ubicación en vivo."
+            "value" : "Es posible que la ubicación del %1$@ no esté disponible con anticipación si aún no se ha asignado un vehículo. Una vez que el conductor comience el viaje, comenzaremos a mostrar la ubicación en vivo."
           }
         },
         "fr" : {
@@ -21552,7 +21552,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El primer tren **%1$@** está programado para llegar a las **%2$@**. Todavía no tenemos predicciones para mostrarle, pero aparecerán aquí cuando se acerque la hora programada."
+            "value" : "El primer tren hacia **%1$@** está programado para llegar a las **%2$@**. Todavía no tenemos predicciones para mostrarle, pero aparecerán aquí cuando se acerque la hora programada."
           }
         },
         "fr" : {
@@ -21714,13 +21714,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Esta atajada tiene %1$ld ascensor cerrado"
+                  "value" : "Esta parada tiene %1$ld ascensor cerrado"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Esta atajada tiene %1$ld ascensores cerrados"
+                  "value" : "Esta parada tiene %1$ld ascensores cerrados"
                 }
               }
             }
@@ -21942,7 +21942,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "reemplazo de traviesas"
+            "value" : "reemplazo de durmientes"
           }
         },
         "fr" : {
@@ -21989,7 +21989,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reemplazo de traviesas"
+            "value" : "Reemplazo de durmientes"
           }
         },
         "fr" : {
@@ -22322,7 +22322,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pista %1$@"
+            "value" : "Vía %1$@"
           }
         },
         "fr" : {
@@ -22369,7 +22369,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cambio de pista"
+            "value" : "Cambio de vía"
           }
         },
         "fr" : {
@@ -22416,7 +22416,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cambio de pista"
+            "value" : "Cambio de vía"
           }
         },
         "fr" : {
@@ -22510,7 +22510,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Problema de vía"
+            "value" : "Problema en la vía"
           }
         },
         "fr" : {
@@ -22580,7 +22580,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ray Chưa Rõ"
+            "value" : "Đường Ray Chưa Rõ"
           }
         },
         "zh-Hans-CN" : {
@@ -22626,7 +22626,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lộ trình sẽ được xác định sau."
+            "value" : "Đường ray chưa rõ"
           }
         },
         "zh-Hans-CN" : {
@@ -22696,7 +22696,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trabajo en vía"
+            "value" : "Trabajo en la vía"
           }
         },
         "fr" : {
@@ -22743,7 +22743,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "tráfico"
+            "value" : "tránsito"
           }
         },
         "fr" : {
@@ -22790,7 +22790,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tráfico"
+            "value" : "Tránsito"
           }
         },
         "fr" : {
@@ -22976,7 +22976,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tren suspendido"
+            "value" : "Servicio de tren suspendido"
           }
         },
         "fr" : {
@@ -23023,7 +23023,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "tráfico de trenes"
+            "value" : "tránsito de trenes"
           }
         },
         "fr" : {
@@ -23070,7 +23070,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tráfico de trenes"
+            "value" : "Tránsito de trenes"
           }
         },
         "fr" : {
@@ -23306,7 +23306,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planificador de viaje"
+            "value" : "Planificador de viajes"
           }
         },
         "fr" : {
@@ -23400,7 +23400,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Busque de nuevo."
+            "value" : "Vuelva a intentar la búsqueda."
           }
         },
         "fr" : {
@@ -23635,7 +23635,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "pasajero rebelde"
+            "value" : "pasajero indisciplinado"
           }
         },
         "fr" : {
@@ -23977,7 +23977,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Use la pestaña de navegación \"Más\" para enviar comentarios sobre la app"
+            "value" : "Use la pestaña de navegación \"Más\" para enviar comentarios sobre la aplicación"
           }
         },
         "fr" : {
@@ -24499,7 +24499,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver el tránsito cerca de Boston"
+            "value" : "Ver transporte público cerca de Boston"
           }
         },
         "fr" : {
@@ -24733,7 +24733,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usamos su ubicación para mostrarle opciones de tráfico cercanas."
+            "value" : "Usamos su ubicación para mostrarle opciones de transporte público cercanas."
           }
         },
         "fr" : {
@@ -24779,7 +24779,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Le avisaremos sobre cualquier problema antes de que salga!"
+            "value" : "Le avisaremos sobre cualquier problema antes de que salga."
           }
         },
         "fr" : {
@@ -25062,7 +25062,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Cuándo quieres recibir notificaciones?"
+            "value" : "¿Cuándo quiere recibir notificaciones?"
           }
         },
         "fr" : {
@@ -25086,7 +25086,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bạn muốn nhận thông báo khi nào?"
+            "value" : "Quý vị muốn nhận thông báo khi nào?"
           }
         },
         "zh-Hans-CN" : {
@@ -25209,7 +25209,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "no se detendrá en %1$@ %2$@"
+            "value" : "no se detendrán en %1$@ %2$@"
           }
         },
         "fr" : {
@@ -25255,7 +25255,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puede cambiar la configuración de ubicación en la aplicación de Configuración."
+            "value" : "Siempre puede cambiar la configuración de ubicación más adelante en la aplicación Configuración."
           }
         },
         "fr" : {
@@ -25301,7 +25301,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verá opciones de tráfico cercanas y obtendrá mejores resultados de búsqueda cuando active los Servicios de Ubicación para MBTA Go."
+            "value" : "Verá opciones de transporte público cercanas y obtendrá mejores resultados de búsqueda cuando active los servicios de ubicación para MBTA Go."
           }
         },
         "fr" : {
