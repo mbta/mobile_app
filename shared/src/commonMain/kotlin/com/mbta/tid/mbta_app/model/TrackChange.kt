@@ -37,7 +37,6 @@ public sealed class TrackChange {
             if (trackChangeAlert != null) {
                 return TrackChange.Alert(trackChangeAlert)
             }
-
             val platformStopId = prediction?.stopId ?: schedule?.stopId
 
             if (
