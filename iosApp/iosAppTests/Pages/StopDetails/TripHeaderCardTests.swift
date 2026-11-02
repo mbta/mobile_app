@@ -796,7 +796,7 @@ final class TripHeaderCardTests: XCTestCase {
             now: now,
             onFollowTrip: nil,
             openExplainer: { type in
-                switch onEnum(of: type) {
+                switch type {
                 case let .scheduledTrackChange(data):
                     XCTAssertEqual("2", data.platformCode)
                     XCTAssertEqual("Track 2", data.platformName)
@@ -808,7 +808,13 @@ final class TripHeaderCardTests: XCTestCase {
         )
 
         try XCTAssertNotNil(sut.inspect().find(TrackChangePill.self))
-        try sut.inspect().find(ViewType.Button.self).tap()
+
+        // The innermost column containing both the stop name and the track change pill is the tap target
+        let column = try XCTUnwrap(sut.inspect().findAll(ViewType.VStack.self, where: {
+            (try? $0.find(text: "Stop Name")) != nil && (try? $0.find(TrackChangePill.self)) != nil
+        }).last)
+        try column.callOnTapGesture()
+
         wait(for: [explainerOpened], timeout: 1)
     }
 }

@@ -37,6 +37,19 @@ final class ExplainerPageTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "Train location not available yet"))
     }
 
+    func testScheduledTrackChange() throws {
+        let sut = ExplainerPage(
+            explainer: .init(
+                type: .scheduledTrackChange(data: .init(platformCode: "2", platformName: "Track 2")),
+                routeAccents: .init(type: .commuterRail)
+            ),
+            onClose: {}
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Track Change"))
+        XCTAssertNotNil(try sut.inspect()
+            .find(text: "The train is traveling on a different track than usual. Please board on Track 2."))
+    }
+
     func testRouteType() throws {
         let sut = ExplainerPage(explainer: .init(type: .noPrediction, routeAccents: .init(type: .bus)), onClose: {})
         XCTAssertNotNil(try sut.inspect().find(imageName: "mode-bus"))

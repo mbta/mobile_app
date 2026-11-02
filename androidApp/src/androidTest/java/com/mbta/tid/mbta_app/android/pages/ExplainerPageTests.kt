@@ -8,6 +8,7 @@ import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.TrackChange
 import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
 import kotlin.test.assertTrue
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -85,6 +86,26 @@ class ExplainerPageTests {
         composeTestRule
             .onNodeWithText(
                 "The ferry location might not be available in advance if a vehicle hasn’t been assigned yet. Once the driver starts the trip, we’ll start showing the live location.",
+            )
+            .assertCanBeDisplayed()
+    }
+
+    @Test
+    fun testScheduledTrackChange() {
+        val objects = ObjectCollectionBuilder()
+        composeTestRule.setContent {
+            ExplainerPage(
+                ExplainerType.ScheduledTrackChange(TrackChange.Scheduled("1", "Track 1")),
+                TripRouteAccents(objects.route { type = RouteType.FERRY }),
+                goBack = {},
+            )
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Track Change").assertCanBeDisplayed()
+        composeTestRule
+            .onNodeWithText(
+                "The train is traveling on a different track than usual. Please board on Track 1."
             )
             .assertCanBeDisplayed()
     }

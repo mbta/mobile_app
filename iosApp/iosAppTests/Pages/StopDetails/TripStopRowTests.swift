@@ -416,12 +416,8 @@ final class TripStopRowTests: XCTestCase {
             now: now,
             onTapLink: { _ in linkTapped.fulfill() },
             onOpenAlertDetails: { _ in },
-            route: route,
-            routeAccents: .init(route: route),
-            stopListContext: .trip(MatcherData(value: route.id), trip.directionId, trip.id),
-            targeted: true,
             openExplainer: { type in
-                switch onEnum(of: type) {
+                switch type {
                 case let .scheduledTrackChange(data):
                     XCTAssertEqual("2", data.platformCode)
                     XCTAssertEqual("Track 2", data.platformName)
@@ -429,7 +425,11 @@ final class TripStopRowTests: XCTestCase {
                 default:
                     XCTFail("expected scheduled track change explainer")
                 }
-            }
+            },
+            route: route,
+            routeAccents: .init(route: route),
+            stopListContext: .trip(MatcherData(value: route.id), trip.directionId, trip.id),
+            targeted: true,
         ).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(TrackChangePill.self))
