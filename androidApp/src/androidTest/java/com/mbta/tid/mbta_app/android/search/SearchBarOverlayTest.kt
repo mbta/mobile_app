@@ -73,10 +73,10 @@ class SearchBarOverlayTest : KoinTest {
                                 isStation = false,
                                 routes =
                                     listOf(
-                                        StopResultRoute(type = RouteType.BUS, icon = "routeIcon")
+                                        StopResultRoute(type = RouteType.BUS, icon = "routeIcon"),
                                     ),
-                            )
-                        )
+                            ),
+                        ),
                 )
         }
 
@@ -104,7 +104,7 @@ class SearchBarOverlayTest : KoinTest {
         // Simulate navigating to a stop and back
         runBlocking {
             mockVisitHistoryRepository.setVisitHistory(
-                VisitHistory().apply { add(Visit.StopVisit(visitedStop.id)) }
+                VisitHistory().apply { add(Visit.StopVisit(visitedStop.id)) },
             )
         }
 

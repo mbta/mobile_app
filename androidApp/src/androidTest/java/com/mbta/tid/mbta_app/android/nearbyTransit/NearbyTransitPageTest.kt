@@ -230,7 +230,7 @@ class NearbyTransitPageTest : KoinTest {
                                 RouteCardData.Context.NearbyTransit,
                             ),
                         ),
-                )
+                ),
             ),
             now,
         )
@@ -251,7 +251,7 @@ class NearbyTransitPageTest : KoinTest {
                                 listOf(greenLineRoutePatternOne),
                                 setOf(greenLineStop.id),
                                 listOf(
-                                    UpcomingTrip(greenLineTrip, prediction = greenLinePrediction)
+                                    UpcomingTrip(greenLineTrip, prediction = greenLinePrediction),
                                 ),
                                 emptyList(),
                                 true,
@@ -259,9 +259,9 @@ class NearbyTransitPageTest : KoinTest {
                                 subwayServiceStartTime = null,
                                 emptyList(),
                                 RouteCardData.Context.NearbyTransit,
-                            )
+                            ),
                         ),
-                )
+                ),
             ),
             now,
         )
@@ -276,7 +276,7 @@ class NearbyTransitPageTest : KoinTest {
             repositoryOverrides = {
                 nearby =
                     MockNearbyRepository(
-                        response = NearbyResponse(listOf(sampleStop.id, greenLineStop.id))
+                        response = NearbyResponse(listOf(sampleStop.id, greenLineStop.id)),
                     )
             },
         )
@@ -287,7 +287,7 @@ class NearbyTransitPageTest : KoinTest {
                     listOf(routeCardData(), glRouteCardData()),
                     Position(0.0, 0.0),
                     listOf(sampleStop.id, greenLineStop.id),
-                )
+                ),
             )
 
         composeTestRule.setContent {
@@ -332,14 +332,14 @@ class NearbyTransitPageTest : KoinTest {
             repositoryOverrides = {
                 nearby =
                     MockNearbyRepository(
-                        response = NearbyResponse(listOf(sampleStop.id, greenLineStop.id))
+                        response = NearbyResponse(listOf(sampleStop.id, greenLineStop.id)),
                     )
                 settings = MockSettingsRepository(settings = mapOf())
                 favorites =
                     MockFavoritesRepository(
                         buildFavorites {
                             routeStopDirection(route.id, sampleStop.id, routePatternOne.directionId)
-                        }
+                        },
                     )
             },
         )
@@ -351,7 +351,7 @@ class NearbyTransitPageTest : KoinTest {
                     listOf(routeCardData()),
                     Position(0.0, 0.0),
                     listOf(sampleStop.id, greenLineStop.id),
-                )
+                ),
             )
 
         composeTestRule.setContent {
@@ -433,7 +433,7 @@ class NearbyTransitPageTest : KoinTest {
                 nearby =
                     MockNearbyRepository(
                         response =
-                            NearbyResponse(listOf(harvardNorthbound.id, centralNorthbound.id))
+                            NearbyResponse(listOf(harvardNorthbound.id, centralNorthbound.id)),
                     )
             },
         )
@@ -445,7 +445,7 @@ class NearbyTransitPageTest : KoinTest {
                     listOf(routeCardData(harvardNorthbound)),
                     Position(0.0, 0.0),
                     listOf(harvardNorthbound.id, centralNorthbound.id),
-                )
+                ),
             )
 
         var setAlertCount = 0
@@ -471,7 +471,7 @@ class NearbyTransitPageTest : KoinTest {
                         locationDataManager = LocationDataManager(),
                         viewportProvider =
                             ViewportProvider(
-                                MapViewportState(cameraState(harvardNorthbound.position.toPoint()))
+                                MapViewportState(cameraState(harvardNorthbound.position.toPoint())),
                             ),
                     ),
                 onOpenStopDetails = { _, _ -> },

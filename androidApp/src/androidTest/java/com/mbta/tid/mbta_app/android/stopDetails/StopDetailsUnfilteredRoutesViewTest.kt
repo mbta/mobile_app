@@ -120,7 +120,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     now,
                     RouteCardData.Context.StopDetailsUnfiltered,
-                )
+                ),
             )
 
         loadKoinMocks {
@@ -162,7 +162,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     AlertsStreamDataResponse(emptyMap()),
                     now,
                     RouteCardData.Context.StopDetailsUnfiltered,
-                )
+                ),
             )
 
         loadKoinMocks {
@@ -209,7 +209,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     AlertsStreamDataResponse(mapOf(alert.id to alert)),
                     now,
                     RouteCardData.Context.StopDetailsUnfiltered,
-                )
+                ),
             )
 
         loadKoinMocks {

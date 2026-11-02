@@ -62,7 +62,7 @@ class HeadsignRowViewTest {
                         RouteType.LIGHT_RAIL,
                         TripInstantDisplay.Boarding(true),
                         true,
-                    )
+                    ),
                 ),
                 warningAlert = null,
             ),
@@ -83,7 +83,7 @@ class HeadsignRowViewTest {
                         RouteType.LIGHT_RAIL,
                         TripInstantDisplay.Boarding(true),
                         true,
-                    )
+                    ),
                 ),
                 warningAlert = UpcomingFormat.WarningAlert("alert-large-green-issue"),
             ),

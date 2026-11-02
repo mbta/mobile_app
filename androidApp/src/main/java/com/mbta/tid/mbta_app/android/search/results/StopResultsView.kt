@@ -104,7 +104,7 @@ fun StopResultsView(
                         Modifier.horizontalScroll(scrollState)
                             .padding(start = 16.dp, bottom = 12.dp)
                             .clearAndSetSemantics { contentDescription = routesContentDescription }
-                            .placeholderIfLoading()
+                            .placeholderIfLoading(),
                 ) {
                     routePillsData.map { spec ->
                         RoutePill(

@@ -67,12 +67,12 @@ class RouteCardDataTest {
                                                     stopIds = setOf(stop1.id),
                                                     allDataLoaded = false,
                                                     context = context,
-                                                )
+                                                ),
                                         ),
-                                    )
+                                    ),
                             ),
                             now,
-                        )
+                        ),
                 ),
                 RouteCardData.ListBuilder(false, context, now)
                     .addStaticStopsData(
@@ -145,7 +145,7 @@ class RouteCardDataTest {
                                                     stopIds = setOf(stop1.id),
                                                     allDataLoaded = true,
                                                     context = context,
-                                                )
+                                                ),
                                         ),
                                     ),
                                 stop2.id to
@@ -164,12 +164,12 @@ class RouteCardDataTest {
                                                     stopIds = setOf(stop2.id),
                                                     allDataLoaded = true,
                                                     context = context,
-                                                )
+                                                ),
                                         ),
                                     ),
                             ),
                             now,
-                        )
+                        ),
                 ),
                 RouteCardData.ListBuilder(true, context, now)
                     .addStaticStopsData(
@@ -250,10 +250,10 @@ class RouteCardDataTest {
                                                 context = context,
                                             ),
                                     ),
-                                )
+                                ),
                         ),
                         now,
-                    )
+                    ),
             ),
             RouteCardData.ListBuilder(false, context, now)
                 .addStaticStopsData(
@@ -359,9 +359,9 @@ class RouteCardDataTest {
                                                     stopIds = setOf(stop1.id),
                                                     allDataLoaded = false,
                                                     context = context,
-                                                )
+                                                ),
                                         ),
-                                    )
+                                    ),
                             ),
                             now,
                         ),
@@ -383,9 +383,9 @@ class RouteCardDataTest {
                                                     stopIds = setOf(stop3.id),
                                                     allDataLoaded = false,
                                                     context = context,
-                                                )
+                                                ),
                                         ),
-                                    )
+                                    ),
                             ),
                             now,
                         ),
@@ -506,7 +506,7 @@ class RouteCardDataTest {
                                                     context = context,
                                                 ),
                                         ),
-                                    )
+                                    ),
                             ),
                             now,
                         ),
@@ -540,7 +540,7 @@ class RouteCardDataTest {
                                                     context = context,
                                                 ),
                                         ),
-                                    )
+                                    ),
                             ),
                             now,
                         ),
@@ -609,9 +609,9 @@ class RouteCardDataTest {
                                                     stopIds = setOf(stop1.id),
                                                     allDataLoaded = false,
                                                     context = context,
-                                                )
+                                                ),
                                         ),
-                                    )
+                                    ),
                             ),
                             now,
                         ),
@@ -633,9 +633,9 @@ class RouteCardDataTest {
                                                     stopIds = setOf(stop1.id),
                                                     allDataLoaded = false,
                                                     context = context,
-                                                )
+                                                ),
                                         ),
-                                    )
+                                    ),
                             ),
                             now,
                         ),
@@ -727,7 +727,7 @@ class RouteCardDataTest {
                                                     ),
                                                 allDataLoaded = false,
                                                 context = context,
-                                            )
+                                            ),
                                     ),
                                 ),
                             stop2.id to
@@ -744,12 +744,12 @@ class RouteCardDataTest {
                                                 stopIds = setOf(stop2.id),
                                                 allDataLoaded = false,
                                                 context = context,
-                                            )
+                                            ),
                                     ),
                                 ),
                         ),
                         now,
-                    )
+                    ),
             ),
             RouteCardData.ListBuilder(false, context, now)
                 .addStaticStopsData(
@@ -818,12 +818,12 @@ class RouteCardDataTest {
                                                     ),
                                                 allDataLoaded = false,
                                                 context = context,
-                                            )
+                                            ),
                                     ),
-                                )
+                                ),
                         ),
                         now,
-                    )
+                    ),
             ),
             RouteCardData.ListBuilder(false, context, now)
                 .addStaticStopsData(
@@ -905,9 +905,9 @@ class RouteCardDataTest {
                                                     stopIds = setOf(stop.id),
                                                     allDataLoaded = false,
                                                     context = context,
-                                                )
+                                                ),
                                         ),
-                                    )
+                                    ),
                             ),
                             now,
                         ),
@@ -929,9 +929,9 @@ class RouteCardDataTest {
                                                     stopIds = setOf(stop.id),
                                                     allDataLoaded = false,
                                                     context = context,
-                                                )
+                                                ),
                                         ),
-                                    )
+                                    ),
                             ),
                             now,
                         ),
@@ -1067,10 +1067,10 @@ class RouteCardDataTest {
                                                 context = context,
                                             ),
                                     ),
-                                )
+                                ),
                         ),
                         now,
-                    )
+                    ),
             ),
             RouteCardData.ListBuilder(false, context, now)
                 .addStaticStopsData(
@@ -1273,10 +1273,10 @@ class RouteCardDataTest {
                                                     context = context,
                                                 ),
                                         ),
-                                    )
+                                    ),
                             ),
                             now,
-                        )
+                        ),
                 ),
                 RouteCardData.ListBuilder(false, context, now)
                     .addStaticStopsData(
@@ -1385,15 +1385,15 @@ class RouteCardDataTest {
                                                     upcomingTrips =
                                                         listOf(
                                                             objects.upcomingTrip(
-                                                                stop1Pattern2Prediction
+                                                                stop1Pattern2Prediction,
                                                             ),
                                                             objects.upcomingTrip(
-                                                                stop1Pattern1Prediction
+                                                                stop1Pattern1Prediction,
                                                             ),
                                                         ),
                                                     allDataLoaded = false,
                                                     context = context,
-                                                )
+                                                ),
                                         ),
                                     ),
                                 stop2.id to
@@ -1411,20 +1411,20 @@ class RouteCardDataTest {
                                                     upcomingTrips =
                                                         listOf(
                                                             objects.upcomingTrip(
-                                                                stop2Pattern1Prediction
+                                                                stop2Pattern1Prediction,
                                                             ),
                                                             objects.upcomingTrip(
-                                                                stop2Pattern3Prediction
+                                                                stop2Pattern3Prediction,
                                                             ),
                                                         ),
                                                     allDataLoaded = false,
                                                     context = context,
-                                                )
+                                                ),
                                         ),
                                     ),
                             ),
                             time,
-                        )
+                        ),
                 ),
                 RouteCardData.ListBuilder(true, context, time)
                     .addStaticStopsData(
@@ -1517,7 +1517,7 @@ class RouteCardDataTest {
                                                     stopIds = setOf(stop1.id),
                                                     upcomingTrips =
                                                         listOf(
-                                                            objects.upcomingTrip(futureSchedule)
+                                                            objects.upcomingTrip(futureSchedule),
                                                         ),
                                                     allDataLoaded = true,
                                                     hasSchedulesTodayByPattern =
@@ -1525,7 +1525,7 @@ class RouteCardDataTest {
                                                     subwayServiceStartTime =
                                                         futureSchedule.stopTime,
                                                     context = context,
-                                                )
+                                                ),
                                         ),
                                     ),
                                 stop2.id to
@@ -1546,7 +1546,7 @@ class RouteCardDataTest {
                                                         mapOf(pattern2.id to true),
                                                     subwayServiceStartTime = pastSchedule.stopTime,
                                                     context = context,
-                                                )
+                                                ),
                                         ),
                                     ),
                                 stop3.id to
@@ -1566,12 +1566,12 @@ class RouteCardDataTest {
                                                     hasSchedulesTodayByPattern =
                                                         mapOf(pattern3.id to false),
                                                     context = context,
-                                                )
+                                                ),
                                         ),
                                     ),
                             ),
                             now,
-                        )
+                        ),
                 ),
                 RouteCardData.ListBuilder(true, context, now)
                     .addStaticStopsData(
@@ -1662,7 +1662,7 @@ class RouteCardDataTest {
                                                 stopIds = setOf(platform.id),
                                                 upcomingTrips =
                                                     listOfNotNull(
-                                                        objects.upcomingTrip(greenBPrediction)
+                                                        objects.upcomingTrip(greenBPrediction),
                                                     ),
                                                 alertsHere = listOfNotNull(alertB),
                                                 allDataLoaded = true,
@@ -1670,12 +1670,12 @@ class RouteCardDataTest {
                                                     mapOf(greenBWestbound.id to false),
                                                 alertsDownstream = listOf(alertC, alertE),
                                                 context = context,
-                                            )
+                                            ),
                                     ),
-                                )
+                                ),
                         ),
                         now,
-                    )
+                    ),
             ),
             RouteCardData.ListBuilder(true, context, now)
                 .addStaticStopsData(
@@ -1765,9 +1765,9 @@ class RouteCardDataTest {
                                         subwayServiceStartTime = null,
                                         alertsDownstream = emptyList(),
                                         context = context,
-                                    )
+                                    ),
                                 ),
-                            )
+                            ),
                         ),
                     time,
                 ),
@@ -1792,9 +1792,9 @@ class RouteCardDataTest {
                                         subwayServiceStartTime = null,
                                         alertsDownstream = emptyList(),
                                         context = context,
-                                    )
+                                    ),
                                 ),
-                            )
+                            ),
                         ),
                     time,
                 ),
@@ -1874,9 +1874,9 @@ class RouteCardDataTest {
                                             subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
-                                        )
+                                        ),
                                     ),
-                                )
+                                ),
                             ),
                         time,
                     ),
@@ -1901,9 +1901,9 @@ class RouteCardDataTest {
                                             subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
-                                        )
+                                        ),
                                     ),
-                                )
+                                ),
                             ),
                         time,
                     ),
@@ -2525,7 +2525,7 @@ class RouteCardDataTest {
                                             stopIds = setOf(stop1.id),
                                             upcomingTrips =
                                                 listOf(
-                                                    objects.upcomingTrip(typicalOutboundPrediction)
+                                                    objects.upcomingTrip(typicalOutboundPrediction),
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
@@ -2542,7 +2542,9 @@ class RouteCardDataTest {
                                             stopIds = setOf(stop1.id),
                                             upcomingTrips =
                                                 listOf(
-                                                    objects.upcomingTrip(deviationInboundPrediction)
+                                                    objects.upcomingTrip(
+                                                        deviationInboundPrediction,
+                                                    ),
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
@@ -2552,10 +2554,10 @@ class RouteCardDataTest {
                                             context = context,
                                         ),
                                     ),
-                                )
+                                ),
                             ),
                         time,
-                    )
+                    ),
                 ),
                 RouteCardData.routeCardsForStopList(
                     listOf(stop1.id),
@@ -2650,7 +2652,7 @@ class RouteCardDataTest {
                                             stopIds = setOf(stop1.id),
                                             upcomingTrips =
                                                 listOf(
-                                                    objects.upcomingTrip(typicalOutboundPrediction)
+                                                    objects.upcomingTrip(typicalOutboundPrediction),
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
@@ -2668,10 +2670,10 @@ class RouteCardDataTest {
                                             upcomingTrips =
                                                 listOf(
                                                     objects.upcomingTrip(
-                                                        deviationInboundPrediction
+                                                        deviationInboundPrediction,
                                                     ),
                                                     objects.upcomingTrip(
-                                                        deviationInboundPredictionLater
+                                                        deviationInboundPredictionLater,
                                                     ),
                                                 ),
                                             alertsHere = emptyList(),
@@ -2682,10 +2684,10 @@ class RouteCardDataTest {
                                             context = context,
                                         ),
                                     ),
-                                )
+                                ),
                             ),
                         time,
-                    )
+                    ),
                 ),
                 RouteCardData.routeCardsForStopList(
                     listOf(stop1.id),
@@ -2772,8 +2774,8 @@ class RouteCardDataTest {
                                             upcomingTrips =
                                                 listOf(
                                                     objects.upcomingTrip(
-                                                        typicalOutboundPredictionStop1
-                                                    )
+                                                        typicalOutboundPredictionStop1,
+                                                    ),
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
@@ -2781,12 +2783,12 @@ class RouteCardDataTest {
                                             subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
-                                        )
+                                        ),
                                     ),
-                                )
+                                ),
                             ),
                         time,
-                    )
+                    ),
                 ),
                 RouteCardData.routeCardsForStopList(
                     listOf(stop1.id),
@@ -2881,8 +2883,8 @@ class RouteCardDataTest {
                                             upcomingTrips =
                                                 listOf(
                                                     objects.upcomingTrip(
-                                                        typicalOutboundPredictionStop1
-                                                    )
+                                                        typicalOutboundPredictionStop1,
+                                                    ),
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
@@ -2890,7 +2892,7 @@ class RouteCardDataTest {
                                             subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
-                                        )
+                                        ),
                                     ),
                                 ),
                                 RouteCardData.RouteStopData(
@@ -2907,10 +2909,10 @@ class RouteCardDataTest {
                                             upcomingTrips =
                                                 listOf(
                                                     objects.upcomingTrip(
-                                                        deviationOutboundPredictionStop2
+                                                        deviationOutboundPredictionStop2,
                                                     ),
                                                     objects.upcomingTrip(
-                                                        typicalOutboundPredictionStop2
+                                                        typicalOutboundPredictionStop2,
                                                     ),
                                                 ),
                                             alertsHere = emptyList(),
@@ -2919,12 +2921,12 @@ class RouteCardDataTest {
                                             subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
-                                        )
+                                        ),
                                     ),
                                 ),
                             ),
                         time,
-                    )
+                    ),
                 ),
                 RouteCardData.routeCardsForStopList(
                     listOf(stop1.id, stop2.id),
@@ -3062,13 +3064,13 @@ class RouteCardDataTest {
                                             upcomingTrips =
                                                 listOf(
                                                     objects.upcomingTrip(
-                                                        typicalOutboundPrediction1Stop1
+                                                        typicalOutboundPrediction1Stop1,
                                                     ),
                                                     objects.upcomingTrip(
-                                                        typicalOutboundPrediction2Stop1
+                                                        typicalOutboundPrediction2Stop1,
                                                     ),
                                                     objects.upcomingTrip(
-                                                        typicalOutboundPrediction3Stop1
+                                                        typicalOutboundPrediction3Stop1,
                                                     ),
                                                 ),
                                             alertsHere = emptyList(),
@@ -3077,12 +3079,12 @@ class RouteCardDataTest {
                                             subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
-                                        )
+                                        ),
                                     ),
-                                )
+                                ),
                             ),
                         time,
-                    )
+                    ),
                 ),
                 RouteCardData.routeCardsForStopList(
                     listOf(stop1.id, stop2.id),
@@ -3164,8 +3166,8 @@ class RouteCardDataTest {
                                             upcomingTrips =
                                                 listOf(
                                                     objects.upcomingTrip(
-                                                        deviationOutboundPredictionStop1
-                                                    )
+                                                        deviationOutboundPredictionStop1,
+                                                    ),
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
@@ -3173,7 +3175,7 @@ class RouteCardDataTest {
                                             subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
-                                        )
+                                        ),
                                     ),
                                 ),
                                 RouteCardData.RouteStopData(
@@ -3193,12 +3195,12 @@ class RouteCardDataTest {
                                             subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
-                                        )
+                                        ),
                                     ),
                                 ),
                             ),
                         time,
-                    )
+                    ),
                 ),
                 RouteCardData.routeCardsForStopList(
                     listOf(stop1.id, stop2.id),
@@ -3287,7 +3289,7 @@ class RouteCardDataTest {
                                     predictionBrd.id,
                                     predictionSoon.id,
                                     predictionLater.id,
-                                )
+                                ),
                         ),
                 )
 
@@ -3368,9 +3370,9 @@ class RouteCardDataTest {
                                             subwayServiceStartTime = scheduleSoonSchedule.stopTime,
                                             alertsDownstream = emptyList(),
                                             context = context,
-                                        )
+                                        ),
                                     ),
-                                )
+                                ),
                             ),
                         time,
                     ),
@@ -3396,9 +3398,9 @@ class RouteCardDataTest {
                                             subwayServiceStartTime = scheduleLaterSchedule.stopTime,
                                             alertsDownstream = emptyList(),
                                             context = context,
-                                        )
+                                        ),
                                     ),
-                                )
+                                ),
                             ),
                         time,
                     ),
@@ -3421,7 +3423,7 @@ class RouteCardDataTest {
                                                     objects.upcomingTrip(
                                                         prediction = predictionBrdPrediction,
                                                         vehicle = predictionBrdVehicle,
-                                                    )
+                                                    ),
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
@@ -3438,7 +3440,7 @@ class RouteCardDataTest {
                                             stopIds = setOf(stop1.id),
                                             upcomingTrips =
                                                 listOf(
-                                                    objects.upcomingTrip(predictionSoonPrediction)
+                                                    objects.upcomingTrip(predictionSoonPrediction),
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
@@ -3448,7 +3450,7 @@ class RouteCardDataTest {
                                             context = context,
                                         ),
                                     ),
-                                )
+                                ),
                             ),
                         time,
                     ),
@@ -3468,7 +3470,7 @@ class RouteCardDataTest {
                                             stopIds = setOf(stop1.id),
                                             upcomingTrips =
                                                 listOf(
-                                                    objects.upcomingTrip(predictionLaterPrediction)
+                                                    objects.upcomingTrip(predictionLaterPrediction),
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
@@ -3476,9 +3478,9 @@ class RouteCardDataTest {
                                             subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
-                                        )
+                                        ),
                                     ),
-                                )
+                                ),
                             ),
                         time,
                     ),
@@ -3556,12 +3558,12 @@ class RouteCardDataTest {
                                         subwayServiceStartTime = null,
                                         alertsDownstream = emptyList(),
                                         context = context,
-                                    )
+                                    ),
                                 ),
-                            )
+                            ),
                         ),
                     time,
-                )
+                ),
             ),
             RouteCardData.routeCardsForStopList(
                 stopIds = listOf(stop1.id),
@@ -3645,7 +3647,7 @@ class RouteCardDataTest {
                                             stopIds = setOf(stop1.id),
                                             upcomingTrips =
                                                 listOf(
-                                                    objects.upcomingTrip(typicalOutboundPrediction)
+                                                    objects.upcomingTrip(typicalOutboundPrediction),
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
@@ -3662,7 +3664,9 @@ class RouteCardDataTest {
                                             stopIds = setOf(stop1.id),
                                             upcomingTrips =
                                                 listOf(
-                                                    objects.upcomingTrip(deviationInboundPrediction)
+                                                    objects.upcomingTrip(
+                                                        deviationInboundPrediction,
+                                                    ),
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
@@ -3672,10 +3676,10 @@ class RouteCardDataTest {
                                             context = context,
                                         ),
                                     ),
-                                )
+                                ),
                             ),
                         time,
-                    )
+                    ),
                 ),
                 RouteCardData.routeCardsForStopList(
                     stopIds = listOf(stop1.id),
@@ -3752,7 +3756,7 @@ class RouteCardDataTest {
                                                     objects.upcomingTrip(
                                                         prediction = typicalOutboundPrediction,
                                                         schedule = typicalOutboundSchedule,
-                                                    )
+                                                    ),
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
@@ -3760,12 +3764,12 @@ class RouteCardDataTest {
                                             subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
-                                        )
+                                        ),
                                     ),
-                                )
+                                ),
                             ),
                         time,
-                    )
+                    ),
                 ),
                 RouteCardData.routeCardsForStopList(
                     stopIds = listOf(stop1.id),
@@ -3827,12 +3831,12 @@ class RouteCardDataTest {
                                         subwayServiceStartTime = null,
                                         alertsDownstream = emptyList(),
                                         context = context,
-                                    )
+                                    ),
                                 ),
-                            )
+                            ),
                         ),
                     time,
-                )
+                ),
             ),
             RouteCardData.routeCardsForStopList(
                 stopIds = listOf(childStop.id, parentStop.id),
@@ -3911,12 +3915,12 @@ class RouteCardDataTest {
                                         subwayServiceStartTime = sched1.stopTime,
                                         alertsDownstream = emptyList(),
                                         context = context,
-                                    )
+                                    ),
                                 ),
-                            )
+                            ),
                         ),
                     time,
-                )
+                ),
             ),
             RouteCardData.routeCardsForStopList(
                 stopIds = listOf(stop.id),
@@ -3980,12 +3984,12 @@ class RouteCardDataTest {
                                             subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
-                                        )
+                                        ),
                                     ),
-                                )
+                                ),
                             ),
                         time,
-                    )
+                    ),
                 ),
                 RouteCardData.routeCardsForStopList(
                     stopIds = listOf(stop.id),
@@ -4052,7 +4056,7 @@ class RouteCardDataTest {
                                                     objects.upcomingTrip(
                                                         prediction = pred,
                                                         schedule = sched,
-                                                    )
+                                                    ),
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
@@ -4060,12 +4064,12 @@ class RouteCardDataTest {
                                             subwayServiceStartTime = sched.stopTime,
                                             alertsDownstream = emptyList(),
                                             context = context,
-                                        )
+                                        ),
                                     ),
-                                )
+                                ),
                             ),
                         time,
-                    )
+                    ),
                 ),
                 RouteCardData.routeCardsForStopList(
                     stopIds = listOf(stop.id),
@@ -4151,12 +4155,12 @@ class RouteCardDataTest {
                                         subwayServiceStartTime = pastSchedule.stopTime,
                                         alertsDownstream = emptyList(),
                                         context,
-                                    )
+                                    ),
                                 ),
-                            )
+                            ),
                         ),
                         time,
-                    )
+                    ),
                 ),
                 RouteCardData.routeCardsForStopList(
                     stopIds = listOf(stop.id),
@@ -4264,12 +4268,12 @@ class RouteCardDataTest {
                                     subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     context,
-                                )
+                                ),
                             ),
-                        )
+                        ),
                     ),
                     time,
-                )
+                ),
             ),
             RouteCardData.routeCardsForStopList(
                 stopIds = listOf(stop.id),
@@ -4389,7 +4393,7 @@ class RouteCardDataTest {
                                                     objects.upcomingTrip(
                                                         prediction = pred1,
                                                         schedule = sched1,
-                                                    )
+                                                    ),
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
@@ -4397,9 +4401,9 @@ class RouteCardDataTest {
                                             subwayServiceStartTime = sched1.stopTime,
                                             alertsDownstream = emptyList(),
                                             context = context,
-                                        )
+                                        ),
                                     ),
-                                )
+                                ),
                             ),
                         time,
                     ),
@@ -4434,9 +4438,9 @@ class RouteCardDataTest {
                                             subwayServiceStartTime = sched2.stopTime,
                                             alertsDownstream = emptyList(),
                                             context = context,
-                                        )
+                                        ),
                                     ),
-                                )
+                                ),
                             ),
                         time,
                     ),
@@ -4637,7 +4641,7 @@ class RouteCardDataTest {
                                 routePatternC2.id,
                                 routePatternE1.id,
                                 routePatternE2.id,
-                            )
+                            ),
                     ),
             )
         val context = RouteCardData.Context.NearbyTransit
@@ -4722,10 +4726,10 @@ class RouteCardDataTest {
                                         context = context,
                                     ),
                                 ),
-                            )
+                            ),
                         ),
                     time,
-                )
+                ),
             )
 
         assertEquals(
@@ -4836,7 +4840,7 @@ class RouteCardDataTest {
                                                     objects.upcomingTrip(
                                                         prediction = predB1,
                                                         schedule = schedB1,
-                                                    )
+                                                    ),
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
@@ -4856,7 +4860,7 @@ class RouteCardDataTest {
                                                     objects.upcomingTrip(
                                                         prediction = predB2,
                                                         schedule = schedB2,
-                                                    )
+                                                    ),
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
@@ -4866,10 +4870,10 @@ class RouteCardDataTest {
                                             context = context,
                                         ),
                                     ),
-                                )
+                                ),
                             ),
                         time,
-                    )
+                    ),
                 )
 
             assertEquals(
@@ -4942,7 +4946,7 @@ class RouteCardDataTest {
                                                     objects.upcomingTrip(
                                                         prediction = pred1,
                                                         schedule = sched1,
-                                                    )
+                                                    ),
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
@@ -4950,12 +4954,12 @@ class RouteCardDataTest {
                                             subwayServiceStartTime = sched1.stopTime,
                                             alertsDownstream = emptyList(),
                                             context = context,
-                                        )
+                                        ),
                                     ),
-                                )
+                                ),
                             ),
                         time,
-                    )
+                    ),
                 ),
                 RouteCardData.routeCardsForStopList(
                     stopIds = listOf(stop.id),
@@ -5203,7 +5207,7 @@ class RouteCardDataTest {
                                                 UpcomingTrip(
                                                     trip = orangeSouthboundDiversionTrip,
                                                     schedule = southboundSchedule,
-                                                )
+                                                ),
                                             ),
                                         alertsHere = emptyList(),
                                         allDataLoaded = true,
@@ -5239,10 +5243,10 @@ class RouteCardDataTest {
                                         context = context,
                                     ),
                                 ),
-                            )
+                            ),
                         ),
                     time,
-                )
+                ),
             ),
             RouteCardData.routeCardsForStopList(
                 listOf(
@@ -5305,7 +5309,7 @@ class RouteCardDataTest {
                     patternIdsByStop =
                         mapOf(
                             oakGrove.id to
-                                listOf(orangeSouthboundTypical.id, orangeNorthboundTypical.id)
+                                listOf(orangeSouthboundTypical.id, orangeNorthboundTypical.id),
                         ),
                 )
             val context = RouteCardData.Context.NearbyTransit
@@ -5350,7 +5354,7 @@ class RouteCardDataTest {
                                                     UpcomingTrip(
                                                         trip = orangeSouthboundTypicalTrip,
                                                         schedule = sched1,
-                                                    )
+                                                    ),
                                                 ),
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
@@ -5358,12 +5362,12 @@ class RouteCardDataTest {
                                             subwayServiceStartTime = sched1.stopTime,
                                             alertsDownstream = emptyList(),
                                             context = context,
-                                        )
+                                        ),
                                     ),
-                                )
+                                ),
                             ),
                         time,
-                    )
+                    ),
                 ),
                 RouteCardData.routeCardsForStopList(
                     stopIds = listOf(oakGrove.id),
@@ -5422,7 +5426,7 @@ class RouteCardDataTest {
                 patternIdsByStop =
                     mapOf(
                         longWharf.id to
-                            listOf(ferryInboundToLongWharf.id, ferryOutboundToHingham.id)
+                            listOf(ferryInboundToLongWharf.id, ferryOutboundToHingham.id),
                     ),
             )
         val context = RouteCardData.Context.NearbyTransit
@@ -5469,12 +5473,12 @@ class RouteCardDataTest {
                                         subwayServiceStartTime = null,
                                         alertsDownstream = emptyList(),
                                         context = context,
-                                    )
+                                    ),
                                 ),
-                            )
+                            ),
                         ),
                     time,
-                )
+                ),
             ),
             RouteCardData.routeCardsForStopList(
                 stopIds = listOf(longWharf.id),
@@ -5635,12 +5639,12 @@ class RouteCardDataTest {
                                             subwayServiceStartTime = null,
                                             alertsDownstream = southboundDownstreamAlerts,
                                             context = context,
-                                        )
+                                        ),
                                     ),
-                                )
+                                ),
                             ),
                         time,
-                    )
+                    ),
                 ),
                 RouteCardData.routeCardsForStopList(
                     stopIds = listOf(park.id),

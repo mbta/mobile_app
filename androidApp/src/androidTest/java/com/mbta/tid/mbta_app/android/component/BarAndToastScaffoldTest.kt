@@ -97,7 +97,7 @@ class BarAndToastScaffoldTest {
                         actionLabel = "Action",
                         onAction = { actionTapped = true },
                     ),
-            )
+            ),
         )
 
         composeTestRule.waitForIdle()
@@ -119,8 +119,8 @@ class BarAndToastScaffoldTest {
                     ToastViewModel.Toast(
                         message = "Toast message",
                         action = ToastViewModel.ToastAction.Close(onClose = { closeTapped = true }),
-                    )
-                )
+                    ),
+                ),
             )
         toastVM.onHideToast()
         composeTestRule.setContent {

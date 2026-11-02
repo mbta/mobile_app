@@ -389,7 +389,7 @@ class KdTreeTest {
         println(tree.asGeoJSON())
         println("tree height ${tree.root?.height() ?: 0}")
         println(
-            "average depth ${(tree.root?.totalDepth(0) ?: 0).toDouble() / commuterRailPoints.size.toDouble()}"
+            "average depth ${(tree.root?.totalDepth(0) ?: 0).toDouble() / commuterRailPoints.size.toDouble()}",
         )
         println("log₂ tree size ${log2(commuterRailPoints.size.toDouble())}")
     }
@@ -439,14 +439,14 @@ class KdTreeTest {
         FeatureCollection(
                 root
                     ?.asFeatures(
-                        BoundingBox(west = -71.858, south = 41.571, east = -70.266, north = 42.807)
+                        BoundingBox(west = -71.858, south = 41.571, east = -70.266, north = 42.807),
                     )
-                    .orEmpty()
+                    .orEmpty(),
             )
             .toJson()
 
     internal fun KdTreeNode.asFeatures(
-        boundingBox: BoundingBox
+        boundingBox: BoundingBox,
     ): List<Feature<Geometry?, JsonObject?>> {
         val id = ids.first()
         val thisFeature =

@@ -85,7 +85,7 @@ fun SheetHeader(
     fun RowScope.RightActionContents() {
         if (rightActionContents != null) {
             Row(
-                modifier = Modifier.padding(top = buttonPadding).align(Alignment.CenterVertically)
+                modifier = Modifier.padding(top = buttonPadding).align(Alignment.CenterVertically),
             ) {
                 rightActionContents()
             }
@@ -123,7 +123,7 @@ fun SheetHeader(
             Row(
                 Modifier.heightIn(min = touchTarget)
                     .padding(start = buttonStartPadding, end = buttonEndPadding)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             ) {
                 BackButton()
                 Spacer(Modifier.weight(1f))

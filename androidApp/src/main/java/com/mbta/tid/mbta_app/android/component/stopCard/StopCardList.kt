@@ -119,7 +119,7 @@ private fun StopCardListPreview() {
                 shortName = "43"
                 textColor = "000000"
                 type = RouteType.BUS
-            }
+            },
         )
     val bus43Inbound =
         objects.routePattern(bus43.route) {
@@ -147,13 +147,13 @@ private fun StopCardListPreview() {
                         objects.prediction {
                             trip = objects.trip(olSouthboundPattern)
                             departureTime = now + 3.minutes
-                        }
+                        },
                     ),
                     objects.upcomingTrip(
                         objects.prediction {
                             trip = objects.trip(olSouthboundPattern)
                             departureTime = now + 11.minutes
-                        }
+                        },
                     ),
                 ),
             alertsHere = emptyList(),
@@ -177,13 +177,13 @@ private fun StopCardListPreview() {
                         objects.prediction {
                             trip = objects.trip(olNorthboundPattern)
                             departureTime = now + 6.minutes
-                        }
+                        },
                     ),
                     objects.upcomingTrip(
                         objects.prediction {
                             trip = objects.trip(olNorthboundPattern)
                             departureTime = now + 14.minutes
-                        }
+                        },
                     ),
                 ),
             alertsHere = emptyList(),
@@ -207,19 +207,19 @@ private fun StopCardListPreview() {
                         objects.prediction {
                             trip = objects.trip(bus43Inbound)
                             departureTime = now + 22.minutes
-                        }
+                        },
                     ),
                     objects.upcomingTrip(
                         objects.prediction {
                             trip = objects.trip(bus43Inbound)
                             departureTime = now + 56.minutes
-                        }
+                        },
                     ),
                     objects.upcomingTrip(
                         objects.schedule {
                             trip = objects.trip(bus43Inbound)
                             departureTime = now + 12.hours
-                        }
+                        },
                     ),
                 ),
             alertsHere = emptyList(),
@@ -243,19 +243,19 @@ private fun StopCardListPreview() {
                         objects.prediction {
                             trip = objects.trip(bus43Inbound)
                             departureTime = now + 25.minutes
-                        }
+                        },
                     ),
                     objects.upcomingTrip(
                         objects.prediction {
                             trip = objects.trip(bus43Inbound)
                             departureTime = now + 59.minutes
-                        }
+                        },
                     ),
                     objects.upcomingTrip(
                         objects.schedule {
                             trip = objects.trip(bus43Inbound)
                             departureTime = now + 12.hours
-                        }
+                        },
                     ),
                 ),
             alertsHere = emptyList(),
@@ -284,19 +284,19 @@ private fun StopCardListPreview() {
                         objects.prediction {
                             trip = objects.trip(objects.getRoutePattern("Green-C-832-0"))
                             departureTime = now + 3.minutes
-                        }
+                        },
                     ),
                     objects.upcomingTrip(
                         objects.prediction {
                             trip = objects.trip(objects.getRoutePattern("Green-B-812-0"))
                             departureTime = now + 5.minutes
-                        }
+                        },
                     ),
                     objects.upcomingTrip(
                         objects.prediction {
                             trip = objects.trip(objects.getRoutePattern("Green-D-855-0"))
                             departureTime = now + 10.minutes
-                        }
+                        },
                     ),
                 ),
             alertsHere = emptyList(),
@@ -316,10 +316,10 @@ private fun StopCardListPreview() {
                 single<Analytics> { MockAnalytics() }
                 single {
                     SettingsCache(
-                        MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
+                        MockSettingsRepository(mapOf(Settings.StationAccessibility to true)),
                     )
                 }
-            }
+            },
         )
     }
     Column {

@@ -49,7 +49,7 @@ fun LabeledSwitch(
                             role = Role.Switch,
                             onValueChange = onValueChange,
                         )
-                    else Modifier
+                    else Modifier,
                 )
                 .alpha(if (enabled) 1.0f else 0.6f)
                 .fillMaxWidth()

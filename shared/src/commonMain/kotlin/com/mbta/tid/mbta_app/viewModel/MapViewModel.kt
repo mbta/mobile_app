@@ -751,7 +751,7 @@ public class MapViewModel(
 public class MockMapViewModel
 @DefaultArgumentInterop.Enabled
 constructor(
-    initialState: MapViewModel.State = MapViewModel.State(MapViewModel.LayerState.Overview, false)
+    initialState: MapViewModel.State = MapViewModel.State(MapViewModel.LayerState.Overview, false),
 ) : IMapViewModel {
 
     public var onSelectedStop: (Stop, StopDetailsFilter?) -> Unit = { _, _ -> }

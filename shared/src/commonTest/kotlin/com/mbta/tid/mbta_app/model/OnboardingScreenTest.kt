@@ -26,13 +26,13 @@ class OnboardingScreenTest {
             OnboardingScreen.HideMaps.applies(
                 MockAccessibilityStatusRepository(isScreenReaderEnabled = true),
                 emptyMap(),
-            )
+            ),
         )
         assertFalse(
             OnboardingScreen.HideMaps.applies(
                 MockAccessibilityStatusRepository(isScreenReaderEnabled = false),
                 emptyMap(),
-            )
+            ),
         )
     }
 
@@ -42,16 +42,16 @@ class OnboardingScreenTest {
             OnboardingScreen.NotificationsBeta.applies(
                 undefinedAccessibilityStatus,
                 mapOf(Settings.Notifications to true),
-            )
+            ),
         )
         assertTrue(
             OnboardingScreen.NotificationsBeta.applies(
                 undefinedAccessibilityStatus,
                 mapOf(Settings.Notifications to false),
-            )
+            ),
         )
         assertTrue(
-            OnboardingScreen.NotificationsBeta.applies(undefinedAccessibilityStatus, emptyMap())
+            OnboardingScreen.NotificationsBeta.applies(undefinedAccessibilityStatus, emptyMap()),
         )
     }
 

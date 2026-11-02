@@ -68,7 +68,7 @@ class TripSchedulesResponseTest {
                 listOf(
                     objects.schedule { stopId = stop1.id },
                     objects.schedule { stopId = stop2.id },
-                )
+                ),
             )
 
         val globalResponse = GlobalResponse(objects, emptyMap())

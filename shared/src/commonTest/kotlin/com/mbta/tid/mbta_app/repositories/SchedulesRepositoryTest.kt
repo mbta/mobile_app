@@ -76,7 +76,7 @@ class SchedulesRepositoryTest : KoinTest {
                           }
                         }
                         """
-                            .trimIndent()
+                            .trimIndent(),
                     ),
                 status = HttpStatusCode.OK,
                 headers = headersOf(HttpHeaders.ContentType, "application/json"),
@@ -106,7 +106,7 @@ class SchedulesRepositoryTest : KoinTest {
                                     routeId = Route.Id("Red"),
                                     stopId = "70064",
                                     tripId = "trip1",
-                                )
+                                ),
                             ),
                         trips =
                             mapOf(
@@ -119,9 +119,9 @@ class SchedulesRepositoryTest : KoinTest {
                                         routePatternId = "rp1",
                                         shapeId = "shape1",
                                         stopIds = listOf("70064", "70065"),
-                                    )
+                                    ),
                             ),
-                    )
+                    ),
                 ),
                 response,
             )
@@ -165,7 +165,7 @@ class SchedulesRepositoryTest : KoinTest {
                           }
                         }
                         """
-                            .trimIndent()
+                            .trimIndent(),
                     ),
                 status = HttpStatusCode.OK,
                 headers = headersOf(HttpHeaders.ContentType, "application/json"),
@@ -197,8 +197,8 @@ class SchedulesRepositoryTest : KoinTest {
                         routeId = Route.Id("Red"),
                         stopId = "70064",
                         tripId = "trip1",
-                    )
-                )
+                    ),
+                ),
             ),
             response,
         )
@@ -238,7 +238,7 @@ class SchedulesRepositoryTest : KoinTest {
                           }
                         }
                         """
-                            .trimIndent()
+                            .trimIndent(),
                     ),
                 status = HttpStatusCode.OK,
                 headers = headersOf(HttpHeaders.ContentType, "application/json"),
@@ -260,7 +260,7 @@ class SchedulesRepositoryTest : KoinTest {
                         ),
                         serviceDate,
                         cachedSchedule.stopId,
-                    )
+                    ),
             )
 
         startKoin {
@@ -271,7 +271,7 @@ class SchedulesRepositoryTest : KoinTest {
                     single<CoroutineDispatcher>(named("coroutineDispatcherIO")) {
                         StandardTestDispatcher(testScheduler)
                     }
-                }
+                },
             )
         }
 
@@ -303,7 +303,7 @@ class SchedulesRepositoryTest : KoinTest {
 
         val response =
             cachedRepository.getSchedule(
-                stopIds = setOf(loadedSchedule.stopId, cachedSchedule.stopId)
+                stopIds = setOf(loadedSchedule.stopId, cachedSchedule.stopId),
             )
 
         assertEquals(
@@ -311,7 +311,7 @@ class SchedulesRepositoryTest : KoinTest {
                 ScheduleResponse(
                     schedules = listOf(cachedSchedule, loadedSchedule),
                     trips = mapOf(cachedTrip.id to cachedTrip, loadedTrip.id to loadedTrip),
-                )
+                ),
             ),
             response,
         )
@@ -347,13 +347,13 @@ class SchedulesRepositoryTest : KoinTest {
                                             ),
                                             serviceDate,
                                             cachedSchedule.stopId,
-                                        )
-                                )
-                            )
+                                        ),
+                                ),
+                            ),
                         )
                     }
                     single<CoroutineDispatcher>(named("coroutineDispatcherIO")) { Dispatchers.IO }
-                }
+                },
             )
         }
 
@@ -366,7 +366,7 @@ class SchedulesRepositoryTest : KoinTest {
                 ScheduleResponse(
                     schedules = listOf(cachedSchedule),
                     trips = mapOf(cachedTrip.id to cachedTrip),
-                )
+                ),
             ),
             response,
         )
@@ -385,7 +385,7 @@ class SchedulesRepositoryTest : KoinTest {
                     single<CoroutineDispatcher>(named("coroutineDispatcherIO")) {
                         StandardTestDispatcher(testScheduler)
                     }
-                }
+                },
             )
         }
 

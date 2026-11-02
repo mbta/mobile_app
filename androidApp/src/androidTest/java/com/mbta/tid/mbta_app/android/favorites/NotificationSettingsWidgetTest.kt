@@ -68,7 +68,7 @@ class NotificationSettingsWidgetTest : KoinTest {
 
         composeTestRule.onNodeWithText("Get disruption notifications").performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            (hasTextMatching(Regex("10:00\\sAM", RegexOption.IGNORE_CASE)))
+            (hasTextMatching(Regex("10:00\\sAM", RegexOption.IGNORE_CASE))),
         )
         composeTestRule
             .onNode(hasTextMatching(Regex("4:00\\sPM", RegexOption.IGNORE_CASE)))
@@ -120,10 +120,10 @@ class NotificationSettingsWidgetTest : KoinTest {
 
         composeTestRule.onNodeWithText("Get disruption notifications").performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasText("Get disruption notifications").and(isEnabled())
+            hasText("Get disruption notifications").and(isEnabled()),
         )
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasTextMatching(Regex("4:00\\sPM", RegexOption.IGNORE_CASE))
+            hasTextMatching(Regex("4:00\\sPM", RegexOption.IGNORE_CASE)),
         )
         composeTestRule
             .onNode(hasTextMatching(Regex("10:00\\sAM", RegexOption.IGNORE_CASE)))
@@ -135,7 +135,7 @@ class NotificationSettingsWidgetTest : KoinTest {
         composeTestRule.onNodeWithContentDescription("45 minutes").performClick()
         composeTestRule.onNodeWithText("Okay").performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasTextMatching(Regex("7:45\\sAM", RegexOption.IGNORE_CASE))
+            hasTextMatching(Regex("7:45\\sAM", RegexOption.IGNORE_CASE)),
         )
         composeTestRule
             .onNode(hasTextMatching(Regex("4:00\\sPM", RegexOption.IGNORE_CASE)))
@@ -146,7 +146,7 @@ class NotificationSettingsWidgetTest : KoinTest {
         composeTestRule.onNodeWithContentDescription("for minutes").performTextReplacement("15")
         composeTestRule.onNodeWithText("Okay").performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasTextMatching(Regex("9:15\\sPM", RegexOption.IGNORE_CASE))
+            hasTextMatching(Regex("9:15\\sPM", RegexOption.IGNORE_CASE)),
         )
     }
 
@@ -168,7 +168,7 @@ class NotificationSettingsWidgetTest : KoinTest {
 
         composeTestRule.onNodeWithText("Get disruption notifications").performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasText("Get disruption notifications").and(isEnabled())
+            hasText("Get disruption notifications").and(isEnabled()),
         )
         composeTestRule.onNodeWithText("Sunday").performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sunday").and(isOn()))
@@ -191,11 +191,11 @@ class NotificationSettingsWidgetTest : KoinTest {
 
         composeTestRule.onNodeWithText("Get disruption notifications").performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasText("Get disruption notifications").and(isEnabled())
+            hasText("Get disruption notifications").and(isEnabled()),
         )
         composeTestRule.onNodeWithText("Morning").performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasTextMatching(Regex("10:00\\sAM", RegexOption.IGNORE_CASE))
+            hasTextMatching(Regex("10:00\\sAM", RegexOption.IGNORE_CASE)),
         )
         composeTestRule
             .onNode(hasTextMatching(Regex("6:00\\sAM", RegexOption.IGNORE_CASE)))
@@ -205,10 +205,10 @@ class NotificationSettingsWidgetTest : KoinTest {
         composeTestRule.onNodeWithContentDescription("45 minutes").performClick()
         composeTestRule.onNodeWithText("Okay").performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasTextMatching(Regex("10:45\\sAM", RegexOption.IGNORE_CASE))
+            hasTextMatching(Regex("10:45\\sAM", RegexOption.IGNORE_CASE)),
         )
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasTextMatching(Regex("11:00\\sAM", RegexOption.IGNORE_CASE))
+            hasTextMatching(Regex("11:00\\sAM", RegexOption.IGNORE_CASE)),
         )
     }
 
@@ -227,11 +227,11 @@ class NotificationSettingsWidgetTest : KoinTest {
 
         composeTestRule.onNodeWithText("Get disruption notifications").performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasText("Get disruption notifications").and(isEnabled())
+            hasText("Get disruption notifications").and(isEnabled()),
         )
         composeTestRule.onNodeWithText("Morning").performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasTextMatching(Regex("6:00\\sAM", RegexOption.IGNORE_CASE))
+            hasTextMatching(Regex("6:00\\sAM", RegexOption.IGNORE_CASE)),
         )
         composeTestRule
             .onNode(hasTextMatching(Regex("10:00\\sAM", RegexOption.IGNORE_CASE)))
@@ -466,9 +466,12 @@ class NotificationSettingsWidgetTest : KoinTest {
                 enabled = true,
                 windows =
                     listOf(
-                        Window(preset = com.mbta.tid.mbta_app.model.Preset.Morning, Window.weekdays)
+                        Window(
+                            preset = com.mbta.tid.mbta_app.model.Preset.Morning,
+                            Window.weekdays,
+                        ),
                     ),
-            )
+            ),
         )
 
         composeTestRule.setContent {

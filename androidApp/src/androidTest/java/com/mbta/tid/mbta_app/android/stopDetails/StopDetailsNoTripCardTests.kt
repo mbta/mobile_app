@@ -33,7 +33,7 @@ class StopDetailsNoTripCardTests {
             StopDetailsNoTripCard(
                 status =
                     UpcomingFormat.NoTripsFormat.SubwayEarlyMorning(
-                        EasternTimeInstant(2025, Month.NOVEMBER, 17, 9, 44)
+                        EasternTimeInstant(2025, Month.NOVEMBER, 17, 9, 44),
                     ),
                 accentColor = Color.Black,
                 directionLabel = "Forest Hills",
@@ -51,8 +51,8 @@ class StopDetailsNoTripCardTests {
                     Regex(
                         "^The first Forest Hills train is scheduled to arrive at 9:44\\sAM. We don’t have predictions to show you yet, but they’ll appear here closer to the scheduled time.$",
                         RegexOption.IGNORE_CASE,
-                    )
-                )
+                    ),
+                ),
             )
             .assertCanBeDisplayed()
     }
@@ -76,7 +76,7 @@ class StopDetailsNoTripCardTests {
         composeTestRule
             .onNodeWithText(
                 "Service is running, but predicted arrival times aren’t available." +
-                    " Check the map to see where buses are right now."
+                    " Check the map to see where buses are right now.",
             )
             .assertCanBeDisplayed()
     }
@@ -130,7 +130,9 @@ class StopDetailsNoTripCardTests {
         composeTestRule.onNodeWithText("Service ended").assertCanBeDisplayed()
         composeTestRule
             .onNode(
-                hasTextMatching(Regex("^Next trip at 9:15\\sAM tomorrow$", RegexOption.IGNORE_CASE))
+                hasTextMatching(
+                    Regex("^Next trip at 9:15\\sAM tomorrow$", RegexOption.IGNORE_CASE),
+                ),
             )
             .assertCanBeDisplayed()
     }

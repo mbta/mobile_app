@@ -28,7 +28,7 @@ fun AlertIcon(
                     StopAlertState.Suspension -> R.drawable.alert_borderless_suspension
                     StopAlertState.AllClear -> R.drawable.alert_borderless_allclear
                     else -> return
-                }
+                },
             )
 
     Icon(

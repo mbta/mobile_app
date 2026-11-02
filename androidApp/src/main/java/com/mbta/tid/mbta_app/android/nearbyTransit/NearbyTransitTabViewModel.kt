@@ -60,7 +60,7 @@ class NearbyTransitTabViewModel : ViewModel() {
         }
 
         pushNavEntry(
-            SheetRoutes.StopDetails(filters.stopId, filters.stopFilter, filters.tripFilter)
+            SheetRoutes.StopDetails(filters.stopId, filters.stopFilter, filters.tripFilter),
         )
     }
 

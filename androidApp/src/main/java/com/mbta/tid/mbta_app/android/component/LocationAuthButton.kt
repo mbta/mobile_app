@@ -71,7 +71,7 @@ fun LocationAuthButton(locationDataManager: LocationDataManager, modifier: Modif
                     arrayOf(
                         android.Manifest.permission.ACCESS_FINE_LOCATION,
                         android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                    )
+                    ),
                 )
             },
         ) {
@@ -103,10 +103,10 @@ fun LocationAuthButton(locationDataManager: LocationDataManager, modifier: Modif
                                     Intent(
                                         ACTION_APPLICATION_DETAILS_SETTINGS,
                                         Uri.fromParts("package", BuildConfig.APPLICATION_ID, null),
-                                    )
+                                    ),
                                 )
                                 showSettingsPrompt = false
-                            }
+                            },
                         ) {
                             Text(
                                 stringResource(R.string.location_settings_prompt_turn_on),

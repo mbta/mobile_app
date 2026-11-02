@@ -63,7 +63,7 @@ fun Departures(
                             stopData.lineOrRoute.id,
                             stopData.stop.id,
                             leaf.direction.id,
-                        )
+                        ),
                     ) ?: false,
                     leaf.alertsHere().isNotEmpty(),
                     stopData.lineOrRoute.type,
@@ -91,7 +91,7 @@ fun Departures(
                         formatted is LeafFormat.Single -> {
                             DirectionRowView(
                                 direction.copy(
-                                    destination = formatted.headsign ?: direction.destination
+                                    destination = formatted.headsign ?: direction.destination,
                                 ),
                                 formatted.format,
                                 pillDecoration =
@@ -193,19 +193,19 @@ private fun DeparturesPreview() {
                             objects.prediction {
                                 trip = objects.trip(redLineAshmontSouthbound)
                                 departureTime = now + 1.minutes
-                            }
+                            },
                         ),
                         objects.upcomingTrip(
                             objects.prediction {
                                 trip = objects.trip(redLineBraintreeSouthbound)
                                 departureTime = now + 2.minutes
-                            }
+                            },
                         ),
                         objects.upcomingTrip(
                             objects.prediction {
                                 trip = objects.trip(redLineAshmontSouthbound)
                                 departureTime = now + 9.minutes
-                            }
+                            },
                         ),
                     ),
                     emptyList(),
@@ -226,13 +226,13 @@ private fun DeparturesPreview() {
                             objects.prediction {
                                 trip = objects.trip(redLineAshmontNorthbound)
                                 departureTime = now + 3.minutes
-                            }
+                            },
                         ),
                         objects.upcomingTrip(
                             objects.prediction {
                                 trip = objects.trip(redLineBraintreeNorthbound)
                                 departureTime = now + 12.minutes
-                            }
+                            },
                         ),
                     ),
                     emptyList(),

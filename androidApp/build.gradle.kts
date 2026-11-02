@@ -195,11 +195,11 @@ tasks.register<ConvertIosMapIconsTask>("convertIosIconsToAssets") {
 tasks.register<CheckMapboxBridgeTask>("checkMapboxBridge") {
     mapboxBridgePath =
         layout.projectDirectory.file(
-            "src/main/java/com/mbta/tid/mbta_app/android/map/MapboxBridge.kt"
+            "src/main/java/com/mbta/tid/mbta_app/android/map/MapboxBridge.kt",
         )
     sharedMapStylePackage =
         layout.projectDirectory.dir(
-            "../shared/src/commonMain/kotlin/com/mbta/tid/mbta_app/map/style"
+            "../shared/src/commonMain/kotlin/com/mbta/tid/mbta_app/map/style",
         )
 }
 

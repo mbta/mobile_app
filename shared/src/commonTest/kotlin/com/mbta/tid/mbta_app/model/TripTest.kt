@@ -26,7 +26,7 @@ class TripTest {
                 "route_pattern_id":"red-1",
                 "shapeId":null}
                 """
-                    .trimIndent()
+                    .trimIndent(),
             ),
         )
     }

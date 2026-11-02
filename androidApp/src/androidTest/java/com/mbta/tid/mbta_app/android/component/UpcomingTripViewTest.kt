@@ -36,7 +36,7 @@ class UpcomingTripViewTest {
     fun testUpcomingTripViewWithSomeOverridden() {
         composeTestRule.setContent {
             UpcomingTripView(
-                UpcomingTripViewState.Some(TripInstantDisplay.Overridden("Test", false))
+                UpcomingTripViewState.Some(TripInstantDisplay.Overridden("Test", false)),
             )
         }
         composeTestRule
@@ -50,7 +50,7 @@ class UpcomingTripViewTest {
     fun testUpcomingTripViewWithSomeOverriddenLast() {
         composeTestRule.setContent {
             UpcomingTripView(
-                UpcomingTripViewState.Some(TripInstantDisplay.Overridden("Test", true))
+                UpcomingTripViewState.Some(TripInstantDisplay.Overridden("Test", true)),
             )
         }
         composeTestRule.onNodeWithText("Last").assertCanBeDisplayed()
@@ -74,7 +74,7 @@ class UpcomingTripViewTest {
     fun testUpcomingTripViewWithSomeSkipped() {
         composeTestRule.setContent {
             UpcomingTripView(
-                UpcomingTripViewState.Some(TripInstantDisplay.Skipped(EasternTimeInstant.now()))
+                UpcomingTripViewState.Some(TripInstantDisplay.Skipped(EasternTimeInstant.now())),
             )
         }
         composeTestRule.onNodeWithText("Test").assertDoesNotExist()
@@ -92,7 +92,7 @@ class UpcomingTripViewTest {
             .onParent()
             .assertExists()
             .assertContentDescriptionMatches(
-                Regex(" arriving at 2:03\\sPM cancelled", RegexOption.IGNORE_CASE)
+                Regex(" arriving at 2:03\\sPM cancelled", RegexOption.IGNORE_CASE),
             )
     }
 
@@ -209,7 +209,7 @@ class UpcomingTripViewTest {
             .onNode(hasTextMatching(Regex("2:03\\sPM", RegexOption.IGNORE_CASE)))
             .assertCanBeDisplayed()
             .assertContentDescriptionMatches(
-                Regex(" arriving at 2:03\\sPM", RegexOption.IGNORE_CASE)
+                Regex(" arriving at 2:03\\sPM", RegexOption.IGNORE_CASE),
             )
             .assertCanBeDisplayed()
         composeTestRule.onNodeWithTag("realtimeIndicator").assertCanBeDisplayed()
@@ -226,7 +226,7 @@ class UpcomingTripViewTest {
             .onNode(hasTextMatching(Regex("2:03\\sPM", RegexOption.IGNORE_CASE)))
             .assertCanBeDisplayed()
             .assertContentDescriptionMatches(
-                Regex(" arriving at 2:03\\sPM, Last trip", RegexOption.IGNORE_CASE)
+                Regex(" arriving at 2:03\\sPM, Last trip", RegexOption.IGNORE_CASE),
             )
         composeTestRule.onNodeWithTag("realtimeIndicator").assertCanBeDisplayed()
     }
@@ -237,7 +237,7 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.TimeWithStatus(instant, "All aboard", false)
+                    TripInstantDisplay.TimeWithStatus(instant, "All aboard", false),
                 ),
                 routeType = RouteType.COMMUTER_RAIL,
             )
@@ -252,8 +252,8 @@ class UpcomingTripViewTest {
         composeTestRule
             .onNode(
                 hasContentDescriptionMatching(
-                    Regex("train arriving at 2:03\\sPM, All aboard", RegexOption.IGNORE_CASE)
-                )
+                    Regex("train arriving at 2:03\\sPM, All aboard", RegexOption.IGNORE_CASE),
+                ),
             )
             .assertCanBeDisplayed()
         composeTestRule
@@ -268,7 +268,7 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.TimeWithStatus(instant, "All aboard", true)
+                    TripInstantDisplay.TimeWithStatus(instant, "All aboard", true),
                 ),
                 routeType = RouteType.COMMUTER_RAIL,
             )
@@ -286,8 +286,8 @@ class UpcomingTripViewTest {
                     Regex(
                         "train arriving at 2:03\\sPM, All aboard, Last trip",
                         RegexOption.IGNORE_CASE,
-                    )
-                )
+                    ),
+                ),
             )
             .assertCanBeDisplayed()
         composeTestRule
@@ -301,7 +301,7 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.TimeWithStatus(instant, "Delay", false)
+                    TripInstantDisplay.TimeWithStatus(instant, "Delay", false),
                 ),
                 routeType = RouteType.COMMUTER_RAIL,
             )
@@ -315,8 +315,8 @@ class UpcomingTripViewTest {
         composeTestRule
             .onNode(
                 hasContentDescriptionMatching(
-                    Regex("2:03\\sPM train delayed", RegexOption.IGNORE_CASE)
-                )
+                    Regex("2:03\\sPM train delayed", RegexOption.IGNORE_CASE),
+                ),
             )
             .assertCanBeDisplayed()
         composeTestRule
@@ -330,7 +330,7 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.TimeWithStatus(instant, "Late", false)
+                    TripInstantDisplay.TimeWithStatus(instant, "Late", false),
                 ),
                 routeType = RouteType.COMMUTER_RAIL,
             )
@@ -344,8 +344,8 @@ class UpcomingTripViewTest {
         composeTestRule
             .onNode(
                 hasContentDescriptionMatching(
-                    Regex("2:03\\sPM train delayed", RegexOption.IGNORE_CASE)
-                )
+                    Regex("2:03\\sPM train delayed", RegexOption.IGNORE_CASE),
+                ),
             )
             .assertCanBeDisplayed()
         composeTestRule
@@ -360,7 +360,7 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant, false)
+                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant, false),
                 ),
                 routeType = RouteType.COMMUTER_RAIL,
             )
@@ -374,8 +374,11 @@ class UpcomingTripViewTest {
         composeTestRule
             .onNode(
                 hasContentDescriptionMatching(
-                    Regex("2:03\\sPM train delayed, arriving at 2:09\\sPM", RegexOption.IGNORE_CASE)
-                )
+                    Regex(
+                        "2:03\\sPM train delayed, arriving at 2:09\\sPM",
+                        RegexOption.IGNORE_CASE,
+                    ),
+                ),
             )
             .assertCanBeDisplayed()
         composeTestRule
@@ -396,7 +399,7 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant, false)
+                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant, false),
                 ),
                 routeType = RouteType.COMMUTER_RAIL,
             )
@@ -410,8 +413,8 @@ class UpcomingTripViewTest {
         composeTestRule
             .onNode(
                 hasContentDescriptionMatching(
-                    Regex("2:09\\sPM train early, arriving at 2:03\\sPM", RegexOption.IGNORE_CASE)
-                )
+                    Regex("2:09\\sPM train early, arriving at 2:03\\sPM", RegexOption.IGNORE_CASE),
+                ),
             )
             .assertCanBeDisplayed()
         composeTestRule
@@ -432,7 +435,7 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant, false)
+                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant, false),
                 ),
                 routeType = RouteType.COMMUTER_RAIL,
                 isFirst = false,
@@ -445,8 +448,8 @@ class UpcomingTripViewTest {
                     Regex(
                         "and 2:03\\sPM train delayed, arriving at 2:09\\sPM",
                         RegexOption.IGNORE_CASE,
-                    )
-                )
+                    ),
+                ),
             )
             .assertCanBeDisplayed()
         composeTestRule
@@ -473,7 +476,7 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant, false)
+                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant, false),
                 ),
                 routeType = RouteType.COMMUTER_RAIL,
                 isFirst = false,
@@ -491,8 +494,8 @@ class UpcomingTripViewTest {
                     Regex(
                         "and 2:09\\sPM train early, arriving at 2:03\\sPM",
                         RegexOption.IGNORE_CASE,
-                    )
-                )
+                    ),
+                ),
             )
             .assertCanBeDisplayed()
         composeTestRule
@@ -512,14 +515,14 @@ class UpcomingTripViewTest {
 
         composeTestRule.setContent {
             UpcomingTripView(
-                UpcomingTripViewState.Some(TripInstantDisplay.ScheduleTime(instant, false))
+                UpcomingTripViewState.Some(TripInstantDisplay.ScheduleTime(instant, false)),
             )
         }
         composeTestRule
             .onNode(hasTextMatching(Regex("2:03\\sPM", RegexOption.IGNORE_CASE)))
             .assertCanBeDisplayed()
             .assertContentDescriptionMatches(
-                Regex(" arriving at 2:03\\sPM scheduled", RegexOption.IGNORE_CASE)
+                Regex(" arriving at 2:03\\sPM scheduled", RegexOption.IGNORE_CASE),
             )
             .assertCanBeDisplayed()
         composeTestRule.onNodeWithTag("realtimeIndicator").assertDoesNotExist()
@@ -530,7 +533,7 @@ class UpcomingTripViewTest {
         val instant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 3, 4)
         composeTestRule.setContent {
             UpcomingTripView(
-                UpcomingTripViewState.Some(TripInstantDisplay.ScheduleTime(instant, true))
+                UpcomingTripViewState.Some(TripInstantDisplay.ScheduleTime(instant, true)),
             )
         }
         composeTestRule.onNodeWithText("Last").assertCanBeDisplayed()
@@ -538,7 +541,7 @@ class UpcomingTripViewTest {
             .onNode(hasTextMatching(Regex("2:03\\sPM", RegexOption.IGNORE_CASE)))
             .assertCanBeDisplayed()
             .assertContentDescriptionMatches(
-                Regex(" arriving at 2:03\\sPM scheduled, Last trip", RegexOption.IGNORE_CASE)
+                Regex(" arriving at 2:03\\sPM scheduled, Last trip", RegexOption.IGNORE_CASE),
             )
         composeTestRule.onNodeWithTag("lastScheduleIndicator").assertCanBeDisplayed()
     }
@@ -551,7 +554,7 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.ScheduleTimeWithStatusColumn(instant, status, false)
+                    TripInstantDisplay.ScheduleTimeWithStatusColumn(instant, status, false),
                 ),
                 routeType = RouteType.COMMUTER_RAIL,
             )
@@ -566,8 +569,8 @@ class UpcomingTripViewTest {
         composeTestRule
             .onNode(
                 hasContentDescriptionMatching(
-                    Regex("2:14\\sPM train delayed", RegexOption.IGNORE_CASE)
-                )
+                    Regex("2:14\\sPM train delayed", RegexOption.IGNORE_CASE),
+                ),
             )
             .assertCanBeDisplayed()
         composeTestRule
@@ -582,7 +585,7 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.ScheduleTimeWithStatusColumn(instant, status, true)
+                    TripInstantDisplay.ScheduleTimeWithStatusColumn(instant, status, true),
                 ),
                 routeType = RouteType.COMMUTER_RAIL,
             )
@@ -597,8 +600,8 @@ class UpcomingTripViewTest {
         composeTestRule
             .onNode(
                 hasContentDescriptionMatching(
-                    Regex("2:14\\sPM train delayed, Last trip", RegexOption.IGNORE_CASE)
-                )
+                    Regex("2:14\\sPM train delayed, Last trip", RegexOption.IGNORE_CASE),
+                ),
             )
             .assertCanBeDisplayed()
         composeTestRule
@@ -614,7 +617,7 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.ScheduleTimeWithStatusRow(instant, status)
+                    TripInstantDisplay.ScheduleTimeWithStatusRow(instant, status),
                 ),
                 routeType = RouteType.COMMUTER_RAIL,
             )
@@ -632,8 +635,8 @@ class UpcomingTripViewTest {
                     Regex(
                         "train arriving at 2:14\\sPM scheduled, Anomalous",
                         RegexOption.IGNORE_CASE,
-                    )
-                )
+                    ),
+                ),
             )
             .assertCanBeDisplayed()
         composeTestRule
@@ -695,7 +698,7 @@ class UpcomingTripViewTest {
     fun testUpcomingTripViewWithSomeScheduleMinutes() {
         composeTestRule.setContent {
             UpcomingTripView(
-                UpcomingTripViewState.Some(TripInstantDisplay.ScheduleMinutes(5, false))
+                UpcomingTripViewState.Some(TripInstantDisplay.ScheduleMinutes(5, false)),
             )
         }
         composeTestRule
@@ -710,7 +713,7 @@ class UpcomingTripViewTest {
     fun testUpcomingTripViewWithSomeScheduleMinutesLast() {
         composeTestRule.setContent {
             UpcomingTripView(
-                UpcomingTripViewState.Some(TripInstantDisplay.ScheduleMinutes(5, true))
+                UpcomingTripViewState.Some(TripInstantDisplay.ScheduleMinutes(5, true)),
             )
         }
         composeTestRule.onNodeWithText("Last").assertCanBeDisplayed()
@@ -728,7 +731,7 @@ class UpcomingTripViewTest {
     fun testUpcomingTripViewWithSomeScheduleMinutesOver60() {
         composeTestRule.setContent {
             UpcomingTripView(
-                UpcomingTripViewState.Some(TripInstantDisplay.ScheduleMinutes(75, false))
+                UpcomingTripViewState.Some(TripInstantDisplay.ScheduleMinutes(75, false)),
             )
         }
         composeTestRule
@@ -813,9 +816,9 @@ class UpcomingTripViewTest {
             UpcomingTripView(
                 UpcomingTripViewState.NoTrips(
                     UpcomingFormat.NoTripsFormat.SubwayEarlyMorning(
-                        EasternTimeInstant(2025, Month.NOVEMBER, 17, 9, 41)
-                    )
-                )
+                        EasternTimeInstant(2025, Month.NOVEMBER, 17, 9, 41),
+                    ),
+                ),
             )
         }
         composeTestRule
@@ -835,7 +838,7 @@ class UpcomingTripViewTest {
         val disruption = UpcomingFormat.Disruption(alert, mapStopRoute = MapStopRoute.FERRY)
         composeTestRule.setContent {
             UpcomingTripView(
-                UpcomingTripViewState.Disruption(FormattedAlert(alert), disruption.iconName)
+                UpcomingTripViewState.Disruption(FormattedAlert(alert), disruption.iconName),
             )
         }
         composeTestRule
@@ -850,7 +853,7 @@ class UpcomingTripViewTest {
         val disruption = UpcomingFormat.Disruption(alert, mapStopRoute = MapStopRoute.ORANGE)
         composeTestRule.setContent {
             UpcomingTripView(
-                UpcomingTripViewState.Disruption(FormattedAlert(alert), disruption.iconName)
+                UpcomingTripViewState.Disruption(FormattedAlert(alert), disruption.iconName),
             )
         }
 

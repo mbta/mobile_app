@@ -21,7 +21,7 @@ fun TripDetailsStopList.Entry.trackChangeTapCallback(
                                 lineId = null,
                                 routeIds = listOf(route.id),
                                 stopId = null,
-                            )
+                            ),
                         )
                     }
                 }

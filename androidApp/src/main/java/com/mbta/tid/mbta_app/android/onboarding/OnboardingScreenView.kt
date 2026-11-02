@@ -111,7 +111,7 @@ fun OnboardingScreenView(
                 if (sharingLocation && result.isNotEmpty()) {
                     advance(OnboardingScreen.Location)
                 }
-            }
+            },
         )
 
     fun shareLocation() {
@@ -314,7 +314,7 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
     }
 
     OnboardingPieces.PageBox(
-        colorResource(if (isSystemInDarkTheme()) R.color.fill1 else R.color.fill2)
+        colorResource(if (isSystemInDarkTheme()) R.color.fill1 else R.color.fill2),
     ) {
         Column(
             Modifier.align(Alignment.TopCenter)
@@ -322,7 +322,7 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
                 .scale(0.6f)
                 .background(colorResource(R.color.key), RoundedCornerShape(32.dp))
                 .border(16.dp, Color.Black, RoundedCornerShape(32.dp))
-                .padding(16.dp)
+                .padding(16.dp),
         ) {
             val isDarkMode = isSystemInDarkTheme()
             Spacer(Modifier.height(250.dp))
@@ -400,12 +400,12 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
                                                     )
                                                     .formattedServiceDay(
                                                         EasternTimeInstant.ServiceDateRounding
-                                                            .BACKWARDS
+                                                            .BACKWARDS,
                                                     ),
                                             ),
                                             "",
                                         )
-                                        .replace(Regex("</?b>"), "**")
+                                        .replace(Regex("</?b>"), "**"),
                                 ),
                         )
                     Text(
@@ -501,8 +501,8 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
                         rememberLottieComposition(
                             LottieCompositionSpec.RawRes(
                                 if (isSystemInDarkTheme()) R.raw.notification_pop_dark
-                                else R.raw.notification_pop_light
-                            )
+                                else R.raw.notification_pop_light,
+                            ),
                         )
                     }
                 val progress by

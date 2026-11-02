@@ -164,8 +164,8 @@ class HomeMapViewTests {
             ViewportProvider(
                 MapViewportState(
                     initialCameraState =
-                        CameraState(customLocation, EdgeInsets(0.0, 0.0, 0.0, 0.0), 0.0, 0.0, 0.0)
-                )
+                        CameraState(customLocation, EdgeInsets(0.0, 0.0, 0.0, 0.0), 0.0, 0.0, 0.0),
+                ),
             )
         viewModel.setViewportManager(viewportProvider)
         val configManager = MapboxConfigManager()
@@ -490,7 +490,7 @@ class HomeMapViewTests {
                 configManager,
                 navCallbacks =
                     NavigationCallbacks.empty.copy(
-                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Header
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Header,
                     ),
             )
         }

@@ -188,7 +188,7 @@ fun HomeMapView(
                 style = {
                     MapStyle(
                         style =
-                            if (isDarkMode) appVariant.darkMapStyle else appVariant.lightMapStyle
+                            if (isDarkMode) appVariant.darkMapStyle else appVariant.lightMapStyle,
                     )
                 },
             ) {
@@ -203,7 +203,7 @@ fun HomeMapView(
                         return@addOnMapClickListener false
                     }
                     map.mapboxMap.setBounds(
-                        CameraBoundsOptions.Builder().maxZoom(18.0).minZoom(7.5).build()
+                        CameraBoundsOptions.Builder().maxZoom(18.0).minZoom(7.5).build(),
                     )
                     map.location.setLocationProvider(locationProvider)
                     map.location.updateSettings {
@@ -282,7 +282,7 @@ fun HomeMapView(
                             ViewAnnotationOptions.Builder()
                                 .geometry(lastLoadedLocation.toPoint())
                                 .annotationAnchor { anchor(ViewAnnotationAnchor.CENTER) }
-                                .build()
+                                .build(),
                     ) {
                         Crosshairs(PaddingValues(0.dp))
                     }
@@ -297,7 +297,7 @@ fun HomeMapView(
                     val updated = mutableSetOf<String>()
                     val updateVehicles =
                         (selectedVehicle?.let { mapOf(it.id to it) } ?: emptyMap()).plus(
-                            vehiclesData.associateBy { it.id }
+                            vehiclesData.associateBy { it.id },
                         )
 
                     // Remove any vehicles that don't exist in the update
@@ -326,9 +326,9 @@ fun HomeMapView(
                                 allowOverlapWithPuck(true)
                                 ignoreCameraPadding(true)
                                 visible(
-                                    zoomLevel >= StopLayerGenerator.stopZoomThreshold || isSelected
+                                    zoomLevel >= StopLayerGenerator.stopZoomThreshold || isSelected,
                                 )
-                            }
+                            },
                     ) {
                         VehiclePuck(
                             vehicle = vehicle,

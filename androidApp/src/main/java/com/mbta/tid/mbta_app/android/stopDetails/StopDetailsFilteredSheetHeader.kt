@@ -80,7 +80,7 @@ fun StopDetailsFilteredHeader(
                 if (stop != null) {
                     Text(
                         AnnotatedString.fromHtml(
-                            stringResource(R.string.header_at_stop, stop.name)
+                            stringResource(R.string.header_at_stop, stop.name),
                         ),
                         modifier =
                             Modifier.semantics { heading() }.weight(1f).placeholderIfLoading(),

@@ -114,8 +114,8 @@ fun BottomSheetScaffold(
                         (actualSheetHeight ?: 0.dp).coerceIn(
                             sheetSmallHeight,
                             max(maxPadding, sheetSmallHeight),
-                        )
-                )
+                        ),
+                ),
             )
         },
         snackbarHost = { snackbarHost(scaffoldState.snackbarHostState) },
@@ -206,7 +206,7 @@ private fun StandardBottomSheet(
                         orientation = orientation,
                         onFling = { scope.launch { state.settle(it) } },
                     )
-                }
+                },
             )
         } else {
             Modifier
@@ -291,7 +291,7 @@ private fun StandardBottomSheet(
                                 }
                             }
                         }
-                    }
+                    },
                 ) {
                     AnimatedVisibility(handleVisible, enter = fadeIn(), exit = fadeOut()) {
                         dragHandle()
@@ -329,7 +329,7 @@ private fun BottomSheetScaffoldLayout(
                 },
                 bottomSheet,
                 snackbarHost,
-            )
+            ),
     ) {
         (topBarMeasurables, bodyMeasurables, bottomSheetMeasurables, snackbarHostMeasurables),
         constraints ->

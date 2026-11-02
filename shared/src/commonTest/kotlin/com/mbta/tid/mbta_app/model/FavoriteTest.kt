@@ -75,7 +75,7 @@ class FavoriteTest {
                 mapOf(
                     RouteStopDirection(Route.Id("route1"), "stop1", 0) to FavoriteSettings(),
                     RouteStopDirection(Route.Id("route2"), "stop2", 1) to FavoriteSettings(),
-                )
+                ),
             ),
             newFavorites,
         )

@@ -454,7 +454,7 @@ class RoutePickerViewTest {
         composeTestRule.onNodeWithText("Filter routes").performClick().performTextInput("query")
         composeTestRule.waitForIdle()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasText("To find stops, select a route first")
+            hasText("To find stops, select a route first"),
         )
         composeTestRule.onNodeWithText(route1.longName).assertCanBeDisplayed()
         composeTestRule.onNodeWithText(route71.longName).assertIsNotDisplayed()
@@ -526,7 +526,7 @@ class RoutePickerViewTest {
         composeTestRule.waitForIdle()
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasText("To find stops, select a route first")
+            hasText("To find stops, select a route first"),
         )
         composeTestRule.onNodeWithText("No matching bus routes").assertCanBeDisplayed()
         composeTestRule.onNodeWithText(route1.longName).assertIsNotDisplayed()

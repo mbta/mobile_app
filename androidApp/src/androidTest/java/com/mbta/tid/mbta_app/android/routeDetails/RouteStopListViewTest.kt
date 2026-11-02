@@ -97,7 +97,7 @@ class RouteStopListViewTest {
                                 ),
                                 name = null,
                                 isTypical = true,
-                            )
+                            ),
                         ),
                     routeId = mainRoute.id,
                 )
@@ -369,9 +369,9 @@ class RouteStopListViewTest {
                     segments =
                         listOf(
                             RouteBranchSegment.of(
-                                listOf("place-alfcl", "place-davis", "place-portr")
-                            )
-                        )
+                                listOf("place-alfcl", "place-davis", "place-portr"),
+                            ),
+                        ),
                 )
         }
         val toastVM = MockToastViewModel()
@@ -417,9 +417,9 @@ class RouteStopListViewTest {
                     segments =
                         listOf(
                             RouteBranchSegment.of(
-                                listOf("place-alfcl", "place-davis", "place-portr")
-                            )
-                        )
+                                listOf("place-alfcl", "place-davis", "place-portr"),
+                            ),
+                        ),
                 )
         }
         val toastVM = MockToastViewModel()
@@ -473,9 +473,9 @@ class RouteStopListViewTest {
                     segments =
                         listOf(
                             RouteBranchSegment.of(
-                                listOf("place-alfcl", "place-davis", "place-portr")
-                            )
-                        )
+                                listOf("place-alfcl", "place-davis", "place-portr"),
+                            ),
+                        ),
                 )
         }
         val toastVM = MockToastViewModel()

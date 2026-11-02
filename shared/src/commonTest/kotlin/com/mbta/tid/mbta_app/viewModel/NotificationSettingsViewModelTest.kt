@@ -42,7 +42,7 @@ class NotificationSettingsViewModelTest {
                             startTime = Preset.Morning.startTime,
                             endTime = Preset.Morning.endTime,
                             daysOfWeek = Window.weekdays,
-                        )
+                        ),
                     ),
             )
 
@@ -90,7 +90,7 @@ class NotificationSettingsViewModelTest {
                         startTime = LocalTime(8, 0),
                         endTime = LocalTime(9, 0),
                         daysOfWeek = Window.weekdays,
-                    )
+                    ),
                 ),
                 state.settings?.windows,
             )
@@ -117,7 +117,7 @@ class NotificationSettingsViewModelTest {
                         startTime = Preset.Midday.startTime,
                         endTime = Preset.Midday.endTime,
                         daysOfWeek = Window.weekdays,
-                    )
+                    ),
                 ),
                 state.settings?.windows,
             )
@@ -134,7 +134,7 @@ class NotificationSettingsViewModelTest {
                     startTime = LocalTime(8, 0),
                     endTime = LocalTime(11, 0),
                     daysOfWeek = setOf(DayOfWeek.MONDAY),
-                )
+                ),
             )
 
         testViewModelFlow(viewModel).test {
@@ -153,7 +153,7 @@ class NotificationSettingsViewModelTest {
                         startTime = Preset.Morning.startTime,
                         endTime = Preset.Morning.endTime,
                         daysOfWeek = setOf(DayOfWeek.MONDAY),
-                    )
+                    ),
                 ),
                 presetState.settings?.windows,
             )
@@ -210,8 +210,8 @@ class NotificationSettingsViewModelTest {
                         startTime = Preset.Morning.startTime,
                         endTime = Preset.Morning.endTime,
                         daysOfWeek = setOf(DayOfWeek.SUNDAY),
-                    )
-                )
+                    ),
+                ),
             )
             awaitItem()
             viewModel.setPreset(null)
@@ -219,7 +219,7 @@ class NotificationSettingsViewModelTest {
             assertEquals(null, newState.selectedPreset)
             assertWindowsEquals(
                 listOf(
-                    Window.customFromCurrentTime(now).copy(daysOfWeek = setOf(DayOfWeek.SUNDAY))
+                    Window.customFromCurrentTime(now).copy(daysOfWeek = setOf(DayOfWeek.SUNDAY)),
                 ),
                 newState.settings?.windows,
             )
@@ -244,7 +244,7 @@ class NotificationSettingsViewModelTest {
                         startTime = Preset.Morning.startTime,
                         endTime = Preset.Morning.endTime,
                         daysOfWeek = setOf(DayOfWeek.MONDAY),
-                    )
+                    ),
                 )
             assertEquals(emptyList(), state.settings?.windows)
             viewModel.setWindows(customWindows)
@@ -269,7 +269,7 @@ class NotificationSettingsViewModelTest {
                     startTime = LocalTime(9, 0),
                     endTime = LocalTime(11, 0),
                     daysOfWeek = setOf(DayOfWeek.MONDAY),
-                )
+                ),
             )
 
         testViewModelFlow(viewModel).test {
@@ -304,7 +304,7 @@ class NotificationSettingsViewModelTest {
                     startTime = LocalTime(9, 0),
                     endTime = LocalTime(11, 0),
                     daysOfWeek = setOf(DayOfWeek.MONDAY),
-                )
+                ),
             )
 
         testViewModelFlow(viewModel).test {
@@ -376,7 +376,7 @@ class NotificationSettingsViewModelTest {
                             startTime = Preset.Morning.startTime,
                             endTime = Preset.Morning.endTime,
                             daysOfWeek = Window.weekdays,
-                        )
+                        ),
                     ),
             )
 
@@ -406,7 +406,7 @@ class NotificationSettingsViewModelTest {
                             startTime = Preset.Morning.startTime,
                             endTime = Preset.Morning.endTime,
                             daysOfWeek = Window.weekdays,
-                        )
+                        ),
                     ),
             )
 
@@ -437,7 +437,7 @@ class NotificationSettingsViewModelTest {
                             startTime = Preset.Morning.startTime,
                             endTime = Preset.Morning.endTime,
                             daysOfWeek = Window.weekdays,
-                        )
+                        ),
                     ),
             )
         val newSettings =
@@ -449,7 +449,7 @@ class NotificationSettingsViewModelTest {
                             startTime = Preset.Evening.startTime,
                             endTime = Preset.Evening.endTime,
                             daysOfWeek = Window.weekdays,
-                        )
+                        ),
                     ),
             )
 

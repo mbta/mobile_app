@@ -31,7 +31,7 @@ private val formatWeekdayAndDate by lazy {
 }
 private val formatShortWeekdayAndDate by lazy {
     DateFormat.getInstanceForSkeleton(
-            DateFormat.ABBR_WEEKDAY + DateFormat.ABBR_MONTH + DateFormat.DAY
+            DateFormat.ABBR_WEEKDAY + DateFormat.ABBR_MONTH + DateFormat.DAY,
         )
         .inEasternTime()
 }
@@ -69,7 +69,7 @@ fun EasternTimeInstant.formattedShortDateShortTime(): String =
  */
 fun EasternTimeInstant.formattedServiceDay(
     rounding: EasternTimeInstant.ServiceDateRounding =
-        EasternTimeInstant.ServiceDateRounding.FORWARDS
+        EasternTimeInstant.ServiceDateRounding.FORWARDS,
 ): String = this.coerceInServiceDay(rounding).formatWith(formatWeekday)
 
 /**
@@ -82,7 +82,7 @@ fun EasternTimeInstant.formattedServiceDay(
  */
 fun EasternTimeInstant.formattedServiceDayAndDate(
     rounding: EasternTimeInstant.ServiceDateRounding =
-        EasternTimeInstant.ServiceDateRounding.FORWARDS
+        EasternTimeInstant.ServiceDateRounding.FORWARDS,
 ): String = this.coerceInServiceDay(rounding).formatWith(formatWeekdayAndDate)
 
 /**
@@ -94,7 +94,7 @@ fun EasternTimeInstant.formattedServiceDayAndDate(
  */
 fun EasternTimeInstant.formattedShortServiceDayAndDate(
     rounding: EasternTimeInstant.ServiceDateRounding =
-        EasternTimeInstant.ServiceDateRounding.FORWARDS
+        EasternTimeInstant.ServiceDateRounding.FORWARDS,
 ): String = this.coerceInServiceDay(rounding).formatWith(formatShortWeekdayAndDate)
 
 /**
@@ -106,5 +106,5 @@ fun EasternTimeInstant.formattedShortServiceDayAndDate(
  */
 fun EasternTimeInstant.formattedServiceDate(
     rounding: EasternTimeInstant.ServiceDateRounding =
-        EasternTimeInstant.ServiceDateRounding.FORWARDS
+        EasternTimeInstant.ServiceDateRounding.FORWARDS,
 ): String = this.coerceInServiceDay(rounding).formatWith(formatMonthDay)

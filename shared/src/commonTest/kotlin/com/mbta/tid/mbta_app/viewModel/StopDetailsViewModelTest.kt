@@ -59,7 +59,7 @@ class StopDetailsViewModelTest : KoinTest {
                         useObjects(objects)
                         pinnedRoutes = MockPinnedRoutesRepository()
                         repositoriesBlock()
-                    }
+                    },
                 ),
                 viewModelModule(),
                 module {
@@ -263,7 +263,7 @@ class StopDetailsViewModelTest : KoinTest {
         setUpKoin(objects, dispatcher) {
             predictions =
                 MockPredictionsRepository(
-                    connectV2Response = PredictionsByStopJoinResponse(objects)
+                    connectV2Response = PredictionsByStopJoinResponse(objects),
                 )
             errorBanner = errorBannerStateRepository
         }
@@ -425,7 +425,7 @@ class StopDetailsViewModelTest : KoinTest {
                     "place-rugg",
                     StopDetailsFilter(Route.Id("Orange"), 1, false),
                     null,
-                )
+                ),
             )
             modelTurbine.awaitItemSatisfying { it.routeData?.filters?.stopFilter?.directionId == 1 }
 

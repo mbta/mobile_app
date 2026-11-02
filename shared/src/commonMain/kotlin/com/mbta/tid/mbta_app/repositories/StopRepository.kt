@@ -57,7 +57,7 @@ public class MockStopRepository(private val objects: ObjectCollectionBuilder? = 
                                 it.directionId,
                                 listOf(),
                                 Shape("fake-shape${it.id}"),
-                            )
+                            ),
                         ),
                     )
                 },
@@ -67,7 +67,7 @@ public class MockStopRepository(private val objects: ObjectCollectionBuilder? = 
                         .childStopIds
                         .mapNotNull { childId -> objects.getStopSafe(childId) }
                         .associateBy { it.id },
-            )
+            ),
         )
     }
 }

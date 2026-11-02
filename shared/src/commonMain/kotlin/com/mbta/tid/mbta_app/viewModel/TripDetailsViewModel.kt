@@ -128,7 +128,9 @@ public class TripDetailsViewModel(
 
         LaunchedEffect(filters, tripData?.vehicle) {
             _mapUpdates.tryEmit(
-                MapUpdate.SelectedVehicle(tripData?.vehicle?.takeIf { it.id == filters?.vehicleId })
+                MapUpdate.SelectedVehicle(
+                    tripData?.vehicle?.takeIf { it.id == filters?.vehicleId },
+                ),
             )
         }
 

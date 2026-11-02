@@ -84,7 +84,7 @@ fun CollapsableStopList(
                     contentDescription = null,
                     onClickLabel =
                         stringResource(
-                            if (stopsExpanded) R.string.collapse_stops else R.string.expand_stops
+                            if (stopsExpanded) R.string.collapse_stops else R.string.expand_stops,
                         ),
                     routeAccents = routeAccents,
                     stickConnections = twistedConnections,
@@ -96,7 +96,7 @@ fun CollapsableStopList(
                         ) {
                             Text(
                                 AnnotatedString.fromHtml(
-                                    stringResource(R.string.less_common_stops, segment.stops.size)
+                                    stringResource(R.string.less_common_stops, segment.stops.size),
                                 ),
                                 color = colorResource(R.color.text),
                                 style = Typography.body,

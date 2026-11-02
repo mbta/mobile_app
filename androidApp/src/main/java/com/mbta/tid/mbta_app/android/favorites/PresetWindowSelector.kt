@@ -51,7 +51,7 @@ fun PresetWindowSelector(
                         rowCount = presetRows.size + 1, // +1 for Custom
                         columnCount = maxColumnCount,
                     )
-            }
+            },
     ) {
         presetRows.forEachIndexed { rowIndex, windows ->
             Row(

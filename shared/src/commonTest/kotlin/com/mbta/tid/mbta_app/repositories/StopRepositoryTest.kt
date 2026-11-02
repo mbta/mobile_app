@@ -78,7 +78,7 @@ class StopRepositoryTest : KoinTest {
                           }
                         }
                         """
-                            .trimIndent()
+                            .trimIndent(),
                     ),
                 status = HttpStatusCode.OK,
                 headers = headersOf(HttpHeaders.ContentType, "application/json"),
@@ -115,16 +115,16 @@ class StopRepositoryTest : KoinTest {
                                                                 ),
                                                             otherPatternsByStopId = mapOf(),
                                                             sourceRoutePatternId = "Blue-6-0",
-                                                        )
+                                                        ),
                                                     ),
                                                 shape =
                                                     Shape(
                                                         id = "canonical-946_0013",
                                                         polyline = "s|zaG~phpLpBwO",
                                                     ),
-                                            )
+                                            ),
                                         ),
-                                )
+                                ),
                             ),
                         childStops =
                             mapOf(
@@ -141,9 +141,9 @@ class StopRepositoryTest : KoinTest {
                                         vehicleType = RouteType.HEAVY_RAIL,
                                         parentStationId = "place-wondl",
                                     ),
-                                )
+                                ),
                             ),
-                    )
+                    ),
                 ),
                 response,
             )

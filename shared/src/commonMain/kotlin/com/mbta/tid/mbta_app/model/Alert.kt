@@ -384,7 +384,7 @@ internal constructor(
         public val daily: Boolean =
             days ==
                 (start.serviceDate..end.serviceDate(
-                            EasternTimeInstant.ServiceDateRounding.BACKWARDS
+                            EasternTimeInstant.ServiceDateRounding.BACKWARDS,
                         ))
                     .map { it.dayOfWeek }
                     .toSet() && days.count() > 1

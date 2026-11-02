@@ -93,7 +93,7 @@ public data class RouteSegment(
      * Only contains keys for stops with an alert, and for each stop only the routes with an alert.
      */
     internal fun alertStateByStopId(
-        alertsByStop: Map<String, AlertAssociatedStop>
+        alertsByStop: Map<String, AlertAssociatedStop>,
     ): Map<String, Map<Route.Id, StopAlertState>> {
         val otherRoutesByStopId = otherRoutesByStopId()
         return stopIds
@@ -201,7 +201,10 @@ public data class RouteSegment(
                 if (lastSegment.first == currSegment.first) {
                     oldSegments +
                         listOf(
-                            Pair(lastSegment.first, lastSegment.second + currSegment.second.drop(1))
+                            Pair(
+                                lastSegment.first,
+                                lastSegment.second + currSegment.second.drop(1),
+                            ),
                         )
                 } else {
                     prevSegments + listOf(currSegment)

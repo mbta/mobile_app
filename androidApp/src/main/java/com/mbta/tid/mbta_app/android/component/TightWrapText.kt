@@ -32,11 +32,11 @@ fun TightWrapText(text: String, modifier: Modifier = Modifier, style: TextStyle 
                 } else {
                     val minX =
                         (0 until newTextLayoutResult.lineCount).minOf(
-                            newTextLayoutResult::getLineLeft
+                            newTextLayoutResult::getLineLeft,
                         )
                     val maxX =
                         (0 until newTextLayoutResult.lineCount).maxOf(
-                            newTextLayoutResult::getLineRight
+                            newTextLayoutResult::getLineRight,
                         )
 
                     layout(ceil(maxX - minX).toInt(), placeable.height) {

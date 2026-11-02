@@ -146,8 +146,8 @@ fun TripDetailsView(
                         trip.directionId,
                         tripFilter.stopId,
                         tripData.tripFilter.stopSequence,
-                    )
-                )
+                    ),
+                ),
             )
         }
 

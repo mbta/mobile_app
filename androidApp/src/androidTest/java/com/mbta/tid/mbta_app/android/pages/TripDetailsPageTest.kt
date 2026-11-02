@@ -107,7 +107,7 @@ class TripDetailsPageTest {
         }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasText("Southbound to") and hasText("Forest Hills")
+            hasText("Southbound to") and hasText("Forest Hills"),
         )
         composeTestRule.onNodeWithText("OL").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Southbound to").assertCanBeDisplayed()

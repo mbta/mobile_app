@@ -110,7 +110,7 @@ class ViewportProvider(
                     Defaults.zoom,
                     0.0,
                     0.0,
-                )
+                ),
         )
     override var cameraStateFlow =
         _cameraState.asStateFlow().distinctUntilChanged { old, new ->
@@ -230,18 +230,20 @@ class ViewportProvider(
         if (stop == null) {
             animateTo(vehicle.position.toMapbox())
         } else if (density != null) {
-            animateToOverview({
-                OverviewViewportStateOptions.Builder()
-                    .padding(lastEdgeInsets)
-                    .geometry(
-                        MultiPoint.fromLngLats(
-                            listOf(vehicle.position.toMapbox(), stop.position.toMapbox())
+            animateToOverview(
+                {
+                    OverviewViewportStateOptions.Builder()
+                        .padding(lastEdgeInsets)
+                        .geometry(
+                            MultiPoint.fromLngLats(
+                                listOf(vehicle.position.toMapbox(), stop.position.toMapbox()),
+                            ),
                         )
-                    )
-                    .geometryPadding(Defaults.overviewPadding(density))
-                    .maxZoom(16.0)
-                    .build()
-            })
+                        .geometryPadding(Defaults.overviewPadding(density))
+                        .maxZoom(16.0)
+                        .build()
+                },
+            )
         }
     }
 
@@ -320,7 +322,7 @@ class ViewportProvider(
                 Defaults.zoom,
                 0.0,
                 0.0,
-            )
+            ),
         )
     }
 

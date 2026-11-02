@@ -111,10 +111,10 @@ fun StopDetailsUnfilteredRoutesView(
         Box(
             Modifier.background(MaterialTheme.colorScheme.surface)
                 .navigationBarsPadding()
-                .fillMaxSize()
+                .fillMaxSize(),
         ) {
             HorizontalDivider(
-                Modifier.fillMaxWidth().zIndex(1f).border(2.dp, colorResource(R.color.halo))
+                Modifier.fillMaxWidth().zIndex(1f).border(2.dp, colorResource(R.color.halo)),
             )
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -145,13 +145,13 @@ fun StopDetailsUnfilteredRoutesView(
                                                                 null,
                                                                 null,
                                                                 stop.id,
-                                                            )
+                                                            ),
                                                         )
                                                     },
                                                     modifier,
                                                 )
                                             }
-                                        }
+                                        },
                                 )
                             } else {
                                 NotAccessibleCard(Modifier.haloContainer(2.dp))
@@ -250,9 +250,9 @@ private fun StopDetailsRoutesViewPreview() {
                                 subwayServiceStartTime = null,
                                 alertsDownstream = emptyList(),
                                 context = context,
-                            )
+                            ),
                         ),
-                    )
+                    ),
                 ),
                 now,
             ),
@@ -295,7 +295,7 @@ private fun StopDetailsRoutesViewPreview() {
                                 context = context,
                             ),
                         ),
-                    )
+                    ),
                 ),
                 now,
             ),
@@ -306,7 +306,7 @@ private fun StopDetailsRoutesViewPreview() {
             module {
                 single<Analytics> { MockAnalytics() }
                 single<SettingsCache> { SettingsCache(MockSettingsRepository()) }
-            }
+            },
         )
     }
     val errorBannerVM: IErrorBannerViewModel = MockErrorBannerViewModel()

@@ -45,7 +45,7 @@ fun loadKoinMocks(
                 MockRepositories().apply {
                     useObjects(objects)
                     repositoryOverrides()
-                }
+                },
             ),
             viewModelModule(),
             MainApplication.koinViewModelModule(),

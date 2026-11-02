@@ -120,7 +120,7 @@ fun TripHeaderCard(
     val cardModifier =
         modifier
             .then(
-                if (clickable && onTrackChangeTap == null) Modifier.infoClick(onTap) else Modifier
+                if (clickable && onTrackChangeTap == null) Modifier.infoClick(onTap) else Modifier,
             )
             .haloContainer(2.dp)
             .semantics(mergeDescendants = true) {}
@@ -191,7 +191,7 @@ fun TripHeaderCard(
                                         toLane = RouteBranchSegment.Lane.Center,
                                         fromVPos = RouteBranchSegment.VPos.Center,
                                         toVPos = RouteBranchSegment.VPos.Bottom,
-                                    )
+                                    ),
                                 ),
                                 Modifier.zIndex(-1f).padding(start = 12.dp).fillMaxHeight(),
                             )
@@ -213,7 +213,7 @@ fun TripHeaderCard(
                                 toLane = RouteBranchSegment.Lane.Center,
                                 fromVPos = RouteBranchSegment.VPos.Top,
                                 toVPos = RouteBranchSegment.VPos.Bottom,
-                            )
+                            ),
                         ),
                         Modifier.zIndex(1f).padding(start = 14.dp).height(2.dp),
                     )
@@ -248,7 +248,7 @@ private fun CarLevelCrowding(carriages: List<Vehicle.Carriage>, routeAccents: Tr
                         Vehicle.CrowdingLevel.SomeCrowding -> R.drawable.crowding_car_some_crowding
                         Vehicle.CrowdingLevel.Crowded -> R.drawable.crowding_car_crowded
                         null -> R.drawable.crowding_car_unknown
-                    }
+                    },
                 )
             val color =
                 when (carriage.occupancyStatus.crowdingLevel) {
@@ -295,7 +295,7 @@ private fun VehicleCrowding(crowding: Vehicle.CrowdingLevel, modifier: Modifier 
                 Vehicle.CrowdingLevel.Crowded -> R.drawable.crowding_bus_crowded
                 Vehicle.CrowdingLevel.NotCrowded -> R.drawable.crowding_bus_not_crowded
                 Vehicle.CrowdingLevel.SomeCrowding -> R.drawable.crowding_bus_some_crowding
-            }
+            },
         )
 
     Row(
@@ -320,7 +320,7 @@ private fun crowdingText(crowding: Vehicle.CrowdingLevel?) =
             Vehicle.CrowdingLevel.NotCrowded -> R.string.crowding_not_crowded
             Vehicle.CrowdingLevel.SomeCrowding -> R.string.crowding_some_crowding
             null -> R.string.crowding_unknown
-        }
+        },
     )
 
 @Composable
@@ -377,7 +377,7 @@ private fun ScheduleDescription(
                 .then(
                     onTrackChangeTap?.let {
                         Modifier.clip(RoundedCornerShape(8.dp)).clickable { onTrackChangeTap() }
-                    } ?: Modifier
+                    } ?: Modifier,
                 ),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
@@ -546,7 +546,7 @@ private fun VehiclePuck(
                 modifier =
                     Modifier.align(Alignment.Center)
                         .padding(bottom = 36.dp)
-                        .testTag("stop_pin_indicator")
+                        .testTag("stop_pin_indicator"),
             ) {
                 Image(painterResource(R.drawable.stop_pin_indicator), null)
             }
@@ -567,7 +567,7 @@ private fun RowScope.TripIndicator(
     val upcomingTripViewState = upcomingTripViewState(spec, route, trip, now)
     Column(
         DestinationPredictionBalance.predictionWidth(
-            upcomingTripViewState?.containsWrappableText() ?: false
+            upcomingTripViewState?.containsWrappableText() ?: false,
         ),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.End,

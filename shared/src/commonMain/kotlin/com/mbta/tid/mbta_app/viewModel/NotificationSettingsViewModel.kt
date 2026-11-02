@@ -129,7 +129,7 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
                             // default custom window time
                             listOf(
                                 Window.customFromCurrentTime(now)
-                                    .copy(daysOfWeek = event.windows.first().daysOfWeek)
+                                    .copy(daysOfWeek = event.windows.first().daysOfWeek),
                             )
                         } else {
                             event.windows
@@ -155,7 +155,7 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
                                             event.preset.startTime,
                                             event.preset.endTime,
                                             daysOfWeek,
-                                        )
+                                        ),
                                     ) + existingWindows.drop(1)
                                 } else {
                                     listOf(
@@ -163,7 +163,7 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
                                             event.preset.startTime,
                                             event.preset.endTime,
                                             daysOfWeek,
-                                        )
+                                        ),
                                     )
                                 }
                             Notifications(
@@ -251,7 +251,7 @@ public class NotificationSettingsViewModel(private val sentryRepository: ISentry
 
 public class MockNotificationSettingsViewModel(
     public val initialState: NotificationSettingsViewModel.State =
-        NotificationSettingsViewModel.State()
+        NotificationSettingsViewModel.State(),
 ) : INotificationSettingsViewModel {
     override val models: MutableStateFlow<NotificationSettingsViewModel.State>
         get() = MutableStateFlow(initialState)

@@ -10,7 +10,7 @@ import org.koin.core.component.KoinComponent
 
 public class ScheduleCache(
     private val keyedCache: IKeyedCache<Entry> =
-        KeyedCache(CACHE_GROUP, CACHE_KEY_PREFIX, json.serializersModule.serializer())
+        KeyedCache(CACHE_GROUP, CACHE_KEY_PREFIX, json.serializersModule.serializer()),
 ) : KoinComponent {
     private companion object {
         private const val CACHE_GROUP = "scheduleCache"

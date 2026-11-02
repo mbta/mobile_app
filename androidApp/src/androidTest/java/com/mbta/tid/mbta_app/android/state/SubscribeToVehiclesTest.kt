@@ -172,8 +172,8 @@ class SubscribeToVehiclesTest {
                                         setOf(stop.id),
                                         listOf(
                                             UpcomingTrip(
-                                                objects.trip { routeId = route2.id.idText }
-                                            )
+                                                objects.trip { routeId = route2.id.idText },
+                                            ),
                                         ),
                                         emptyList(),
                                         true,
@@ -181,12 +181,12 @@ class SubscribeToVehiclesTest {
                                         null,
                                         emptyList(),
                                         RouteCardData.Context.StopDetailsFiltered,
-                                    )
+                                    ),
                                 ),
-                            )
+                            ),
                         ),
                     at = EasternTimeInstant.now(),
-                )
+                ),
             )
 
         var vehicles: List<Vehicle> = emptyList()
@@ -256,7 +256,9 @@ class SubscribeToVehiclesTest {
                                         listOf(),
                                         setOf(stop.id),
                                         listOf(
-                                            UpcomingTrip(objects.trip { routeId = route.id.idText })
+                                            UpcomingTrip(
+                                                objects.trip { routeId = route.id.idText },
+                                            ),
                                         ),
                                         emptyList(),
                                         true,
@@ -264,12 +266,12 @@ class SubscribeToVehiclesTest {
                                         null,
                                         emptyList(),
                                         RouteCardData.Context.StopDetailsFiltered,
-                                    )
+                                    ),
                                 ),
-                            )
+                            ),
                         ),
                     at = EasternTimeInstant.now(),
-                )
+                ),
             )
 
         var vehicles: List<Vehicle> = emptyList()

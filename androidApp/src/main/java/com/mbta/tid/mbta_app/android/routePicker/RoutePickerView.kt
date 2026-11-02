@@ -119,7 +119,7 @@ fun RoutePickerView(
             closeText = stringResource(R.string.done),
             navCallbacks =
                 navCallbacks.copy(
-                    onBack = navCallbacks.onBack.takeUnless { path == RoutePickerPath.Root }
+                    onBack = navCallbacks.onBack.takeUnless { path == RoutePickerPath.Root },
                 ),
             buttonColors = ButtonDefaults.contrastTranslucent(),
         )
@@ -197,7 +197,7 @@ fun RoutePickerView(
                 if (displayedRoutes.isNotEmpty())
                     Column(
                         Modifier.padding(bottom = 14.dp)
-                            .haloContainer(2.dp, outlineColor = path.haloColor)
+                            .haloContainer(2.dp, outlineColor = path.haloColor),
                     ) {
                         for ((index, route) in displayedRoutes.withIndex()) {
                             RoutePickerRow(route) { onOpenRouteDetails(route.id, context) }

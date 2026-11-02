@@ -34,7 +34,7 @@ fun SearchResultsView(
                 .fillMaxWidth()
                 .background(colorResource(R.color.fill1))
                 .padding(16.dp)
-                .navigationBarsPadding()
+                .navigationBarsPadding(),
     ) {
         when (state) {
             SearchViewModel.State.Loading -> LoadingResultsView()

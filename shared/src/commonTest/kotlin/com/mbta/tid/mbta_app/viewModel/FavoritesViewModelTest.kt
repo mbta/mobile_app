@@ -130,7 +130,7 @@ internal class FavoritesViewModelTest : KoinTest {
                         favorites = MockFavoritesRepository(this@FavoritesViewModelTest.favorites)
                         pinnedRoutes = MockPinnedRoutesRepository()
                         repositoriesBlock()
-                    }
+                    },
                 ),
                 viewModelModule(),
                 module {
@@ -256,9 +256,9 @@ internal class FavoritesViewModelTest : KoinTest {
                                     subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     context = RouteCardData.Context.Favorites,
-                                )
+                                ),
                             ),
-                        )
+                        ),
                     ),
                     now,
                 ),
@@ -282,9 +282,9 @@ internal class FavoritesViewModelTest : KoinTest {
                                     subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     context = RouteCardData.Context.Favorites,
-                                )
+                                ),
                             ),
-                        )
+                        ),
                     ),
                     now,
                 ),
@@ -310,8 +310,8 @@ internal class FavoritesViewModelTest : KoinTest {
                                                 predictions
                                                     .getValue(stop1)
                                                     .getValue(route1)
-                                                    .getValue(0)
-                                            )
+                                                    .getValue(0),
+                                            ),
                                         ),
                                     alertsHere = emptyList(),
                                     allDataLoaded = true,
@@ -319,9 +319,9 @@ internal class FavoritesViewModelTest : KoinTest {
                                     subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     context = RouteCardData.Context.Favorites,
-                                )
+                                ),
                             ),
-                        )
+                        ),
                     ),
                     now,
                 ),
@@ -344,8 +344,8 @@ internal class FavoritesViewModelTest : KoinTest {
                                                 predictions
                                                     .getValue(stop2)
                                                     .getValue(route2)
-                                                    .getValue(1)
-                                            )
+                                                    .getValue(1),
+                                            ),
                                         ),
                                     alertsHere = emptyList(),
                                     allDataLoaded = true,
@@ -353,9 +353,9 @@ internal class FavoritesViewModelTest : KoinTest {
                                     subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     context = RouteCardData.Context.Favorites,
-                                )
+                                ),
                             ),
-                        )
+                        ),
                     ),
                     now,
                 ),
@@ -451,12 +451,12 @@ internal class FavoritesViewModelTest : KoinTest {
                                     subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     RouteCardData.Context.Favorites,
-                                )
+                                ),
                             ),
-                        )
+                        ),
                     ),
                     now,
-                )
+                ),
             )
         val expectedStaticDataAfter =
             listOf(
@@ -480,12 +480,12 @@ internal class FavoritesViewModelTest : KoinTest {
                                     subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     RouteCardData.Context.Favorites,
-                                )
+                                ),
                             ),
-                        )
+                        ),
                     ),
                     now,
-                )
+                ),
             )
 
         testViewModelFlow(viewModel).test {
@@ -573,12 +573,12 @@ internal class FavoritesViewModelTest : KoinTest {
                                     subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     RouteCardData.Context.Favorites,
-                                )
+                                ),
                             ),
-                        )
+                        ),
                     ),
                     now,
-                )
+                ),
             )
         val expectedStaticDataAfter: List<RouteCardData> = listOf()
 
@@ -760,7 +760,7 @@ internal class FavoritesViewModelTest : KoinTest {
         var analyticsLogged: Pair<String, String>? = null
         val mockAnalytics =
             MockAnalytics(
-                onSetUserProperty = { event, count -> analyticsLogged = Pair(event, count) }
+                onSetUserProperty = { event, count -> analyticsLogged = Pair(event, count) },
             )
 
         val initialFavorites = buildFavorites { routeStopDirection(route1.id, stop1.id, 0) }
@@ -826,7 +826,7 @@ internal class FavoritesViewModelTest : KoinTest {
                         subwayServiceStartTime = null,
                         alertsDownstream = emptyList(),
                         RouteCardData.Context.Favorites,
-                    )
+                    ),
                 ),
             )
 
@@ -848,7 +848,7 @@ internal class FavoritesViewModelTest : KoinTest {
                         subwayServiceStartTime = null,
                         alertsDownstream = emptyList(),
                         RouteCardData.Context.Favorites,
-                    )
+                    ),
                 ),
             )
 
@@ -870,7 +870,7 @@ internal class FavoritesViewModelTest : KoinTest {
                         subwayServiceStartTime = null,
                         alertsDownstream = emptyList(),
                         RouteCardData.Context.Favorites,
-                    )
+                    ),
                 ),
             )
         val routeCard1Data = RouteCardData(LineOrRoute.Route(route1), listOf(stop1Data), now)
@@ -1149,12 +1149,12 @@ internal class FavoritesViewModelTest : KoinTest {
                                     subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     RouteCardData.Context.Favorites,
-                                )
+                                ),
                             ),
-                        )
+                        ),
                     ),
                     now,
-                )
+                ),
             )
         val expectedStaticDataAfter: List<RouteCardData> = listOf()
 

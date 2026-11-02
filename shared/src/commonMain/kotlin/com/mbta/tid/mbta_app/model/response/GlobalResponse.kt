@@ -36,7 +36,7 @@ internal constructor(
     @SerialName("stop_blocklist") internal val stopBlocklist: List<String> = emptyList(),
 ) {
     public constructor(
-        objects: ObjectCollectionBuilder
+        objects: ObjectCollectionBuilder,
     ) : this(
         objects.facilities.toMap(),
         objects.lines.toMap(),
@@ -93,7 +93,7 @@ internal constructor(
                     it.locationType in setOf(LocationType.STOP, LocationType.STATION) &&
                         it.vehicleType != null
                 }
-                .map { it.id to it.position }
+                .map { it.id to it.position },
         )
 
     @Transient

@@ -24,7 +24,7 @@ class MockDatastoreStorage : Storage<Preferences> {
         }
 
         override suspend fun <R> readScope(
-            block: suspend ReadScope<Preferences>.(locked: Boolean) -> R
+            block: suspend ReadScope<Preferences>.(locked: Boolean) -> R,
         ): R = MockReadScope().block(true)
     }
 

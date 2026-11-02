@@ -133,7 +133,7 @@ fun SearchInputField(
                 onSearch = {
                     onSearch(query)
                     keyboardController?.hide()
-                }
+                },
             ),
         interactionSource = interactionSource,
         decorationBox =

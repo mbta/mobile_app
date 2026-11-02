@@ -98,7 +98,7 @@ private fun predictedMinutesDescription(
                 is TripInstantDisplay.Approaching -> 1
                 is TripInstantDisplay.Minutes -> trip.minutes
                 else -> return ""
-            }
+            },
         )
     val lastTrip =
         when (trip) {

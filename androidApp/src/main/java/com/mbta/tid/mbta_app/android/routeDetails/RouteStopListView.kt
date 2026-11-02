@@ -286,7 +286,7 @@ fun RouteStopListView(
                     message = firstTimeToastMessage,
                     action =
                         ToastViewModel.ToastAction.Close(
-                            onClose = { showFirstTimeFavoritesToast = false }
+                            onClose = { showFirstTimeFavoritesToast = false },
                         ),
                     isTip = true,
                 )
@@ -491,7 +491,7 @@ private fun LineRoutePicker(
     Column(
         Modifier.padding(horizontal = 14.dp)
             .padding(top = 6.dp, bottom = 4.dp)
-            .haloContainer(1.dp, backgroundColor, backgroundColor)
+            .haloContainer(1.dp, backgroundColor, backgroundColor),
     ) {
         for (route in routes) {
             val selected = route.id == selectedRouteId
@@ -634,7 +634,7 @@ private fun RouteStopsPreview() {
                                     RouteBranchSegment.Lane.Right,
                                 ),
                             emptyList(),
-                        )
+                        ),
                     ),
                     isTypical = true,
                 ),
@@ -650,7 +650,7 @@ private fun RouteStopsPreview() {
                                 RouteBranchSegment.Lane.Right,
                             ),
                             emptyList(),
-                        )
+                        ),
                     ),
                     isTypical = true,
                 ),

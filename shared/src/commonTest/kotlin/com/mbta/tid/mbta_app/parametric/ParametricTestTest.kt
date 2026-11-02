@@ -70,7 +70,7 @@ class ParametricTestTest {
                     anyBoolean(),
                     anyEnumValue<TestEnum>(),
                     anyEnumValueExcept(TestEnum.A, TestEnum.B),
-                )
+                ),
             )
         }
         assertContentEquals(

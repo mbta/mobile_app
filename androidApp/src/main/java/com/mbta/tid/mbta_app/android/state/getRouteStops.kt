@@ -77,7 +77,7 @@ fun getRouteStops(
 ): RouteStopsResult? {
     val viewModel: RouteStopsViewModel =
         viewModel(
-            factory = RouteStopsViewModel.Factory(routeStopsRepository, errorBannerRepository)
+            factory = RouteStopsViewModel.Factory(routeStopsRepository, errorBannerRepository),
         )
 
     LaunchedEffect(routeId, directionId) { viewModel.getRouteStops(routeId, directionId, errorKey) }

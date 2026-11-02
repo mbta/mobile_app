@@ -49,7 +49,7 @@ class ExplainerPageTests {
         composeTestRule.onNodeWithText("Finishing another trip").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText(
-                "The train assigned to this route is currently serving another trip. We’ll show it on the route once it starts this trip."
+                "The train assigned to this route is currently serving another trip. We’ll show it on the route once it starts this trip.",
             )
             .assertCanBeDisplayed()
     }
@@ -64,7 +64,7 @@ class ExplainerPageTests {
         composeTestRule.onNodeWithText("Prediction not available yet").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText(
-                "We don’t have live predictions for this trip yet, but they will appear closer to the scheduled time. If the trip is delayed or cancelled, we’ll let you know here."
+                "We don’t have live predictions for this trip yet, but they will appear closer to the scheduled time. If the trip is delayed or cancelled, we’ll let you know here.",
             )
             .assertCanBeDisplayed()
     }
@@ -84,7 +84,7 @@ class ExplainerPageTests {
         composeTestRule.onNodeWithText("Ferry location not available yet").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText(
-                "The ferry location might not be available in advance if a vehicle hasn’t been assigned yet. Once the driver starts the trip, we’ll start showing the live location."
+                "The ferry location might not be available in advance if a vehicle hasn’t been assigned yet. Once the driver starts the trip, we’ll start showing the live location.",
             )
             .assertCanBeDisplayed()
     }

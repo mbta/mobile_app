@@ -28,7 +28,7 @@ public sealed interface Exp<T> : MapboxStyleObject {
                         for (element in elements) {
                             add(element)
                         }
-                    }
+                    },
                 )
 
             fun arrayOf(vararg elements: String) =
@@ -37,7 +37,7 @@ public sealed interface Exp<T> : MapboxStyleObject {
                         for (element in elements) {
                             add(element)
                         }
-                    }
+                    },
                 )
         }
     }
@@ -48,7 +48,7 @@ public sealed interface Exp<T> : MapboxStyleObject {
                 buildJsonArray {
                     add(operator)
                     block()
-                }
+                },
             )
 
         private fun <T> op(operator: String, vararg operands: Exp<*>): Exp<T> =

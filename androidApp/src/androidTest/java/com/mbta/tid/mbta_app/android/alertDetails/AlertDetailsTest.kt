@@ -66,8 +66,8 @@ class AlertDetailsTest {
         composeTestRule
             .onNode(
                 hasTextMatching(
-                    Regex("Wednesday, (Jan 22|22 Jan), 10:35\\sAM", RegexOption.IGNORE_CASE)
-                )
+                    Regex("Wednesday, (Jan 22|22 Jan), 10:35\\sAM", RegexOption.IGNORE_CASE),
+                ),
             )
             .assertCanBeDisplayed()
         composeTestRule.onNodeWithText("3 affected stops").assertCanBeDisplayed()
@@ -84,8 +84,8 @@ class AlertDetailsTest {
         composeTestRule
             .onNode(
                 hasTextMatching(
-                    Regex("Updated: (0?1/22|22/0?1)/25, 10:36\\sAM", RegexOption.IGNORE_CASE)
-                )
+                    Regex("Updated: (0?1/22|22/0?1)/25, 10:36\\sAM", RegexOption.IGNORE_CASE),
+                ),
             )
             .assertCanBeDisplayed()
     }
@@ -117,8 +117,8 @@ class AlertDetailsTest {
         composeTestRule
             .onNode(
                 hasTextMatching(
-                    Regex("Tuesday, (Jul 29|29 Jul), 9:25\\sAM", RegexOption.IGNORE_CASE)
-                )
+                    Regex("Tuesday, (Jul 29|29 Jul), 9:25\\sAM", RegexOption.IGNORE_CASE),
+                ),
             )
             .assertCanBeDisplayed()
     }

@@ -39,7 +39,7 @@ open class MapboxConfigManager(
 
     init {
         setHttpInterceptor(
-            MapHttpInterceptor { _lastMapboxErrorTimestamp.value = EasternTimeInstant.now() }
+            MapHttpInterceptor { _lastMapboxErrorTimestamp.value = EasternTimeInstant.now() },
         )
     }
 

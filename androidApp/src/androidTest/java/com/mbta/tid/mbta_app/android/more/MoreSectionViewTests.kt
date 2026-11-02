@@ -35,7 +35,7 @@ class MoreSectionViewTests {
                 highlighted = false,
                 settingsCache =
                     SettingsCache(
-                        MockSettingsRepository(onSaveSettings = { toggleCallbackCalled = true })
+                        MockSettingsRepository(onSaveSettings = { toggleCallbackCalled = true }),
                     ),
             )
         }
@@ -66,8 +66,8 @@ class MoreSectionViewTests {
                             onSaveSettings = {
                                 assertNull(onChangeArgs)
                                 wasWritten = true
-                            }
-                        )
+                            },
+                        ),
                     ),
                 onChangeSetting = { setting, newValue ->
                     assertTrue(wasWritten)

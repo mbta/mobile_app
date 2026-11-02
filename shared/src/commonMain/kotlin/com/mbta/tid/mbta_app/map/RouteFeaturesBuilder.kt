@@ -155,10 +155,10 @@ public object RouteFeaturesBuilder {
                                     sourceRouteId = shapeWithStops.routeId,
                                     stopIds = parentResolvedStops,
                                     otherPatternsByStopId = emptyMap(),
-                                )
+                                ),
                             ),
                         shape = shape,
-                    )
+                    ),
                 ),
         )
     }
@@ -353,7 +353,7 @@ public object RouteFeaturesBuilder {
                 }
         }
         return listOf(
-            MapFriendlyRouteResponse.RouteWithSegmentedShapes(filter.routeId, emptyList())
+            MapFriendlyRouteResponse.RouteWithSegmentedShapes(filter.routeId, emptyList()),
         )
     }
 }

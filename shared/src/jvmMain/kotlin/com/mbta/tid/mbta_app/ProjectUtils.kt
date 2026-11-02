@@ -80,7 +80,7 @@ internal object ProjectUtils {
         val stops =
             globalData.stops.filterValues {
                 (listOf(it.id) + it.childStopIds + listOfNotNull(it.parentStationId)).any(
-                    allStopIds::contains
+                    allStopIds::contains,
                 )
             }
         val tripIds = patterns.map { (_, pattern) -> pattern.representativeTripId }.toSet()
@@ -136,7 +136,7 @@ internal object ProjectUtils {
                                 addStatement("))")
                             }
                         }
-                        .build()
+                        .build(),
                 )
                 .build()
 
@@ -165,7 +165,7 @@ internal object ProjectUtils {
                                 addStatement("))")
                             }
                         }
-                        .build()
+                        .build(),
                 )
                 .build()
 
@@ -200,7 +200,7 @@ internal object ProjectUtils {
                                 addStatement("))")
                             }
                         }
-                        .build()
+                        .build(),
                 )
                 .build()
 
@@ -223,7 +223,7 @@ internal object ProjectUtils {
                                 addStatement("))")
                             }
                         }
-                        .build()
+                        .build(),
                 )
                 .build()
 
@@ -240,7 +240,7 @@ internal object ProjectUtils {
                         .addStatement("putTrips(objects)")
                         .addStatement("objects")
                         .endControlFlow()
-                        .build()
+                        .build(),
                 )
                 .addKdoc(
                     "A snapshot of some real system data, to be referenced in tests and previews " +
@@ -249,7 +249,7 @@ internal object ProjectUtils {
                         "doesn’t compile and it’s blocking the ProjectUtils themselves from " +
                         "running to recreate it, delete all the [ObjectCollectionBuilder.put] " +
                         "calls to unblock ProjectUtils.\n" +
-                        "\n@see com.mbta.tid.mbta_app.ProjectUtils"
+                        "\n@see com.mbta.tid.mbta_app.ProjectUtils",
                 )
                 .build()
 

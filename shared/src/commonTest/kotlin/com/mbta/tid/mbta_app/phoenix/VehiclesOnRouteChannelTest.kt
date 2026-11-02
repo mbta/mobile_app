@@ -50,7 +50,7 @@ class VehiclesOnRouteChannelTest {
                             }
                         }
                     }
-                }
+                },
             )
 
         val parsed = VehiclesOnRouteChannel.parseMessage(payload)
@@ -86,8 +86,8 @@ class VehiclesOnRouteChannelTest {
                             "99",
                             "61391720",
                             Vehicle.Decoration.Pride,
-                        )
-                )
+                        ),
+                ),
             ),
             parsed,
         )

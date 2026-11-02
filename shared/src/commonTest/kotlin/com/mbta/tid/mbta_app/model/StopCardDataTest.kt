@@ -34,7 +34,7 @@ class StopCardDataTest {
                     id = "43"
                     directionNames = listOf("Outbound", "Inbound")
                     directionDestinations = listOf("Ruggles Station", "Park Street Station")
-                }
+                },
             )
         val bus43Inbound =
             objects.routePattern(bus43.route) {
@@ -143,7 +143,7 @@ class StopCardDataTest {
                             ol,
                             ruggles,
                             listOf(olSouthboundLeaf, olNorthboundLeaf),
-                        )
+                        ),
                     ),
                     now,
                 ),

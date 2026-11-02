@@ -80,7 +80,7 @@ private fun TakeoverAlertCard(
                     when {
                         isPresenceOfWhalesAlert ->
                             painterResource(
-                                id = R.drawable.alert_cause_backgroundless_presense_of_whales
+                                id = R.drawable.alert_cause_backgroundless_presense_of_whales,
                             )
                         alert.effect == Alert.Effect.Cancellation ->
                             routeSlashIcon(routeAccents.type)
@@ -158,7 +158,7 @@ fun AlertCard(
                 modifier
                     .then(
                         if (onViewDetails != null) Modifier.clickable { onViewDetails() }
-                        else Modifier
+                        else Modifier,
                     )
                     .padding(horizontal = 16.dp, vertical = 10.dp)
                     .padding(interiorPadding),
@@ -210,10 +210,12 @@ fun AlertCardPreview() {
         modifier = Modifier.background(Color.Blue),
     ) {
         AlertCard(
-            ObjectCollectionBuilder.Single.alert({
-                header = "Orange Line suspended from point A to point B"
-                effect = Alert.Effect.Suspension
-            }),
+            ObjectCollectionBuilder.Single.alert(
+                {
+                    header = "Orange Line suspended from point A to point B"
+                    effect = Alert.Effect.Suspension
+                },
+            ),
             null,
             AlertCardSpec.Takeover,
             routeAccents =
@@ -232,7 +234,7 @@ fun AlertCardPreview() {
                 informedEntity(trip = "trip")
             },
             AlertSummaryEntity(
-                "**10:17\u202FPM** train from **Mansfield** is cancelled today due to holiday"
+                "**10:17\u202FPM** train from **Mansfield** is cancelled today due to holiday",
             ),
             AlertCardSpec.Takeover,
             routeAccents =
@@ -258,11 +260,13 @@ fun AlertCardPreview() {
         )
 
         AlertCard(
-            ObjectCollectionBuilder.Single.alert({
-                effect = Alert.Effect.ElevatorClosure
-                header =
-                    "Ruggles Elevator 848 (Lobby to lower busway side platform) unavailable due to maintenance"
-            }),
+            ObjectCollectionBuilder.Single.alert(
+                {
+                    effect = Alert.Effect.ElevatorClosure
+                    header =
+                        "Ruggles Elevator 848 (Lobby to lower busway side platform) unavailable due to maintenance"
+                },
+            ),
             null,
             AlertCardSpec.Elevator,
             routeAccents =
@@ -276,24 +280,28 @@ fun AlertCardPreview() {
 
         AlertListContainer(
             highPriority =
-                listOf({ modifier ->
-                    AlertCard(
-                        ObjectCollectionBuilder.Single.alert({
-                            effect = Alert.Effect.Delay
-                            cause = Alert.Cause.DrawbridgeIssue
-                        }),
-                        AlertSummaryEntity("Delays due to drawbridge issue"),
-                        AlertCardSpec.Delay,
-                        routeAccents =
-                            TripRouteAccents(
-                                color = Color.fromHex("ED8B00"),
-                                textColor = Color.fromHex("FFFFFF"),
-                                type = RouteType.HEAVY_RAIL,
+                listOf(
+                    { modifier ->
+                        AlertCard(
+                            ObjectCollectionBuilder.Single.alert(
+                                {
+                                    effect = Alert.Effect.Delay
+                                    cause = Alert.Cause.DrawbridgeIssue
+                                },
                             ),
-                        onViewDetails = {},
-                        modifier = modifier,
-                    )
-                })
+                            AlertSummaryEntity("Delays due to drawbridge issue"),
+                            AlertCardSpec.Delay,
+                            routeAccents =
+                                TripRouteAccents(
+                                    color = Color.fromHex("ED8B00"),
+                                    textColor = Color.fromHex("FFFFFF"),
+                                    type = RouteType.HEAVY_RAIL,
+                                ),
+                            onViewDetails = {},
+                            modifier = modifier,
+                        )
+                    },
+                ),
         )
     }
 }

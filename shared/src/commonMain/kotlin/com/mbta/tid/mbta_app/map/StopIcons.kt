@@ -38,7 +38,7 @@ public object StopIcons {
                     }
                 } +
             listOf(
-                "${stopIconPrefix}${stopZoomWidePrefix}${MapStopRoute.SILVER.name}${stopTerminalSuffix}"
+                "${stopIconPrefix}${stopZoomWidePrefix}${MapStopRoute.SILVER.name}${stopTerminalSuffix}",
             )
 
     internal val branchIcons: List<String> =

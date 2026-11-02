@@ -53,7 +53,7 @@ class ContentViewTests : KoinTest {
         val flow = MutableStateFlow(null).asStateFlow()
         composeTestRule.setContent {
             CompositionLocalProvider(
-                LocalLocationClient provides MockFusedLocationProviderClient()
+                LocalLocationClient provides MockFusedLocationProviderClient(),
             ) {
                 ContentView(flow, {})
             }
@@ -74,7 +74,7 @@ class ContentViewTests : KoinTest {
 
         composeTestRule.setContent {
             CompositionLocalProvider(
-                LocalLocationClient provides MockFusedLocationProviderClient()
+                LocalLocationClient provides MockFusedLocationProviderClient(),
             ) {
                 ContentView(flow, {})
             }
@@ -86,7 +86,7 @@ class ContentViewTests : KoinTest {
         assertEquals(DefaultTab.Nearby, repo.defaultTab)
         composeTestRule.onNodeWithText("Favorites").performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasText("Favorites") and isHeading()
+            hasText("Favorites") and isHeading(),
         )
         assertEquals(DefaultTab.Favorites, repo.defaultTab)
     }
@@ -109,7 +109,7 @@ class ContentViewTests : KoinTest {
         composeTestRule.setContent {
             val flow = MutableStateFlow(null)
             CompositionLocalProvider(
-                LocalLocationClient provides MockFusedLocationProviderClient()
+                LocalLocationClient provides MockFusedLocationProviderClient(),
             ) {
                 ContentView(flow, {}, viewModel = vm)
             }

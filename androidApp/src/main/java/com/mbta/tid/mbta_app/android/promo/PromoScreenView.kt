@@ -36,7 +36,7 @@ fun PromoScreenView(screen: FeaturePromo, onAdvance: () -> Unit) {
 @Composable
 fun EnhancedFavorites(textScale: Float, onAdvance: () -> Unit) {
     OnboardingPieces.PageBox(
-        colorResource(if (isSystemInDarkTheme()) R.color.fill1 else R.color.fill2)
+        colorResource(if (isSystemInDarkTheme()) R.color.fill1 else R.color.fill2),
     ) {
         if (textScale < 1.9f) {
             this@PageBox.PromoImage(R.drawable.feature_promo_favorites)

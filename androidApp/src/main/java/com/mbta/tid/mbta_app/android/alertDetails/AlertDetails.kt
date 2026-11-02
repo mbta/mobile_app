@@ -114,7 +114,7 @@ fun AlertDetails(
                 TripPlannerLink(
                     onTappedTripPlanner = {
                         analytics.tappedTripPlanner(routeId, stop?.id ?: "", alert.id)
-                    }
+                    },
                 )
             }
         }
@@ -287,7 +287,7 @@ private fun AffectedStopCollapsible(affectedStops: List<Stop>, onTappedAffectedS
     var areStopsExpanded by remember { mutableStateOf(false) }
     val affectedStopsLabel =
         AnnotatedString.fromHtml(
-            pluralStringResource(R.plurals.affected_stops, affectedStops.size, affectedStops.size)
+            pluralStringResource(R.plurals.affected_stops, affectedStops.size, affectedStops.size),
         )
     if (affectedStops.isNotEmpty()) {
         Column(Modifier.tile()) {
@@ -392,7 +392,7 @@ private fun AlertDescription(alert: Alert, affectedStopsKnown: Boolean) {
             addAll(
                 splitDetails(description, "\n\n").filterNot {
                     affectedStopsKnown && it.startsWith("Affected stops:")
-                }
+                },
             )
         }
     }

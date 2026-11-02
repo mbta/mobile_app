@@ -140,7 +140,7 @@ public object LoadingPlaceholders {
                             )
                         },
                         isTypical = true,
-                    )
+                    ),
                 ),
         )
     }

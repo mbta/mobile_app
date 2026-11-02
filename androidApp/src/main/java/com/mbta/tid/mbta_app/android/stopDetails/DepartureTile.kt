@@ -92,7 +92,7 @@ fun DepartureTile(
         CompositionLocalProvider(
             LocalContentColor provides
                 if (isSelected) colorResource(R.color.text)
-                else colorResource(R.color.route_color_contrast_text)
+                else colorResource(R.color.route_color_contrast_text),
         ) {
             val headsign = data.headsign.takeIf { showHeadsign }
             if (headsign != null) {
@@ -182,7 +182,7 @@ private fun DepartureTilePreview() {
                                 ),
                                 lastTrip = false,
                                 null,
-                            )
+                            ),
                         ),
                         warningAlert = null,
                     ),
@@ -204,7 +204,7 @@ private fun DepartureTilePreview() {
                                 TripInstantDisplay.Minutes(9, false),
                                 lastTrip = false,
                                 null,
-                            )
+                            ),
                         ),
                         warningAlert = null,
                     ),
@@ -230,7 +230,7 @@ private fun DepartureTilePreview() {
                                 ),
                                 lastTrip = false,
                                 null,
-                            )
+                            ),
                         ),
                         warningAlert = null,
                     ),
@@ -251,7 +251,7 @@ private fun DepartureTilePreview() {
                                 TripInstantDisplay.Minutes(12, false),
                                 false,
                                 null,
-                            )
+                            ),
                         ),
                         warningAlert = null,
                     ),

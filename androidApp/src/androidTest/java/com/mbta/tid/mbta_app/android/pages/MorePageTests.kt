@@ -46,7 +46,7 @@ class MorePageTests : KoinTest {
                         if (settings.size == 1 && settings.containsKey(Settings.HideMaps)) {
                             hideMapValue = settings.getValue(Settings.HideMaps)
                         }
-                    }
+                    },
                 )
         }
         composeTestRule.setContent { MorePage(bottomBar = {}) }

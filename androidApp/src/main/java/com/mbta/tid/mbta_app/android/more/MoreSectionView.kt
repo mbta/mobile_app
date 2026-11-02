@@ -64,7 +64,7 @@ fun MoreSectionView(
                         else colorResource(R.color.halo),
                         MaterialTheme.shapes.medium,
                     )
-                    .background(colorResource(R.color.fill3))
+                    .background(colorResource(R.color.fill3)),
             ) {
                 section.items.mapIndexed { index, item ->
                     when (item) {

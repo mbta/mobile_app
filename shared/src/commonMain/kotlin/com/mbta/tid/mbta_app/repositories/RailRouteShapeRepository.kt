@@ -27,7 +27,7 @@ public interface IRailRouteShapeRepository {
 
 internal class RailRouteShapeRepository(
     val cache: ResponseCache<MapFriendlyRouteResponse> =
-        ResponseCache.create(cacheKey = "rail-route-shapes", invalidationKey = "2025-03-19")
+        ResponseCache.create(cacheKey = "rail-route-shapes", invalidationKey = "2025-03-19"),
 ) : IRailRouteShapeRepository, KoinComponent {
     private val mobileBackendClient: MobileBackendClient by inject()
     override val state = cache.state
@@ -50,7 +50,7 @@ constructor(
 ) : IRailRouteShapeRepository {
 
     public constructor(
-        objects: ObjectCollectionBuilder
+        objects: ObjectCollectionBuilder,
     ) : this(
         response =
             MapFriendlyRouteResponse(
@@ -77,7 +77,7 @@ constructor(
                                         }
                                     } ?: emptyList(),
                                     mapOf(),
-                                )
+                                ),
                             )
 
                         MapFriendlyRouteResponse.RouteWithSegmentedShapes(
@@ -95,11 +95,11 @@ constructor(
                                         polyline =
                                             "\"}nwaG~|eqLGyNIqAAc@S_CAEWu@g@}@u@k@u@Wu@OMGIMISQkAOcAGw@SoDFkCf@sUXcJJuERwHPkENqCJmB^mDn@}D??D[TeANy@\\\\iAt@qB`AwBl@cAl@m@b@Yn@QrBEtCKxQ_ApMT??R?`m@hD`Np@jAF|@C`B_@hBi@n@s@d@gA`@}@Z_@RMZIl@@fBFlB\\\\tAP??~@L^?HCLKJWJ_@vC{NDGLQvG}HdCiD`@e@Xc@b@oAjEcPrBeGfAsCvMqVl@sA??jByD`DoGd@cAj@cBJkAHqBNiGXeHVmJr@kR~@q^HsB@U\"",
                                     ),
-                                )
+                                ),
                             ),
                         )
-                    }
-            )
+                    },
+            ),
     )
 
     override val state: MutableStateFlow<MapFriendlyRouteResponse> = MutableStateFlow(response)

@@ -718,7 +718,7 @@ class TripDetailsStopListTest {
 
         assertEquals(
             stopListOf(
-                entry(stopA.id, stopSequence = 10, schedule = sched, routes = listOf(routeOther))
+                entry(stopA.id, stopSequence = 10, schedule = sched, routes = listOf(routeOther)),
             ),
             fromPieces(
                 schedulesResponseOf(sched),

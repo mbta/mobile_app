@@ -33,7 +33,7 @@ class SocketMessageTest {
                 """{"category":"sharknado"}""",
             ),
             decodeMessage(
-                """[null,"3","miami:weather","report_emergency",{"category":"sharknado"}]"""
+                """[null,"3","miami:weather","report_emergency",{"category":"sharknado"}]""",
             ),
         )
 
@@ -41,7 +41,7 @@ class SocketMessageTest {
         assertEquals(
             Message("0", "0", "predictions:stops", "phx_reply", mapOf("status" to "ok"), "{}"),
             decodeMessage(
-                """["0","0","predictions:stops","phx_reply",{"status":"ok","response":{}}]"""
+                """["0","0","predictions:stops","phx_reply",{"status":"ok","response":{}}]""",
             ),
         )
 

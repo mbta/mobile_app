@@ -207,8 +207,8 @@ class PredictionsRepositoryTests : KoinTest {
                                     }
                                 }
                                 """
-                                    .trimIndent()
-                        )
+                                    .trimIndent(),
+                        ),
                     )
                 }
                 return this
@@ -303,7 +303,7 @@ class PredictionsRepositoryTests : KoinTest {
                             }
                     }
                     """
-                        .trimIndent()
+                        .trimIndent(),
             )
         val data = PredictionsForStopsChannel.parseV2Message(message.jsonBody!!)
 

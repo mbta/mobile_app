@@ -73,7 +73,7 @@ fun StickDiagram(
                     )
                 }
             }
-        }
+        },
     )
 }
 
@@ -182,6 +182,6 @@ fun RouteLineTwist(
                     }
                 }
             }
-        }
+        },
     )
 }

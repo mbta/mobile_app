@@ -48,7 +48,7 @@ fun TripStatus(predictions: UpcomingFormat) {
                 UpcomingTripViewState.Disruption(
                     FormattedAlert(predictions.alert),
                     iconName = predictions.iconName,
-                )
+                ),
             )
         is UpcomingFormat.NoTrips ->
             UpcomingTripView(UpcomingTripViewState.NoTrips(predictions.noTripsFormat))

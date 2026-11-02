@@ -77,7 +77,7 @@ fun StopDetailsFilterPills(
         Row(
             Modifier.horizontalScroll(scrollState)
                 .padding(horizontal = 15.dp)
-                .align(Alignment.CenterStart)
+                .align(Alignment.CenterStart),
         ) {
             for (filterBy in servedRoutes) {
                 val isActive = filter == null || filter.routeId == filterBy.id

@@ -11,7 +11,7 @@ public data class ScheduleResponse(
     internal val trips: Map<String, Trip>,
 ) {
     public constructor(
-        objects: ObjectCollectionBuilder
+        objects: ObjectCollectionBuilder,
     ) : this(objects.schedules.values.toList(), objects.trips.toMap())
 
     internal fun getSchedulesTodayByPattern(): Map<String, Boolean> {

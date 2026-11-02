@@ -17,7 +17,7 @@ data class TripRouteAccents(
     val type: RouteType,
 ) {
     constructor(
-        route: Route
+        route: Route,
     ) : this(Color.fromHex(route.color), Color.fromHex(route.textColor), route.type)
 
     companion object {

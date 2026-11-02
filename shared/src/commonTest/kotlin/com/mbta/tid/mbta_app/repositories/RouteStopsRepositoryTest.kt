@@ -463,7 +463,7 @@ class RouteStopsRepositoryTest : KoinTest {
                           }
                         ]
                         """
-                            .trimIndent()
+                            .trimIndent(),
                     ),
                 status = HttpStatusCode.OK,
                 headers = headersOf(HttpHeaders.ContentType, "application/json"),
@@ -496,7 +496,7 @@ class RouteStopsRepositoryTest : KoinTest {
                                                 toStop = "place-mlmnl",
                                                 toLane = RouteBranchSegment.Lane.Center,
                                                 toVPos = RouteBranchSegment.VPos.Bottom,
-                                            )
+                                            ),
                                         ),
                                     ),
                                     RouteBranchSegment.BranchStop(
@@ -690,15 +690,15 @@ class RouteStopsRepositoryTest : KoinTest {
                                                 toStop = "place-forhl",
                                                 toLane = RouteBranchSegment.Lane.Center,
                                                 toVPos = RouteBranchSegment.VPos.Center,
-                                            )
+                                            ),
                                         ),
                                     ),
                                 ),
                                 name = null,
                                 isTypical = true,
-                            )
+                            ),
                         ),
-                    )
+                    ),
                 ),
                 response,
             )

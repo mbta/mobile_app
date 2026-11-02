@@ -39,7 +39,7 @@ private fun putLines(objects: ObjectCollectionBuilder) {
             shortName = "",
             sortOrder = 10_032,
             textColor = "FFFFFF",
-        )
+        ),
     )
     objects.put(
         Line(
@@ -49,7 +49,7 @@ private fun putLines(objects: ObjectCollectionBuilder) {
             shortName = "",
             sortOrder = 10_051,
             textColor = "FFFFFF",
-        )
+        ),
     )
 }
 
@@ -68,7 +68,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             textColor = "FFFFFF",
             lineId = Line.Id("line-Red"),
             routePatternIds = null,
-        )
+        ),
     )
     objects.put(
         Route(
@@ -84,7 +84,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             textColor = "FFFFFF",
             lineId = Line.Id("line-Orange"),
             routePatternIds = null,
-        )
+        ),
     )
     objects.put(
         Route(
@@ -100,7 +100,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             textColor = "FFFFFF",
             lineId = Line.Id("line-Green"),
             routePatternIds = null,
-        )
+        ),
     )
     objects.put(
         Route(
@@ -116,7 +116,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             textColor = "FFFFFF",
             lineId = Line.Id("line-Green"),
             routePatternIds = null,
-        )
+        ),
     )
     objects.put(
         Route(
@@ -132,7 +132,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             textColor = "FFFFFF",
             lineId = Line.Id("line-Green"),
             routePatternIds = null,
-        )
+        ),
     )
     objects.put(
         Route(
@@ -148,7 +148,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             textColor = "FFFFFF",
             lineId = Line.Id("line-Green"),
             routePatternIds = null,
-        )
+        ),
     )
     objects.put(
         Route(
@@ -164,7 +164,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             textColor = "FFFFFF",
             lineId = Line.Id("line-SLWaterfront"),
             routePatternIds = null,
-        )
+        ),
     )
     objects.put(
         Route(
@@ -180,7 +180,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             textColor = "FFFFFF",
             lineId = Line.Id("line-SLWaterfront"),
             routePatternIds = null,
-        )
+        ),
     )
     objects.put(
         Route(
@@ -196,7 +196,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             textColor = "FFFFFF",
             lineId = Line.Id("line-SLWaterfront"),
             routePatternIds = null,
-        )
+        ),
     )
     objects.put(
         Route(
@@ -212,7 +212,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             textColor = "FFFFFF",
             lineId = Line.Id("line-SLWaterfront"),
             routePatternIds = null,
-        )
+        ),
     )
     objects.put(
         Route(
@@ -228,7 +228,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             textColor = "FFFFFF",
             lineId = Line.Id("line-Fitchburg"),
             routePatternIds = null,
-        )
+        ),
     )
     objects.put(
         Route(
@@ -244,7 +244,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             textColor = "FFFFFF",
             lineId = Line.Id("line-Haverhill"),
             routePatternIds = null,
-        )
+        ),
     )
     objects.put(
         Route(
@@ -260,7 +260,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             textColor = "FFFFFF",
             lineId = Line.Id("line-Lowell"),
             routePatternIds = null,
-        )
+        ),
     )
     objects.put(
         Route(
@@ -276,7 +276,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             textColor = "FFFFFF",
             lineId = Line.Id("line-Newburyport"),
             routePatternIds = null,
-        )
+        ),
     )
     objects.put(
         Route(
@@ -292,7 +292,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             textColor = "FFFFFF",
             lineId = Line.Id("line-Providence"),
             routePatternIds = null,
-        )
+        ),
     )
     objects.put(
         Route(
@@ -308,7 +308,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             textColor = "000000",
             lineId = Line.Id("line-15"),
             routePatternIds = null,
-        )
+        ),
     )
     objects.put(
         Route(
@@ -324,7 +324,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             textColor = "000000",
             lineId = Line.Id("line-6779"),
             routePatternIds = null,
-        )
+        ),
     )
     objects.put(
         Route(
@@ -341,7 +341,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             textColor = "000000",
             lineId = Line.Id("line-87"),
             routePatternIds = null,
-        )
+        ),
     )
 }
 
@@ -355,7 +355,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Red-C1-0",
             routeId = Route.Id("Red"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -366,7 +366,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Red-C2-0",
             routeId = Route.Id("Red"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -377,7 +377,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Red-C1-1",
             routeId = Route.Id("Red"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -388,7 +388,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Red-C2-1",
             routeId = Route.Id("Red"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -399,7 +399,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Orange-C1-0",
             routeId = Route.Id("Orange"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -410,7 +410,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Orange-C1-1",
             routeId = Route.Id("Orange"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -421,7 +421,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-B-C1-0",
             routeId = Route.Id("Green-B"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -432,7 +432,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-B-C1-1",
             routeId = Route.Id("Green-B"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -443,7 +443,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-C-C1-0",
             routeId = Route.Id("Green-C"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -454,7 +454,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-C-C1-1",
             routeId = Route.Id("Green-C"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -465,7 +465,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-D-C1-0",
             routeId = Route.Id("Green-D"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -476,7 +476,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-D-C1-1",
             routeId = Route.Id("Green-D"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -487,7 +487,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-E-C1-0",
             routeId = Route.Id("Green-E"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -498,7 +498,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-E-C1-1",
             routeId = Route.Id("Green-E"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -509,7 +509,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "72039742",
             routeId = Route.Id("741"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -520,7 +520,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "72039744",
             routeId = Route.Id("741"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -531,7 +531,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "72039786",
             routeId = Route.Id("742"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -542,7 +542,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "72039768",
             routeId = Route.Id("742"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -553,7 +553,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "72040977",
             routeId = Route.Id("743"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -564,7 +564,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "72040978",
             routeId = Route.Id("743"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -575,7 +575,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "72039743",
             routeId = Route.Id("746"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -586,7 +586,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "72039750",
             routeId = Route.Id("746"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -597,7 +597,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "HaverhillRestoredWKDY-744237-405",
             routeId = Route.Id("CR-Fitchburg"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -608,7 +608,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "HaverhillRestoredWKDY-744235-400",
             routeId = Route.Id("CR-Fitchburg"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -619,7 +619,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-CR-Haverhill-C1-0",
             routeId = Route.Id("CR-Haverhill"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -630,7 +630,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-CR-Haverhill-C1-1",
             routeId = Route.Id("CR-Haverhill"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -641,7 +641,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-CR-Lowell-C1-0",
             routeId = Route.Id("CR-Lowell"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -652,7 +652,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-CR-Lowell-C1-1",
             routeId = Route.Id("CR-Lowell"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -663,7 +663,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "HaverhillRestoredWKDY-744341-125",
             routeId = Route.Id("CR-Newburyport"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -674,7 +674,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "HaverhillRestoredWKDY-744312-27",
             routeId = Route.Id("CR-Newburyport"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -685,7 +685,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "HaverhillRestoredWKDY-744338-114",
             routeId = Route.Id("CR-Newburyport"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -696,7 +696,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "HaverhillRestoredWKDY-744311-24",
             routeId = Route.Id("CR-Newburyport"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -707,7 +707,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "Sept8Read-767850-839",
             routeId = Route.Id("CR-Providence"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -718,7 +718,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "Sept8Read-768056-925",
             routeId = Route.Id("CR-Providence"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -729,7 +729,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "Sept8Read-767840-852",
             routeId = Route.Id("CR-Providence"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -740,7 +740,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "Sept8Read-768057-930",
             routeId = Route.Id("CR-Providence"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -751,7 +751,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "71373591",
             routeId = Route.Id("15"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -762,7 +762,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "71373380",
             routeId = Route.Id("15"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -773,7 +773,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "71694757",
             routeId = Route.Id("67"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -784,7 +784,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "71694754",
             routeId = Route.Id("67"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -795,7 +795,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "71694434",
             routeId = Route.Id("87"),
-        )
+        ),
     )
     objects.put(
         RoutePattern(
@@ -806,7 +806,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "71694436",
             routeId = Route.Id("87"),
-        )
+        ),
     )
 }
 
@@ -826,7 +826,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-forhl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -843,7 +843,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-jaksn",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -860,7 +860,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-jfk",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -877,7 +877,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-andrw",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -894,7 +894,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-alfcl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -911,7 +911,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-alfcl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -928,7 +928,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-alfcl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -945,7 +945,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-alfcl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -962,7 +962,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-alfcl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -979,7 +979,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-alfcl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -996,7 +996,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1013,7 +1013,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1030,7 +1030,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-babck",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1047,7 +1047,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-babck",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1064,7 +1064,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-amory",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1081,7 +1081,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-amory",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1098,7 +1098,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-rugg",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1115,7 +1115,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-rugg",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1132,7 +1132,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-rugg",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1149,7 +1149,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-rsmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1166,7 +1166,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-rsmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1183,7 +1183,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bbsta",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1200,7 +1200,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1217,7 +1217,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1234,7 +1234,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sull",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1251,7 +1251,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sull",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1268,7 +1268,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sull",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1285,7 +1285,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sull",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1302,7 +1302,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sull",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1319,7 +1319,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sull",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1336,7 +1336,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sull",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1353,7 +1353,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sull",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1370,7 +1370,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sull",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1387,7 +1387,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sull",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1404,7 +1404,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sull",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1421,7 +1421,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sull",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1438,7 +1438,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sull",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1455,7 +1455,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-nqncy",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1472,7 +1472,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-qnctr",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1489,7 +1489,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-qnctr",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1506,7 +1506,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-qnctr",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1523,7 +1523,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-qnctr",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1540,7 +1540,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-qnctr",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1557,7 +1557,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-fldcr",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1574,7 +1574,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-asmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1591,7 +1591,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-river",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1608,7 +1608,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-brntn",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1625,7 +1625,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-qamnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1642,7 +1642,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-mlmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1659,7 +1659,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-davis",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1676,7 +1676,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-welln",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1693,7 +1693,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-welln",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1710,7 +1710,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-welln",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1727,7 +1727,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-welln",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1744,7 +1744,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-welln",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1761,7 +1761,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-welln",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1778,7 +1778,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-welln",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1795,7 +1795,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-welln",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1812,7 +1812,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-mlmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1829,7 +1829,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-mlmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1846,7 +1846,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-forhl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1863,7 +1863,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-grnst",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1880,7 +1880,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-grnst",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1897,7 +1897,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sbmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1914,7 +1914,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sbmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1931,7 +1931,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-jaksn",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1948,7 +1948,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-jaksn",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1965,7 +1965,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-rcmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1982,7 +1982,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-rcmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -1999,7 +1999,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-rugg",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2016,7 +2016,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-rugg",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2033,7 +2033,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-masta",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2050,7 +2050,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-masta",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2067,7 +2067,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bbsta",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2084,7 +2084,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bbsta",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2101,7 +2101,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-tumnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2118,7 +2118,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-tumnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2135,7 +2135,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-chncl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2152,7 +2152,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-chncl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2169,7 +2169,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-dwnxg",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2186,7 +2186,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-dwnxg",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2203,7 +2203,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-state",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2220,7 +2220,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-state",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2237,7 +2237,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-haecl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2254,7 +2254,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-haecl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2271,7 +2271,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-north",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2288,7 +2288,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-north",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2305,7 +2305,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-ccmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2322,7 +2322,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-ccmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2339,7 +2339,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sull",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2356,7 +2356,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sull",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2373,7 +2373,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-welln",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2390,7 +2390,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-welln",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2407,7 +2407,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-mlmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2424,7 +2424,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-mlmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2441,7 +2441,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-ogmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2458,7 +2458,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-gover",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2475,7 +2475,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-gover",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2492,7 +2492,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-state",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2509,7 +2509,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-state",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2526,7 +2526,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-aqucl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2543,7 +2543,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-aqucl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2560,7 +2560,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-alfcl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2577,7 +2577,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-davis",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2594,7 +2594,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-davis",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2611,7 +2611,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-portr",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2628,7 +2628,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-portr",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2645,7 +2645,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-harsq",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2662,7 +2662,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-harsq",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2679,7 +2679,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-cntsq",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2696,7 +2696,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-cntsq",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2713,7 +2713,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-knncl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2730,7 +2730,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-knncl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2747,7 +2747,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-chmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2764,7 +2764,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-chmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2781,7 +2781,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-pktrm",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2798,7 +2798,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-pktrm",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2815,7 +2815,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-dwnxg",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2832,7 +2832,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-dwnxg",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2849,7 +2849,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sstat",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2866,7 +2866,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sstat",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2883,7 +2883,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-brdwy",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2900,7 +2900,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-brdwy",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2917,7 +2917,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-andrw",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2934,7 +2934,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-andrw",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2951,7 +2951,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-jfk",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2968,7 +2968,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-jfk",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -2985,7 +2985,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-shmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3002,7 +3002,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-shmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3019,7 +3019,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-fldcr",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3036,7 +3036,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-fldcr",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3053,7 +3053,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-smmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3070,7 +3070,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-smmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3087,7 +3087,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-asmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3104,7 +3104,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-asmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3121,7 +3121,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-jfk",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3138,7 +3138,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-jfk",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3155,7 +3155,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-nqncy",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3172,7 +3172,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-nqncy",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3189,7 +3189,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-wlsta",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3206,7 +3206,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-wlsta",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3223,7 +3223,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-qnctr",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3240,7 +3240,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-qnctr",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3257,7 +3257,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-qamnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3274,7 +3274,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-qamnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3291,7 +3291,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-brntn",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3308,7 +3308,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-lake",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3325,7 +3325,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-lake",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3342,7 +3342,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sougr",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3359,7 +3359,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sougr",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3376,7 +3376,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-chill",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3393,7 +3393,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-chill",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3410,7 +3410,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-chswk",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3427,7 +3427,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-chswk",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3444,7 +3444,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sthld",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3461,7 +3461,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sthld",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3478,7 +3478,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-wascm",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3495,7 +3495,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-wascm",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3512,7 +3512,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-wrnst",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3529,7 +3529,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-wrnst",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3546,7 +3546,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-alsgr",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3563,7 +3563,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-alsgr",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3580,7 +3580,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-grigg",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3597,7 +3597,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-grigg",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3614,7 +3614,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-harvd",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3631,7 +3631,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-harvd",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3648,7 +3648,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-brico",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3665,7 +3665,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-brico",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3682,7 +3682,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bucen",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3699,7 +3699,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bucen",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3716,7 +3716,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-buest",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3733,7 +3733,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-buest",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3750,7 +3750,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bland",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3767,7 +3767,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bland",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3784,7 +3784,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-kencl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3801,7 +3801,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-kencl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3818,7 +3818,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-hymnl",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3835,7 +3835,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-hymnl",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3852,7 +3852,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-coecl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3869,7 +3869,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-coecl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3886,7 +3886,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-armnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3903,7 +3903,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-armnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3920,7 +3920,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-boyls",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3937,7 +3937,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-boyls",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3954,7 +3954,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-river",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3971,7 +3971,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-river",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -3988,7 +3988,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-woodl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4005,7 +4005,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-woodl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4022,7 +4022,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-waban",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4039,7 +4039,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-waban",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4056,7 +4056,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-eliot",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4073,7 +4073,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-eliot",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4090,7 +4090,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-newtn",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4107,7 +4107,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-newtn",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4124,7 +4124,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-newto",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4141,7 +4141,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-newto",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4158,7 +4158,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-chhil",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4175,7 +4175,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-chhil",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4192,7 +4192,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-rsmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4209,7 +4209,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-rsmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4226,7 +4226,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bcnfd",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4243,7 +4243,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bcnfd",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4260,7 +4260,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-brkhl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4277,7 +4277,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-brkhl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4294,7 +4294,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bvmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4311,7 +4311,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bvmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4328,7 +4328,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-longw",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4345,7 +4345,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-longw",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4362,7 +4362,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-fenwy",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4379,7 +4379,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-fenwy",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4396,7 +4396,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-pktrm",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4413,7 +4413,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-pktrm",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4430,7 +4430,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-pktrm",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4447,7 +4447,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-pktrm",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4464,7 +4464,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-pktrm",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4481,7 +4481,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-gover",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4498,7 +4498,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-gover",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4515,7 +4515,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-haecl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4532,7 +4532,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-haecl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4549,7 +4549,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-north",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4566,7 +4566,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-north",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4583,7 +4583,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-spmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4600,7 +4600,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-spmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4617,7 +4617,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-smary",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4634,7 +4634,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-smary",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4651,7 +4651,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-hwsst",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4668,7 +4668,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-hwsst",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4685,7 +4685,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-kntst",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4702,7 +4702,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-kntst",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4719,7 +4719,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-stpul",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4736,7 +4736,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-stpul",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4753,7 +4753,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-cool",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4770,7 +4770,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-cool",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4787,7 +4787,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sumav",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4804,7 +4804,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sumav",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4821,7 +4821,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bndhl",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4838,7 +4838,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bndhl",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4855,7 +4855,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-fbkst",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4872,7 +4872,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-fbkst",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4889,7 +4889,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bcnwa",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4906,7 +4906,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bcnwa",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4923,7 +4923,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-tapst",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4940,7 +4940,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-tapst",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4957,7 +4957,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-denrd",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4974,7 +4974,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-denrd",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -4991,7 +4991,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-engav",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5008,7 +5008,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-engav",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5025,7 +5025,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-clmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5042,7 +5042,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-clmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5059,7 +5059,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-prmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5076,7 +5076,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-prmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5093,7 +5093,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-symcl",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5110,7 +5110,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-symcl",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5127,7 +5127,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-nuniv",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5144,7 +5144,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-nuniv",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5161,7 +5161,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-mfa",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5178,7 +5178,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-mfa",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5195,7 +5195,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-lngmd",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5212,7 +5212,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-lngmd",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5229,7 +5229,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-brmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5246,7 +5246,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-brmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5263,7 +5263,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-fenwd",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5280,7 +5280,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-fenwd",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5297,7 +5297,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-mispk",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5314,7 +5314,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-mispk",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5331,7 +5331,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-rvrwy",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5348,7 +5348,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-rvrwy",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5365,7 +5365,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bckhl",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5382,7 +5382,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bckhl",
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5399,7 +5399,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-hsmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5416,7 +5416,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-asmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5433,7 +5433,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-astao",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5450,7 +5450,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-astao",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5467,7 +5467,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-lech",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5484,7 +5484,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-lech",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5501,7 +5501,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-lech",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5518,7 +5518,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-unsqu",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5535,7 +5535,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-unsqu",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5552,7 +5552,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-gilmn",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5569,7 +5569,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-gilmn",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5586,7 +5586,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-mgngl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5603,7 +5603,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-mgngl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5620,7 +5620,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-balsq",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5637,7 +5637,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-balsq",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5654,7 +5654,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-mdftf",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5671,7 +5671,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-mdftf",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5688,7 +5688,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-esomr",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5705,7 +5705,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-esomr",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5722,7 +5722,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-kencl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5739,7 +5739,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-kencl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5756,7 +5756,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-pktrm",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5773,7 +5773,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sstat",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5790,7 +5790,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sstat",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5807,7 +5807,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-harsq",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5824,7 +5824,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-harsq",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5841,7 +5841,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-harsq",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5858,7 +5858,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-harsq",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5875,7 +5875,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-harsq",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5892,7 +5892,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-harsq",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5909,7 +5909,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-harsq",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5926,7 +5926,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-newtn",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5943,7 +5943,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-newtn",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5960,7 +5960,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-forhl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5977,7 +5977,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-kencl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -5994,7 +5994,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-alfcl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6011,7 +6011,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-newtn",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6028,7 +6028,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-ogmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6045,7 +6045,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-alfcl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6062,7 +6062,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-alfcl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6079,7 +6079,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-north",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6096,7 +6096,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-north",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6113,7 +6113,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-north",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6130,7 +6130,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-north",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6147,7 +6147,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-north",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6164,7 +6164,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-north",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6181,7 +6181,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-north",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6198,7 +6198,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-north",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6215,7 +6215,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-north",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6232,7 +6232,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-north",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6249,7 +6249,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-north",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6266,7 +6266,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-north",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6283,7 +6283,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-north",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6300,7 +6300,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-brntn",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6317,7 +6317,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-brntn",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6334,7 +6334,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-portr",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6351,7 +6351,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-portr",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6368,7 +6368,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-portr",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6385,7 +6385,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-forhl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6402,7 +6402,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-forhl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6419,7 +6419,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-gover",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6436,7 +6436,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-jfk",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6453,7 +6453,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-qnctr",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6470,7 +6470,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-brntn",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6487,7 +6487,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-brntn",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6504,7 +6504,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-brntn",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6521,7 +6521,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-forhl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6538,7 +6538,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-forhl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6555,7 +6555,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-forhl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6572,7 +6572,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-rugg",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6589,7 +6589,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-rugg",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6606,7 +6606,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-rugg",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6623,7 +6623,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-rugg",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6640,7 +6640,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bbsta",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6657,7 +6657,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bbsta",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6674,7 +6674,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bbsta",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6691,7 +6691,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bbsta",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6708,7 +6708,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bbsta",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6725,7 +6725,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sstat",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6742,7 +6742,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sstat",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6759,7 +6759,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sstat",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6776,7 +6776,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sstat",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6793,7 +6793,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sstat",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6810,7 +6810,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sstat",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6827,7 +6827,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sstat",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6844,7 +6844,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sstat",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6861,7 +6861,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sstat",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6878,7 +6878,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sstat",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6895,7 +6895,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sstat",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6912,7 +6912,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sstat",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6929,7 +6929,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sstat",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6946,7 +6946,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sstat",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6963,7 +6963,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-sstat",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6980,7 +6980,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-ogmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -6997,7 +6997,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-ogmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7014,7 +7014,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-unsqu",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7031,7 +7031,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-unsqu",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7048,7 +7048,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bbsta",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7065,7 +7065,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-bbsta",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7082,7 +7082,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-mlmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7099,7 +7099,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-ogmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7217,7 +7217,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7234,7 +7234,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7259,7 +7259,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("956"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7310,7 +7310,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070083", "9170084"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7385,7 +7385,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                 ),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7433,7 +7433,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070156", "145", "177"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7487,7 +7487,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7534,7 +7534,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7559,7 +7559,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("933", "958", "934"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7588,7 +7588,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070509", "2697", "2736"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7677,7 +7677,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("11384", "176", "9270014", "71855", "34585"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7694,7 +7694,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("65741", "22365"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7720,7 +7720,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7737,7 +7737,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("1292", "1276", "9070229"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7754,7 +7754,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("951", "941"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7771,7 +7771,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070226", "9070225"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7800,7 +7800,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("8279"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7835,7 +7835,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("151", "150"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7852,7 +7852,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070135", "960", "9070134"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7876,7 +7876,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9170178"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7893,7 +7893,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("1362", "1319", "21317", "92391"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7940,7 +7940,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7957,7 +7957,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("953", "938"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -7974,7 +7974,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("952", "939"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8000,7 +8000,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("11366", "9070180", "1526", "1555"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8031,7 +8031,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8058,7 +8058,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8075,7 +8075,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("1029", "1090", "9070113", "9070112"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8111,7 +8111,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070074"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8153,7 +8153,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("6567", "6537"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8170,7 +8170,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070114"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8187,7 +8187,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070238", "9070237"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8237,7 +8237,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                 listOf<String>("102", "1060", "1123", "72", "2443", "1059", "9070070", "2755"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8271,7 +8271,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("175", "9170154", "178", "9070154"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8288,7 +8288,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("1372", "9070219", "9070220", "1308"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8344,7 +8344,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("5015", "2581"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8361,7 +8361,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070233", "9070234"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8459,7 +8459,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070080", "16538", "49001", "16535"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8488,7 +8488,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8505,7 +8505,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070236", "9070235"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8531,7 +8531,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("2761"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8548,7 +8548,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070228", "9070227"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8565,7 +8565,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("1363", "1317"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8589,7 +8589,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("1807", "9434"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8627,7 +8627,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8693,7 +8693,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8724,7 +8724,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070506", "9070505", "2398", "2388"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8773,7 +8773,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("4510"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8790,7 +8790,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070128", "9070129"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8820,7 +8820,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070002", "52371", "52370", "9070003"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8886,7 +8886,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                 listOf<String>("30203", "9170024", "4511", "117", "8309", "9070025", "9070024"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8953,7 +8953,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070072", "110", "22549"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8970,7 +8970,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070130", "1302", "1378"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -8987,7 +8987,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("1761", "1747", "65741", "22365"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9004,7 +9004,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070214", "9070213"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9042,7 +9042,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("93", "79", "11391", "9070152", "9170152"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9073,7 +9073,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070007", "41157"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9142,7 +9142,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9194,7 +9194,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                 listOf<String>("34510", "9070185", "9170151", "9070150", "9070151", "34509"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9247,7 +9247,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("2231", "9170071", "9070071"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9264,7 +9264,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070216", "9070215"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9281,7 +9281,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070107"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9317,7 +9317,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070502"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9334,7 +9334,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("91391", "31317"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9366,7 +9366,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9411,7 +9411,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("187", "188"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9439,7 +9439,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("2407"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9456,7 +9456,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("51317", "1799", "71391", "1784"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9486,7 +9486,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9503,7 +9503,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("1315", "1365"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9552,7 +9552,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9583,7 +9583,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070169", "9170169", "9170168"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9617,7 +9617,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070170", "9070171"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9744,7 +9744,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070026", "114", "113", "9070090"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9799,7 +9799,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9370024"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9816,7 +9816,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("41391", "81317"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9868,7 +9868,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9326", "5991"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -9965,7 +9965,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070076", "9170076", "10000", "49001"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10037,7 +10037,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("2430", "2460", "12301", "23151", "9070065"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10087,7 +10087,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("11389", "11388"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10165,7 +10165,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("3852", "3946"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10212,7 +10212,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("32000", "9070101"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10242,7 +10242,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("1323", "1357", "1258", "1222"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10273,7 +10273,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070160"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10304,7 +10304,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070238"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10376,7 +10376,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("1225", "9070010"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10393,7 +10393,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("21365", "6575", "1314"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10423,7 +10423,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("45237", "9070005"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10460,7 +10460,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10477,7 +10477,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070211", "9070212"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10509,7 +10509,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10526,7 +10526,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070111", "9070110"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10571,7 +10571,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070091"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10702,7 +10702,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("6564", "892", "6538", "9070079"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10793,7 +10793,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                 listOf<String>("65", "9370022", "9070022", "204", "9270022", "190", "191"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10810,7 +10810,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070116"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10827,7 +10827,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070217", "9070218"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10880,7 +10880,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10897,7 +10897,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070224", "9070223"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10942,7 +10942,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("82", "89"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -10959,7 +10959,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070232", "9070231"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -11010,7 +11010,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("49002", "6565", "8281"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -11041,7 +11041,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070503", "12530", "2512", "2531"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -11069,7 +11069,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070164", "9070165"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -11086,7 +11086,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070120", "9070121", "1273", "1295", "9170120"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -11136,7 +11136,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -11195,7 +11195,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9170099", "9170100"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -11212,7 +11212,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070162"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -11229,7 +11229,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>("9070125", "9070124"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
-        )
+        ),
     )
     objects.put(
         Stop(
@@ -11246,7 +11246,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             connectingStopIds = listOf<String>(),
             parentStationId = "place-river",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
+        ),
     )
 }
 
@@ -11298,7 +11298,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "1224",
                     "17861",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11341,7 +11341,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "556",
                     "323",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11388,7 +11388,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "12643",
                     "12644",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11436,7 +11436,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "2601",
                     "70500",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11469,7 +11469,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "24791",
                     "14118",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11503,7 +11503,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "7962",
                     "7961",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11514,7 +11514,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             routePatternId = "741-_-0",
             shapeId = "7410055",
             stopIds = listOf<String>("74611", "74612", "74613", "74624", "17091"),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11525,7 +11525,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             routePatternId = "746-_-0",
             shapeId = "7460032",
             stopIds = listOf<String>("74611", "74612", "74613", "74614"),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11548,7 +11548,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "74616",
                     "74617",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11559,7 +11559,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             routePatternId = "746-_-1",
             shapeId = "7460033",
             stopIds = listOf<String>("74614", "74615", "74616", "74617"),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11582,7 +11582,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "74616",
                     "74617",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11593,7 +11593,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             routePatternId = "742-3-0",
             shapeId = "7420072",
             stopIds = listOf<String>("74611", "74612", "74613", "74624", "247", "30249", "30250"),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11615,7 +11615,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "74633",
                     "74631",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11638,7 +11638,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "74616",
                     "74617",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11668,7 +11668,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "FR-0034-02",
                     "BNT-0000",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11698,7 +11698,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "FR-0494-CS",
                     "FR-3338-CS",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11723,7 +11723,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "ER-0042-02",
                     "BNT-0000",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11748,7 +11748,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "GB-0316-S",
                     "GB-0353-S",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11772,7 +11772,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "ER-0042-02",
                     "BNT-0000",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11796,7 +11796,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "ER-0312-S",
                     "ER-0362-01",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11821,7 +11821,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "NEC-2276-02",
                     "NEC-2287",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11846,7 +11846,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "NEC-1768-03",
                     "NEC-1659-03",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11866,7 +11866,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "SB-0156-S",
                     "SB-0189-S",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11887,7 +11887,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "NEC-2276-02",
                     "NEC-2287",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11915,7 +11915,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "WR-0325-01",
                     "WR-0329-01",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11943,7 +11943,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "WR-0045-S",
                     "BNT-0000",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11964,7 +11964,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "NHRML-0218-01",
                     "NHRML-0254-04",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -11985,7 +11985,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "NHRML-0055-02",
                     "BNT-0000",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -12021,7 +12021,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "70111",
                     "70107",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -12057,7 +12057,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "70200",
                     "70201",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -12090,7 +12090,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "70235",
                     "70237",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -12123,7 +12123,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "70200",
                     "70201",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -12161,7 +12161,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "70163",
                     "70161",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -12199,7 +12199,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "70501",
                     "70503",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -12237,7 +12237,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "70257",
                     "70260",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -12275,7 +12275,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "70509",
                     "70511",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -12308,7 +12308,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "70002",
                     "70001",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -12341,7 +12341,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "70035",
                     "70036",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -12372,7 +12372,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "70103",
                     "70105",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -12403,7 +12403,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "70064",
                     "70061",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -12433,7 +12433,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "70091",
                     "70093",
                 ),
-        )
+        ),
     )
     objects.put(
         Trip(
@@ -12463,6 +12463,6 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "70064",
                     "70061",
                 ),
-        )
+        ),
     )
 }

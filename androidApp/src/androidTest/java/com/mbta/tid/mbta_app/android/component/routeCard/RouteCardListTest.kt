@@ -213,7 +213,7 @@ class RouteCardListTest : KoinTest {
 
         composeTestRule.waitForIdle()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasText("This would be the empty view")
+            hasText("This would be the empty view"),
         )
         composeTestRule.onNodeWithText("This would be the empty view").assertCanBeDisplayed()
     }

@@ -151,7 +151,7 @@ public data class RouteDetailsStopList(val directionId: Int, val segments: List<
                                 // fail when compiled against API 35 but run on API <35
                                 val priorSegment = acc.removeAt(acc.lastIndex)
                                 acc.add(
-                                    priorSegment.copy(stops = priorSegment.stops + segment.stops)
+                                    priorSegment.copy(stops = priorSegment.stops + segment.stops),
                                 )
                             } else {
                                 acc.add(segment)

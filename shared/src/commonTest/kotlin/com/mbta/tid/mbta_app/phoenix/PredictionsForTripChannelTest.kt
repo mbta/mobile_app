@@ -33,8 +33,8 @@ class PredictionsForTripChannelTest {
                         putJsonObject("vehicles") {
                             put(vehicle1.id, Json.encodeToJsonElement(vehicle1))
                         }
-                    })
-                )
+                    }),
+                ),
             )
         assertEquals(
             parsed,

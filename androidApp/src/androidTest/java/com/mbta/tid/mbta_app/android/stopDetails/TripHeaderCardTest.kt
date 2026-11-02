@@ -102,7 +102,7 @@ class TripHeaderCardTest {
                 objects.vehicle {
                     currentStatus = Vehicle.CurrentStatus.InTransitTo
                     tripId = trip.id
-                }
+                },
             )
         val route = objects.route {}
 
@@ -153,7 +153,7 @@ class TripHeaderCardTest {
                     currentStatus = Vehicle.CurrentStatus.InTransitTo
                     tripId = trip.id
                     occupancyStatus = Vehicle.OccupancyStatus.ManySeatsAvailable
-                }
+                },
             )
         val route = objects.route { type = RouteType.BUS }
 

@@ -86,7 +86,7 @@ fun DirectionPicker(
             DirectionLabel(
                 direction = directions[it],
                 modifier.padding(horizontal = 12.dp).fillMaxWidth().semantics(
-                    mergeDescendants = true
+                    mergeDescendants = true,
                 ) {
                     heading()
                 },

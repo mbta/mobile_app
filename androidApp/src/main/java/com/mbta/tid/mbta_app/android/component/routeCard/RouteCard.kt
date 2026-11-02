@@ -69,7 +69,7 @@ class Previews() {
             module {
                 single<Analytics> { MockAnalytics() }
                 single<SettingsCache> { SettingsCache(MockSettingsRepository()) }
-            }
+            },
         )
     }
 

@@ -33,8 +33,8 @@ class TripDetailsPageViewModelTest : KoinTest {
                     MockRepositories().apply {
                         useObjects(objects)
                         repositoriesBlock()
-                    }
-                )
+                    },
+                ),
             )
         }
     }
@@ -72,7 +72,7 @@ class TripDetailsPageViewModelTest : KoinTest {
                         tripSchedules = null,
                         tripPredictions = null,
                         vehicle = null,
-                    )
+                    ),
             )
         val tripDetailsVMModels = MutableStateFlow(tripState)
         val tripDetailsVM =

@@ -85,7 +85,7 @@ private fun detailText(
                         predictionsUnavailableStringNoMap
                     } else {
                         predictionsUnavailableString
-                    }
+                    },
                 )
             }
         }
@@ -97,8 +97,8 @@ private fun detailText(
                             R.string.subway_early_am_detail,
                             directionLabel,
                             status.scheduledTime.formattedTime(),
-                        )
-                    )
+                        ),
+                    ),
                 )
             }
         }
@@ -114,8 +114,8 @@ private fun detailText(
                                     stringResource(
                                         R.string.next_trip_on,
                                         nextScheduleTime.formattedServiceDayAndDate(),
-                                    )
-                                )
+                                    ),
+                                ),
                             )
                         nextScheduleTime.local.date > now.local.date ->
                             Text(
@@ -123,8 +123,8 @@ private fun detailText(
                                     stringResource(
                                         R.string.next_trip_at_tomorrow,
                                         nextScheduleTime.formattedTime(),
-                                    )
-                                )
+                                    ),
+                                ),
                             )
                         else ->
                             Text(
@@ -132,8 +132,8 @@ private fun detailText(
                                     stringResource(
                                         R.string.next_trip_at,
                                         nextScheduleTime.formattedTime(),
-                                    )
-                                )
+                                    ),
+                                ),
                             )
                     }
                 }

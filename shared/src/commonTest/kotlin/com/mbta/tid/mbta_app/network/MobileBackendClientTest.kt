@@ -35,7 +35,7 @@ class MobileBackendClientTest : KoinTest {
                           "trips": {}
                         }
                         """
-                            .trimIndent()
+                            .trimIndent(),
                     ),
                 status = HttpStatusCode.OK,
                 headers = headersOf(HttpHeaders.ContentType, "application/json"),
@@ -56,7 +56,7 @@ class MobileBackendClientTest : KoinTest {
             assertEquals(AppVariant.Staging.backendRoot, response.request.url.protocolWithAuthority)
             assertTrue(
                 Regex("""^MBTA Go/1\.3\.12 \((Android|iOS|JVM)\)$""")
-                    .matches(response.request.headers["User-Agent"] ?: "")
+                    .matches(response.request.headers["User-Agent"] ?: ""),
             )
         }
     }

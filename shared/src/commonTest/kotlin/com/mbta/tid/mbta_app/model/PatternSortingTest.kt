@@ -38,7 +38,7 @@ class PatternSortingTest {
             objects.schedule {
                 trip = objects.trip(routePattern)
                 departureTime = EasternTimeInstant.now() + 4.minutes
-            }
+            },
         )
 
     private fun leaf(
@@ -62,7 +62,7 @@ class PatternSortingTest {
                     listOf(
                         objects.alert {
                             effect = Alert.Effect.Suspension
-                        }
+                        },
                     )
                 else emptyList(),
             allDataLoaded = allDataLoaded,
@@ -250,7 +250,7 @@ class PatternSortingTest {
             expected
                 .reversed()
                 .sortedWith(
-                    PatternSorting.compareRouteCards(position, RouteCardData.Context.NearbyTransit)
+                    PatternSorting.compareRouteCards(position, RouteCardData.Context.NearbyTransit),
                 ),
         )
     }
@@ -297,14 +297,14 @@ class PatternSortingTest {
             expected
                 .reversed()
                 .sortedWith(
-                    PatternSorting.compareRouteCards(position, RouteCardData.Context.Favorites)
+                    PatternSorting.compareRouteCards(position, RouteCardData.Context.Favorites),
                 ),
         )
 
         assertEquals(
             expected.reversed(),
             expected.sortedWith(
-                PatternSorting.compareRouteCards(position, RouteCardData.Context.NearbyTransit)
+                PatternSorting.compareRouteCards(position, RouteCardData.Context.NearbyTransit),
             ),
         )
     }

@@ -98,11 +98,11 @@ fun PredictionRowView(
                                 UpcomingTripViewState.Disruption(
                                     FormattedAlert(predictions.alert),
                                     iconName = predictions.iconName,
-                                )
+                                ),
                             )
                         is UpcomingFormat.NoTrips ->
                             UpcomingTripView(
-                                (UpcomingTripViewState.NoTrips(predictions.noTripsFormat))
+                                (UpcomingTripViewState.NoTrips(predictions.noTripsFormat)),
                             )
                         is UpcomingFormat.Loading -> UpcomingTripView(UpcomingTripViewState.Loading)
                     }
@@ -161,7 +161,7 @@ private fun PredictionRowViewPreview() {
                             ),
                         ),
                         null,
-                    )
+                    ),
             ) {
                 Text("Needham Heights")
             }
@@ -177,7 +177,7 @@ private fun PredictionRowViewPreview() {
                             null,
                         ),
                         null,
-                    )
+                    ),
             ) {
                 Text("Longer Destination than That")
             }
@@ -208,7 +208,7 @@ private fun PredictionRowViewPreview() {
                         null,
                     ),
                     null,
-                )
+                ),
             ) {
                 Text("Destination")
             }
@@ -232,7 +232,7 @@ private fun PredictionRowViewPreview() {
                         ),
                     ),
                     null,
-                )
+                ),
             ) {
                 Text("Destination")
             }
@@ -241,7 +241,7 @@ private fun PredictionRowViewPreview() {
                 UpcomingFormat.Disruption(
                     alert { effect = Alert.Effect.Detour },
                     MapStopRoute.GREEN,
-                )
+                ),
             ) {
                 Text("Destination")
             }

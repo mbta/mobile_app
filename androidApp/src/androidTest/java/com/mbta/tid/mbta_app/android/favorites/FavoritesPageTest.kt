@@ -67,7 +67,7 @@ class FavoritesPageTest {
                         emptyList(),
                         emptyList(),
                         null,
-                    )
+                    ),
             )
         val toastVM = mock<IToastViewModel>(MockMode.autofill)
 
@@ -88,7 +88,7 @@ class FavoritesPageTest {
                                         Clock.System,
                                     )
                                 }
-                            }
+                            },
                     ),
                 toastViewModel = toastVM,
                 nearbyTransit =
@@ -133,7 +133,7 @@ class FavoritesPageTest {
                         emptyList(),
                         emptyList(),
                         null,
-                    )
+                    ),
             )
 
         var hintDismissed = false
@@ -156,7 +156,7 @@ class FavoritesPageTest {
                                         Clock.System,
                                     )
                                 }
-                            }
+                            },
                     ),
                 toastViewModel = MockToastViewModel(),
                 nearbyTransit =
@@ -197,7 +197,7 @@ class FavoritesPageTest {
                         emptyList(),
                         emptyList(),
                         null,
-                    )
+                    ),
             )
 
         var hintDismissed = false
@@ -220,7 +220,7 @@ class FavoritesPageTest {
                                         Clock.System,
                                     )
                                 }
-                            }
+                            },
                     ),
                 toastViewModel = MockToastViewModel(),
                 nearbyTransit =

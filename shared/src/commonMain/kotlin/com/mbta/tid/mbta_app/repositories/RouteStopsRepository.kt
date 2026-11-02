@@ -95,9 +95,9 @@ public class MockRouteStopsRepository(
                                                 )
                                             } ?: emptyList(),
                                     isTypical = true,
-                                )
+                                ),
                             ),
-                    )
+                    ),
                 )
             },
         onGet = { _, _ -> },

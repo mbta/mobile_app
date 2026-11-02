@@ -84,11 +84,11 @@ constructor(
     internal val onDisconnect: () -> Unit = {},
 ) : IVehiclesRepository {
     public constructor(
-        vehicles: List<Vehicle> = emptyList()
+        vehicles: List<Vehicle> = emptyList(),
     ) : this(response = VehiclesStreamDataResponse(vehicles.associateBy { it.id }))
 
     internal constructor(
-        objects: ObjectCollectionBuilder
+        objects: ObjectCollectionBuilder,
     ) : this(response = VehiclesStreamDataResponse(objects.vehicles.toMap()))
 
     override fun connect(

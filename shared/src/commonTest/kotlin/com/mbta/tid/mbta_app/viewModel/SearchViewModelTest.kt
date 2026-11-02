@@ -60,7 +60,7 @@ class SearchViewModelTest {
                             zone = "stopZone",
                             isStation = false,
                             routes = emptyList(),
-                        )
+                        ),
                     ),
             )
 
@@ -125,8 +125,8 @@ class SearchViewModelTest {
                             false,
                             visitedStop.name,
                             listOf(routePill),
-                        )
-                    )
+                        ),
+                    ),
                 ),
                 awaitItem(),
             )
@@ -140,7 +140,7 @@ class SearchViewModelTest {
                             false,
                             searchedStop.name,
                             listOf(routePill),
-                        )
+                        ),
                     ),
                     emptyList(),
                 ),
@@ -212,8 +212,8 @@ class SearchViewModelTest {
                         VisitHistory().apply {
                             add(Visit.StopVisit(stop.id))
                             add(Visit.StopVisit(station.id))
-                        }
-                    )
+                        },
+                    ),
                 ),
             )
 
@@ -383,7 +383,7 @@ class SearchViewModelTest {
                             ),
                         ),
                     ),
-                )
+                ),
             ),
             state,
         )

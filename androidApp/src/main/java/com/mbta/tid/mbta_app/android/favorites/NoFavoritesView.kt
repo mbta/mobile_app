@@ -47,7 +47,7 @@ fun NoFavoritesView(onAddStops: () -> Unit, showAddStops: Boolean = true) {
                 modifier =
                     Modifier.clickable { onAddStops() }
                         .clip(MaterialTheme.shapes.medium)
-                        .background(color = colorResource(R.color.key))
+                        .background(color = colorResource(R.color.key)),
             ) {
                 Row(
                     modifier =

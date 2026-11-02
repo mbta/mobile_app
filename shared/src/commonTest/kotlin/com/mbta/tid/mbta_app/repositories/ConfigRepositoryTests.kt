@@ -37,7 +37,7 @@ class ConfigRepositoryTests {
                           "mapbox_public_token": "fake_token"
                         }
                         """
-                            .trimIndent()
+                            .trimIndent(),
                     ),
                 status = HttpStatusCode.OK,
                 headers = headersOf(HttpHeaders.ContentType, "application/json"),
@@ -63,7 +63,7 @@ class ConfigRepositoryTests {
                         """
                         {"message": "oh no"}
                         """
-                            .trimIndent()
+                            .trimIndent(),
                     ),
                 status = HttpStatusCode.Unauthorized,
                 headers = headersOf(HttpHeaders.ContentType, "application/json"),

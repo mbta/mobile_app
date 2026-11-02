@@ -221,7 +221,7 @@ fun SaveFavoritePage(
 
         toastText?.let {
             toastViewModel.showToast(
-                ToastViewModel.Toast(it, duration = ToastViewModel.Duration.Short)
+                ToastViewModel.Toast(it, duration = ToastViewModel.Duration.Short),
             )
         }
     }
@@ -254,7 +254,7 @@ fun SaveFavoritePage(
                             toastViewModel.hideToast()
                         },
                     ),
-            )
+            ),
         )
     }
 
@@ -263,7 +263,7 @@ fun SaveFavoritePage(
             Modifier.background(colorResource(R.color.fill3))
                 .statusBarsPadding()
                 .padding(vertical = 16.dp)
-                .padding(end = 16.dp)
+                .padding(end = 16.dp),
         ) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 NavTextButton(
@@ -286,7 +286,7 @@ fun SaveFavoritePage(
             Text(
                 stringResource(
                     if (saveMode == Mode.Edit) R.string.edit_favorite_title
-                    else R.string.add_favorite_title
+                    else R.string.add_favorite_title,
                 ),
                 Modifier.padding(start = 16.dp).semantics {
                     heading()
@@ -309,10 +309,9 @@ fun SaveFavoritePage(
                     stop,
                     lineOrRoute,
                     stopDirections.find { it.id == selectedDirection } ?: stopDirections.first(),
-                    toggleDirection =
-                        {
-                                selectedDirection = 1 - selectedDirection
-                            }
+                    toggleDirection = {
+                            selectedDirection = 1 - selectedDirection
+                        }
                             .takeIf { showDirectionToggle },
                     onlyServingOppositeDirection =
                         stopDirections.singleOrNull()?.id == 1 - initialDirection,
@@ -375,7 +374,7 @@ private fun SaveFavoritePagePreviewAdd() {
                         MockAnalytics(),
                     )
                 }
-            }
+            },
         )
     }
 
@@ -418,12 +417,12 @@ private fun SaveFavoritePagePreviewEdit() {
                                                                 startTime = LocalTime(8, 0),
                                                                 endTime = LocalTime(9, 0),
                                                                 setOf(DayOfWeek.FRIDAY),
-                                                            )
+                                                            ),
                                                         ),
-                                                )
-                                        )
-                                )
-                            )
+                                                ),
+                                        ),
+                                ),
+                            ),
                         ),
                         MockGlobalRepository(GlobalResponse(objects)),
                         MockSettingsRepository(),
@@ -431,7 +430,7 @@ private fun SaveFavoritePagePreviewEdit() {
                         MockAnalytics(),
                     )
                 }
-            }
+            },
         )
     }
 

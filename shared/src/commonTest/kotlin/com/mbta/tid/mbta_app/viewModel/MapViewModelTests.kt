@@ -102,7 +102,7 @@ internal class MapViewModelTests : KoinTest {
                     MockRepositories().apply {
                         useObjects(TestData.clone())
                         configureRepositories()
-                    }
+                    },
                 ),
                 viewModelModule(),
                 module {
@@ -155,7 +155,7 @@ internal class MapViewModelTests : KoinTest {
             val stopFilter = StopDetailsFilter(Route.Id(""), 0)
             val tripFilter = TripDetailsFilter("", "", 0)
             viewModel.navChanged(
-                SheetRoutes.TripDetails(TripDetailsPageFilter("", stopFilter, tripFilter))
+                SheetRoutes.TripDetails(TripDetailsPageFilter("", stopFilter, tripFilter)),
             )
             assertEquals(
                 MapViewModel.State(
@@ -261,7 +261,7 @@ internal class MapViewModelTests : KoinTest {
                 awaitItem(),
             )
             viewModel.navChanged(
-                SheetRoutes.RouteDetails(Route.Id(""), RouteDetailsContext.Details)
+                SheetRoutes.RouteDetails(Route.Id(""), RouteDetailsContext.Details),
             )
             assertEquals(
                 MapViewModel.State(MapViewModel.LayerState.StopSelected(stop, null), false),
@@ -376,7 +376,7 @@ internal class MapViewModelTests : KoinTest {
                         ),
                         stop = it.id,
                         route = Route.Id("Green-B"),
-                    )
+                    ),
                 )
             }
         val alert = objects.alert {
@@ -427,7 +427,7 @@ internal class MapViewModelTests : KoinTest {
                         ),
                         stop = it.id,
                         route = Route.Id("Green-B"),
-                    )
+                    ),
                 )
             }
         val alert = objects.alert {
@@ -540,7 +540,7 @@ internal class MapViewModelTests : KoinTest {
                     matches<MoleculeViewModel.TimeoutException> {
                         it.message ==
                             "Timeout in MapViewModel handling event LocationPermissionsChanged(hasPermission=true)"
-                    }
+                    },
                 )
             }
             cancelAndIgnoreRemainingEvents()
@@ -572,7 +572,7 @@ internal class MapViewModelTests : KoinTest {
                         ),
                         stop = it.id,
                         route = Route.Id("Green-B"),
-                    )
+                    ),
                 )
             }
         val alertCreationTime = clock.startTime + 1.seconds
@@ -598,7 +598,7 @@ internal class MapViewModelTests : KoinTest {
                         predicate = {
                             it.all { it.lines.all { it.alertState == SegmentAlertState.Normal } }
                         },
-                    )
+                    ),
                 )
             }
             resetCalls(layerManger)
@@ -614,7 +614,7 @@ internal class MapViewModelTests : KoinTest {
                                 it.lines.any { it.alertState == SegmentAlertState.Suspension }
                             }
                         },
-                    )
+                    ),
                 )
             }
         }
@@ -664,8 +664,8 @@ internal class MapViewModelTests : KoinTest {
                             LineOrRoute.Route(TestData.getRoute("Red")),
                             stopData = emptyList(),
                             at = EasternTimeInstant.now(),
-                        )
-                    )
+                        ),
+                    ),
                 )
             // there won’t be a new model, but we do want to give the LaunchedEffect time to run
             delay(100.milliseconds)

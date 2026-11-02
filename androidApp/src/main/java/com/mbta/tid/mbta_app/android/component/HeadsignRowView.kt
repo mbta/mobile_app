@@ -111,7 +111,7 @@ fun HeadsignRowViewPreview() {
                             type = RouteType.LIGHT_RAIL
                             textColor = "FFFFFF"
                             longName = "Green Line E"
-                        }
+                        },
                     ),
             )
             HeadsignRowView("Loading", UpcomingFormat.Loading)

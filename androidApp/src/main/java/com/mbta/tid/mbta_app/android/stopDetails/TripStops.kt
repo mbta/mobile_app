@@ -110,9 +110,9 @@ fun TripStops(
                                 ?.significance(now) == AlertSignificance.Major
                         )
                             4.dp
-                        else 0.dp
+                        else 0.dp,
                 )
-                .haloContainer(2.dp, backgroundColor = colorResource(R.color.fill2))
+                .haloContainer(2.dp, backgroundColor = colorResource(R.color.fill2)),
         )
         Column(
             Modifier.padding(top = 14.dp),

@@ -53,7 +53,7 @@ fun StopListGroupToggle(
                     toVPos = RouteBranchSegment.VPos.Bottom,
                 ),
                 true,
-            )
+            ),
         ),
     label: @Composable RowScope.() -> Unit,
 ) {
@@ -64,7 +64,7 @@ fun StopListGroupToggle(
             .then(
                 if (contentDescription != null)
                     Modifier.clearAndSetSemantics { this.contentDescription = contentDescription }
-                else Modifier
+                else Modifier,
             )
             .padding(horizontal = 8.dp)
             .defaultMinSize(minHeight = 48.dp),

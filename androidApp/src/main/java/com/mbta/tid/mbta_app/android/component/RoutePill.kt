@@ -215,7 +215,7 @@ private fun RoutePillPreviews() {
                     sortOrder = 10010,
                     textColor = "FFFFFF",
                     lineId = Line.Id("line-Red"),
-                )
+                ),
         )
         RoutePillPreview(
             route =
@@ -231,7 +231,7 @@ private fun RoutePillPreviews() {
                     sortOrder = 10020,
                     textColor = "FFFFFF",
                     lineId = Line.Id("line-Orange"),
-                )
+                ),
         )
         RoutePillPreview(
             route =
@@ -247,7 +247,7 @@ private fun RoutePillPreviews() {
                     sortOrder = 10040,
                     textColor = "FFFFFF",
                     lineId = Line.Id("line-Blue"),
-                )
+                ),
         )
         RoutePillPreview(
             route =
@@ -263,7 +263,7 @@ private fun RoutePillPreviews() {
                     sortOrder = 10011,
                     textColor = "FFFFFF",
                     lineId = Line.Id("line-Mattapan"),
-                )
+                ),
         )
         RoutePillPreview(
             route =
@@ -279,7 +279,7 @@ private fun RoutePillPreviews() {
                     sortOrder = 10032,
                     textColor = "FFFFFF",
                     lineId = Line.Id("line-Green"),
-                )
+                ),
         )
         RoutePillPreview(
             route =
@@ -295,7 +295,7 @@ private fun RoutePillPreviews() {
                     sortOrder = 10033,
                     textColor = "FFFFFF",
                     lineId = Line.Id("line-Green"),
-                )
+                ),
         )
         RoutePillPreview(
             route =
@@ -311,7 +311,7 @@ private fun RoutePillPreviews() {
                     sortOrder = 10034,
                     textColor = "FFFFFF",
                     lineId = Line.Id("line-Green"),
-                )
+                ),
         )
         RoutePillPreview(
             route =
@@ -327,7 +327,7 @@ private fun RoutePillPreviews() {
                     sortOrder = 10035,
                     textColor = "FFFFFF",
                     lineId = Line.Id("line-Green"),
-                )
+                ),
         )
         RoutePillPreview(
             route =
@@ -343,7 +343,7 @@ private fun RoutePillPreviews() {
                     sortOrder = 20012,
                     textColor = "FFFFFF",
                     lineId = Line.Id("line-Fitchburg"),
-                )
+                ),
         )
         RoutePillPreview(
             route =
@@ -359,7 +359,7 @@ private fun RoutePillPreviews() {
                     sortOrder = 52160,
                     textColor = "000000",
                     lineId = Line.Id("line-214216"),
-                )
+                ),
         )
         RoutePillPreview(
             route =
@@ -375,7 +375,7 @@ private fun RoutePillPreviews() {
                     sortOrder = 50621,
                     textColor = "000000",
                     lineId = Line.Id("line-6276"),
-                )
+                ),
         )
         RoutePillPreview(
             route =
@@ -391,7 +391,7 @@ private fun RoutePillPreviews() {
                     sortOrder = 10051,
                     textColor = "FFFFFF",
                     lineId = Line.Id("line-SLWaterfront"),
-                )
+                ),
         )
         RoutePillPreview(
             route =
@@ -407,7 +407,7 @@ private fun RoutePillPreviews() {
                     sortOrder = 30002,
                     textColor = "FFFFFF",
                     lineId = Line.Id("line-Boat-F1"),
-                )
+                ),
         )
         RoutePillPreview(
             route =
