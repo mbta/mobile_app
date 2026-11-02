@@ -22,7 +22,7 @@ plugins {
     alias(libs.plugins.sentry.kmp)
     alias(libs.plugins.serialization)
     alias(libs.plugins.skie)
-    id("de.undercouch.download").version("5.6.0")
+    id("de.undercouch.download").version("5.7.0")
 }
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
