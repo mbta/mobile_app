@@ -81,13 +81,10 @@ constructor(
         time != null && time >= currentTime
 
     /** Check if the vehicle is past the prediction stop, falling back to true if data is missing */
-    internal fun hasPassedPredictionStop(): Boolean =
+    internal fun hasPassedPredictionStop(now: EasternTimeInstant, routeType: RouteType): Boolean =
         prediction?.let { resolvedPrediction ->
             vehicle?.let { resolvedVehicle ->
-                resolvedVehicle.currentStopSequence?.let { vehicleStop ->
-                    resolvedVehicle.tripId == resolvedPrediction.tripId &&
-                        vehicleStop > resolvedPrediction.stopSequence
-                }
+                resolvedVehicle.hasPassedPredictionStop(resolvedPrediction, routeType, now)
             }
         } ?: true
 

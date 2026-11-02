@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
 
 /**
@@ -111,9 +112,8 @@ public sealed class TripInstantDisplay {
             val hasPassedPredictionStop =
                 prediction?.let { resolvedPrediction ->
                     vehicle?.let { resolvedVehicle ->
-                        resolvedVehicle.currentStopSequence?.let { vehicleStop ->
-                            resolvedVehicle.tripId == resolvedPrediction.tripId &&
-                                vehicleStop > resolvedPrediction.stopSequence
+                        routeType?.let { type ->
+                            resolvedVehicle.hasPassedPredictionStop(resolvedPrediction, type, now)
                         }
                     }
                 } ?: true // Fall back to true, since we can't know if the stop has passed
