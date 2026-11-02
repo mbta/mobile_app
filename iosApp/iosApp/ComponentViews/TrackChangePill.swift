@@ -51,7 +51,7 @@ struct TrackChangePill: View {
     var backgroundColor: Color {
         switch type {
         case .alert: .trackChangePillAlertBackground
-        case let .scheduled(_trackNumber, _trackLabel):
+        case let .scheduled(trackNumber, trackLabel):
             if case let .compact(isDimmed) = style, isDimmed {
                 Color.haloDark
             } else {
@@ -63,7 +63,7 @@ struct TrackChangePill: View {
     var textColor: Color {
         switch type {
         case .alert: .trackChangePillIcon
-        case let .scheduled(_trackNumber, _trackLabel):
+        case let .scheduled(trackNumber, trackLabel):
             if case let .compact(isDimmed) = style, isDimmed {
                 Color.white
             } else {
