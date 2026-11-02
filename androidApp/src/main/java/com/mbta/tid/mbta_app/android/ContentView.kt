@@ -102,7 +102,6 @@ fun ContentView(
     val globalResponse = getGlobalData(ErrorKey(setOf(), "ContentView"))
     val hideMaps = SettingsCache.get(Settings.HideMaps)
     val includeAccessibility = SettingsCache.get(Settings.StationAccessibility)
-    val notificationsEnabled = SettingsCache.get(Settings.Notifications)
     val pendingOnboarding = viewModel.pendingOnboarding.collectAsState().value
     val pendingFeaturePromos = viewModel.pendingFeaturePromos.collectAsState().value
     val currentLocale = stringResource(R.string.current_locale)
@@ -110,7 +109,7 @@ fun ContentView(
     ManageMapboxConfig()
 
     // Update notification subscriptions on the backend
-    LaunchedEffect(fcmToken, notificationsEnabled, globalResponse) {
+    LaunchedEffect(fcmToken, globalResponse) {
         fcmToken?.let { token ->
             val favorites = favoritesUsecases.getRouteStopDirectionFavorites()
             val subscriptions =
@@ -122,7 +121,6 @@ fun ContentView(
                 token,
                 subscriptions,
                 currentLocale,
-                notificationsEnabled,
             )
         }
     }
@@ -290,7 +288,6 @@ fun ContentView(
                         navigateToMore = {},
                     )
                 },
-                reloadPendingOnboarding = { viewModel.loadPendingOnboarding() },
             )
         }
     }

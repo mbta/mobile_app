@@ -278,7 +278,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             state: .init(settings: settings, selectedPreset: nil),
             showPresets: true,
             notificationPermissionManager: MockNotificationPermissionManager(),
-        ).withFixedSettings([.notificationPresetWindows: true])
+        ).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(button: "Morning"))
         XCTAssertNotNil(try sut.inspect().find(button: "Midday"))
@@ -297,7 +297,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             state: .init(settings: settings, selectedPreset: nil),
             showPresets: false,
             notificationPermissionManager: MockNotificationPermissionManager(),
-        ).withFixedSettings([.notificationPresetWindows: true])
+        ).withFixedSettings([:])
 
         XCTAssertThrowsError(try sut.inspect().find(button: "Morning"))
         XCTAssertThrowsError(try sut.inspect().find(button: "Midday"))
@@ -316,7 +316,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             state: .init(settings: settings, selectedPreset: nil),
             showPresets: true,
             notificationPermissionManager: MockNotificationPermissionManager(),
-        ).withFixedSettings([.notificationPresetWindows: true])
+        ).withFixedSettings([:])
 
         XCTAssertEqual(
             2,
@@ -353,7 +353,7 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             state: .init(settings: settings, selectedPreset: nil),
             showPresets: true,
             notificationPermissionManager: MockNotificationPermissionManager(),
-        ).withFixedSettings([.notificationPresetWindows: true])
+        ).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(text: "next day"))
         XCTAssertNotNil(try sut.inspect().find(imageName: "service-end-moon"))

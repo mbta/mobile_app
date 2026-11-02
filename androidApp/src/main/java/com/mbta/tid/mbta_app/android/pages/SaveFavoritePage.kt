@@ -52,7 +52,6 @@ import com.mbta.tid.mbta_app.android.component.NavTextButton
 import com.mbta.tid.mbta_app.android.component.stopCard.FavoriteStopCard
 import com.mbta.tid.mbta_app.android.favorites.NotificationSettingsWidget
 import com.mbta.tid.mbta_app.android.state.getGlobalData
-import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fcmToken
 import com.mbta.tid.mbta_app.android.util.getLabels
@@ -74,7 +73,6 @@ import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockSubscriptionsRepository
-import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.utils.TestData
@@ -173,8 +171,6 @@ fun SaveFavoritePage(
         }
     }
 
-    val includeAccessibility = SettingsCache.get(Settings.StationAccessibility)
-    val notificationsEnabled = SettingsCache.get(Settings.Notifications)
     val currentLocale = stringResource(R.string.current_locale)
 
     fun updateFavorites(update: Map<RouteStopDirection, FavoriteSettings?>) {

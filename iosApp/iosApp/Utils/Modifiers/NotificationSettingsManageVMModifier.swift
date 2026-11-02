@@ -14,9 +14,6 @@ struct NotificationSettingsManageVMModifier: ViewModifier {
     @Binding var vmState: NotificationSettingsViewModel.State?
     var now: EasternTimeInstant
 
-    @EnvironmentObject var settingsCache: SettingsCache
-    var presetWindowsEnabled: Bool { settingsCache.get(.notificationPresetWindows) }
-
     func body(content: Content) -> some View {
         content
             .task {
@@ -26,10 +23,6 @@ struct NotificationSettingsManageVMModifier: ViewModifier {
             }
             .onAppear {
                 viewModel.setNow(now: now)
-                viewModel.setPresetsEnabledFlag(enabled: presetWindowsEnabled)
-            }
-            .onChange(of: presetWindowsEnabled) { newVal in
-                viewModel.setPresetsEnabledFlag(enabled: newVal)
             }
             .enableInjection()
     }

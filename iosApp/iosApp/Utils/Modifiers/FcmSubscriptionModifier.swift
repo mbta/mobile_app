@@ -13,14 +13,13 @@ import SwiftUI
 struct FcmSubscriptionModifier: ViewModifier {
     let fcmToken: String?
     let includeAccessibility: Bool
-    let notificationsEnabled: Bool
 
     @State var subscriptionsRepository: ISubscriptionsRepository = RepositoryDI().subscriptions
 
     @State var favorites: Favorites = LoadedFavorites.last
     @State var globalData: GlobalResponse?
 
-    func updateSubscriptions(_ fcmToken: String?, _ notificationsEnabled: Bool) {
+    func updateSubscriptions(_ fcmToken: String?) {
         if let fcmToken {
             Task {
                 let validFavorites = if let globalData {
@@ -36,7 +35,6 @@ struct FcmSubscriptionModifier: ViewModifier {
                     fcmToken: fcmToken,
                     subscriptions: subscriptions,
                     locale: NSLocalizedString("key/current_locale", comment: ""),
-                    notificationsEnabled: notificationsEnabled,
                 )
             }
         }
@@ -46,10 +44,9 @@ struct FcmSubscriptionModifier: ViewModifier {
         content
             .favorites($favorites)
             .global($globalData, errorKey: ErrorKey(sheets: [], id: "FcmSubscriptionModifier"))
-            .onAppear { updateSubscriptions(fcmToken, notificationsEnabled) }
-            .onChange(of: fcmToken) { newToken in updateSubscriptions(newToken, notificationsEnabled) }
-            .onChange(of: notificationsEnabled) { newNotifications in updateSubscriptions(fcmToken, newNotifications) }
-            .onChange(of: globalData) { _ in updateSubscriptions(fcmToken, notificationsEnabled) }
+            .onAppear { updateSubscriptions(fcmToken) }
+            .onChange(of: fcmToken) { newToken in updateSubscriptions(newToken) }
+            .onChange(of: globalData) { _ in updateSubscriptions(fcmToken) }
             .enableInjection()
     }
 }
@@ -59,12 +56,10 @@ public extension View {
     func handleFcmTokenSubscriptions(
         fcmToken: String?,
         includeAccessibility: Bool,
-        notificationsEnabled: Bool,
     ) -> some View {
         modifier(FcmSubscriptionModifier(
             fcmToken: fcmToken,
             includeAccessibility: includeAccessibility,
-            notificationsEnabled: notificationsEnabled,
         ))
     }
 }
