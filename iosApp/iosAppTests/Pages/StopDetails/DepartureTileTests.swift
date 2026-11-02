@@ -103,6 +103,39 @@ final class DepartureTileTests: XCTestCase {
         wait(for: [tapExpectation], timeout: 1)
     }
 
+    func testTrackChangeBadgeShownWithScheduledTrackChange() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route { route in
+            route.type = .commuterRail
+        }
+        let upcomingTrip = UpcomingTrip(
+            trip: objects.trip { _ in },
+            trackChange: TrackChange.Scheduled(platformCode: "2", platformName: "Track 2")
+        )
+        let sut = DepartureTile(
+            data: .init(
+                route: route,
+                headsign: "headsign",
+                formatted: UpcomingFormat.Some(
+                    trips: [.init(
+                        trip: upcomingTrip,
+                        routeType: .commuterRail,
+                        format: .Minutes(minutes: 5, last: false),
+                        lastTrip: false,
+                        alert: nil
+                    )],
+                    warningAlert: nil
+                ),
+                upcoming: upcomingTrip
+            ),
+            onTap: {}
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(TrackChangePill.self))
+        XCTAssertThrowsError(try sut.inspect().find(text: "Track 2"))
+        XCTAssertNotNil(try sut.inspect().find(text: "5 min"))
+    }
+
     func testAccessibility() throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()

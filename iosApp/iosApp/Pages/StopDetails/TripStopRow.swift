@@ -16,6 +16,7 @@ struct TripStopRow: View {
     var now: EasternTimeInstant
     var onTapLink: (TripDetailsStopList.Entry) -> Void
     var onOpenAlertDetails: (Shared.Alert) -> Void
+    var openExplainer: (ExplainerType) -> Void = { _ in }
     var route: Route
     var routeAccents: TripRouteAccents
     var stopListContext: StopListContext
@@ -54,7 +55,7 @@ struct TripStopRow: View {
         } else {
             switch onEnum(of: stop.trackChange) {
             case let .some(.alert(alert)): onOpenAlertDetails(alert.alert)
-            case let .some(.scheduled(change)): break
+            case let .some(.scheduled(change)): openExplainer(ExplainerType.ScheduledTrackChange(data: change))
             default: break
             }
         }

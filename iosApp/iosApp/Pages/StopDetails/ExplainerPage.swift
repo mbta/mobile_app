@@ -14,12 +14,6 @@ public struct Explainer {
     let routeAccents: TripRouteAccents
 }
 
-enum ExplainerType: String {
-    case finishingAnotherTrip
-    case noPrediction
-    case noVehicle
-}
-
 struct ExplainerPage: View {
     @ObserveInjection var inject
     let explainer: Explainer
@@ -31,16 +25,19 @@ struct ExplainerPage: View {
         VStack(alignment: .leading, spacing: 0) {
             header
             VStack(alignment: .leading, spacing: 24) {
+                explanationImage
                 explanationHeadline
-                    .font(Typography.title2Bold)
+                    .font(Typography.title1Bold)
                     .accessibilityHeading(.h2)
                     .accessibilityAddTraits(.isHeader)
-                explanationImage
+                    .padding(.horizontal, 16)
+
                 explanationText.font(Typography.body)
+                    .padding(.horizontal, 16)
+
                 Spacer()
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 16)
             .padding(.top, 24)
             .padding(.bottom, 40)
         }
@@ -58,7 +55,7 @@ struct ExplainerPage: View {
                 .accessibilityHidden(true)
 
             Text("Details", comment: "Header on the general explainer details page")
-                .font(Typography.headline)
+                .font(Typography.headlineBold)
                 .accessibilityHeading(.h1)
                 .accessibilityAddTraits(.isHeader)
             Spacer()
@@ -71,7 +68,7 @@ struct ExplainerPage: View {
     }
 
     @ViewBuilder private var explanationHeadline: some View {
-        switch explainer.type {
+        switch onEnum(of: explainer.type) {
         case .finishingAnotherTrip: Text(
                 "Finishing another trip",
                 comment: "Headline for a page explaining that the vehicle shown is finishing a different trip"
@@ -81,11 +78,12 @@ struct ExplainerPage: View {
                 comment: "Headline for an explanation of why no predictions are shown"
             )
         case .noVehicle: Text(localizedNoVehicleHeading)
+        case .scheduledTrackChange: Text("Track Change")
         }
     }
 
     @ViewBuilder private var explanationImage: some View {
-        switch explainer.type {
+        switch onEnum(of: explainer.type) {
         case .finishingAnotherTrip: ZStack(alignment: .center) {
                 Image(.turnaroundShape)
                     .resizable()
@@ -97,18 +95,27 @@ struct ExplainerPage: View {
                     .scaledToFit()
                     .frame(maxWidth: .infinity)
                     .foregroundStyle(explainer.routeAccents.textColor)
-            }.accessibilityHidden(true)
+            }
+            .padding(.horizontal, 16)
+            .accessibilityHidden(true)
+        case .scheduledTrackChange: Image(.explainerTrackChangeCr)
+            .resizable()
+            .scaledToFit()
+            .frame(maxWidth: .infinity)
         default: EmptyView()
         }
     }
 
     @ViewBuilder private var explanationText: some View {
-        switch explainer.type {
+        switch onEnum(of: explainer.type) {
         case .finishingAnotherTrip: Text(localizedFinishingAnotherTripDescription)
         case .noPrediction: Text(
                 "We don’t have live predictions for this trip yet, but they will appear closer to the scheduled time. If the trip is delayed or cancelled, we’ll let you know here."
             )
         case .noVehicle: Text(localizedNoVehicleDescription)
+        case let .scheduledTrackChange(trackChange): Text(
+                "The train is traveling on a different track than usual. Please board on \(trackChange.data.platformName ?? trackChange.data.platformCode)."
+            )
         }
     }
 
