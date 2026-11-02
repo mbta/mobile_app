@@ -73,32 +73,6 @@ class NotificationSettingsViewModelTest {
     }
 
     @Test
-    fun setEnabledAddsDefaultWeekdayWindowWhenPresetsFeatureDisabled() = runTest {
-        val viewModel = NotificationSettingsViewModel(MockSentryRepository())
-
-        testViewModelFlow(viewModel).test {
-            awaitItem()
-
-            viewModel.setPresetsEnabledFlag(false)
-            viewModel.setEnabled(true)
-
-            val state = awaitItem()
-            assertEquals(true, state.settings?.enabled)
-            assertWindowsEquals(
-                listOf(
-                    Window(
-                        startTime = LocalTime(8, 0),
-                        endTime = LocalTime(9, 0),
-                        daysOfWeek = Window.weekdays,
-                    ),
-                ),
-                state.settings?.windows,
-            )
-            assertEquals(null, state.selectedPreset)
-        }
-    }
-
-    @Test
     fun setEnabledUsesCurrentPresetWindow() = runTest {
         val viewModel = NotificationSettingsViewModel(MockSentryRepository())
 
@@ -106,7 +80,6 @@ class NotificationSettingsViewModelTest {
             awaitItem()
 
             viewModel.setNow(EasternTimeInstant(2026, Month.SEPTEMBER, 3, 12, 30))
-            viewModel.setPresetsEnabledFlag(true)
             viewModel.setEnabled(true)
 
             val state = awaitItem()
@@ -174,7 +147,6 @@ class NotificationSettingsViewModelTest {
         testViewModelFlow(viewModel).test {
             awaitItem()
             viewModel.setNow(now)
-            viewModel.setPresetsEnabledFlag(true)
             viewModel.loadSavedSettings(Notifications.disabled)
 
             val state = awaitItem()
@@ -197,7 +169,6 @@ class NotificationSettingsViewModelTest {
         testViewModelFlow(viewModel).test {
             awaitItem()
             viewModel.setNow(now)
-            viewModel.setPresetsEnabledFlag(true)
             viewModel.loadSavedSettings(Notifications.disabled)
 
             val state = awaitItem()
@@ -234,7 +205,6 @@ class NotificationSettingsViewModelTest {
         testViewModelFlow(viewModel).test {
             awaitItem()
             viewModel.setNow(now)
-            viewModel.setPresetsEnabledFlag(true)
             viewModel.loadSavedSettings(Notifications.disabled)
 
             val state = awaitItem()
@@ -257,41 +227,6 @@ class NotificationSettingsViewModelTest {
                 listOf(Window.customFromCurrentTime(now)),
                 awaitItem().settings?.windows,
             )
-        }
-    }
-
-    @Test
-    fun addPlaceholderWindowAppendsWeekendWindowWhenFeatureFlagDisabled() = runTest {
-        val viewModel = NotificationSettingsViewModel(MockSentryRepository())
-        val customWindows =
-            listOf(
-                Window(
-                    startTime = LocalTime(9, 0),
-                    endTime = LocalTime(11, 0),
-                    daysOfWeek = setOf(DayOfWeek.MONDAY),
-                ),
-            )
-
-        testViewModelFlow(viewModel).test {
-            awaitItem()
-
-            viewModel.setWindows(customWindows)
-            assertEquals(customWindows, awaitItem().settings?.windows)
-
-            viewModel.addPlaceholderWindow()
-
-            val state = awaitItem()
-            assertEquals(2, state.settings?.windows?.size)
-            assertWindowsEquals(
-                customWindows +
-                    Window(
-                        startTime = LocalTime(12, 0),
-                        endTime = LocalTime(13, 0),
-                        daysOfWeek = Window.weekend,
-                    ),
-                state.settings?.windows,
-            )
-            assertEquals(null, state.selectedPreset)
         }
     }
 
@@ -412,7 +347,6 @@ class NotificationSettingsViewModelTest {
 
         testViewModelFlow(viewModel).test {
             viewModel.setNow(now)
-            viewModel.setPresetsEnabledFlag(true)
             viewModel.loadSavedSettings(savedSettings)
             awaitItem()
             viewModel.savedSettings()

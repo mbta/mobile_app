@@ -84,7 +84,7 @@ final class MorePageTests: XCTestCase {
         }
 
         try await ViewHosting.host(sut.environmentObject(
-            SettingsCache(settingsRepo: settingsRepository, cache: [.notifications: true])
+            SettingsCache(settingsRepo: settingsRepository, cache: [:])
         )) {
             await fulfillment(of: [tapExp, savedExp, updateExp], timeout: 5)
         }

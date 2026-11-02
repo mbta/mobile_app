@@ -251,7 +251,7 @@ final class SaveFavoritePageTests: XCTestCase {
             navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
         )
 
-        ViewHosting.host(view: sut.withFixedSettings([.notificationPresetWindows: true]))
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         defer { ViewHosting.expel() }
 
         sut.inspection.inspect(after: 1) { view in

@@ -54,7 +54,7 @@ internal class OnboardingRepository : IOnboardingRepository, KoinComponent {
                 }
                 .toSet()
         val onboardingPending =
-            OnboardingScreen.entries.filter { it.applies(accessibilityStatus, settings) } -
+            OnboardingScreen.entries.filter { it.applies(accessibilityStatus) } -
                 onboardingCompleted
         return onboardingPending
     }

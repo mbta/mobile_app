@@ -57,7 +57,6 @@ final class FcmSubscriptionModifierTests: XCTestCase {
         let sut = Text("test").handleFcmTokenSubscriptions(
             fcmToken: expectedToken,
             includeAccessibility: true,
-            notificationsEnabled: true,
         )
 
         ViewHosting.host(view: sut)
@@ -99,7 +98,6 @@ final class FcmSubscriptionModifierTests: XCTestCase {
         let sut = Text("test").handleFcmTokenSubscriptions(
             fcmToken: nil,
             includeAccessibility: true,
-            notificationsEnabled: true,
         )
 
         ViewHosting.host(view: sut)

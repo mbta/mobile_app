@@ -35,8 +35,7 @@ struct ProductionAppView: View {
             HelpersKt.startKoinIOSTestApp()
             self.init(socket: MockSocket())
         } else if CommandLine.arguments.contains("--e2e-mocks") {
-            var settings = [Settings.notificationPresetWindows: KotlinBoolean(bool: true),
-                            Settings.notifications: KotlinBoolean(bool: true)]
+            var settings: [Settings: KotlinBoolean] = [:]
             if CommandLine.arguments.contains("--skip-map") {
                 settings[Settings.hideMaps] = KotlinBoolean(bool: true)
             }

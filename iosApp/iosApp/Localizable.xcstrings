@@ -290,6 +290,7 @@
     },
     "**%1$@** at **%2$@** added to Favorites" : {
       "comment" : "Favorite added toast text, the first value is the route name (Red Line, 1 bus),\nand the second is a stop name (Ruggles, Alewife).\nThe asterisks surround bolded text. ex. \"[Green Line] at [Arlington] added to Favorites\"",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1715,6 +1716,7 @@
     },
     "%@ service only" : {
       "comment" : "Notice that there is only service in a single direction for a route at a stop within the favorites flow. Ex: [Easbound] service only.",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2985,6 +2987,7 @@
     },
     "Add" : {
       "comment" : "Text for confirmation button when user is adding to their favorites",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3038,6 +3041,7 @@
     },
     "Add **%1$@** at **%2$@**" : {
       "comment" : "Title for a confirmation modal when a user adds a favorite route + stop and already has the context that what they are adding is a favorite. Ex: Add [Green Line] at [Boylston]",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3091,6 +3095,7 @@
     },
     "Add **%1$@** at **%2$@** to Favorites" : {
       "comment" : "Title for a confirmation modal when a user adds a favorite route + stop. Ex: Add [Green Line] at [Boylston] to Favorites",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -7831,6 +7836,7 @@
     },
     "Delete" : {
       "comment" : "Content description for a button that removes a favorited route/stop/direction",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -15425,6 +15431,7 @@
       }
     },
     "Okay" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -22052,6 +22059,7 @@
       }
     },
     "This stop is drop-off only" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
