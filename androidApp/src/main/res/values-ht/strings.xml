@@ -18,17 +18,17 @@
     <string name="additional_service_sentence_case">Plis sèvis</string>
     <plurals name="affected_stops">
         <item quantity="one">&lt;b&gt;%1$d&lt;/b&gt; arè ki afekte</item>
-        <item quantity="other">&lt;b&gt;%1$d&lt;/b&gt; arè ki afekte</item>
+        <item quantity="other">&lt;b&gt;%1$d&lt;/b&gt; arè ki afekte yo</item>
     </plurals>
     <string name="alert">Avètisman</string>
     <string name="alert_details">Detay Avètisman</string>
     <string name="alert_elevator_header">Fèmti Asansè (%1$s)</string>
     <string name="alert_ended">Avètisman an pa aplikab ankò</string>
     <string name="alert_summary">&lt;b&gt;%1$s&lt;/b&gt;%2$s%3$s%4$s</string>
-    <string name="alert_summary_location_successive">" soti nan rive &lt;b&gt;%1$s&lt;/b&gt; nan &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="alert_summary_location_successive">" soti nan &lt;b&gt;%1$s&lt;/b&gt; rive nan &lt;b&gt;%2$s&lt;/b&gt;"</string>
     <string name="alert_summary_timeframe_this_week">" jiska %1$s"</string>
     <string name="alerts_channel" translatable="false">Service Alerts</string>
-    <string name="all_day">Tout lajounen</string>
+    <string name="all_day">Tout jounen an</string>
     <string name="alternative_path">Lòt chemen</string>
     <string name="amber_alert">Avètisman Amber</string>
     <string name="amber_alert_sentence_case">Avètisman amber</string>
@@ -72,7 +72,7 @@
     <string name="connections_to_and">Koneksyon ak %1$s epi %2$s</string>
     <string name="construction">Konstriksyon</string>
     <string name="construction_lowercase">konstriksyon</string>
-    <string name="counterclockwise">Nan sans kontrè zegwi mont lan (goch mont)</string>
+    <string name="counterclockwise">Nan sans kontrè ak zegwi mont lan</string>
     <string name="crossing_issue">Pwoblèm nan Pasaj a Nivo yo</string>
     <string name="crossing_issue_lowercase">pwoblèm nan pasaj a nivo</string>
     <string name="crossing_malfunction">Pasaj a Nivo ki p ap Fonksyone</string>
@@ -84,7 +84,7 @@
     <string name="crowding_some_crowding">Gen kèk moun ki te twò chaje</string>
     <string name="crowding_unknown">Foul moun enkoni</string>
     <string name="current_locale">ht</string>
-    <string name="custom">Personnalisé</string>
+    <string name="custom">Pèsonalize</string>
     <string name="daily">Chak jou</string>
     <string name="delay">Reta</string>
     <string name="delays_due_to_cause">&lt;b&gt;Reta&lt;/b&gt; akòz %1$s</string>
@@ -128,11 +128,11 @@
     <string name="elevator_closed_sentence_case">Asansè a fèmen</string>
     <string name="elevator_closure">Fèmti Asansè</string>
     <plurals name="elevator_closure_count">
-        <item quantity="one">%1$d asansè fèmen</item>
-        <item quantity="other">%1$d asansè ki fèmen</item>
+        <item quantity="one">%1$d asansè a fèmen</item>
+        <item quantity="other">%1$d asansè yo fèmen</item>
     </plurals>
     <plurals name="elevator_closure_count_accessibility_description">
-        <item quantity="one">Arè sa a gen %1$d asansè fèmen</item>
+        <item quantity="one">Arè sa a gen %1$d asansè ki fèmen</item>
         <item quantity="other">Arè sa a gen %1$d asansè ki fèmen</item>
     </plurals>
     <string name="en_dash_range">%1$s – %2$s</string>
@@ -142,7 +142,7 @@
     <string name="escalator_closed_sentence_case">Fèmti eskalye</string>
     <string name="escalator_closure">Fèmti Eskalye</string>
     <string name="evening">Aswè</string>
-    <string name="exact_hours_format_abbr">&lt;b&gt;%1$d&lt;/b&gt; pou</string>
+    <string name="exact_hours_format_abbr">&lt;b&gt;%1$d&lt;/b&gt; èdtan</string>
     <string name="expand_remaining_stops">elaji arè ki rete yo</string>
     <string name="expand_stops">elaji arè yo</string>
     <string name="explainer_headline_finishing_another">Ap fini yon lòt vwayaj</string>
@@ -211,7 +211,7 @@
     <string name="last">Dènye</string>
     <string name="last_trip">Dènye vwayaj la</string>
     <string name="later_today">pita jodi a</string>
-    <string name="less_common_stop"> Arè ki mwen komen</string>
+    <string name="less_common_stop">Arè ki mwen komen</string>
     <string name="less_common_stops">&lt;b&gt;%1$d&lt;/b&gt; arè ki mwen komen</string>
     <string name="list_join">", "</string>
     <string name="live">An dirèk</string>
@@ -222,7 +222,7 @@
     <string name="location_settings_prompt_keep_off">Kenbe Sèvis Pozisyon Fèmen</string>
     <string name="location_settings_prompt_title">MBTA Go mache pi byen lè Sèvis Pozisyon w yo aktive</string>
     <string name="location_settings_prompt_turn_on">Ouvri nan pa Paramèt</string>
-    <string name="looping">Boukl</string>
+    <string name="looping">Ap repete</string>
     <string name="maintenance">Antretyen</string>
     <string name="maintenance_lowercase">antretyen</string>
     <string name="mechanical_issue">Pwoblèm Mekanik</string>
@@ -231,7 +231,7 @@
     <string name="mechanical_problem_lowercase">pwoblèm mekanik</string>
     <string name="medical_emergency">Ijans Medikal</string>
     <string name="medical_emergency_lowercase">ijans medikal</string>
-    <string name="midday">Midi</string>
+    <string name="midday">Mitan jounen</string>
     <string name="minutes_abbr">&lt;b&gt;%1$d&lt;/b&gt; minit</string>
     <string name="modified_service">Sèvis Modifye</string>
     <string name="modified_service_sentence_case">Sèvis modifye</string>
@@ -248,22 +248,22 @@
     <string name="more_section_support_note_accessibility">711 pou moun ki rele TTY; VRS pou moun kap rele ASL</string>
     <string name="more_section_support_note_hours">Lendi rive vandredi: 6:30 AM - 8 PM</string>
     <string name="more_title">MBTA Go</string>
-    <string name="morning">Maten</string>
+    <string name="morning">Bonjou</string>
     <string name="nearby_transit">Transpò piblik ki toupre</string>
     <string name="nearby_transit_link">Toupre</string>
     <string name="new_feature_screen_reader_header_prefix">Nouvo karakteristik. %1$s</string>
-    <string name="next_day">jou kap vini an</string>
+    <string name="next_day">pwochen jou a</string>
     <string name="next_stop">Pwochen arè</string>
     <string name="next_trip_at">Pwochen vwayaj la nan &lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="next_trip_at_tomorrow">Pwochen vwayaj la nan &lt;b&gt;%1$s&lt;/b&gt; demen</string>
     <string name="next_trip_on">Pwochen vwayaj la se sou &lt;b&gt;%1$s&lt;/b&gt;</string>
-    <string name="no_matching_routes">Pa gen wout %1$ski matche</string>
+    <string name="no_matching_routes">Pa gen wout %1$s ki matche</string>
     <string name="no_predictions">Pa gen prediksyon disponib</string>
-    <string name="no_results_found">Nou pa jwenn rezilta</string>
+    <string name="no_results_found">Nou pa jwenn rezilta 🤔</string>
     <string name="no_service">Pa gen Sèvis</string>
     <string name="no_service_sentence_case">Pa gen sèvis</string>
     <string name="no_service_today">Pa gen sèvis jodi a</string>
-    <string name="no_stops_added">Ajoute arè ou pi renmen yo pou aksè fasil ak notifikasyon entèripsyon</string>
+    <string name="no_stops_added">Ajoute arè ou pi renmen yo pou jwenn aksè fasil ak notifikasyon sou entèripsyon sèvis</string>
     <string name="no_stops_nearby">Ou deyò zòn sèvis MBTA a.</string>
     <string name="no_stops_nearby_pan">Gade transpò piblik toupre Boston</string>
     <string name="no_stops_nearby_search">Chèche dapre arè a</string>
@@ -273,7 +273,7 @@
     <string name="not_accessible_stop_card">Estasyon sa a pa aksesib</string>
     <string name="notice">Avi</string>
     <string name="notifications_beta_toggle_label">Notifikasyon Entèripsyon</string>
-    <string name="notification_settings_empty_state">Nou ka voye notifikasyon ba ou konsènan pwoblèm sou wout sa a anvan ou ale.</string>
+    <string name="notification_settings_empty_state">Nou ka voye notifikasyon push ba ou sou pwoblèm sou wout sa a anvan ou pati</string>
     <string name="notifications_enabled">notifikasyon yo pèmèt</string>
     <string name="notifications_favorites_hint">Kounye a, &lt;u&gt;modifye favori ou yo&lt;/u&gt; pou resevwa notifikasyon entèripsyon yo</string>
     <string name="notifications_settings_link">Pèmèt avi Notifikasyon nan Anviwònman yo</string>
@@ -305,15 +305,15 @@
     <string name="parking_issue">Pwoblèm Pakin</string>
     <string name="parking_issue_sentence_case">Pwoblèm pakin</string>
     <string name="police_activity">Aktivite Polis</string>
-    <string name="police_activity_lowercase">aktivite lapolis</string>
+    <string name="police_activity_lowercase">aktivite Polis</string>
     <string name="policy_change">Chanjman Règleman</string>
     <string name="policy_change_sentence_case">Chanjman règleman</string>
     <string name="power_problem">Pwoblèm Kouran</string>
     <string name="power_problem_lowercase">pwoblèm kouran</string>
     <string name="predictions_unavailable_details">Sèvis la ap fonksyone, men prediksyon lè arive yo pa disponib. Verifye kat la pou wè ki kote %1$s yo ye kounye a.</string>
     <string name="predictions_unavailable_details_hide_maps">Sèvis la ap fonksyone, men prediksyon lè arive yo pa disponib.</string>
-    <string name="presence_of_whales">Prezans Balèn yo</string>
-    <string name="presence_of_whales_lowercase">prezans balèn yo</string>
+    <string name="presence_of_whales">Prezans balèn</string>
+    <string name="presence_of_whales_lowercase">prezans balèn</string>
     <string name="promo_favorites_body">Kounye a tout wout ou fè souvan yo sere &lt;b&gt;fasil nan yon sèl kote&lt;/b&gt;.</string>
     <string name="promo_favorites_header">Ajoute nan Preferans ou yo</string>
     <string name="promo_notifications_body">N ap di w nenpòt pwoblèm anvan w ale!</string>
@@ -343,7 +343,7 @@
     <string name="route_mode_label">%1$s %2$s</string>
     <string name="routes">Wout</string>
     <string name="save">Sove</string>
-    <string name="schedule_change">Chanjman Orè</string>
+    <string name="schedule_change">Chanjman nan orè</string>
     <string name="schedule_change_sentence_case">Chanjman orè</string>
     <string name="scheduled_to_depart">Pwograme pou ale</string>
     <string name="scheduled_to_depart_accessibility_desc">Chwazi %1$s pwograme pou ale %2$s</string>
@@ -411,8 +411,8 @@
     <string name="stop_skipped_sentence_case">Arè sote</string>
     <string name="stops">Arè</string>
     <plurals name="stops_away">
-        <item quantity="one">%1$darè lwen</item>
-        <item quantity="other">%1$darè lwen</item>
+        <item quantity="one">%1$d arè lwen</item>
+        <item quantity="other">%1$d arè lwen</item>
     </plurals>
     <string name="strike">Grèv</string>
     <string name="strike_lowercase">grèv</string>
@@ -433,7 +433,7 @@
     <string name="tie_replacement_lowercase">ranplasman mare</string>
     <string name="time_picker_type_toggle">Chanje/dezaktive kalite seleksyon tan an</string>
     <string name="to">Pou</string>
-    <string name="to_lowercase">Pou</string>
+    <string name="to_lowercase">pou</string>
     <string name="toast_tip_prefix">Konsèy: %1$s</string>
     <string name="toggle_direction">baskile direksyon</string>
     <string name="track_change">Suiv Chanjman</string>
@@ -468,11 +468,11 @@
     <string name="until_further_notice">Jiskaske yo bay lòt avi</string>
     <string name="updated_at">Mizajou: %1$s</string>
     <plurals name="updated_mins_ago">
-        <item quantity="one">Mizajou %1$d minit de sa</item>
-        <item quantity="other">Mizajou %1$d minit de sa</item>
+        <item quantity="one">Mete ajou %1$d minit de sa</item>
+        <item quantity="other">Mete ajou %1$d minit de sa</item>
     </plurals>
-    <string name="utility_work">Travay sèvis piblik</string>
-    <string name="utility_work_lowercase">travay ap fèt sou ray</string>
+    <string name="utility_work">Travay sou rezo sèvis piblik yo</string>
+    <string name="utility_work_lowercase">travay sou rezo sèvis piblik yo</string>
     <string name="vehicle_arriving_first">%1$s ap rive kounye a</string>
     <string name="vehicle_arriving_other">ap rive kounye a</string>
     <string name="vehicle_boarding_first">%1$s ap pran moun kounye a</string>
@@ -506,10 +506,10 @@
     <string name="vehicle_shuttled_other">epi nan %1$s ranplase pa yon bis navèt</string>
     <string name="vehicle_skipped_first">%1$s rive nan %2$s sote</string>
     <string name="vehicle_skipped_other">epi nan %1$s sote</string>
-    <string name="vessel_substitution">Ranplasman bis</string>
-    <string name="vessel_substitution_lowercase">Ranplasman bis</string>
-    <string name="vessel_traffic">Sikilasyon</string>
-    <string name="vessel_traffic_lowercase">trafik</string>
+    <string name="vessel_substitution">Ranplasman veso</string>
+    <string name="vessel_substitution_lowercase">Ranplasman bato</string>
+    <string name="vessel_traffic">Trafik bato</string>
+    <string name="vessel_traffic_lowercase">trafik bato</string>
     <string name="view_details">Gade detay yo</string>
     <string name="waiting_to_depart">Ap tann pou yo ale</string>
     <string name="weather">Tan</string>

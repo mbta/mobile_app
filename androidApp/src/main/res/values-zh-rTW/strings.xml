@@ -17,14 +17,14 @@
     <string name="additional_service">附加服務</string>
     <string name="additional_service_sentence_case">附加服務</string>
     <plurals name="affected_stops">
-        <item quantity="other">&lt;b&gt;%1$d 個&lt;/b&gt;受影響的站點</item>
+        <item quantity="other">&lt;b&gt;%1$d&lt;/b&gt;個受影響的站點</item>
     </plurals>
     <string name="alert">警報</string>
     <string name="alert_details">警報詳情</string>
     <string name="alert_elevator_header">電梯關停(%1$s)</string>
     <string name="alert_ended">警報已失效</string>
     <string name="alert_summary">&lt;b&gt;%1$s&lt;/b&gt;%2$s%3$s%4$s</string>
-    <string name="alert_summary_location_successive">"從&lt;b&gt;%1$s&lt;/b&gt; 至&lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="alert_summary_location_successive">" 從&lt;b&gt;%1$s&lt;/b&gt;至&lt;b&gt;%2$s&lt;/b&gt;"</string>
     <string name="alert_summary_timeframe_this_week">" 至%1$s"</string>
     <string name="alerts_channel" translatable="false">Service Alerts</string>
     <string name="all_day">全天</string>
@@ -83,7 +83,7 @@
     <string name="crowding_some_crowding">略有擁擠</string>
     <string name="crowding_unknown">擁擠度不明</string>
     <string name="current_locale">zh-Hant-TW</string>
-    <string name="custom">風俗</string>
+    <string name="custom">自訂</string>
     <string name="daily">每日</string>
     <string name="delay">延誤</string>
     <string name="delays_due_to_cause">因 %1$s 造成&lt;b&gt;延誤&lt;/b&gt;</string>
@@ -127,19 +127,19 @@
     <string name="elevator_closed_sentence_case">直梯已關閉</string>
     <string name="elevator_closure">電梯關閉</string>
     <plurals name="elevator_closure_count">
-        <item quantity="other">%1$d部電梯 已關閉</item>
+        <item quantity="other">%1$d部電梯已關閉</item>
     </plurals>
     <plurals name="elevator_closure_count_accessibility_description">
-        <item quantity="other">本站有%1$d部電梯 已關閉</item>
+        <item quantity="other">此站有%1$d部電梯已關閉</item>
     </plurals>
     <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">結束日期</string>
-    <string name="end_of_service">服務結束</string>
+    <string name="end_of_service">營運結束</string>
     <string name="error_loading_data">載入資料時發生錯誤</string>
     <string name="escalator_closed_sentence_case">自動扶梯已關閉</string>
     <string name="escalator_closure">自動扶梯關閉</string>
     <string name="evening">晚上</string>
-    <string name="exact_hours_format_abbr">&lt;b&gt;%1$d&lt;/b&gt;至</string>
+    <string name="exact_hours_format_abbr">&lt;b&gt;%1$d&lt;/b&gt;小時</string>
     <string name="expand_remaining_stops">展開剩餘站點</string>
     <string name="expand_stops">展開網站</string>
     <string name="explainer_headline_finishing_another">結束另一趟行程</string>
@@ -163,10 +163,10 @@
     <string name="feature_flag_debug_mode">調試模式</string>
     <string name="feature_flag_route_search">線路搜尋</string>
     <string name="feedback_link_form">傳送應用程式回饋</string>
-    <string name="ferries">輪渡</string>
+    <string name="ferries">渡輪</string>
     <string name="ferry">輪渡</string>
     <string name="ferry_cancelled">輪渡航線已取消</string>
-    <string name="ferry_lowercase">輪渡</string>
+    <string name="ferry_lowercase">渡輪</string>
     <string name="ferry_suspended">輪渡航線已暫停營運</string>
     <string name="filter_routes">篩選路線</string>
     <string name="filter_show_all">全部</string>
@@ -192,7 +192,7 @@
     <string name="group_by_direction" translatable="false">Group by Direction</string>
     <string name="hazmat_condition">危險物質</string>
     <string name="hazmat_condition_lowercase">危險物質</string>
-    <string name="header_at_stop">下一趟車將於 到站&lt;b&gt;%1$s&lt;/b&gt;</string>
+    <string name="header_at_stop">在&lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="heading">方向</string>
     <string name="heavy_ridership">客流過大</string>
     <string name="heavy_ridership_lowercase">客流過大</string>
@@ -205,12 +205,12 @@
     <string name="ice_in_harbor_lowercase">港口結冰</string>
     <string name="inbound">進站</string>
     <string name="is_stops_away_from">%1$s距離%3$s還有%2$d站</string>
-    <string name="last">末班</string>
+    <string name="last">末班車</string>
     <string name="last_trip">末班車</string>
     <string name="later_today">今天晚些時候</string>
     <string name="less_common_stop">較少停靠的網站</string>
     <string name="less_common_stops">&lt;b&gt;%1$d&lt;/b&gt;較少停靠的網站</string>
-    <string name="list_join">"、 "</string>
+    <string name="list_join">"，"</string>
     <string name="live">即時</string>
     <string name="loading">正在載入……</string>
     <string name="location_not_available_yet">位置尚未確定</string>
@@ -219,7 +219,7 @@
     <string name="location_settings_prompt_keep_off">保持關閉定位服務</string>
     <string name="location_settings_prompt_title">MBTA Go在定位服務開啟時效果最佳</string>
     <string name="location_settings_prompt_turn_on">在設定中打開</string>
-    <string name="looping">循環</string>
+    <string name="looping">循環播放</string>
     <string name="maintenance">維護</string>
     <string name="maintenance_lowercase">維護</string>
     <string name="mechanical_issue">機械問題</string>
@@ -228,7 +228,7 @@
     <string name="mechanical_problem_lowercase">機械故障</string>
     <string name="medical_emergency">醫療急救</string>
     <string name="medical_emergency_lowercase">醫療急救</string>
-    <string name="midday">正午</string>
+    <string name="midday">中午</string>
     <string name="minutes_abbr">&lt;b&gt;%1$d&lt;/b&gt;分鐘</string>
     <string name="modified_service">調整後的服務</string>
     <string name="modified_service_sentence_case">調整後的服務</string>
@@ -249,18 +249,18 @@
     <string name="nearby_transit">附近的交通</string>
     <string name="nearby_transit_link">附近</string>
     <string name="new_feature_screen_reader_header_prefix">新增功能。%1$s</string>
-    <string name="next_day">第二天</string>
+    <string name="next_day">隔天</string>
     <string name="next_stop">下一站</string>
     <string name="next_trip_at">下一班次時間&lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="next_trip_at_tomorrow">明日下一班次時間&lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="next_trip_on">下一班次時間&lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="no_matching_routes">沒有匹配的%1$s路線</string>
     <string name="no_predictions">預測不可用</string>
-    <string name="no_results_found">未找到結果🤔</string>
+    <string name="no_results_found">未找到結果 🤔</string>
     <string name="no_service">無服務</string>
     <string name="no_service_sentence_case">無服務</string>
     <string name="no_service_today">今日無服務</string>
-    <string name="no_stops_added">新增常用網站以便輕鬆存取和接收中斷通知</string>
+    <string name="no_stops_added">新增最愛站點，方便快速存取並接收服務中斷通知</string>
     <string name="no_stops_nearby">您位於MBTA服務區域之外。</string>
     <string name="no_stops_nearby_pan">查看波士頓附近的交通</string>
     <string name="no_stops_nearby_search">按站點搜尋</string>
@@ -270,7 +270,7 @@
     <string name="not_accessible_stop_card">此車站不適合輪椅通行</string>
     <string name="notice">通知</string>
     <string name="notifications_beta_toggle_label">營運變動通知</string>
-    <string name="notification_settings_empty_state">我們可以在您出發前向您發送有關此路線可能出現問題的推播通知。</string>
+    <string name="notification_settings_empty_state">在您出發前，我們可以向您傳送此路線的異常推播通知</string>
     <string name="notifications_enabled">通知已開啟</string>
     <string name="notifications_favorites_hint">立即&lt;u&gt;編輯您的收藏&lt;/u&gt;以接收營運變動通知</string>
     <string name="notifications_settings_link">在「設定」中開啟「通知」許可權</string>
@@ -302,15 +302,15 @@
     <string name="parking_issue">停車問題</string>
     <string name="parking_issue_sentence_case">停車問題</string>
     <string name="police_activity">警方活動</string>
-    <string name="police_activity_lowercase">警方活動</string>
+    <string name="police_activity_lowercase">警方行動</string>
     <string name="policy_change">政策變化</string>
     <string name="policy_change_sentence_case">政策變化</string>
     <string name="power_problem">電力故障</string>
     <string name="power_problem_lowercase">電力故障</string>
     <string name="predictions_unavailable_details">服務正在運行，但無法提供預計到達時間。查看地圖，看看%1$s目前所在的位置。</string>
     <string name="predictions_unavailable_details_hide_maps">服務正在運行，但無法提供預計到達時間。</string>
-    <string name="presence_of_whales">鯨魚的出現</string>
-    <string name="presence_of_whales_lowercase">鯨魚的出現</string>
+    <string name="presence_of_whales">鯨魚出沒</string>
+    <string name="presence_of_whales_lowercase">鯨魚的存在</string>
     <string name="promo_favorites_body">現在將您常用的網站儲存到&lt;b&gt;一個便捷位置&lt;/b&gt;。</string>
     <string name="promo_favorites_header">新增您的我的最愛</string>
     <string name="promo_notifications_body">出行前我們將為您推播各類營運異常資訊！</string>
@@ -334,8 +334,8 @@
     <string name="resources_link_mticket_note">mTicket應用程式</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="results_failed_to_load">結果載入失敗☹️</string>
-    <string name="rough_seas">波濤洶湧</string>
-    <string name="rough_seas_lowercase">波濤洶湧的海面</string>
+    <string name="rough_seas">海象不佳</string>
+    <string name="rough_seas_lowercase">海象惡劣</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_mode_label">%1$s %2$s</string>
     <string name="routes">線路</string>
@@ -353,8 +353,8 @@
     <string name="serves_route_list">服務%1$s</string>
     <string name="service_change">服務變更</string>
     <string name="service_change_sentence_case">服務變更</string>
-    <string name="service_day_start">服務開始</string>
-    <string name="service_day_end">服務結束</string>
+    <string name="service_day_start">營運開始</string>
+    <string name="service_day_end">營運結束</string>
     <string name="service_ended">服務已結束</string>
     <string name="service_suspended">服務暫停</string>
     <string name="setting_station_accessibility">車站無障礙資訊</string>
@@ -388,7 +388,7 @@
     <string name="star_route">為線路添加星號</string>
     <string name="star_route_hint">將線路固定到清單頂部</string>
     <string name="start">開始日期</string>
-    <string name="start_of_service">服務開始</string>
+    <string name="start_of_service">營運開始</string>
     <string name="start_to_end_of_service">從服務開始到結束</string>
     <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">自明日起，直至另行通知</string>
@@ -408,7 +408,7 @@
     <string name="stop_skipped_sentence_case">網站跳停</string>
     <string name="stops">網站</string>
     <plurals name="stops_away">
-        <item quantity="other">距離%1$d站</item>
+        <item quantity="other">還有%1$d站</item>
     </plurals>
     <string name="strike">罷工</string>
     <string name="strike_lowercase">罷工</string>
@@ -428,8 +428,8 @@
     <string name="tie_replacement">更換軌枕</string>
     <string name="tie_replacement_lowercase">更換軌枕</string>
     <string name="time_picker_type_toggle">時間選擇器類型切換</string>
-    <string name="to">目的地</string>
-    <string name="to_lowercase">目的地</string>
+    <string name="to">前往</string>
+    <string name="to_lowercase">前往</string>
     <string name="toast_tip_prefix">提示：%1$s</string>
     <string name="toggle_direction">切換方向</string>
     <string name="track_change">軌道變更</string>
@@ -464,10 +464,10 @@
     <string name="until_further_notice">等待進一步通知</string>
     <string name="updated_at">最後更新：%1$s</string>
     <plurals name="updated_mins_ago">
-        <item quantity="other">%1$d分鐘前更新</item>
+        <item quantity="other">%1$d 分鐘前更新</item>
     </plurals>
-    <string name="utility_work">公用工程</string>
-    <string name="utility_work_lowercase">軌道作業</string>
+    <string name="utility_work">管線施工</string>
+    <string name="utility_work_lowercase">公用事業工程</string>
     <string name="vehicle_arriving_first">%1$s現已到站</string>
     <string name="vehicle_arriving_other">下一趟車現已到站</string>
     <string name="vehicle_boarding_first">%1$s正在上客</string>
@@ -501,10 +501,10 @@
     <string name="vehicle_shuttled_other">並且於%1$s抵達的班次由接駁巴士替代</string>
     <string name="vehicle_skipped_first">於%2$s抵達的%1$s的班次不停靠</string>
     <string name="vehicle_skipped_other">於%1$s跳停</string>
-    <string name="vessel_substitution">巴士替代方案</string>
-    <string name="vessel_substitution_lowercase">巴士替代方案</string>
-    <string name="vessel_traffic">交通</string>
-    <string name="vessel_traffic_lowercase">交通</string>
+    <string name="vessel_substitution">船舶替代方案</string>
+    <string name="vessel_substitution_lowercase">船舶替代方案</string>
+    <string name="vessel_traffic">船舶交通</string>
+    <string name="vessel_traffic_lowercase">船舶交通</string>
     <string name="view_details">查看詳情</string>
     <string name="waiting_to_depart">等待離開</string>
     <string name="weather">天氣</string>

@@ -136,7 +136,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "、 "
+            "value" : "， "
           }
         },
         "zh-Hant-TW" : {
@@ -183,7 +183,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$@**提前到站"
+            "value" : "前方有**%1$@**"
           }
         },
         "zh-Hant-TW" : {
@@ -230,7 +230,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$@ %2$@**位于**%3$@**已添加到收藏夹"
+            "value" : "已将**%3$@**的**%1$@ %2$@**添加到收藏夹"
           }
         },
         "zh-Hant-TW" : {
@@ -277,7 +277,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$@ %2$@**位于**%3$@**已从收藏夹中移除"
+            "value" : "已将**%3$@**的**%1$@ %2$@**从收藏夹中移除"
           }
         },
         "zh-Hant-TW" : {
@@ -324,7 +324,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$@**位于**%2$@**已添加到收藏夹"
+            "value" : "已将**%2$@**的**%1$@**添加到收藏夹"
           }
         },
         "zh-Hant-TW" : {
@@ -978,7 +978,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$@于%3$@到站"
+            "value" : "%1$@ %2$@，位于%3$@"
           }
         },
         "zh-Hant-TW" : {
@@ -1084,7 +1084,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "于%2$@抵达的%1$@班次由接驳巴士替代"
+            "value" : "于%2$@抵达的%1$@班次由摆渡巴士替代"
           }
         },
         "zh-Hant-TW" : {
@@ -1190,7 +1190,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "于%2$@抵达的%1$@的班次不停靠"
+            "value" : "原定于%2$@到站的%1$@班次不停靠"
           }
         },
         "zh-Hant-TW" : {
@@ -1702,7 +1702,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@定位服务暂不可用"
+            "value" : "暂时无法获取%1$@的位置"
           }
         },
         "zh-Hant-TW" : {
@@ -1755,7 +1755,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@仅限服务"
+            "value" : "仅提供%1$@方向的服务"
           }
         },
         "zh-Hant-TW" : {
@@ -2371,7 +2371,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld部电梯 已关闭"
+                  "value" : "%1$ld部电梯已关闭"
                 }
               }
             }
@@ -2573,7 +2573,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "距离%1$ld站"
+                  "value" : "还有%1$ld站"
                 }
               }
             }
@@ -2728,7 +2728,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "距离%1$ld站"
+                  "value" : "%1$ld站"
                 }
               }
             }
@@ -2972,7 +2972,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "事件"
+            "value" : "事故"
           }
         },
         "zh-Hant-TW" : {
@@ -3078,7 +3078,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在**%1$@**添加**%2$@**"
+            "value" : "添加**%2$@**站的**%1$@**"
           }
         },
         "zh-Hant-TW" : {
@@ -3367,7 +3367,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "添加最喜欢的站点"
+            "value" : "添加收藏站点"
           }
         },
         "zh-Hant-TW" : {
@@ -3384,13 +3384,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agrega paradas a favoritos para acceder a ellas fácilmente y recibir notificaciones sobre incidentes"
+            "value" : "Agregue paradas a favoritos para acceder a ellas fácilmente y recibir notificaciones sobre incidentes"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoutez des arrêts favoris pour un accès facile et des notifications de perturbation"
+            "value" : "Ajoutez des arrêts favoris pour y accéder facilement et recevoir des notifications en cas de perturbation"
           }
         },
         "ht" : {
@@ -3402,7 +3402,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adicione paradas favoritas para acesso fácil e notificações de interrupções."
+            "value" : "Adicione pontos favoritos para acessá-los facilmente e receber notificações sobre interrupções"
           }
         },
         "vi" : {
@@ -3414,13 +3414,13 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "添加常用站点以便轻松访问和接收中断通知"
+            "value" : "将站点添加到收藏夹，方便快速访问并接收服务中断通知"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新增常用網站以便輕鬆存取和接收中斷通知"
+            "value" : "新增常用站點，方便快速查詢並接收營運異常通知"
           }
         }
       }
@@ -3461,7 +3461,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "添加您的收藏夹"
+            "value" : "添加收藏站点"
           }
         },
         "zh-Hant-TW" : {
@@ -4260,7 +4260,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Amtrak火车交通"
+            "value" : "Amtrak 列车运行"
           }
         },
         "zh-Hant-TW" : {
@@ -4307,7 +4307,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Amtrak火车交通"
+            "value" : "Amtrak 列车运行"
           }
         },
         "zh-Hant-TW" : {
@@ -4730,7 +4730,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "并且于%1$@抵达的班次由接驳巴士替代"
+            "value" : "原定于%1$@到站的另一班车由摆渡巴士替代"
           }
         },
         "zh-Hant-TW" : {
@@ -4824,7 +4824,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "于%1$@跳停"
+            "value" : "原定于%1$@到站的另一班车不停靠"
           }
         },
         "zh-Hant-TW" : {
@@ -5306,7 +5306,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正在接近"
+            "value" : "即将进站"
           }
         },
         "zh-Hant-TW" : {
@@ -5448,7 +5448,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "到站%1$@"
+            "value" : "将于%1$@到站"
           }
         },
         "zh-Hant-TW" : {
@@ -5495,7 +5495,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "于**%1$@**到站"
+            "value" : "在**%1$@**"
           }
         },
         "zh-Hant-TW" : {
@@ -5542,7 +5542,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "交通事故"
+            "value" : "道路车辆阻碍运营"
           }
         },
         "zh-Hant-TW" : {
@@ -5589,7 +5589,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "交通事故"
+            "value" : "道路车辆阻碍运营"
           }
         },
         "zh-Hant-TW" : {
@@ -5636,7 +5636,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "后退"
+            "value" : "返回"
           }
         },
         "zh-Hant-TW" : {
@@ -5964,7 +5964,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "巴士线路已取消"
+            "value" : "巴士班次已取消"
           }
         },
         "zh-Hant-TW" : {
@@ -6012,7 +6012,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "巴士替代方案"
+            "value" : "巴士替代运营"
           }
         },
         "zh-Hant-TW" : {
@@ -6058,7 +6058,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "巴士线路已暂停运营"
+            "value" : "巴士服务已暂停"
           }
         },
         "zh-Hant-TW" : {
@@ -6151,7 +6151,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通过选择加入，我们可以向您显示哪些车站不适合轮椅通行或电梯关闭。"
+            "value" : "开启此功能后，您可以查看哪些车站无法无障碍通行或有电梯停运。"
           }
         },
         "zh-Hant-TW" : {
@@ -6509,7 +6509,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dans le sens des aiguilles d’une montre"
+            "value" : "Sens horaire"
           }
         },
         "ht" : {
@@ -6521,7 +6521,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "sentido horário"
+            "value" : "Sentido horário"
           }
         },
         "vi" : {
@@ -6539,7 +6539,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "順時針"
+            "value" : "順時針方向"
           }
         }
       }
@@ -6674,7 +6674,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "海岸警卫队警戒"
+            "value" : "海岸警卫队限制措施"
           }
         },
         "zh-Hant-TW" : {
@@ -6721,7 +6721,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "海岸警卫队警戒"
+            "value" : "海岸警卫队限制措施"
           }
         },
         "zh-Hant-TW" : {
@@ -6840,13 +6840,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "colapsado, doble toque para expandir"
+            "value" : "contraído, toque dos veces para expandir"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "effondré, double pression pour s’étendre"
+            "value" : "réduit, appuyez deux fois pour agrandir"
           }
         },
         "ht" : {
@@ -6858,7 +6858,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recolhido, toque duas vezes para expandir"
+            "value" : "recolhido, toque duas vezes para expandir"
           }
         },
         "vi" : {
@@ -6870,13 +6870,13 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已折叠，双击展开"
+            "value" : "已折叠，轻点两下以展开"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已折疊，雙擊展開"
+            "value" : "已收合，點兩下即可展開"
           }
         }
       }
@@ -6917,7 +6917,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通勤列车和渡轮票"
+            "value" : "通勤铁路和渡轮票"
           }
         },
         "zh-Hant-TW" : {
@@ -7058,7 +7058,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "连接到%1$@"
+            "value" : "可换乘%1$@"
           }
         },
         "zh-Hant-TW" : {
@@ -7111,7 +7111,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "连接到%1$@和%2$@"
+            "value" : "可换乘%1$@和%2$@"
           }
         },
         "zh-Hant-TW" : {
@@ -7134,7 +7134,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "construction"
+            "value" : "travaux"
           }
         },
         "ht" : {
@@ -7275,7 +7275,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dans le sens antihoraire"
+            "value" : "Sens antihoraire"
           }
         },
         "ht" : {
@@ -7287,7 +7287,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "sentido anti-horário"
+            "value" : "Sentido anti-horário"
           }
         },
         "vi" : {
@@ -7346,7 +7346,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "交通信号灯问题"
+            "value" : "铁路道口问题"
           }
         },
         "zh-Hant-TW" : {
@@ -7393,7 +7393,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "交通信号灯问题"
+            "value" : "铁路道口问题"
           }
         },
         "zh-Hant-TW" : {
@@ -7440,7 +7440,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "交通信号灯故障"
+            "value" : "铁路道口故障"
           }
         },
         "zh-Hant-TW" : {
@@ -7487,7 +7487,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "交通信号灯故障"
+            "value" : "铁路道口故障"
           }
         },
         "zh-Hant-TW" : {
@@ -7605,7 +7605,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Coutumes"
+            "value" : "Personnalisé"
           }
         },
         "ht" : {
@@ -7623,19 +7623,19 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Phong tục"
+            "value" : "Tùy chỉnh"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "风俗"
+            "value" : "自定义"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "風俗"
+            "value" : "自訂"
           }
         }
       }
@@ -7889,7 +7889,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "supprimer la période"
+            "value" : "Supprimer la période"
           }
         },
         "ht" : {
@@ -7907,13 +7907,13 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "chỉnh sửa mục yêu thích"
+            "value" : "Xóa khoảng thời gian"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "编辑收藏"
+            "value" : "删除时间段"
           }
         },
         "zh-Hant-TW" : {
@@ -8290,7 +8290,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "列车停运"
+            "value" : "列车故障"
           }
         },
         "zh-Hant-TW" : {
@@ -8337,7 +8337,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "列车停运"
+            "value" : "列车故障"
           }
         },
         "zh-Hant-TW" : {
@@ -8668,7 +8668,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "停靠区域已关闭"
+            "value" : "码头已关闭"
           }
         },
         "zh-Hant-TW" : {
@@ -8715,7 +8715,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "停靠区域已关闭"
+            "value" : "码头已关闭"
           }
         },
         "zh-Hant-TW" : {
@@ -8809,7 +8809,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "停靠区域问题"
+            "value" : "码头问题"
           }
         },
         "zh-Hant-TW" : {
@@ -8856,7 +8856,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "停靠区域问题"
+            "value" : "码头问题"
           }
         },
         "zh-Hant-TW" : {
@@ -9562,7 +9562,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "直梯已关闭"
+            "value" : "电梯已关闭"
           }
         },
         "zh-Hant-TW" : {
@@ -9750,7 +9750,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "服务结束"
+            "value" : "运营结束"
           }
         },
         "zh-Hant-TW" : {
@@ -9914,7 +9914,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Soirée"
+            "value" : "Soir"
           }
         },
         "ht" : {
@@ -10370,7 +10370,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "最喜欢的站点"
+            "value" : "收藏站点"
           }
         },
         "zh-Hant-TW" : {
@@ -10558,13 +10558,13 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "轮渡"
+            "value" : "渡轮"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "輪渡"
+            "value" : "渡輪"
           }
         }
       }
@@ -10605,13 +10605,13 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "轮渡"
+            "value" : "渡轮"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "輪渡"
+            "value" : "渡輪"
           }
         }
       }
@@ -10652,7 +10652,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "轮渡"
+            "value" : "渡轮"
           }
         },
         "zh-Hant-TW" : {
@@ -10698,7 +10698,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "轮渡航线已取消"
+            "value" : "渡轮班次已取消"
           }
         },
         "zh-Hant-TW" : {
@@ -10744,7 +10744,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "轮渡航线已暂停运营"
+            "value" : "渡轮服务已暂停"
           }
         },
         "zh-Hant-TW" : {
@@ -10980,7 +10980,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "消防局活动"
+            "value" : "消防部门行动"
           }
         },
         "zh-Hant-TW" : {
@@ -11027,7 +11027,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "消防局活动"
+            "value" : "消防部门行动"
           }
         },
         "zh-Hant-TW" : {
@@ -11450,7 +11450,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "出发地"
+            "value" : "开始时间"
           }
         },
         "zh-Hant-TW" : {
@@ -11825,7 +11825,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "危险物质"
+            "value" : "危险物质状况"
           }
         },
         "zh-Hant-TW" : {
@@ -11872,7 +11872,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "危险物质"
+            "value" : "危险物质状况"
           }
         },
         "zh-Hant-TW" : {
@@ -12688,7 +12688,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "末班"
+            "value" : "末班车"
           }
         },
         "zh-Hant-TW" : {
@@ -12975,7 +12975,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正在加载……"
+            "value" : "正在加载…"
           }
         },
         "zh-Hant-TW" : {
@@ -13021,7 +13021,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "定位服务暂不可用"
+            "value" : "暂时无法获取位置信息"
           }
         },
         "zh-Hant-TW" : {
@@ -13091,7 +13091,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Boucle"
+            "value" : "En boucle"
           }
         },
         "ht" : {
@@ -13103,25 +13103,25 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Em loop"
+            "value" : "Circular"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lặp lại"
+            "value" : "Đang lặp"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "循环"
+            "value" : "环行"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "循環"
+            "value" : "循環行駛"
           }
         }
       }
@@ -13856,19 +13856,19 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Giữa trưa"
+            "value" : "Buổi trưa"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正午"
+            "value" : "中午"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正午"
+            "value" : "中午"
           }
         }
       }
@@ -13909,7 +13909,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "调整后的服务"
+            "value" : "服务调整"
           }
         },
         "zh-Hant-TW" : {
@@ -13956,7 +13956,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "调整后的服务"
+            "value" : "服务调整"
           }
         },
         "zh-Hant-TW" : {
@@ -14300,13 +14300,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al día siguiente"
+            "value" : "día siguiente"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le lendemain"
+            "value" : "le lendemain"
           }
         },
         "ht" : {
@@ -14318,7 +14318,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "no dia seguinte"
+            "value" : "dia seguinte"
           }
         },
         "vi" : {
@@ -14330,13 +14330,13 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "第二天"
+            "value" : "次日"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "第二天"
+            "value" : "隔天"
           }
         }
       }
@@ -14424,7 +14424,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一班次时间**%1$@**"
+            "value" : "下一班于**%1$@**发车"
           }
         },
         "zh-Hant-TW" : {
@@ -14471,7 +14471,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "明日下一班次时间**%1$@**"
+            "value" : "明日下一班于**%1$@**发车"
           }
         },
         "zh-Hant-TW" : {
@@ -14518,7 +14518,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一班次时间**%1$@**"
+            "value" : "下一班日期：**%1$@**"
           }
         },
         "zh-Hant-TW" : {
@@ -14665,7 +14665,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "未找到結果🤔"
+            "value" : "未找到結果 🤔"
           }
         }
       }
@@ -15194,7 +15194,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ahora <u>edite sus favoritos</u> para recibir notificaciones de interrupciones del servicio"
+            "value" : "Ahora <u>edite sus favoritos</u> para recibir notificaciones sobre interrupciones del servicio"
           }
         },
         "fr" : {
@@ -15271,7 +15271,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "现在停靠"
+            "value" : "当前停靠于"
           }
         },
         "zh-Hant-TW" : {
@@ -15654,7 +15654,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "开启获得更多到站信息"
+            "value" : "展开查看更多到站信息"
           }
         },
         "zh-Hant-TW" : {
@@ -15842,7 +15842,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "停车已关闭"
+            "value" : "停车场已关闭"
           }
         },
         "zh-Hant-TW" : {
@@ -15889,7 +15889,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "停车关闭"
+            "value" : "停车场关闭"
           }
         },
         "zh-Hant-TW" : {
@@ -15936,7 +15936,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "停车问题"
+            "value" : "停车场问题"
           }
         },
         "zh-Hant-TW" : {
@@ -15983,7 +15983,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "停车问题"
+            "value" : "停车场问题"
           }
         },
         "zh-Hant-TW" : {
@@ -16123,7 +16123,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "警方活动"
+            "value" : "警方行动"
           }
         },
         "zh-Hant-TW" : {
@@ -16170,7 +16170,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "警方活动"
+            "value" : "警方行动"
           }
         },
         "zh-Hant-TW" : {
@@ -16405,7 +16405,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "预测功能暂不可用"
+            "value" : "暂无预计到站时间"
           }
         },
         "zh-Hant-TW" : {
@@ -16469,13 +16469,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Presencia de ballenas"
+            "value" : "presencia de ballenas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Présence de baleines"
+            "value" : "présence de baleines"
           }
         },
         "ht" : {
@@ -16493,19 +16493,19 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "sự hiện diện của cá voi"
+            "value" : "sự xuất hiện của cá voi"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "鲸鱼的出现"
+            "value" : "鲸鱼出没"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "鯨魚的出現"
+            "value" : "鯨魚出沒"
           }
         }
       }
@@ -16522,7 +16522,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Présence des baleines"
+            "value" : "Présence de baleines"
           }
         },
         "ht" : {
@@ -16540,19 +16540,19 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sự hiện diện của cá voi"
+            "value" : "Sự xuất hiện của cá voi"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "鲸鱼的出现"
+            "value" : "鲸鱼出没"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "鯨魚的出現"
+            "value" : "鯨魚出沒"
           }
         }
       }
@@ -16734,7 +16734,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "实时到达实时更新"
+            "value" : "实时到站信息持续更新"
           }
         },
         "zh-Hant-TW" : {
@@ -17410,13 +17410,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mares agitados"
+            "value" : "mar agitado"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mer agitée"
+            "value" : "mer agitée"
           }
         },
         "ht" : {
@@ -17440,13 +17440,13 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "波涛汹涌的海面"
+            "value" : "风浪较大"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "波濤洶湧的海面"
+            "value" : "海象惡劣"
           }
         }
       }
@@ -17457,7 +17457,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mares agitados"
+            "value" : "Mar agitado"
           }
         },
         "fr" : {
@@ -17487,13 +17487,13 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "波涛汹涌的海面"
+            "value" : "风浪较大"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "波濤洶湧"
+            "value" : "海象不佳"
           }
         }
       }
@@ -18969,7 +18969,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "接驳巴士"
+            "value" : "摆渡巴士"
           }
         },
         "zh-Hant-TW" : {
@@ -19016,7 +19016,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "穿梭巴士"
+            "value" : "摆渡巴士"
           }
         },
         "zh-Hant-TW" : {
@@ -19110,7 +19110,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "摆渡巴士取代原服务"
+            "value" : "摆渡巴士替代原有服务"
           }
         },
         "zh-Hant-TW" : {
@@ -19345,7 +19345,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "单轨道"
+            "value" : "单线运行"
           }
         },
         "zh-Hant-TW" : {
@@ -19392,7 +19392,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "单轨道"
+            "value" : "单线运行"
           }
         },
         "zh-Hant-TW" : {
@@ -19627,7 +19627,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "路线积雪"
+            "value" : "雪天行驶路线"
           }
         },
         "zh-Hant-TW" : {
@@ -19674,7 +19674,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "雪地线路"
+            "value" : "雪天行驶路线"
           }
         },
         "zh-Hant-TW" : {
@@ -20144,7 +20144,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "服务开始"
+            "value" : "运营开始"
           }
         },
         "zh-Hant-TW" : {
@@ -20161,13 +20161,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "inicio del servicio"
+            "value" : "desde el inicio hasta el fin del servicio"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "début du service"
+            "value" : "du début à la fin du service"
           }
         },
         "ht" : {
@@ -20185,13 +20185,13 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "bắt đầu dịch vụ"
+            "value" : "từ khi bắt đầu đến khi kết thúc dịch vụ"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "服务开始"
+            "value" : "从服务开始到结束"
           }
         },
         "zh-Hant-TW" : {
@@ -20568,7 +20568,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "站点已移动"
+            "value" : "站点已迁移"
           }
         },
         "zh-Hant-TW" : {
@@ -20615,7 +20615,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "站点已移动"
+            "value" : "站点已迁移"
           }
         },
         "zh-Hant-TW" : {
@@ -20756,7 +20756,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "站点跳停"
+            "value" : "站点不停靠"
           }
         },
         "zh-Hant-TW" : {
@@ -20803,7 +20803,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "站点跳停"
+            "value" : "站点不停靠"
           }
         },
         "zh-Hant-TW" : {
@@ -20851,7 +20851,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "靠站位置距离您%1$ld站"
+            "value" : "车辆停在距离目标站还有%1$ld站的位置"
           }
         },
         "zh-Hant-TW" : {
@@ -21791,7 +21791,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "首班**%1$@**列车预计于**%2$@**抵达。暂无班次预测信息，临近发车时间时将在此处显示。"
+            "value" : "首班**%1$@**列车计划于**%2$@**到站。目前暂无预计到站时间，临近计划到站时间时将在此处显示。"
           }
         },
         "zh-Hant-TW" : {
@@ -22031,7 +22031,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "本站有%1$ld部电梯 已关闭"
+                  "value" : "此站点的%1$ld部电梯已关闭"
                 }
               }
             }
@@ -22297,7 +22297,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "sélecteur d'heure"
+            "value" : "sélecteur d’heure"
           }
         },
         "ht" : {
@@ -22434,13 +22434,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A"
+            "value" : "a"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jusqu’à"
+            "value" : "à"
           }
         },
         "ht" : {
@@ -22452,25 +22452,25 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para"
+            "value" : "até"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Đến"
+            "value" : "đến"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "目的地"
+            "value" : "至"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "目的地"
+            "value" : "至"
           }
         }
       }
@@ -22607,7 +22607,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "追踪%1$@"
+            "value" : "轨道%1$@"
           }
         },
         "zh-Hant-TW" : {
@@ -22857,7 +22857,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ruta por determinar"
+            "value" : "Vía por determinar"
           }
         },
         "fr" : {
@@ -22887,7 +22887,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "赛道待定"
+            "value" : "轨道待定"
           }
         },
         "zh-Hant-TW" : {
@@ -23016,7 +23016,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "tráfego"
+            "value" : "trânsito"
           }
         },
         "vi" : {
@@ -23261,7 +23261,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "列车线路已暂停运营"
+            "value" : "列车服务已暂停"
           }
         },
         "zh-Hant-TW" : {
@@ -23308,7 +23308,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "火车交通"
+            "value" : "列车运行"
           }
         },
         "zh-Hant-TW" : {
@@ -23355,7 +23355,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "火车交通"
+            "value" : "列车运行"
           }
         },
         "zh-Hant-TW" : {
@@ -23544,7 +23544,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "暂无可用班次"
+            "value" : "班次信息不可用"
           }
         },
         "zh-Hant-TW" : {
@@ -23732,7 +23732,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在设置中打开"
+            "value" : "在“设置”中开启"
           }
         },
         "zh-Hant-TW" : {
@@ -24014,7 +24014,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "等待进一步通知"
+            "value" : "直至另行通知"
           }
         },
         "zh-Hant-TW" : {
@@ -24160,7 +24160,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld分钟前更新"
+                  "value" : "%1$ld 分钟前更新"
                 }
               }
             }
@@ -24279,13 +24279,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "trabajo en la vía"
+            "value" : "trabajos de servicios públicos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "travaux sur la voie"
+            "value" : "travaux sur les réseaux"
           }
         },
         "ht" : {
@@ -24297,25 +24297,25 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "trabalho nos trilhos"
+            "value" : "obras em redes de serviços públicos"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "thi công đường ray"
+            "value" : "thi công hạ tầng tiện ích"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "轨道作业"
+            "value" : "公用设施施工"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "軌道作業"
+            "value" : "公用設施施工"
           }
         }
       }
@@ -24326,13 +24326,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trabajo de servicios públicos"
+            "value" : "Trabajos de servicios públicos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Travaux publics"
+            "value" : "Travaux sur les réseaux"
           }
         },
         "ht" : {
@@ -24344,25 +24344,25 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Serviços de utilidade pública"
+            "value" : "Obras de concessionárias"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Công việc tiện ích"
+            "value" : "Thi công hạ tầng tiện ích"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "公用工程"
+            "value" : "公用设施施工"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "公用工程"
+            "value" : "公用設施施工"
           }
         }
       }
@@ -24479,7 +24479,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remplacement par bus"
+            "value" : "remplacement de navire"
           }
         },
         "ht" : {
@@ -24491,19 +24491,19 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Substituição de ônibus"
+            "value" : "substituição de embarcação"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Xe buýt thay thế"
+            "value" : "thay thế tàu"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "巴士替代方案"
+            "value" : "船舶替换"
           }
         },
         "zh-Hant-TW" : {
@@ -24520,13 +24520,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cambio de Barco"
+            "value" : "Cambio de barco"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remplacement par bus"
+            "value" : "Remplacement de navire"
           }
         },
         "ht" : {
@@ -24538,19 +24538,19 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Substituição de ônibus"
+            "value" : "Substituição de embarcação"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Xe buýt thay thế"
+            "value" : "Thay thế tàu"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "巴士替代方案"
+            "value" : "船舶替换"
           }
         },
         "zh-Hant-TW" : {
@@ -24567,13 +24567,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "tráfico marítimo"
+            "value" : "tránsito marítimo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "trafic"
+            "value" : "trafic maritime"
           }
         },
         "ht" : {
@@ -24585,25 +24585,25 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "tráfego"
+            "value" : "trânsito de embarcações"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "giao thông"
+            "value" : "lưu lượng tàu thuyền"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "交通"
+            "value" : "船舶交通"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "交通"
+            "value" : "船舶交通"
           }
         }
       }
@@ -24614,13 +24614,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tráfico Marítimo"
+            "value" : "Tránsito marítimo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trafic"
+            "value" : "Trafic maritime"
           }
         },
         "ht" : {
@@ -24632,25 +24632,25 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tráfego"
+            "value" : "Trânsito de embarcações"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Giao thông"
+            "value" : "Lưu lượng tàu thuyền"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "交通"
+            "value" : "船舶交通"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "交通"
+            "value" : "船舶交通"
           }
         }
       }
@@ -24784,7 +24784,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "查看波士顿车站附近的交通运输服务"
+            "value" : "查看波士顿附近的公共交通"
           }
         },
         "zh-Hant-TW" : {
@@ -24849,7 +24849,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Podemos enviarte notificaciones push sobre problemas en esta ruta antes de que te vayas"
+            "value" : "Podemos enviarle notificaciones push sobre problemas en esta ruta antes de que salga"
           }
         },
         "fr" : {
@@ -24867,7 +24867,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Podemos enviar-lhe notificações push sobre problemas nesta rota antes de partir."
+            "value" : "Podemos enviar notificações push sobre problemas nesta rota antes de você sair"
           }
         },
         "vi" : {
@@ -24879,13 +24879,13 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "我们可以在您出发前向您发送有关此路线可能出现问题的推送通知。"
+            "value" : "我们可以在您出发前向您发送此线路出现问题的推送通知"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "我們可以在您出發前向您發送有關此路線可能出現問題的推播通知。"
+            "value" : "我們可以在您出發前，傳送此路線異常狀況的推播通知給您"
           }
         }
       }
@@ -24925,7 +24925,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "我们目前还无法实时预测此行程的车辆到达时间，但会在临近计划时间时显示。如果行程延误或取消，我们会在此通知您。"
+            "value" : "目前尚无此班次的实时预计到站时间，临近计划时间时将在此处显示。如果班次延误或取消，我们会在此通知您。"
           }
         },
         "zh-Hant-TW" : {
@@ -25064,7 +25064,7 @@
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "出行前我们将为您推送各类运营异常信息！"
+            "value" : "出行前，我们会通知您可能遇到的运营问题。"
           }
         },
         "zh-Hant-TW" : {
@@ -25323,7 +25323,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quand souhaitez-vous recevoir des notifications ?"
+            "value" : "Quand souhaitez-vous recevoir des notifications ?"
           }
         },
         "ht" : {
