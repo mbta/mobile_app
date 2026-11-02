@@ -172,9 +172,9 @@ struct TripDetailsView: View {
         }()
 
         let explainerType: ExplainerType? = switch headerSpec {
-        case .scheduled: routeAccents.type != .ferry ? .noPrediction : nil
-        case .finishingAnotherTrip: .finishingAnotherTrip
-        case .noVehicle: .noVehicle
+        case .scheduled: routeAccents.type != .ferry ? ExplainerType.NoPrediction() : nil
+        case .finishingAnotherTrip: ExplainerType.FinishingAnotherTrip()
+        case .noVehicle: ExplainerType.NoVehicle()
         default: nil
         }
         let onHeaderTap: (() -> Void)? = if let explainerType { {

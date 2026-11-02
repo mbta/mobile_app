@@ -417,10 +417,10 @@ final class TripStopRowTests: XCTestCase {
             onTapLink: { _ in linkTapped.fulfill() },
             onOpenAlertDetails: { _ in },
             openExplainer: { type in
-                switch type {
-                case let .scheduledTrackChange(data):
-                    XCTAssertEqual("2", data.platformCode)
-                    XCTAssertEqual("Track 2", data.platformName)
+                switch onEnum(of: type) {
+                case let .scheduledTrackChange(trackChange):
+                    XCTAssertEqual("2", trackChange.data.platformCode)
+                    XCTAssertEqual("Track 2", trackChange.data.platformName)
                     explainerOpened.fulfill()
                 default:
                     XCTFail("expected scheduled track change explainer")

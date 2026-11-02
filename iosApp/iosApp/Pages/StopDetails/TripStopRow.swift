@@ -55,7 +55,7 @@ struct TripStopRow: View {
         } else {
             switch onEnum(of: stop.trackChange) {
             case let .some(.alert(alert)): onOpenAlertDetails(alert.alert)
-            case let .some(.scheduled(change)): openExplainer(ExplainerType.scheduledTrackChange(data: change))
+            case let .some(.scheduled(change)): openExplainer(ExplainerType.ScheduledTrackChange(data: change))
             default: break
             }
         }

@@ -46,7 +46,7 @@ struct TripHeaderCard: View {
     private var onTrackChangeTap: (() -> Void)? {
         switch onEnum(of: trackChange) {
         case let .some(.alert(alert)): { onOpenAlertDetails(alert.alert) }
-        case let .some(.scheduled(change)): { openExplainer(.scheduledTrackChange(data: change)) }
+        case let .some(.scheduled(change)): { openExplainer(ExplainerType.ScheduledTrackChange(data: change)) }
         default: nil
         }
     }

@@ -14,13 +14,6 @@ public struct Explainer {
     let routeAccents: TripRouteAccents
 }
 
-enum ExplainerType {
-    case finishingAnotherTrip
-    case noPrediction
-    case noVehicle
-    case scheduledTrackChange(data: TrackChange.Scheduled)
-}
-
 struct ExplainerPage: View {
     @ObserveInjection var inject
     let explainer: Explainer
@@ -75,7 +68,7 @@ struct ExplainerPage: View {
     }
 
     @ViewBuilder private var explanationHeadline: some View {
-        switch explainer.type {
+        switch onEnum(of: explainer.type) {
         case .finishingAnotherTrip: Text(
                 "Finishing another trip",
                 comment: "Headline for a page explaining that the vehicle shown is finishing a different trip"
@@ -90,7 +83,7 @@ struct ExplainerPage: View {
     }
 
     @ViewBuilder private var explanationImage: some View {
-        switch explainer.type {
+        switch onEnum(of: explainer.type) {
         case .finishingAnotherTrip: ZStack(alignment: .center) {
                 Image(.turnaroundShape)
                     .resizable()
@@ -114,14 +107,14 @@ struct ExplainerPage: View {
     }
 
     @ViewBuilder private var explanationText: some View {
-        switch explainer.type {
+        switch onEnum(of: explainer.type) {
         case .finishingAnotherTrip: Text(localizedFinishingAnotherTripDescription)
         case .noPrediction: Text(
                 "We don’t have live predictions for this trip yet, but they will appear closer to the scheduled time. If the trip is delayed or cancelled, we’ll let you know here."
             )
         case .noVehicle: Text(localizedNoVehicleDescription)
-        case let .scheduledTrackChange(data): Text(
-                "The train is traveling on a different track than usual. Please board on \(data.platformName ?? data.platformCode)."
+        case let .scheduledTrackChange(trackChange): Text(
+                "The train is traveling on a different track than usual. Please board on \(trackChange.data.platformName ?? trackChange.data.platformCode)."
             )
         }
     }
