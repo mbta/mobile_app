@@ -138,7 +138,7 @@ fun ExplanationImage(
                 painterResource(R.drawable.explainer_track_change_cr),
                 null,
                 modifier.fillMaxWidth(),
-                contentScale = ContentScale.Fit,
+                contentScale = ContentScale.Crop,
             )
         else -> {}
     }
