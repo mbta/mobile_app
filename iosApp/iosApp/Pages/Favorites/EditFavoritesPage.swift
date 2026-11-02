@@ -149,11 +149,7 @@ struct EditFavoritesList: View {
                                 leaves: stopData.data,
                                 globalData: global
                             ) { leaf in
-                                if settingsCache.get(.notifications) {
-                                    onOpenEditModal(leaf.routeStopDirection)
-                                } else {
-                                    deleteFavorite(leaf.routeStopDirection)
-                                }
+                                onOpenEditModal(leaf.routeStopDirection)
                             }
                         }
                     }
@@ -262,12 +258,8 @@ struct FavoriteRowRightContent: View {
     @EnvironmentObject var settingsCache: SettingsCache
 
     var body: some View {
-        if settingsCache.get(.notifications) {
-            NotificationStatusIcon(favoriteSetting: favoriteSettings)
-            EditFavoriteButton { onClick(leaf) }
-        } else {
-            DeleteButton { onClick(leaf) }
-        }
+        NotificationStatusIcon(favoriteSetting: favoriteSettings)
+        EditFavoriteButton { onClick(leaf) }
     }
 }
 
@@ -310,32 +302,6 @@ struct NotificationStatusIcon: View {
                 .frame(width: imageSize, height: imageSize)
                 .foregroundStyle(Color.text)
         }
-    }
-}
-
-struct DeleteButton: View {
-    @ObserveInjection var inject
-    let action: () -> Void
-    @ScaledMetric private var imageHeight = 16
-    @ScaledMetric private var imageWidth = 14
-    @ScaledMetric private var buttonSize = 44
-    var body: some View {
-        Button(action: action) {
-            ZStack {
-                Circle()
-                    .fill(Color.deleteBackground)
-                    .frame(width: buttonSize, height: buttonSize)
-                Image(.faDelete)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: imageWidth, height: imageHeight)
-                    .foregroundStyle(Color.delete)
-            }
-        }.accessibilityLabel(Text(
-            "Delete",
-            comment: "Content description for a button that removes a favorited route/stop/direction"
-        ))
-        .enableInjection()
     }
 }
 

@@ -120,7 +120,6 @@ public class FavoritesUsecases(
                     fcmToken,
                     subs,
                     locale,
-                    notificationsEnabled = settings[Settings.Notifications] ?: false,
                 )
                 breadcrumb("updated subscriptions")
             }

@@ -92,7 +92,7 @@ final class EditFavoritesPageTests: XCTestCase {
             onClick: { leaf in editRsd = leaf.routeStopDirection }
         )
 
-        ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         defer { ViewHosting.expel() }
 
         try sut.inspect().findAll(EditFavoriteButton.self)[0].find(ViewType.Button.self).tap()
@@ -147,7 +147,7 @@ final class EditFavoritesPageTests: XCTestCase {
             onClick: { _ in }
         )
 
-        ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         defer { ViewHosting.expel() }
 
         XCTAssertNotNil(try? sut.inspect().find(imageName: "fa-bell-filled"))

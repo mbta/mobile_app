@@ -5,15 +5,12 @@
     <string name="accident">事件</string>
     <string name="accident_lowercase">事故</string>
     <string name="add_another_time_period">新增其他時間段</string>
-    <string name="add_confirmation_button">新增</string>
     <string name="add_favorite_label">新增收藏</string>
     <!-- Used as the header for the route picker when the user is adding a favorite stop, the button
     to add favorite stops on the empty favorites page, and the voiceover text for the button to
     add more favorites when other favorites have already been added. -->
     <string name="add_favorite_stops">新增常用站點</string>
     <string name="add_favorite_title">新增收藏</string>
-    <string name="add_to_favorites_title">在&lt;b&gt;%1$s&lt;/b&gt;新增&lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="add_to_favorites_title_stop_details">將&lt;b&gt;%1$s&lt;/b&gt;的&lt;b&gt;%2$s&lt;/b&gt;新增到我的最愛</string>
     <string name="additional_service">附加服務</string>
     <string name="additional_service_sentence_case">附加服務</string>
     <plurals name="affected_stops">
@@ -96,7 +93,6 @@
     <string name="details">詳情</string>
     <string name="detour">交通改道</string>
     <string name="directionTo">%1$s至</string>
-    <string name="direction_service_only">%1$s僅限服務</string>
     <string name="disabled_bus">巴士拋錨</string>
     <string name="disabled_bus_lowercase">巴士拋錨</string>
     <string name="disabled_train">列車停運</string>
@@ -424,7 +420,6 @@
     <string name="tap_favorites_hint">按一下網站可新增至我的最愛</string>
     <string name="technical_problem">技術故障</string>
     <string name="technical_problem_lowercase">技術故障</string>
-    <string name="this_stop_is_drop_off_only">此網站僅供下客</string>
     <string name="tie_replacement">更換軌枕</string>
     <string name="tie_replacement_lowercase">更換軌枕</string>
     <string name="time_picker_type_toggle">時間選擇器類型切換</string>

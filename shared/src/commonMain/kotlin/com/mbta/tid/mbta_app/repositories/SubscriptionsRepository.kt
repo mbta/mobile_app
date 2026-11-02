@@ -19,7 +19,6 @@ public interface ISubscriptionsRepository {
         fcmToken: String,
         subscriptions: List<SubscriptionRequest>,
         locale: String?,
-        notificationsEnabled: Boolean,
     )
 
     public suspend fun updateAccessibility(
@@ -37,7 +36,6 @@ internal class SubscriptionsRepository : ISubscriptionsRepository, KoinComponent
         fcmToken: String,
         subscriptions: List<SubscriptionRequest>,
         locale: String?,
-        notificationsEnabled: Boolean,
     ) {
         val requestBody = WriteSubscriptionsRequest(fcmToken, subscriptions, locale)
         ApiResult.runCatching {
@@ -79,7 +77,6 @@ public class MockSubscriptionsRepository(
         fcmToken: String,
         subscriptions: List<SubscriptionRequest>,
         locale: String?,
-        notificationsEnabled: Boolean,
     ) {
         onUpdateSubscriptions(fcmToken, subscriptions, locale)
     }

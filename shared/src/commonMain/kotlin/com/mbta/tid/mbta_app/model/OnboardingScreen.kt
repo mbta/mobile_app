@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
-import com.mbta.tid.mbta_app.repositories.Settings
 
 public enum class OnboardingScreen {
     Location,
@@ -10,10 +9,7 @@ public enum class OnboardingScreen {
     NotificationsBeta,
     Feedback;
 
-    internal fun applies(
-        accessibilityStatus: IAccessibilityStatusRepository,
-        settings: Map<Settings, Boolean>,
-    ): Boolean =
+    internal fun applies(accessibilityStatus: IAccessibilityStatusRepository): Boolean =
         when (this) {
             Location -> true
             StationAccessibility -> true

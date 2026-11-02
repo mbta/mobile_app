@@ -59,7 +59,6 @@ import org.koin.compose.koinInject
 fun MorePage(
     highlightSection: MoreSection.Category? = null,
     bottomBar: @Composable () -> Unit,
-    reloadPendingOnboarding: () -> Unit = {},
     viewModel: MoreViewModel = koinInject(),
 ) {
     val translation = stringResource(R.string.current_locale)
@@ -79,7 +78,6 @@ fun MorePage(
 
     val dependencies = Dependency.getAllDependencies()
     var showingBuildNumber by remember { mutableStateOf(false) }
-    val notificationsEnabled = SettingsCache.get(Settings.Notifications)
 
     Scaffold(
         Modifier.fillMaxSize().background(colorResource(R.color.fill3)),
@@ -132,22 +130,16 @@ fun MorePage(
                                     onChangeSetting = { setting, newValue ->
                                         when (setting) {
                                             Settings.StationAccessibility -> {
-                                                if (notificationsEnabled) {
-                                                    fcmToken?.let {
-                                                        viewModel.updateAccessibility(
-                                                            it,
-                                                            newValue,
-                                                            currentLocale,
-                                                        )
-                                                    }
+                                                fcmToken?.let {
+                                                    viewModel.updateAccessibility(
+                                                        it,
+                                                        newValue,
+                                                        currentLocale,
+                                                    )
                                                 }
-                                            }
-                                            Settings.Notifications -> {
-                                                reloadPendingOnboarding()
                                             }
                                             Settings.DevDebugMode,
                                             Settings.HideMaps,
-                                            Settings.NotificationPresetWindows,
                                             Settings.SearchRouteResults -> {}
                                         }
                                     },

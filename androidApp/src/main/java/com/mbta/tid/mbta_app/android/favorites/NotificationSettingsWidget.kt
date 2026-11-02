@@ -87,7 +87,6 @@ import com.mbta.tid.mbta_app.model.FavoriteSettings.Notifications.Window
 import com.mbta.tid.mbta_app.model.Preset
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.Settings as UserSettings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.INotificationSettingsViewModel
 import com.mbta.tid.mbta_app.viewModel.NotificationSettingsViewModel
@@ -135,12 +134,6 @@ fun NotificationSettingsWidget(
             ),
             listOf(Preset.AllDay),
         )
-
-    val presetWindowsEnabled = SettingsCache.get(UserSettings.NotificationPresetWindows)
-
-    LaunchedEffect(presetWindowsEnabled) {
-        viewModel.setPresetsEnabledFlag(presetWindowsEnabled)
-    }
 
     val settings = notificationSettingsState.settings ?: return
 
@@ -204,7 +197,7 @@ fun NotificationSettingsWidget(
                             padding = 4.dp,
                         ),
                 ) {
-                    if (presetWindowsEnabled && showPresets) {
+                    if (showPresets) {
                         PresetWindowSelector(
                             presetRows = presetOptions,
                             selectedPreset = notificationSettingsState.selectedPreset,
@@ -701,7 +694,7 @@ private fun NotificationSettingsWidgetPreview() {
     val enabledNotificationSettingsViewModel: INotificationSettingsViewModel by lazy {
         NotificationSettingsViewModel(MockSentryRepository()).apply {
             setEnabled(true)
-            setWindows(listOf(Window.default(emptyList(), true, EasternTimeInstant.now())))
+            setWindows(listOf(Window.default(emptyList(), EasternTimeInstant.now())))
         }
     }
 
@@ -727,19 +720,7 @@ private fun NotificationSettingsWidgetPreview() {
     }
 
     if (KoinPlatformTools.defaultContext().getOrNull() == null) {
-        startKoin {
-            modules(
-                module {
-                    single {
-                        SettingsCache(
-                            MockSettingsRepository(
-                                mapOf(UserSettings.NotificationPresetWindows to true),
-                            ),
-                        )
-                    }
-                },
-            )
-        }
+        startKoin { modules(module { single { SettingsCache(MockSettingsRepository()) } }) }
     }
     MyApplicationTheme {
         Column(

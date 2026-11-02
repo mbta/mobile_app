@@ -290,6 +290,7 @@
     },
     "**%1$@** at **%2$@** added to Favorites" : {
       "comment" : "Favorite added toast text, the first value is the route name (Red Line, 1 bus),\nand the second is a stop name (Ruggles, Alewife).\nThe asterisks surround bolded text. ex. \"[Green Line] at [Arlington] added to Favorites\"",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1713,59 +1714,6 @@
         }
       }
     },
-    "%@ service only" : {
-      "comment" : "Notice that there is only service in a single direction for a route at a stop within the favorites flow. Ex: [Easbound] service only.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ service only"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ únicamente"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Service uniquement %1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ sèvis sèlman"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ somente serviço"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chỉ phục vụ chuyến %1$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "仅提供%1$@方向的服务"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@僅限服務"
-          }
-        }
-      }
-    },
     "%@ to" : {
       "comment" : "Label the direction a list of arrivals is for.\nPossible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound.\nFor example, \"[Northbound] to [Alewife]\"",
       "localizations" : {
@@ -2979,165 +2927,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "事件"
-          }
-        }
-      }
-    },
-    "Add" : {
-      "comment" : "Text for confirmation button when user is adding to their favorites",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agregar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajouter"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajoute"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adicionar"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thêm"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "添加"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新增"
-          }
-        }
-      }
-    },
-    "Add **%1$@** at **%2$@**" : {
-      "comment" : "Title for a confirmation modal when a user adds a favorite route + stop and already has the context that what they are adding is a favorite. Ex: Add [Green Line] at [Boylston]",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add **%1$@** at **%2$@**"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agregar **%1$@** en **%2$@**"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajouter **%1$@** à **%2$@**"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajoute **%1$@** nan **%2$@**"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adicionar **%1$@** em **%2$@**"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thêm **%1$@** tại **%2$@**"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "添加**%2$@**站的**%1$@**"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在**%1$@**新增**%2$@**"
-          }
-        }
-      }
-    },
-    "Add **%1$@** at **%2$@** to Favorites" : {
-      "comment" : "Title for a confirmation modal when a user adds a favorite route + stop. Ex: Add [Green Line] at [Boylston] to Favorites",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add **%1$@** at **%2$@** to Favorites"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agregar **%1$@** en **%2$@** a Favoritos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajouter **%1$@** à **%2$@** aux Favoris"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajoute **%1$@** nan **%2$@** sa ou pi renmen yo"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adicionar **%1$@** em **%2$@** aos Favoritos"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thêm **%1$@** tại **%2$@** vào mục Yêu thích"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "将**%2$@**的**%1$@**添加到收藏夹"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "將**%2$@**的**%1$@**新增到我的最愛"
           }
         }
       }
@@ -7831,6 +7620,7 @@
     },
     "Delete" : {
       "comment" : "Content description for a button that removes a favorited route/stop/direction",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -15425,6 +15215,7 @@
       }
     },
     "Okay" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -22047,52 +21838,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "This stop is drop-off only" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta parada es solo para descenso"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cet arrêt est réservé à la descente"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arè sa a se pou depoze moun sèlman"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta parada é somente para desembarque"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Điểm dừng này chỉ để trả khách"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "此站点仅供下客"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "此網站僅供下客"
           }
         }
       }

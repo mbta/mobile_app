@@ -25,8 +25,6 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopCardData
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
@@ -347,7 +345,7 @@ class EditFavoritesPageTest : KoinTest {
                 ),
             )
 
-        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to true)) }
+        loadKoinMocks()
 
         composeTestRule.setContent {
             EditFavoritesPage(
@@ -415,7 +413,7 @@ class EditFavoritesPageTest : KoinTest {
                 ),
             )
 
-        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to true)) }
+        loadKoinMocks()
 
         composeTestRule.setContent {
             EditFavoritesPage(

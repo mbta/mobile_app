@@ -181,35 +181,12 @@ constructor(val notifications: Notifications = Notifications.disabled) {
 
                 public fun default(
                     existingWindows: List<Window>,
-                    presetsEnabled: Boolean,
                     now: EasternTimeInstant,
                 ): Window {
-                    if (presetsEnabled) {
-                        return if (existingWindows.isEmpty()) {
-                            defaultFromCurrentTime(now)
-                        } else {
-                            defaultFromCurrentTime(now).copy(daysOfWeek = weekend)
-                        }
+                    return if (existingWindows.isEmpty()) {
+                        defaultFromCurrentTime(now)
                     } else {
-                        if (existingWindows.isEmpty()) {
-                            return Window(
-                                startTime = LocalTime(8, 0, second = 0, nanosecond = 0),
-                                endTime = LocalTime(9, 0, second = 0, nanosecond = 0),
-                                daysOfWeek =
-                                    setOf(
-                                        DayOfWeek.MONDAY,
-                                        DayOfWeek.TUESDAY,
-                                        DayOfWeek.WEDNESDAY,
-                                        DayOfWeek.THURSDAY,
-                                        DayOfWeek.FRIDAY,
-                                    ),
-                            )
-                        }
-                        return Window(
-                            startTime = LocalTime(12, 0),
-                            endTime = LocalTime(13, 0),
-                            setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY),
-                        )
+                        defaultFromCurrentTime(now).copy(daysOfWeek = weekend)
                     }
                 }
 

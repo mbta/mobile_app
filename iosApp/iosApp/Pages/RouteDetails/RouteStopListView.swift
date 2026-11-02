@@ -225,12 +225,10 @@ struct RouteStopListContentView<RightSideContent: View>: View {
 
     @State var favorites: Favorites = LoadedFavorites.last
 
-    @State var showFavoritesStopConfirmation: Stop?
     @State var showFirstTimeFavoritesToast: Bool?
     @State var displayedToast: ToastViewModel.Toast?
     @State var firstTimeToast: ToastViewModel.Toast?
 
-    @ObservedObject var fcmTokenContainer = FcmTokenContainer.shared
     @EnvironmentObject var settingsCache: SettingsCache
 
     let inspection = Inspection<Self>()
@@ -334,11 +332,6 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             }
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
-        .overlay {
-            if let showFavoritesStopConfirmation {
-                favoriteDialog(stop: showFavoritesStopConfirmation)
-            }
-        }
         .onChange(of: favorites) { favorites in
             // Only set first time toast on first favorites load, otherwise keep the current value
             showFirstTimeFavoritesToast = if let showFirstTimeFavoritesToast {
@@ -470,52 +463,6 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         routeStopList(stopList: loadingStops, onTapStop: { _ in }).loadingPlaceholder()
     }
 
-    @ViewBuilder private func favoriteDialog(stop: Stop) -> some View {
-        let allPatternsForStop = globalData.getPatternsFor(stopId: stop.id, lineOrRoute: lineOrRoute)
-        let stopDirections = lineOrRoute.directions(
-            globalData: globalData,
-            stop: stop,
-            patterns: allPatternsForStop.filter { $0.isTypical() }
-        )
-
-        SaveFavoritesFlow(
-            lineOrRoute: lineOrRoute,
-            stop: stop,
-            directions: stopDirections.filter { direction in
-                parameters.availableDirections.map { Int32(truncating: $0) }.contains { $0 == direction.id } &&
-                    !stop.isLastStopForAllPatterns(
-                        directionId: direction.id,
-                        patterns: allPatternsForStop,
-                        global: globalData
-                    )
-            },
-            selectedDirection: selectedDirection,
-            context: .favorites,
-            global: globalData,
-            isFavorite: { rsd in isFavorite(rsd) },
-            updateFavorites: { newFavorites in confirmFavorites(updatedValues: newFavorites) },
-            onClose: { showFavoritesStopConfirmation = nil },
-            pushNavEntry: pushNavEntry,
-            toastVM: toastVM,
-        )
-    }
-
-    private func confirmFavorites(updatedValues: [RouteStopDirection: FavoriteSettings?]) {
-        Task {
-            let editContext = switch onEnum(of: context) {
-            case .favorites: EditFavoritesContext.favorites
-            case .details: EditFavoritesContext.routeDetails
-            }
-
-            favoritesVM.updateFavorites(
-                updatedFavorites: updatedValues,
-                context: editContext,
-                defaultDirection: selectedDirection,
-                fcmToken: fcmTokenContainer.token,
-            )
-        }
-    }
-
     private func isFavorite(_ routeStopDirection: RouteStopDirection) -> Bool {
         favorites.routeStopDirection[routeStopDirection] != nil
     }
@@ -530,7 +477,14 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                     direction: selectedDirection
                 )),
                 onTapStar: {
-                    showFavoritesStopConfirmation = stop
+                    pushNavEntry(
+                        .saveFavorite(
+                            routeId: lineOrRoute.id,
+                            stopId: stop.id,
+                            selectedDirection: selectedDirection,
+                            context: .favorites
+                        )
+                    )
                 }
             )
         }

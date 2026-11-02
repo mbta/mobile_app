@@ -25,7 +25,6 @@ struct FavoritesView: View {
     @State var locationUnthrottled: CLLocationCoordinate2D?
 
     @EnvironmentObject var settingsCache: SettingsCache
-    var notificationsEnabled: Bool { settingsCache.get(.notifications) }
 
     @State var globalData: GlobalResponse?
     var globalRepository = RepositoryDI().global
@@ -36,7 +35,7 @@ struct FavoritesView: View {
     @ScaledMetric private var editButtonHeight: CGFloat = 32
 
     func emptyFavoritesNotificationsHintCheck() {
-        if notificationsEnabled, favoritesVMState.favorites?.isEmpty == true {
+        if favoritesVMState.favorites?.isEmpty == true {
             favoritesVM.dismissNotificationsHint()
         }
     }
@@ -62,7 +61,7 @@ struct FavoritesView: View {
                 }
             ).padding(.bottom, 16)
 
-            if notificationsEnabled, favoritesVMState.shouldShowNotificationsHint {
+            if favoritesVMState.shouldShowNotificationsHint {
                 NotificationsHint(onTap: {
                     navManager.pushNavEntry(.editFavorites)
                     favoritesVM.dismissNotificationsHint()
@@ -113,7 +112,6 @@ struct FavoritesView: View {
             }
         }
         .onChange(of: favoritesVMState.favorites) { _ in emptyFavoritesNotificationsHintCheck() }
-        .onChange(of: notificationsEnabled) { _ in emptyFavoritesNotificationsHintCheck() }
         .onAppear {
             if favoritesVMState.shouldShowFirstTimeToast {
                 showFirstTimeToast()
