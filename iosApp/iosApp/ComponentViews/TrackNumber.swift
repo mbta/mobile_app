@@ -20,7 +20,7 @@ struct TrackNumber: View {
         case let .trackChange(trackChangeWrapper):
             switch onEnum(of: trackChangeWrapper.trackChange) {
             case .alert: Text("Track Change")
-            case .scheduled: Text("") // TODO:
+            case let .scheduled(scheduled): Text(scheduled.platformName ?? scheduled.platformCode)
             }
         }
     }
@@ -32,7 +32,7 @@ struct TrackNumber: View {
         case let .trackChange(trackChangeWrapper):
             switch onEnum(of: trackChangeWrapper.trackChange) {
             case .alert: Text("Track Change")
-            case .scheduled: Text("") // TODO:
+            case let .scheduled(scheduled): Text(scheduled.platformName ?? scheduled.platformCode)
             }
         }
     }
@@ -40,8 +40,15 @@ struct TrackNumber: View {
     var body: some View {
         Group {
             switch onEnum(of: track) {
-            case .trackChange:
-                TrackChangePill(shape: .expanded)
+            case let .trackChange(trackChangeWrapper):
+                switch onEnum(of: trackChangeWrapper.trackChange) {
+                case .alert: TrackChangePill(style: .expanded, type: .alert)
+                case let .scheduled(scheduled): TrackChangePill(
+                        style: .expanded,
+                        type: .scheduled(trackNumber: scheduled.platformCode, trackLabel: scheduled.platformName)
+                    )
+                }
+
             default:
                 trackText
                     .font(Typography.footnote)

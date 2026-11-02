@@ -56,7 +56,7 @@ fun ExplainerPage(type: ExplainerType, routeAccents: TripRouteAccents, goBack: (
             Text(
                 stringResource(R.string.details),
                 color = routeAccents.textColor,
-                style = Typography.headline,
+                style = Typography.headlineBold,
                 modifier = Modifier.weight(1f),
             )
             ActionButton(ActionButtonKind.Close, colors = ButtonDefaults.overRouteColor()) {
@@ -64,13 +64,21 @@ fun ExplainerPage(type: ExplainerType, routeAccents: TripRouteAccents, goBack: (
             }
         }
         Column(
-            Modifier.padding(horizontal = 16.dp, vertical = 24.dp).navigationBarsPadding(),
+            Modifier.padding(vertical = 24.dp).navigationBarsPadding(),
             verticalArrangement = Arrangement.spacedBy(24.dp),
             horizontalAlignment = Alignment.Start,
         ) {
-            ExplanationHeadline(type, routeAccents.type)
-            ExplanationImage(type, routeAccents)
-            ExplanationText(type, routeAccents.type)
+            ExplanationImage(type, routeAccents, modifier = Modifier.fillMaxWidth())
+            ExplanationHeadline(
+                type,
+                routeAccents.type,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+            ExplanationText(
+                type,
+                routeAccents.type,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
             Spacer(Modifier.weight(1f))
         }
     }
@@ -93,9 +101,11 @@ fun ExplanationHeadline(type: ExplainerType, routeType: RouteType, modifier: Mod
                         if (it.isLowerCase()) it.titlecase(LocalLocale.current.platformLocale)
                         else it.toString()
                     }
+
+            is ExplainerType.ScheduledTrackChange -> stringResource(R.string.track_change)
         },
         modifier,
-        style = Typography.title2Bold,
+        style = Typography.title1Bold,
     )
 }
 
@@ -107,7 +117,7 @@ fun ExplanationImage(
 ) {
     when (type) {
         ExplainerType.FinishingAnotherTrip ->
-            Box(modifier.clearAndSetSemantics {}) {
+            Box(modifier.clearAndSetSemantics {}.padding(horizontal = 16.dp)) {
                 Image(
                     routeTurnaroundResource(routeAccents.type),
                     null,
@@ -123,6 +133,13 @@ fun ExplanationImage(
                     contentScale = ContentScale.Fit,
                 )
             }
+        is ExplainerType.ScheduledTrackChange ->
+            Image(
+                painterResource(R.drawable.explainer_track_change_cr),
+                null,
+                modifier.fillMaxWidth(),
+                contentScale = ContentScale.Crop,
+            )
         else -> {}
     }
 }
@@ -160,6 +177,12 @@ fun ExplanationText(type: ExplainerType, routeType: RouteType, modifier: Modifie
                         if (it.isLowerCase()) it.titlecase(LocalLocale.current.platformLocale)
                         else it.toString()
                     }
+
+            is ExplainerType.ScheduledTrackChange ->
+                stringResource(
+                    R.string.explainer_text_scheduled_track_change,
+                    type.data.platformName ?: type.data.platformCode,
+                )
         },
         modifier,
         style = Typography.body,

@@ -29,6 +29,7 @@ struct TripHeaderCard: View {
     let now: EasternTimeInstant
     let onFollowTrip: (() -> Void)?
     var onOpenAlertDetails: (Shared.Alert) -> Void = { _ in }
+    var openExplainer: (ExplainerType) -> Void = { _ in }
     var debugData: TripHeaderDebugData?
 
     @Environment(\.layoutDirection) var layoutDirection
@@ -46,7 +47,7 @@ struct TripHeaderCard: View {
     private var onTrackChangeTap: (() -> Void)? {
         switch onEnum(of: trackChange) {
         case let .some(.alert(alert)): { onOpenAlertDetails(alert.alert) }
-        case let .some(.scheduled(change)): {} // TODO:
+        case let .some(.scheduled(change)): { openExplainer(ExplainerType.ScheduledTrackChange(data: change)) }
         default: nil
         }
     }
