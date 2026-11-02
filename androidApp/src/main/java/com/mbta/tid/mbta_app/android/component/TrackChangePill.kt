@@ -104,7 +104,7 @@ fun TrackChangePill(
                                 pillType.trackLabel ?: pillType.trackNumber
                         },
                     color = iconColor,
-                    style = Typography.footnote,
+                    style = Typography.caption,
                 )
             else -> {}
         }

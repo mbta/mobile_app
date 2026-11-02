@@ -80,7 +80,7 @@ struct TrackChangePill: View {
                 .padding(2)
             if case let .expanded = style {
                 trackChangeText
-                    .font(Typography.footnote)
+                    .font(Typography.caption)
                     .multilineTextAlignment(.leading)
                 Image(.faCircleInfo)
                     .resizable()
