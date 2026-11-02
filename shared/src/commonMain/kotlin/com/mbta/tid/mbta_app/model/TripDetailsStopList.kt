@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlin.collections.orEmpty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -289,16 +290,6 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
                             trip.directionId,
                         )
 
-                    val trackChangeAlert =
-                        Alert.trackChangeAlert(
-                            alertsData.alerts.values,
-                            working.schedule?.departureBasedStopTime
-                                ?: working.prediction?.departureBasedStopTime,
-                            trip.directionId,
-                            route.id,
-                            parentAndChildStopIds,
-                            trip.id,
-                        )
                     return Entry(
                         stop,
                         working.stopSequence,
@@ -309,7 +300,15 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
                         working.vehicle,
                         getTransferRoutes(working, globalData),
                         Alert.elevatorAlerts(allElevatorAlerts, parentAndChildStopIds),
-                        trackChange = trackChangeAlert?.let { TrackChange.Alert(it) },
+                        trackChange =
+                            TrackChange.calculate(
+                                alertsData.alerts,
+                                working.schedule,
+                                working.prediction,
+                                trip,
+                                parentAndChildStopIds,
+                                globalData,
+                            ),
                     )
                 }
 
