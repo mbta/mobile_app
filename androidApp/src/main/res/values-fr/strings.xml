@@ -17,8 +17,8 @@
     <string name="additional_service">Service supplémentaire</string>
     <string name="additional_service_sentence_case">Service supplémentaire</string>
     <plurals name="affected_stops">
-        <item quantity="one">&lt;b&gt;%1$d&lt;/b&gt; arrêt affecté</item>
-        <item quantity="other">&lt;b&gt;%1$d&lt;/b&gt; arrêts affectés</item>
+        <item quantity="one">&lt;b&gt;%1$d&lt;/b&gt; arrêt concerné</item>
+        <item quantity="other">&lt;b&gt;%1$d&lt;/b&gt; arrêts concernés</item>
     </plurals>
     <string name="alert">Alerte</string>
     <string name="alert_details">Détails de l’alerte</string>
@@ -60,7 +60,7 @@
     <string name="cancel">Annuler</string>
     <string name="cancellation">Annulation</string>
     <string name="cancelled">Annulé</string>
-    <string name="clockwise">Dans le sens des aiguilles d’une montre</string>
+    <string name="clockwise">Sens horaire</string>
     <string name="close_button_label">Fermer</string>
     <string name="coast_guard_restriction">Restriction des garde-côtes</string>
     <string name="coast_guard_restriction_lowercase">Restriction des garde-côtes</string>
@@ -71,8 +71,8 @@
     <string name="connection_to">Correspondance vers %1$s</string>
     <string name="connections_to_and">Correspondances vers %2$s et %1$s</string>
     <string name="construction">Chantier</string>
-    <string name="construction_lowercase">construction</string>
-    <string name="counterclockwise">Dans le sens antihoraire</string>
+    <string name="construction_lowercase">travaux</string>
+    <string name="counterclockwise">Sens antihoraire</string>
     <string name="crossing_issue">Problème de passage à niveau</string>
     <string name="crossing_issue_lowercase">problème de passage à niveau</string>
     <string name="crossing_malfunction">Dysfonctionnement du passage à niveau</string>
@@ -84,13 +84,13 @@
     <string name="crowding_some_crowding">Affluence modérée</string>
     <string name="crowding_unknown">Foule inconnue</string>
     <string name="current_locale">fr</string>
-    <string name="custom">Coutumes</string>
+    <string name="custom">Personnalisé</string>
     <string name="daily">Tous les jours</string>
     <string name="delay">Retard</string>
     <string name="delays_due_to_cause">&lt;b&gt;Retards&lt;/b&gt; dus à %1$s</string>
-    <string name="delays_unknown_reason">&lt;b&gt;Retard&lt;/b&gt;</string>
+    <string name="delays_unknown_reason">&lt;b&gt;Retards&lt;/b&gt;</string>
     <string name="delete">Supprimer</string>
-    <string name="delete_time_period">supprimer la période</string>
+    <string name="delete_time_period">Supprimer la période</string>
     <string name="demonstration">Manifestation</string>
     <string name="demonstration_lowercase">manifestation</string>
     <string name="departure_tile_on_click_label">afficher plus d’informations sur ce trajet</string>
@@ -128,12 +128,12 @@
     <string name="elevator_closed_sentence_case">Ascenseur fermé</string>
     <string name="elevator_closure">Fermeture de l’ascenseur</string>
     <plurals name="elevator_closure_count">
-        <item quantity="one">%1$d ascenseur fermé</item>
+        <item quantity="one">Ascenseur %1$d fermé</item>
         <item quantity="other">%1$d ascenseurs fermés</item>
     </plurals>
     <plurals name="elevator_closure_count_accessibility_description">
-        <item quantity="one">Cet arrêt %1$d ascenseur fermé</item>
-        <item quantity="other">Cet arrêt compte %1$d ascenseurs fermés</item>
+        <item quantity="one">Cet arrêt comporte %1$d ascenseur fermé</item>
+        <item quantity="other">Cet arrêt comporte %1$d ascenseurs fermés</item>
     </plurals>
     <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">Fin</string>
@@ -141,8 +141,8 @@
     <string name="error_loading_data">Erreur dans le chargement des données</string>
     <string name="escalator_closed_sentence_case">Escalator hors service</string>
     <string name="escalator_closure">Escalator hors service</string>
-    <string name="evening">Soirée</string>
-    <string name="exact_hours_format_abbr">&lt;b&gt;%1$d&lt;/b&gt; vers</string>
+    <string name="evening">Soir</string>
+    <string name="exact_hours_format_abbr">&lt;b&gt;%1$d&lt;/b&gt; h</string>
     <string name="expand_remaining_stops">étendre les arrêts restants</string>
     <string name="expand_stops">afficher les arrêts</string>
     <string name="explainer_headline_finishing_another">Termine un autre voyage</string>
@@ -222,9 +222,9 @@
     <string name="location_settings_prompt_keep_off">Désactiver les services de localisation</string>
     <string name="location_settings_prompt_title">MBTA Go fonctionne mieux lorsque les services de localisation sont activés</string>
     <string name="location_settings_prompt_turn_on">Activer dans les paramètres</string>
-    <string name="looping">Boucle</string>
+    <string name="looping">En boucle</string>
     <string name="maintenance">Maintenance</string>
-    <string name="maintenance_lowercase">entretien</string>
+    <string name="maintenance_lowercase">maintenance</string>
     <string name="mechanical_issue">Problème mécanique</string>
     <string name="mechanical_issue_lowercase">problème mécanique</string>
     <string name="mechanical_problem">Problème mécanique</string>
@@ -252,7 +252,7 @@
     <string name="nearby_transit">Transports à proximité</string>
     <string name="nearby_transit_link">Proche</string>
     <string name="new_feature_screen_reader_header_prefix">Nouvelle fonctionnalité. %1$s</string>
-    <string name="next_day">Le lendemain</string>
+    <string name="next_day">le lendemain</string>
     <string name="next_stop">Prochain arrêt</string>
     <string name="next_trip_at">Prochain voyage à &lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="next_trip_at_tomorrow">Prochain voyage à &lt;b&gt;%1$s&lt;/b&gt; demain</string>
@@ -263,7 +263,7 @@
     <string name="no_service">Pas de service</string>
     <string name="no_service_sentence_case">Aucun service</string>
     <string name="no_service_today">Aucun service aujourd’hui</string>
-    <string name="no_stops_added">Ajoutez des arrêts favoris pour un accès facile et des notifications de perturbation</string>
+    <string name="no_stops_added">Ajoutez des arrêts favoris pour y accéder facilement et recevoir des notifications en cas de perturbation</string>
     <string name="no_stops_nearby">Vous vous situez en dehors de la zone de service de MBTA.</string>
     <string name="no_stops_nearby_pan">Voir les transports près de Boston</string>
     <string name="no_stops_nearby_search">Rechercher par arrêt</string>
@@ -312,8 +312,8 @@
     <string name="power_problem_lowercase">problème d’alimentation</string>
     <string name="predictions_unavailable_details">Le service fonctionne, mais les heures d’arrivée prévues ne sont pas disponibles. Consulter la carte pour afficher la position actuelle de %1$s.</string>
     <string name="predictions_unavailable_details_hide_maps">Le service fonctionne, mais les heures d’arrivée prévues ne sont pas disponibles.</string>
-    <string name="presence_of_whales">Présence des baleines</string>
-    <string name="presence_of_whales_lowercase">Présence de baleines</string>
+    <string name="presence_of_whales">Présence de baleines</string>
+    <string name="presence_of_whales_lowercase">présence de baleines</string>
     <string name="promo_favorites_body">Enregistrez vos arrêts fréquents dans &lt;b&gt;un seul endroit pratique&lt;/b&gt;.</string>
     <string name="promo_favorites_header">Ajouter à vos favoris</string>
     <string name="promo_notifications_body">Nous vous informerons des éventuelles perturbations avant votre départ !</string>
@@ -338,9 +338,9 @@
     <string name="resources_link_trip_planner">Planificateur de trajet</string>
     <string name="results_failed_to_load">Échec du chargement des résultats ☹️</string>
     <string name="rough_seas">Mer agitée</string>
-    <string name="rough_seas_lowercase">Mer agitée</string>
-    <string name="route_effect">%2$s %1$s</string>
-    <string name="route_mode_label">%2$s %1$s</string>
+    <string name="rough_seas_lowercase">mer agitée</string>
+    <string name="route_effect">%1$s %2$s</string>
+    <string name="route_mode_label">%1$s %2$s</string>
     <string name="routes">Trajets</string>
     <string name="save">Sauvegarder</string>
     <string name="schedule_change">Changement d’horaire</string>
@@ -356,7 +356,7 @@
     <string name="serves_route_list">sert %1$s</string>
     <string name="service_change">Changement de service</string>
     <string name="service_change_sentence_case">Changement de service</string>
-    <string name="service_day_start">début du service</string>
+    <string name="service_day_start">début de service</string>
     <string name="service_day_end">fin de service</string>
     <string name="service_ended">Fin de service</string>
     <string name="service_suspended">Service interrompu</string>
@@ -391,7 +391,7 @@
     <string name="star_route">Route préférée</string>
     <string name="star_route_hint">épingler le trajet en haut de la liste</string>
     <string name="start">Commencer</string>
-    <string name="start_of_service">début du service</string>
+    <string name="start_of_service">début de service</string>
     <string name="start_to_end_of_service">Du début à la fin du service</string>
     <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">À compter de demain et jusqu’à nouvel ordre</string>
@@ -411,8 +411,8 @@
     <string name="stop_skipped_sentence_case">Arrêt ignoré</string>
     <string name="stops">Arrêts</string>
     <plurals name="stops_away">
-        <item quantity="one">%1$darrêt de route</item>
-        <item quantity="other">%1$darrêts de route</item>
+        <item quantity="one">%1$d arrêt restant</item>
+        <item quantity="other">%1$d arrêts restants</item>
     </plurals>
     <string name="strike">Grève</string>
     <string name="strike_lowercase">grève</string>
@@ -432,8 +432,8 @@
     <string name="tie_replacement">Remplacement de traverses</string>
     <string name="tie_replacement_lowercase">remplacement de traverses</string>
     <string name="time_picker_type_toggle">Changer le mode de sélection de l’heure</string>
-    <string name="to">Jusqu’à</string>
-    <string name="to_lowercase">Jusqu’à</string>
+    <string name="to">Vers</string>
+    <string name="to_lowercase">vers</string>
     <string name="toast_tip_prefix">Astuce : %1$s</string>
     <string name="toggle_direction">inverser la direction</string>
     <string name="track_change">Changement de voie</string>
@@ -468,11 +468,11 @@
     <string name="until_further_notice">Jusqu’à nouvel ordre</string>
     <string name="updated_at">Mis à jour : %1$s</string>
     <plurals name="updated_mins_ago">
-        <item quantity="one">Mise à jour il y a %1$d minute</item>
-        <item quantity="other">Mise à jour il y a %1$d minutes</item>
+        <item quantity="one">Mis à jour il y a %1$d minute</item>
+        <item quantity="other">Mis à jour il y a %1$d minutes</item>
     </plurals>
-    <string name="utility_work">Travaux publics</string>
-    <string name="utility_work_lowercase">travaux sur la voie</string>
+    <string name="utility_work">Travaux sur les réseaux</string>
+    <string name="utility_work_lowercase">travaux sur les réseaux</string>
     <string name="vehicle_arriving_first">%1$s arrive maintenant</string>
     <string name="vehicle_arriving_other">et arrive maintenant</string>
     <string name="vehicle_boarding_first">%1$s embarquement en cours</string>
@@ -506,10 +506,10 @@
     <string name="vehicle_shuttled_other">et à %1$s remplacé par une navette</string>
     <string name="vehicle_skipped_first">%1$s arrivant à %2$s non desservi</string>
     <string name="vehicle_skipped_other">et à %1$s ignoré</string>
-    <string name="vessel_substitution">Remplacement par bus</string>
-    <string name="vessel_substitution_lowercase">Remplacement par bus</string>
-    <string name="vessel_traffic">Trafic</string>
-    <string name="vessel_traffic_lowercase">trafic</string>
+    <string name="vessel_substitution">Remplacement de navire</string>
+    <string name="vessel_substitution_lowercase">remplacement de navire</string>
+    <string name="vessel_traffic">Trafic maritime</string>
+    <string name="vessel_traffic_lowercase">trafic maritime</string>
     <string name="view_details">Voir les détails</string>
     <string name="waiting_to_depart">En attente de départ</string>
     <string name="weather">Météo</string>
@@ -517,6 +517,6 @@
     <string name="weekdays">Jours de la semaine</string>
     <string name="weekends">Week-ends</string>
     <string name="westbound">En direction de l’ouest</string>
-    <string name="when_do_you_want_notifications">Quand souhaitez-vous recevoir des notifications ?</string>
+    <string name="when_do_you_want_notifications">Quand souhaitez-vous recevoir des notifications ?</string>
     <string name="x_and_y">%1$s et %2$s</string>
 </resources>
