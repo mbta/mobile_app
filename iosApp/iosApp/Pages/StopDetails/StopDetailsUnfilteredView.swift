@@ -96,7 +96,7 @@ struct StopDetailsUnfilteredView: View {
                         buttonTextColor: .fill2,
                         navCallbacks: navCallbacks,
                     ).padding(.bottom, hasPillFilters ? 4 : 16)
-                    DebugView {
+                    ChannelDebugView {
                         Text(verbatim: "stop id: \(stopId)")
                     }
                     ErrorBanner(errorBannerVM, padding: [

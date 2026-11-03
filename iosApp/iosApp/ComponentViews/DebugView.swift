@@ -13,16 +13,11 @@ import SwiftUI
 struct DebugView<Content: View>: View {
     @ObserveInjection var inject
 
-    var withSocketInfo = true
     let content: () -> Content
     var details: (() -> Content)?
 
     @EnvironmentObject var settingsCache: SettingsCache
     @State var detailsPresented = false
-    @State var debugRepository = RepositoryDI().debug
-    @State private var debugState: DebugState? = nil
-    @State private var now = EasternTimeInstant.now()
-    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     var body: some View {
         if settingsCache.get(.devDebugMode) {
@@ -32,25 +27,6 @@ struct DebugView<Content: View>: View {
                 HStack(alignment: .center, spacing: 8) {
                     VStack(alignment: .leading) {
                         content()
-
-                        if withSocketInfo, let channelUpdates = debugState?.channelUpdates {
-                            Text(verbatim: "channel connections:")
-                            ForEach(channelUpdates.keys.sorted(), id: \.self) { key in
-                                let trimmedKey = if key.count > 25 { "\(key.prefix(25))..." } else { key }
-                                let updateDuration = if let updateTime = channelUpdates[key] {
-                                    Duration(
-                                        secondsComponent: abs(now.minus(other: updateTime).inWholeSeconds),
-                                        attosecondsComponent: 0
-                                    )
-                                    .formatted(.units(allowed: [.seconds], width: .narrow))
-                                } else { "??" }
-
-                                Text(verbatim: "\(trimmedKey) last updated \(updateDuration) ago")
-                            }
-                        }
-                        if withSocketInfo, let socketConnected = debugState?.socketConnected {
-                            Text(verbatim: "socket connected: \(socketConnected)")
-                        }
                     }
                     .foregroundStyle(Color.text)
                     .multilineTextAlignment(.leading)
@@ -71,12 +47,6 @@ struct DebugView<Content: View>: View {
                 }
                 .padding(8)
             }
-            .task {
-                for await state in debugRepository.state {
-                    debugState = state
-                }
-            }
-            .onReceive(timer) { input in now = input.toEasternInstant() }
             .frame(maxWidth: .infinity)
             .background(Color.fill3)
             .padding(4)

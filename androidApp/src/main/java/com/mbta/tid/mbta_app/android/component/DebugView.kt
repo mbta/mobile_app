@@ -35,24 +35,16 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
-import com.mbta.tid.mbta_app.android.util.timer
-import com.mbta.tid.mbta_app.repositories.IDebugRepository
 import com.mbta.tid.mbta_app.repositories.Settings
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DebugView(
     modifier: Modifier = Modifier,
-    debugRepository: IDebugRepository = koinInject(),
-    withSocketInfo: Boolean = true,
     content: @Composable ColumnScope.() -> Unit,
     details: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
@@ -64,9 +56,6 @@ fun DebugView(
     val textColor = colorResource(R.color.text)
     val color = colorResource(R.color.fill3)
     val density = LocalDensity.current
-
-    val debugState by debugRepository.state.collectAsStateWithLifecycle()
-    val now by timer(updateInterval = 1.seconds)
 
     Row(
         modifier
@@ -93,24 +82,6 @@ fun DebugView(
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
             ProvideTextStyle(Typography.footnote.copy(color = textColor)) {
                 content()
-                if (withSocketInfo) {
-                    debugState?.channelUpdates?.let {
-                        Text("channel connections:")
-                        it.entries
-                            .sortedBy { it.key }
-                            .forEach { (key, value) ->
-                                val trimmedKey =
-                                    if (key.length > 25) "${key.substring(0, 25)}..." else key
-                                val duration =
-                                    (now - value)
-                                        .absoluteValue
-                                        .toString(DurationUnit.SECONDS, decimals = 0)
-                                Text("$trimmedKey last updated $duration ago")
-                            }
-                    }
-
-                    Text("socket connected: ${debugState?.socketConnected}")
-                }
             }
         }
         details?.let {

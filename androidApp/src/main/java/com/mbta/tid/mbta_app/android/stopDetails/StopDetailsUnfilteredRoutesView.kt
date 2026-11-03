@@ -30,7 +30,7 @@ import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.component.DebugView
+import com.mbta.tid.mbta_app.android.component.ChannelDebugView
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCard
@@ -94,7 +94,7 @@ fun StopDetailsUnfilteredRoutesView(
                 navCallbacks = navCallbacks,
                 buttonColors = ButtonDefaults.contrastTranslucent(),
             )
-            DebugView(content = { Text("stop id: ${stop.id}") })
+            ChannelDebugView(content = { Text("stop id: ${stop.id}") })
             if (multiRoute) {
                 Box(Modifier.height(56.dp).fillMaxWidth()) {
                     StopDetailsFilterPills(

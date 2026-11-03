@@ -4,19 +4,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.component.DebugView
+import com.mbta.tid.mbta_app.android.component.ChannelDebugView
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ScrollSeparatorColumn
 import com.mbta.tid.mbta_app.android.state.getGlobalData
@@ -106,17 +104,7 @@ fun TripDetailsPage(
             }
         }
         ErrorBanner(errorBannerViewModel, Modifier.padding(bottom = 8.dp))
-        DebugView(
-            content = {
-                Column(Modifier.align(Alignment.Start), horizontalAlignment = Alignment.Start) {
-                    Text("trip id: ${filter.tripId}")
-                    Text("vehicle id: ${filter.vehicleId ?: "null"}")
-                    Text(
-                        "vehicle stop sequence: ${tripDetailsState.tripData?.vehicle?.currentStopSequence ?: "null"}",
-                    )
-                }
-            },
-        )
+        ChannelDebugView()
         ScrollSeparatorColumn {
             TripDetailsView(
                 filter,

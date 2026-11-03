@@ -307,12 +307,8 @@ struct StopDetailsFilteredView: View {
                     navCallbacks: navCallbacks,
                 )
                 ErrorBanner(errorBannerVM, padding: .init([.horizontal, .bottom], 16))
-                DebugView {
-                    VStack(alignment: .leading) {
-                        Text(verbatim: "stop id: \(stopId)")
-                        Text(verbatim: "trip id: \(tripFilter?.tripId ?? "nil")")
-                        Text(verbatim: "vehicle id: \(tripFilter?.vehicleId ?? "nil")")
-                    }
+                ChannelDebugView {
+                    Text(verbatim: "stop id: \(stopId)")
                 }
                 .padding(.horizontal, 6)
             }

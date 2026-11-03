@@ -70,7 +70,7 @@ struct FavoritesView: View {
             }
 
             ErrorBanner(errorBannerVM, padding: .init([.horizontal, .bottom], 16))
-            DebugView { EmptyView() }
+            ChannelDebugView()
             StopCardList(
                 stopCardData: favoritesVMState.stopCardData,
                 emptyView: { emptyView() },

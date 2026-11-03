@@ -30,7 +30,6 @@ fun TripStatus(predictions: UpcomingFormat) {
                         )
                         trip.debugTime?.let {
                             DebugView(
-                                withSocketInfo = false,
                                 content = {
                                     val now by timer(updateInterval = 1.seconds)
                                     val diff = it.minus(now)
