@@ -53,6 +53,7 @@ private fun TakeoverAlertCard(
 ) {
     val isPresenceOfWhalesAlert = alert.cause == Alert.Cause.PresenceOfWhales
     val alertState = alert.alertState
+    val omitAlertIconColor = isPresenceOfWhalesAlert || alertState == StopAlertState.Elevator
     val iconSize = 48.dp
     val formattedAlert = FormattedAlert(alert, alertSummaryEntity)
 
@@ -71,7 +72,7 @@ private fun TakeoverAlertCard(
         ) {
             AlertIcon(
                 alertState = alertState,
-                color = if (isPresenceOfWhalesAlert) Color.Unspecified else routeAccents.color,
+                color = if (omitAlertIconColor) Color.Unspecified else routeAccents.color,
                 modifier =
                     Modifier.clearAndSetSemantics {}
                         .size(iconSize)
