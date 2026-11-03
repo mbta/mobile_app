@@ -81,7 +81,7 @@ public data class Vehicle(
     )
 
     public val hasCarLevelCrowding: Boolean =
-        carriages.orEmpty().any { it.occupancyStatus != Vehicle.OccupancyStatus.NoDataAvailable }
+        carriages.orEmpty().any { it.occupancyStatus != OccupancyStatus.NoDataAvailable }
 
     private val staleThreshold = 1.hours
 
@@ -92,11 +92,11 @@ public data class Vehicle(
         routeType: RouteType,
         now: EasternTimeInstant,
     ): Boolean {
-        val staleVehicleThreshold =
-            if (routeType == RouteType.COMMUTER_RAIL) 5.minutes else 2.minutes
+        val isStaleVehicle =
+            listOf(RouteType.BUS, RouteType.FERRY).contains(routeType) &&
+                now.minus(updatedAt) > 2.minutes
         return currentStopSequence?.let { vehicleStop ->
-            now.minus(updatedAt) > staleVehicleThreshold ||
-                (tripId == prediction.tripId && vehicleStop > prediction.stopSequence)
+            isStaleVehicle || (tripId == prediction.tripId && vehicleStop > prediction.stopSequence)
         } ?: true
     }
 

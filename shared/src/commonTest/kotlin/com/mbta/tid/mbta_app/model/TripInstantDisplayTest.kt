@@ -539,7 +539,7 @@ class TripInstantDisplayTest {
         val now = EasternTimeInstant.now()
         val lastTrip = anyBoolean()
         assertEquals(
-            TripInstantDisplay.Hidden,
+            TripInstantDisplay.Time(now.minus(30.seconds), last = lastTrip, headline = true),
             TripInstantDisplay.from(
                 prediction =
                     ObjectCollectionBuilder.Single.prediction {
