@@ -23,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -40,11 +39,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.ModalRoutes
+import com.mbta.tid.mbta_app.android.ModalRoutes.SaveFavorite
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
-import com.mbta.tid.mbta_app.android.component.SaveFavoritesFlow
 import com.mbta.tid.mbta_app.android.component.ScrollSeparatorColumn
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.StarButton
@@ -65,7 +64,6 @@ import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.modifiers.loading
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
 import com.mbta.tid.mbta_app.android.util.stateJsonSaver
-import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
@@ -89,7 +87,6 @@ import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
 import kotlinx.coroutines.flow.map as flowMap
-import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
@@ -239,22 +236,10 @@ fun RouteStopListView(
     toastViewModel: IToastViewModel = koinInject(),
     rightSideContent: @Composable RowScope.(RouteDetailsRowContext, Modifier) -> Unit,
 ) {
-    val (favorites, updateFavorites) = manageFavorites()
+    val (favorites, _) = manageFavorites()
 
     fun isFavorite(routeStopDirection: RouteStopDirection): Boolean =
         favorites?.contains(routeStopDirection) ?: false
-
-    val coroutineScope = rememberCoroutineScope()
-    fun confirmFavorites(updatedValues: Map<RouteStopDirection, FavoriteSettings?>) {
-        coroutineScope.launch {
-            updateFavorites(
-                updatedValues,
-                if (context == RouteDetailsContext.Favorites) EditFavoritesContext.Favorites
-                else EditFavoritesContext.RouteDetails,
-                selectedDirection,
-            )
-        }
-    }
 
     val firstTimeToastMessage = stringResource(R.string.tap_favorites_hint)
 
@@ -297,9 +282,6 @@ fun RouteStopListView(
         }
     }
 
-    var showFavoritesStopConfirmationId by rememberSaveable { mutableStateOf<String?>(null) }
-    val showFavoritesStopConfirmation = globalData.getStop(showFavoritesStopConfirmationId)
-
     fun stopRowContext(stop: Stop) =
         when (context) {
             is RouteDetailsContext.Details -> RouteDetailsRowContext.Details(stop)
@@ -307,31 +289,18 @@ fun RouteStopListView(
                 RouteDetailsRowContext.Favorites(
                     isFavorited =
                         isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, selectedDirection)),
-                    onTapStar = { showFavoritesStopConfirmationId = stop.id },
+                    onTapStar = {
+                        openModal(
+                            SaveFavorite(
+                                lineOrRoute.id,
+                                stop.id,
+                                selectedDirection = selectedDirection,
+                                context = EditFavoritesContext.Favorites,
+                            ),
+                        )
+                    },
                 )
         }
-
-    showFavoritesStopConfirmation?.let { stop ->
-        val allPatternsForStop = globalData.getPatternsFor(stop.id, lineOrRoute)
-        val stopDirections =
-            lineOrRoute.directions(globalData, stop, allPatternsForStop.filter { it.isTypical() })
-        Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
-            SaveFavoritesFlow(
-                lineOrRoute,
-                stop,
-                stopDirections.filter {
-                    it.id in parameters.availableDirections &&
-                        !stop.isLastStopForAllPatterns(it.id, allPatternsForStop, globalData)
-                },
-                selectedDirection = selectedDirection,
-                context = EditFavoritesContext.Favorites,
-                isFavorite = ::isFavorite,
-                updateFavorites = ::confirmFavorites,
-                onClose = { showFavoritesStopConfirmationId = null },
-                openModal = openModal,
-            )
-        }
-    }
 
     Column(modifier = Modifier.semantics { paneTitle = lineOrRoute.name }) {
         SheetHeader(

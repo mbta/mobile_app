@@ -34,10 +34,6 @@ struct StopDetailsFilteredView: View {
     var favoritesVM: IFavoritesViewModel
     @ObservedObject var navManager: NavigationManager
 
-    @State var inSaveFavoritesFlow = false
-
-    @ObservedObject var fcmTokenContainer = FcmTokenContainer.shared
-
     @EnvironmentObject var settingsCache: SettingsCache
 
     var analytics: Analytics = AnalyticsProvider.shared
@@ -139,7 +135,6 @@ struct StopDetailsFilteredView: View {
             context: .stopDetails,
             filters: tripPageFilter,
         )
-        .accessibilityHidden(inSaveFavoritesFlow)
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .enableInjection()
     }
@@ -268,34 +263,12 @@ struct StopDetailsFilteredView: View {
     }
 
     @ViewBuilder
-    func header(lineOrRoute: LineOrRoute, directions _: [Direction], availableDirections: [Direction]) -> some View {
+    func header(lineOrRoute: LineOrRoute, directions _: [Direction], availableDirections _: [Direction]) -> some View {
         let line: Line? = switch onEnum(of: lineOrRoute) {
         case let .line(line): line.line
         default: nil
         }
         VStack(spacing: 0) {
-            if let stop, let routeStopDirection, inSaveFavoritesFlow {
-                SaveFavoritesFlow(
-                    lineOrRoute: lineOrRoute,
-                    stop: stop,
-                    directions: availableDirections,
-                    selectedDirection: routeStopDirection.direction,
-                    context: .stopDetails,
-                    global: global,
-                    isFavorite: { favorites.isFavorite($0) },
-                    updateFavorites: { updatedValues in
-                        favoritesVM.updateFavorites(
-                            updatedFavorites: updatedValues,
-                            context: .stopDetails,
-                            defaultDirection: routeStopDirection.direction,
-                            fcmToken: fcmTokenContainer.token,
-                        )
-                    },
-                    onClose: { inSaveFavoritesFlow = false },
-                    pushNavEntry: { navManager.pushNavEntry($0) },
-                )
-            }
-
             VStack(spacing: 0) {
                 StopDetailsFilteredHeader(
                     route: lineOrRoute.sortRoute,
@@ -303,7 +276,16 @@ struct StopDetailsFilteredView: View {
                     stop: stop,
                     direction: stopFilter.directionId,
                     isFavorite: isFavorite,
-                    onFavorite: { inSaveFavoritesFlow = true },
+                    onFavorite: {
+                        navManager.pushNavEntry(
+                            .saveFavorite(
+                                routeId: lineOrRoute.id,
+                                stopId: stopId,
+                                selectedDirection: stopFilter.directionId,
+                                context: .stopDetails
+                            )
+                        )
+                    },
                     navCallbacks: navCallbacks,
                 )
                 ErrorBanner(errorBannerVM, padding: .init([.horizontal, .bottom], 16))

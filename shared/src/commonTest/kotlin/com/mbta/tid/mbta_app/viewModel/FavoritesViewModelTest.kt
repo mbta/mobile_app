@@ -1104,7 +1104,7 @@ internal class FavoritesViewModelTest : KoinTest {
 
         val subscriptionsRepository = mock<ISubscriptionsRepository>(MockMode.autofill)
         everySuspend {
-            subscriptionsRepository.updateSubscriptions(any(), any(), any(), any())
+            subscriptionsRepository.updateSubscriptions(any(), any(), any())
         } calls { delay(20.days) }
 
         val sentryRepository = mock<ISentryRepository>(MockMode.autofill)

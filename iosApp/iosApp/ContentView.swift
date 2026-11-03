@@ -37,7 +37,6 @@ struct ContentView: View {
     @EnvironmentObject var settingsCache: SettingsCache
     var hideMaps: Bool { settingsCache.get(.hideMaps) }
     var includeAccessibility: Bool { settingsCache.get(.stationAccessibility) }
-    var notificationsFlag: Bool { settingsCache.get(.notifications) }
 
     @State var transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     let analytics: Analytics = AnalyticsProvider.shared
@@ -111,8 +110,7 @@ struct ContentView: View {
         .global($globalData, errorKey: ErrorKey(sheets: [], id: "ContentView"))
         .handleFcmTokenSubscriptions(
             fcmToken: fcmTokenContainer.token,
-            includeAccessibility: includeAccessibility,
-            notificationsEnabled: notificationsFlag
+            includeAccessibility: includeAccessibility
         )
         .onChange(of: contentVM.defaultTab) { newTab in
             // if we aren't on an entrypoint, then the default tab may have loaded after
@@ -642,7 +640,7 @@ struct ContentView: View {
                         .tag(SelectedTab.nearby)
                         .tabItem { TabLabel(tab: SelectedTab.nearby) }
 
-                    MorePage(highlight: category, reloadPendingOnboarding: { await contentVM.loadOnboardingScreens() })
+                    MorePage(highlight: category)
                         .toolbar(tabBarVisibility, for: .tabBar)
                         .toolbarBackground(.visible, for: .tabBar)
                         .tag(SelectedTab.more(highlight: nil))

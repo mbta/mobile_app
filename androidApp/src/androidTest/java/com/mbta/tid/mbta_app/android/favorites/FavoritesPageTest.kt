@@ -26,8 +26,6 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
@@ -40,7 +38,6 @@ import dev.mokkery.mock
 import dev.mokkery.resetCalls
 import dev.mokkery.verify
 import dev.mokkery.verify.VerifyMode
-import kotlin.collections.emptyList
 import kotlin.time.Clock
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -118,7 +115,7 @@ class FavoritesPageTest {
     @OptIn(ExperimentalTestApi::class, ExperimentalMaterial3Api::class)
     @Test
     fun testShowsHint() = runBlocking {
-        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to true)) }
+        loadKoinMocks()
 
         val favoritesVM =
             MockFavoritesViewModel(
@@ -182,7 +179,7 @@ class FavoritesPageTest {
     @OptIn(ExperimentalTestApi::class, ExperimentalMaterial3Api::class)
     @Test
     fun testEmptyFavoritesDismissHint() = runBlocking {
-        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to true)) }
+        loadKoinMocks()
 
         val favoritesVM =
             MockFavoritesViewModel(

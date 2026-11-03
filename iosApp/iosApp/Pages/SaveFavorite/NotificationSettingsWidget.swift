@@ -59,9 +59,6 @@ struct NotificationSettingsWidgetPresentationView: View {
     var authorizationStatus: UNAuthorizationStatus? { notificationPermissionManager.authorizationStatus }
     var now: EasternTimeInstant = .now()
 
-    @EnvironmentObject var settingsCache: SettingsCache
-    var presetWindowsEnabled: Bool { settingsCache.get(.notificationPresetWindows) }
-
     var daysOfWeek: Set<Kotlinx_datetimeDayOfWeek> {
         FavoriteSettings.NotificationsWindow.companion.defaultDaysOfWeek(now: now)
     }
@@ -102,7 +99,7 @@ struct NotificationSettingsWidgetPresentationView: View {
                             .padding(.vertical, 8)
 
                         VStack(spacing: 16) {
-                            if presetWindowsEnabled, showPresets {
+                            if showPresets {
                                 PresetWindowSelector(
                                     presetRows: presetOptions,
                                     selectedPreset: state.selectedPreset,
@@ -516,7 +513,6 @@ struct NotificationSettingsWidget_Previews: PreviewProvider {
         @ObserveInjection var inject
         let windows = [FavoriteSettings.NotificationsWindow.companion.default(
             existingWindows: [],
-            presetsEnabled: false,
             now: EasternTimeInstant.now()
         )]
 

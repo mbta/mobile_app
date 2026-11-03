@@ -9,13 +9,13 @@ class FeedbackFormUrlTest {
     @Test
     fun testParams() {
         assertEquals(
-            "https://example.com?language=en&version=1.2.3&platform=iOS&Notifications=true&HideMaps=false",
+            "https://example.com?language=en&version=1.2.3&platform=iOS&HideMaps=false",
             feedbackFormUrl(
                 "https://example.com",
                 "en",
                 "1.2.3",
                 PlatformType.iOS,
-                mapOf(Settings.Notifications to true, Settings.HideMaps to false),
+                mapOf(Settings.HideMaps to false),
             ),
         )
     }
