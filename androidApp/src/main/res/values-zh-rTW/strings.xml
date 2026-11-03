@@ -14,7 +14,7 @@
     <string name="additional_service">附加服務</string>
     <string name="additional_service_sentence_case">附加服務</string>
     <plurals name="affected_stops">
-        <item quantity="other">&lt;b&gt;%1$d&lt;/b&gt;個受影響的站點</item>
+        <item quantity="other">&lt;b&gt;%1$d 個&lt;/b&gt;受影響的站點</item>
     </plurals>
     <string name="alert">警報</string>
     <string name="alert_details">警報詳情</string>
@@ -123,14 +123,14 @@
     <string name="elevator_closed_sentence_case">直梯已關閉</string>
     <string name="elevator_closure">電梯關閉</string>
     <plurals name="elevator_closure_count">
-        <item quantity="other">%1$d部電梯已關閉</item>
+        <item quantity="other">%1$d部電梯 已關閉</item>
     </plurals>
     <plurals name="elevator_closure_count_accessibility_description">
-        <item quantity="other">此站有%1$d部電梯已關閉</item>
+        <item quantity="other">本站有%1$d部電梯 已關閉</item>
     </plurals>
     <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">結束日期</string>
-    <string name="end_of_service">營運結束</string>
+    <string name="end_of_service">服務結束</string>
     <string name="error_loading_data">載入資料時發生錯誤</string>
     <string name="escalator_closed_sentence_case">自動扶梯已關閉</string>
     <string name="escalator_closure">自動扶梯關閉</string>
@@ -201,7 +201,7 @@
     <string name="ice_in_harbor_lowercase">港口結冰</string>
     <string name="inbound">進站</string>
     <string name="is_stops_away_from">%1$s距離%3$s還有%2$d站</string>
-    <string name="last">末班車</string>
+    <string name="last">末班</string>
     <string name="last_trip">末班車</string>
     <string name="later_today">今天晚些時候</string>
     <string name="less_common_stop">較少停靠的網站</string>
@@ -252,7 +252,7 @@
     <string name="next_trip_on">下一班次時間&lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="no_matching_routes">沒有匹配的%1$s路線</string>
     <string name="no_predictions">預測不可用</string>
-    <string name="no_results_found">未找到結果 🤔</string>
+    <string name="no_results_found">未找到結果🤔</string>
     <string name="no_service">無服務</string>
     <string name="no_service_sentence_case">無服務</string>
     <string name="no_service_today">今日無服務</string>
@@ -298,7 +298,7 @@
     <string name="parking_issue">停車問題</string>
     <string name="parking_issue_sentence_case">停車問題</string>
     <string name="police_activity">警方活動</string>
-    <string name="police_activity_lowercase">警方行動</string>
+    <string name="police_activity_lowercase">警方活動</string>
     <string name="policy_change">政策變化</string>
     <string name="policy_change_sentence_case">政策變化</string>
     <string name="power_problem">電力故障</string>
@@ -384,7 +384,7 @@
     <string name="star_route">為線路添加星號</string>
     <string name="star_route_hint">將線路固定到清單頂部</string>
     <string name="start">開始日期</string>
-    <string name="start_of_service">營運開始</string>
+    <string name="start_of_service">服務開始</string>
     <string name="start_to_end_of_service">從服務開始到結束</string>
     <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">自明日起，直至另行通知</string>
@@ -404,7 +404,7 @@
     <string name="stop_skipped_sentence_case">網站跳停</string>
     <string name="stops">網站</string>
     <plurals name="stops_away">
-        <item quantity="other">還有%1$d站</item>
+        <item quantity="other">距離%1$d站</item>
     </plurals>
     <string name="strike">罷工</string>
     <string name="strike_lowercase">罷工</string>
@@ -459,7 +459,7 @@
     <string name="until_further_notice">等待進一步通知</string>
     <string name="updated_at">最後更新：%1$s</string>
     <plurals name="updated_mins_ago">
-        <item quantity="other">%1$d 分鐘前更新</item>
+        <item quantity="other">%1$d分鐘前更新</item>
     </plurals>
     <string name="utility_work">管線施工</string>
     <string name="utility_work_lowercase">管線施工</string>
