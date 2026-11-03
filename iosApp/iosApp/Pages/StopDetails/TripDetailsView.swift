@@ -187,7 +187,15 @@ struct TripDetailsView: View {
             MissingTripCard(type: .complete, routeAccents: routeAccents).padding(.horizontal, 16)
         } else {
             VStack(spacing: 0) {
-                tripHeaderCard(filter.stopId, trip, headerSpec, onHeaderTap, route, routeAccents).zIndex(1)
+                tripHeaderCard(
+                    filter.stopId, trip, headerSpec, onHeaderTap, route, routeAccents,
+                    TripHeaderDebugData.companion.from(
+                        trip: trip,
+                        vehicleId: filter.vehicleId,
+                        vehicle: vehicle,
+                        now: now
+                    )
+                ).zIndex(1)
                     .padding(.horizontal, 6)
                     .padding(.top, 2)
                 TripStops(
@@ -215,6 +223,7 @@ struct TripDetailsView: View {
         _ onTap: (() -> Void)?,
         _ route: Route,
         _ routeAccents: TripRouteAccents,
+        _ debugData: TripHeaderDebugData,
     ) -> some View {
         if let spec {
             let targetedStop: Stop? = switch spec {
@@ -235,7 +244,8 @@ struct TripDetailsView: View {
                 onTap: onTap,
                 now: now,
                 onFollowTrip: context != .tripDetails ? onFollowTrip : nil,
-                onOpenAlertDetails: onOpenAlertDetails
+                onOpenAlertDetails: onOpenAlertDetails,
+                debugData: debugData
             )
         }
     }

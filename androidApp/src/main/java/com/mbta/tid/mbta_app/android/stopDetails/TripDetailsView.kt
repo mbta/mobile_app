@@ -32,6 +32,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
+import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderDebugData
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.routes.SheetRoutes
@@ -167,6 +168,7 @@ fun TripDetailsView(
             isTripDetailsPage,
             openModal,
             modifier,
+            debugData = TripHeaderDebugData.from(trip, tripFilter.vehicleId, vehicle, now),
         )
     } else if (tripData != null && trip == null && tripData.vehicle != null) {
         MissingTripCard(
@@ -229,6 +231,7 @@ fun TripDetails(
     isTripDetailsPage: Boolean,
     openModal: (ModalRoutes) -> Unit,
     modifier: Modifier = Modifier,
+    debugData: TripHeaderDebugData? = null,
 ) {
     val routeAccents = TripRouteAccents(route)
 
@@ -258,6 +261,7 @@ fun TripDetails(
                     onTap = onHeaderTap,
                     onFollowTrip = if (!isTripDetailsPage) onFollowTrip else null,
                     openModal = openModal,
+                    debugData = debugData,
                 )
             }
             Column(Modifier.offset(y = (-16).dp)) {
