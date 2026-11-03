@@ -85,7 +85,6 @@ struct MorePage: View {
                                 onChangeSetting: { setting, newValue in
                                     switch setting {
                                     case .stationAccessibility:
-                                        if settingsCache.get(.notifications),
                                            let fcmInstallationId = fcmInstallationIdContainer.installationId {
                                             viewModel.updateAccessibility(
                                                 fcmInstallationId: fcmInstallationId,

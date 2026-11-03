@@ -107,6 +107,7 @@ public class FavoritesUsecases(
         breadcrumb("updating favorites: writing ${currentFavorites.size} favorites")
         repository.setFavorites(storedFavorites.copy(routeStopDirection = currentFavorites))
         fcmInstallationId?.let {
+            breadcrumb("updating favorites: reading settings")
             val settings = settingsRepository.getSettings()
             CoroutineScope(Dispatchers.IO).launch {
                 val subs =

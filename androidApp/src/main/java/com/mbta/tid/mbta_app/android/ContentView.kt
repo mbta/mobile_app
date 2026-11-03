@@ -108,7 +108,8 @@ fun ContentView(
 
     ManageMapboxConfig()
 
-    LaunchedEffect(fcmInstallationId, notificationsEnabled) {
+    // Update notification subscriptions on the backend
+    LaunchedEffect(fcmInstallationId, globalResponse) {
         fcmInstallationId?.let {
             val favorites = favoritesUsecases.getRouteStopDirectionFavorites()
             val subscriptions =
@@ -117,7 +118,7 @@ fun ContentView(
                     includeAccessibility,
                 )
             subscriptionsRepository.updateSubscriptions(
-                token,
+                it,
                 subscriptions,
                 currentLocale,
             )

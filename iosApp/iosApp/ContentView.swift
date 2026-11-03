@@ -108,10 +108,9 @@ struct ContentView: View {
         }
         .alerts($alerts)
         .global($globalData, errorKey: ErrorKey(sheets: [], id: "ContentView"))
-        .handleFcmInstallationIdSubscriptions(
+        .handleFcmTokenSubscriptions(
             fcmInstallationId: fcmInstallationIdContainer.installationId,
-            includeAccessibility: includeAccessibility,
-            notificationsEnabled: notificationsFlag
+            includeAccessibility: includeAccessibility
         )
         .onChange(of: fcmInstallationIdContainer.installationId) { installationId in
             favoritesVM.clearStaleFavorites(fcmInstallationId: installationId)

@@ -1,5 +1,6 @@
 import FirebaseAnalytics
 import FirebaseCore
+import FirebaseInstallations
 import FirebaseMessaging
 import os
 import Shared
@@ -36,7 +37,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
 
     func application(_: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Messaging.messaging().apnsToken = deviceToken
-        Messaging.messaging().register(completion: { _ in })
     }
 
     func application(

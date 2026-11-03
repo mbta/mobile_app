@@ -32,7 +32,7 @@ fun manageFavorites(favoritesUseCases: FavoritesUsecases = koinInject()): Manage
                 newValues,
                 context,
                 defaultDirection,
-                if (notificationsEnabled) fcmInstallationId else null,
+                fcmInstallationId,
                 currentLocale,
             )
         }

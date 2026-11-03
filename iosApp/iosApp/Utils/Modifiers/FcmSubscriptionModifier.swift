@@ -19,7 +19,7 @@ struct FcmSubscriptionModifier: ViewModifier {
     @State var favorites: Favorites = LoadedFavorites.last
     @State var globalData: GlobalResponse?
 
-    func updateSubscriptions(_ fcmInstallationId: String?, _ notificationsEnabled: Bool) {
+    func updateSubscriptions(_ fcmInstallationId: String?) {
         if let fcmInstallationId {
             Task {
                 let validFavorites = if let globalData {
@@ -43,15 +43,10 @@ struct FcmSubscriptionModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .favorites($favorites)
-            .onAppear { updateSubscriptions(fcmInstallationId, notificationsEnabled) }
-            .onChange(of: fcmInstallationId) { newInstallationId in updateSubscriptions(
-                newInstallationId,
-                notificationsEnabled
-            ) }
-            .onChange(of: notificationsEnabled) { newNotifications in updateSubscriptions(
-                fcmInstallationId,
-                newNotifications
-            ) }
+            .global($globalData, errorKey: ErrorKey(sheets: [], id: "FcmSubscriptionModifier"))
+            .onAppear { updateSubscriptions(fcmInstallationId) }
+            .onChange(of: fcmInstallationId) { newInstallationId in updateSubscriptions(newInstallationId) }
+            .onChange(of: globalData) { _ in updateSubscriptions(fcmInstallationId) }
             .enableInjection()
     }
 }

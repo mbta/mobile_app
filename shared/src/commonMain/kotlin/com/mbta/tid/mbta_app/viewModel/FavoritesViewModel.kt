@@ -438,7 +438,7 @@ public class FavoritesViewModel(
                 defaultDirection,
                 fcmInstallationId,
                 locale,
-            )
+            ),
         )
     }
 }

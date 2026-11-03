@@ -130,14 +130,12 @@ fun MorePage(
                                     onChangeSetting = { setting, newValue ->
                                         when (setting) {
                                             Settings.StationAccessibility -> {
-                                                if (notificationsEnabled) {
-                                                    fcmInstallationId?.let {
-                                                        viewModel.updateAccessibility(
-                                                            it,
-                                                            newValue,
-                                                            currentLocale,
-                                                        )
-                                                    }
+                                                fcmInstallationId?.let {
+                                                    viewModel.updateAccessibility(
+                                                        it,
+                                                        newValue,
+                                                        currentLocale,
+                                                    )
                                                 }
                                             }
                                             Settings.DevDebugMode,
