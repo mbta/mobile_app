@@ -11,7 +11,7 @@ import Shared
 import SwiftUI
 
 struct FcmSubscriptionModifier: ViewModifier {
-    let fcmToken: String?
+    let fcmInstallationId: String?
     let includeAccessibility: Bool
 
     @State var subscriptionsRepository: ISubscriptionsRepository = RepositoryDI().subscriptions
@@ -19,8 +19,8 @@ struct FcmSubscriptionModifier: ViewModifier {
     @State var favorites: Favorites = LoadedFavorites.last
     @State var globalData: GlobalResponse?
 
-    func updateSubscriptions(_ fcmToken: String?) {
-        if let fcmToken {
+    func updateSubscriptions(_ fcmInstallationId: String?) {
+        if let fcmInstallationId {
             Task {
                 let validFavorites = if let globalData {
                     FavoriteValidityKt.filterValidFavorites(favorites.routeStopDirection, global: globalData)
@@ -32,7 +32,7 @@ struct FcmSubscriptionModifier: ViewModifier {
                     includeAccessibility: includeAccessibility
                 )
                 try await subscriptionsRepository.updateSubscriptions(
-                    fcmToken: fcmToken,
+                    fcmInstallationId: fcmInstallationId,
                     subscriptions: subscriptions,
                     locale: NSLocalizedString("key/current_locale", comment: ""),
                 )
@@ -44,21 +44,21 @@ struct FcmSubscriptionModifier: ViewModifier {
         content
             .favorites($favorites)
             .global($globalData, errorKey: ErrorKey(sheets: [], id: "FcmSubscriptionModifier"))
-            .onAppear { updateSubscriptions(fcmToken) }
-            .onChange(of: fcmToken) { newToken in updateSubscriptions(newToken) }
-            .onChange(of: globalData) { _ in updateSubscriptions(fcmToken) }
+            .onAppear { updateSubscriptions(fcmInstallationId) }
+            .onChange(of: fcmInstallationId) { newInstallationId in updateSubscriptions(newInstallationId) }
+            .onChange(of: globalData) { _ in updateSubscriptions(fcmInstallationId) }
             .enableInjection()
     }
 }
 
 public extension View {
-    /** Update subscriptions on the backend when the FCM token is set or changed. */
-    func handleFcmTokenSubscriptions(
-        fcmToken: String?,
+    /** Update subscriptions on the backend when the FCM installation ID is set or changed. */
+    func handleFcmInstallationIdSubscriptions(
+        fcmInstallationId: String?,
         includeAccessibility: Bool,
     ) -> some View {
         modifier(FcmSubscriptionModifier(
-            fcmToken: fcmToken,
+            fcmInstallationId: fcmInstallationId,
             includeAccessibility: includeAccessibility,
         ))
     }

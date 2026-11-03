@@ -67,7 +67,7 @@ public interface IFavoritesViewModel {
         updatedFavorites: Map<RouteStopDirection, FavoriteSettings?>,
         context: EditFavoritesContext,
         defaultDirection: Int?,
-        fcmToken: String?,
+        fcmInstallationId: String?,
         locale: String?,
     )
 }
@@ -98,7 +98,7 @@ public class FavoritesViewModel(
             val updatedFavorites: Map<RouteStopDirection, FavoriteSettings?>,
             val context: EditFavoritesContext,
             val defaultDirection: Int?,
-            val fcmToken: String?,
+            val fcmInstallationId: String?,
             val locale: String?,
         ) : Event
     }
@@ -240,7 +240,7 @@ public class FavoritesViewModel(
                         event.updatedFavorites,
                         event.context,
                         event.defaultDirection,
-                        event.fcmToken,
+                        event.fcmInstallationId,
                         event.locale,
                     )
                     reloadFavorites()
@@ -377,11 +377,17 @@ public class FavoritesViewModel(
         updatedFavorites: Map<RouteStopDirection, FavoriteSettings?>,
         context: EditFavoritesContext,
         defaultDirection: Int?,
-        fcmToken: String?,
+        fcmInstallationId: String?,
         locale: String?,
     ) {
         fireEvent(
-            Event.UpdateFavorites(updatedFavorites, context, defaultDirection, fcmToken, locale),
+            Event.UpdateFavorites(
+                updatedFavorites,
+                context,
+                defaultDirection,
+                fcmInstallationId,
+                locale,
+            ),
         )
     }
 }
@@ -440,7 +446,7 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
         updatedFavorites: Map<RouteStopDirection, FavoriteSettings?>,
         context: EditFavoritesContext,
         defaultDirection: Int?,
-        fcmToken: String?,
+        fcmInstallationId: String?,
         locale: String?,
     ) {
         onUpdateFavorites(updatedFavorites)

@@ -1,5 +1,6 @@
 import FirebaseAnalytics
 import FirebaseCore
+import FirebaseInstallations
 import FirebaseMessaging
 import os
 import Shared
@@ -36,13 +37,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
 
     func application(_: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Messaging.messaging().apnsToken = deviceToken
-        Messaging.messaging().token { token, error in
-            if let error {
-                print("Error fetching FCM registration token: \(error)")
-            } else if let token {
-                FcmTokenContainer.shared.token = token
-            }
-        }
     }
 
     func application(
@@ -61,8 +55,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         completionHandler(.noData)
     }
 
-    func messaging(_: Messaging, didReceiveRegistrationToken token: String?) {
-        FcmTokenContainer.shared.token = token
+    func messaging(_: Messaging, didReceiveRegistration installationId: String?) {
+        FcmInstallationIdContainer.shared.installationId = installationId
     }
 
     func userNotificationCenter(
