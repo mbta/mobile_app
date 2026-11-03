@@ -60,7 +60,7 @@
     <string name="cancel">Cancelar</string>
     <string name="cancellation">Cancelamento</string>
     <string name="cancelled">Cancelado</string>
-    <string name="clockwise">Horário</string>
+    <string name="clockwise">Sentido horário</string>
     <string name="close_button_label">Fechar</string>
     <string name="coast_guard_restriction">Restrição da Guarda Costeira</string>
     <string name="coast_guard_restriction_lowercase">Restrição da Guarda Costeira</string>
@@ -72,7 +72,7 @@
     <string name="connections_to_and">Conexões para %1$s e %2$s</string>
     <string name="construction">Obras</string>
     <string name="construction_lowercase">obras</string>
-    <string name="counterclockwise">Anti-horário</string>
+    <string name="counterclockwise">Sentido anti-horário</string>
     <string name="crossing_issue">Problema de travessia</string>
     <string name="crossing_issue_lowercase">problema de travessia</string>
     <string name="crossing_malfunction">Problemas no cruzamento</string>
@@ -222,7 +222,7 @@
     <string name="location_settings_prompt_keep_off">Manter serviços de localização desativados</string>
     <string name="location_settings_prompt_title">O MBTA Go funciona melhor com os Serviços de Localização ativados</string>
     <string name="location_settings_prompt_turn_on">Ativar nas Configurações</string>
-    <string name="looping">Repetindo</string>
+    <string name="looping">Circular</string>
     <string name="maintenance">Manutenção</string>
     <string name="maintenance_lowercase">manutenção</string>
     <string name="mechanical_issue">Problema mecânico</string>

@@ -90,7 +90,7 @@
     <string name="delays_due_to_cause">&lt;b&gt;Demoras&lt;/b&gt; debido a %1$s</string>
     <string name="delays_unknown_reason">&lt;b&gt;Demoras&lt;/b&gt;</string>
     <string name="delete">Eliminar</string>
-    <string name="delete_time_period">eliminar período de tiempo</string>
+    <string name="delete_time_period">Eliminar período de tiempo</string>
     <string name="demonstration">Demostración</string>
     <string name="demonstration_lowercase">demostración</string>
     <string name="departure_tile_on_click_label">mostrar más información sobre este viaje</string>
@@ -118,7 +118,7 @@
     <string name="drawbridge_issue_lowercase">problema con el puente levadizo</string>
     <string name="eastbound">En dirección este</string>
     <string name="edit">Editar</string>
-    <string name="edit_favorite">Editar favorito</string>
+    <string name="edit_favorite">editar favorito</string>
     <string name="edit_favorite_title">Editar favorito</string>
     <string name="edit_favorites">Editar Favoritos</string>
     <string name="effect" translatable="false">&lt;b&gt;%1$s&lt;/b&gt;</string>
@@ -392,7 +392,7 @@
     <string name="star_route_hint">anclar la ruta en la parte superior de la lista</string>
     <string name="start">Inicio</string>
     <string name="start_of_service">inicio del servicio</string>
-    <string name="start_to_end_of_service">Desde el inicio hasta el final del servicio</string>
+    <string name="start_to_end_of_service">desde el inicio hasta el fin del servicio</string>
     <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">A partir de mañana y hasta nuevo aviso</string>
     <string name="station_closed">Estación cerrada</string>
@@ -517,6 +517,6 @@
     <string name="weekdays">Días laborables</string>
     <string name="weekends">Fines de semana</string>
     <string name="westbound">En dirección oeste</string>
-    <string name="when_do_you_want_notifications">¿Cuándo quieres recibir notificaciones?</string>
+    <string name="when_do_you_want_notifications">¿Cuándo quiere recibir notificaciones?</string>
     <string name="x_and_y">%1$s y %2$s</string>
 </resources>
