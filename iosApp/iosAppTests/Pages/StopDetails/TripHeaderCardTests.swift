@@ -17,6 +17,92 @@ final class TripHeaderCardTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
+    @MainActor func testDebugInformation() throws {
+        struct TestCase {
+            let spec: iosApp.TripHeaderSpec
+            var vehicle: Vehicle?
+            var debugEnabled = true
+            var updateText: String?
+            var sequenceText: String?
+        }
+
+        let now = EasternTimeInstant.now()
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let route = objects.route { _ in }
+        let trip = objects.trip { $0.routePatternId = "pattern_1" }
+        let vehicle = objects.vehicle {
+            $0.currentStatus = .inTransitTo
+            $0.updatedAt = now.minus(seconds: 65)
+            $0.currentStopSequence = 3
+        }
+        let vehicleWithoutSequence = objects.vehicle {
+            $0.currentStatus = .inTransitTo
+            $0.updatedAt = now.plus(seconds: 5)
+            $0.currentStopSequence = nil
+        }
+        let cases: [TestCase] = [
+            .init(
+                spec: .vehicle(vehicle, stop, nil, false),
+                vehicle: vehicle,
+                updateText: "vehicle updated 01m 05s ago",
+                sequenceText: "current stop sequence: 3"
+            ),
+            .init(
+                spec: .vehicle(vehicleWithoutSequence, stop, nil, true),
+                vehicle: vehicleWithoutSequence,
+                updateText: "vehicle updated 00m 05s ago"
+            ),
+            .init(spec: .noVehicle),
+            .init(
+                spec: .finishingAnotherTrip,
+                vehicle: vehicle,
+                updateText: "vehicle updated 01m 05s ago",
+                sequenceText: "current stop sequence: 3"
+            ),
+            .init(spec: .vehicle(vehicle, stop, nil, false), vehicle: vehicle, debugEnabled: false),
+        ]
+
+        for testCase in cases {
+            let sut = TripHeaderCard(
+                spec: testCase.spec,
+                trip: trip,
+                targeted: false,
+                route: route,
+                routeAccents: .init(route: route),
+                onTap: nil,
+                now: now,
+                onFollowTrip: nil,
+                debugData: TripHeaderDebugData.companion.from(
+                    trip: trip, vehicleId: "selected-vehicle", vehicle: testCase.vehicle, now: now
+                )
+            ).withFixedSettings([.devDebugMode: testCase.debugEnabled])
+
+            ViewHosting.host(view: sut)
+            defer { ViewHosting.expel() }
+
+            if testCase.debugEnabled {
+                XCTAssertNotNil(try sut.inspect().find(text: "pattern id: pattern_1"))
+                XCTAssertNotNil(try sut.inspect().find(text: "trip id: \(trip.id)"))
+                XCTAssertNotNil(try sut.inspect().find(text: "vehicle id: selected-vehicle"))
+            } else {
+                XCTAssertThrowsError(try sut.inspect().find(text: "pattern id: pattern_1"))
+                XCTAssertThrowsError(try sut.inspect().find(text: "trip id: \(trip.id)"))
+                XCTAssertThrowsError(try sut.inspect().find(text: "vehicle id: selected-vehicle"))
+            }
+            if let updateText = testCase.updateText {
+                XCTAssertNotNil(try sut.inspect().find(text: updateText))
+            } else {
+                XCTAssertThrowsError(try sut.inspect().find(text: "vehicle updated 01m 05s ago"))
+            }
+            if let sequenceText = testCase.sequenceText {
+                XCTAssertNotNil(try sut.inspect().find(text: sequenceText))
+            } else {
+                XCTAssertThrowsError(try sut.inspect().find(text: "current stop sequence: 3"))
+            }
+        }
+    }
+
     func testDisplaysStopName() throws {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()

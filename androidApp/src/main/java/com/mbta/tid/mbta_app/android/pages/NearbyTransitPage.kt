@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.component.DebugView
+import com.mbta.tid.mbta_app.android.component.ChannelDebugView
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardList
@@ -94,7 +94,7 @@ fun NearbyTransitPage(
                 ),
         )
         ErrorBanner(errorBannerViewModel)
-        DebugView(content = {})
+        ChannelDebugView()
         RouteCardList(
             routeCardData = state.routeCardData,
             emptyView = {

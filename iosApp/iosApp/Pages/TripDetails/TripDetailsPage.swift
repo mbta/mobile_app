@@ -56,16 +56,8 @@ struct TripDetailsPage: View {
             VStack {
                 TripDetailsHeader(route: route, direction: direction, navCallbacks: navCallbacks)
                 ErrorBanner(errorBannerVM, padding: [.init(.bottom, 8), .init(.horizontal, 14)])
-                DebugView {
-                    VStack(alignment: .leading) {
-                        let stopSequence = tripDetailsState?.tripData?.vehicle?.currentStopSequence?.intValue
-                        let stopSequenceText = if let stopSequence { String(stopSequence) } else { "nil" }
-                        Text(verbatim: "trip id: \(filter.tripId)")
-                        Text(verbatim: "vehicle id: \(filter.vehicleId ?? "nil")")
-                        Text(verbatim: "stop sequence: \(stopSequenceText)")
-                    }
-                }
-                .padding(.horizontal, 6)
+                ChannelDebugView()
+                    .padding(.horizontal, 6)
                 HaloScrollView {
                     TripDetailsView(
                         tripFilter: filter,

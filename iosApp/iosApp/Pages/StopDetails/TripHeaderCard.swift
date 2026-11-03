@@ -29,6 +29,7 @@ struct TripHeaderCard: View {
     let now: EasternTimeInstant
     let onFollowTrip: (() -> Void)?
     var onOpenAlertDetails: (Shared.Alert) -> Void = { _ in }
+    var debugData: TripHeaderDebugData?
 
     @Environment(\.layoutDirection) var layoutDirection
 
@@ -93,6 +94,9 @@ struct TripHeaderCard: View {
                     if case let .vehicle(vehicle, _, _, atTerminal) = spec, vehicle.hasCarLevelCrowding, !atTerminal {
                         carLevelCrowding
                     }
+                    if let debugData {
+                        debugView(debugData)
+                    }
                 }
             }
             .padding(.vertical, 16)
@@ -111,6 +115,16 @@ struct TripHeaderCard: View {
         .accessibilityAddTraits(onCardTap != nil ? .isButton : [])
         .accessibilityHint(onCardTap != nil ? moreInformationHint : "")
         .enableInjection()
+    }
+
+    private func debugView(_ debugData: TripHeaderDebugData) -> some View {
+        DebugView(content: {
+            VStack(alignment: .leading) {
+                ForEach(Array(debugData.lines.enumerated()), id: \.offset) { _, line in
+                    Text(verbatim: line)
+                }
+            }
+        })
     }
 
     @ViewBuilder private var carLevelCrowding: some View {

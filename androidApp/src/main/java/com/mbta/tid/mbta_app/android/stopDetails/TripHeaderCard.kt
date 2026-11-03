@@ -52,6 +52,7 @@ import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.DebugView
 import com.mbta.tid.mbta_app.android.component.InfoCircle
 import com.mbta.tid.mbta_app.android.component.LiveIcon
 import com.mbta.tid.mbta_app.android.component.StickDiagram
@@ -80,6 +81,7 @@ import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.Vehicle
+import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderDebugData
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.TestData
@@ -105,6 +107,7 @@ fun TripHeaderCard(
     onFollowTrip: (() -> Unit)? = null,
     onTap: (() -> Unit)? = null,
     openModal: (ModalRoutes) -> Unit = {},
+    debugData: TripHeaderDebugData? = null,
 ) {
     val clickable = onTap != null
 
@@ -175,6 +178,7 @@ fun TripHeaderCard(
                                 if (hasCarLevelCrowding) {
                                     CarLevelCrowding(spec.vehicle.carriages.orEmpty(), routeAccents)
                                 }
+                                debugData?.let { TripHeaderDebugView(it) }
                             }
                         }
                     }
@@ -645,6 +649,15 @@ private fun LiveIndicator() {
             modifier = Modifier.placeholderIfLoading(),
         )
     }
+}
+
+@Composable
+private fun TripHeaderDebugView(debugData: TripHeaderDebugData) {
+    DebugView(
+        content = {
+            debugData.lines.forEach { Text(it) }
+        },
+    )
 }
 
 private fun upcomingTripViewState(

@@ -20,7 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ActionButton
 import com.mbta.tid.mbta_app.android.component.ActionButtonKind
-import com.mbta.tid.mbta_app.android.component.DebugView
+import com.mbta.tid.mbta_app.android.component.ChannelDebugView
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.NavTextButton
 import com.mbta.tid.mbta_app.android.component.SheetHeader
@@ -187,7 +187,7 @@ fun FavoritesPage(
         }
 
         ErrorBanner(errorBannerViewModel, modifier = Modifier.padding(top = 8.dp))
-        DebugView(content = {})
+        ChannelDebugView()
         StopCardList(
             stopCardData = stopCardData,
             emptyView = { emptyView() },
