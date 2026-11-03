@@ -15,6 +15,7 @@ import io.sentry.kotlin.multiplatform.Sentry
 import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
 import kotlin.experimental.ExperimentalObjCRefinement
 import kotlin.native.ShouldRefineInSwift
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -82,6 +83,7 @@ public class FavoritesUsecases(
         defaultDirection: Int?,
         fcmToken: String?,
         locale: String?,
+        coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
     ) {
         breadcrumb("updating favorites: reading stored favorites")
         val storedFavorites = repository.getFavorites()
@@ -109,7 +111,7 @@ public class FavoritesUsecases(
         fcmToken?.let {
             breadcrumb("updating favorites: reading settings")
             val settings = settingsRepository.getSettings()
-            CoroutineScope(Dispatchers.IO).launch {
+            CoroutineScope(coroutineDispatcher).launch {
                 val subs =
                     SubscriptionRequest.fromFavorites(
                         filteredFavorites(currentFavorites) ?: currentFavorites,
@@ -132,4 +134,5 @@ public enum class EditFavoritesContext {
     Favorites,
     StopDetails,
     RouteDetails,
+    InitialLaunch,
 }

@@ -46,8 +46,6 @@ import com.mbta.tid.mbta_app.android.util.fcmToken
 import com.mbta.tid.mbta_app.cache.ScheduleCache
 import com.mbta.tid.mbta_app.model.FeaturePromo
 import com.mbta.tid.mbta_app.model.OnboardingScreen
-import com.mbta.tid.mbta_app.model.SubscriptionRequest
-import com.mbta.tid.mbta_app.model.filterValidFavorites
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.repositories.DefaultTab
@@ -55,11 +53,9 @@ import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.IDebugRepository
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
-import com.mbta.tid.mbta_app.repositories.ISubscriptionsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.DeepLinkState
 import com.mbta.tid.mbta_app.routes.SheetRoutes
-import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
@@ -77,11 +73,9 @@ fun ContentView(
     socket: PhoenixSocket = koinInject(),
     viewModel: ContentViewModel = koinViewModel(),
     favoritesViewModel: IFavoritesViewModel = koinInject(),
-    favoritesUsecases: FavoritesUsecases = koinInject(),
     scheduleCache: ScheduleCache = koinInject(),
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
     debugRepository: IDebugRepository = koinInject(),
-    subscriptionsRepository: ISubscriptionsRepository = koinInject(),
     mapViewModel: MapViewModel = koinInject(),
     accessibilityStatusRepository: IAccessibilityStatusRepository = koinInject(),
 ) {
@@ -108,22 +102,11 @@ fun ContentView(
 
     ManageMapboxConfig()
 
-    // Update notification subscriptions on the backend
-    LaunchedEffect(fcmToken, globalResponse) {
-        fcmToken?.let { token ->
-            val favorites = favoritesUsecases.getRouteStopDirectionFavorites()
-            val subscriptions =
-                SubscriptionRequest.fromFavorites(
-                    globalResponse?.let { favorites.filterValidFavorites(it) } ?: favorites,
-                    includeAccessibility,
-                )
-            subscriptionsRepository.updateSubscriptions(
-                token,
-                subscriptions,
-                currentLocale,
-            )
-        }
+    LaunchedEffect(fcmToken) {
+        favoritesViewModel.setFcmToken(fcmToken)
     }
+
+    LaunchedEffect(Unit) { favoritesViewModel.setLocale(currentLocale) }
 
     val locationDataManager = rememberLocationDataManager()
     val mapViewportState = rememberMapViewportState {

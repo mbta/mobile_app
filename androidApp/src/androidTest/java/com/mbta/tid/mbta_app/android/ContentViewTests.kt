@@ -22,6 +22,7 @@ import com.mbta.tid.mbta_app.repositories.DefaultTab
 import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.MockTabPreferencesRepository
 import com.mbta.tid.mbta_app.usecases.IFeaturePromoUseCase
+import com.mbta.tid.mbta_app.viewModel.MockFavoritesViewModel
 import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.everySuspend
@@ -148,5 +149,32 @@ class ContentViewTests : KoinTest {
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
 
         composeTestRule.waitUntilDefaultTimeout { onAttachCount == 2 && onDetatchCount == 1 }
+    }
+
+    @Test
+    fun testFavoritesVmLocaleSet() {
+        val favoritesVM = MockFavoritesViewModel()
+
+        var localeSet: String? = null
+        favoritesVM.onSetLocale = { localeSet = it }
+
+        composeTestRule.setContent {
+            ContentView(MutableStateFlow(null), {}, favoritesViewModel = favoritesVM)
+        }
+
+        composeTestRule.waitUntilDefaultTimeout { localeSet != null }
+    }
+
+    @Test
+    fun testFavoritesVmFcmTokenSet() {
+        val favoritesVM = MockFavoritesViewModel()
+        var fcmTokenSet: String? = null
+        favoritesVM.onSetFcmToken = { fcmTokenSet = it }
+
+        composeTestRule.setContent {
+            ContentView(MutableStateFlow(null), {}, favoritesViewModel = favoritesVM)
+        }
+
+        composeTestRule.waitUntilDefaultTimeout { fcmTokenSet != null }
     }
 }
