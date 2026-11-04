@@ -25,7 +25,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : " soti nan **%1$@** a **%2$@**"
+            "value" : " soti nan **%1$@** rive **%2$@**"
           }
         },
         "pt-BR" : {
@@ -213,7 +213,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$@ %2$@** nan **%3$@** retire nan Preferans yo"
+            "value" : "**%1$@ %2$@** nan **%3$@** retire nan sa ou pi renmen yo"
           }
         },
         "pt-BR" : {
@@ -261,7 +261,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$@** nan **%2$@** ajoute nan Preferans yo"
+            "value" : "**%1$@** nan **%2$@** ajoute nan sa ou pi renmen yo"
           }
         },
         "pt-BR" : {
@@ -616,7 +616,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$ld** lè **%2$ld** minit"
+            "value" : "**%1$ld** èdtan **%2$ld** minit"
           }
         },
         "pt-BR" : {
@@ -757,13 +757,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reta akòz **%1$@**"
+            "value" : "Reta akòz ** %1$@**"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atrasos devido a **%1$@**"
+            "value" : "Atrasos devido a ** %1$@**"
           }
         },
         "vi" : {
@@ -1027,7 +1027,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ chegando às %2$@ substituído por ônibus de apoio"
+            "value" : "%1$@ chegando às %2$@ substituído por ônibus circular"
           }
         },
         "vi" : {
@@ -1127,13 +1127,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ rive nan %2$@ sote"
+            "value" : "%1$@ rive nan %2$@ kontoune"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ chegando às %2$@ sem parada"
+            "value" : "%1$@ chegando às %2$@ desviado"
           }
         },
         "vi" : {
@@ -1233,13 +1233,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ rive nan %2$d è %3$d min"
+            "value" : "%1$@ rive nan %2$d èdtan %3$d minit"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ chegando em %2$d hr %3$d min"
+            "value" : "%1$@ chegando em %2$d h %3$d min"
           }
         },
         "vi" : {
@@ -1286,7 +1286,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ rive nan %2$d è %3$d min pwograme"
+            "value" : "%1$@ rive nan %2$d èdtan %3$d minit pwograme"
           }
         },
         "pt-BR" : {
@@ -1445,7 +1445,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ ap rive nan %2$d min pwograme"
+            "value" : "%1$@ ap rive nan %2$d minit pwograme"
           }
         },
         "pt-BR" : {
@@ -2213,13 +2213,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld asansè fèmen"
+                  "value" : "%1$ld asansè a fèmen"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld asansè fèmen"
+                  "value" : "%1$ld asansè yo fèmen"
                 }
               },
               "two" : {
@@ -2243,13 +2243,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld elevador fechado"
+                  "value" : "%1$ld elevador interditado"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld elevadores fechados"
+                  "value" : "%1$ld elevadores interditados"
                 }
               }
             }
@@ -2421,7 +2421,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld arè lwen"
+                  "value" : "%1$ld arè yo lwen"
                 }
               },
               "two" : {
@@ -2576,7 +2576,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ldarè lwen"
+                  "value" : "%1$ldarè yo lwen"
                 }
               },
               "two" : {
@@ -2600,13 +2600,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "a %1$ldparada de distância"
+                  "value" : "a %1$ld parada de distância"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "a %1$ldparadas de distância"
+                  "value" : "a %1$ld paradas de distância"
                 }
               }
             }
@@ -2997,7 +2997,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ajoute yon preferans"
+            "value" : "ajoute sa ou pi renmen an"
           }
         },
         "pt-BR" : {
@@ -3045,7 +3045,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoute nan Favorite"
+            "value" : "Ajoute Sa Ou Pi Renmen an"
           }
         },
         "pt-BR" : {
@@ -3092,7 +3092,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoute arè nan Preferans yo"
+            "value" : "Ajoute arè nan sa ou pi renmen yo"
           }
         },
         "pt-BR" : {
@@ -3139,7 +3139,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoute arè ou pi renmen yo pou aksè fasil ak notifikasyon entèripsyon"
+            "value" : "Ajoute arè ou pi renmen yo pou jwenn yo fasil epi resevwa notifikasyon sou entèripsyon sèvis"
           }
         },
         "pt-BR" : {
@@ -3186,13 +3186,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoute nan Preferans ou yo"
+            "value" : "Ajoute nan sa ou pi renmen yo"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adicionar seus Favoritos"
+            "value" : "Adicionar seus favoritos"
           }
         },
         "vi" : {
@@ -3233,7 +3233,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoute nan Preferans yo"
+            "value" : "Ajoute nan Sa Ou Pi Renmen Yo"
           }
         },
         "pt-BR" : {
@@ -3374,7 +3374,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoute nan favorites"
+            "value" : "Ajoute nan sa ou pi renmen yo"
           }
         },
         "pt-BR" : {
@@ -3520,7 +3520,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O alerta não está mais em efeito"
+            "value" : "Alerta encerrado"
           }
         },
         "vi" : {
@@ -3567,7 +3567,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tudo"
+            "value" : "Todas"
           }
         },
         "vi" : {
@@ -3656,7 +3656,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tout lajounen"
+            "value" : "Tout jounen an"
           }
         },
         "pt-BR" : {
@@ -3750,13 +3750,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pèmèt avi Notifikasyon nan Anviwònman yo"
+            "value" : "Pèmèt Notifikasyon nan Paramèt"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Permita as notificações nas configurações"
+            "value" : "Permitir notificações nas configurações"
           }
         },
         "vi" : {
@@ -4126,7 +4126,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yon Pwoblèm Mekanik Ki Rive Pi Bonè"
+            "value" : "Yon Pwoblèm Mekanik Ki Te Pase Anvan"
           }
         },
         "pt-BR" : {
@@ -4220,7 +4220,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yon Siyal Ki Rive Pi Bonè"
+            "value" : "Yon Pwoblèm Siyal Ki Te Pase Anvan"
           }
         },
         "pt-BR" : {
@@ -4461,7 +4461,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "e às %1$@ substituído por ônibus de apoio"
+            "value" : "e às %1$@ substituído por ônibus circular"
           }
         },
         "vi" : {
@@ -4549,13 +4549,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "epi nan %1$@ sote"
+            "value" : "epi nan %1$@ kontoune"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "e às %1$@ ignorado"
+            "value" : "e às %1$@ desviado"
           }
         },
         "vi" : {
@@ -4743,7 +4743,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "epi nan %1$d è %2$d min"
+            "value" : "epi nan %1$d èdtan %2$d minit"
           }
         },
         "pt-BR" : {
@@ -4796,7 +4796,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "epi nan %1$d è %2$d min pwograme"
+            "value" : "epi nan %1$d èdtan %2$d minit pwograme"
           }
         },
         "pt-BR" : {
@@ -4890,7 +4890,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "epi nan %1$d min"
+            "value" : "epi nan %1$d minit"
           }
         },
         "pt-BR" : {
@@ -4937,7 +4937,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "epi nan %1$d min pwograme"
+            "value" : "epi nan %1$d minit pwograme"
           }
         },
         "pt-BR" : {
@@ -5267,13 +5267,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "oto ap anpeche sèvis la"
+            "value" : "machin ap anpeche sèvis la"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "veículos impedindo o serviço"
+            "value" : "veículos impedindo a operação"
           }
         },
         "vi" : {
@@ -5314,13 +5314,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Machin Ki Bloke Sèvis la"
+            "value" : "Machin Ap Anpeche Sèvis la"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Carros impedindo serviço"
+            "value" : "Veículos impedindo a operação"
           }
         },
         "vi" : {
@@ -5502,7 +5502,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Monte sou vwa a %1$@"
+            "value" : "Monte sou ray la %1$@"
           }
         },
         "pt-BR" : {
@@ -5876,13 +5876,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lè ou enskri, nou ka montre w ki estasyon ki pa aksesib oswa kote yo fèmen asansè yo."
+            "value" : "Lè ou chwazi opsyon sa a, nou ka montre w ki estasyon ki pa aksesib oswa kote yo fèmen asansè yo."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ao ativar, podemos mostrar quais estações estão inacessíveis ou com elevadores fechados."
+            "value" : "Ao ativar, podemos mostrar quais estações estão inacessíveis ou com elevadores interditados."
           }
         },
         "vi" : {
@@ -6217,7 +6217,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "apagar texto de pesquisa"
+            "value" : "apagar texto da pesquisa"
           }
         },
         "vi" : {
@@ -6399,7 +6399,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Restriksyon Gad Kòt"
+            "value" : "Restriksyon Gad kòt"
           }
         },
         "pt-BR" : {
@@ -6446,7 +6446,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gad Kot Mete Restriksyon"
+            "value" : "Restriksyon Gad Kòt"
           }
         },
         "pt-BR" : {
@@ -6494,7 +6494,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "retire arè ki rete yo"
+            "value" : "minimize arè ki rete yo"
           }
         },
         "pt-BR" : {
@@ -6548,7 +6548,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Minize arè yo"
+            "value" : "minimize arè yo"
           }
         },
         "pt-BR" : {
@@ -6595,7 +6595,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "retresi, tape de fwa pou elaji"
+            "value" : "fèmen, tape de fwa pou ouvri"
           }
         },
         "pt-BR" : {
@@ -6642,13 +6642,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tikè Tren Vil la ak Bato"
+            "value" : "Tikè Commuter Rail ak Bato"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bilhetes de transporte diário por trem e balsa"
+            "value" : "Passagens do Commuter Rail e balsa"
           }
         },
         "vi" : {
@@ -6689,7 +6689,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "anbouteyaj"
+            "value" : "blokis"
           }
         },
         "pt-BR" : {
@@ -6889,7 +6889,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "construção"
+            "value" : "obras"
           }
         },
         "vi" : {
@@ -7024,7 +7024,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nan sans kontrè zegwi mont lan (goch mont)"
+            "value" : "Nan sans kontrè ak zegwi mont lan"
           }
         },
         "pt-BR" : {
@@ -7118,7 +7118,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pwoblèm nan Pasaj a Nivo yo"
+            "value" : "Pwoblèm nan Pasaj a Nivo"
           }
         },
         "pt-BR" : {
@@ -7165,13 +7165,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "malfonksyònman nan pasaj a nivo"
+            "value" : "pasaj a nivo ki p ap fonksyone"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "mau funcionamento do cruzamento"
+            "value" : "mau funcionamento da travessia"
           }
         },
         "vi" : {
@@ -7218,7 +7218,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Problemas no cruzamento"
+            "value" : "Problemas de travessia"
           }
         },
         "vi" : {
@@ -7306,7 +7306,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Foul moun enkoni"
+            "value" : "Yo pa konnen si li chaje"
           }
         },
         "pt-BR" : {
@@ -7354,7 +7354,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Personnalisé"
+            "value" : "Pèsonalize"
           }
         },
         "pt-BR" : {
@@ -7639,7 +7639,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "efase peryòd tan"
+            "value" : "Efase peryòd tan"
           }
         },
         "pt-BR" : {
@@ -7686,7 +7686,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "manifestasyon"
+            "value" : "demonstrasyon"
           }
         },
         "pt-BR" : {
@@ -7922,13 +7922,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "otobis anpann"
+            "value" : "bis ki pa aktif"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ônibus com defeito"
+            "value" : "ônibus desativado"
           }
         },
         "vi" : {
@@ -8016,13 +8016,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "tren anpann"
+            "value" : "tren ki pa aktif"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "trem com defeito"
+            "value" : "trem desativado"
           }
         },
         "vi" : {
@@ -8347,7 +8347,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Notifikasyon Entèripsyon"
+            "value" : "Notifikasyon sou Entèripsyon"
           }
         },
         "pt-BR" : {
@@ -8400,7 +8400,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Doca fechada"
+            "value" : "Píer fechado"
           }
         },
         "vi" : {
@@ -8447,7 +8447,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Doca fechada"
+            "value" : "Píer fechado"
           }
         },
         "vi" : {
@@ -8488,13 +8488,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Waf la Fèmen"
+            "value" : "Fèmti Waf la"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fechamento de doca"
+            "value" : "Fechamento de píer"
           }
         },
         "vi" : {
@@ -8541,7 +8541,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Problema na doca"
+            "value" : "Problema no píer"
           }
         },
         "vi" : {
@@ -8588,7 +8588,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Problema na doca"
+            "value" : "Problema no píer"
           }
         },
         "vi" : {
@@ -8724,7 +8724,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "pon levasyon ap monte"
+            "value" : "y ap leve pon ki ka bouje a"
           }
         },
         "pt-BR" : {
@@ -8777,7 +8777,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ponte móvel em elevação"
+            "value" : "Ponte levadiça sendo levantada"
           }
         },
         "vi" : {
@@ -8818,7 +8818,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "pwoblèm pon leve"
+            "value" : "pwoblèm pon ki ka bouje a"
           }
         },
         "pt-BR" : {
@@ -8865,7 +8865,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pwoblèm Pon Levab"
+            "value" : "Pwoblèm Pon Ki Ka Bouje a"
           }
         },
         "pt-BR" : {
@@ -9006,7 +9006,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Modifye Favorite yo"
+            "value" : "Modifye sa ou pi renmen an"
           }
         },
         "pt-BR" : {
@@ -9053,7 +9053,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Modifye Favorite yo"
+            "value" : "Modifye Sa Ou Pi Renmen An"
           }
         },
         "pt-BR" : {
@@ -9100,13 +9100,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Modifye Preferans yo"
+            "value" : "Modifye Sa Ou Pi Renmen Yo"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Editar Favoritos"
+            "value" : "Editar favoritos"
           }
         },
         "vi" : {
@@ -9247,7 +9247,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obra elétrica"
+            "value" : "Serviço elétrico"
           }
         },
         "vi" : {
@@ -9294,7 +9294,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elevador fechado"
+            "value" : "Elevador interditado"
           }
         },
         "vi" : {
@@ -9341,7 +9341,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fechamento de elevador"
+            "value" : "Interdição de elevador"
           }
         },
         "vi" : {
@@ -9388,7 +9388,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fechamento dos elevadores (%1$@)"
+            "value" : "Interdição de elevadores (%1$@)"
           }
         },
         "vi" : {
@@ -9482,7 +9482,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "fim do serviço"
+            "value" : "fim da operação"
           }
         },
         "vi" : {
@@ -9570,13 +9570,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fèmti eskalye"
+            "value" : "Eskalye a fèmen"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escada rolante fechada"
+            "value" : "Escada rolante interditada"
           }
         },
         "vi" : {
@@ -9623,7 +9623,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fechamento de escada rolante"
+            "value" : "Interdição de escada rolante"
           }
         },
         "vi" : {
@@ -10190,7 +10190,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preferans yo"
+            "value" : "Sa ou pi renmen yo"
           }
         },
         "pt-BR" : {
@@ -10424,7 +10424,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ferry anile"
+            "value" : "Bato anile"
           }
         },
         "pt-BR" : {
@@ -10470,7 +10470,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ferry sispann"
+            "value" : "Bato sispann"
           }
         },
         "pt-BR" : {
@@ -10518,7 +10518,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Filter wout"
+            "value" : "Filtre wout yo"
           }
         },
         "pt-BR" : {
@@ -10706,7 +10706,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "aktivite ponpye"
+            "value" : "aktivite depatman ponpye a"
           }
         },
         "pt-BR" : {
@@ -10753,7 +10753,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktivite Ponpye"
+            "value" : "Aktivite Depatman Ponpye a"
           }
         },
         "pt-BR" : {
@@ -10947,7 +10947,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "névoa"
+            "value" : "neblina"
           }
         },
         "vi" : {
@@ -11129,7 +11129,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Blokaj Nan Tren Machandiz"
+            "value" : "Entèferans Tren Machandiz"
           }
         },
         "pt-BR" : {
@@ -11551,7 +11551,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "kondisyon danje"
+            "value" : "eta matyè danjere"
           }
         },
         "pt-BR" : {
@@ -11604,7 +11604,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Condição de material perigoso"
+            "value" : "Condição de materiais perigosos"
           }
         },
         "vi" : {
@@ -11692,7 +11692,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anpil pasaje"
+            "value" : "anpil pasaje"
           }
         },
         "pt-BR" : {
@@ -11739,13 +11739,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anpil Moun Ap Pase la"
+            "value" : "Anpil Pasaje"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Excesso de passageiros"
+            "value" : "Grande volume de passageiros"
           }
         },
         "vi" : {
@@ -12020,7 +12020,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vakans"
+            "value" : "Jou ferye"
           }
         },
         "pt-BR" : {
@@ -12161,13 +12161,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Antran"
+            "value" : "Rive"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entrada"
+            "value" : "Sentido centro"
           }
         },
         "vi" : {
@@ -12208,7 +12208,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kenbe Sèvis Pozisyon Fèmen"
+            "value" : "Kenbe Sèvis Pozisyon an Dezaktive"
           }
         },
         "pt-BR" : {
@@ -12420,7 +12420,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Última"
+            "value" : "Último"
           }
         },
         "vi" : {
@@ -12561,7 +12561,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arè ki mwen komen"
+            "value" : "Arè ki mwens komen"
           }
         },
         "pt-BR" : {
@@ -12794,7 +12794,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sèvis Pozisyon Fèmen"
+            "value" : "Sèvis Pozisyon Dezaktive"
           }
         },
         "pt-BR" : {
@@ -12841,7 +12841,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Boukl"
+            "value" : "Wout sikilè"
           }
         },
         "pt-BR" : {
@@ -13074,7 +13074,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ekspozisyon kat la"
+            "value" : "Afichaj kat la"
           }
         },
         "pt-BR" : {
@@ -13172,7 +13172,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O MBTA Go está no estágio inicial! Queremos seus comentários enquanto continuamos a fazer melhorias e adicionar novos recursos."
+            "value" : "O MBTA Go está no estágio inicial! Queremos seu feedback enquanto continuamos a fazer melhorias e adicionar novos recursos."
           }
         },
         "vi" : {
@@ -14244,7 +14244,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pwochen vwayaj la se sou **%1$@**"
+            "value" : "Pwochen vwayaj la se nan dat **%1$@**"
           }
         },
         "pt-BR" : {
@@ -14292,13 +14292,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pa gen wout %1$@ki matche"
+            "value" : "Pa gen wout %1$@ ki matche"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não há correspondência %1$@ nas rotas"
+            "value" : "Não há correspondência de rotas de %1$@"
           }
         },
         "vi" : {
@@ -14385,7 +14385,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nou pa jwenn rezilta"
+            "value" : "Nou pa jwenn rezilta 🤔"
           }
         },
         "pt-BR" : {
@@ -14762,7 +14762,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "notifikasyon yo pèmèt"
+            "value" : "notifikasyon yo aktive"
           }
         },
         "pt-BR" : {
@@ -14902,7 +14902,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kounye a %1$@ pou resevwa avi notifikasyon sou entèripsyon"
+            "value" : "Kounye a %1$@ pou resevwa notifikasyon sou entèripsyon"
           }
         },
         "pt-BR" : {
@@ -14950,7 +14950,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kounye a, <u>modifye favori ou yo</u> pou resevwa notifikasyon entèripsyon yo"
+            "value" : "Kounye a, <u>modifye favori ou yo</u> pou resevwa notifikasyon pou entèripsyon"
           }
         },
         "pt-BR" : {
@@ -15051,7 +15051,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Embarcando agora"
+            "value" : "Embarque em andamento"
           }
         },
         "vi" : {
@@ -15092,7 +15092,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kounye a resevwa notifikasyon pou entèripsyon"
+            "value" : "Kounye a resevwa notifikasyon sou entèripsyon"
           }
         },
         "pt-BR" : {
@@ -15139,13 +15139,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kounye a tout wout ou fè souvan yo sere **fasil nan yon sèl kote**."
+            "value" : "Kounye a tout arè ou fè souvan yo sere **fasil nan yon sèl kote**."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agora salve suas paradas de uso frequente em **um lugar fácil**."
+            "value" : "Agora salve suas paradas de uso frequente em **um lugar fácil de acessar**."
           }
         },
         "vi" : {
@@ -15240,7 +15240,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pontual"
+            "value" : "No horário"
           }
         },
         "vi" : {
@@ -15428,13 +15428,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Soti"
+            "value" : "Derape"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Saída"
+            "value" : "Sentido bairro"
           }
         },
         "vi" : {
@@ -15575,7 +15575,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estacionamento fechado"
+            "value" : "Estacionamento interditado"
           }
         },
         "vi" : {
@@ -15622,7 +15622,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fechamento de estacionamento"
+            "value" : "Interdição de estacionamento"
           }
         },
         "vi" : {
@@ -15803,13 +15803,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planifye yon wout ak Planifikasyon Vwayaj"
+            "value" : "Planifye yon wout ak zouti Planifikasyon Vwayaj"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planeje uma rota com o Trip Planner"
+            "value" : "Trace uma rota com o Planejador de viagens"
           }
         },
         "vi" : {
@@ -15850,7 +15850,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "aktivite lapolis"
+            "value" : "aktivite Polis"
           }
         },
         "pt-BR" : {
@@ -16226,7 +16226,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "prezans balèn yo"
+            "value" : "prezans balèn"
           }
         },
         "pt-BR" : {
@@ -16273,7 +16273,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prezans Balèn yo"
+            "value" : "Prezans Balèn"
           }
         },
         "pt-BR" : {
@@ -16414,7 +16414,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Defo nan ray tren yo"
+            "value" : "Defo nan ray"
           }
         },
         "pt-BR" : {
@@ -16467,7 +16467,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atualização em tempo real ao vivo das chegadas"
+            "value" : "Atualização em tempo real de chegadas ao vivo"
           }
         },
         "vi" : {
@@ -16561,7 +16561,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mapa mais recente sobre minha localização"
+            "value" : "Centralizar o mapa na minha localização"
           }
         },
         "vi" : {
@@ -16607,7 +16607,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Visto(s) recentemente"
+            "value" : "Visto recentemente"
           }
         },
         "vi" : {
@@ -16838,7 +16838,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "retire yon preferans"
+            "value" : "retire sa mwen pi renmen an"
           }
         },
         "pt-BR" : {
@@ -16885,13 +16885,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retire nan Favorites yo"
+            "value" : "Retire nan Sa Mwen Pi Renmen Yo"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remover dos favoritos"
+            "value" : "Remover dos Favoritos"
           }
         },
         "vi" : {
@@ -16979,7 +16979,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retire nan Preferans yo"
+            "value" : "Retire nan Sa Mwen Pi Renmen Yo"
           }
         },
         "pt-BR" : {
@@ -17120,7 +17120,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rezilta yo pa monte"
+            "value" : "Rezilta yo pa monte ☹️"
           }
         },
         "pt-BR" : {
@@ -17214,7 +17214,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lanmè ajite"
+            "value" : "Lanmè Ajite"
           }
         },
         "pt-BR" : {
@@ -17354,7 +17354,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sove"
+            "value" : "Anrejistre"
           }
         },
         "pt-BR" : {
@@ -17401,7 +17401,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chanjman orè"
+            "value" : "Chanjman nan orè"
           }
         },
         "pt-BR" : {
@@ -17448,13 +17448,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chanjman Orè"
+            "value" : "Chanjman nan orè"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alteração de horário"
+            "value" : "Mudança de horário"
           }
         },
         "vi" : {
@@ -17592,7 +17592,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver transporte perto de você"
+            "value" : "Ver tráfego perto de você"
           }
         },
         "vi" : {
@@ -17988,7 +17988,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voye fidbak sou App la"
+            "value" : "Voye fidbak sou Aplikasyon an"
           }
         },
         "pt-BR" : {
@@ -18323,7 +18323,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sèvis ki kanpe"
+            "value" : "Sèvis sispann"
           }
         },
         "pt-BR" : {
@@ -18416,7 +18416,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mete preferans ou pou enfòmasyon sou aksè estasyon yo"
+            "value" : "Mete preferans ou pou enfòmasyon sou aksesibilite estasyon yo"
           }
         },
         "pt-BR" : {
@@ -18556,13 +18556,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "move tan"
+            "value" : "gwo move tan"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "clima severo"
+            "value" : "condições climáticas adversas"
           }
         },
         "vi" : {
@@ -18603,13 +18603,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Move Tan"
+            "value" : "Gwo Move Tan"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tempo ruim"
+            "value" : "Condições climáticas adversas"
           }
         },
         "vi" : {
@@ -18656,7 +18656,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ônibus vai-e-vem"
+            "value" : "Transporte circular"
           }
         },
         "vi" : {
@@ -18696,13 +18696,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Otobis navèt"
+            "value" : "Bis navèt"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ônibus de apoio"
+            "value" : "Ônibus circular"
           }
         },
         "vi" : {
@@ -18743,13 +18743,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Otobis Navèt"
+            "value" : "Bis Navèt"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ônibus vai-e-vem"
+            "value" : "Ônibus circular"
           }
         },
         "vi" : {
@@ -18790,13 +18790,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Otobis k ap fè lanavèt"
+            "value" : "Bis navèt yo"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ônibus de transferência"
+            "value" : "Ônibus circulares"
           }
         },
         "vi" : {
@@ -18843,7 +18843,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Serviço de substituição de ônibus vai-e-vem"
+            "value" : "Serviço de substituição de ônibus circulares"
           }
         },
         "vi" : {
@@ -18978,7 +18978,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "pann siyal"
+            "value" : "pwoblèm siyal"
           }
         },
         "pt-BR" : {
@@ -19166,7 +19166,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ray glise"
+            "value" : "ray ki glise"
           }
         },
         "pt-BR" : {
@@ -19354,7 +19354,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wout denèjman"
+            "value" : "Wout pou lè gen nèj"
           }
         },
         "pt-BR" : {
@@ -19401,7 +19401,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wout denèjman"
+            "value" : "Wout pou Lè Gen Nèj"
           }
         },
         "pt-BR" : {
@@ -19495,7 +19495,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gen kèk moun ki te twò chaje"
+            "value" : "Yon ti jan chaje"
           }
         },
         "pt-BR" : {
@@ -19683,7 +19683,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "restriksyon vitès"
+            "value" : "limit vitès"
           }
         },
         "pt-BR" : {
@@ -19777,7 +19777,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mete wout nan favori"
+            "value" : "Make wout la ak yon etwal"
           }
         },
         "pt-BR" : {
@@ -19877,7 +19877,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "início do serviço"
+            "value" : "início da operação"
           }
         },
         "vi" : {
@@ -19918,7 +19918,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "kòmansman sèvis"
+            "value" : "soti nan kòmansman rive nan fen sèvis la"
           }
         },
         "pt-BR" : {
@@ -19965,7 +19965,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apati demen jiskaske nou jwenn plis avi"
+            "value" : "Apati demen jiskaske yo bay lòt avi"
           }
         },
         "pt-BR" : {
@@ -20012,7 +20012,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enfòmasyon sou Aksè Estasyon"
+            "value" : "Enfòmasyon sou Aksesibilite Estasyon yo"
           }
         },
         "pt-BR" : {
@@ -20295,13 +20295,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arè Fèmen"
+            "value" : "Arè yo deplase"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parada movimentada"
+            "value" : "Mudança de parada"
           }
         },
         "vi" : {
@@ -20342,13 +20342,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arè Fèmen"
+            "value" : "Arè Yo Deplase"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parada movimentada"
+            "value" : "Mudança de parada"
           }
         },
         "vi" : {
@@ -20389,7 +20389,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arè denèjman"
+            "value" : "Netwayaj nèj nan arè"
           }
         },
         "pt-BR" : {
@@ -20436,7 +20436,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arè Denèjman"
+            "value" : "Netwayaj Nèj nan Arè"
           }
         },
         "pt-BR" : {
@@ -20483,13 +20483,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arè sote"
+            "value" : "Arè kontoune"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parada ignorada"
+            "value" : "Parada desviada"
           }
         },
         "vi" : {
@@ -20530,13 +20530,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arè Sote"
+            "value" : "Arè Kontoune"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parada Ignorada"
+            "value" : "Parada desviada"
           }
         },
         "vi" : {
@@ -20814,7 +20814,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Subway"
+            "value" : "Metwo"
           }
         },
         "pt-BR" : {
@@ -21002,7 +21002,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pwoblèm nan switch ray"
+            "value" : "Pwoblèm nan Switch Ray"
           }
         },
         "pt-BR" : {
@@ -21049,7 +21049,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "pann nan switch ray"
+            "value" : "pwoblèm nan switch ray"
           }
         },
         "pt-BR" : {
@@ -21096,7 +21096,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pann nan switch ray"
+            "value" : "Pwoblèm nan Switch Ray"
           }
         },
         "pt-BR" : {
@@ -21189,13 +21189,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tape sou arè yo pou ajoute yo nan Favorites"
+            "value" : "Tape sou arè yo pou ajoute yo nan sa ou pi renmen yo"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toque nas paradas para adicioná-las aos favoritos"
+            "value" : "Toque nas paradas para adicioná-las aos Favoritos"
           }
         },
         "vi" : {
@@ -21383,7 +21383,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Teste novos recursos"
+            "value" : "Testar novos recursos"
           }
         },
         "vi" : {
@@ -21430,7 +21430,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O %1$@ atribuído a esta rota está atualmente atendendo em outra viagem. Nós vamos mostrá-lo nesta rota assim que iniciar esta viagem."
+            "value" : "O %1$@ atribuído a esta rota está atualmente atendendo em outra viagem. Mostraremos ele nesta rota assim que iniciar esta viagem."
           }
         },
         "vi" : {
@@ -21477,7 +21477,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A localização de %1$@ pode não estar disponível com antecedência se um veículo ainda não tiver sido atribuído. Assim que o motorista iniciar a viagem, começaremos a mostrar a localização em tempo real."
+            "value" : "A localização de %1$@ pode não estar disponível com antecedência se um veículo ainda não tiver sido atribuído. Assim que o motorista iniciar a viagem, mostraremos a localização em tempo real."
           }
         },
         "vi" : {
@@ -21549,7 +21549,51 @@
     },
     "The train is traveling on a different track than usual. Please board on %@." : {
       "comment" : "A description of a train that is traveling on a different track than usual.",
-      "isCommentAutoGenerated" : true
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El tren está circulando por una vía distinta de la habitual. Aborde en %1$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le train ne circule pas sur sa voie habituelle. Veuillez monter à bord sur la voie %1$@."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tren an ap pase sou yon lòt ray pase nòmal. Tanpri monte nan %1$@."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O trem está circulando por uma via diferente da habitual. Embarque na %1$@."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tàu đang chạy trên đường ray khác với thường lệ. Vui lòng lên tàu tại %1$@."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列车正在不同于平时的轨道上行驶。请在 %1$@ 上车。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列車目前行駛於與平常不同的軌道上。 請於 %1$@ 上車。"
+          }
+        }
+      }
     },
     "This %@ has reached its destination." : {
       "comment" : "Body text of a card on trip details telling the user that the vehicle they were following has completed its trip. Interpolated value can be \"bus\", \"train\", or \"ferry\".",
@@ -21622,7 +21666,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este %1$@ ainda não está atribuído a uma viagem."
+            "value" : "%1$@ ainda não está atribuído a uma viagem."
           }
         },
         "vi" : {
@@ -21720,7 +21764,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Arè sa a gen %1$ld asansè fèmen"
+                  "value" : "Arè sa a gen %1$ld asansè ki fèmen"
                 }
               },
               "other" : {
@@ -21750,13 +21794,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Esta parada tem %1$ld elevador fechado"
+                  "value" : "Esta parada tem %1$ld elevador interditado"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Esta parada tem %1$ld elevadores fechados"
+                  "value" : "Esta parada tem %1$ld elevadores interditados"
                 }
               }
             }
@@ -21912,7 +21956,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ranplasman mare"
+            "value" : "ranplasman travès ray yo"
           }
         },
         "pt-BR" : {
@@ -21959,13 +22003,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ranplasman kòd"
+            "value" : "Ranplasman Travès Ray yo"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Troca de pneu"
+            "value" : "Substituição de dormentes"
           }
         },
         "vi" : {
@@ -22006,7 +22050,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "seleksyonè tan"
+            "value" : "selektè lè"
           }
         },
         "pt-BR" : {
@@ -22054,7 +22098,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chanje/dezaktive kalite seleksyon tan an"
+            "value" : "Chanje kalite seleksyon tan an"
           }
         },
         "pt-BR" : {
@@ -22149,7 +22193,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pou"
+            "value" : "pou"
           }
         },
         "pt-BR" : {
@@ -22292,13 +22336,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suiv %1$@"
+            "value" : "Ray %1$@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trilho %1$@"
+            "value" : "Via %1$@"
           }
         },
         "vi" : {
@@ -22339,13 +22383,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suiv chanjman"
+            "value" : "Chanjman ray"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alteração de trilho"
+            "value" : "Alteração de via"
           }
         },
         "vi" : {
@@ -22386,13 +22430,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suiv Chanjman"
+            "value" : "Chanjman Ray"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alteração de trilho"
+            "value" : "Alteração de via"
           }
         },
         "vi" : {
@@ -22439,7 +22483,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "problema nos trilhos"
+            "value" : "problema na via"
           }
         },
         "vi" : {
@@ -22486,7 +22530,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Problema de trilho"
+            "value" : "Problema na via"
           }
         },
         "vi" : {
@@ -22572,7 +22616,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tras la poko detèmine"
+            "value" : "Ray la poko detèmine"
           }
         },
         "pt-BR" : {
@@ -22625,7 +22669,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "trabalho nos trilhos"
+            "value" : "obras na via"
           }
         },
         "vi" : {
@@ -22666,13 +22710,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Travay sou Ray"
+            "value" : "Travay Ap Fèt sou Ray"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obras no trilho"
+            "value" : "Obras na via"
           }
         },
         "vi" : {
@@ -22760,7 +22804,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sikilasyon"
+            "value" : "Trafik"
           }
         },
         "pt-BR" : {
@@ -22900,7 +22944,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dyagram anbouteyaj tren yo"
+            "value" : "Dyagram ki montre jan tren an chaje"
           }
         },
         "pt-BR" : {
@@ -23282,7 +23326,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planejador de trajetos"
+            "value" : "Planejador de viagens"
           }
         },
         "vi" : {
@@ -23417,7 +23461,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ouvri nan pa Paramèt"
+            "value" : "Aktive nan Paramèt"
           }
         },
         "pt-BR" : {
@@ -23470,7 +23514,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossível conectar"
+            "value" : "Não foi possível conectar"
           }
         },
         "vi" : {
@@ -23558,7 +23602,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "detache wout la soti nan tèt lis la"
+            "value" : "retire wout la soti nan tèt lis la"
           }
         },
         "pt-BR" : {
@@ -23605,13 +23649,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "pasaje ap fè dezòd"
+            "value" : "pasaje ki fè dezòd"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "passageiro problemático"
+            "value" : "passageiro desordeiro"
           }
         },
         "vi" : {
@@ -23652,13 +23696,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pasaje Ki Pa Respekte Règ"
+            "value" : "Pasaje ki Fè Dezòd"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Passageiro indisciplinado"
+            "value" : "Passageiro desordeiro"
           }
         },
         "vi" : {
@@ -23803,13 +23847,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Mizajou %1$ld minit de sa"
+                  "value" : "Mete ajou %1$ld minit de sa"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Mizajou %1$ld minit de sa"
+                  "value" : "Mete ajou %1$ld minit de sa"
                 }
               },
               "two" : {
@@ -23907,7 +23951,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atualização: %1$@"
+            "value" : "Atualizado: %1$@"
           }
         },
         "vi" : {
@@ -23994,7 +24038,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "travay ap fèt sou ray"
+            "value" : "travay sou rezo piblik yo"
           }
         },
         "pt-BR" : {
@@ -24041,7 +24085,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Travay sèvis piblik"
+            "value" : "Travay sou Rezo Piblik yo"
           }
         },
         "pt-BR" : {
@@ -24188,7 +24232,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ranplasman bis"
+            "value" : "ranplasman bato"
           }
         },
         "pt-BR" : {
@@ -24235,7 +24279,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ranplasman bis"
+            "value" : "Ranplasman Bato"
           }
         },
         "pt-BR" : {
@@ -24282,7 +24326,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "trafik"
+            "value" : "trafik bato"
           }
         },
         "pt-BR" : {
@@ -24329,7 +24373,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sikilasyon"
+            "value" : "Trafik bato"
           }
         },
         "pt-BR" : {
@@ -24423,13 +24467,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gade sous la sou GitHub"
+            "value" : "Gade Sous la sou GitHub"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Visualizar Origem no GitHub"
+            "value" : "Visualizar origem no GitHub"
           }
         },
         "vi" : {
@@ -24522,7 +24566,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esperando para partir"
+            "value" : "Aguardando para partir"
           }
         },
         "vi" : {
@@ -24564,7 +24608,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nou ka voye notifikasyon ba ou konsènan pwoblèm sou wout sa a anvan ou ale."
+            "value" : "Nou ka voye notifikasyon push ba ou sou pwoblèm ki genyen sou wout sa a anvan ou pati"
           }
         },
         "pt-BR" : {
@@ -24616,7 +24660,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda não temos previsões em tempo real para esta viagem, mas ela vai aparecer mais perto do horário programado. Se a viagem for adiada ou cancelada, informaremos você por aqui."
+            "value" : "Ainda não temos previsões em tempo real para esta viagem, mas detalhes aparecerão mais perto do horário programado. Se a viagem for adiada ou cancelada, informaremos você por aqui."
           }
         },
         "vi" : {
@@ -24663,7 +24707,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agora mostramos as **chegadas** e **localizações das composições** detalhadas de uma só vez. Conte-nos sua opinião!"
+            "value" : "Agora mostramos detalhes das **chegadas** e **localizações dos veículos** de uma só vez. Queremos saber sua opinião!"
           }
         },
         "vi" : {
@@ -24796,7 +24840,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "move tan"
+            "value" : "tan"
           }
         },
         "pt-BR" : {
@@ -25079,7 +25123,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lè w ap itilize TalkBack, nou ka kache sèten kat pou aplikasyon an ka pi fasil pou navige."
+            "value" : "Lè w ap itilize TalkBack, nou ka kache kat yo pou aplikasyon an ka pi fasil pou navige."
           }
         },
         "pt-BR" : {
@@ -25125,7 +25169,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lè w ap itilize VoiceOver, nou ka kache sèten kat pou aplikasyon an ka pi fasil pou navige."
+            "value" : "Lè w ap itilize VoiceOver, nou ka kache kat yo pou aplikasyon an ka pi fasil pou navige."
           }
         },
         "pt-BR" : {
@@ -25179,7 +25223,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "p ap rete nan %1$@ %2$@"
+            "value" : "p ap kanpe nan %1$@ %2$@"
           }
         },
         "pt-BR" : {
@@ -25231,7 +25275,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você sempre poderá mudar as configurações de localização mais tarde no aplicativo Configurações."
+            "value" : "Você sempre poderá mudar as configurações de localização mais tarde no aplicativo de Configurações."
           }
         },
         "vi" : {
@@ -25271,7 +25315,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "W ap wè opsyon transpò piblik ki toupre a epi jwenn pi bon rezilta rechèch lè w ouvri Sèvis Pozisyon an pou MBTA Go."
+            "value" : "W ap wè opsyon transpò piblik ki toupre a epi jwenn pi bon rezilta rechèch lè w aktive Sèvis Pozisyon an pou MBTA Go."
           }
         },
         "pt-BR" : {

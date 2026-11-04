@@ -144,6 +144,7 @@
     <string name="explainer_text_finishing_another">分配給此線路的%1$s目前正在為另一趟行程提供服務。一旦行程開始，我們就會在線路上顯示它。</string>
     <string name="explainer_text_no_prediction">我們還沒有這次行程的即時預測，但當接近預定時間時就會顯示。如果行程延誤或取消，我們會在這裡通知您。</string>
     <string name="explainer_text_no_vehicle">如果尚未分配車輛，%1$s位置可能無法提前使用。一旦司機開始行程，我們將開始顯示即時位置。</string>
+    <string name="explainer_text_scheduled_track_change">列車目前行駛於與平常不同的軌道上。 請於 %1$s 上車。</string>
     <string name="extra_service">額外服務</string>
     <string name="extra_service_sentence_case">額外服務</string>
     <string name="facility_issue">設施問題</string>
