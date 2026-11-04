@@ -46,8 +46,6 @@ import org.maplibre.spatialk.geojson.Position
 public interface IFavoritesViewModel {
     public val models: StateFlow<FavoritesViewModel.State>
 
-    public fun clearStaleFavorites(fcmInstallationId: String?)
-
     public fun dismissNotificationsHint()
 
     public fun reloadFavorites()
@@ -90,8 +88,6 @@ public class FavoritesViewModel(
     }
 
     public sealed interface Event {
-        public data class ClearStaleFavorites(val fcmInstallationId: String?) : Event
-
         public data object DismissNotificationsHint : Event
 
         public data object ReloadFavorites : Event
@@ -140,7 +136,6 @@ public class FavoritesViewModel(
             mutableStateOf(null)
         }
 
-        var fcmInstallationIdForClearingStaleFavorites: String? by remember { mutableStateOf(null) }
         var hadOldPinnedRoutes: Boolean by remember { mutableStateOf(false) }
         var shouldShowFirstTimeToast: Boolean by remember { mutableStateOf(false) }
         var shouldShowNotificationsHint: Boolean by remember { mutableStateOf(false) }
@@ -220,9 +215,6 @@ public class FavoritesViewModel(
 
         EventSink(eventHandlingTimeout = 2.seconds, sentryRepository = sentryRepository) { event ->
             when (event) {
-                is Event.ClearStaleFavorites -> {
-                    fcmInstallationIdForClearingStaleFavorites = event.fcmInstallationId
-                }
                 Event.DismissNotificationsHint -> {
                     shouldShowNotificationsHint = false
                     onboardingRepository.notificationsFavoriteHintDismissed()
@@ -252,46 +244,6 @@ public class FavoritesViewModel(
                         event.locale,
                     )
                     reloadFavorites()
-                }
-            }
-        }
-
-        LaunchedEffect(globalData, favorites, fcmInstallationIdForClearingStaleFavorites) {
-            val fcmInstallationId = fcmInstallationIdForClearingStaleFavorites
-            val resolvedFavorites = favorites
-            if (globalData == null || resolvedFavorites == null || fcmInstallationId == null) {
-                return@LaunchedEffect
-            }
-
-            fcmInstallationIdForClearingStaleFavorites = null
-
-            val staleFavorites = getStaleFavorites(resolvedFavorites.keys, globalData)
-            if (staleFavorites.isNotEmpty()) {
-                updateFavorites(
-                    staleFavorites.mapValues { null },
-                    EditFavoritesContext.StaleCheck,
-                    defaultDirection = null,
-                    fcmInstallationId,
-                    locale = null,
-                )
-                sentryRepository.captureMessage("Clearing stale favorites") {
-                    addBreadcrumb(
-                        Breadcrumb(
-                            message = "Removing ${staleFavorites.size} stale favorite(s)",
-                            data =
-                                mutableMapOf(
-                                    "staleFavorites" to
-                                        staleFavorites.map { (rsd, removalReason) ->
-                                            mapOf(
-                                                "route" to rsd.route.idText,
-                                                "stop" to rsd.stop,
-                                                "direction" to rsd.direction,
-                                                "removalReason" to removalReason,
-                                            )
-                                        },
-                                ),
-                        ),
-                    )
                 }
             }
         }
@@ -394,9 +346,6 @@ public class FavoritesViewModel(
     override val models: StateFlow<State>
         get() = internalModels
 
-    override fun clearStaleFavorites(fcmInstallationId: String?): Unit =
-        fireEvent(Event.ClearStaleFavorites(fcmInstallationId))
-
     override fun dismissNotificationsHint(): Unit = fireEvent(Event.DismissNotificationsHint)
 
     override fun reloadFavorites(): Unit = fireEvent(Event.ReloadFavorites)
@@ -460,10 +409,6 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
     public var onUpdateFavorites: (Map<RouteStopDirection, FavoriteSettings?>) -> Unit = { _ -> }
 
     override val models: MutableStateFlow<FavoritesViewModel.State> = MutableStateFlow(initialState)
-
-    override fun clearStaleFavorites(fcmInstallationId: String?) {
-        onClearStaleFavorites(fcmInstallationId)
-    }
 
     override fun dismissNotificationsHint() {
         onDismissNotificationsHint()

@@ -112,12 +112,6 @@ struct ContentView: View {
             fcmInstallationId: fcmInstallationIdContainer.installationId,
             includeAccessibility: includeAccessibility
         )
-        .onChange(of: fcmInstallationIdContainer.installationId) { installationId in
-            favoritesVM.clearStaleFavorites(fcmInstallationId: installationId)
-        }
-        .onChange(of: globalData) { _ in
-            favoritesVM.clearStaleFavorites(fcmInstallationId: fcmInstallationIdContainer.installationId)
-        }
         .onChange(of: contentVM.defaultTab) { newTab in
             // if we aren't on an entrypoint, then the default tab may have loaded after
             // we navigated via deeplink. Don't navigate away from the deeplinked location
