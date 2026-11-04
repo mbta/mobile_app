@@ -32,7 +32,7 @@ struct SaveFavoritePage: View {
     var notificationPermissionManager: INotificationPermissionManager
 
     @State var globalResponse: GlobalResponse?
-    @State var favorites: Favorites = .init(routeStopDirection: [:])
+    @State var favorites: Favorites? = nil
     @State var pendingSettings: FavoriteSettings
     @State var selectedDirection: Int32
     @State var favoritesLoaded: Bool = false
@@ -75,7 +75,7 @@ struct SaveFavoritePage: View {
         RouteStopDirection(route: routeId, stop: stopId, direction: selectedDirection)
     }
 
-    var savedFavorite: FavoriteSettings? { favorites.routeStopDirection[selectedRouteStopDirection] }
+    var savedFavorite: FavoriteSettings? { favorites?.routeStopDirection[selectedRouteStopDirection] }
     var saveMode: SaveFavoriteMode { if savedFavorite != nil { .edit } else { .add } }
     var allPatternsForStop: [RoutePattern] {
         if let globalResponse, let lineOrRoute, let stop {
@@ -104,7 +104,7 @@ struct SaveFavoritePage: View {
     var showDirectionToggle: Bool { stopDirections.count > 1 && wasAdding }
 
     func resetPendingSettings() {
-        pendingSettings = favorites
+        pendingSettings = favorites?
             .routeStopDirection[selectedRouteStopDirection] ?? FavoriteSettings(notifications: .companion.disabled)
     }
 
@@ -139,7 +139,7 @@ struct SaveFavoritePage: View {
     }
 
     func deleteCloseAndToast(_ rsd: RouteStopDirection) {
-        let settings = favorites.routeStopDirection[rsd]
+        let settings = favorites?.routeStopDirection[rsd]
         updateFavorites([rsd: nil])
 
         let labels = rsd.getLabels(globalResponse)

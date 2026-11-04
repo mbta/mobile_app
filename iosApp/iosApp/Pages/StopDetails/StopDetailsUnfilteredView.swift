@@ -16,7 +16,7 @@ struct StopDetailsUnfilteredView: View {
     var stopId: String
 
     var routeData: StopDetailsViewModel.RouteData?
-    var favorites: Favorites
+    var favorites: Favorites?
     var global: GlobalResponse?
     var now: EasternTimeInstant
 
@@ -35,7 +35,7 @@ struct StopDetailsUnfilteredView: View {
     init(
         stopId: String,
         routeData: StopDetailsViewModel.RouteData?,
-        favorites: Favorites,
+        favorites: Favorites?,
         global: GlobalResponse?,
         now: EasternTimeInstant,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
@@ -165,7 +165,7 @@ struct StopDetailsUnfilteredView: View {
                                         cardData: routeCardData,
                                         global: global,
                                         now: now,
-                                        isFavorite: { favorites.isFavorite($0) },
+                                        isFavorite: { favorites?.isFavorite($0) ?? false},
                                         pushNavEntry: { entry in navManager.pushNavEntry(entry) },
                                         showStopHeader: false
                                     )

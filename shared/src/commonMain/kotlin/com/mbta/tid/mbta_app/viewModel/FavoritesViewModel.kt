@@ -160,7 +160,6 @@ public class FavoritesViewModel(
 
         var locale: String? by remember { mutableStateOf(null) }
         var fcmToken: String? by remember { mutableStateOf(null) }
-        var syncedOnLaunch: Boolean by remember { mutableStateOf(false) }
 
         val stopIds =
             remember(validFavorites, globalData) {
@@ -349,7 +348,7 @@ public class FavoritesViewModel(
             shouldShowFirstTimeToast = hadOldPinnedRoutes && isFirstExposureToNewFavorites
         }
 
-        LaunchedEffect(globalData, locale, fcmToken) {
+        LaunchedEffect(locale, fcmToken, favorites == null) {
             favorites?.let { loadedFavorites ->
                 favoritesUsecases.updateRouteStopDirections(
                     loadedFavorites,
@@ -360,23 +359,6 @@ public class FavoritesViewModel(
                     coroutineDispatcher,
                 )
                 reloadFavorites()
-            }
-        }
-
-        LaunchedEffect(favorites) {
-            favorites?.let { loadedFavorites ->
-                if (!syncedOnLaunch) {
-                    favoritesUsecases.updateRouteStopDirections(
-                        loadedFavorites,
-                        EditFavoritesContext.InitialLaunch,
-                        null,
-                        fcmToken,
-                        locale,
-                        coroutineDispatcher,
-                    )
-                    syncedOnLaunch = true
-                    reloadFavorites()
-                }
             }
         }
 

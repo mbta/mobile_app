@@ -10,12 +10,12 @@ import Shared
 import SwiftUI
 
 class LoadedFavorites {
-    static var last = Favorites(routeStopDirection: [:])
+    static var last: Favorites? = nil
 }
 
 struct FavoritesModifier: ViewModifier {
     @State var favoritesVM = ViewModelDI().favorites
-    @Binding var favorites: Favorites
+    @Binding var favorites: Favorites?
 
     @MainActor
     func activateListener() async {
@@ -40,7 +40,7 @@ struct FavoritesModifier: ViewModifier {
 }
 
 public extension View {
-    func favorites(_ favorites: Binding<Favorites>) -> some View {
+    func favorites(_ favorites: Binding<Favorites?>) -> some View {
         modifier(FavoritesModifier(favorites: favorites))
     }
 }

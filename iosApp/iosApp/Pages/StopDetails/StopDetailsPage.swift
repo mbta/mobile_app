@@ -25,9 +25,8 @@ struct StopDetailsPage: View {
     var navCallbacks: NavigationCallbacks
 
     var alerts: AlertsStreamDataResponse?
-    @State var favorites: Favorites = LoadedFavorites.last
+    @State var favorites: Favorites? = LoadedFavorites.last
     @State var global: GlobalResponse?
-    @State var loadingFavorites = true
     @State var now = Date.now
     // Used only for VO notifications, VM state data is used for displaying other stop details content
     @State var routeCardDataState: RouteCardDataViewModel.State?
@@ -79,7 +78,7 @@ struct StopDetailsPage: View {
             favorites: favorites,
             global: global,
             now: now,
-            onUpdateFavorites: { loadingFavorites = true },
+            onUpdateFavorites: {  },
             setStopFilter: { filter in navManager.setLastStopDetailsFilter(stopId, filter) },
             setTripFilter: { filter in navManager.setLastTripDetailsFilter(stopId, filter) },
             navCallbacks: navCallbacks,

@@ -26,7 +26,7 @@ struct NearbyTransitView: View {
 
     var analytics: Analytics = AnalyticsProvider.shared
 
-    @State var favorites: Favorites = LoadedFavorites.last
+    @State var favorites: Favorites? = LoadedFavorites.last
     @State var globalData: GlobalResponse?
     @State var now = EasternTimeInstant.now()
     @State var nearbyTransitState: Shared.NearbyViewModel.State?
@@ -113,7 +113,7 @@ struct NearbyTransitView: View {
                                 cardData: cardData,
                                 global: global,
                                 now: now,
-                                isFavorite: { favorites.isFavorite($0) },
+                                isFavorite: { favorites?.isFavorite($0) ?? false },
                                 pushNavEntry: { entry in navManager.pushNavEntry(entry) },
                                 showStopHeader: true
                             )

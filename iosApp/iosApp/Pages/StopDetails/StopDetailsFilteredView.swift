@@ -18,7 +18,7 @@ struct StopDetailsFilteredView: View {
 
     var routeData: StopDetailsViewModel.RouteData?
     var alerts: AlertsStreamDataResponse?
-    var favorites: Favorites
+    var favorites: Favorites?
     var global: GlobalResponse?
     var now: Date
 
@@ -46,7 +46,7 @@ struct StopDetailsFilteredView: View {
         tripFilter: TripDetailsFilter?,
         routeData: StopDetailsViewModel.RouteData?,
         alerts: AlertsStreamDataResponse?,
-        favorites: Favorites,
+        favorites: Favorites?,
         global: GlobalResponse?,
         now: Date,
         onUpdateFavorites: @escaping () -> Void,
@@ -80,7 +80,7 @@ struct StopDetailsFilteredView: View {
         self.navManager = navManager
     }
 
-    var isFavorite: Bool { if let routeStopDirection { favorites.isFavorite(routeStopDirection) } else { false }}
+    var isFavorite: Bool { if let routeStopDirection { favorites?.isFavorite(routeStopDirection) ?? false } else { false }}
     var nowInstant: EasternTimeInstant { now.toEasternInstant() }
     var routeStopDirection: RouteStopDirection? { .init(
         route: stopFilter.routeId,
