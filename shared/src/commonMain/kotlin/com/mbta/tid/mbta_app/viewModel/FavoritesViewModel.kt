@@ -288,9 +288,9 @@ public class FavoritesViewModel(
                                                 "direction" to rsd.direction,
                                                 "removalReason" to removalReason,
                                             )
-                                        }
+                                        },
                                 ),
-                        )
+                        ),
                     )
                 }
             }
