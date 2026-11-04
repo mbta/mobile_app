@@ -253,7 +253,11 @@ public class MapViewModel(
                                 RecenterType.CurrentLocation -> followPuck(null)
                                 RecenterType.Trip -> {
                                     val currentState = layerState as LayerState.TripSelected
-                                    handleViewportCentering(currentState, density)
+                                    handleViewportCentering(
+                                        currentState,
+                                        density,
+                                        isTripDetails = previousNavEntry is SheetRoutes.TripDetails,
+                                    )
                                 }
                             }
                         }
@@ -504,7 +508,10 @@ public class MapViewModel(
                 is SheetRoutes.TripDetails -> newNavEntry
                 else -> null
             }
-        val stop = globalResponse?.getStop(currentNavEntryStopDetails?.stopId)
+        val stop =
+            globalResponse?.getStop(
+                currentNavEntryStopDetails?.stopId ?: currentNavEntryTripDetails?.filter?.stopId,
+            )
         val routePickerOrDetails =
             newNavEntry is SheetRoutes.RoutePicker || newNavEntry is SheetRoutes.RouteDetails
         val newState =
@@ -560,7 +567,11 @@ public class MapViewModel(
         return newState
     }
 
-    private fun handleViewportCentering(layerState: LayerState, density: Float?) {
+    private fun handleViewportCentering(
+        layerState: LayerState,
+        density: Float?,
+        isTripDetails: Boolean = false,
+    ) {
         CoroutineScope(defaultCoroutineDispatcher).launch {
             when (layerState) {
                 LayerState.Overview -> {}
@@ -573,9 +584,15 @@ public class MapViewModel(
                     if (layerState.tripFilter.vehicleId == null) {
                         layerState.stop?.let { viewportManager.stopCenter(it) }
                     } else {
-                        // If we're following a vehicle, exclude the stop so the map follows only
-                        // the vehicle
-                        val stop = if (layerState.following) null else layerState.stop
+                        val isFollowing = layerState.following || isTripDetails
+                        val targetSequence = layerState.tripFilter.stopSequence
+                        val vehicleSequence = layerState.vehicle?.currentStopSequence
+                        val hasPassedTarget =
+                            targetSequence != null &&
+                                vehicleSequence != null &&
+                                layerState.vehicle.tripId == layerState.tripFilter.tripId &&
+                                vehicleSequence > targetSequence
+                        val stop = layerState.stop.takeUnless { isFollowing && hasPassedTarget }
                         // if there is a vehicle id associated with the trip but there
                         // isn't a vehicle yet, wait for one to load before centering
                         layerState.vehicle?.let {
