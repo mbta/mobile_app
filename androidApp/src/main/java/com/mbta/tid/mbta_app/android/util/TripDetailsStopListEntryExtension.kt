@@ -33,7 +33,7 @@ fun TripDetailsStopList.Entry.trackChangeTapCallback(
                             Explainer(
                                 type = ExplainerType.ScheduledTrackChange(trackChange),
                                 routeAccents = TripRouteAccents(route),
-                            )
+                            ),
                         )
                     }
                 }

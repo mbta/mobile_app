@@ -105,7 +105,7 @@ class ExplainerPageTests {
         composeTestRule.onNodeWithText("Track Change").assertCanBeDisplayed()
         composeTestRule
             .onNodeWithText(
-                "The train is traveling on a different track than usual. Please board on Track 1."
+                "The train is traveling on a different track than usual. Please board on Track 1.",
             )
             .assertCanBeDisplayed()
     }

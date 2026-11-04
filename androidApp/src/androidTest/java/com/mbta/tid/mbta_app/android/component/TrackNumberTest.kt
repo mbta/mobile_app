@@ -16,7 +16,7 @@ class TrackNumberTest {
     fun testScheduledTrackChangeShowsPill() {
         composeTestRule.setContent {
             TrackNumber(
-                TripDetailsStopList.Track.TrackChange(TrackChange.Scheduled("2", "Track 2"))
+                TripDetailsStopList.Track.TrackChange(TrackChange.Scheduled("2", "Track 2")),
             )
         }
         composeTestRule.onNodeWithText("Track 2", useUnmergedTree = true).assertCanBeDisplayed()
