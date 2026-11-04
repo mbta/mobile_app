@@ -108,7 +108,7 @@ struct ContentView: View {
         }
         .alerts($alerts)
         .global($globalData, errorKey: ErrorKey(sheets: [], id: "ContentView"))
-        .handleFcmTokenSubscriptions(
+        .handleFcmInstallationIdSubscriptions(
             fcmInstallationId: fcmInstallationIdContainer.installationId,
             includeAccessibility: includeAccessibility
         )
