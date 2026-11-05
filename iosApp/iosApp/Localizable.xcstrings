@@ -21606,6 +21606,52 @@
         }
       }
     },
+    "This stop is drop-off only" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta parada es solo para descenso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cet arrêt est réservé à la descente"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arè sa a se pou depoze moun sèlman"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta parada é somente para desembarque"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Điểm dừng này chỉ để trả khách"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此站点仅供下客"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此站點僅限下車"
+          }
+        }
+      }
+    },
     "This stop is not accessible" : {
       "comment" : "Displayed on the stop page when the stop is not wheelchair accessible",
       "localizations" : {
