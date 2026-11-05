@@ -218,6 +218,43 @@ class DepartureTileTest {
     }
 
     @Test
+    fun testTrackChangeBadgeShownWithScheduledTrackChange() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+        val trip = objects.trip()
+        val upcoming = UpcomingTrip(trip, trackChange = TrackChange.Scheduled("2", "Track 2"))
+        composeTestRule.setContent {
+            DepartureTile(
+                TileData(
+                    route,
+                    "headsign",
+                    UpcomingFormat.Some(
+                        trips =
+                            listOf(
+                                UpcomingFormat.Some.FormattedTrip(
+                                    upcoming,
+                                    route.type,
+                                    TripInstantDisplay.Minutes(5, false),
+                                    false,
+                                ),
+                            ),
+                        warningAlert = null,
+                    ),
+                    upcoming,
+                ),
+                onTap = {},
+            )
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule
+            .onNodeWithTag("track_change_pill", useUnmergedTree = true)
+            .assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Track 2", useUnmergedTree = true).assertDoesNotExist()
+        composeTestRule.onNodeWithText("5 min").assertCanBeDisplayed()
+    }
+
+    @Test
     fun testTrackChangeBadgeShownAlongsideRoutePill() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route {

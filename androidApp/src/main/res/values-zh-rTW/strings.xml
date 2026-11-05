@@ -148,6 +148,7 @@
     <string name="explainer_text_finishing_another">分配給此線路的%1$s目前正在執行另一趟行程。待其開始本次行程後，我們便會將其顯示在路線上。</string>
     <string name="explainer_text_no_prediction">目前尚無此班次的即時預測，但當接近預定時間時就會顯示。如果行程延誤或取消，我們會在這裡通知您。</string>
     <string name="explainer_text_no_vehicle">如果尚未指派車輛，可能無法提前取得%1$s的位置資訊。駕駛開始行程後，我們就會顯示即時位置。</string>
+    <string name="explainer_text_scheduled_track_change">列車目前行駛於與平常不同的軌道上。 請於 %1$s 上車。</string>
     <string name="extra_service">加開班次</string>
     <string name="extra_service_sentence_case">加開班次</string>
     <string name="facility_issue">設施問題</string>

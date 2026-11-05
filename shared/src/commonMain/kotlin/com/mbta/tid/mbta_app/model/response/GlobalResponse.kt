@@ -183,6 +183,12 @@ internal constructor(
         return getPatternsFor(stopId).filter { it.routeId == routeId }
     }
 
+    public fun getPatternsFor(routeId: Route.Id, directionId: Int): List<RoutePattern> {
+        return routePatterns.values.filter {
+            it.routeId == routeId && directionId == it.directionId
+        }
+    }
+
     internal fun getTypicalRoutesFor(stopId: String): List<Route> {
         return getPatternsFor(stopId)
             .mapNotNull { routePattern ->

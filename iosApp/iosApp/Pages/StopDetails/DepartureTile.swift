@@ -82,9 +82,13 @@ struct DepartureTile: View {
                 }
 
                 HStack(alignment: .center, spacing: 0) {
-                    if data.upcoming.trackChange != nil {
-                        TrackChangePill(shape: .compact)
-                            .padding(.trailing, hasRoutePill ? 8 : 0)
+                    if let trackChange = data.upcoming.trackChange {
+                        let type: TrackChangePill.TrackChangeType = switch onEnum(of: trackChange) {
+                        case .alert: .alert
+                        case let .scheduled(scheduled):
+                            .scheduled(trackNumber: scheduled.platformCode, trackLabel: scheduled.platformName)
+                        }
+                        TrackChangePill(style: .compact(isDimmed: !isSelected), type: type)
                     }
                     if case let .onPrediction(route) = pillDecoration {
                         RoutePill(route: route, type: .flex)

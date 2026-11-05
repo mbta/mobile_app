@@ -12,8 +12,6 @@
     add more favorites when other favorites have already been added. -->
     <string name="add_favorite_stops">Ajoute arè ou pi renmen yo</string>
     <string name="add_favorite_title">Ajoute yon preferans</string>
-    <string name="add_to_favorites_title">Ajoute &lt;b&gt;%1$s&lt;/b&gt; nan &lt;b&gt;%2$s&lt;/b&gt;</string>
-    <string name="add_to_favorites_title_stop_details">Ajoute &lt;b&gt;%1$s&lt;/b&gt; nan &lt;b&gt;%2$s&lt;/b&gt; Preferans yo</string>
     <string name="additional_service">Plis Sèvis</string>
     <string name="additional_service_sentence_case">Plis sèvis</string>
     <plurals name="affected_stops">
@@ -151,6 +149,7 @@
     <string name="explainer_text_finishing_another">%1$s yo mete pou wout sa a ap sèvi yon lòt vwayaj kounye a. Nou pral montre li sou wout la kou li kòmanse vwayaj sa a.</string>
     <string name="explainer_text_no_prediction">Nou poko gen prediksyon an dirèk pou vwayaj sa a, men yo pral parèt pi pre lè ki pwograme a. Si vwayaj la an reta oswa anile, n ap fè w konnen isit la.</string>
     <string name="explainer_text_no_vehicle">Pozisyon %1$s ka pa disponib davans si yo poko mete yon machin pou li. Kou chofè a kòmanse vwayaj la, nou pral kòmanse montre pozisyon an, an dirèk.</string>
+    <string name="explainer_text_scheduled_track_change">Tren an ap pase sou yon lòt ray pase nòmal. Tanpri monte nan %1$s.</string>
     <string name="extra_service">Sèvis Anplis</string>
     <string name="extra_service_sentence_case">Sèvis anplis</string>
     <string name="facility_issue">Pwoblèm Lokal</string>
@@ -428,7 +427,6 @@
     <string name="tap_favorites_hint">Tape sou arè yo pou ajoute yo nan sa ou pi renmen yo</string>
     <string name="technical_problem">Pwoblèm Teknik</string>
     <string name="technical_problem_lowercase">pwoblèm teknik</string>
-    <string name="this_stop_is_drop_off_only">Arè sa a se pou depoze moun sèlman</string>
     <string name="tie_replacement">Ranplasman Travès Ray yo</string>
     <string name="tie_replacement_lowercase">ranplasman travès ray yo</string>
     <string name="time_picker_type_toggle">Chanje kalite seleksyon tan an</string>

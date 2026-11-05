@@ -148,6 +148,7 @@
     <string name="explainer_text_finishing_another">%1$s được chỉ định cho tuyến đường này hiện đang phục vụ một chuyến đi khác. Chúng tôi sẽ hiển thị trên tuyến đường khi phương tiện bắt đầu chuyến đi này.</string>
     <string name="explainer_text_no_prediction">Chúng tôi chưa có dự đoán trực tiếp cho chuyến đi này nhưng dự đoán sẽ xuất hiện khi gần thời gian dự kiến hơn. Nếu chuyến đi bị hoãn hoặc hủy, chúng tôi sẽ thông báo cho quý vị tại đây.</string>
     <string name="explainer_text_no_vehicle">Vị trí %1$s có thể không khả dụng trước nếu phương tiện chưa được chỉ định. Khi tài xế bắt đầu chuyến đi, chúng tôi sẽ bắt đầu hiển thị vị trí trực tiếp.</string>
+    <string name="explainer_text_scheduled_track_change">Tàu đang chạy trên đường ray khác với thường lệ. Vui lòng lên tàu tại %1$s.</string>
     <string name="extra_service">Dịch vụ Bổ sung</string>
     <string name="extra_service_sentence_case">Dịch vụ bổ sung</string>
     <string name="facility_issue">Vấn đề về Cơ sở Vật chất</string>

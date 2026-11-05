@@ -151,6 +151,7 @@
     <string name="explainer_text_finishing_another">El %1$s asignado a esta ruta actualmente está realizando otro viaje. Lo mostraremos en la ruta una vez que comience este viaje.</string>
     <string name="explainer_text_no_prediction">Aún no tenemos predicciones en vivo para este viaje, pero aparecerán más cerca de la hora programada. Si el viaje se retrasa o se cancela, se lo informaremos aquí.</string>
     <string name="explainer_text_no_vehicle">Es posible que la ubicación de %1$s no esté disponible con anticipación si aún no se ha asignado un vehículo. Una vez que el conductor comience el viaje, comenzaremos a mostrar la ubicación en vivo.</string>
+    <string name="explainer_text_scheduled_track_change">El tren está circulando por una vía distinta de la habitual. Aborde en %1$s.</string>
     <string name="extra_service">Servicio extra</string>
     <string name="extra_service_sentence_case">Servicio extra</string>
     <string name="facility_issue">Problema en las instalaciones</string>

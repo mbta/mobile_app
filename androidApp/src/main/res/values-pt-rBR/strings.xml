@@ -151,6 +151,7 @@
     <string name="explainer_text_finishing_another">O %1$s atribuído a esta rota está atualmente atendendo em outra viagem. Mostraremos ele nesta rota assim que iniciar esta viagem.</string>
     <string name="explainer_text_no_prediction">Ainda não temos previsões em tempo real para esta viagem, mas detalhes aparecerão mais perto do horário programado. Se a viagem for adiada ou cancelada, informaremos você por aqui.</string>
     <string name="explainer_text_no_vehicle">A localização de %1$s pode não estar disponível com antecedência se um veículo ainda não tiver sido atribuído. Assim que o motorista iniciar a viagem, mostraremos a localização em tempo real.</string>
+    <string name="explainer_text_scheduled_track_change">O trem está circulando por uma via diferente da habitual. Embarque na %1$s.</string>
     <string name="extra_service">Serviço extra</string>
     <string name="extra_service_sentence_case">Serviço extra</string>
     <string name="facility_issue">Problema nas instalações</string>
@@ -428,7 +429,6 @@
     <string name="tap_favorites_hint">Toque nas paradas para adicioná-las aos favoritos</string>
     <string name="technical_problem">Problema técnico</string>
     <string name="technical_problem_lowercase">problema técnico</string>
-    <string name="this_stop_is_drop_off_only">Esta parada é somente para desembarque</string>
     <string name="tie_replacement">Substituição de dormentes</string>
     <string name="tie_replacement_lowercase">substituição de dormentes</string>
     <string name="time_picker_type_toggle">Alternar modo de entrada do horário</string>

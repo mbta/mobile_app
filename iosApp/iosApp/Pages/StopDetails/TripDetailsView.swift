@@ -172,9 +172,9 @@ struct TripDetailsView: View {
         }()
 
         let explainerType: ExplainerType? = switch headerSpec {
-        case .scheduled: routeAccents.type != .ferry ? .noPrediction : nil
-        case .finishingAnotherTrip: .finishingAnotherTrip
-        case .noVehicle: .noVehicle
+        case .scheduled: routeAccents.type != .ferry ? ExplainerType.NoPrediction() : nil
+        case .finishingAnotherTrip: ExplainerType.FinishingAnotherTrip()
+        case .noVehicle: ExplainerType.NoVehicle()
         default: nil
         }
         let onHeaderTap: (() -> Void)? = if let explainerType { {
@@ -206,6 +206,7 @@ struct TripDetailsView: View {
                     now: now,
                     onTapLink: onTapStop,
                     onOpenAlertDetails: onOpenAlertDetails,
+                    openExplainer: { type in explainer = .init(type: type, routeAccents: routeAccents) },
                     route: route,
                     routeAccents: routeAccents,
                     global: global
@@ -245,6 +246,9 @@ struct TripDetailsView: View {
                 now: now,
                 onFollowTrip: context != .tripDetails ? onFollowTrip : nil,
                 onOpenAlertDetails: onOpenAlertDetails,
+                openExplainer: { explainerType in
+                    explainer = .init(type: explainerType, routeAccents: routeAccents)
+                },
                 debugData: debugData
             )
         }

@@ -18,6 +18,7 @@ struct TripStops: View {
     let now: EasternTimeInstant
     let onTapLink: (TripDetailsStopList.Entry) -> Void
     let onOpenAlertDetails: (Shared.Alert) -> Void
+    let openExplainer: (ExplainerType) -> Void
     let route: Route
     let routeAccents: TripRouteAccents
     let global: GlobalResponse?
@@ -41,6 +42,7 @@ struct TripStops: View {
         now: EasternTimeInstant,
         onTapLink: @escaping (TripDetailsStopList.Entry) -> Void,
         onOpenAlertDetails: @escaping (Shared.Alert) -> Void,
+        openExplainer: @escaping (ExplainerType) -> Void = { _ in },
         route: Route,
         routeAccents: TripRouteAccents,
         global: GlobalResponse?
@@ -52,6 +54,7 @@ struct TripStops: View {
         self.now = now
         self.onTapLink = onTapLink
         self.onOpenAlertDetails = onOpenAlertDetails
+        self.openExplainer = openExplainer
         self.route = route
         self.routeAccents = routeAccents
         self.global = global
@@ -173,6 +176,7 @@ struct TripStops: View {
                         now: now,
                         onTapLink: onTapLink,
                         onOpenAlertDetails: onOpenAlertDetails,
+                        openExplainer: openExplainer,
                         route: route,
                         routeAccents: routeAccents,
                         stopListContext: stopListContext,
