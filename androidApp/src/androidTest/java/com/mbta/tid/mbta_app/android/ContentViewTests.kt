@@ -16,6 +16,7 @@ import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
+import com.mbta.tid.mbta_app.android.util.fcmToken
 import com.mbta.tid.mbta_app.model.FeaturePromo
 import com.mbta.tid.mbta_app.network.MockPhoenixSocket
 import com.mbta.tid.mbta_app.repositories.DefaultTab
@@ -159,8 +160,13 @@ class ContentViewTests : KoinTest {
         favoritesVM.onSetLocale = { localeSet = it }
 
         composeTestRule.setContent {
-            ContentView(MutableStateFlow(null), {}, favoritesViewModel = favoritesVM)
+            CompositionLocalProvider(
+                LocalLocationClient provides MockFusedLocationProviderClient(),
+            ) {
+                ContentView(MutableStateFlow(null), {}, favoritesViewModel = favoritesVM)
+            }
         }
+        composeTestRule.waitForIdle()
 
         composeTestRule.waitUntilDefaultTimeout { localeSet != null }
     }
@@ -171,10 +177,16 @@ class ContentViewTests : KoinTest {
         var fcmTokenSet: String? = null
         favoritesVM.onSetFcmToken = { fcmTokenSet = it }
 
+        fcmToken = "test_token"
+
         composeTestRule.setContent {
-            ContentView(MutableStateFlow(null), {}, favoritesViewModel = favoritesVM)
+            CompositionLocalProvider(
+                LocalLocationClient provides MockFusedLocationProviderClient(),
+            ) {
+                ContentView(MutableStateFlow(null), {}, favoritesViewModel = favoritesVM)
+            }
         }
 
-        composeTestRule.waitUntilDefaultTimeout { fcmTokenSet != null }
+        composeTestRule.waitUntilDefaultTimeout { fcmTokenSet == "test_token" }
     }
 }
