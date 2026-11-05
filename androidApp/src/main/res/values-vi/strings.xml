@@ -5,12 +5,15 @@
     <string name="accident">Tai nạn</string>
     <string name="accident_lowercase">tai nạn</string>
     <string name="add_another_time_period">Thêm một khoảng thời gian khác</string>
+    <string name="add_confirmation_button">Thêm</string>
     <string name="add_favorite_label">thêm mục yêu thích</string>
     <!-- Used as the header for the route picker when the user is adding a favorite stop, the button
     to add favorite stops on the empty favorites page, and the voiceover text for the button to
     add more favorites when other favorites have already been added. -->
     <string name="add_favorite_stops">Thêm điểm dừng yêu thích</string>
     <string name="add_favorite_title">Thêm mục Yêu thích</string>
+    <string name="add_to_favorites_title">Thêm &lt;b&gt;%1$s&lt;/b&gt; tại &lt;b&gt;%2$s&lt;/b&gt;</string>
+    <string name="add_to_favorites_title_stop_details">Thêm &lt;b&gt;%1$s&lt;/b&gt; tại &lt;b&gt;%2$s&lt;/b&gt; vào mục Yêu thích</string>
     <string name="additional_service">Dịch vụ Bổ sung</string>
     <string name="additional_service_sentence_case">Dịch vụ bổ sung</string>
     <plurals name="affected_stops">
@@ -93,6 +96,7 @@
     <string name="details">Thông tin chi tiết</string>
     <string name="detour">Đường vòng</string>
     <string name="directionTo">%1$s đến</string>
+    <string name="direction_service_only">Chỉ phục vụ chuyến %1$s</string>
     <string name="disabled_bus">Xe buýt gặp Sự cố</string>
     <string name="disabled_bus_lowercase">xe buýt gặp sự cố</string>
     <string name="disabled_train">Tàu gặp Sự cố</string>
@@ -420,6 +424,7 @@
     <string name="tap_favorites_hint">Nhấn vào điểm dừng để thêm vào mục Yêu thích</string>
     <string name="technical_problem">Vấn đề Kỹ thuật</string>
     <string name="technical_problem_lowercase">vấn đề kỹ thuật</string>
+    <string name="this_stop_is_drop_off_only">Điểm dừng này chỉ để trả khách</string>
     <string name="tie_replacement">Thay Tà vẹt</string>
     <string name="tie_replacement_lowercase">thay tà vẹt</string>
     <string name="time_picker_type_toggle">Công tắc chọn loại thời gian</string>
