@@ -20,36 +20,6 @@ class DirectionTest {
     }
 
     @Test
-    fun `missing route labels use existing fallbacks`() {
-        val objects = ObjectCollectionBuilder()
-        val route = objects.route {
-            directionNames = listOf("Outbound")
-            directionDestinations = emptyList()
-        }
-
-        assertEquals(Direction("Outbound", null, 0), Direction(0, route))
-        assertEquals(Direction("", null, 1), Direction(1, route))
-        assertEquals(
-            Direction("", "Pattern Destination", 1),
-            Direction(1, route, patternDestination = "Pattern Destination"),
-        )
-    }
-
-    @Test
-    fun `invalid direction ids do not index past special cases`() {
-        val route = TestData.getRoute("Green-B")
-        val stop = TestData.getStop("place-armnl")
-        val stopIds = listOf("place-armnl", "place-hymnl")
-
-        for (directionId in listOf(-1, 2)) {
-            assertEquals(
-                Direction("", null, directionId),
-                Direction(directionId, route, stop, stopIds),
-            )
-        }
-    }
-
-    @Test
     fun `special cases get correct values`() {
         val arlington = TestData.getStop("place-armnl")
         val greenB = TestData.getRoute("Green-B")

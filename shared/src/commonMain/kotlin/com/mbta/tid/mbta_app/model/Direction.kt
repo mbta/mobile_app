@@ -26,11 +26,11 @@ public data class Direction(val name: String?, val destination: String?, val id:
         routeStopIds: List<String>? = null,
         patternDestination: String? = null,
     ) : this(
-        name = route.directionNames.getOrNull(directionId) ?: "",
+        name = route.directionNames[directionId] ?: "",
         destination =
             getSpecialCaseDestination(directionId, route.id, stop?.id, routeStopIds)
                 ?: patternDestination
-                ?: route.directionDestinations.getOrNull(directionId),
+                ?: route.directionDestinations[directionId],
         directionId,
     )
 
@@ -104,7 +104,7 @@ public data class Direction(val name: String?, val destination: String?, val id:
             routeStopIds: List<String>?,
         ): String? {
             val routeCases = specialCases[idOverrides[routeId] ?: routeId] ?: return null
-            val directionCases = routeCases.getOrNull(directionId) ?: return null
+            val directionCases = routeCases[directionId] ?: return null
             val stops = routeStopIds ?: return null
             val stopIndex = stops.indexOf(stopId)
             if (stopIndex == -1) {

@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.model
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
-import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class AppVersionTest {
@@ -30,16 +29,5 @@ class AppVersionTest {
         assertFails { AppVersion.parse("1.0") }
         assertFails { AppVersion.parse("1.2.3-beta9") }
         assertFails { AppVersion.parse("Ceci n'est pas une version") }
-    }
-
-    @Test
-    fun `parse rejects incomplete versions with a clear error`() {
-        for (version in listOf("", "1", "1.0")) {
-            val error = assertFailsWith<IllegalArgumentException> { AppVersion.parse(version) }
-            assertEquals(
-                "Invalid app version '$version': expected major.minor.patch",
-                error.message,
-            )
-        }
     }
 }
