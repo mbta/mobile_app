@@ -71,7 +71,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : " soti nan **%1$@** a **%2$@**"
+            "value" : " soti nan **%1$@** rive **%2$@**"
           }
         },
         "pt-BR" : {
@@ -189,7 +189,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "提前**%1$@**"
+            "value" : "前方有**%1$@**"
           }
         }
       }
@@ -236,7 +236,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$@ %2$@**位於**%3$@**已新增到我的最愛"
+            "value" : "已收藏**%3$@**的**%2$@（%1$@）**"
           }
         }
       }
@@ -259,7 +259,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$@ %2$@** nan **%3$@** retire nan Preferans yo"
+            "value" : "**%1$@ %2$@** nan **%3$@** retire nan sa ou pi renmen yo"
           }
         },
         "pt-BR" : {
@@ -283,14 +283,13 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$@ %2$@**位於**%3$@**已從我的最愛中移除"
+            "value" : "**%3$@**的**%1$@ %2$@**已移除收藏"
           }
         }
       }
     },
     "**%1$@** at **%2$@** added to Favorites" : {
       "comment" : "Favorite added toast text, the first value is the route name (Red Line, 1 bus),\nand the second is a stop name (Ruggles, Alewife).\nThe asterisks surround bolded text. ex. \"[Green Line] at [Arlington] added to Favorites\"",
-      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -307,7 +306,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$@** nan **%2$@** ajoute nan Preferans yo"
+            "value" : "**%1$@** nan **%2$@** ajoute nan sa ou pi renmen yo"
           }
         },
         "pt-BR" : {
@@ -331,7 +330,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$@**位於**%2$@**已新增到我的最愛"
+            "value" : "已收藏**%2$@**的**%1$@**"
           }
         }
       }
@@ -431,7 +430,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$ld**較少停靠的網站"
+            "value" : "**%1$ld** 個站點不會每班車都停"
           }
         }
       }
@@ -583,7 +582,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "**%1$ld**個受影響的站點"
+                  "value" : "**%1$ld** 個受影響的站點"
                 }
               }
             }
@@ -633,7 +632,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$ld**小時"
+            "value" : "**%1$ld** 小時"
           }
         }
       }
@@ -662,7 +661,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$ld** lè **%2$ld** minit"
+            "value" : "**%1$ld** èdtan **%2$ld** minit"
           }
         },
         "pt-BR" : {
@@ -686,7 +685,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$ld**小時**%2$ld**分鐘"
+            "value" : "**%1$ld** 小時 **%2$ld** 分鐘"
           }
         }
       }
@@ -733,7 +732,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**%1$ld**分鐘"
+            "value" : "**%1$ld** 分鐘"
           }
         }
       }
@@ -803,13 +802,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reta akòz **%1$@**"
+            "value" : "Reta akòz ** %1$@**"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atrasos devido a **%1$@**"
+            "value" : "Atrasos devido a ** %1$@**"
           }
         },
         "vi" : {
@@ -827,7 +826,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "因 **%1$@** 造成延誤"
+            "value" : "因**%1$@**造成延誤"
           }
         }
       }
@@ -932,7 +931,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$@"
+            "value" : "%1$@%2$@"
           }
         }
       }
@@ -985,7 +984,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$@於%3$@"
+            "value" : "%1$@ %2$@於 %3$@"
           }
         }
       }
@@ -1038,7 +1037,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "於%2$@到站的%1$@已取消"
+            "value" : "原訂於 %2$@ 抵達的%1$@班次已取消"
           }
         }
       }
@@ -1073,7 +1072,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ chegando às %2$@ substituído por ônibus de apoio"
+            "value" : "%1$@ chegando às %2$@ substituído por ônibus circular"
           }
         },
         "vi" : {
@@ -1091,7 +1090,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "於%2$@抵達的%1$@班次由接駁巴士替代"
+            "value" : "原訂於 %2$@ 抵達的%1$@班次，改由接駁巴士提供服務"
           }
         }
       }
@@ -1144,7 +1143,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@預定於%2$@到站"
+            "value" : "%1$@預定於 %2$@ 到站"
           }
         }
       }
@@ -1173,13 +1172,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ rive nan %2$@ sote"
+            "value" : "%1$@ rive nan %2$@ kontoune"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ chegando às %2$@ sem parada"
+            "value" : "%1$@ chegando às %2$@ desviado"
           }
         },
         "vi" : {
@@ -1197,7 +1196,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "於%2$@抵達的%1$@的班次不停靠"
+            "value" : "%1$@於 %2$@ 抵達，但不停靠"
           }
         }
       }
@@ -1250,7 +1249,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@將在%2$d小時內到站"
+            "value" : "%1$@將於 %2$d 小時後到站"
           }
         }
       }
@@ -1279,13 +1278,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ rive nan %2$d è %3$d min"
+            "value" : "%1$@ rive nan %2$d èdtan %3$d minit"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ chegando em %2$d hr %3$d min"
+            "value" : "%1$@ chegando em %2$d h %3$d min"
           }
         },
         "vi" : {
@@ -1303,7 +1302,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@將在%2$d小時%3$d分鐘內到站"
+            "value" : "%1$@將於 %2$d 小時 %3$d 分鐘後到站"
           }
         }
       }
@@ -1332,7 +1331,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ rive nan %2$d è %3$d min pwograme"
+            "value" : "%1$@ rive nan %2$d èdtan %3$d minit pwograme"
           }
         },
         "pt-BR" : {
@@ -1356,7 +1355,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@預定將於%2$d小時%3$d分鐘內到站"
+            "value" : "%1$@預定將於 %2$d 小時 %3$d 分鐘後到站"
           }
         }
       }
@@ -1409,7 +1408,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@預定將於%2$d小時內到站"
+            "value" : "%1$@預定將於 %2$d 小時後到站"
           }
         }
       }
@@ -1462,7 +1461,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@將在%2$d分鐘內到站"
+            "value" : "%1$@將於 %2$d 分鐘後到站"
           }
         }
       }
@@ -1491,7 +1490,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ ap rive nan %2$d min pwograme"
+            "value" : "%1$@ ap rive nan %2$d minit pwograme"
           }
         },
         "pt-BR" : {
@@ -1515,7 +1514,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@預定將於%2$d分鐘內到站"
+            "value" : "%1$@預定將於 %2$d 分鐘後到站"
           }
         }
       }
@@ -1609,7 +1608,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@正在上客"
+            "value" : "%1$@準備出發，請上座"
           }
         }
       }
@@ -1662,7 +1661,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@距離%3$@還有%2$ld站"
+            "value" : "%1$@距離 %3$@ 還有 %2$ld 站"
           }
         }
       }
@@ -1709,7 +1708,60 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@位置尚未確定"
+            "value" : "%1$@位置資訊尚未確定"
+          }
+        }
+      }
+    },
+    "%@ service only" : {
+      "comment" : "Notice that there is only service in a single direction for a route at a stop within the favorites flow. Ex: [Easbound] service only.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ service only"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ únicamente"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Service uniquement %1$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ sèvis sèlman"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ somente serviço"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chỉ phục vụ chuyến %1$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅提供%1$@方向的服务"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "僅提供%1$@方向服務"
           }
         }
       }
@@ -1850,7 +1902,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@，選定站點"
+            "value" : "%1$@，為目前選取的站點"
           }
         }
       }
@@ -1897,7 +1949,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@，選定站點，第一站"
+            "value" : "%1$@，為目前選取的站點，第一站"
           }
         }
       }
@@ -1944,7 +1996,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$@延誤"
+            "value" : "原訂 %1$@ 抵達的%2$@班次延遲到站"
           }
         }
       }
@@ -1991,7 +2043,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$@提前"
+            "value" : "原訂 %1$@ 抵達的%2$@班次提早到站"
           }
         }
       }
@@ -2038,7 +2090,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@於%2$@到站"
+            "value" : "%1$@將於 %2$@ 抵達"
           }
         }
       }
@@ -2085,7 +2137,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@巴士"
+            "value" : "%1$@ 號巴士"
           }
         }
       }
@@ -2132,7 +2184,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@已駛離%2$@"
+            "value" : "%1$@已從 %2$@ 離站"
           }
         }
       }
@@ -2179,7 +2231,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@至%2$@已駛離%3$@"
+            "value" : "往 %2$@ 的%1$@已從 %3$@ 離站"
           }
         }
       }
@@ -2259,13 +2311,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld asansè fèmen"
+                  "value" : "%1$ld asansè a fèmen"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld asansè fèmen"
+                  "value" : "%1$ld asansè yo fèmen"
                 }
               },
               "two" : {
@@ -2289,13 +2341,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld elevador fechado"
+                  "value" : "%1$ld elevador interditado"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld elevadores fechados"
+                  "value" : "%1$ld elevadores interditados"
                 }
               }
             }
@@ -2331,7 +2383,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld部電梯 已關閉"
+                  "value" : "%1$ld 部電梯已關閉"
                 }
               }
             }
@@ -2381,7 +2433,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "找到%1$ld個結果"
+            "value" : "找到 %1$ld 個結果"
           }
         }
       }
@@ -2467,7 +2519,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld arè lwen"
+                  "value" : "%1$ld arè yo lwen"
                 }
               },
               "two" : {
@@ -2533,7 +2585,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "距離%1$ld站"
+                  "value" : "還有 %1$ld 站"
                 }
               }
             }
@@ -2622,7 +2674,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ldarè lwen"
+                  "value" : "%1$ldarè yo lwen"
                 }
               },
               "two" : {
@@ -2646,13 +2698,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "a %1$ldparada de distância"
+                  "value" : "a %1$ld parada de distância"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "a %1$ldparadas de distância"
+                  "value" : "a %1$ld paradas de distância"
                 }
               }
             }
@@ -2688,7 +2740,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "距離%1$ld站"
+                  "value" : "還有 %1$ld 站"
                 }
               }
             }
@@ -2738,7 +2790,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "TTY呼叫者請致電711；ASL呼叫者請使用VRS"
+            "value" : "TTY 使用者請撥打 711，ASL 使用者請使用 VRS"
           }
         }
       }
@@ -2926,7 +2978,166 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "事件"
+            "value" : "事故"
+          }
+        }
+      }
+    },
+    "Add" : {
+      "comment" : "Text for confirmation button when user is adding to their favorites",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agregar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoute"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicionar"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thêm"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "收藏"
+          }
+        }
+      }
+    },
+    "Add **%1$@** at **%2$@**" : {
+      "comment" : "Title for a confirmation modal when a user adds a favorite route + stop and already has the context that what they are adding is a favorite. Ex: Add [Green Line] at [Boylston]",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add **%1$@** at **%2$@**"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agregar **%1$@** en **%2$@**"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter **%1$@** à **%2$@**"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoute **%1$@** nan **%2$@**"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicionar **%1$@** em **%2$@**"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thêm **%1$@** tại **%2$@**"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加**%2$@**站的**%1$@**"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "收藏**%2$@**的**%1$@**"
+          }
+        }
+      }
+    },
+    "Add **%1$@** at **%2$@** to Favorites" : {
+      "comment" : "Title for a confirmation modal when a user adds a favorite route + stop. Ex: Add [Green Line] at [Boylston] to Favorites",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add **%1$@** at **%2$@** to Favorites"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agregar **%1$@** en **%2$@** a Favoritos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter **%1$@** à **%2$@** aux Favoris"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoute **%1$@** nan **%2$@** sa ou pi renmen yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicionar **%1$@** em **%2$@** aos Favoritos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thêm **%1$@** tại **%2$@** vào mục Yêu thích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将**%2$@**的**%1$@**添加到收藏夹"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "收藏**%2$@**的**%1$@**"
           }
         }
       }
@@ -2972,7 +3183,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新增收藏網站"
+            "value" : "加入收藏站點"
           }
         }
       }
@@ -3019,7 +3230,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新增其他時間段"
+            "value" : "新增其他時段"
           }
         }
       }
@@ -3043,7 +3254,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ajoute yon preferans"
+            "value" : "ajoute sa ou pi renmen an"
           }
         },
         "pt-BR" : {
@@ -3067,7 +3278,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新增收藏"
+            "value" : "加入收藏"
           }
         }
       }
@@ -3091,7 +3302,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoute nan Favorite"
+            "value" : "Ajoute Sa Ou Pi Renmen an"
           }
         },
         "pt-BR" : {
@@ -3115,7 +3326,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新增收藏"
+            "value" : "加入收藏"
           }
         }
       }
@@ -3138,7 +3349,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoute arè nan Preferans yo"
+            "value" : "Ajoute arè nan sa ou pi renmen yo"
           }
         },
         "pt-BR" : {
@@ -3162,7 +3373,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新增最喜歡的網站"
+            "value" : "加入收藏站點"
           }
         }
       }
@@ -3185,7 +3396,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoute arè ou pi renmen yo pou aksè fasil ak notifikasyon entèripsyon"
+            "value" : "Ajoute arè ou pi renmen yo pou jwenn yo fasil epi resevwa notifikasyon sou entèripsyon sèvis"
           }
         },
         "pt-BR" : {
@@ -3232,13 +3443,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoute nan Preferans ou yo"
+            "value" : "Ajoute nan sa ou pi renmen yo"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adicionar seus Favoritos"
+            "value" : "Adicionar seus favoritos"
           }
         },
         "vi" : {
@@ -3256,7 +3467,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新增您的我的最愛"
+            "value" : "加入收藏站點"
           }
         }
       }
@@ -3279,7 +3490,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoute nan Preferans yo"
+            "value" : "Ajoute nan Sa Ou Pi Renmen Yo"
           }
         },
         "pt-BR" : {
@@ -3303,7 +3514,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已新增到我的最愛"
+            "value" : "已加入收藏"
           }
         }
       }
@@ -3350,7 +3561,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "附加服務"
+            "value" : "加開班次服務"
           }
         }
       }
@@ -3397,7 +3608,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "附加服務"
+            "value" : "加開班次服務"
           }
         }
       }
@@ -3420,7 +3631,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoute nan favorites"
+            "value" : "Ajoute nan sa ou pi renmen yo"
           }
         },
         "pt-BR" : {
@@ -3444,7 +3655,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新增至我的最愛"
+            "value" : "加入收藏"
           }
         }
       }
@@ -3566,7 +3777,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O alerta não está mais em efeito"
+            "value" : "Alerta encerrado"
           }
         },
         "vi" : {
@@ -3584,7 +3795,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "警報已失效"
+            "value" : "警示已解除"
           }
         }
       }
@@ -3613,7 +3824,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tudo"
+            "value" : "Todas"
           }
         },
         "vi" : {
@@ -3679,7 +3890,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "請上車"
+            "value" : "所有乘客請上車"
           }
         }
       }
@@ -3702,7 +3913,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tout lajounen"
+            "value" : "Tout jounen an"
           }
         },
         "pt-BR" : {
@@ -3796,13 +4007,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pèmèt avi Notifikasyon nan Anviwònman yo"
+            "value" : "Pèmèt Notifikasyon nan Paramèt"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Permita as notificações nas configurações"
+            "value" : "Permitir notificações nas configurações"
           }
         },
         "vi" : {
@@ -3820,7 +4031,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在「設定」中開啟「通知」許可權"
+            "value" : "在「設定」中允許接收「通知」"
           }
         }
       }
@@ -3867,7 +4078,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "替代路徑"
+            "value" : "替代路線"
           }
         }
       }
@@ -3914,7 +4125,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "安珀警報"
+            "value" : "Amber Alert"
           }
         }
       }
@@ -3961,7 +4172,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "安珀警報"
+            "value" : "Amber Alert"
           }
         }
       }
@@ -4055,7 +4266,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Amtrak火車交通"
+            "value" : "Amtrak 列車行駛狀況"
           }
         }
       }
@@ -4102,7 +4313,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Amtrak火車交通"
+            "value" : "Amtrak 列車行駛狀況"
           }
         }
       }
@@ -4149,7 +4360,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "早前的機械故障"
+            "value" : "先前的機械故障"
           }
         }
       }
@@ -4172,7 +4383,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yon Pwoblèm Mekanik Ki Rive Pi Bonè"
+            "value" : "Yon Pwoblèm Mekanik Ki Te Pase Anvan"
           }
         },
         "pt-BR" : {
@@ -4196,7 +4407,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "早前的機械故障"
+            "value" : "先前的機械故障"
           }
         }
       }
@@ -4243,7 +4454,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "早前的信號問題"
+            "value" : "先前的號誌故障"
           }
         }
       }
@@ -4266,7 +4477,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yon Siyal Ki Rive Pi Bonè"
+            "value" : "Yon Pwoblèm Siyal Ki Te Pase Anvan"
           }
         },
         "pt-BR" : {
@@ -4290,7 +4501,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "早前的信號問題"
+            "value" : "先前的號誌故障"
           }
         }
       }
@@ -4337,7 +4548,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟%1$@%2$@延誤"
+            "value" : "原訂 %1$@ 抵達的%2$@班次延遲到站"
           }
         }
       }
@@ -4384,7 +4595,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟%1$@%2$@提前"
+            "value" : "原訂 %1$@抵達的%2$@班次提早到站"
           }
         }
       }
@@ -4431,7 +4642,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟車現已到站"
+            "value" : "現已到站"
           }
         }
       }
@@ -4478,7 +4689,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "於%1$@到站的下一趟車已取消"
+            "value" : "%1$@ 班次取消服務"
           }
         }
       }
@@ -4507,7 +4718,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "e às %1$@ substituído por ônibus de apoio"
+            "value" : "e às %1$@ substituído por ônibus circular"
           }
         },
         "vi" : {
@@ -4525,7 +4736,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "並且於%1$@抵達的班次由接駁巴士替代"
+            "value" : "%1$@ 班次改由接駁巴士提供服務"
           }
         }
       }
@@ -4572,7 +4783,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟車預定將於%1$@到站"
+            "value" : "接著表定下一班於 %1$@ 到站"
           }
         }
       }
@@ -4595,13 +4806,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "epi nan %1$@ sote"
+            "value" : "epi nan %1$@ kontoune"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "e às %1$@ ignorado"
+            "value" : "e às %1$@ desviado"
           }
         },
         "vi" : {
@@ -4619,7 +4830,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "於%1$@跳停"
+            "value" : "接著 %1$@ 班次不停靠"
           }
         }
       }
@@ -4666,7 +4877,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟車將於%1$@到站"
+            "value" : "接著下一班於 %1$@ 到站"
           }
         }
       }
@@ -4713,7 +4924,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正在上客"
+            "value" : "準備出發，請上座"
           }
         }
       }
@@ -4760,7 +4971,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟車將在%1$d小時內抵達"
+            "value" : "接著下一班於 %1$d 小時後"
           }
         }
       }
@@ -4789,7 +5000,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "epi nan %1$d è %2$d min"
+            "value" : "epi nan %1$d èdtan %2$d minit"
           }
         },
         "pt-BR" : {
@@ -4813,7 +5024,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟車將在%1$d小時%2$d分鐘內抵達"
+            "value" : "接著下一班於 %1$d 小時 %2$d 分鐘後"
           }
         }
       }
@@ -4842,7 +5053,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "epi nan %1$d è %2$d min pwograme"
+            "value" : "epi nan %1$d èdtan %2$d minit pwograme"
           }
         },
         "pt-BR" : {
@@ -4866,7 +5077,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟車預定將在%1$d小時%2$d分鐘內抵達"
+            "value" : "接著表定下一班於 %1$d 小時 %2$d 分鐘後"
           }
         }
       }
@@ -4913,7 +5124,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟車預定將在%1$d小時內抵達"
+            "value" : "接著下一班於 %1$d 小時後"
           }
         }
       }
@@ -4936,7 +5147,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "epi nan %1$d min"
+            "value" : "epi nan %1$d minit"
           }
         },
         "pt-BR" : {
@@ -4960,7 +5171,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟車將在%1$d分鐘內抵達"
+            "value" : "接著下一班於 %1$d 分鐘後"
           }
         }
       }
@@ -4983,7 +5194,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "epi nan %1$d min pwograme"
+            "value" : "epi nan %1$d minit pwograme"
           }
         },
         "pt-BR" : {
@@ -5007,7 +5218,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一趟車預定將在%1$d分鐘內抵達"
+            "value" : "接著表定下一班於 %1$d 分鐘後"
           }
         }
       }
@@ -5054,7 +5265,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "應用篩選條件，以便僅顯示來自該線路的到達資訊"
+            "value" : "套用篩選條件，只顯示此路線的抵達資訊"
           }
         }
       }
@@ -5101,7 +5312,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正在接近"
+            "value" : "即將進站"
           }
         }
       }
@@ -5243,7 +5454,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "到站%1$@"
+            "value" : "預計於 %1$@ 到站"
           }
         }
       }
@@ -5313,13 +5524,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "oto ap anpeche sèvis la"
+            "value" : "machin ap anpeche sèvis la"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "veículos impedindo o serviço"
+            "value" : "veículos impedindo a operação"
           }
         },
         "vi" : {
@@ -5360,13 +5571,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Machin Ki Bloke Sèvis la"
+            "value" : "Machin Ap Anpeche Sèvis la"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Carros impedindo serviço"
+            "value" : "Veículos impedindo a operação"
           }
         },
         "vi" : {
@@ -5431,7 +5642,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "後退"
+            "value" : "返回"
           }
         }
       }
@@ -5548,7 +5759,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Monte sou vwa a %1$@"
+            "value" : "Monte sou ray la %1$@"
           }
         },
         "pt-BR" : {
@@ -5572,7 +5783,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在軌道%1$@登車"
+            "value" : "請至 %1$@ 號月台搭車"
           }
         }
       }
@@ -5619,7 +5830,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "上客"
+            "value" : "上車"
           }
         }
       }
@@ -5807,7 +6018,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "巴士替代方案"
+            "value" : "巴士替代服務"
           }
         }
       }
@@ -5922,13 +6133,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lè ou enskri, nou ka montre w ki estasyon ki pa aksesib oswa kote yo fèmen asansè yo."
+            "value" : "Lè ou chwazi opsyon sa a, nou ka montre w ki estasyon ki pa aksesib oswa kote yo fèmen asansè yo."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ao ativar, podemos mostrar quais estações estão inacessíveis ou com elevadores fechados."
+            "value" : "Ao ativar, podemos mostrar quais estações estão inacessíveis ou com elevadores interditados."
           }
         },
         "vi" : {
@@ -5946,7 +6157,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "透過選擇加入，我們可以向您顯示哪些車站不適合輪椅通行或電梯關閉。"
+            "value" : "只要啟用此功能，我們就能向您顯示哪些車站不提供無障礙服務不適合輪椅通行，或是有電梯暫停使用的情況。"
           }
         }
       }
@@ -6140,7 +6351,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "第%1$@節，共%2$@節，%3$@"
+            "value" : "第 %1$@ 車（共 %2$@ 車）%3$@"
           }
         }
       }
@@ -6187,7 +6398,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "查看新網站視圖"
+            "value" : "查看新版站點圖示"
           }
         }
       }
@@ -6263,7 +6474,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "apagar texto de pesquisa"
+            "value" : "apagar texto da pesquisa"
           }
         },
         "vi" : {
@@ -6328,7 +6539,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "順時針方向"
+            "value" : "順時針"
           }
         }
       }
@@ -6422,7 +6633,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "關閉搜尋網頁面"
+            "value" : "關閉搜尋頁"
           }
         }
       }
@@ -6445,7 +6656,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Restriksyon Gad Kòt"
+            "value" : "Restriksyon Gad kòt"
           }
         },
         "pt-BR" : {
@@ -6492,7 +6703,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gad Kot Mete Restriksyon"
+            "value" : "Restriksyon Gad Kòt"
           }
         },
         "pt-BR" : {
@@ -6540,7 +6751,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "retire arè ki rete yo"
+            "value" : "minimize arè ki rete yo"
           }
         },
         "pt-BR" : {
@@ -6564,7 +6775,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "折疊剩餘站點"
+            "value" : "收合剩餘停靠站"
           }
         }
       }
@@ -6594,7 +6805,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Minize arè yo"
+            "value" : "minimize arè yo"
           }
         },
         "pt-BR" : {
@@ -6618,7 +6829,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "折疊網站"
+            "value" : "收合停靠站"
           }
         }
       }
@@ -6641,7 +6852,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "retresi, tape de fwa pou elaji"
+            "value" : "fèmen, tape de fwa pou ouvri"
           }
         },
         "pt-BR" : {
@@ -6688,13 +6899,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tikè Tren Vil la ak Bato"
+            "value" : "Tikè Commuter Rail ak Bato"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bilhetes de transporte diário por trem e balsa"
+            "value" : "Passagens do Commuter Rail e balsa"
           }
         },
         "vi" : {
@@ -6712,7 +6923,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通勤列車和渡輪票"
+            "value" : "通勤鐵路和渡輪票"
           }
         }
       }
@@ -6735,7 +6946,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "anbouteyaj"
+            "value" : "blokis"
           }
         },
         "pt-BR" : {
@@ -6759,7 +6970,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "交通擁堵"
+            "value" : "交通壅塞"
           }
         }
       }
@@ -6806,7 +7017,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "交通擁堵"
+            "value" : "交通壅塞"
           }
         }
       }
@@ -6853,7 +7064,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "連接到%1$@"
+            "value" : "可轉乘 %1$@"
           }
         }
       }
@@ -6906,7 +7117,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "連接到%1$@和%2$@"
+            "value" : "可轉乘 %1$@ 和 %2$@"
           }
         }
       }
@@ -6935,7 +7146,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "construção"
+            "value" : "obras"
           }
         },
         "vi" : {
@@ -7070,7 +7281,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nan sans kontrè zegwi mont lan (goch mont)"
+            "value" : "Nan sans kontrè ak zegwi mont lan"
           }
         },
         "pt-BR" : {
@@ -7141,7 +7352,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "交通信號燈問題"
+            "value" : "平交道問題"
           }
         }
       }
@@ -7164,7 +7375,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pwoblèm nan Pasaj a Nivo yo"
+            "value" : "Pwoblèm nan Pasaj a Nivo"
           }
         },
         "pt-BR" : {
@@ -7188,7 +7399,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "交通信號燈問題"
+            "value" : "平交道問題"
           }
         }
       }
@@ -7211,13 +7422,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "malfonksyònman nan pasaj a nivo"
+            "value" : "pasaj a nivo ki p ap fonksyone"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "mau funcionamento do cruzamento"
+            "value" : "mau funcionamento da travessia"
           }
         },
         "vi" : {
@@ -7235,7 +7446,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "交通信號燈故障"
+            "value" : "平交道故障"
           }
         }
       }
@@ -7264,7 +7475,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Problemas no cruzamento"
+            "value" : "Problemas de travessia"
           }
         },
         "vi" : {
@@ -7282,7 +7493,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "交通信號燈故障"
+            "value" : "平交道故障"
           }
         }
       }
@@ -7352,7 +7563,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Foul moun enkoni"
+            "value" : "Yo pa konnen si li chaje"
           }
         },
         "pt-BR" : {
@@ -7376,7 +7587,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "擁擠度不明"
+            "value" : "擁擠程度不明"
           }
         }
       }
@@ -7400,7 +7611,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Personnalisé"
+            "value" : "Pèsonalize"
           }
         },
         "pt-BR" : {
@@ -7518,7 +7729,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "調試模式"
+            "value" : "偵錯模式"
           }
         }
       }
@@ -7613,14 +7824,13 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "延誤"
+            "value" : "延遲"
           }
         }
       }
     },
     "Delete" : {
       "comment" : "Content description for a button that removes a favorited route/stop/direction",
-      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -7685,7 +7895,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "efase peryòd tan"
+            "value" : "Efase peryòd tan"
           }
         },
         "pt-BR" : {
@@ -7732,7 +7942,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "manifestasyon"
+            "value" : "demonstrasyon"
           }
         },
         "pt-BR" : {
@@ -7756,7 +7966,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "示威"
+            "value" : "示威活動"
           }
         }
       }
@@ -7803,7 +8013,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "示威"
+            "value" : "示威活動"
           }
         }
       }
@@ -7968,13 +8178,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "otobis anpann"
+            "value" : "bis ki pa aktif"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ônibus com defeito"
+            "value" : "ônibus desativado"
           }
         },
         "vi" : {
@@ -7992,7 +8202,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "巴士拋錨"
+            "value" : "故障巴士"
           }
         }
       }
@@ -8039,7 +8249,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "巴士拋錨"
+            "value" : "故障巴士"
           }
         }
       }
@@ -8062,13 +8272,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "tren anpann"
+            "value" : "tren ki pa aktif"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "trem com defeito"
+            "value" : "trem desativado"
           }
         },
         "vi" : {
@@ -8180,7 +8390,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "關閉"
+            "value" : "知道了"
           }
         }
       }
@@ -8276,7 +8486,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "顯示有關此行程的更多信息"
+            "value" : "顯示有關此行程的更多資訊"
           }
         }
       }
@@ -8393,7 +8603,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Notifikasyon Entèripsyon"
+            "value" : "Notifikasyon sou Entèripsyon"
           }
         },
         "pt-BR" : {
@@ -8446,7 +8656,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Doca fechada"
+            "value" : "Píer fechado"
           }
         },
         "vi" : {
@@ -8464,7 +8674,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "停靠區域已關閉"
+            "value" : "碼頭已關閉"
           }
         }
       }
@@ -8493,7 +8703,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Doca fechada"
+            "value" : "Píer fechado"
           }
         },
         "vi" : {
@@ -8511,7 +8721,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "停靠區域已關閉"
+            "value" : "碼頭已關閉"
           }
         }
       }
@@ -8534,13 +8744,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Waf la Fèmen"
+            "value" : "Fèmti Waf la"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fechamento de doca"
+            "value" : "Fechamento de píer"
           }
         },
         "vi" : {
@@ -8587,7 +8797,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Problema na doca"
+            "value" : "Problema no píer"
           }
         },
         "vi" : {
@@ -8605,7 +8815,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "停靠區域問題"
+            "value" : "碼頭問題"
           }
         }
       }
@@ -8634,7 +8844,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Problema na doca"
+            "value" : "Problema no píer"
           }
         },
         "vi" : {
@@ -8652,7 +8862,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "停靠區域問題"
+            "value" : "碼頭問題"
           }
         }
       }
@@ -8747,7 +8957,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "拖曳控制柄"
+            "value" : "拖曳控制項"
           }
         }
       }
@@ -8770,7 +8980,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "pon levasyon ap monte"
+            "value" : "y ap leve pon ki ka bouje a"
           }
         },
         "pt-BR" : {
@@ -8794,7 +9004,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "吊橋升起"
+            "value" : "開合橋正在升起"
           }
         }
       }
@@ -8823,7 +9033,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ponte móvel em elevação"
+            "value" : "Ponte levadiça sendo levantada"
           }
         },
         "vi" : {
@@ -8841,7 +9051,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "吊橋升起"
+            "value" : "開合橋正在升起"
           }
         }
       }
@@ -8864,7 +9074,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "pwoblèm pon leve"
+            "value" : "pwoblèm pon ki ka bouje a"
           }
         },
         "pt-BR" : {
@@ -8911,7 +9121,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pwoblèm Pon Levab"
+            "value" : "Pwoblèm Pon Ki Ka Bouje a"
           }
         },
         "pt-BR" : {
@@ -8982,7 +9192,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "東行"
+            "value" : "往東"
           }
         }
       }
@@ -9052,7 +9262,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Modifye Favorite yo"
+            "value" : "Modifye sa ou pi renmen an"
           }
         },
         "pt-BR" : {
@@ -9099,7 +9309,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Modifye Favorite yo"
+            "value" : "Modifye Sa Ou Pi Renmen An"
           }
         },
         "pt-BR" : {
@@ -9123,7 +9333,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "編輯收藏"
+            "value" : "編輯收藏站點"
           }
         }
       }
@@ -9146,13 +9356,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Modifye Preferans yo"
+            "value" : "Modifye Sa Ou Pi Renmen Yo"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Editar Favoritos"
+            "value" : "Editar favoritos"
           }
         },
         "vi" : {
@@ -9170,7 +9380,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "編輯我的最愛"
+            "value" : "編輯收藏站點"
           }
         }
       }
@@ -9217,7 +9427,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "編輯您的收藏"
+            "value" : "編輯您的收藏站點"
           }
         }
       }
@@ -9264,7 +9474,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "電力作業"
+            "value" : "電力工程"
           }
         }
       }
@@ -9293,7 +9503,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obra elétrica"
+            "value" : "Serviço elétrico"
           }
         },
         "vi" : {
@@ -9311,7 +9521,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "電力作業"
+            "value" : "電力工程"
           }
         }
       }
@@ -9340,7 +9550,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elevador fechado"
+            "value" : "Elevador interditado"
           }
         },
         "vi" : {
@@ -9358,7 +9568,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "直梯已關閉"
+            "value" : "電梯已關閉"
           }
         }
       }
@@ -9387,7 +9597,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fechamento de elevador"
+            "value" : "Interdição de elevador"
           }
         },
         "vi" : {
@@ -9434,7 +9644,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fechamento dos elevadores (%1$@)"
+            "value" : "Interdição de elevadores (%1$@)"
           }
         },
         "vi" : {
@@ -9452,7 +9662,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "電梯關停(%1$@)"
+            "value" : "電梯關停（%1$@）"
           }
         }
       }
@@ -9528,7 +9738,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "fim do serviço"
+            "value" : "fim da operação"
           }
         },
         "vi" : {
@@ -9546,7 +9756,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "服務結束"
+            "value" : "營運結束"
           }
         }
       }
@@ -9616,13 +9826,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fèmti eskalye"
+            "value" : "Eskalye a fèmen"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escada rolante fechada"
+            "value" : "Escada rolante interditada"
           }
         },
         "vi" : {
@@ -9640,7 +9850,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自動扶梯已關閉"
+            "value" : "手扶梯已關閉"
           }
         }
       }
@@ -9669,7 +9879,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fechamento de escada rolante"
+            "value" : "Interdição de escada rolante"
           }
         },
         "vi" : {
@@ -9687,7 +9897,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自動扶梯關閉"
+            "value" : "手扶梯關閉"
           }
         }
       }
@@ -9782,7 +9992,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "展開剩餘站點"
+            "value" : "展開剩餘停靠站"
           }
         }
       }
@@ -9836,7 +10046,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "展開網站"
+            "value" : "展開停靠站"
           }
         }
       }
@@ -9931,7 +10141,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "額外服務"
+            "value" : "加開班次"
           }
         }
       }
@@ -9978,7 +10188,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "額外服務"
+            "value" : "加開班次"
           }
         }
       }
@@ -10166,7 +10376,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "最喜歡的網站"
+            "value" : "已收藏站點"
           }
         }
       }
@@ -10213,7 +10423,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "收藏網站功能已替代原有的星標線路功能。"
+            "value" : "收藏站點功能取代了原本的星號標記路線功能。"
           }
         }
       }
@@ -10236,7 +10446,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preferans yo"
+            "value" : "Sa ou pi renmen yo"
           }
         },
         "pt-BR" : {
@@ -10260,7 +10470,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "我的最愛"
+            "value" : "收藏站點"
           }
         }
       }
@@ -10448,7 +10658,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "輪渡"
+            "value" : "渡輪"
           }
         }
       }
@@ -10470,7 +10680,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ferry anile"
+            "value" : "Bato anile"
           }
         },
         "pt-BR" : {
@@ -10494,7 +10704,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "輪渡航線已取消"
+            "value" : "渡輪服務已取消"
           }
         }
       }
@@ -10516,7 +10726,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ferry sispann"
+            "value" : "Bato sispann"
           }
         },
         "pt-BR" : {
@@ -10540,7 +10750,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "輪渡航線已暫停營運"
+            "value" : "渡輪服務已暫停"
           }
         }
       }
@@ -10564,7 +10774,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Filter wout"
+            "value" : "Filtre wout yo"
           }
         },
         "pt-BR" : {
@@ -10635,7 +10845,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "結束另一趟行程"
+            "value" : "正在完成另一趟行程"
           }
         }
       }
@@ -10752,7 +10962,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "aktivite ponpye"
+            "value" : "aktivite depatman ponpye a"
           }
         },
         "pt-BR" : {
@@ -10776,7 +10986,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "消防局活動"
+            "value" : "消防單位活動"
           }
         }
       }
@@ -10799,7 +11009,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktivite Ponpye"
+            "value" : "Aktivite Depatman Ponpye a"
           }
         },
         "pt-BR" : {
@@ -10823,7 +11033,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "消防局活動"
+            "value" : "消防單位活動"
           }
         }
       }
@@ -10870,7 +11080,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "首班**%1$@**"
+            "value" : "首班 **%1$@**"
           }
         }
       }
@@ -10917,7 +11127,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "洪水"
+            "value" : "淹水"
           }
         }
       }
@@ -10964,7 +11174,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "洪水"
+            "value" : "淹水"
           }
         }
       }
@@ -10993,7 +11203,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "névoa"
+            "value" : "neblina"
           }
         },
         "vi" : {
@@ -11011,7 +11221,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "大霧"
+            "value" : "濃霧"
           }
         }
       }
@@ -11058,7 +11268,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "大霧"
+            "value" : "濃霧"
           }
         }
       }
@@ -11105,7 +11315,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "跟隨"
+            "value" : "追蹤"
           }
         }
       }
@@ -11175,7 +11385,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Blokaj Nan Tren Machandiz"
+            "value" : "Entèferans Tren Machandiz"
           }
         },
         "pt-BR" : {
@@ -11246,7 +11456,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "出發地"
+            "value" : "開始時間"
           }
         }
       }
@@ -11340,7 +11550,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MBTA通用資訊與支援"
+            "value" : "MBTA 一般資訊與支援"
           }
         }
       }
@@ -11434,7 +11644,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "搶先測試新功能並提供回饋"
+            "value" : "搶先測試新功能並提供意見回饋"
           }
         }
       }
@@ -11527,7 +11737,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "早上好！"
+            "value" : "早安！"
           }
         }
       }
@@ -11597,7 +11807,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "kondisyon danje"
+            "value" : "eta matyè danjere"
           }
         },
         "pt-BR" : {
@@ -11650,7 +11860,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Condição de material perigoso"
+            "value" : "Condição de materiais perigosos"
           }
         },
         "vi" : {
@@ -11715,7 +11925,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "方向"
+            "value" : "行駛方向"
           }
         }
       }
@@ -11738,7 +11948,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anpil pasaje"
+            "value" : "anpil pasaje"
           }
         },
         "pt-BR" : {
@@ -11762,7 +11972,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "客流過大"
+            "value" : "乘客眾多"
           }
         }
       }
@@ -11785,13 +11995,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anpil Moun Ap Pase la"
+            "value" : "Anpil Pasaje"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Excesso de passageiros"
+            "value" : "Grande volume de passageiros"
           }
         },
         "vi" : {
@@ -11809,7 +12019,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "客流過大"
+            "value" : "乘客眾多"
           }
         }
       }
@@ -12043,7 +12253,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "節假日"
+            "value" : "假日"
           }
         }
       }
@@ -12066,7 +12276,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vakans"
+            "value" : "Jou ferye"
           }
         },
         "pt-BR" : {
@@ -12090,7 +12300,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "節假日"
+            "value" : "假日"
           }
         }
       }
@@ -12137,7 +12347,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "港口結冰"
+            "value" : "港灣結冰"
           }
         }
       }
@@ -12184,7 +12394,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "港口結冰"
+            "value" : "港灣結冰"
           }
         }
       }
@@ -12207,13 +12417,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Antran"
+            "value" : "Rive"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entrada"
+            "value" : "Sentido centro"
           }
         },
         "vi" : {
@@ -12231,7 +12441,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "進站"
+            "value" : "往市區"
           }
         }
       }
@@ -12254,7 +12464,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kenbe Sèvis Pozisyon Fèmen"
+            "value" : "Kenbe Sèvis Pozisyon an Dezaktive"
           }
         },
         "pt-BR" : {
@@ -12331,7 +12541,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : " 至%1$@"
+            "value" : " 直至%1$@"
           }
         }
       }
@@ -12437,7 +12647,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$@"
+            "value" : "%1$@%2$@"
           }
         }
       }
@@ -12466,7 +12676,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Última"
+            "value" : "Último"
           }
         },
         "vi" : {
@@ -12484,7 +12694,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "末班"
+            "value" : "末班車"
           }
         }
       }
@@ -12578,7 +12788,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今天晚些時候"
+            "value" : "今天稍晚"
           }
         }
       }
@@ -12607,7 +12817,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arè ki mwen komen"
+            "value" : "Arè ki mwens komen"
           }
         },
         "pt-BR" : {
@@ -12631,7 +12841,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "較少停靠的網站"
+            "value" : "較少車次停靠的站點"
           }
         }
       }
@@ -12678,7 +12888,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "列出剩餘站點"
+            "value" : "列出剩餘停靠站"
           }
         }
       }
@@ -12840,7 +13050,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sèvis Pozisyon Fèmen"
+            "value" : "Sèvis Pozisyon Dezaktive"
           }
         },
         "pt-BR" : {
@@ -12887,7 +13097,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Boukl"
+            "value" : "Wout sikilè"
           }
         },
         "pt-BR" : {
@@ -13050,7 +13260,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "維護"
+            "value" : "維護作業"
           }
         }
       }
@@ -13097,7 +13307,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "維護"
+            "value" : "維護作業"
           }
         }
       }
@@ -13120,7 +13330,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ekspozisyon kat la"
+            "value" : "Afichaj kat la"
           }
         },
         "pt-BR" : {
@@ -13218,7 +13428,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O MBTA Go está no estágio inicial! Queremos seus comentários enquanto continuamos a fazer melhorias e adicionar novos recursos."
+            "value" : "O MBTA Go está no estágio inicial! Queremos seu feedback enquanto continuamos a fazer melhorias e adicionar novos recursos."
           }
         },
         "vi" : {
@@ -13236,7 +13446,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MBTA Go尚處於試運行階段！我們希望收到您的回饋，以便我們繼續改進和新增功能。"
+            "value" : "MBTA Go 目前仍在開發初期！我們希望收到您的意見回饋，持續改進並新增功能。"
           }
         }
       }
@@ -13282,7 +13492,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MBTA Go在定位服務開啟時效果最佳"
+            "value" : "開啟定位服務後，MBTA Go 的使用體驗會更好"
           }
         }
       }
@@ -13329,7 +13539,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MBTA標誌"
+            "value" : "MBTA 標誌"
           }
         }
       }
@@ -13564,7 +13774,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "醫療急救"
+            "value" : "醫療緊急情況"
           }
         }
       }
@@ -13611,7 +13821,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "醫療急救"
+            "value" : "醫療緊急情況"
           }
         }
       }
@@ -13705,7 +13915,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "調整後的服務"
+            "value" : "調整服務"
           }
         }
       }
@@ -13752,7 +13962,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "調整後的服務"
+            "value" : "調整服務"
           }
         }
       }
@@ -13799,7 +14009,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "週一至週五：上午6:30至晚上8:00"
+            "value" : "週一至週五：上午 6:30 至晚上 8:00"
           }
         }
       }
@@ -13940,7 +14150,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "mTicket應用程式"
+            "value" : "mTicket App"
           }
         }
       }
@@ -14034,7 +14244,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "附近的交通"
+            "value" : "附近的大眾運輸"
           }
         }
       }
@@ -14220,7 +14430,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一班次時間**%1$@**"
+            "value" : "下一班次於**%1$@**"
           }
         }
       }
@@ -14267,7 +14477,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "明日下一班次時間**%1$@**"
+            "value" : "下一班次將於明日**%1$@**"
           }
         }
       }
@@ -14290,7 +14500,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pwochen vwayaj la se sou **%1$@**"
+            "value" : "Pwochen vwayaj la se nan dat **%1$@**"
           }
         },
         "pt-BR" : {
@@ -14314,7 +14524,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下一班次時間**%1$@**"
+            "value" : "下一班次於**%1$@**"
           }
         }
       }
@@ -14338,13 +14548,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pa gen wout %1$@ki matche"
+            "value" : "Pa gen wout %1$@ ki matche"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não há correspondência %1$@ nas rotas"
+            "value" : "Não há correspondência de rotas de %1$@"
           }
         },
         "vi" : {
@@ -14362,7 +14572,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "沒有匹配的%1$@路線"
+            "value" : "找不到符合條件的%1$@路線"
           }
         }
       }
@@ -14431,7 +14641,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nou pa jwenn rezilta"
+            "value" : "Nou pa jwenn rezilta 🤔"
           }
         },
         "pt-BR" : {
@@ -14455,7 +14665,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "未找到結果 🤔"
+            "value" : "找不到結果 🤔"
           }
         }
       }
@@ -14643,7 +14853,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "北行"
+            "value" : "往北"
           }
         }
       }
@@ -14690,7 +14900,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "不適合輪椅通行"
+            "value" : "不提供無障礙服務"
           }
         }
       }
@@ -14808,7 +15018,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "notifikasyon yo pèmèt"
+            "value" : "notifikasyon yo aktive"
           }
         },
         "pt-BR" : {
@@ -14832,7 +15042,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通知已開啟"
+            "value" : "已開啟通知"
           }
         }
       }
@@ -14878,7 +15088,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "立即"
+            "value" : "現在"
           }
         }
       }
@@ -14948,7 +15158,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kounye a %1$@ pou resevwa avi notifikasyon sou entèripsyon"
+            "value" : "Kounye a %1$@ pou resevwa notifikasyon sou entèripsyon"
           }
         },
         "pt-BR" : {
@@ -14972,7 +15182,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "立即%1$@以接收營運變動通知"
+            "value" : "立即%1$@，以接收營運變動通知"
           }
         }
       }
@@ -14996,7 +15206,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kounye a, <u>modifye favori ou yo</u> pou resevwa notifikasyon entèripsyon yo"
+            "value" : "Kounye a, <u>modifye favori ou yo</u> pou resevwa notifikasyon pou entèripsyon"
           }
         },
         "pt-BR" : {
@@ -15020,7 +15230,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "立即<u>編輯您的收藏</u>以接收營運變動通知"
+            "value" : "立即<u>編輯您的收藏站點</u>，以接收營運變動通知"
           }
         }
       }
@@ -15067,7 +15277,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "現在停靠"
+            "value" : "現在停靠在"
           }
         }
       }
@@ -15097,7 +15307,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Embarcando agora"
+            "value" : "Embarque em andamento"
           }
         },
         "vi" : {
@@ -15138,7 +15348,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kounye a resevwa notifikasyon pou entèripsyon"
+            "value" : "Kounye a resevwa notifikasyon sou entèripsyon"
           }
         },
         "pt-BR" : {
@@ -15162,7 +15372,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "立即開啟營運變動通知"
+            "value" : "立即接收營運異常通知"
           }
         }
       }
@@ -15185,13 +15395,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kounye a tout wout ou fè souvan yo sere **fasil nan yon sèl kote**."
+            "value" : "Kounye a tout arè ou fè souvan yo sere **fasil nan yon sèl kote**."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agora salve suas paradas de uso frequente em **um lugar fácil**."
+            "value" : "Agora salve suas paradas de uso frequente em **um lugar fácil de acessar**."
           }
         },
         "vi" : {
@@ -15209,13 +15419,12 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "現在將您常用的網站儲存到**一個便捷位置**。"
+            "value" : "將您常用的站點儲存在**收藏夾**，方便隨時查看。"
           }
         }
       }
     },
     "Okay" : {
-      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -15286,7 +15495,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pontual"
+            "value" : "No horário"
           }
         },
         "vi" : {
@@ -15352,7 +15561,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "僅%1$@方向前往"
+            "value" : "僅%1$@方向"
           }
         }
       }
@@ -15474,13 +15683,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Soti"
+            "value" : "Derape"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Saída"
+            "value" : "Sentido bairro"
           }
         },
         "vi" : {
@@ -15498,7 +15707,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "出站"
+            "value" : "往市郊"
           }
         }
       }
@@ -15545,7 +15754,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "遊行"
+            "value" : "遊行活動"
           }
         }
       }
@@ -15592,7 +15801,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "遊行"
+            "value" : "遊行活動"
           }
         }
       }
@@ -15621,7 +15830,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estacionamento fechado"
+            "value" : "Estacionamento interditado"
           }
         },
         "vi" : {
@@ -15639,7 +15848,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "停車已關閉"
+            "value" : "停車場已關閉"
           }
         }
       }
@@ -15668,7 +15877,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fechamento de estacionamento"
+            "value" : "Interdição de estacionamento"
           }
         },
         "vi" : {
@@ -15686,7 +15895,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "停車關閉"
+            "value" : "停車場關閉"
           }
         }
       }
@@ -15827,7 +16036,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "將線路固定到清單頂部"
+            "value" : "將路線釘選在清單頂部"
           }
         }
       }
@@ -15849,13 +16058,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planifye yon wout ak Planifikasyon Vwayaj"
+            "value" : "Planifye yon wout ak zouti Planifikasyon Vwayaj"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planeje uma rota com o Trip Planner"
+            "value" : "Trace uma rota com o Planejador de viagens"
           }
         },
         "vi" : {
@@ -15873,7 +16082,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "使用Trip Planner規劃出行路線"
+            "value" : "使用 Trip Planner 規劃行程路線"
           }
         }
       }
@@ -15896,7 +16105,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "aktivite lapolis"
+            "value" : "aktivite Polis"
           }
         },
         "pt-BR" : {
@@ -15920,7 +16129,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "警方活動"
+            "value" : "警方行動"
           }
         }
       }
@@ -16014,7 +16223,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "政策變化"
+            "value" : "政策變更"
           }
         }
       }
@@ -16061,7 +16270,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "政策變化"
+            "value" : "政策變更"
           }
         }
       }
@@ -16202,7 +16411,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "預測尚不可用"
+            "value" : "目前無法提供路況預報資訊"
           }
         }
       }
@@ -16249,7 +16458,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "預測不可用"
+            "value" : "無法提供路況預報資訊"
           }
         }
       }
@@ -16272,7 +16481,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "prezans balèn yo"
+            "value" : "prezans balèn"
           }
         },
         "pt-BR" : {
@@ -16319,7 +16528,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prezans Balèn yo"
+            "value" : "Prezans Balèn"
           }
         },
         "pt-BR" : {
@@ -16390,7 +16599,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "隱私政策"
+            "value" : "隱私權政策"
           }
         }
       }
@@ -16460,7 +16669,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Defo nan ray tren yo"
+            "value" : "Defo nan ray"
           }
         },
         "pt-BR" : {
@@ -16513,7 +16722,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atualização em tempo real ao vivo das chegadas"
+            "value" : "Atualização em tempo real de chegadas ao vivo"
           }
         },
         "vi" : {
@@ -16531,7 +16740,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "即時到達即時更新"
+            "value" : "即時更新抵達資訊"
           }
         }
       }
@@ -16578,7 +16787,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "將地圖重新定位至%1$@"
+            "value" : "將地圖重新定位至%1$@所在位置"
           }
         }
       }
@@ -16607,7 +16816,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mapa mais recente sobre minha localização"
+            "value" : "Centralizar o mapa na minha localização"
           }
         },
         "vi" : {
@@ -16653,7 +16862,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Visto(s) recentemente"
+            "value" : "Visto recentemente"
           }
         },
         "vi" : {
@@ -16765,7 +16974,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "重新整理預測"
+            "value" : "重新整理預測交通資訊"
           }
         }
       }
@@ -16884,7 +17093,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "retire yon preferans"
+            "value" : "retire sa mwen pi renmen an"
           }
         },
         "pt-BR" : {
@@ -16931,13 +17140,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retire nan Favorites yo"
+            "value" : "Retire nan Sa Mwen Pi Renmen Yo"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remover dos favoritos"
+            "value" : "Remover dos Favoritos"
           }
         },
         "vi" : {
@@ -16955,7 +17164,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "從我的最愛中移除"
+            "value" : "移除收藏"
           }
         }
       }
@@ -17002,7 +17211,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "刪除篩選條件並顯示所有線路"
+            "value" : "移除篩選條件以顯示所有路線"
           }
         }
       }
@@ -17025,7 +17234,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retire nan Preferans yo"
+            "value" : "Retire nan Sa Mwen Pi Renmen Yo"
           }
         },
         "pt-BR" : {
@@ -17049,7 +17258,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已從我的最愛中移除"
+            "value" : "已移除收藏"
           }
         }
       }
@@ -17096,7 +17305,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "刪除選取的篩選條件，以便顯示所有線路的到站情況"
+            "value" : "清除選取的篩選條件，以便顯示所有路線的到站情況"
           }
         }
       }
@@ -17166,7 +17375,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rezilta yo pa monte"
+            "value" : "Rezilta yo pa monte ☹️"
           }
         },
         "pt-BR" : {
@@ -17190,7 +17399,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "結果載入失敗☹️"
+            "value" : "結果載入失敗 ☹️"
           }
         }
       }
@@ -17260,7 +17469,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lanmè ajite"
+            "value" : "Lanmè Ajite"
           }
         },
         "pt-BR" : {
@@ -17331,7 +17540,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "線路搜尋"
+            "value" : "路線搜尋"
           }
         }
       }
@@ -17377,7 +17586,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "線路"
+            "value" : "路線"
           }
         }
       }
@@ -17400,7 +17609,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sove"
+            "value" : "Anrejistre"
           }
         },
         "pt-BR" : {
@@ -17447,7 +17656,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chanjman orè"
+            "value" : "Chanjman nan orè"
           }
         },
         "pt-BR" : {
@@ -17494,13 +17703,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chanjman Orè"
+            "value" : "Chanjman nan orè"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alteração de horário"
+            "value" : "Mudança de horário"
           }
         },
         "vi" : {
@@ -17610,7 +17819,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "按站點搜尋"
+            "value" : "依站點搜尋"
           }
         }
       }
@@ -17638,7 +17847,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver transporte perto de você"
+            "value" : "Ver tráfego perto de você"
           }
         },
         "vi" : {
@@ -17656,7 +17865,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "查看您附近的交通"
+            "value" : "查看您附近的大眾運輸"
           }
         }
       }
@@ -17799,7 +18008,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "選擇呼叫"
+            "value" : "點選以撥打電話"
           }
         }
       }
@@ -17852,7 +18061,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "選定%1$@%2$@%3$@"
+            "value" : "選定%1$@%2$@ %3$@"
           }
         }
       }
@@ -17905,7 +18114,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "選定%1$@%2$@%3$@，選定站點"
+            "value" : "選定%1$@%2$@ %3$@，為目前選取的站點"
           }
         }
       }
@@ -17958,7 +18167,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "選定%1$@預定駛離%2$@"
+            "value" : "選定%1$@預定從 %2$@ 出發"
           }
         }
       }
@@ -18011,7 +18220,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "選定%1$@預定駛離%2$@，選定站點"
+            "value" : "選定%1$@預定從 %2$@ 出發，為目前選取的站點"
           }
         }
       }
@@ -18034,7 +18243,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voye fidbak sou App la"
+            "value" : "Voye fidbak sou Aplikasyon an"
           }
         },
         "pt-BR" : {
@@ -18058,7 +18267,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "傳送應用程式回饋"
+            "value" : "傳送 App 意見回饋"
           }
         }
       }
@@ -18111,7 +18320,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "服務%1$@"
+            "value" : "停靠此站的路線：%1$@"
           }
         }
       }
@@ -18299,7 +18508,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "服務正在運行，但無法提供預計到達時間。"
+            "value" : "服務運行中，但無法提供預計到達時間。"
           }
         }
       }
@@ -18346,7 +18555,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "服務正在運行，但無法提供預計到達時間。查看地圖，看看%1$@目前所在的位置。"
+            "value" : "服務運行中，但無法提供預計到達時間。查看地圖，瞭解%1$@目前所在的位置。"
           }
         }
       }
@@ -18369,7 +18578,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sèvis ki kanpe"
+            "value" : "Sèvis sispann"
           }
         },
         "pt-BR" : {
@@ -18393,7 +18602,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "服務暫停"
+            "value" : "服務已暫停"
           }
         }
       }
@@ -18440,7 +18649,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "設定地圖顯示首選項"
+            "value" : "設定地圖顯示偏好"
           }
         }
       }
@@ -18462,7 +18671,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mete preferans ou pou enfòmasyon sou aksè estasyon yo"
+            "value" : "Mete preferans ou pou enfòmasyon sou aksesibilite estasyon yo"
           }
         },
         "pt-BR" : {
@@ -18486,7 +18695,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "設定車站無障礙資訊首選項"
+            "value" : "設定車站無障礙資訊偏好"
           }
         }
       }
@@ -18602,13 +18811,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "move tan"
+            "value" : "gwo move tan"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "clima severo"
+            "value" : "condições climáticas adversas"
           }
         },
         "vi" : {
@@ -18649,13 +18858,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Move Tan"
+            "value" : "Gwo Move Tan"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tempo ruim"
+            "value" : "Condições climáticas adversas"
           }
         },
         "vi" : {
@@ -18702,7 +18911,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ônibus vai-e-vem"
+            "value" : "Transporte circular"
           }
         },
         "vi" : {
@@ -18720,7 +18929,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "擺渡巴士"
+            "value" : "接駁巴士"
           }
         }
       }
@@ -18742,13 +18951,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Otobis navèt"
+            "value" : "Bis navèt"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ônibus de apoio"
+            "value" : "Ônibus circular"
           }
         },
         "vi" : {
@@ -18789,13 +18998,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Otobis Navèt"
+            "value" : "Bis Navèt"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ônibus vai-e-vem"
+            "value" : "Ônibus circular"
           }
         },
         "vi" : {
@@ -18813,7 +19022,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "穿梭巴士"
+            "value" : "接駁巴士"
           }
         }
       }
@@ -18836,13 +19045,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Otobis k ap fè lanavèt"
+            "value" : "Bis navèt yo"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ônibus de transferência"
+            "value" : "Ônibus circulares"
           }
         },
         "vi" : {
@@ -18860,7 +19069,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "擺渡巴士"
+            "value" : "接駁巴士"
           }
         }
       }
@@ -18889,7 +19098,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Serviço de substituição de ônibus vai-e-vem"
+            "value" : "Serviço de substituição de ônibus circulares"
           }
         },
         "vi" : {
@@ -18907,7 +19116,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "擺渡巴士取代原服務"
+            "value" : "以接駁巴士取代原有服務"
           }
         }
       }
@@ -18954,7 +19163,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "信號問題"
+            "value" : "號誌問題"
           }
         }
       }
@@ -19001,7 +19210,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "信號問題"
+            "value" : "號誌故障"
           }
         }
       }
@@ -19024,7 +19233,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "pann siyal"
+            "value" : "pwoblèm siyal"
           }
         },
         "pt-BR" : {
@@ -19048,7 +19257,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "信號故障"
+            "value" : "號誌故障"
           }
         }
       }
@@ -19095,7 +19304,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "信號故障"
+            "value" : "號誌故障"
           }
         }
       }
@@ -19142,7 +19351,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "單軌道"
+            "value" : "單線通行"
           }
         }
       }
@@ -19189,7 +19398,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "單軌道"
+            "value" : "單線通行"
           }
         }
       }
@@ -19212,7 +19421,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ray glise"
+            "value" : "ray ki glise"
           }
         },
         "pt-BR" : {
@@ -19400,7 +19609,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wout denèjman"
+            "value" : "Wout pou lè gen nèj"
           }
         },
         "pt-BR" : {
@@ -19424,7 +19633,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "雪道"
+            "value" : "降雪路段"
           }
         }
       }
@@ -19447,7 +19656,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wout denèjman"
+            "value" : "Wout pou Lè Gen Nèj"
           }
         },
         "pt-BR" : {
@@ -19471,7 +19680,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "雪地線路"
+            "value" : "降雪路段"
           }
         }
       }
@@ -19518,7 +19727,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "軟體許可證"
+            "value" : "軟體授權"
           }
         }
       }
@@ -19541,7 +19750,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gen kèk moun ki te twò chaje"
+            "value" : "Yon ti jan chaje"
           }
         },
         "pt-BR" : {
@@ -19565,7 +19774,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "略有擁擠"
+            "value" : "稍微擁擠"
           }
         }
       }
@@ -19612,7 +19821,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "南行"
+            "value" : "往南"
           }
         }
       }
@@ -19729,7 +19938,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "restriksyon vitès"
+            "value" : "limit vitès"
           }
         },
         "pt-BR" : {
@@ -19823,7 +20032,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mete wout nan favori"
+            "value" : "Make wout la ak yon etwal"
           }
         },
         "pt-BR" : {
@@ -19923,7 +20132,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "início do serviço"
+            "value" : "início da operação"
           }
         },
         "vi" : {
@@ -19941,7 +20150,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "服務開始"
+            "value" : "營運開始"
           }
         }
       }
@@ -19964,7 +20173,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "kòmansman sèvis"
+            "value" : "soti nan kòmansman rive nan fen sèvis la"
           }
         },
         "pt-BR" : {
@@ -20011,7 +20220,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apati demen jiskaske nou jwenn plis avi"
+            "value" : "Apati demen jiskaske yo bay lòt avi"
           }
         },
         "pt-BR" : {
@@ -20035,7 +20244,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自明日起，直至另行通知"
+            "value" : "自明日起生效，直至另行通知"
           }
         }
       }
@@ -20058,7 +20267,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enfòmasyon sou Aksè Estasyon"
+            "value" : "Enfòmasyon sou Aksesibilite Estasyon yo"
           }
         },
         "pt-BR" : {
@@ -20271,7 +20480,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "網站已關閉"
+            "value" : "站點已關閉"
           }
         }
       }
@@ -20341,13 +20550,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arè Fèmen"
+            "value" : "Arè yo deplase"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parada movimentada"
+            "value" : "Mudança de parada"
           }
         },
         "vi" : {
@@ -20365,7 +20574,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "網站已移動"
+            "value" : "站點遷移"
           }
         }
       }
@@ -20388,13 +20597,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arè Fèmen"
+            "value" : "Arè Yo Deplase"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parada movimentada"
+            "value" : "Mudança de parada"
           }
         },
         "vi" : {
@@ -20412,7 +20621,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "網站已移動"
+            "value" : "站點遷移"
           }
         }
       }
@@ -20435,7 +20644,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arè denèjman"
+            "value" : "Netwayaj nèj nan arè"
           }
         },
         "pt-BR" : {
@@ -20459,7 +20668,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "網站鏟雪中"
+            "value" : "站點除雪中"
           }
         }
       }
@@ -20482,7 +20691,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arè Denèjman"
+            "value" : "Netwayaj Nèj nan Arè"
           }
         },
         "pt-BR" : {
@@ -20506,7 +20715,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "網站鏟雪中"
+            "value" : "站點除雪中"
           }
         }
       }
@@ -20529,13 +20738,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arè sote"
+            "value" : "Arè kontoune"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parada ignorada"
+            "value" : "Parada desviada"
           }
         },
         "vi" : {
@@ -20553,7 +20762,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "網站跳停"
+            "value" : "此站不停靠"
           }
         }
       }
@@ -20576,13 +20785,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arè Sote"
+            "value" : "Arè Kontoune"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parada Ignorada"
+            "value" : "Parada desviada"
           }
         },
         "vi" : {
@@ -20600,7 +20809,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "網站跳停"
+            "value" : "此站不停靠"
           }
         }
       }
@@ -20648,7 +20857,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "靠站位置距離您%1$ld站"
+            "value" : "距離您還有 %1$ld 站"
           }
         }
       }
@@ -20743,7 +20952,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "網站"
+            "value" : "站點"
           }
         }
       }
@@ -20860,7 +21069,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Subway"
+            "value" : "Metwo"
           }
         },
         "pt-BR" : {
@@ -20931,7 +21140,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "概觀"
+            "value" : "摘要"
           }
         }
       }
@@ -20978,7 +21187,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "暫停"
+            "value" : "暫停服務"
           }
         }
       }
@@ -21048,7 +21257,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pwoblèm nan switch ray"
+            "value" : "Pwoblèm nan Switch Ray"
           }
         },
         "pt-BR" : {
@@ -21095,7 +21304,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "pann nan switch ray"
+            "value" : "pwoblèm nan switch ray"
           }
         },
         "pt-BR" : {
@@ -21142,7 +21351,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pann nan switch ray"
+            "value" : "Pwoblèm nan Switch Ray"
           }
         },
         "pt-BR" : {
@@ -21235,13 +21444,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tape sou arè yo pou ajoute yo nan Favorites"
+            "value" : "Tape sou arè yo pou ajoute yo nan sa ou pi renmen yo"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toque nas paradas para adicioná-las aos favoritos"
+            "value" : "Toque nas paradas para adicioná-las aos Favoritos"
           }
         },
         "vi" : {
@@ -21259,7 +21468,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "按一下網站可新增至我的最愛"
+            "value" : "點按站點即可加入收藏"
           }
         }
       }
@@ -21429,7 +21638,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Teste novos recursos"
+            "value" : "Testar novos recursos"
           }
         },
         "vi" : {
@@ -21476,7 +21685,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O %1$@ atribuído a esta rota está atualmente atendendo em outra viagem. Nós vamos mostrá-lo nesta rota assim que iniciar esta viagem."
+            "value" : "O %1$@ atribuído a esta rota está atualmente atendendo em outra viagem. Mostraremos ele nesta rota assim que iniciar esta viagem."
           }
         },
         "vi" : {
@@ -21494,7 +21703,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分配給此線路的%1$@目前正在為另一趟行程提供服務。一旦行程開始，我們就會在線路上顯示它。"
+            "value" : "分配給此線路的%1$@目前正在執行另一趟行程。待其開始本次行程後，我們便會將其顯示在路線上。"
           }
         }
       }
@@ -21523,7 +21732,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A localização de %1$@ pode não estar disponível com antecedência se um veículo ainda não tiver sido atribuído. Assim que o motorista iniciar a viagem, começaremos a mostrar a localização em tempo real."
+            "value" : "A localização de %1$@ pode não estar disponível com antecedência se um veículo ainda não tiver sido atribuído. Assim que o motorista iniciar a viagem, mostraremos a localização em tempo real."
           }
         },
         "vi" : {
@@ -21541,7 +21750,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "如果尚未分配車輛，%1$@位置可能無法提前使用。一旦司機開始行程，我們將開始顯示即時位置。"
+            "value" : "如果尚未指派車輛，可能無法提前取得%1$@的位置資訊。駕駛開始行程後，我們就會顯示即時位置。"
           }
         }
       }
@@ -21635,7 +21844,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "本%1$@已到達目的地。"
+            "value" : "此%1$@已抵達終點站。"
           }
         }
       }
@@ -21664,7 +21873,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este %1$@ ainda não está atribuído a uma viagem."
+            "value" : "%1$@ ainda não está atribuído a uma viagem."
           }
         },
         "vi" : {
@@ -21682,7 +21891,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "該%1$@尚未分配至任一車次。"
+            "value" : "此%1$@尚未指派至任何班次。"
           }
         }
       }
@@ -21762,7 +21971,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Arè sa a gen %1$ld asansè fèmen"
+                  "value" : "Arè sa a gen %1$ld asansè ki fèmen"
                 }
               },
               "other" : {
@@ -21792,13 +22001,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Esta parada tem %1$ld elevador fechado"
+                  "value" : "Esta parada tem %1$ld elevador interditado"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Esta parada tem %1$ld elevadores fechados"
+                  "value" : "Esta parada tem %1$ld elevadores interditados"
                 }
               }
             }
@@ -21834,10 +22043,56 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "本站有%1$ld部電梯 已關閉"
+                  "value" : "此站有 %1$ld 部電梯已關閉"
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "This stop is drop-off only" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta parada es solo para descenso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cet arrêt est réservé à la descente"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arè sa a se pou depoze moun sèlman"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta parada é somente para desembarque"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Điểm dừng này chỉ để trả khách"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此站点仅供下客"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此站點僅限下車"
           }
         }
       }
@@ -21884,7 +22139,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "此車站不適合輪椅通行"
+            "value" : "此站點不提供無障礙服務"
           }
         }
       }
@@ -21931,7 +22186,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "本行程已取消。對於造成您的不便，我們深表歉意。"
+            "value" : "此班次已取消，造成您的不便，我們深感抱歉。"
           }
         }
       }
@@ -21954,7 +22209,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ranplasman mare"
+            "value" : "ranplasman travès ray yo"
           }
         },
         "pt-BR" : {
@@ -22001,13 +22256,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ranplasman kòd"
+            "value" : "Ranplasman Travès Ray yo"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Troca de pneu"
+            "value" : "Substituição de dormentes"
           }
         },
         "vi" : {
@@ -22048,7 +22303,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "seleksyonè tan"
+            "value" : "selektè lè"
           }
         },
         "pt-BR" : {
@@ -22096,7 +22351,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chanje/dezaktive kalite seleksyon tan an"
+            "value" : "Chanje kalite seleksyon tan an"
           }
         },
         "pt-BR" : {
@@ -22191,7 +22446,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pou"
+            "value" : "pou"
           }
         },
         "pt-BR" : {
@@ -22263,7 +22518,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "要尋找網站，請先選擇路線"
+            "value" : "請先選擇路線，再搜尋站點"
           }
         }
       }
@@ -22334,13 +22589,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suiv %1$@"
+            "value" : "Ray %1$@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trilho %1$@"
+            "value" : "Via %1$@"
           }
         },
         "vi" : {
@@ -22358,7 +22613,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "追蹤%1$@"
+            "value" : "%1$@ 號軌道月台"
           }
         }
       }
@@ -22381,13 +22636,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suiv chanjman"
+            "value" : "Chanjman ray"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alteração de trilho"
+            "value" : "Alteração de via"
           }
         },
         "vi" : {
@@ -22428,13 +22683,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suiv Chanjman"
+            "value" : "Chanjman Ray"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alteração de trilho"
+            "value" : "Alteração de via"
           }
         },
         "vi" : {
@@ -22481,7 +22736,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "problema nos trilhos"
+            "value" : "problema na via"
           }
         },
         "vi" : {
@@ -22528,7 +22783,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Problema de trilho"
+            "value" : "Problema na via"
           }
         },
         "vi" : {
@@ -22614,7 +22869,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tras la poko detèmine"
+            "value" : "Ray la poko detèmine"
           }
         },
         "pt-BR" : {
@@ -22667,7 +22922,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "trabalho nos trilhos"
+            "value" : "obras na via"
           }
         },
         "vi" : {
@@ -22708,13 +22963,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Travay sou Ray"
+            "value" : "Travay Ap Fèt sou Ray"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obras no trilho"
+            "value" : "Obras na via"
           }
         },
         "vi" : {
@@ -22779,7 +23034,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "交通"
+            "value" : "交通狀況"
           }
         }
       }
@@ -22802,7 +23057,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sikilasyon"
+            "value" : "Trafik"
           }
         },
         "pt-BR" : {
@@ -22826,7 +23081,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "交通"
+            "value" : "交通狀況"
           }
         }
       }
@@ -22942,7 +23197,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dyagram anbouteyaj tren yo"
+            "value" : "Dyagram ki montre jan tren an chaje"
           }
         },
         "pt-BR" : {
@@ -23012,7 +23267,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "列車線路已暫停營運"
+            "value" : "列車服務已暫停"
           }
         }
       }
@@ -23059,7 +23314,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "火車交通"
+            "value" : "列車行駛狀況"
           }
         }
       }
@@ -23106,7 +23361,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "火車交通"
+            "value" : "列車行駛狀況"
           }
         }
       }
@@ -23200,7 +23455,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "行程已取消"
+            "value" : "班次已取消"
           }
         }
       }
@@ -23295,7 +23550,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "暫無可用班次"
+            "value" : "目前無法取得班次資訊"
           }
         }
       }
@@ -23324,7 +23579,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planejador de trajetos"
+            "value" : "Planejador de viagens"
           }
         },
         "vi" : {
@@ -23389,7 +23644,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "嘗試不同的拼字或名稱。"
+            "value" : "請嘗試使用不同的拼法或名稱。"
           }
         }
       }
@@ -23436,7 +23691,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "再次嘗試搜尋。"
+            "value" : "請重新搜尋。"
           }
         }
       }
@@ -23459,7 +23714,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ouvri nan pa Paramèt"
+            "value" : "Aktive nan Paramèt"
           }
         },
         "pt-BR" : {
@@ -23483,7 +23738,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在設定中打開"
+            "value" : "在設定中開啟"
           }
         }
       }
@@ -23512,7 +23767,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossível conectar"
+            "value" : "Não foi possível conectar"
           }
         },
         "vi" : {
@@ -23530,7 +23785,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "無法連接"
+            "value" : "無法連線"
           }
         }
       }
@@ -23577,7 +23832,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "撤銷"
+            "value" : "復原"
           }
         }
       }
@@ -23600,7 +23855,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "detache wout la soti nan tèt lis la"
+            "value" : "retire wout la soti nan tèt lis la"
           }
         },
         "pt-BR" : {
@@ -23624,7 +23879,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "從清單頂部取消固定線路"
+            "value" : "從清單頂部取消釘選線路"
           }
         }
       }
@@ -23647,13 +23902,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "pasaje ap fè dezòd"
+            "value" : "pasaje ki fè dezòd"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "passageiro problemático"
+            "value" : "passageiro desordeiro"
           }
         },
         "vi" : {
@@ -23694,13 +23949,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pasaje Ki Pa Respekte Règ"
+            "value" : "Pasaje ki Fè Dezòd"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Passageiro indisciplinado"
+            "value" : "Passageiro desordeiro"
           }
         },
         "vi" : {
@@ -23765,7 +24020,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "等待進一步通知"
+            "value" : "直至另行通知"
           }
         }
       }
@@ -23845,13 +24100,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Mizajou %1$ld minit de sa"
+                  "value" : "Mete ajou %1$ld minit de sa"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Mizajou %1$ld minit de sa"
+                  "value" : "Mete ajou %1$ld minit de sa"
                 }
               },
               "two" : {
@@ -23917,7 +24172,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%1$ld分鐘前更新"
+                  "value" : "%1$ld 分鐘前更新"
                 }
               }
             }
@@ -23949,7 +24204,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atualização: %1$@"
+            "value" : "Atualizado: %1$@"
           }
         },
         "vi" : {
@@ -24013,7 +24268,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "使用「更多」導覽標籤傳送應用程式回饋"
+            "value" : "前往導覽列中的「更多」，提交 App 意見回饋"
           }
         }
       }
@@ -24036,7 +24291,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "travay ap fèt sou ray"
+            "value" : "travay sou rezo piblik yo"
           }
         },
         "pt-BR" : {
@@ -24083,7 +24338,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Travay sèvis piblik"
+            "value" : "Travay sou Rezo Piblik yo"
           }
         },
         "pt-BR" : {
@@ -24207,7 +24462,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "版本%1$@(%2$@)"
+            "value" : "版本 %1$@ (%2$@)"
           }
         }
       }
@@ -24230,7 +24485,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ranplasman bis"
+            "value" : "ranplasman bato"
           }
         },
         "pt-BR" : {
@@ -24277,7 +24532,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ranplasman bis"
+            "value" : "Ranplasman Bato"
           }
         },
         "pt-BR" : {
@@ -24324,7 +24579,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "trafik"
+            "value" : "trafik bato"
           }
         },
         "pt-BR" : {
@@ -24371,7 +24626,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sikilasyon"
+            "value" : "Trafik bato"
           }
         },
         "pt-BR" : {
@@ -24465,13 +24720,13 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gade sous la sou GitHub"
+            "value" : "Gade Sous la sou GitHub"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Visualizar Origem no GitHub"
+            "value" : "Visualizar origem no GitHub"
           }
         },
         "vi" : {
@@ -24489,7 +24744,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在GitHub上查看原始程式碼"
+            "value" : "在GitHub上檢視原始碼"
           }
         }
       }
@@ -24535,7 +24790,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "查看波士頓附近的交通"
+            "value" : "查看波士頓附近的大眾運輸"
           }
         }
       }
@@ -24564,7 +24819,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esperando para partir"
+            "value" : "Aguardando para partir"
           }
         },
         "vi" : {
@@ -24582,7 +24837,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "等待離開"
+            "value" : "等待出發"
           }
         }
       }
@@ -24606,7 +24861,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nou ka voye notifikasyon ba ou konsènan pwoblèm sou wout sa a anvan ou ale."
+            "value" : "Nou ka voye notifikasyon push ba ou sou pwoblèm ki genyen sou wout sa a anvan ou pati"
           }
         },
         "pt-BR" : {
@@ -24658,7 +24913,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda não temos previsões em tempo real para esta viagem, mas ela vai aparecer mais perto do horário programado. Se a viagem for adiada ou cancelada, informaremos você por aqui."
+            "value" : "Ainda não temos previsões em tempo real para esta viagem, mas detalhes aparecerão mais perto do horário programado. Se a viagem for adiada ou cancelada, informaremos você por aqui."
           }
         },
         "vi" : {
@@ -24676,7 +24931,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "我們還沒有這次行程的即時預測，但當接近預定時間時就會顯示。如果行程延誤或取消，我們會在這裡通知您。"
+            "value" : "目前尚無此班次的即時預測，但當接近預定時間時就會顯示。如果行程延誤或取消，我們會在這裡通知您。"
           }
         }
       }
@@ -24705,7 +24960,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agora mostramos as **chegadas** e **localizações das composições** detalhadas de uma só vez. Conte-nos sua opinião!"
+            "value" : "Agora mostramos detalhes das **chegadas** e **localizações dos veículos** de uma só vez. Queremos saber sua opinião!"
           }
         },
         "vi" : {
@@ -24769,7 +25024,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "我們使用您的位置向您顯示附近的交通選擇。"
+            "value" : "我們會使用您的位置資訊，顯示附近的大眾運輸選項。"
           }
         }
       }
@@ -24815,7 +25070,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "出行前我們將為您推播各類營運異常資訊！"
+            "value" : "出發前，我們會通知您任何營運變動！"
           }
         }
       }
@@ -24838,7 +25093,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "move tan"
+            "value" : "tan"
           }
         },
         "pt-BR" : {
@@ -24956,7 +25211,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "工作日"
+            "value" : "平日"
           }
         }
       }
@@ -25050,7 +25305,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "西行"
+            "value" : "往西"
           }
         }
       }
@@ -25121,7 +25376,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lè w ap itilize TalkBack, nou ka kache sèten kat pou aplikasyon an ka pi fasil pou navige."
+            "value" : "Lè w ap itilize TalkBack, nou ka kache kat yo pou aplikasyon an ka pi fasil pou navige."
           }
         },
         "pt-BR" : {
@@ -25145,7 +25400,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "使用TalkBack時，我們可以隱藏地圖以使應用程式更易於導航。"
+            "value" : "使用TalkBack時，您可以隱藏地圖，讓App更容易操作。"
           }
         }
       }
@@ -25167,7 +25422,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lè w ap itilize VoiceOver, nou ka kache sèten kat pou aplikasyon an ka pi fasil pou navige."
+            "value" : "Lè w ap itilize VoiceOver, nou ka kache kat yo pou aplikasyon an ka pi fasil pou navige."
           }
         },
         "pt-BR" : {
@@ -25191,7 +25446,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "使用VoiceOver時，我們可以隱藏地圖以使應用程式更易於導航。"
+            "value" : "使用VoiceOver時，您可以隱藏地圖，讓App更容易操作。"
           }
         }
       }
@@ -25221,7 +25476,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "p ap rete nan %1$@ %2$@"
+            "value" : "p ap kanpe nan %1$@ %2$@"
           }
         },
         "pt-BR" : {
@@ -25273,7 +25528,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você sempre poderá mudar as configurações de localização mais tarde no aplicativo Configurações."
+            "value" : "Você sempre poderá mudar as configurações de localização mais tarde no aplicativo de Configurações."
           }
         },
         "vi" : {
@@ -25291,7 +25546,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "您可以隨時在「設定」應用程式中變更位置設定。"
+            "value" : "您也可以隨時前往手機的「設定」App，變更定位設定。"
           }
         }
       }
@@ -25313,7 +25568,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "W ap wè opsyon transpò piblik ki toupre a epi jwenn pi bon rezilta rechèch lè w ouvri Sèvis Pozisyon an pou MBTA Go."
+            "value" : "W ap wè opsyon transpò piblik ki toupre a epi jwenn pi bon rezilta rechèch lè w aktive Sèvis Pozisyon an pou MBTA Go."
           }
         },
         "pt-BR" : {
@@ -25383,7 +25638,7 @@
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "您位於MBTA服務區域之外。"
+            "value" : "您目前位於MBTA服務範圍之外。"
           }
         }
       }
