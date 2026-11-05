@@ -12,8 +12,7 @@ import SwiftUI
 
 struct FcmSubscriptionModifier: ViewModifier {
     let fcmToken: String?
-
-    @State var favoritesVM: IFavoritesViewModel = ViewModelDI().favorites
+    let favoritesVM: IFavoritesViewModel
 
     func body(content: Content) -> some View {
         content
@@ -30,9 +29,11 @@ public extension View {
     /** Update subscriptions on the backend when the FCM token is set or changed. */
     func handleFcmTokenSubscriptions(
         fcmToken: String?,
+        favoritesVM: IFavoritesViewModel = ViewModelDI().favorites
     ) -> some View {
         modifier(FcmSubscriptionModifier(
             fcmToken: fcmToken,
+            favoritesVM: favoritesVM
         ))
     }
 }

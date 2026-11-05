@@ -27,7 +27,7 @@ final class FavoritesModifierTests: XCTestCase {
             $0.routeStopDirection(route: Route.Id("route"), stop: "stop", direction: 0)
         }
 
-        let favoritesBinding = Binding(get: { Favorites(routeStopDirection: [:]) }, set: {
+        let favoritesBinding: Binding<Favorites?> = Binding(get: { Favorites(routeStopDirection: [:]) }, set: {
             guard $0 == updatedFavorites else { return }
             setExp.fulfill()
         })
@@ -63,11 +63,14 @@ final class FavoritesModifierTests: XCTestCase {
         }
         LoadedFavorites.last = previouslyLoaded
 
-        let favoritesBinding = Binding(get: { Favorites(routeStopDirection: [:]) }, set: { setFavorites in
-            if setFavorites == previouslyLoaded {
-                setExp.fulfill()
+        let favoritesBinding: Binding<Favorites?> = Binding(
+            get: { Favorites(routeStopDirection: [:]) },
+            set: { setFavorites in
+                if setFavorites == previouslyLoaded {
+                    setExp.fulfill()
+                }
             }
-        })
+        )
 
         let sut = Text("test").favorites(favoritesBinding)
 
