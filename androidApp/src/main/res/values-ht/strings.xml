@@ -5,7 +5,6 @@
     <string name="accident">Aksidan</string>
     <string name="accident_lowercase">aksidan</string>
     <string name="add_another_time_period">Ajoute yon lòt peryòd tan</string>
-    <string name="add_confirmation_button">Ajoute</string>
     <string name="add_favorite_label">ajoute yon preferans</string>
     <!-- Used as the header for the route picker when the user is adding a favorite stop, the button
     to add favorite stops on the empty favorites page, and the voiceover text for the button to
@@ -95,7 +94,6 @@
     <string name="details">Detay yo</string>
     <string name="detour">Detou</string>
     <string name="directionTo">%1$s pou</string>
-    <string name="direction_service_only">%1$s sèvis sèlman</string>
     <string name="disabled_bus">Bis Ki Pa Aktif</string>
     <string name="disabled_bus_lowercase">bis ki pa aktif</string>
     <string name="disabled_train">Tren Ki Pa Aktif</string>

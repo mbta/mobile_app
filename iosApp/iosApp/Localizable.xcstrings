@@ -242,53 +242,6 @@
         }
       }
     },
-    "**%1$@** at **%2$@** added to Favorites" : {
-      "comment" : "Favorite added toast text, the first value is the route name (Red Line, 1 bus),\nand the second is a stop name (Ruggles, Alewife).\nThe asterisks surround bolded text. ex. \"[Green Line] at [Arlington] added to Favorites\"",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@** en **%2$@** se agregó a Favoritos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@** à **%2$@** ajouté aux Favoris"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@** nan **%2$@** ajoute nan sa ou pi renmen yo"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@** em **%2$@** adicionado aos Favoritos"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@** tại **%2$@** đã được thêm vào mục Yêu thích"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已将**%2$@**的**%1$@**添加到收藏夹"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已收藏**%2$@**的**%1$@**"
-          }
-        }
-      }
-    },
     "**%1$@**%2$@%3$@%4$@" : {
       "comment" : "Alert summary in the format of \"[Alert effect][at location][through timeframe][until recurrence]\", ex \"[Stop closed][ at Haymarket][ through this Friday][]\" or \"[Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday]\"",
       "localizations" : {
@@ -1667,59 +1620,6 @@
         }
       }
     },
-    "%@ service only" : {
-      "comment" : "Notice that there is only service in a single direction for a route at a stop within the favorites flow. Ex: [Easbound] service only.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ service only"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ únicamente"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Service uniquement %1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ sèvis sèlman"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ somente serviço"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chỉ phục vụ chuyến %1$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "仅提供%1$@方向的服务"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "僅提供%1$@方向服務"
-          }
-        }
-      }
-    },
     "%@ to" : {
       "comment" : "Label the direction a list of arrivals is for.\nPossible values include Northbound, Southbound, Inbound, Outbound, Eastbound, Westbound.\nFor example, \"[Northbound] to [Alewife]\"",
       "localizations" : {
@@ -2933,165 +2833,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "事故"
-          }
-        }
-      }
-    },
-    "Add" : {
-      "comment" : "Text for confirmation button when user is adding to their favorites",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agregar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajouter"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajoute"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adicionar"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thêm"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "添加"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "收藏"
-          }
-        }
-      }
-    },
-    "Add **%1$@** at **%2$@**" : {
-      "comment" : "Title for a confirmation modal when a user adds a favorite route + stop and already has the context that what they are adding is a favorite. Ex: Add [Green Line] at [Boylston]",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add **%1$@** at **%2$@**"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agregar **%1$@** en **%2$@**"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajouter **%1$@** à **%2$@**"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajoute **%1$@** nan **%2$@**"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adicionar **%1$@** em **%2$@**"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thêm **%1$@** tại **%2$@**"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "添加**%2$@**站的**%1$@**"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "收藏**%2$@**的**%1$@**"
-          }
-        }
-      }
-    },
-    "Add **%1$@** at **%2$@** to Favorites" : {
-      "comment" : "Title for a confirmation modal when a user adds a favorite route + stop. Ex: Add [Green Line] at [Boylston] to Favorites",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add **%1$@** at **%2$@** to Favorites"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agregar **%1$@** en **%2$@** a Favoritos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajouter **%1$@** à **%2$@** aux Favoris"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajoute **%1$@** nan **%2$@** sa ou pi renmen yo"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adicionar **%1$@** em **%2$@** aos Favoritos"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thêm **%1$@** tại **%2$@** vào mục Yêu thích"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "将**%2$@**的**%1$@**添加到收藏夹"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "收藏**%2$@**的**%1$@**"
           }
         }
       }
@@ -7779,53 +7520,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "延遲"
-          }
-        }
-      }
-    },
-    "Delete" : {
-      "comment" : "Content description for a button that removes a favorited route/stop/direction",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eliminar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Supprimer"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Efase"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Excluir"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Xóa"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "删除"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "刪除"
           }
         }
       }
@@ -15284,53 +14978,6 @@
         }
       }
     },
-    "Now get disruption notifications" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Active ahora las notificaciones sobre interrupciones del servicio"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recevez des notifications en cas de perturbation"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kounye a resevwa notifikasyon sou entèripsyon"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agora receba notificações de interrupções"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Giờ đây, quý vị có thể nhận thông báo khi có sự cố gián đoạn"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "立即开启运营变动通知"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "立即接收營運異常通知"
-          }
-        }
-      }
-    },
     "Now save your frequently used stops to **one easy place**." : {
       "comment" : "Promo text that describes the value of a new feature to favorite stops",
       "localizations" : {
@@ -15374,52 +15021,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "將您常用的站點儲存在**收藏夾**，方便隨時查看。"
-          }
-        }
-      }
-    },
-    "Okay" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aceptar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oke"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ok"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Okay"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "好的"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "好的"
           }
         }
       }
@@ -20250,54 +19851,6 @@
         }
       }
     },
-    "Station Closed" : {
-      "comment" : "Possible alert effect",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estación cerrada"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Station fermée"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estasyon Fèmen"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estação fechada"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nhà ga Đóng cửa"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "车站已关闭"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "車站已關閉"
-          }
-        }
-      }
-    },
     "Station issue" : {
       "comment" : "Possible alert effect",
       "localizations" : {
@@ -22049,52 +21602,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "This stop is drop-off only" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta parada es solo para descenso"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cet arrêt est réservé à la descente"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arè sa a se pou depoze moun sèlman"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta parada é somente para desembarque"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Điểm dừng này chỉ để trả khách"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "此站点仅供下客"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "此站點僅限下車"
           }
         }
       }
