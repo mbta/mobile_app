@@ -11,7 +11,11 @@ public data class AppVersion(val major: UInt, val minor: UInt, val patch: UInt) 
 
     public companion object {
         public fun parse(version: String): AppVersion {
-            val numbers = version.split('.', limit = 3).map(String::toUInt)
+            val components = version.split('.', limit = 3)
+            require(components.size == 3) {
+                "Invalid app version '$version': expected major.minor.patch"
+            }
+            val numbers = components.map(String::toUInt)
             return AppVersion(numbers[0], numbers[1], numbers[2])
         }
     }

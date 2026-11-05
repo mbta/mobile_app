@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android.pages
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -171,7 +170,7 @@ fun MapAndSheetPage(
     val currentNavEntry = currentNavBackStackEntry?.let { SheetRoutes.fromNavBackStackEntry(it) }
     val previousNavEntry: SheetRoutes? = rememberPrevious(currentNavEntry)
 
-    var navControllerInitialized: Boolean by rememberSaveable { mutableStateOf(false) }
+    val navControllerInitialized = currentNavBackStackEntry != null
 
     val modalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var currentModalRoute by
@@ -217,12 +216,9 @@ fun MapAndSheetPage(
     }
 
     fun navigateToEntrypoint(entrypoint: SheetRoutes.Entrypoint) {
-        try {
-            navController.navigate(entrypoint) { popUpTo(entrypoint) }
-        } catch (_: IllegalStateException) {
-            // This should only happen in tests when the navigation graph hasn't been initialized
-            Log.w("MapAndSheetPage", "Failed to navigate to sheet entrypoint")
-        }
+        // Before the graph is attached, NavHost uses the entrypoint as its start destination.
+        if (navController.currentBackStackEntry == null) return
+        navController.navigate(entrypoint) { popUpTo(entrypoint) }
     }
 
     fun openModalWithCloseCallback(modal: ModalRoutes, onClose: () -> Unit) {
@@ -281,10 +277,6 @@ fun MapAndSheetPage(
         }
     }
 
-    LaunchedEffect(currentNavBackStackEntry) {
-        navControllerInitialized = navControllerInitialized || currentNavBackStackEntry != null
-    }
-
     val deepLinkState by deepLinkStateFlow.collectAsStateWithLifecycle()
     LaunchedEffect(deepLinkState, navControllerInitialized) {
         val state = deepLinkState
@@ -317,7 +309,12 @@ fun MapAndSheetPage(
     }
 
     val filterUpdates by stopDetailsViewModel.filterUpdates.collectAsStateWithLifecycle()
-    LaunchedEffect(filterUpdates) { filterUpdates?.let { updateStopDetailsFilters(it) } }
+    LaunchedEffect(filterUpdates, navControllerInitialized) {
+        // filterUpdates is a StateFlow on a shared view model, so it can replay a value before the
+        // NavHost has attached its graph. Defer until the controller is ready rather than drop it.
+        if (!navControllerInitialized) return@LaunchedEffect
+        filterUpdates?.let { updateStopDetailsFilters(it) }
+    }
 
     val vehiclesData: List<Vehicle> =
         subscribeToVehicles(
