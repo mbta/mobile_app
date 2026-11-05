@@ -15,17 +15,17 @@
     <string name="additional_service_sentence_case">Plis sèvis</string>
     <plurals name="affected_stops">
         <item quantity="one">&lt;b&gt;%1$d&lt;/b&gt; arè ki afekte</item>
-        <item quantity="other">&lt;b&gt;%1$d&lt;/b&gt; arè ki afekte</item>
+        <item quantity="other">&lt;b&gt;%1$d&lt;/b&gt; arè ki afekte yo</item>
     </plurals>
     <string name="alert">Avètisman</string>
     <string name="alert_details">Detay Avètisman</string>
     <string name="alert_elevator_header">Fèmti asansè (%1$s)</string>
     <string name="alert_ended">Avètisman an pa aplikab ankò</string>
     <string name="alert_summary">&lt;b&gt;%1$s&lt;/b&gt;%2$s%3$s%4$s</string>
-    <string name="alert_summary_location_successive">" soti nan rive &lt;b&gt;%1$s&lt;/b&gt; nan &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="alert_summary_location_successive">" soti nan &lt;b&gt;%1$s&lt;/b&gt; rive nan &lt;b&gt;%2$s&lt;/b&gt;"</string>
     <string name="alert_summary_timeframe_this_week">" jiska %1$s"</string>
     <string name="alerts_channel" translatable="false">Service Alerts</string>
-    <string name="all_day">Tout lajounen</string>
+    <string name="all_day">Tout jounen an</string>
     <string name="alternative_path">Lòt chemen</string>
     <string name="amber_alert">Avètisman Amber</string>
     <string name="amber_alert_sentence_case">Avètisman amber</string>
@@ -81,7 +81,7 @@
     <string name="crowding_some_crowding">Yon ti jan chaje</string>
     <string name="crowding_unknown">Yo pa konnen si li chaje</string>
     <string name="current_locale">ht</string>
-    <string name="custom">Personnalisé</string>
+    <string name="custom">Pèsonalize</string>
     <string name="daily">Chak jou</string>
     <string name="delay">Reta</string>
     <string name="delays_due_to_cause">&lt;b&gt;Reta&lt;/b&gt; akòz %1$s</string>
@@ -114,7 +114,7 @@
     <string name="drawbridge_issue_lowercase">pwoblèm pon ki ka bouje a</string>
     <string name="eastbound">Pran direksyon lès</string>
     <string name="edit">Modifye</string>
-    <string name="edit_favorite">Modifye Favorite yo</string>
+    <string name="edit_favorite">modifye sa ou pi renmen an</string>
     <string name="edit_favorite_title">Modifye Sa Ou Pi Renmen An</string>
     <string name="edit_favorites">Modifye Sa Ou Pi Renmen Yo</string>
     <string name="effect" translatable="false">&lt;b&gt;%1$s&lt;/b&gt;</string>
@@ -124,11 +124,11 @@
     <string name="elevator_closed_sentence_case">Asansè a fèmen</string>
     <string name="elevator_closure">Fèmti Asansè</string>
     <plurals name="elevator_closure_count">
-        <item quantity="one">%1$d asansè fèmen</item>
-        <item quantity="other">%1$d asansè ki fèmen</item>
+        <item quantity="one">%1$d asansè a fèmen</item>
+        <item quantity="other">%1$d asansè yo fèmen</item>
     </plurals>
     <plurals name="elevator_closure_count_accessibility_description">
-        <item quantity="one">Arè sa a gen %1$d asansè fèmen</item>
+        <item quantity="one">Arè sa a gen %1$d asansè ki fèmen</item>
         <item quantity="other">Arè sa a gen %1$d asansè ki fèmen</item>
     </plurals>
     <string name="en_dash_range">%1$s – %2$s</string>
@@ -138,7 +138,7 @@
     <string name="escalator_closed_sentence_case">Eskalye a fèmen</string>
     <string name="escalator_closure">Fèmti Eskalye</string>
     <string name="evening">Aswè</string>
-    <string name="exact_hours_format_abbr">&lt;b&gt;%1$d&lt;/b&gt; pou</string>
+    <string name="exact_hours_format_abbr">&lt;b&gt;%1$d&lt;/b&gt; èdtan</string>
     <string name="expand_remaining_stops">elaji arè ki rete yo</string>
     <string name="expand_stops">elaji arè yo</string>
     <string name="explainer_headline_finishing_another">Ap fini yon lòt vwayaj</string>
@@ -228,7 +228,7 @@
     <string name="mechanical_problem_lowercase">pwoblèm mekanik</string>
     <string name="medical_emergency">Ijans Medikal</string>
     <string name="medical_emergency_lowercase">ijans medikal</string>
-    <string name="midday">Midi</string>
+    <string name="midday">Mitan jounen</string>
     <string name="minutes_abbr">&lt;b&gt;%1$d&lt;/b&gt; minit</string>
     <string name="modified_service">Sèvis Modifye</string>
     <string name="modified_service_sentence_case">Sèvis modifye</string>
@@ -256,7 +256,7 @@
     <string name="next_trip_on">Pwochen vwayaj la se nan dat &lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="no_matching_routes">Pa gen wout %1$s ki matche</string>
     <string name="no_predictions">Pa gen prediksyon disponib</string>
-    <string name="no_results_found">Nou pa jwenn rezilta</string>
+    <string name="no_results_found">Nou pa jwenn rezilta 🤔</string>
     <string name="no_service">Pa gen Sèvis</string>
     <string name="no_service_sentence_case">Pa gen sèvis</string>
     <string name="no_service_today">Pa gen sèvis jodi a</string>
@@ -429,7 +429,7 @@
     <string name="tie_replacement_lowercase">ranplasman travès ray yo</string>
     <string name="time_picker_type_toggle">Chanje kalite seleksyon tan an</string>
     <string name="to">Pou</string>
-    <string name="to_lowercase">Pou</string>
+    <string name="to_lowercase">pou</string>
     <string name="toast_tip_prefix">Konsèy: %1$s</string>
     <string name="toggle_direction">baskile direksyon</string>
     <string name="track_change">Chanjman Ray</string>
@@ -464,8 +464,8 @@
     <string name="until_further_notice">Jiskaske yo bay lòt avi</string>
     <string name="updated_at">Mizajou: %1$s</string>
     <plurals name="updated_mins_ago">
-        <item quantity="one">Mizajou %1$d minit de sa</item>
-        <item quantity="other">Mizajou %1$d minit de sa</item>
+        <item quantity="one">Mete ajou %1$d minit de sa</item>
+        <item quantity="other">Mete ajou %1$d minit de sa</item>
     </plurals>
     <string name="utility_work">Travay sou Rezo Piblik yo</string>
     <string name="utility_work_lowercase">travay sou rezo piblik yo</string>

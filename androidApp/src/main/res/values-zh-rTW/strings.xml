@@ -216,7 +216,7 @@
     <string name="location_settings_prompt_keep_off">保持關閉定位服務</string>
     <string name="location_settings_prompt_title">MBTA Go在定位服務開啟時效果最佳</string>
     <string name="location_settings_prompt_turn_on">在設定中打開</string>
-    <string name="looping">循環播放</string>
+    <string name="looping">循環行駛</string>
     <string name="maintenance">維護</string>
     <string name="maintenance_lowercase">維護</string>
     <string name="mechanical_issue">機械問題</string>
@@ -267,7 +267,7 @@
     <string name="not_accessible_stop_card">此車站不適合輪椅通行</string>
     <string name="notice">通知</string>
     <string name="notifications_beta_toggle_label">營運變動通知</string>
-    <string name="notification_settings_empty_state">在您出發前，我們可以向您傳送此路線的異常推播通知</string>
+    <string name="notification_settings_empty_state">我們可以在您出發前，傳送此路線異常狀況的推播通知給您</string>
     <string name="notifications_enabled">通知已開啟</string>
     <string name="notifications_favorites_hint">立即&lt;u&gt;編輯您的收藏&lt;/u&gt;以接收營運變動通知</string>
     <string name="notifications_settings_link">在「設定」中開啟「通知」許可權</string>
