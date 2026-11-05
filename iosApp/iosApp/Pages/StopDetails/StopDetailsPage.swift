@@ -78,7 +78,7 @@ struct StopDetailsPage: View {
             favorites: favorites,
             global: global,
             now: now,
-            onUpdateFavorites: {  },
+            onUpdateFavorites: {},
             setStopFilter: { filter in navManager.setLastStopDetailsFilter(stopId, filter) },
             setTripFilter: { filter in navManager.setLastTripDetailsFilter(stopId, filter) },
             navCallbacks: navCallbacks,

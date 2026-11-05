@@ -10,7 +10,7 @@ import Shared
 import SwiftUI
 
 class LoadedFavorites {
-    static var last: Favorites? = nil
+    static var last: Favorites?
 }
 
 struct FavoritesModifier: ViewModifier {

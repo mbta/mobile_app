@@ -80,7 +80,10 @@ struct StopDetailsFilteredView: View {
         self.navManager = navManager
     }
 
-    var isFavorite: Bool { if let routeStopDirection { favorites?.isFavorite(routeStopDirection) ?? false } else { false }}
+    var isFavorite: Bool {
+        if let routeStopDirection { favorites?.isFavorite(routeStopDirection) ?? false } else { false }
+    }
+
     var nowInstant: EasternTimeInstant { now.toEasternInstant() }
     var routeStopDirection: RouteStopDirection? { .init(
         route: stopFilter.routeId,

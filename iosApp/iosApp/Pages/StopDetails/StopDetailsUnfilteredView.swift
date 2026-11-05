@@ -165,7 +165,7 @@ struct StopDetailsUnfilteredView: View {
                                         cardData: routeCardData,
                                         global: global,
                                         now: now,
-                                        isFavorite: { favorites?.isFavorite($0) ?? false},
+                                        isFavorite: { favorites?.isFavorite($0) ?? false },
                                         pushNavEntry: { entry in navManager.pushNavEntry(entry) },
                                         showStopHeader: false
                                     )
