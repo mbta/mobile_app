@@ -393,6 +393,50 @@ final class TripStopRowTests: XCTestCase {
         wait(for: [alertTapped, linkTapped], timeout: 1)
     }
 
+    func testTrackChangeScheduledTargeted() throws {
+        let now = EasternTimeInstant.now()
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let trip = objects.trip { _ in }
+        let route = objects.route { $0.type = .commuterRail }
+        let scheduledTrackChange = TrackChange.Scheduled(platformCode: "2", platformName: "Track 2")
+        let entry = TripDetailsStopList.Entry(
+            stop: stop, stopSequence: 0, disruption: nil,
+            schedule: nil, prediction: nil,
+            vehicle: nil, routes: [route], elevatorAlerts: [], trackChange: scheduledTrackChange
+        )
+
+        let explainerOpened = expectation(description: "scheduled track change explainer opened")
+        let linkTapped = expectation(description: "stop link tapped")
+        linkTapped.isInverted = true
+
+        let sut = TripStopRow(
+            stop: entry,
+            trip: trip,
+            now: now,
+            onTapLink: { _ in linkTapped.fulfill() },
+            onOpenAlertDetails: { _ in },
+            openExplainer: { type in
+                switch onEnum(of: type) {
+                case let .scheduledTrackChange(trackChange):
+                    XCTAssertEqual("2", trackChange.data.platformCode)
+                    XCTAssertEqual("Track 2", trackChange.data.platformName)
+                    explainerOpened.fulfill()
+                default:
+                    XCTFail("expected scheduled track change explainer")
+                }
+            },
+            route: route,
+            routeAccents: .init(route: route),
+            stopListContext: .trip(MatcherData(value: route.id), trip.directionId, trip.id),
+            targeted: true,
+        ).withFixedSettings([:])
+
+        XCTAssertNotNil(try sut.inspect().find(TrackChangePill.self))
+        try sut.inspect().find(ViewType.Button.self).tap()
+        wait(for: [explainerOpened, linkTapped], timeout: 1)
+    }
+
     func testTrackChangeAlertNotTargeted() throws {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()

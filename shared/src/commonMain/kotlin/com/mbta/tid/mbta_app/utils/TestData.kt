@@ -306,7 +306,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             shortName = "15",
             sortOrder = 50_150,
             textColor = "000000",
-            lineId = Line.Id("line-15"),
+            lineId = Line.Id("line-15171"),
             routePatternIds = null,
         ),
     )
@@ -322,7 +322,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             shortName = "67",
             sortOrder = 50_670,
             textColor = "000000",
-            lineId = Line.Id("line-6779"),
+            lineId = Line.Id("line-67"),
             routePatternIds = null,
         ),
     )
@@ -332,10 +332,9 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             type = RouteType.BUS,
             color = "FFC72C",
             directionNames = listOf("Outbound", "Inbound"),
-            directionDestinations =
-                listOf("Clarendon Hill or Arlington Center", "Lechmere Station"),
+            directionDestinations = listOf("Arlington Center", "Lechmere Station"),
             isListedRoute = true,
-            longName = "Clarendon Hill or Arlington Center - Lechmere Station",
+            longName = "Arlington Center - Lechmere Station",
             shortName = "87",
             sortOrder = 50_870,
             textColor = "000000",
@@ -351,10 +350,11 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             id = "Red-3-0",
             directionId = 0,
             name = "Alewife - Braintree",
-            sortOrder = 100_100_040,
+            sortOrder = 100_100_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Red-C1-0",
             routeId = Route.Id("Red"),
+            canonical = true,
         ),
     )
     objects.put(
@@ -362,10 +362,11 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             id = "Red-1-0",
             directionId = 0,
             name = "Alewife - Ashmont",
-            sortOrder = 100_100_041,
+            sortOrder = 100_100_001,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Red-C2-0",
             routeId = Route.Id("Red"),
+            canonical = true,
         ),
     )
     objects.put(
@@ -377,6 +378,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Red-C1-1",
             routeId = Route.Id("Red"),
+            canonical = true,
         ),
     )
     objects.put(
@@ -388,6 +390,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Red-C2-1",
             routeId = Route.Id("Red"),
+            canonical = true,
         ),
     )
     objects.put(
@@ -399,6 +402,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Orange-C1-0",
             routeId = Route.Id("Orange"),
+            canonical = true,
         ),
     )
     objects.put(
@@ -410,6 +414,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Orange-C1-1",
             routeId = Route.Id("Orange"),
+            canonical = true,
         ),
     )
     objects.put(
@@ -421,6 +426,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-B-C1-0",
             routeId = Route.Id("Green-B"),
+            canonical = true,
         ),
     )
     objects.put(
@@ -432,6 +438,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-B-C1-1",
             routeId = Route.Id("Green-B"),
+            canonical = true,
         ),
     )
     objects.put(
@@ -443,6 +450,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-C-C1-0",
             routeId = Route.Id("Green-C"),
+            canonical = true,
         ),
     )
     objects.put(
@@ -454,6 +462,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-C-C1-1",
             routeId = Route.Id("Green-C"),
+            canonical = true,
         ),
     )
     objects.put(
@@ -465,6 +474,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-D-C1-0",
             routeId = Route.Id("Green-D"),
+            canonical = true,
         ),
     )
     objects.put(
@@ -476,6 +486,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-D-C1-1",
             routeId = Route.Id("Green-D"),
+            canonical = true,
         ),
     )
     objects.put(
@@ -487,6 +498,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-E-C1-0",
             routeId = Route.Id("Green-E"),
+            canonical = true,
         ),
     )
     objects.put(
@@ -498,6 +510,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-E-C1-1",
             routeId = Route.Id("Green-E"),
+            canonical = true,
         ),
     )
     objects.put(
@@ -507,8 +520,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "South Station - Logan Airport Terminals",
             sortOrder = 100_510_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "72039742",
+            representativeTripId = "78612827",
             routeId = Route.Id("741"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -518,8 +532,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "Logan Airport Terminals - South Station",
             sortOrder = 100_511_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "72039744",
+            representativeTripId = "78612831",
             routeId = Route.Id("741"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -529,8 +544,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "South Station - Design Center (PM Route)",
             sortOrder = 100_520_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "72039786",
+            representativeTripId = "78611643",
             routeId = Route.Id("742"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -540,8 +556,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "Design Center - South Station (PM - Omits 88 Black Falcon Ave)",
             sortOrder = 100_521_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "72039768",
+            representativeTripId = "78611644",
             routeId = Route.Id("742"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -551,8 +568,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "South Station - Chelsea Station",
             sortOrder = 100_530_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "72040977",
+            representativeTripId = "78611864",
             routeId = Route.Id("743"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -562,8 +580,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "Chelsea Station - South Station",
             sortOrder = 100_531_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "72040978",
+            representativeTripId = "78612119",
             routeId = Route.Id("743"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -573,8 +592,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "South Station - Silver Line Way",
             sortOrder = 100_570_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "72039743",
+            representativeTripId = "78611656",
             routeId = Route.Id("746"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -584,8 +604,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "Silver Line Way - South Station",
             sortOrder = 100_571_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "72039750",
+            representativeTripId = "78611654",
             routeId = Route.Id("746"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -595,8 +616,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "North Station - Wachusett",
             sortOrder = 200_030_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "HaverhillRestoredWKDY-744237-405",
+            representativeTripId = "NorthFall26WKDYBase-881942-4023",
             routeId = Route.Id("CR-Fitchburg"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -606,8 +628,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "Wachusett - North Station",
             sortOrder = 200_031_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "HaverhillRestoredWKDY-744235-400",
+            representativeTripId = "NorthFall26WKDYBase-881943-4022",
             routeId = Route.Id("CR-Fitchburg"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -619,6 +642,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-CR-Haverhill-C1-0",
             routeId = Route.Id("CR-Haverhill"),
+            canonical = true,
         ),
     )
     objects.put(
@@ -630,6 +654,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-CR-Haverhill-C1-1",
             routeId = Route.Id("CR-Haverhill"),
+            canonical = true,
         ),
     )
     objects.put(
@@ -641,6 +666,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-CR-Lowell-C1-0",
             routeId = Route.Id("CR-Lowell"),
+            canonical = true,
         ),
     )
     objects.put(
@@ -652,6 +678,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-CR-Lowell-C1-1",
             routeId = Route.Id("CR-Lowell"),
+            canonical = true,
         ),
     )
     objects.put(
@@ -661,8 +688,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "North Station - Newburyport",
             sortOrder = 200_120_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "HaverhillRestoredWKDY-744341-125",
+            representativeTripId = "NorthFall26WKDYBase-882056-1113",
             routeId = Route.Id("CR-Newburyport"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -672,8 +700,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "North Station - Rockport",
             sortOrder = 200_120_010,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "HaverhillRestoredWKDY-744312-27",
+            representativeTripId = "NorthFall26WKDYBase-881961-1019",
             routeId = Route.Id("CR-Newburyport"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -683,8 +712,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "Newburyport - North Station",
             sortOrder = 200_121_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "HaverhillRestoredWKDY-744338-114",
+            representativeTripId = "NorthFall26WKDYBase-882006-1118",
             routeId = Route.Id("CR-Newburyport"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -694,8 +724,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "Rockport - North Station",
             sortOrder = 200_121_010,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "HaverhillRestoredWKDY-744311-24",
+            representativeTripId = "NorthFall26WKDYBase-881990-1020",
             routeId = Route.Id("CR-Newburyport"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -705,8 +736,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "South Station - Wickford Junction via Back Bay",
             sortOrder = 200_130_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "Sept8Read-767850-839",
+            representativeTripId = "FBTieJobPhase17006patch-879459-6015",
             routeId = Route.Id("CR-Providence"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -716,8 +748,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "South Station - Stoughton via Back Bay",
             sortOrder = 200_130_010,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "Sept8Read-768056-925",
+            representativeTripId = "FBTieJobPhase17006patch-879400-6309",
             routeId = Route.Id("CR-Providence"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -727,8 +760,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "Wickford Junction - South Station via Back Bay",
             sortOrder = 200_131_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "Sept8Read-767840-852",
+            representativeTripId = "FBTieJobPhase17006patch-879390-6038",
             routeId = Route.Id("CR-Providence"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -738,8 +772,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "Stoughton - South Station via Back Bay",
             sortOrder = 200_131_010,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "Sept8Read-768057-930",
+            representativeTripId = "FBTieJobPhase17006patch-879397-6310",
             routeId = Route.Id("CR-Providence"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -749,8 +784,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "Ruggles Station - Fields Corner Station",
             sortOrder = 501_500_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "71373591",
+            representativeTripId = "78977752",
             routeId = Route.Id("15"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -760,8 +796,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "Fields Corner Station - Ruggles Station",
             sortOrder = 501_501_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "71373380",
+            representativeTripId = "78977562",
             routeId = Route.Id("15"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -771,8 +808,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "Alewife Station - Turkey Hill",
             sortOrder = 506_700_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "71694757",
+            representativeTripId = "78512855",
             routeId = Route.Id("67"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -782,8 +820,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "Turkey Hill - Alewife Station",
             sortOrder = 506_701_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "71694754",
+            representativeTripId = "78512852",
             routeId = Route.Id("67"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -793,8 +832,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "Lechmere Station - Arlington Center",
             sortOrder = 508_700_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "71694434",
+            representativeTripId = "78514094",
             routeId = Route.Id("87"),
+            canonical = false,
         ),
     )
     objects.put(
@@ -804,8 +844,9 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             name = "Arlington Center - Lechmere Station",
             sortOrder = 508_701_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "71694436",
+            representativeTripId = "78514088",
             routeId = Route.Id("87"),
+            canonical = false,
         ),
     )
 }
@@ -1086,8 +1127,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "17861",
-            latitude = 42.336572,
-            longitude = -71.089616,
+            latitude = 42.336855,
+            longitude = -71.089449,
             name = "Ruggles",
             locationType = LocationType.STOP,
             description = "Ruggles - Upper Busway",
@@ -1103,13 +1144,13 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "17862",
-            latitude = 42.336489,
-            longitude = -71.089085,
+            latitude = 42.33623,
+            longitude = -71.089359,
             name = "Ruggles",
             locationType = LocationType.STOP,
-            description = "Ruggles - Lower Busway Lane 1",
-            platformCode = "1",
-            platformName = "Lower Busway Lane 1",
+            description = "Ruggles - Lower Busway Berth A1",
+            platformCode = "A1",
+            platformName = "Lower Busway Berth A1",
             vehicleType = RouteType.BUS,
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
@@ -1120,13 +1161,132 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "17863",
-            latitude = 42.33639,
-            longitude = -71.08905,
+            latitude = 42.336359,
+            longitude = -71.08922,
             name = "Ruggles",
             locationType = LocationType.STOP,
-            description = "Ruggles - Lower Busway Lane 2",
-            platformCode = "2",
-            platformName = "Lower Busway Lane 2",
+            description = "Ruggles - Lower Busway Berth A2",
+            platformCode = "A2",
+            platformName = "Lower Busway Berth A2",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-rugg",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        ),
+    )
+    objects.put(
+        Stop(
+            id = "17865",
+            latitude = 42.336496,
+            longitude = -71.089015,
+            name = "Ruggles",
+            locationType = LocationType.STOP,
+            description = "Ruggles - Lower Busway Berth A3",
+            platformCode = "A3",
+            platformName = "Lower Busway Berth A3",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-rugg",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        ),
+    )
+    objects.put(
+        Stop(
+            id = "17866",
+            latitude = 42.336638,
+            longitude = -71.088853,
+            name = "Ruggles",
+            locationType = LocationType.STOP,
+            description = "Ruggles - Lower Busway Berth A4",
+            platformCode = "A4",
+            platformName = "Lower Busway Berth A4",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-rugg",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        ),
+    )
+    objects.put(
+        Stop(
+            id = "17867",
+            latitude = 42.336109,
+            longitude = -71.089188,
+            name = "Ruggles",
+            locationType = LocationType.STOP,
+            description = "Ruggles - Lower Busway Berth B1",
+            platformCode = "B1",
+            platformName = "Lower Busway Berth B1",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-rugg",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        ),
+    )
+    objects.put(
+        Stop(
+            id = "17868",
+            latitude = 42.336257,
+            longitude = -71.089009,
+            name = "Ruggles",
+            locationType = LocationType.STOP,
+            description = "Ruggles - Lower Busway Berth B2",
+            platformCode = "B2",
+            platformName = "Lower Busway Berth B2",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-rugg",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        ),
+    )
+    objects.put(
+        Stop(
+            id = "17869",
+            latitude = 42.3364,
+            longitude = -71.088835,
+            name = "Ruggles",
+            locationType = LocationType.STOP,
+            description = "Ruggles - Lower Busway Berth B3",
+            platformCode = "B3",
+            platformName = "Lower Busway Berth B3",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-rugg",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        ),
+    )
+    objects.put(
+        Stop(
+            id = "17870",
+            latitude = 42.336479,
+            longitude = -71.08874,
+            name = "Ruggles",
+            locationType = LocationType.STOP,
+            description = "Ruggles - Lower Busway Berth B4",
+            platformCode = "B4",
+            platformName = "Lower Busway Berth B4",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-rugg",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        ),
+    )
+    objects.put(
+        Stop(
+            id = "17871",
+            latitude = 42.336539,
+            longitude = -71.088668,
+            name = "Ruggles",
+            locationType = LocationType.STOP,
+            description = "Ruggles - Lower Busway Berth B5",
+            platformCode = "B5",
+            platformName = "Lower Busway Berth B5",
             vehicleType = RouteType.BUS,
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
@@ -1239,7 +1399,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "29002",
-            latitude = 42.384386,
+            latitude = 42.3843863,
             longitude = -71.076502,
             name = "Sullivan Square",
             locationType = LocationType.STOP,
@@ -1443,8 +1603,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "3125",
-            latitude = 42.275585,
-            longitude = -71.028752,
+            latitude = 42.275514,
+            longitude = -71.02871,
             name = "North Quincy",
             locationType = LocationType.STOP,
             description = "North Quincy - Busway",
@@ -1460,8 +1620,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "32001",
-            latitude = 42.251696,
-            longitude = -71.004973,
+            latitude = 42.251709,
+            longitude = -71.005047,
             name = "Quincy Center",
             locationType = LocationType.STOP,
             description = "Quincy Center - Berth 1",
@@ -1477,8 +1637,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "32002",
-            latitude = 42.251772,
-            longitude = -71.005099,
+            latitude = 42.251841,
+            longitude = -71.00512,
             name = "Quincy Center",
             locationType = LocationType.STOP,
             description = "Quincy Center - Berth 2",
@@ -1494,8 +1654,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "32003",
-            latitude = 42.251847,
-            longitude = -71.005168,
+            latitude = 42.251999,
+            longitude = -71.00522,
             name = "Quincy Center",
             locationType = LocationType.STOP,
             description = "Quincy Center - Berth 3",
@@ -1511,8 +1671,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "32004",
-            latitude = 42.251908,
-            longitude = -71.0052,
+            latitude = 42.252118,
+            longitude = -71.005294,
             name = "Quincy Center",
             locationType = LocationType.STOP,
             description = "Quincy Center - Berth 4",
@@ -1528,8 +1688,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "32005",
-            latitude = 42.251975,
-            longitude = -71.005231,
+            latitude = 42.252262,
+            longitude = -71.005384,
             name = "Quincy Center",
             locationType = LocationType.STOP,
             description = "Quincy Center - Berth 5",
@@ -1544,14 +1704,48 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     )
     objects.put(
         Stop(
-            id = "323",
-            latitude = 42.299807,
-            longitude = -71.062219,
+            id = "32301",
+            latitude = 42.299774,
+            longitude = -71.062396,
             name = "Fields Corner",
             locationType = LocationType.STOP,
-            description = "Fields Corner - Busway",
-            platformCode = null,
-            platformName = "Busway",
+            description = "Fields Corner - Busway Berth A",
+            platformCode = "A",
+            platformName = "Busway Berth A",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-fldcr",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        ),
+    )
+    objects.put(
+        Stop(
+            id = "32302",
+            latitude = 42.300011,
+            longitude = -71.061485,
+            name = "Fields Corner",
+            locationType = LocationType.STOP,
+            description = "Fields Corner - Busway Berth B",
+            platformCode = "B",
+            platformName = "Busway Berth B",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-fldcr",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        ),
+    )
+    objects.put(
+        Stop(
+            id = "32303",
+            latitude = 42.300142,
+            longitude = -71.060923,
+            name = "Fields Corner",
+            locationType = LocationType.STOP,
+            description = "Fields Corner - Busway Berth C",
+            platformCode = "C",
+            platformName = "Busway Berth C",
             vehicleType = RouteType.BUS,
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
@@ -1596,8 +1790,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "38671",
-            latitude = 42.207213,
-            longitude = -71.001278,
+            latitude = 42.206892,
+            longitude = -71.00129,
             name = "Braintree",
             locationType = LocationType.STOP,
             description = "Braintree - Busway",
@@ -2157,8 +2351,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "70020",
-            latitude = 42.355518,
-            longitude = -71.060225,
+            latitude = 42.355111,
+            longitude = -71.061004,
             name = "Downtown Crossing",
             locationType = LocationType.STOP,
             description = "Downtown Crossing - Orange Line - Forest Hills",
@@ -2174,8 +2368,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "70021",
-            latitude = 42.355518,
-            longitude = -71.060225,
+            latitude = 42.35588,
+            longitude = -71.059978,
             name = "Downtown Crossing",
             locationType = LocationType.STOP,
             description = "Downtown Crossing - Orange Line - Oak Grove",
@@ -2769,8 +2963,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "70075",
-            latitude = 42.356395,
-            longitude = -71.062424,
+            latitude = 42.3563946,
+            longitude = -71.0624242,
             name = "Park Street",
             locationType = LocationType.STOP,
             description = "Park Street - Red Line - Ashmont/Braintree",
@@ -2786,8 +2980,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "70076",
-            latitude = 42.356395,
-            longitude = -71.062424,
+            latitude = 42.3563946,
+            longitude = -71.0624242,
             name = "Park Street",
             locationType = LocationType.STOP,
             description = "Park Street - Red Line - Alewife",
@@ -2803,8 +2997,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "70077",
-            latitude = 42.355518,
-            longitude = -71.060225,
+            latitude = 42.354672,
+            longitude = -71.059426,
             name = "Downtown Crossing",
             locationType = LocationType.STOP,
             description = "Downtown Crossing - Red Line - Ashmont/Braintree",
@@ -2820,8 +3014,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "70078",
-            latitude = 42.355518,
-            longitude = -71.060225,
+            latitude = 42.354763,
+            longitude = -71.059375,
             name = "Downtown Crossing",
             locationType = LocationType.STOP,
             description = "Downtown Crossing - Red Line - Alewife",
@@ -3041,7 +3235,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "70091",
-            latitude = 42.293126,
+            latitude = 42.2931258,
             longitude = -71.065738,
             name = "Shawmut",
             locationType = LocationType.STOP,
@@ -3058,7 +3252,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "70092",
-            latitude = 42.293126,
+            latitude = 42.2931258,
             longitude = -71.065738,
             name = "Shawmut",
             locationType = LocationType.STOP,
@@ -4384,8 +4578,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "70196",
-            latitude = 42.356395,
-            longitude = -71.062424,
+            latitude = 42.3563946,
+            longitude = -71.0624242,
             name = "Park Street",
             locationType = LocationType.STOP,
             description = "Park Street - Green Line - (B) Boston College",
@@ -4401,8 +4595,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "70197",
-            latitude = 42.356395,
-            longitude = -71.062424,
+            latitude = 42.3563946,
+            longitude = -71.0624242,
             name = "Park Street",
             locationType = LocationType.STOP,
             description = "Park Street - Green Line - (C) Cleveland Circle",
@@ -4418,8 +4612,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "70198",
-            latitude = 42.356395,
-            longitude = -71.062424,
+            latitude = 42.3563946,
+            longitude = -71.0624242,
             name = "Park Street",
             locationType = LocationType.STOP,
             description = "Park Street - Green Line - (D) Riverside",
@@ -4435,8 +4629,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "70199",
-            latitude = 42.356395,
-            longitude = -71.062424,
+            latitude = 42.3563946,
+            longitude = -71.0624242,
             name = "Park Street",
             locationType = LocationType.STOP,
             description = "Park Street - Green Line - (E) Heath Street",
@@ -4452,8 +4646,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "70200",
-            latitude = 42.356395,
-            longitude = -71.062424,
+            latitude = 42.3563946,
+            longitude = -71.0624242,
             name = "Park Street",
             locationType = LocationType.STOP,
             description = "Park Street - Green Line - Government Center & North",
@@ -4922,7 +5116,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
             parentStationId = "place-tapst",
-            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
     )
     objects.put(
@@ -4939,14 +5133,14 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
             parentStationId = "place-tapst",
-            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
     )
     objects.put(
         Stop(
             id = "70233",
-            latitude = 42.337807,
-            longitude = -71.141753,
+            latitude = 42.337621,
+            longitude = -71.142706,
             name = "Dean Road",
             locationType = LocationType.STOP,
             description = "Dean Road - Green Line - (C) Cleveland Circle",
@@ -4956,7 +5150,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
             parentStationId = "place-denrd",
-            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
     )
     objects.put(
@@ -4973,7 +5167,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
             parentStationId = "place-denrd",
-            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
     )
     objects.put(
@@ -4990,14 +5184,14 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
             parentStationId = "place-engav",
-            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
     )
     objects.put(
         Stop(
             id = "70236",
-            latitude = 42.337011,
-            longitude = -71.145368,
+            latitude = 42.337199,
+            longitude = -71.144382,
             name = "Englewood Avenue",
             locationType = LocationType.STOP,
             description = "Englewood Avenue - Green Line - Park Street & North",
@@ -5007,7 +5201,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
             parentStationId = "place-engav",
-            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
     )
     objects.put(
@@ -5765,9 +5959,9 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             longitude = -71.055242,
             name = "South Station",
             locationType = LocationType.STOP,
-            description = "South Station - Silver Line - Airport/Design Center/Chelsea",
+            description = "South Station - Silver Line - SL2/SL3 Design Center/Chelsea",
             platformCode = null,
-            platformName = "Airport/Design Center/Chelsea",
+            platformName = "SL3 Design Center/Chelsea",
             vehicleType = RouteType.BUS,
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
@@ -5947,6 +6141,23 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     )
     objects.put(
         Stop(
+            id = "84611",
+            latitude = 42.352271,
+            longitude = -71.055242,
+            name = "South Station",
+            locationType = LocationType.STOP,
+            description = "South Station - Silver Line - SL1 Airport",
+            platformCode = null,
+            platformName = "Airport",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-sstat",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        ),
+    )
+    objects.put(
+        Stop(
             id = "875",
             latitude = 42.300479,
             longitude = -71.113634,
@@ -5982,8 +6193,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "9070061",
-            latitude = 42.396091,
-            longitude = -71.141886,
+            latitude = 42.39575,
+            longitude = -71.14158,
             name = "Alewife",
             locationType = LocationType.STOP,
             description = "Alewife - Busway Berth A2",
@@ -6016,8 +6227,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "9328",
-            latitude = 42.436807,
-            longitude = -71.070338,
+            latitude = 42.436734,
+            longitude = -71.07029,
             name = "Oak Grove Busway",
             locationType = LocationType.STOP,
             description = null,
@@ -6698,11 +6909,12 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             id = "NEC-2276-B",
             latitude = 42.347497,
             longitude = -71.075894,
-            name = "Back Bay",
+            name = "Back Bay - Dartmouth St @ Back Bay Station",
             locationType = LocationType.STOP,
-            description = "Back Bay - Commuter Rail Shuttle",
+            description =
+                "Back Bay - Commuter Rail Outbound Shuttle - Dartmouth St @ Back Bay Station",
             platformCode = null,
-            platformName = "Commuter Rail Shuttle",
+            platformName = "Outbound Shuttle",
             vehicleType = RouteType.BUS,
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
@@ -6713,8 +6925,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "NEC-2287",
-            latitude = 42.35141,
-            longitude = -71.055417,
+            latitude = 42.351497,
+            longitude = -71.055059,
             name = "South Station",
             locationType = LocationType.STOP,
             description = "South Station - Commuter Rail",
@@ -6730,8 +6942,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "NEC-2287-01",
-            latitude = 42.351302,
-            longitude = -71.05571,
+            latitude = 42.351083,
+            longitude = -71.055797,
             name = "South Station",
             locationType = LocationType.STOP,
             description = "South Station - Commuter Rail - Track 1",
@@ -6747,8 +6959,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "NEC-2287-02",
-            latitude = 42.351261,
-            longitude = -71.055552,
+            latitude = 42.351046,
+            longitude = -71.05565,
             name = "South Station",
             locationType = LocationType.STOP,
             description = "South Station - Commuter Rail - Track 2",
@@ -6764,8 +6976,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "NEC-2287-03",
-            latitude = 42.351261,
-            longitude = -71.055552,
+            latitude = 42.351046,
+            longitude = -71.05565,
             name = "South Station",
             locationType = LocationType.STOP,
             description = "South Station - Commuter Rail - Track 3",
@@ -6781,8 +6993,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "NEC-2287-04",
-            latitude = 42.35122,
-            longitude = -71.055396,
+            latitude = 42.351011,
+            longitude = -71.05549,
             name = "South Station",
             locationType = LocationType.STOP,
             description = "South Station - Commuter Rail - Track 4",
@@ -6798,8 +7010,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "NEC-2287-05",
-            latitude = 42.35122,
-            longitude = -71.055396,
+            latitude = 42.351011,
+            longitude = -71.05549,
             name = "South Station",
             locationType = LocationType.STOP,
             description = "South Station - Commuter Rail - Track 5",
@@ -6815,8 +7027,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "NEC-2287-06",
-            latitude = 42.351178,
-            longitude = -71.055238,
+            latitude = 42.350978,
+            longitude = -71.055328,
             name = "South Station",
             locationType = LocationType.STOP,
             description = "South Station - Commuter Rail - Track 6",
@@ -6832,8 +7044,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "NEC-2287-07",
-            latitude = 42.351178,
-            longitude = -71.055238,
+            latitude = 42.350978,
+            longitude = -71.055328,
             name = "South Station",
             locationType = LocationType.STOP,
             description = "South Station - Commuter Rail - Track 7",
@@ -6849,8 +7061,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "NEC-2287-08",
-            latitude = 42.351136,
-            longitude = -71.055081,
+            latitude = 42.350944,
+            longitude = -71.055169,
             name = "South Station",
             locationType = LocationType.STOP,
             description = "South Station - Commuter Rail - Track 8",
@@ -6866,8 +7078,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "NEC-2287-09",
-            latitude = 42.351136,
-            longitude = -71.055081,
+            latitude = 42.350944,
+            longitude = -71.055169,
             name = "South Station",
             locationType = LocationType.STOP,
             description = "South Station - Commuter Rail - Track 9",
@@ -6883,8 +7095,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "NEC-2287-10",
-            latitude = 42.351034,
-            longitude = -71.054958,
+            latitude = 42.350914,
+            longitude = -71.055006,
             name = "South Station",
             locationType = LocationType.STOP,
             description = "South Station - Commuter Rail - Track 10",
@@ -6900,8 +7112,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "NEC-2287-11",
-            latitude = 42.351034,
-            longitude = -71.054958,
+            latitude = 42.350914,
+            longitude = -71.055006,
             name = "South Station",
             locationType = LocationType.STOP,
             description = "South Station - Commuter Rail - Track 11",
@@ -6918,7 +7130,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
         Stop(
             id = "NEC-2287-12",
             latitude = 42.350742,
-            longitude = -71.05493,
+            longitude = -71.054932,
             name = "South Station",
             locationType = LocationType.STOP,
             description = "South Station - Commuter Rail - Track 12",
@@ -6935,7 +7147,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
         Stop(
             id = "NEC-2287-13",
             latitude = 42.350742,
-            longitude = -71.05493,
+            longitude = -71.054932,
             name = "South Station",
             locationType = LocationType.STOP,
             description = "South Station - Commuter Rail - Track 13",
@@ -6958,6 +7170,74 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             description = "South Station - Commuter Rail Shuttle - Atlantic Ave @ Summer St",
             platformCode = null,
             platformName = "Commuter Rail Shuttle",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-sstat",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        ),
+    )
+    objects.put(
+        Stop(
+            id = "NEC-2287-B2",
+            latitude = 42.350428,
+            longitude = -71.055812,
+            name = "South Station - Bus Terminal Gates 28-29",
+            locationType = LocationType.STOP,
+            description = "South Station - Shuttle - Bus Terminal Gates 28-29",
+            platformCode = "28/29",
+            platformName = "Bus Gates 28-29",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-sstat",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        ),
+    )
+    objects.put(
+        Stop(
+            id = "NEC-2287-B36",
+            latitude = 42.351232,
+            longitude = -71.05534,
+            name = "South Station - Bus Terminal Gate 36",
+            locationType = LocationType.STOP,
+            description = "South Station - Shuttle - Bus Terminal Gate 36",
+            platformCode = "36",
+            platformName = "Bus Gate 36",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-sstat",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        ),
+    )
+    objects.put(
+        Stop(
+            id = "NEC-2287-B37",
+            latitude = 42.351091,
+            longitude = -71.055143,
+            name = "South Station - Bus Terminal Gate 37",
+            locationType = LocationType.STOP,
+            description = "South Station - Shuttle - Bus Terminal Gate 37",
+            platformCode = "37",
+            platformName = "Bus Gate 37",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-sstat",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        ),
+    )
+    objects.put(
+        Stop(
+            id = "NEC-2287-B4",
+            latitude = 42.349957,
+            longitude = -71.05566,
+            name = "South Station - Bus Terminal Gates 4-6",
+            locationType = LocationType.STOP,
+            description = "South Station - Shuttle - Bus Terminal Gates 4-6",
+            platformCode = "4-6",
+            platformName = "Bus Gates 4-6",
             vehicleType = RouteType.BUS,
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
@@ -7377,10 +7657,12 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                 listOf<String>(
                     "224",
                     "9070043",
-                    "Boat-Long-South",
                     "236",
+                    "Boat-Long-South",
                     "9170043",
                     "Boat-Long",
+                    "Boat-Long-North-5B",
+                    "Boat-Long-North-5C",
                     "Boat-Aquarium",
                 ),
             parentStationId = null,
@@ -7674,7 +7956,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "node-bbsta-w57stairs-lobby",
                     "node-bbsta-w57stairs-platform",
                 ),
-            connectingStopIds = listOf<String>("11384", "176", "9270014", "71855", "34585"),
+            connectingStopIds = listOf<String>("11384", "176", "9270014", "71855"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
@@ -7734,7 +8016,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             platformName = null,
             vehicleType = null,
             childStopIds = listOf<String>("70229", "70230"),
-            connectingStopIds = listOf<String>("1292", "1276", "9070229"),
+            connectingStopIds = listOf<String>("9070229", "1292", "1276"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
@@ -7870,7 +8152,9 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "70178",
                     "70179",
                     "door-brkhl-bhs",
+                    "door-brkhl-brington",
                     "door-brkhl-cypress",
+                    "node-brkhl-bringtonramp-bottom",
                     "node-brkhl-eastramp-top",
                 ),
             connectingStopIds = listOf<String>("9170178"),
@@ -7898,8 +8182,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "place-brntn",
-            latitude = 42.207854,
-            longitude = -71.001138,
+            latitude = 42.2078543,
+            longitude = -71.0011385,
             name = "Braintree",
             locationType = LocationType.STATION,
             description = null,
@@ -8234,7 +8518,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "node-cntsq-westernstair-platform",
                 ),
             connectingStopIds =
-                listOf<String>("102", "1060", "1123", "72", "2443", "1059", "9070070", "2755"),
+                listOf<String>("102", "11230", "1123", "72", "2443", "1059", "9070070"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
@@ -8349,8 +8633,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "place-denrd",
-            latitude = 42.337807,
-            longitude = -71.141853,
+            latitude = 42.337656,
+            longitude = -71.142156,
             name = "Dean Road",
             locationType = LocationType.STATION,
             description = null,
@@ -8358,9 +8642,9 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             platformName = null,
             vehicleType = null,
             childStopIds = listOf<String>("70233", "70234"),
-            connectingStopIds = listOf<String>("9070233", "9070234"),
+            connectingStopIds = listOf<String>("9070234", "9070233"),
             parentStationId = null,
-            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
     )
     objects.put(
@@ -8383,6 +8667,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "door-dwnxg-101arch",
                     "door-dwnxg-chauncy",
                     "door-dwnxg-franklin",
+                    "door-dwnxg-franklinelev",
                     "door-dwnxg-hawley",
                     "door-dwnxg-macys",
                     "door-dwnxg-rochebros",
@@ -8493,8 +8778,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "place-engav",
-            latitude = 42.336971,
-            longitude = -71.14566,
+            latitude = 42.337104,
+            longitude = -71.144852,
             name = "Englewood Avenue",
             locationType = LocationType.STATION,
             description = null,
@@ -8504,7 +8789,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             childStopIds = listOf<String>("70235", "70236"),
             connectingStopIds = listOf<String>("9070236", "9070235"),
             parentStationId = null,
-            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
     )
     objects.put(
@@ -8528,7 +8813,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "node-esomr-innercross-platform",
                     "node-esomr-washcross-platform",
                 ),
-            connectingStopIds = listOf<String>("2761"),
+            connectingStopIds = listOf<String>("2761", "2776"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
@@ -8604,7 +8889,9 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             vehicleType = null,
             childStopIds =
                 listOf<String>(
-                    "323",
+                    "32301",
+                    "32302",
+                    "32303",
                     "70089",
                     "70090",
                     "door-fldcr-busway",
@@ -8817,7 +9104,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "node-grnst-stairs-lobby",
                     "node-grnst-stairs-platform",
                 ),
-            connectingStopIds = listOf<String>("9070002", "52371", "52370", "9070003"),
+            connectingStopIds = listOf<String>("9070002", "9070003"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
@@ -8883,7 +9170,17 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "node-haecl-passogstair-platform",
                 ),
             connectingStopIds =
-                listOf<String>("30203", "9170024", "4511", "117", "8309", "9070025", "9070024"),
+                listOf<String>(
+                    "11170",
+                    "30203",
+                    "9170024",
+                    "83091",
+                    "117",
+                    "4511",
+                    "8309",
+                    "9070025",
+                    "9070024",
+                ),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
@@ -8950,7 +9247,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "node-harsq-upperramp-upper",
                     "node-harsq-yardstair-lobby",
                 ),
-            connectingStopIds = listOf<String>("9070072", "110", "22549"),
+            connectingStopIds = listOf<String>("9070072", "110", "2168", "22549"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
@@ -9070,7 +9367,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "node-jaksn-stairs-lobby",
                     "node-jaksn-stairs-platform",
                 ),
-            connectingStopIds = listOf<String>("9070007", "41157"),
+            connectingStopIds = listOf<String>("9070007"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
@@ -9199,8 +9496,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "place-knncl",
-            latitude = 42.362491,
-            longitude = -71.086176,
+            latitude = 42.3624908,
+            longitude = -71.0861765,
             name = "Kendall/MIT",
             locationType = LocationType.STATION,
             description = null,
@@ -9211,28 +9508,35 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                 listOf<String>(
                     "70071",
                     "70072",
+                    "door-knncl-nbhotel",
                     "door-knncl-nbmain",
                     "door-knncl-nbsecond",
                     "door-knncl-sbcarleton",
                     "door-knncl-sbelevator",
                     "door-knncl-sbmain",
                     "door-knncl-sbsecond",
+                    "node-362-entrance",
+                    "node-362-platform",
                     "node-450-entrance",
                     "node-450-platform",
                     "node-756-entrance",
                     "node-756-platform",
                     "node-757-entrance",
                     "node-757-platform",
+                    "node-777-entrance",
+                    "node-777-platform",
                     "node-866-entrance",
                     "node-866-platform",
-                    "node-knncl-backnbstair-entrance",
                     "node-knncl-backnbstair-platform",
-                    "node-knncl-frontnbstair-entrance",
+                    "node-knncl-frontnbstair-landing",
                     "node-knncl-frontnbstair-platform",
-                    "node-knncl-frontsbstair-entrance",
                     "node-knncl-frontsbstair-platform",
+                    "node-knncl-nbhotelstair-entrance",
+                    "node-knncl-nbhotelstair-landing",
                     "node-knncl-nbmain-farepaid",
                     "node-knncl-nbmain-fareunpaid",
+                    "node-knncl-nbmainstair-entrance",
+                    "node-knncl-nbmainstair-landing",
                     "node-knncl-nbsec-farepaid",
                     "node-knncl-nbsec-fareunpaid",
                     "node-knncl-sbcarleton-entrance",
@@ -9278,7 +9582,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             platformName = null,
             vehicleType = null,
             childStopIds = listOf<String>("70106", "70107"),
-            connectingStopIds = listOf<String>("9070107"),
+            connectingStopIds = listOf<String>("9070107", "9370051"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
@@ -9436,7 +9740,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "node-mdftf-stairs-bottom",
                     "node-mdftf-stairs-top",
                 ),
-            connectingStopIds = listOf<String>("2407"),
+            connectingStopIds = listOf<String>("2408", "2378"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
@@ -9462,7 +9766,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
         Stop(
             id = "place-mgngl",
             latitude = 42.393682,
-            longitude = -71.106388,
+            longitude = -71.1063879,
             name = "Magoun Square",
             locationType = LocationType.STATION,
             description = null,
@@ -9580,7 +9884,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "node-newtn-lake-platform",
                     "node-newtn-walnut-platform",
                 ),
-            connectingStopIds = listOf<String>("9070169", "9170169", "9170168"),
+            connectingStopIds = listOf<String>("9170169", "9170168"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
@@ -9762,8 +10066,12 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "3125",
                     "70097",
                     "70098",
+                    "door-nqncy-garageelevators",
+                    "door-nqncy-garagestairs",
                     "door-nqncy-hancock",
+                    "door-nqncy-hancockelevator",
                     "door-nqncy-newport",
+                    "door-nqncy-newportelevator",
                     "door-nqncy-squantum",
                     "node-325-lobby",
                     "node-325-platform",
@@ -9773,14 +10081,15 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "node-327-street",
                     "node-383-lobby",
                     "node-383-street",
+                    "node-739-rl",
+                    "node-740-rl",
                     "node-897-lobby",
-                    "node-897-street",
                     "node-898-lobby",
-                    "node-898-street",
                     "node-899-lobby",
                     "node-899-platform",
                     "node-900-lobby",
                     "node-900-platform",
+                    "node-nqncy-739740stairs-rl",
                     "node-nqncy-hstair-lobby",
                     "node-nqncy-hstair-street",
                     "node-nqncy-nhfarepaid",
@@ -9789,6 +10098,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "node-nqncy-nhpstair-platform",
                     "node-nqncy-nstair-lobby",
                     "node-nqncy-nstair-street",
+                    "node-nqncy-parkinglink-garage",
+                    "node-nqncy-parkinglink-station",
                     "node-nqncy-senterramp-bus",
                     "node-nqncy-senterstair-bus",
                     "node-nqncy-sfarepaid",
@@ -9796,7 +10107,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "node-nqncy-spstair-lobby",
                     "node-nqncy-spstair-platform",
                 ),
-            connectingStopIds = listOf<String>("9370024"),
+            connectingStopIds = listOf<String>("9370047"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
@@ -9813,7 +10124,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             platformName = null,
             vehicleType = null,
             childStopIds = listOf<String>("70243", "70244"),
-            connectingStopIds = listOf<String>("41391", "81317"),
+            connectingStopIds = listOf<String>("81317", "41391"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
@@ -9873,8 +10184,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "place-pktrm",
-            latitude = 42.356395,
-            longitude = -71.062424,
+            latitude = 42.3563946,
+            longitude = -71.0624242,
             name = "Park Street",
             locationType = LocationType.STATION,
             description = null,
@@ -10034,7 +10345,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "node-portr-weststairs-crplatform",
                     "node-portr-weststairs-street",
                 ),
-            connectingStopIds = listOf<String>("2430", "2460", "12301", "23151", "9070065"),
+            connectingStopIds = listOf<String>("2460", "2430", "23151", "12301", "9070065"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
@@ -10209,7 +10520,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "node-qnctr-rdstair-entrance",
                     "node-qnctr-rdstair-platform",
                 ),
-            connectingStopIds = listOf<String>("32000", "9070101"),
+            connectingStopIds = listOf<String>("32000", "9370048"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
@@ -10322,6 +10633,13 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "17861",
                     "17862",
                     "17863",
+                    "17865",
+                    "17866",
+                    "17867",
+                    "17868",
+                    "17869",
+                    "17870",
+                    "17871",
                     "70010",
                     "70011",
                     "NEC-2265",
@@ -10352,11 +10670,17 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "node-850-platform",
                     "node-851-bottom",
                     "node-851-top",
+                    "node-rugg-bus1crosswalk-1",
+                    "node-rugg-bus1crosswalk-2",
                     "node-rugg-bus1stairs-busway",
                     "node-rugg-bus1stairs-lobby",
                     "node-rugg-bus2stairs-busway",
                     "node-rugg-bus2stairs-lobby",
                     "node-rugg-columbusstairs-top",
+                    "node-rugg-crnorthgate-farepaid",
+                    "node-rugg-crnorthgate-fareunpaid",
+                    "node-rugg-crsouthgate-farepaid",
+                    "node-rugg-crsouthgate-fareunpaid",
                     "node-rugg-crstairs-lobby",
                     "node-rugg-crstairs-platform",
                     "node-rugg-farepaid",
@@ -10373,7 +10697,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "node-rugg-track2ramp-bottom",
                     "node-rugg-track2ramp-top",
                 ),
-            connectingStopIds = listOf<String>("1225", "9070010"),
+            connectingStopIds = listOf<String>("9070010"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
@@ -10420,7 +10744,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "node-sbmnl-stairs-lobby",
                     "node-sbmnl-stairs-platform",
                 ),
-            connectingStopIds = listOf<String>("45237", "9070005"),
+            connectingStopIds = listOf<String>("9070005", "9070004"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
@@ -10482,7 +10806,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "place-smmnl",
-            latitude = 42.293126,
+            latitude = 42.2931258,
             longitude = -71.065738,
             name = "Shawmut",
             locationType = LocationType.STATION,
@@ -10590,6 +10914,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "70080",
                     "74611",
                     "74617",
+                    "84611",
                     "NEC-2287",
                     "NEC-2287-01",
                     "NEC-2287-02",
@@ -10605,12 +10930,18 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "NEC-2287-12",
                     "NEC-2287-13",
                     "NEC-2287-B",
+                    "NEC-2287-B2",
+                    "NEC-2287-B36",
+                    "NEC-2287-B37",
+                    "NEC-2287-B4",
                     "door-sstat-atlantic",
                     "door-sstat-bus",
                     "door-sstat-dewey",
+                    "door-sstat-deweyelev",
                     "door-sstat-finctr",
                     "door-sstat-main",
                     "door-sstat-outmain",
+                    "door-sstat-outmainelev",
                     "door-sstat-reserve",
                     "door-sstat-summer",
                     "door-sstat-usps",
@@ -10639,6 +10970,10 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "node-424-lobby",
                     "node-6476-ground",
                     "node-6476-lobby",
+                    "node-753-bottom",
+                    "node-753-top",
+                    "node-754-bottom",
+                    "node-754-top",
                     "node-901-lobby",
                     "node-901-rl",
                     "node-901-sl",
@@ -10689,8 +11024,39 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "node-sstat-bldgescup-lobby",
                     "node-sstat-bldgstair-ground",
                     "node-sstat-bldgstair-lobby",
+                    "node-sstat-buscr-downescalator-bottom",
+                    "node-sstat-buscr-downescalator-top",
+                    "node-sstat-buscr-stair-bottom",
+                    "node-sstat-buscr-stair-top",
+                    "node-sstat-buscr-upescalator-bottom",
+                    "node-sstat-buscr-upescalator-top",
+                    "node-sstat-busgroundelev-bottom",
+                    "node-sstat-busgroundelev-top",
+                    "node-sstat-busgroundesc-bottom",
+                    "node-sstat-busgroundesc-top",
+                    "node-sstat-busgroundstair-bottom",
+                    "node-sstat-busgroundstair-top",
+                    "node-sstat-busrotundadownesc-bottom",
+                    "node-sstat-busrotundadownesc-top",
+                    "node-sstat-busrotundanorthelev-bottom",
+                    "node-sstat-busrotundanorthelev-top",
+                    "node-sstat-busrotundanorthstair-bottom",
+                    "node-sstat-busrotundanorthstair-top",
+                    "node-sstat-busrotundasouthelev-bottom",
+                    "node-sstat-busrotundasouthelev-top",
+                    "node-sstat-busrotundasouthstair-bottom",
+                    "node-sstat-busrotundasouthstair-top",
+                    "node-sstat-busrotundaupesc-bottom",
+                    "node-sstat-busrotundaupesc-top",
                     "node-sstat-cr-lobby",
+                    "node-sstat-cr-lobbycentdoor",
+                    "node-sstat-cr-lobbyeastdoor",
+                    "node-sstat-cr-lobbywestdoor",
                     "node-sstat-deweystair-lobby",
+                    "node-sstat-essexramp-cr",
+                    "node-sstat-essexstair-crlower",
+                    "node-sstat-essexstair-crupper",
+                    "node-sstat-essexstair-exitupper",
                     "node-sstat-finctrstair-lobby",
                     "node-sstat-north-farepaid",
                     "node-sstat-north-fareunpaid",
@@ -10698,6 +11064,18 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "node-sstat-reservestair-lobby",
                     "node-sstat-south-farepaid",
                     "node-sstat-south-fareunpaid",
+                    "node-sstat-track1-farepaid",
+                    "node-sstat-track1-fareunpaid",
+                    "node-sstat-track11-farepaid",
+                    "node-sstat-track11-fareunpaid",
+                    "node-sstat-track3-farepaid",
+                    "node-sstat-track3-fareunpaid",
+                    "node-sstat-track5-farepaid",
+                    "node-sstat-track5-fareunpaid",
+                    "node-sstat-track7-farepaid",
+                    "node-sstat-track7-fareunpaid",
+                    "node-sstat-track9-farepaid",
+                    "node-sstat-track9-fareunpaid",
                 ),
             connectingStopIds = listOf<String>("6564", "892", "6538", "9070079"),
             parentStationId = null,
@@ -10723,6 +11101,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
                     "70042",
                     "door-state-cityhall",
                     "door-state-congress",
+                    "door-state-devonshire",
                     "door-state-exchange",
                     "door-state-meeting",
                     "door-state-state",
@@ -10958,7 +11337,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             childStopIds = listOf<String>("70231", "70232"),
             connectingStopIds = listOf<String>("9070232", "9070231"),
             parentStationId = null,
-            wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
     )
     objects.put(
@@ -11083,7 +11462,7 @@ private fun putStops(objects: ObjectCollectionBuilder) {
             platformName = null,
             vehicleType = null,
             childStopIds = listOf<String>("70120", "70121"),
-            connectingStopIds = listOf<String>("9070120", "9070121", "1273", "1295", "9170120"),
+            connectingStopIds = listOf<String>("9070120", "9070121", "1273", "1295"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         ),
@@ -11141,8 +11520,8 @@ private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "place-wlsta",
-            latitude = 42.266514,
-            longitude = -71.020337,
+            latitude = 42.2665139,
+            longitude = -71.0203369,
             name = "Wollaston",
             locationType = LocationType.STATION,
             description = null,
@@ -11253,151 +11632,79 @@ private fun putStops(objects: ObjectCollectionBuilder) {
 private fun putTrips(objects: ObjectCollectionBuilder) {
     objects.put(
         Trip(
-            id = "71373380",
+            id = "78512852",
             directionId = 1,
-            headsign = "Ruggles",
-            routeId = Route.Id("15"),
-            routePatternId = "15-1-1",
-            shapeId = "150308",
+            headsign = "Alewife via Arlington Center",
+            routeId = Route.Id("67"),
+            routePatternId = "67-4-1",
+            shapeId = "670074",
             stopIds =
                 listOf<String>(
-                    "323",
-                    "322",
-                    "557",
-                    "558",
-                    "559",
-                    "560",
-                    "561",
-                    "1468",
-                    "1469",
-                    "1470",
-                    "1471",
-                    "1472",
-                    "1473",
-                    "14731",
-                    "1474",
-                    "1475",
-                    "1478",
-                    "1479",
-                    "1480",
-                    "1481",
-                    "11482",
-                    "14831",
-                    "1484",
-                    "1485",
-                    "1486",
-                    "1487",
-                    "1488",
-                    "1489",
-                    "1491",
-                    "64000",
-                    "1148",
-                    "11149",
-                    "11148",
-                    "21148",
-                    "1224",
-                    "17861",
+                    "7961",
+                    "7963",
+                    "79642",
+                    "7965",
+                    "7966",
+                    "7967",
+                    "7968",
+                    "7969",
+                    "2258",
+                    "2259",
+                    "23535",
+                    "23536",
+                    "23537",
+                    "23538",
+                    "2475",
+                    "2477",
+                    "2478",
+                    "24790",
+                    "24791",
+                    "14118",
                 ),
         ),
     )
     objects.put(
         Trip(
-            id = "71373591",
+            id = "78512855",
             directionId = 0,
-            headsign = "Fields Corner",
-            routeId = Route.Id("15"),
-            routePatternId = "15-1-0",
-            shapeId = "150307",
+            headsign = "Turkey Hill via Arlington Center",
+            routeId = Route.Id("67"),
+            routePatternId = "67-4-0",
+            shapeId = "670077",
             stopIds =
                 listOf<String>(
-                    "17863",
-                    "11257",
-                    "1259",
-                    "11323",
-                    "11259",
-                    "64000",
-                    "1493",
-                    "1495",
-                    "1496",
-                    "1497",
-                    "1498",
-                    "1499",
-                    "1500",
-                    "1501",
-                    "11501",
-                    "1504",
-                    "1506",
-                    "1508",
-                    "1509",
-                    "1510",
-                    "1511",
-                    "11512",
-                    "1512",
-                    "1514",
-                    "1515",
-                    "553",
-                    "554",
-                    "555",
-                    "556",
-                    "323",
+                    "14121",
+                    "2482",
+                    "23530",
+                    "23531",
+                    "23532",
+                    "23533",
+                    "2283",
+                    "2284",
+                    "7976",
+                    "7977",
+                    "7978",
+                    "7979",
+                    "7981",
+                    "7953",
+                    "7954",
+                    "7955",
+                    "7956",
+                    "7959",
+                    "7960",
+                    "7962",
+                    "7961",
                 ),
         ),
     )
     objects.put(
         Trip(
-            id = "71694434",
-            directionId = 0,
-            headsign = "Arlington Center",
-            routeId = Route.Id("87"),
-            routePatternId = "87-2-0",
-            shapeId = "870206",
-            stopIds =
-                listOf<String>(
-                    "70500",
-                    "2605",
-                    "2607",
-                    "12610",
-                    "2612",
-                    "26131",
-                    "12615",
-                    "12616",
-                    "2617",
-                    "2618",
-                    "2620",
-                    "2621",
-                    "2622",
-                    "2623",
-                    "2625",
-                    "2626",
-                    "2627",
-                    "2628",
-                    "5104",
-                    "2631",
-                    "2632",
-                    "2634",
-                    "2635",
-                    "2715",
-                    "2636",
-                    "12636",
-                    "12637",
-                    "12638",
-                    "12639",
-                    "12640",
-                    "12641",
-                    "12642",
-                    "12643",
-                    "12644",
-                ),
-        ),
-    )
-    objects.put(
-        Trip(
-            id = "71694436",
+            id = "78514088",
             directionId = 1,
             headsign = "Lechmere",
             routeId = Route.Id("87"),
             routePatternId = "87-2-1",
-            shapeId = "870202",
+            shapeId = "870213",
             stopIds =
                 listOf<String>(
                     "12644",
@@ -11440,135 +11747,70 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
     )
     objects.put(
         Trip(
-            id = "71694754",
-            directionId = 1,
-            headsign = "Alewife via Arlington Center",
-            routeId = Route.Id("67"),
-            routePatternId = "67-4-1",
-            shapeId = "670068",
+            id = "78514094",
+            directionId = 0,
+            headsign = "Arlington Center",
+            routeId = Route.Id("87"),
+            routePatternId = "87-2-0",
+            shapeId = "870212",
             stopIds =
                 listOf<String>(
-                    "7961",
-                    "7963",
-                    "79642",
-                    "7965",
-                    "7966",
-                    "7967",
-                    "7968",
-                    "7969",
-                    "2258",
-                    "2259",
-                    "23535",
-                    "23536",
-                    "23537",
-                    "23538",
-                    "2475",
-                    "2477",
-                    "2478",
-                    "24790",
-                    "24791",
-                    "14118",
+                    "70500",
+                    "2605",
+                    "2607",
+                    "12610",
+                    "2612",
+                    "26131",
+                    "12615",
+                    "12616",
+                    "2617",
+                    "2618",
+                    "2620",
+                    "2621",
+                    "2622",
+                    "2623",
+                    "2625",
+                    "2626",
+                    "2627",
+                    "2628",
+                    "5104",
+                    "2631",
+                    "2632",
+                    "2634",
+                    "2635",
+                    "2715",
+                    "2636",
+                    "12636",
+                    "12637",
+                    "12638",
+                    "12639",
+                    "12640",
+                    "12641",
+                    "12642",
+                    "12643",
+                    "12644",
                 ),
         ),
     )
     objects.put(
         Trip(
-            id = "71694757",
+            id = "78611643",
             directionId = 0,
-            headsign = "Turkey Hill via Arlington Center",
-            routeId = Route.Id("67"),
-            routePatternId = "67-4-0",
-            shapeId = "670067",
-            stopIds =
-                listOf<String>(
-                    "14121",
-                    "2482",
-                    "23530",
-                    "23531",
-                    "23532",
-                    "23533",
-                    "2283",
-                    "2284",
-                    "7976",
-                    "7977",
-                    "7978",
-                    "7979",
-                    "7981",
-                    "7953",
-                    "7954",
-                    "7955",
-                    "7956",
-                    "7959",
-                    "7960",
-                    "7962",
-                    "7961",
-                ),
+            headsign = "Design Center",
+            routeId = Route.Id("742"),
+            routePatternId = "742-3-0",
+            shapeId = "7420075",
+            stopIds = listOf<String>("74611", "74612", "74613", "74624", "247", "30249", "30250"),
         ),
     )
     objects.put(
         Trip(
-            id = "72039742",
-            directionId = 0,
-            headsign = "Logan Airport",
-            routeId = Route.Id("741"),
-            routePatternId = "741-_-0",
-            shapeId = "7410055",
-            stopIds = listOf<String>("74611", "74612", "74613", "74624", "17091"),
-        ),
-    )
-    objects.put(
-        Trip(
-            id = "72039743",
-            directionId = 0,
-            headsign = "Silver Line Way",
-            routeId = Route.Id("746"),
-            routePatternId = "746-_-0",
-            shapeId = "7460032",
-            stopIds = listOf<String>("74611", "74612", "74613", "74614"),
-        ),
-    )
-    objects.put(
-        Trip(
-            id = "72039744",
-            directionId = 1,
-            headsign = "South Station",
-            routeId = Route.Id("741"),
-            routePatternId = "741-_-1",
-            shapeId = "7410056",
-            stopIds =
-                listOf<String>(
-                    "17091",
-                    "27092",
-                    "17093",
-                    "17094",
-                    "17095",
-                    "17096",
-                    "74614",
-                    "74615",
-                    "74616",
-                    "74617",
-                ),
-        ),
-    )
-    objects.put(
-        Trip(
-            id = "72039750",
-            directionId = 1,
-            headsign = "South Station",
-            routeId = Route.Id("746"),
-            routePatternId = "746-_-1",
-            shapeId = "7460033",
-            stopIds = listOf<String>("74614", "74615", "74616", "74617"),
-        ),
-    )
-    objects.put(
-        Trip(
-            id = "72039768",
+            id = "78611644",
             directionId = 1,
             headsign = "South Station",
             routeId = Route.Id("742"),
             routePatternId = "742-3-1",
-            shapeId = "7420071",
+            shapeId = "7420074",
             stopIds =
                 listOf<String>(
                     "30250",
@@ -11586,23 +11828,34 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
     )
     objects.put(
         Trip(
-            id = "72039786",
-            directionId = 0,
-            headsign = "Design Center",
-            routeId = Route.Id("742"),
-            routePatternId = "742-3-0",
-            shapeId = "7420072",
-            stopIds = listOf<String>("74611", "74612", "74613", "74624", "247", "30249", "30250"),
+            id = "78611654",
+            directionId = 1,
+            headsign = "South Station",
+            routeId = Route.Id("746"),
+            routePatternId = "746-_-1",
+            shapeId = "7460036",
+            stopIds = listOf<String>("74614", "74615", "74616", "74617"),
         ),
     )
     objects.put(
         Trip(
-            id = "72040977",
+            id = "78611656",
+            directionId = 0,
+            headsign = "Silver Line Way",
+            routeId = Route.Id("746"),
+            routePatternId = "746-_-0",
+            shapeId = "7460035",
+            stopIds = listOf<String>("74611", "74612", "74613", "74614"),
+        ),
+    )
+    objects.put(
+        Trip(
+            id = "78611864",
             directionId = 0,
             headsign = "Chelsea",
             routeId = Route.Id("743"),
             routePatternId = "743-_-0",
-            shapeId = "7430048",
+            shapeId = "7430059",
             stopIds =
                 listOf<String>(
                     "74611",
@@ -11619,12 +11872,12 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
     )
     objects.put(
         Trip(
-            id = "72040978",
+            id = "78612119",
             directionId = 1,
             headsign = "South Station",
             routeId = Route.Id("743"),
             routePatternId = "743-_-1",
-            shapeId = "7430047",
+            shapeId = "7430058",
             stopIds =
                 listOf<String>(
                     "74630",
@@ -11642,37 +11895,223 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
     )
     objects.put(
         Trip(
-            id = "HaverhillRestoredWKDY-744235-400",
+            id = "78612827",
+            directionId = 0,
+            headsign = "Logan Airport",
+            routeId = Route.Id("741"),
+            routePatternId = "741-_-0",
+            shapeId = "7410062",
+            stopIds = listOf<String>("84611", "74612", "74613", "74624", "17091"),
+        ),
+    )
+    objects.put(
+        Trip(
+            id = "78612831",
             directionId = 1,
-            headsign = "North Station",
-            routeId = Route.Id("CR-Fitchburg"),
-            routePatternId = "CR-Fitchburg-d82ea33a-1",
-            shapeId = "9840003",
+            headsign = "South Station",
+            routeId = Route.Id("741"),
+            routePatternId = "741-_-1",
+            shapeId = "7410061",
             stopIds =
                 listOf<String>(
-                    "FR-3338-CS",
-                    "FR-0494-CS",
-                    "FR-0451-02",
-                    "FR-0394-02",
-                    "FR-0361-02",
-                    "FR-0301-02",
-                    "FR-0253-02",
-                    "FR-0219-02",
-                    "FR-0201-02",
-                    "FR-0167-02",
-                    "FR-0132-02",
-                    "FR-0115-02",
-                    "FR-0098-S",
-                    "FR-0074-02",
-                    "FR-0064-02",
-                    "FR-0034-02",
-                    "BNT-0000",
+                    "17091",
+                    "27092",
+                    "17093",
+                    "17094",
+                    "17095",
+                    "17096",
+                    "74614",
+                    "74615",
+                    "74616",
+                    "74617",
                 ),
         ),
     )
     objects.put(
         Trip(
-            id = "HaverhillRestoredWKDY-744237-405",
+            id = "78977562",
+            directionId = 1,
+            headsign = "Ruggles",
+            routeId = Route.Id("15"),
+            routePatternId = "15-1-1",
+            shapeId = "150325",
+            stopIds =
+                listOf<String>(
+                    "32302",
+                    "322",
+                    "557",
+                    "558",
+                    "559",
+                    "560",
+                    "561",
+                    "1468",
+                    "1469",
+                    "1470",
+                    "1471",
+                    "1472",
+                    "1473",
+                    "14731",
+                    "1474",
+                    "1475",
+                    "1478",
+                    "1479",
+                    "1480",
+                    "1481",
+                    "11482",
+                    "14831",
+                    "1484",
+                    "1485",
+                    "1486",
+                    "1487",
+                    "1488",
+                    "1489",
+                    "1491",
+                    "64000",
+                    "1148",
+                    "11149",
+                    "11148",
+                    "21148",
+                    "1224",
+                    "17861",
+                ),
+        ),
+    )
+    objects.put(
+        Trip(
+            id = "78977752",
+            directionId = 0,
+            headsign = "Fields Corner",
+            routeId = Route.Id("15"),
+            routePatternId = "15-1-0",
+            shapeId = "150326",
+            stopIds =
+                listOf<String>(
+                    "17867",
+                    "11257",
+                    "1259",
+                    "11323",
+                    "11259",
+                    "64000",
+                    "1493",
+                    "1495",
+                    "1496",
+                    "1497",
+                    "1498",
+                    "1499",
+                    "1500",
+                    "1501",
+                    "11501",
+                    "1504",
+                    "1506",
+                    "1508",
+                    "1509",
+                    "1510",
+                    "1511",
+                    "11512",
+                    "1512",
+                    "1514",
+                    "1515",
+                    "553",
+                    "554",
+                    "556",
+                    "32302",
+                ),
+        ),
+    )
+    objects.put(
+        Trip(
+            id = "FBTieJobPhase17006patch-879390-6038",
+            directionId = 1,
+            headsign = "South Station",
+            routeId = Route.Id("CR-Providence"),
+            routePatternId = "CR-Providence-e9395acc-1",
+            shapeId = "9890008",
+            stopIds =
+                listOf<String>(
+                    "NEC-1659-03",
+                    "NEC-1768-03",
+                    "NEC-1851-03",
+                    "NEC-1891-02",
+                    "NEC-1969-04",
+                    "NEC-2040-02",
+                    "NEC-2108-02",
+                    "NEC-2139-02",
+                    "NEC-2173-02",
+                    "NEC-2265-02",
+                    "NEC-2276-02",
+                    "NEC-2287",
+                ),
+        ),
+    )
+    objects.put(
+        Trip(
+            id = "FBTieJobPhase17006patch-879397-6310",
+            directionId = 1,
+            headsign = "South Station",
+            routeId = Route.Id("CR-Providence"),
+            routePatternId = "CR-Providence-6cae46be-1",
+            shapeId = "9890003",
+            stopIds =
+                listOf<String>(
+                    "SB-0189-S",
+                    "SB-0156-S",
+                    "SB-0150-06",
+                    "NEC-2173-02",
+                    "NEC-2203-02",
+                    "NEC-2265-02",
+                    "NEC-2276-02",
+                    "NEC-2287",
+                ),
+        ),
+    )
+    objects.put(
+        Trip(
+            id = "FBTieJobPhase17006patch-879400-6309",
+            directionId = 0,
+            headsign = "Stoughton",
+            routeId = Route.Id("CR-Providence"),
+            routePatternId = "CR-Providence-9515a09b-0",
+            shapeId = "9890004",
+            stopIds =
+                listOf<String>(
+                    "NEC-2287",
+                    "NEC-2276-01",
+                    "NEC-2265-01",
+                    "NEC-2173-01",
+                    "SB-0150-04",
+                    "SB-0156-S",
+                    "SB-0189-S",
+                ),
+        ),
+    )
+    objects.put(
+        Trip(
+            id = "FBTieJobPhase17006patch-879459-6015",
+            directionId = 0,
+            headsign = "Wickford Junction",
+            routeId = Route.Id("CR-Providence"),
+            routePatternId = "CR-Providence-9cf54fb3-0",
+            shapeId = "9890009",
+            stopIds =
+                listOf<String>(
+                    "NEC-2287",
+                    "NEC-2276-01",
+                    "NEC-2265-01",
+                    "NEC-2173-01",
+                    "NEC-2139-01",
+                    "NEC-2108-01",
+                    "NEC-2040-01",
+                    "NEC-1969-03",
+                    "NEC-1891-01",
+                    "NEC-1851-03",
+                    "NEC-1768-03",
+                    "NEC-1659-03",
+                ),
+        ),
+    )
+    objects.put(
+        Trip(
+            id = "NorthFall26WKDYBase-881942-4023",
             directionId = 0,
             headsign = "Wachusett",
             routeId = Route.Id("CR-Fitchburg"),
@@ -11702,32 +12141,37 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
     )
     objects.put(
         Trip(
-            id = "HaverhillRestoredWKDY-744311-24",
+            id = "NorthFall26WKDYBase-881943-4022",
             directionId = 1,
             headsign = "North Station",
-            routeId = Route.Id("CR-Newburyport"),
-            routePatternId = "CR-Newburyport-d47c5647-1",
-            shapeId = "9810006",
+            routeId = Route.Id("CR-Fitchburg"),
+            routePatternId = "CR-Fitchburg-d82ea33a-1",
+            shapeId = "9840003",
             stopIds =
                 listOf<String>(
-                    "GB-0353-S",
-                    "GB-0316-S",
-                    "GB-0296-02",
-                    "GB-0254-02",
-                    "GB-0229-02",
-                    "GB-0198-02",
-                    "ER-0183-02",
-                    "ER-0168-S",
-                    "ER-0128-02",
-                    "ER-0117-02",
-                    "ER-0042-02",
+                    "FR-3338-CS",
+                    "FR-0494-CS",
+                    "FR-0451-02",
+                    "FR-0394-02",
+                    "FR-0361-02",
+                    "FR-0301-02",
+                    "FR-0253-02",
+                    "FR-0219-02",
+                    "FR-0201-02",
+                    "FR-0167-02",
+                    "FR-0132-02",
+                    "FR-0115-02",
+                    "FR-0098-S",
+                    "FR-0074-02",
+                    "FR-0064-02",
+                    "FR-0034-02",
                     "BNT-0000",
                 ),
         ),
     )
     objects.put(
         Trip(
-            id = "HaverhillRestoredWKDY-744312-27",
+            id = "NorthFall26WKDYBase-881961-1019",
             directionId = 0,
             headsign = "Rockport",
             routeId = Route.Id("CR-Newburyport"),
@@ -11752,7 +12196,32 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
     )
     objects.put(
         Trip(
-            id = "HaverhillRestoredWKDY-744338-114",
+            id = "NorthFall26WKDYBase-881990-1020",
+            directionId = 1,
+            headsign = "North Station",
+            routeId = Route.Id("CR-Newburyport"),
+            routePatternId = "CR-Newburyport-d47c5647-1",
+            shapeId = "9810006",
+            stopIds =
+                listOf<String>(
+                    "GB-0353-S",
+                    "GB-0316-S",
+                    "GB-0296-02",
+                    "GB-0254-02",
+                    "GB-0229-02",
+                    "GB-0198-02",
+                    "ER-0183-02",
+                    "ER-0168-S",
+                    "ER-0128-02",
+                    "ER-0117-02",
+                    "ER-0042-02",
+                    "BNT-0000",
+                ),
+        ),
+    )
+    objects.put(
+        Trip(
+            id = "NorthFall26WKDYBase-882006-1118",
             directionId = 1,
             headsign = "North Station",
             routeId = Route.Id("CR-Newburyport"),
@@ -11776,7 +12245,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
     )
     objects.put(
         Trip(
-            id = "HaverhillRestoredWKDY-744341-125",
+            id = "NorthFall26WKDYBase-882056-1113",
             directionId = 0,
             headsign = "Newburyport",
             routeId = Route.Id("CR-Newburyport"),
@@ -11795,97 +12264,6 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
                     "ER-0276-S",
                     "ER-0312-S",
                     "ER-0362-01",
-                ),
-        ),
-    )
-    objects.put(
-        Trip(
-            id = "Sept8Read-767840-852",
-            directionId = 1,
-            headsign = "South Station",
-            routeId = Route.Id("CR-Providence"),
-            routePatternId = "CR-Providence-e9395acc-1",
-            shapeId = "9890008",
-            stopIds =
-                listOf<String>(
-                    "NEC-1659-03",
-                    "NEC-1768-03",
-                    "NEC-1851-03",
-                    "NEC-1891-02",
-                    "NEC-1969-04",
-                    "NEC-2040-02",
-                    "NEC-2108-02",
-                    "NEC-2139-02",
-                    "NEC-2173-02",
-                    "NEC-2265-02",
-                    "NEC-2276-02",
-                    "NEC-2287",
-                ),
-        ),
-    )
-    objects.put(
-        Trip(
-            id = "Sept8Read-767850-839",
-            directionId = 0,
-            headsign = "Wickford Junction",
-            routeId = Route.Id("CR-Providence"),
-            routePatternId = "CR-Providence-9cf54fb3-0",
-            shapeId = "9890009",
-            stopIds =
-                listOf<String>(
-                    "NEC-2287",
-                    "NEC-2276-01",
-                    "NEC-2265-01",
-                    "NEC-2173-01",
-                    "NEC-2139-01",
-                    "NEC-2108-01",
-                    "NEC-2040-01",
-                    "NEC-1969-03",
-                    "NEC-1891-01",
-                    "NEC-1851-03",
-                    "NEC-1768-03",
-                    "NEC-1659-03",
-                ),
-        ),
-    )
-    objects.put(
-        Trip(
-            id = "Sept8Read-768056-925",
-            directionId = 0,
-            headsign = "Stoughton",
-            routeId = Route.Id("CR-Providence"),
-            routePatternId = "CR-Providence-9515a09b-0",
-            shapeId = "9890004",
-            stopIds =
-                listOf<String>(
-                    "NEC-2287",
-                    "NEC-2276-01",
-                    "NEC-2265-01",
-                    "NEC-2173-01",
-                    "SB-0150-04",
-                    "SB-0156-S",
-                    "SB-0189-S",
-                ),
-        ),
-    )
-    objects.put(
-        Trip(
-            id = "Sept8Read-768057-930",
-            directionId = 1,
-            headsign = "South Station",
-            routeId = Route.Id("CR-Providence"),
-            routePatternId = "CR-Providence-6cae46be-1",
-            shapeId = "9890003",
-            stopIds =
-                listOf<String>(
-                    "SB-0189-S",
-                    "SB-0156-S",
-                    "SB-0150-06",
-                    "NEC-2173-02",
-                    "NEC-2203-02",
-                    "NEC-2265-02",
-                    "NEC-2276-02",
-                    "NEC-2287",
                 ),
         ),
     )
