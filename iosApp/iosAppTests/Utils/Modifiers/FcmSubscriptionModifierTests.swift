@@ -18,91 +18,29 @@ final class FcmSubscriptionModifierTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
-    func testUpdatesSubscriptions() {
-        let updateExp = expectation(description: "subscriptions updated")
+    func testSetsLocaleAndFcmToken() {
+        let localeExp = expectation(description: "locale set")
+        let tokenExp = expectation(description: "fcm token set")
 
-        let objects = ObjectCollectionBuilder()
-
-        let route = objects.route { _ in }
-        let stop = objects.stop { _ in }
-
-        let favorites = Favorites(routeStopDirection: [
-            .init(route: route.id, stop: stop.id, direction: 1):
-                .init(notifications: .init(enabled: true, windows: [.init(
-                    startTime: .init(hour: 8, minute: 0, second: 0, nanosecond: 0),
-                    endTime: .init(hour: 9, minute: 0, second: 0, nanosecond: 0),
-                    daysOfWeek: [.saturday, .sunday]
-                )])),
-        ])
-
-        LoadedFavorites.last = favorites
-        let expectedSubscriptions = SubscriptionRequest.companion.fromFavorites(
-            favorites: favorites.routeStopDirection,
-            includeAccessibility: true
-        )
         let expectedToken = "token_string"
-
-        let mockRepos = MockRepositories()
-        mockRepos.subscriptions = MockSubscriptionsRepository(
-            onUpdateSubscriptions: { token, subs, locale in
-                XCTAssertEqual(expectedToken, token)
-                XCTAssertEqual(expectedSubscriptions, subs)
-                XCTAssertEqual("en", locale)
-                updateExp.fulfill()
-            },
-            onUpdateAccessibility: { _, _, _ in }
-        )
-        loadKoinMocks(repositories: mockRepos)
+        let favoritesVM = MockFavoritesViewModel()
+        favoritesVM.onSetLocale = { locale in
+            XCTAssertEqual("en", locale)
+            localeExp.fulfill()
+        }
+        favoritesVM.onSetFcmToken = { token in
+            XCTAssertEqual(expectedToken, token)
+            tokenExp.fulfill()
+        }
 
         let sut = Text("test").handleFcmTokenSubscriptions(
             fcmToken: expectedToken,
-            includeAccessibility: true,
+            favoritesVM: favoritesVM
         )
 
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
 
-        wait(for: [updateExp], timeout: 1)
-    }
-
-    func testDoesNothingWithNoToken() {
-        let updateExp = expectation(description: "subscriptions updated")
-        updateExp.isInverted = true
-
-        let objects = ObjectCollectionBuilder()
-
-        let route = objects.route { _ in }
-        let stop = objects.stop { _ in }
-
-        let favorites = Favorites(routeStopDirection: [
-            .init(route: route.id, stop: stop.id, direction: 1):
-                .init(notifications: .init(enabled: true, windows: [.init(
-                    startTime: .init(hour: 8, minute: 0, second: 0, nanosecond: 0),
-                    endTime: .init(hour: 9, minute: 0, second: 0, nanosecond: 0),
-                    daysOfWeek: [.saturday, .sunday]
-                )])),
-        ])
-
-        LoadedFavorites.last = favorites
-
-        let mockRepos = MockRepositories()
-        mockRepos.subscriptions = MockSubscriptionsRepository(
-            onUpdateSubscriptions: { _, _, _ in
-                XCTFail("Should not update when token is missing")
-                updateExp.fulfill()
-            },
-            onUpdateAccessibility: { _, _, _ in }
-        )
-        loadKoinMocks(repositories: mockRepos)
-
-        let sut = Text("test").handleFcmTokenSubscriptions(
-            fcmToken: nil,
-            includeAccessibility: true,
-        )
-
-        ViewHosting.host(view: sut)
-        defer { ViewHosting.expel() }
-
-        wait(for: [updateExp], timeout: 1)
+        wait(for: [localeExp, tokenExp], timeout: 1)
     }
 }

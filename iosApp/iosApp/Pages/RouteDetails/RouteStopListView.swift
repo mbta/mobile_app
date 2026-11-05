@@ -223,7 +223,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
     let favoritesVM: IFavoritesViewModel
     let toastVM: IToastViewModel
 
-    @State var favorites: Favorites = LoadedFavorites.last
+    @State var favorites: Favorites? = LoadedFavorites.last
 
     @State var showFirstTimeFavoritesToast: Bool?
     @State var displayedToast: ToastViewModel.Toast?
@@ -333,11 +333,13 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onChange(of: favorites) { favorites in
-            // Only set first time toast on first favorites load, otherwise keep the current value
-            showFirstTimeFavoritesToast = if let showFirstTimeFavoritesToast {
-                showFirstTimeFavoritesToast
-            } else {
-                context is RouteDetailsContext.Favorites && favorites.routeStopDirection.isEmpty
+            if let favorites {
+                // Only set first time toast on first favorites load, otherwise keep the current value
+                showFirstTimeFavoritesToast = if let showFirstTimeFavoritesToast {
+                    showFirstTimeFavoritesToast
+                } else {
+                    context is RouteDetailsContext.Favorites && favorites.routeStopDirection.isEmpty
+                }
             }
         }
         .onChange(of: showFirstTimeFavoritesToast) { _ in
@@ -464,7 +466,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
     }
 
     private func isFavorite(_ routeStopDirection: RouteStopDirection) -> Bool {
-        favorites.routeStopDirection[routeStopDirection] != nil
+        favorites?.routeStopDirection[routeStopDirection] != nil
     }
 
     private func stopRowContext(_ stop: Stop) -> RouteDetailsRowContext {

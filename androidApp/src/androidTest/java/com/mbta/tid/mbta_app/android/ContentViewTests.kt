@@ -16,12 +16,14 @@ import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
+import com.mbta.tid.mbta_app.android.util.fcmToken
 import com.mbta.tid.mbta_app.model.FeaturePromo
 import com.mbta.tid.mbta_app.network.MockPhoenixSocket
 import com.mbta.tid.mbta_app.repositories.DefaultTab
 import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.MockTabPreferencesRepository
 import com.mbta.tid.mbta_app.usecases.IFeaturePromoUseCase
+import com.mbta.tid.mbta_app.viewModel.MockFavoritesViewModel
 import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.everySuspend
@@ -148,5 +150,43 @@ class ContentViewTests : KoinTest {
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
 
         composeTestRule.waitUntilDefaultTimeout { onAttachCount == 2 && onDetatchCount == 1 }
+    }
+
+    @Test
+    fun testFavoritesVmLocaleSet() {
+        val favoritesVM = MockFavoritesViewModel()
+
+        var localeSet: String? = null
+        favoritesVM.onSetLocale = { localeSet = it }
+
+        composeTestRule.setContent {
+            CompositionLocalProvider(
+                LocalLocationClient provides MockFusedLocationProviderClient(),
+            ) {
+                ContentView(MutableStateFlow(null), {}, favoritesViewModel = favoritesVM)
+            }
+        }
+        composeTestRule.waitForIdle()
+
+        composeTestRule.waitUntilDefaultTimeout { localeSet != null }
+    }
+
+    @Test
+    fun testFavoritesVmFcmTokenSet() {
+        val favoritesVM = MockFavoritesViewModel()
+        var fcmTokenSet: String? = null
+        favoritesVM.onSetFcmToken = { fcmTokenSet = it }
+
+        fcmToken = "test_token"
+
+        composeTestRule.setContent {
+            CompositionLocalProvider(
+                LocalLocationClient provides MockFusedLocationProviderClient(),
+            ) {
+                ContentView(MutableStateFlow(null), {}, favoritesViewModel = favoritesVM)
+            }
+        }
+
+        composeTestRule.waitUntilDefaultTimeout { fcmTokenSet == "test_token" }
     }
 }

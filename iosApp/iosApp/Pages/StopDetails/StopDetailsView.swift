@@ -19,7 +19,7 @@ struct StopDetailsView: View {
 
     var routeData: StopDetailsViewModel.RouteData?
     var alerts: AlertsStreamDataResponse?
-    var favorites: Favorites
+    var favorites: Favorites?
     var global: GlobalResponse?
     var now: Date
 
