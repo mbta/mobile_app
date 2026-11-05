@@ -31,10 +31,11 @@ private struct TakeoverAlertCard: View {
                     // Override alert state and icon size in the case of all clear
                     let alertState = alert.allClear(atTime: now) ? .allClear : alert.alertState
                     let isPresenceOfWhalesAlert = alert.cause == .presenceOfWhales
+                    let preservesOriginalColors = isPresenceOfWhalesAlert || alertState == .elevator
                     AlertIcon(
                         alertState: alertState,
                         color: routeAccents.color,
-                        preserveOriginalColors: isPresenceOfWhalesAlert,
+                        preserveOriginalColors: preservesOriginalColors,
                         overrideIcon: {
                             if isPresenceOfWhalesAlert {
                                 Image("alert-cause-backgroundless-presense-of-whales")
@@ -131,6 +132,7 @@ struct AlertCard: View {
             HStack {
                 let alertState = alert.allClear(atTime: now) ? StopAlertState.allClear : alert.alertState
                 let isPresenceOfWhalesAlert = alert.cause == .presenceOfWhales
+                let preservesOriginalColors: Bool = isPresenceOfWhalesAlert || alertState == .elevator
                 let iconSize =
                     if isPresenceOfWhalesAlert { 32.0 }
                     else if alertState == .allClear || spec == .elevator { elevatorIconSize }
@@ -140,7 +142,7 @@ struct AlertCard: View {
                     AlertIcon(
                         alertState: alertState,
                         color: routeAccents.color,
-                        preserveOriginalColors: isPresenceOfWhalesAlert,
+                        preserveOriginalColors: preservesOriginalColors,
                         overrideIcon: {
                             if isPresenceOfWhalesAlert {
                                 Image("alert-cause-presence-of-whales")

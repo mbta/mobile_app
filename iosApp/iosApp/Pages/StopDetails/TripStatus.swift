@@ -36,7 +36,7 @@ struct TripStatus: View {
                         hideDisruptionIcon: true
                     ).enableInjection()
                     if let time = trip.debugTime {
-                        DebugView(withSocketInfo: false, content: {
+                        DebugView(content: {
                             Text(debugCountdown(time))
                                 .onReceive(timer) { input in now = input.toEasternInstant() }
                         })

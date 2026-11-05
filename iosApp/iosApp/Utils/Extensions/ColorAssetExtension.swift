@@ -31,6 +31,8 @@ extension Color {
     static let text = Color("Text")
     static let textContrast = Color("Text Contrast")
     static let trackChangePillAlertBackground = Color("Track Change Pill Alert Background")
+    static let trackChangePillIcon = Color("Track Change Pill Icon")
+    static let trackChangePillScheduledBackground = Color("Track Change Pill Scheduled Background")
 }
 
 extension UIColor {
@@ -58,4 +60,7 @@ extension UIColor {
     static let text = UIColor(named: "Text") ?? UIColor(Color(.text))
     static let trackChangePillAlertBackground = UIColor(named: "Track Change Pill Alert Background") ??
         UIColor(Color(.trackChangePillAlertBackground))
+    static let trackChangePillIcon = UIColor(named: "Track Change Pill Icon") ?? UIColor(Color(.trackChangePillIcon))
+    static let trackChangePillScheduledBackground = UIColor(named: "Track Change Pill Scheduled Background") ??
+        UIColor(Color(.trackChangePillScheduledBackground))
 }

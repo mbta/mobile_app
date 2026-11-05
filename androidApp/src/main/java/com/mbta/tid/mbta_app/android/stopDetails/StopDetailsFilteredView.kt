@@ -17,8 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,16 +25,15 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.ModalRoutes
+import com.mbta.tid.mbta_app.android.ModalRoutes.SaveFavorite
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.component.DebugView
+import com.mbta.tid.mbta_app.android.component.ChannelDebugView
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
-import com.mbta.tid.mbta_app.android.component.SaveFavoritesFlow
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.loading
 import com.mbta.tid.mbta_app.model.Direction
-import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -66,7 +63,6 @@ fun StopDetailsFilteredView(
     allAlerts: AlertsStreamDataResponse?,
     now: EasternTimeInstant,
     isFavorite: (RouteStopDirection) -> Boolean?,
-    updateFavorites: (Map<RouteStopDirection, FavoriteSettings?>, Int) -> Unit,
     navCallbacks: NavigationCallbacks,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
@@ -96,44 +92,34 @@ fun StopDetailsFilteredView(
                 it.direction.id == stopFilter.directionId
         }
 
-    var inSaveFavoritesFlow by rememberSaveable { mutableStateOf(false) }
-
     @Composable
-    fun Header(lineOrRoute: LineOrRoute, stop: Stop, availableDirections: List<Direction>) {
+    fun Header(lineOrRoute: LineOrRoute, stop: Stop) {
         val rsd = RouteStopDirection(lineOrRoute.id, stop.id, stopFilter.directionId)
 
         return Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
-            if (inSaveFavoritesFlow) {
-                SaveFavoritesFlow(
-                    lineOrRoute,
-                    stop,
-                    availableDirections,
-                    selectedDirection = stopFilter.directionId,
-                    context = EditFavoritesContext.StopDetails,
-                    updateFavorites = { newValues ->
-                        updateFavorites(newValues, stopFilter.directionId)
-                    },
-                    isFavorite = { rsd -> isFavorite(rsd) ?: false },
-                    onClose = { inSaveFavoritesFlow = false },
-                    openModal = openModal,
-                )
-            }
             StopDetailsFilteredHeader(
                 lineOrRoute.sortRoute,
                 (lineOrRoute as? LineOrRoute.Line)?.line,
                 stop,
                 isFavorite = isFavorite(rsd),
-                onFavorite = { inSaveFavoritesFlow = true },
+                onFavorite = {
+                    openModal(
+                        SaveFavorite(
+                            lineOrRoute.id,
+                            stop.id,
+                            selectedDirection = stopFilter.directionId,
+                            context = EditFavoritesContext.StopDetails,
+                        ),
+                    )
+                },
                 navCallbacks,
             )
 
             ErrorBanner(errorBannerViewModel, Modifier.padding(bottom = 16.dp))
-            DebugView(
+            ChannelDebugView(
                 content = {
                     Column(Modifier.align(Alignment.Start), horizontalAlignment = Alignment.Start) {
                         Text("stop id: $stopId")
-                        Text("trip id: ${tripFilter?.tripId ?: "null"}")
-                        Text("vehicle id: ${tripFilter?.vehicleId ?: "null"}")
                     }
                 },
             )
@@ -193,7 +179,7 @@ fun StopDetailsFilteredView(
         val rsd = RouteStopDirection(lineOrRoute.id, stop.id, stopFilter.directionId)
 
         Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
-            Header(lineOrRoute, stop, availableDirections)
+            Header(lineOrRoute, stop)
             Box(Modifier.fillMaxSize().background(routeColor)) {
                 HorizontalDivider(
                     Modifier.fillMaxWidth().zIndex(1f).border(2.dp, colorResource(R.color.halo)),

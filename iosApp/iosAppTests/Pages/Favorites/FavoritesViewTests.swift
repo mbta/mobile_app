@@ -436,7 +436,7 @@ final class FavoritesViewTests: XCTestCase {
                 .callOnTapGesture()
         }
 
-        ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         defer { ViewHosting.expel() }
         wait(for: [dismissHint], timeout: 2)
     }
@@ -470,7 +470,7 @@ final class FavoritesViewTests: XCTestCase {
             viewportProvider: .init(),
         )
 
-        ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         defer { ViewHosting.expel() }
         wait(for: [dismissHint], timeout: 2)
     }

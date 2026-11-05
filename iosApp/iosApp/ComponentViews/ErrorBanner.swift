@@ -63,7 +63,6 @@ struct ErrorBanner: View {
                     Text("Error loading data", comment: "Displayed when loading necessary information fails")
 
                     DebugView(
-                        withSocketInfo: false,
                         content: {
                             ForEach(state.messages.sorted(), id: \.self) { errorName in
                                 Text(errorName)

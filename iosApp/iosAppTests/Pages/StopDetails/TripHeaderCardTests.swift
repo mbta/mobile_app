@@ -17,6 +17,92 @@ final class TripHeaderCardTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
+    @MainActor func testDebugInformation() throws {
+        struct TestCase {
+            let spec: iosApp.TripHeaderSpec
+            var vehicle: Vehicle?
+            var debugEnabled = true
+            var updateText: String?
+            var sequenceText: String?
+        }
+
+        let now = EasternTimeInstant.now()
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let route = objects.route { _ in }
+        let trip = objects.trip { $0.routePatternId = "pattern_1" }
+        let vehicle = objects.vehicle {
+            $0.currentStatus = .inTransitTo
+            $0.updatedAt = now.minus(seconds: 65)
+            $0.currentStopSequence = 3
+        }
+        let vehicleWithoutSequence = objects.vehicle {
+            $0.currentStatus = .inTransitTo
+            $0.updatedAt = now.plus(seconds: 5)
+            $0.currentStopSequence = nil
+        }
+        let cases: [TestCase] = [
+            .init(
+                spec: .vehicle(vehicle, stop, nil, false),
+                vehicle: vehicle,
+                updateText: "vehicle updated 01m 05s ago",
+                sequenceText: "current stop sequence: 3"
+            ),
+            .init(
+                spec: .vehicle(vehicleWithoutSequence, stop, nil, true),
+                vehicle: vehicleWithoutSequence,
+                updateText: "vehicle updated 00m 05s ago"
+            ),
+            .init(spec: .noVehicle),
+            .init(
+                spec: .finishingAnotherTrip,
+                vehicle: vehicle,
+                updateText: "vehicle updated 01m 05s ago",
+                sequenceText: "current stop sequence: 3"
+            ),
+            .init(spec: .vehicle(vehicle, stop, nil, false), vehicle: vehicle, debugEnabled: false),
+        ]
+
+        for testCase in cases {
+            let sut = TripHeaderCard(
+                spec: testCase.spec,
+                trip: trip,
+                targeted: false,
+                route: route,
+                routeAccents: .init(route: route),
+                onTap: nil,
+                now: now,
+                onFollowTrip: nil,
+                debugData: TripHeaderDebugData.companion.from(
+                    trip: trip, vehicleId: "selected-vehicle", vehicle: testCase.vehicle, now: now
+                )
+            ).withFixedSettings([.devDebugMode: testCase.debugEnabled])
+
+            ViewHosting.host(view: sut)
+            defer { ViewHosting.expel() }
+
+            if testCase.debugEnabled {
+                XCTAssertNotNil(try sut.inspect().find(text: "pattern id: pattern_1"))
+                XCTAssertNotNil(try sut.inspect().find(text: "trip id: \(trip.id)"))
+                XCTAssertNotNil(try sut.inspect().find(text: "vehicle id: selected-vehicle"))
+            } else {
+                XCTAssertThrowsError(try sut.inspect().find(text: "pattern id: pattern_1"))
+                XCTAssertThrowsError(try sut.inspect().find(text: "trip id: \(trip.id)"))
+                XCTAssertThrowsError(try sut.inspect().find(text: "vehicle id: selected-vehicle"))
+            }
+            if let updateText = testCase.updateText {
+                XCTAssertNotNil(try sut.inspect().find(text: updateText))
+            } else {
+                XCTAssertThrowsError(try sut.inspect().find(text: "vehicle updated 01m 05s ago"))
+            }
+            if let sequenceText = testCase.sequenceText {
+                XCTAssertNotNil(try sut.inspect().find(text: sequenceText))
+            } else {
+                XCTAssertThrowsError(try sut.inspect().find(text: "current stop sequence: 3"))
+            }
+        }
+    }
+
     func testDisplaysStopName() throws {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
@@ -758,5 +844,63 @@ final class TripHeaderCardTests: XCTestCase {
         try column.callOnTapGesture()
 
         wait(for: [alertTapped, followTapped], timeout: 1)
+    }
+
+    func testTrackChangeScheduledTap() throws {
+        let now = EasternTimeInstant.now()
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in stop.name = "Stop Name" }
+        let route = objects.route { $0.type = .commuterRail }
+        let trip = objects.trip { _ in }
+        let scheduledTrackChange = TrackChange.Scheduled(platformCode: "2", platformName: "Track 2")
+
+        let schedule = objects.schedule { schedule in
+            schedule.departureTime = now.plus(minutes: 5)
+        }
+
+        let entry = TripDetailsStopList.Entry(
+            stop: stop,
+            stopSequence: 0,
+            disruption: nil,
+            schedule: schedule,
+            prediction: nil,
+            vehicle: nil,
+            routes: [],
+            elevatorAlerts: [],
+            trackChange: scheduledTrackChange
+        )
+
+        let explainerOpened = expectation(description: "scheduled track change explainer opened")
+
+        let sut = TripHeaderCard(
+            spec: .scheduled(stop, entry),
+            trip: trip,
+            targeted: true,
+            route: route,
+            routeAccents: .init(route: route),
+            onTap: nil,
+            now: now,
+            onFollowTrip: nil,
+            openExplainer: { type in
+                switch onEnum(of: type) {
+                case let .scheduledTrackChange(trackChange):
+                    XCTAssertEqual("2", trackChange.data.platformCode)
+                    XCTAssertEqual("Track 2", trackChange.data.platformName)
+                    explainerOpened.fulfill()
+                default:
+                    XCTFail("expected scheduled track change explainer")
+                }
+            }
+        )
+
+        try XCTAssertNotNil(sut.inspect().find(TrackChangePill.self))
+
+        // The innermost column containing both the stop name and the track change pill is the tap target
+        let column = try XCTUnwrap(sut.inspect().findAll(ViewType.VStack.self, where: {
+            (try? $0.find(text: "Stop Name")) != nil && (try? $0.find(TrackChangePill.self)) != nil
+        }).last)
+        try column.callOnTapGesture()
+
+        wait(for: [explainerOpened], timeout: 1)
     }
 }

@@ -20,14 +20,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ActionButton
 import com.mbta.tid.mbta_app.android.component.ActionButtonKind
-import com.mbta.tid.mbta_app.android.component.DebugView
+import com.mbta.tid.mbta_app.android.component.ChannelDebugView
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.NavTextButton
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.stopCard.StopCardList
 import com.mbta.tid.mbta_app.android.favorites.NoFavoritesView
 import com.mbta.tid.mbta_app.android.favorites.NotificationsHint
-import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.contrastTranslucent
 import com.mbta.tid.mbta_app.android.util.isRoughlyEqualTo
 import com.mbta.tid.mbta_app.android.util.managedTargetLocation
@@ -37,7 +36,6 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
-import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
@@ -65,8 +63,6 @@ fun FavoritesPage(
     val targetLocation by managedTargetLocation(nearbyTransit)
     val cameraStateUnthrottled by
         nearbyTransit.viewportProvider.cameraStateFlow.collectAsStateWithLifecycle(null)
-
-    val notificationsEnabled = SettingsCache.get(Settings.Notifications)
 
     fun onAddFavorites() {
         favoritesViewModel.setIsFirstExposureToNewFavorites(false)
@@ -115,9 +111,8 @@ fun FavoritesPage(
         }
     }
 
-    LaunchedEffect(state.favorites, notificationsEnabled) {
-        if (notificationsEnabled && state.favorites?.isEmpty() == true)
-            favoritesViewModel.dismissNotificationsHint()
+    LaunchedEffect(state.favorites) {
+        if (state.favorites?.isEmpty() == true) favoritesViewModel.dismissNotificationsHint()
     }
 
     val toastText = stringResource(R.string.favorite_stops_first_time_toast_message)
@@ -176,7 +171,7 @@ fun FavoritesPage(
             },
         )
 
-        if (notificationsEnabled && state.shouldShowNotificationsHint) {
+        if (state.shouldShowNotificationsHint) {
             NotificationsHint(
                 onHintTap = {
                     openSheetRoute(SheetRoutes.EditFavorites)
@@ -187,7 +182,7 @@ fun FavoritesPage(
         }
 
         ErrorBanner(errorBannerViewModel, modifier = Modifier.padding(top = 8.dp))
-        DebugView(content = {})
+        ChannelDebugView()
         StopCardList(
             stopCardData = stopCardData,
             emptyView = { emptyView() },

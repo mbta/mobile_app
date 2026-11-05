@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
-import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -25,7 +24,6 @@ fun StopDetailsView(
     allAlerts: AlertsStreamDataResponse?,
     now: EasternTimeInstant,
     isFavorite: (RouteStopDirection) -> Boolean?,
-    updateFavorites: (Map<RouteStopDirection, FavoriteSettings?>, Int) -> Unit,
     navCallbacks: NavigationCallbacks,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
@@ -55,7 +53,6 @@ fun StopDetailsView(
             allAlerts,
             now,
             isFavorite,
-            updateFavorites,
             navCallbacks,
             updateStopFilter,
             updateTripFilter,

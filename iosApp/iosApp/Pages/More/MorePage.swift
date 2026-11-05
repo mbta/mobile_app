@@ -14,7 +14,6 @@ struct MorePage: View {
     let inspection = Inspection<Self>()
 
     let highlight: MoreSection.Category?
-    let reloadPendingOnboarding: () async -> Void
 
     let viewModel = ViewModelDI().more
     @State var showingBuildNumber = false
@@ -28,9 +27,8 @@ struct MorePage: View {
     var infoPlist: [String: Any]? { Bundle.main.infoDictionary }
     var version: String? { infoPlist?["CFBundleShortVersionString"] as? String }
 
-    init(highlight: MoreSection.Category?, reloadPendingOnboarding: @escaping () async -> Void = {}) {
+    init(highlight: MoreSection.Category?) {
         self.highlight = highlight
-        self.reloadPendingOnboarding = reloadPendingOnboarding
     }
 
     var sections: [MoreSection] {
@@ -87,16 +85,14 @@ struct MorePage: View {
                                 onChangeSetting: { setting, newValue in
                                     switch setting {
                                     case .stationAccessibility:
-                                        if settingsCache.get(.notifications), let fcmToken = fcmTokenContainer.token {
+                                        if let fcmToken = fcmTokenContainer.token {
                                             viewModel.updateAccessibility(
                                                 fcmToken: fcmToken,
                                                 includeAccessibility: newValue,
                                                 locale: NSLocalizedString("key/current_locale", comment: "")
                                             )
                                         }
-                                    case .notifications:
-                                        await reloadPendingOnboarding()
-                                    case .devDebugMode, .hideMaps, .notificationPresetWindows, .searchRouteResults:
+                                    case .devDebugMode, .hideMaps, .searchRouteResults:
                                         break
                                     }
                                 }

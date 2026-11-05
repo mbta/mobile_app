@@ -13,8 +13,6 @@ import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.utils.buildFavorites
@@ -360,7 +358,6 @@ class SaveFavoritePageTests {
                             }
                         },
                 )
-            settings = MockSettingsRepository(mapOf(Settings.NotificationPresetWindows to true))
         }
 
         composeTestRule.setContent {

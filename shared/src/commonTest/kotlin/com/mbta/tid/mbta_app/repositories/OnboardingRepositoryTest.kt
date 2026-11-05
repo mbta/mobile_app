@@ -12,7 +12,6 @@ import com.mbta.tid.mbta_app.mocks.MockDatastoreStorage
 import com.mbta.tid.mbta_app.model.OnboardingScreen
 import kotlin.test.AfterTest
 import kotlin.test.Test
-import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
@@ -112,15 +111,8 @@ class OnboardingRepositoryTest : KoinTest {
     }
 
     @Test
-    fun `returns notifications beta if it does apply`() = runBlocking {
-        startKoin(settings = mapOf(Settings.Notifications to true))
-        val repo = OnboardingRepository()
-        assertContains(repo.getPendingOnboarding(), OnboardingScreen.NotificationsBeta)
-    }
-
-    @Test
     fun `always return notifications beta`() = runBlocking {
-        startKoin(settings = mapOf(Settings.Notifications to false))
+        startKoin()
         val repo = OnboardingRepository()
         assertTrue(repo.getPendingOnboarding().contains(OnboardingScreen.NotificationsBeta))
     }

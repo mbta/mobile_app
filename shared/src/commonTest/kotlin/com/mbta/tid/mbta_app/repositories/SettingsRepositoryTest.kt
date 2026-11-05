@@ -37,10 +37,8 @@ internal class SettingsRepositoryTest : KoinTest {
             mapOf(
                 Settings.DevDebugMode to true,
                 Settings.HideMaps to false,
-                Settings.Notifications to false,
                 Settings.SearchRouteResults to false,
                 Settings.StationAccessibility to false,
-                Settings.NotificationPresetWindows to false,
             ),
             repo.getSettings(),
         )

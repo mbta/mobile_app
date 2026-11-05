@@ -92,7 +92,6 @@ fun StopDetailsPage(
         allAlerts,
         now,
         ::isFavorite,
-        ::updateFavorites,
         navCallbacks,
         updateStopFilter,
         updateTripFilter,

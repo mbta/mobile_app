@@ -504,6 +504,68 @@ class TripInstantDisplayTest {
     }
 
     @Test
+    fun `departure_time in the past but stale bus is before the stop`() = parametricTest {
+        val now = EasternTimeInstant.now()
+        val lastTrip = anyBoolean()
+        assertEquals(
+            TripInstantDisplay.Hidden,
+            TripInstantDisplay.from(
+                prediction =
+                    ObjectCollectionBuilder.Single.prediction {
+                        arrivalTime = null
+                        departureTime = now.minus(30.seconds)
+                        stopSequence = 10
+                        tripId = "trip1"
+                    },
+                schedule = null,
+                vehicle =
+                    ObjectCollectionBuilder.Single.vehicle {
+                        currentStatus = Vehicle.CurrentStatus.StoppedAt
+                        stopId = "12345"
+                        currentStopSequence = 10
+                        tripId = "trip1"
+                        updatedAt = now.minus(3.minutes)
+                    },
+                routeType = RouteType.BUS,
+                now = now,
+                context = anyEnumValueExcept(TripInstantDisplay.Context.TripDetails),
+                lastTrip = lastTrip,
+            ),
+        )
+    }
+
+    @Test
+    fun `departure_time in the past but stale cr is before the stop`() = parametricTest {
+        val now = EasternTimeInstant.now()
+        val lastTrip = anyBoolean()
+        assertEquals(
+            TripInstantDisplay.Time(now.minus(30.seconds), last = lastTrip, headline = true),
+            TripInstantDisplay.from(
+                prediction =
+                    ObjectCollectionBuilder.Single.prediction {
+                        arrivalTime = null
+                        departureTime = now.minus(30.seconds)
+                        stopSequence = 10
+                        tripId = "trip1"
+                    },
+                schedule = null,
+                vehicle =
+                    ObjectCollectionBuilder.Single.vehicle {
+                        currentStatus = Vehicle.CurrentStatus.StoppedAt
+                        stopId = "12345"
+                        currentStopSequence = 10
+                        tripId = "trip1"
+                        updatedAt = now.minus(6.minutes)
+                    },
+                routeType = RouteType.COMMUTER_RAIL,
+                now = now,
+                context = anyEnumValueExcept(TripInstantDisplay.Context.TripDetails),
+                lastTrip = lastTrip,
+            ),
+        )
+    }
+
+    @Test
     fun `seconds less than 0`() = parametricTest {
         val now = EasternTimeInstant.now()
         val lastTrip = anyBoolean()

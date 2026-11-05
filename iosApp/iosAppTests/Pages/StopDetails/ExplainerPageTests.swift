@@ -19,7 +19,7 @@ final class ExplainerPageTests: XCTestCase {
 
     func testFinishingTrip() throws {
         let sut = ExplainerPage(
-            explainer: .init(type: .finishingAnotherTrip, routeAccents: .init(type: .bus)),
+            explainer: .init(type: ExplainerType.FinishingAnotherTrip(), routeAccents: .init(type: .bus)),
             onClose: {}
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Finishing another trip"))
@@ -28,24 +28,46 @@ final class ExplainerPageTests: XCTestCase {
     }
 
     func testNoPrediction() throws {
-        let sut = ExplainerPage(explainer: .init(type: .noPrediction, routeAccents: .init()), onClose: {})
+        let sut = ExplainerPage(
+            explainer: .init(type: ExplainerType.NoPrediction(), routeAccents: .init()),
+            onClose: {}
+        )
         XCTAssertNotNil(try sut.inspect().find(text: "Prediction not available yet"))
     }
 
     func testNoVehicle() throws {
-        let sut = ExplainerPage(explainer: .init(type: .noVehicle, routeAccents: .init(type: .lightRail)), onClose: {})
+        let sut = ExplainerPage(
+            explainer: .init(type: ExplainerType.NoVehicle(), routeAccents: .init(type: .lightRail)),
+            onClose: {}
+        )
         XCTAssertNotNil(try sut.inspect().find(text: "Train location not available yet"))
     }
 
+    func testScheduledTrackChange() throws {
+        let sut = ExplainerPage(
+            explainer: .init(
+                type: ExplainerType.ScheduledTrackChange(data: .init(platformCode: "2", platformName: "Track 2")),
+                routeAccents: .init(type: .commuterRail)
+            ),
+            onClose: {}
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Track Change"))
+        XCTAssertNotNil(try sut.inspect()
+            .find(text: "The train is traveling on a different track than usual. Please board on Track 2."))
+    }
+
     func testRouteType() throws {
-        let sut = ExplainerPage(explainer: .init(type: .noPrediction, routeAccents: .init(type: .bus)), onClose: {})
+        let sut = ExplainerPage(
+            explainer: .init(type: ExplainerType.NoPrediction(), routeAccents: .init(type: .bus)),
+            onClose: {}
+        )
         XCTAssertNotNil(try sut.inspect().find(imageName: "mode-bus"))
     }
 
     func testClose() throws {
         let closeExpectation = expectation(description: "close button callback")
         let sut = ExplainerPage(
-            explainer: .init(type: .noPrediction, routeAccents: .init()),
+            explainer: .init(type: ExplainerType.NoPrediction(), routeAccents: .init()),
             onClose: { closeExpectation.fulfill() }
         )
         try sut.inspect().find(ActionButton.self).find(ViewType.Button.self).tap()

@@ -44,7 +44,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -63,7 +62,6 @@ import com.mbta.tid.mbta_app.android.component.routeCard.StopCardHeader
 import com.mbta.tid.mbta_app.android.component.stopCard.LoadingStopCard
 import com.mbta.tid.mbta_app.android.favorites.NoFavoritesView
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
-import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fcmToken
 import com.mbta.tid.mbta_app.android.util.getLabels
@@ -77,7 +75,6 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.StopCardData
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
@@ -199,8 +196,6 @@ private fun EditFavoritesList(
     deleteFavorite: (RouteStopDirection) -> Unit,
     editFavorite: (RouteStopDirection) -> Unit,
 ) {
-    val notificationsFlag = SettingsCache.get(Settings.Notifications)
-
     val displayedFavorites = stopCardData?.filter { data ->
         !removedFavorites.containsAll(data.routeStopDirections)
     }
@@ -239,11 +234,7 @@ private fun EditFavoritesList(
                         { leaf -> deleteFavorite(leaf.routeStopDirection) },
                     ) { leaf ->
                         val selectedFavorite = leaf.routeStopDirection
-                        if (notificationsFlag) {
-                            editFavorite(selectedFavorite)
-                        } else {
-                            deleteFavorite(selectedFavorite)
-                        }
+                        editFavorite(selectedFavorite)
                     }
                 }
             }
@@ -261,8 +252,6 @@ private fun FavoriteDepartures(
     onDrag: (RouteCardData.Leaf) -> Unit,
     onClick: (RouteCardData.Leaf) -> Unit,
 ) {
-    val notificationsFlag = SettingsCache.get(Settings.Notifications)
-
     Column {
         leaves.withIndex().forEach { (index, leaf) ->
             val formatted = leaf.format(EasternTimeInstant.now(), globalData)
@@ -311,12 +300,8 @@ private fun FavoriteDepartures(
                 ) {
                     @Composable
                     fun rightContent() {
-                        if (notificationsFlag) {
-                            NotificationStatusIcon(favorites?.get(leaf.routeStopDirection))
-                            EditIcon { onClick(leaf) }
-                        } else {
-                            DeleteIcon(action = { onClick(leaf) })
-                        }
+                        NotificationStatusIcon(favorites?.get(leaf.routeStopDirection))
+                        EditIcon { onClick(leaf) }
                     }
 
                     Row(
@@ -416,27 +401,6 @@ private fun BranchRows(formatted: LeafFormat.Branched) {
                 modifier = Modifier.placeholderIfLoading(),
             )
         }
-    }
-}
-
-@Composable
-private fun DeleteIcon(action: () -> Unit) {
-    Box(
-        modifier =
-            Modifier.size(44.dp)
-                .clip(CircleShape)
-                .background(colorResource(R.color.delete_background))
-                .clickable { action() }
-                .testTag("trashCan")
-                .clearAndSetSemantics { hideFromAccessibility() },
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            painterResource(R.drawable.trash_can),
-            null,
-            modifier = Modifier.size(16.dp),
-            tint = colorResource(R.color.delete),
-        )
     }
 }
 
