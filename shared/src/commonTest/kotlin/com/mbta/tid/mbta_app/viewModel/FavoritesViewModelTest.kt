@@ -13,6 +13,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.StopCardData
+import com.mbta.tid.mbta_app.model.SubscriptionRequest
 import com.mbta.tid.mbta_app.model.filterValidFavorites
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -21,17 +22,17 @@ import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.repositories.ISubscriptionsRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
+import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.MockPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockSubscriptionsRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.buildFavorites
 import dev.mokkery.MockMode
 import dev.mokkery.answering.calls
-import dev.mokkery.answering.repeat
 import dev.mokkery.answering.returns
-import dev.mokkery.answering.sequentially
 import dev.mokkery.every
 import dev.mokkery.everySuspend
 import dev.mokkery.matcher.any
@@ -52,6 +53,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalTime
 import org.koin.core.component.get
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
@@ -523,19 +526,81 @@ internal class FavoritesViewModelTest : KoinTest {
     }
 
     @Test
+    fun `syncs favorites on initial launch`() = runTest {
+        val now = EasternTimeInstant.now()
+        val initialFavorites = buildFavorites {
+            routeStopDirection(route1.id, stop1.id, 0) {
+                notifications {
+                    enabled = true
+                    window(
+                        LocalTime(8, 0),
+                        LocalTime(9, 0),
+                        setOf(DayOfWeek.TUESDAY),
+                    )
+                }
+            }
+        }
+        val updateSubscriptionsParams:
+            MutableList<Triple<String?, List<SubscriptionRequest>, String?>> =
+            mutableListOf()
+        var updateSubscriptionsCount = 0
+
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(objects, dispatcher) {
+            favorites = MockFavoritesRepository(initialFavorites)
+            subscriptions =
+                MockSubscriptionsRepository(
+                    onUpdateSubscriptions = ({ fcmToken, routeStopDirections, locale ->
+                            updateSubscriptionsCount++
+                            updateSubscriptionsParams.add(
+                                Triple(fcmToken, routeStopDirections, locale),
+                            )
+                        }),
+                )
+            global = MockGlobalRepository(GlobalResponse(objects))
+        }
+
+        val viewModel: FavoritesViewModel = get()
+        viewModel.setActive(true, false)
+        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+        viewModel.setNow(now)
+        viewModel.setLocation(stop1.position)
+
+        testViewModelFlow(viewModel).test {
+            awaitItemSatisfying { it.favorites == initialFavorites.routeStopDirection }
+            assertEquals(0, updateSubscriptionsCount) // no fcm token yet
+            viewModel.setFcmToken("fcmToken")
+            awaitItem() // reloadFavorites called
+            viewModel.setLocale("es")
+            awaitItem() // reloadFavorites called
+            assertEquals(2, updateSubscriptionsCount)
+            assertEquals(
+                listOf(
+                    Triple(
+                        "fcmToken",
+                        SubscriptionRequest.fromFavorites(initialFavorites.routeStopDirection),
+                        null,
+                    ),
+                    Triple(
+                        "fcmToken",
+                        SubscriptionRequest.fromFavorites(initialFavorites.routeStopDirection),
+                        "es",
+                    ),
+                ),
+                updateSubscriptionsParams.toList(),
+            )
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `updates favorites`() = runTest {
         val now = EasternTimeInstant.now()
 
         val favoritesBefore = buildFavorites { routeStopDirection(route1.id, stop1.id, 0) }
         val favoritesAfter = Favorites(emptyMap())
 
-        val favoritesRepo = mock<IFavoritesRepository>(MockMode.autofill)
-
-        everySuspend { favoritesRepo.getFavorites() } sequentially
-            {
-                returns(favoritesBefore)
-                repeat { returns(favoritesAfter) }
-            }
+        val favoritesRepo = MockFavoritesRepository(favoritesBefore)
 
         val dispatcher = StandardTestDispatcher(testScheduler)
 
@@ -1094,13 +1159,7 @@ internal class FavoritesViewModelTest : KoinTest {
         val favoritesBefore = buildFavorites { routeStopDirection(route1.id, stop1.id, 0) }
         val favoritesAfter = Favorites(emptyMap())
 
-        val favoritesRepo = mock<IFavoritesRepository>(MockMode.autofill)
-
-        everySuspend { favoritesRepo.getFavorites() } sequentially
-            {
-                returns(favoritesBefore)
-                repeat { returns(favoritesAfter) }
-            }
+        val favoritesRepo = MockFavoritesRepository(favoritesBefore)
 
         val subscriptionsRepository = mock<ISubscriptionsRepository>(MockMode.autofill)
         everySuspend {

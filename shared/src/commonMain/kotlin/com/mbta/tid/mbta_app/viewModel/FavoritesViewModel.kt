@@ -62,6 +62,10 @@ public interface IFavoritesViewModel {
 
     public fun setIsFirstExposureToNewFavorites(isFirst: Boolean)
 
+    public fun setLocale(locale: String)
+
+    public fun setFcmInstallationId(fcmInstallationId: String?)
+
     @ShouldRefineInSwift
     public fun updateFavorites(
         updatedFavorites: Map<RouteStopDirection, FavoriteSettings?>,
@@ -101,6 +105,10 @@ public class FavoritesViewModel(
             val fcmInstallationId: String?,
             val locale: String?,
         ) : Event
+
+        public data class SetLocale(val locale: String) : Event
+
+        public data class SetFcmInstallationId(val fcmInstallationId: String?) : Event
     }
 
     public data class State(
@@ -149,6 +157,9 @@ public class FavoritesViewModel(
         var active: Boolean by remember { mutableStateOf(false) }
         val errorKey = ErrorKey(setOf(SheetRoutes.Favorites::class), "FavoritesViewModel")
         val globalData = getGlobalData(errorKey)
+
+        var locale: String? by remember { mutableStateOf(null) }
+        var fcmInstallationId: String? by remember { mutableStateOf(null) }
 
         val stopIds =
             remember(validFavorites, globalData) {
@@ -245,6 +256,13 @@ public class FavoritesViewModel(
                     )
                     reloadFavorites()
                 }
+
+                is Event.SetFcmInstallationId -> {
+                    fcmInstallationId = event.fcmInstallationId
+                }
+                is Event.SetLocale -> {
+                    locale = event.locale
+                }
             }
         }
 
@@ -330,6 +348,20 @@ public class FavoritesViewModel(
             shouldShowFirstTimeToast = hadOldPinnedRoutes && isFirstExposureToNewFavorites
         }
 
+        LaunchedEffect(locale, fcmInstallationId, favorites == null) {
+            favorites?.let { loadedFavorites ->
+                favoritesUsecases.updateRouteStopDirections(
+                    loadedFavorites,
+                    EditFavoritesContext.InitialLaunch,
+                    null,
+                    fcmInstallationId,
+                    locale,
+                    coroutineDispatcher,
+                )
+                reloadFavorites()
+            }
+        }
+
         return State(
             awaitingPredictionsAfterBackground,
             favorites,
@@ -373,6 +405,14 @@ public class FavoritesViewModel(
         this.isFirstExposureToNewFavorites = isFirst
     }
 
+    override fun setLocale(locale: String) {
+        fireEvent(Event.SetLocale(locale))
+    }
+
+    override fun setFcmInstallationId(fcmInstallationId: String?) {
+        fireEvent(Event.SetFcmInstallationId(fcmInstallationId))
+    }
+
     override fun updateFavorites(
         updatedFavorites: Map<RouteStopDirection, FavoriteSettings?>,
         context: EditFavoritesContext,
@@ -405,6 +445,8 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
     public var onSetLocation: (Position?) -> Unit = {}
     public var onSetNow: (EasternTimeInstant) -> Unit = { _ -> }
     public var onSetIsFirstExposureToNewFavorites: (Boolean) -> Unit = { _ -> }
+    public var onSetLocale: (String) -> Unit = { _ -> }
+    public var onSetFcmInstallationId: (String?) -> Unit = { _ -> }
     @ShouldRefineInSwift
     public var onUpdateFavorites: (Map<RouteStopDirection, FavoriteSettings?>) -> Unit = { _ -> }
 
@@ -440,6 +482,14 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
 
     override fun setIsFirstExposureToNewFavorites(isFirst: Boolean) {
         onSetIsFirstExposureToNewFavorites(isFirst)
+    }
+
+    override fun setLocale(locale: String) {
+        onSetLocale(locale)
+    }
+
+    override fun setFcmInstallationId(fcmInstallationId: String?) {
+        onSetFcmInstallationId(fcmInstallationId)
     }
 
     override fun updateFavorites(

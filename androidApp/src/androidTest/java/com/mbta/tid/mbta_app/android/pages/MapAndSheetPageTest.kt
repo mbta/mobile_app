@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isHeading
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
@@ -13,21 +15,27 @@ import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDoesNotExistDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.routes.DeepLinkState
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
+import com.mbta.tid.mbta_app.viewModel.MockStopDetailsViewModel
 import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
+import kotlin.test.assertEquals
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -36,6 +44,130 @@ import org.junit.Test
 
 class MapAndSheetPageTest {
     @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
+
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalTestApi::class)
+    @Test
+    fun testRestoredDeepLinkWaitsForNavigationGraph() {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop { name = "Deep-linked Stop" }
+        loadKoinMocks(objects) {
+            settings = MockSettingsRepository(mapOf(Settings.HideMaps to true))
+        }
+
+        val mapViewModel = mock<IMapViewModel>(MockMode.autofill)
+        every { mapViewModel.models } returns
+            MutableStateFlow(MapViewModel.State(MapViewModel.LayerState.Overview, true))
+        val locationDataManager = MockLocationDataManager()
+        val viewportProvider = ViewportProvider(MapViewportState())
+        val initialDeepLink = MutableStateFlow<DeepLinkState?>(null)
+        val pendingDeepLink = DeepLinkState.Stop(stop.id, null, null, null)
+        val restoredDeepLink = MutableStateFlow<DeepLinkState?>(pendingDeepLink)
+        val restoredEntrypoint = mutableStateOf<SheetRoutes.Entrypoint?>(null)
+        var restoring = false
+        var deepLinkHandledCount = 0
+        val restorationTester = StateRestorationTester(composeTestRule)
+
+        restorationTester.setContent {
+            MapAndSheetPage(
+                nearbyTransit =
+                    NearbyTransit(
+                        alertData = AlertsStreamDataResponse(objects),
+                        globalResponse = GlobalResponse(objects),
+                        lastLoadedLocationState = remember { mutableStateOf(null) },
+                        isTargetingState = remember { mutableStateOf(false) },
+                        scaffoldState = rememberBottomSheetScaffoldState(),
+                        locationDataManager = locationDataManager,
+                        viewportProvider = viewportProvider,
+                    ),
+                deepLinkStateFlow = if (restoring) restoredDeepLink else initialDeepLink,
+                deepLinkCallback = {
+                    deepLinkHandledCount += 1
+                    restoredDeepLink.value = null
+                },
+                sheetNavEntrypoint =
+                    if (restoring) restoredEntrypoint.value else SheetRoutes.NearbyTransit,
+                navBarVisible = false,
+                showNavBar = {},
+                hideNavBar = {},
+                bottomBar = {},
+                mapViewModel = mapViewModel,
+            )
+        }
+
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
+            hasText("Nearby Transit") and isHeading(),
+        )
+
+        // Restore with no entrypoint yet, so no NavHost is composed and the nav graph is unset.
+        // A nav controller recreated by restoration must not be treated as initialized.
+        restoring = true
+        restorationTester.emulateSavedInstanceStateRestore()
+        composeTestRule.runOnIdle {
+            assertEquals(0, deepLinkHandledCount)
+            assertEquals(pendingDeepLink, restoredDeepLink.value)
+            // Composing the NavHost sets the graph, which should release the pending deep link.
+            restoredEntrypoint.value = SheetRoutes.NearbyTransit
+        }
+
+        composeTestRule.waitUntilDefaultTimeout { deepLinkHandledCount == 1 }
+        assertEquals(1, deepLinkHandledCount)
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalTestApi::class)
+    @Test
+    fun testReplayedFilterUpdateWaitsForNavigationGraph() {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop { name = "Filtered Stop" }
+        loadKoinMocks(objects) {
+            settings = MockSettingsRepository(mapOf(Settings.HideMaps to true))
+        }
+
+        val mapViewModel = mock<IMapViewModel>(MockMode.autofill)
+        every { mapViewModel.models } returns
+            MutableStateFlow(MapViewModel.State(MapViewModel.LayerState.Overview, true))
+        // The shared view model replays its last filter update, so the effect fires immediately,
+        // before any NavHost has had a chance to attach a graph to the nav controller.
+        val stopDetailsViewModel = MockStopDetailsViewModel()
+        stopDetailsViewModel.filterUpdates.value = StopDetailsPageFilters(stop.id, null, null)
+        val entrypoint = mutableStateOf<SheetRoutes.Entrypoint?>(null)
+        val noDeepLink = MutableStateFlow<DeepLinkState?>(null).asStateFlow()
+
+        composeTestRule.setContent {
+            MapAndSheetPage(
+                nearbyTransit =
+                    NearbyTransit(
+                        alertData = AlertsStreamDataResponse(objects),
+                        globalResponse = GlobalResponse(objects),
+                        lastLoadedLocationState = remember { mutableStateOf(null) },
+                        isTargetingState = remember { mutableStateOf(false) },
+                        scaffoldState = rememberBottomSheetScaffoldState(),
+                        locationDataManager = MockLocationDataManager(),
+                        viewportProvider = ViewportProvider(MapViewportState()),
+                    ),
+                deepLinkStateFlow = noDeepLink,
+                deepLinkCallback = {},
+                sheetNavEntrypoint = entrypoint.value,
+                navBarVisible = false,
+                showNavBar = {},
+                hideNavBar = {},
+                bottomBar = {},
+                mapViewModel = mapViewModel,
+                stopDetailsViewModel = stopDetailsViewModel,
+            )
+        }
+
+        // Without an entrypoint there is no NavHost, so navigating here would throw.
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
+            hasText("Nearby Transit") and isHeading(),
+        )
+
+        composeTestRule.runOnIdle { entrypoint.value = SheetRoutes.NearbyTransit }
+
+        // Once the graph is attached the deferred update applies and navigates away from nearby.
+        composeTestRule.waitUntilDoesNotExistDefaultTimeout(
+            hasText("Nearby Transit") and isHeading(),
+        )
+    }
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalTestApi::class)
     @Test

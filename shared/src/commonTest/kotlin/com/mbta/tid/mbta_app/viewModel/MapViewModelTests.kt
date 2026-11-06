@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.viewModel
 import app.cash.turbine.test
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
+import com.mbta.tid.mbta_app.map.StopLayerGenerator
 import com.mbta.tid.mbta_app.mocks.MockClock
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LineOrRoute
@@ -46,6 +47,7 @@ import kotlin.test.fail
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -350,6 +352,143 @@ internal class MapViewModelTests : KoinTest {
             )
             advanceTimeBy(100.milliseconds)
             assertEquals(tripDetailsFilter.tripId, loadedTripShapeId)
+        }
+    }
+
+    @Test
+    fun tripDetailsKeepsTargetPinAndFramesStopUntilPassed() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(dispatcher) { trip = MockTripRepository() }
+        val stop = TestData.getStop("70113")
+        val expectedTarget = stop
+        val vehicle = TestData.vehicle {
+            tripId = "trip"
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+            currentStopSequence = 4
+        }
+        val tripFilter = TripDetailsFilter("trip", vehicle.id, 5)
+        val stopFilter = StopDetailsFilter(Route.Id("Green-B"), 0)
+        val overviews = mutableListOf<Pair<Vehicle, Stop?>>()
+        val viewportProvider =
+            MockViewportManager(
+                vehicleOverviewCalled = { vehicle, stop, _ -> overviews.add(vehicle to stop) },
+            )
+        val layerManager = mock<IMapLayerManager>(MockMode.autofill)
+        val tripLayersAdded = CompletableDeferred<Unit>()
+        everySuspend {
+            layerManager.addLayers(
+                any<List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>>(),
+                matches {
+                    it is StopLayerGenerator.State.TripDetails &&
+                        it.selectedStopId == expectedTarget.id
+                },
+                any(),
+                any(),
+            )
+        } calls { tripLayersAdded.complete(Unit) }
+        val viewModel: MapViewModel = get()
+        viewModel.setViewportManager(viewportProvider)
+        viewModel.layerManagerInitialized(layerManager)
+        viewModel.densityChanged(1f)
+
+        testViewModelFlow(viewModel).test {
+            awaitItem()
+            advanceTimeBy(100.milliseconds)
+            viewModel.navChanged(
+                SheetRoutes.TripDetails(TripDetailsPageFilter(stop.id, stopFilter, tripFilter)),
+            )
+            advanceTimeBy(100.milliseconds)
+            assertEquals(
+                expectedTarget,
+                (expectMostRecentItem().layerState as MapViewModel.LayerState.TripSelected).stop,
+            )
+            assertEquals(emptyList(), overviews)
+            tripLayersAdded.await()
+
+            val updates =
+                listOf(
+                    vehicle to expectedTarget,
+                    vehicle.copy(
+                        currentStopSequence = 5,
+                        currentStatus = Vehicle.CurrentStatus.IncomingAt,
+                    ) to expectedTarget,
+                    vehicle.copy(
+                        currentStopSequence = 5,
+                        currentStatus = Vehicle.CurrentStatus.StoppedAt,
+                    ) to expectedTarget,
+                    vehicle.copy(currentStopSequence = 6) to null,
+                    vehicle.copy(currentStopSequence = null) to expectedTarget,
+                    vehicle.copy(tripId = "other-trip", currentStopSequence = 6) to expectedTarget,
+                )
+            for ((updatedVehicle, expectedStop) in updates) {
+                viewModel.selectedVehicleUpdated(updatedVehicle, true)
+                advanceTimeBy(100.milliseconds)
+                assertEquals(updatedVehicle to expectedStop, overviews.last())
+                assertEquals(
+                    expectedTarget,
+                    (expectMostRecentItem().layerState as MapViewModel.LayerState.TripSelected)
+                        .stop,
+                )
+            }
+
+            // Panning pauses automatic updates; recentering still uses trip-details framing.
+            val passedVehicle = vehicle.copy(currentStopSequence = 6)
+            val overviewCount = overviews.size
+            viewModel.selectedVehicleUpdated(passedVehicle, false)
+            advanceTimeBy(100.milliseconds)
+            expectMostRecentItem()
+            assertEquals(overviewCount, overviews.size)
+            viewModel.recenter(MapViewModel.Event.RecenterType.Trip)
+            advanceTimeBy(100.milliseconds)
+            assertEquals(passedVehicle to null, overviews.last())
+            assertEquals(overviewCount + 1, overviews.size)
+
+            // Stop details continues to frame the target even after the vehicle passes it.
+            viewModel.vehiclesChanged(listOf(passedVehicle))
+            viewModel.navChanged(SheetRoutes.StopDetails(stop.id, stopFilter, tripFilter))
+            advanceTimeBy(100.milliseconds)
+            assertEquals(passedVehicle to stop, overviews.last())
+
+            viewModel.navChanged(
+                SheetRoutes.TripDetails(
+                    TripDetailsPageFilter(
+                        stop.id,
+                        stopFilter,
+                        tripFilter.copy(stopSequence = null),
+                    ),
+                ),
+            )
+            advanceTimeBy(100.milliseconds)
+            assertEquals(passedVehicle to expectedTarget, overviews.last())
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun tripDetailsWithoutVehicleCentersTargetStop() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(dispatcher)
+        val centeredStops = mutableListOf<Stop>()
+        val viewportProvider = MockViewportManager(stopCenterCalled = { centeredStops.add(it) })
+        val viewModel: MapViewModel = get()
+        viewModel.setViewportManager(viewportProvider)
+        val stop = TestData.getStop("70113")
+
+        testViewModelFlow(viewModel).test {
+            awaitItem()
+            advanceTimeBy(100.milliseconds)
+            viewModel.navChanged(
+                SheetRoutes.TripDetails(
+                    TripDetailsPageFilter(
+                        stop.id,
+                        StopDetailsFilter(Route.Id("Green-B"), 0),
+                        TripDetailsFilter("trip", null, 5),
+                    ),
+                ),
+            )
+            advanceTimeBy(100.milliseconds)
+            expectMostRecentItem()
+            assertEquals(listOf(stop), centeredStops)
         }
     }
 

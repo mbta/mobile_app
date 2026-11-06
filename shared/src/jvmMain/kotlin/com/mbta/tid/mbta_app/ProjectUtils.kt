@@ -33,6 +33,10 @@ internal val platformModule = module {
 /**
  * Utilities that we may need to run from time to time that need access to the real business logic.
  * Run with `gradlew jvmRun`.
+ *
+ * You may need to set currentAppVersion in [com.mbta.tid.mbta_app.dependencyInjection.RepositoryDI]
+ * `RealRepositories` to a non-null value (ex: `MockCurrentAppVersionRepository(AppVersion(0u, 0u,
+ * 0u))`)) to run this.
  */
 @Suppress("unused")
 internal object ProjectUtils {
@@ -161,7 +165,8 @@ internal object ProjectUtils {
                                     "representativeTripId = %S,",
                                     pattern.representativeTripId,
                                 )
-                                addStatement("routeId = %L", pattern.routeId.encode())
+                                addStatement("routeId = %L,", pattern.routeId.encode())
+                                addStatement("canonical = %L", pattern.canonical)
                                 addStatement("))")
                             }
                         }

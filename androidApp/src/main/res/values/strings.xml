@@ -147,6 +147,7 @@
     <string name="explainer_text_finishing_another">The %1$s assigned to this route is currently serving another trip. We’ll show it on the route once it starts this trip.</string>
     <string name="explainer_text_no_prediction">We don’t have live predictions for this trip yet, but they will appear closer to the scheduled time. If the trip is delayed or cancelled, we’ll let you know here.</string>
     <string name="explainer_text_no_vehicle">The %1$s location might not be available in advance if a vehicle hasn’t been assigned yet. Once the driver starts the trip, we’ll start showing the live location.</string>
+    <string name="explainer_text_scheduled_track_change">The train is traveling on a different track than usual. Please board on %1$s.</string>
     <string name="extra_service">Extra Service</string>
     <string name="extra_service_sentence_case">Extra service</string>
     <string name="facility_issue">Facility Issue</string>

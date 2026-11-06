@@ -18,6 +18,7 @@ import com.mbta.tid.mbta_app.model.TrackChange
 import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.Vehicle
+import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.TestData
@@ -903,7 +904,7 @@ class TripHeaderCardTest {
     }
 
     @Test
-    fun testTrackChangePillTapScheduled() {
+    fun testTrackChangeAlertPillTapScheduledTrip() {
         val now = EasternTimeInstant(2025, Month.JULY, 29, 9, 43)
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "Stop Name" }
@@ -941,7 +942,41 @@ class TripHeaderCardTest {
     }
 
     @Test
-    fun testTrackChangePillTapVehicleOnTrip() {
+    fun testTrackChangeScheduledPillTapOpensExplainer() {
+        val now = EasternTimeInstant(2025, Month.JULY, 29, 9, 43)
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop { name = "Stop Name" }
+        val trip = objects.trip()
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+        val scheduled = TrackChange.Scheduled("2", "Track 2")
+        var openedModal: ModalRoutes? = null
+        var cardTapped = false
+
+        composeTestRule.setContent {
+            TripHeaderCard(
+                trip,
+                scheduledSpec(objects, now, stop, trip, scheduled),
+                targeted = true,
+                route,
+                TripRouteAccents(route),
+                now,
+                onTap = { cardTapped = true },
+                openModal = { openedModal = it },
+            )
+        }
+
+        composeTestRule.onNodeWithText("Track 2", useUnmergedTree = true).performClick()
+
+        val explainer = openedModal as? ModalRoutes.Explainer
+        assertEquals(
+            TrackChange.Scheduled("2", "Track 2"),
+            (explainer?.type as? ExplainerType.ScheduledTrackChange)?.data,
+        )
+        assertFalse(cardTapped)
+    }
+
+    @Test
+    fun testTrackChangeAlertPillTapVehicleOnTrip() {
         val now = EasternTimeInstant(2025, Month.JULY, 29, 9, 43)
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "Stop Name" }

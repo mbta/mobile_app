@@ -147,6 +147,7 @@
     <string name="explainer_text_finishing_another">Le %1$s affecté à cet itinéraire effectue actuellement un autre trajet. Il apparaîtra sur l’itinéraire dès qu’il commencera ce trajet.</string>
     <string name="explainer_text_no_prediction">Nous ne disposons pas encore de prévisions en temps réel pour ce trajet, mais elles s’afficheront à l’approche de l’heure prévue. Si le trajet est retardé ou annulé, nous vous en informerons ici.</string>
     <string name="explainer_text_no_vehicle">La localisation %1$s peut ne pas être disponible à l’avance si aucun véhicule n’a encore été attribué. Dès que le conducteur commencera le trajet, nous afficherons sa position en temps réel.</string>
+    <string name="explainer_text_scheduled_track_change">Le train ne circule pas sur sa voie habituelle. Veuillez monter à bord sur la voie %1$s.</string>
     <string name="extra_service">Service supplémentaire</string>
     <string name="extra_service_sentence_case">service supplémentaire</string>
     <string name="facility_issue">Problème d’infrastructure</string>

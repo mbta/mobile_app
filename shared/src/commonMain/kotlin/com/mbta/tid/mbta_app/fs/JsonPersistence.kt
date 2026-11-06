@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.fs
 
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.utils.SystemPaths
+import kotlin.uuid.Uuid
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.DeserializationStrategy
@@ -74,7 +75,9 @@ internal class JsonPersistence(
             val dir = dir(category, group)
             fileSystem.createDirectories(dir)
             val path = dir / "$name.json"
-            fileSystem.write(path, writerAction = writerAction)
+            val tempPath = dir / "$name.${Uuid.random()}.tmp"
+            fileSystem.write(tempPath, writerAction = writerAction)
+            fileSystem.atomicMove(tempPath, path)
         }
 
     suspend fun <T> read(

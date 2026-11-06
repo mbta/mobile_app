@@ -12,54 +12,30 @@ import SwiftUI
 
 struct FcmSubscriptionModifier: ViewModifier {
     let fcmInstallationId: String?
-    let includeAccessibility: Bool
-
-    @State var subscriptionsRepository: ISubscriptionsRepository = RepositoryDI().subscriptions
-
-    @State var favorites: Favorites = LoadedFavorites.last
-    @State var globalData: GlobalResponse?
-
-    func updateSubscriptions(_ fcmInstallationId: String?) {
-        if let fcmInstallationId {
-            Task {
-                let validFavorites = if let globalData {
-                    FavoriteValidityKt.filterValidFavorites(favorites.routeStopDirection, global: globalData)
-                } else {
-                    favorites.routeStopDirection
-                }
-                let subscriptions = SubscriptionRequest.companion.fromFavorites(
-                    favorites: validFavorites,
-                    includeAccessibility: includeAccessibility
-                )
-                try await subscriptionsRepository.updateSubscriptions(
-                    fcmInstallationId: fcmInstallationId,
-                    subscriptions: subscriptions,
-                    locale: NSLocalizedString("key/current_locale", comment: ""),
-                )
-            }
-        }
-    }
+    let favoritesVM: IFavoritesViewModel
 
     func body(content: Content) -> some View {
         content
-            .favorites($favorites)
-            .global($globalData, errorKey: ErrorKey(sheets: [], id: "FcmSubscriptionModifier"))
-            .onAppear { updateSubscriptions(fcmInstallationId) }
-            .onChange(of: fcmInstallationId) { newInstallationId in updateSubscriptions(newInstallationId) }
-            .onChange(of: globalData) { _ in updateSubscriptions(fcmInstallationId) }
+            .onAppear {
+                favoritesVM.setLocale(locale: NSLocalizedString("key/current_locale", comment: ""))
+                favoritesVM.setFcmInstallationId(fcmInstallationId: fcmInstallationId)
+            }
+            .onChange(of: fcmInstallationId) { newInstallationId in
+                favoritesVM.setFcmInstallationId(fcmInstallationId: newInstallationId)
+            }
             .enableInjection()
     }
 }
 
 public extension View {
-    /** Update subscriptions on the backend when the FCM installation ID is set or changed. */
+    /** Update subscriptions on the backend when the FCM token is set or changed. */
     func handleFcmInstallationIdSubscriptions(
         fcmInstallationId: String?,
-        includeAccessibility: Bool,
+        favoritesVM: IFavoritesViewModel = ViewModelDI().favorites
     ) -> some View {
         modifier(FcmSubscriptionModifier(
             fcmInstallationId: fcmInstallationId,
-            includeAccessibility: includeAccessibility,
+            favoritesVM: favoritesVM
         ))
     }
 }

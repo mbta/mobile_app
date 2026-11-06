@@ -18,91 +18,29 @@ final class FcmSubscriptionModifierTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
-    func testUpdatesSubscriptions() {
-        let updateExp = expectation(description: "subscriptions updated")
+    func testSetsLocaleAndFcmToken() {
+        let localeExp = expectation(description: "locale set")
+        let installationIdExp = expectation(description: "fcm installation id set")
 
-        let objects = ObjectCollectionBuilder()
-
-        let route = objects.route { _ in }
-        let stop = objects.stop { _ in }
-
-        let favorites = Favorites(routeStopDirection: [
-            .init(route: route.id, stop: stop.id, direction: 1):
-                .init(notifications: .init(enabled: true, windows: [.init(
-                    startTime: .init(hour: 8, minute: 0, second: 0, nanosecond: 0),
-                    endTime: .init(hour: 9, minute: 0, second: 0, nanosecond: 0),
-                    daysOfWeek: [.saturday, .sunday]
-                )])),
-        ])
-
-        LoadedFavorites.last = favorites
-        let expectedSubscriptions = SubscriptionRequest.companion.fromFavorites(
-            favorites: favorites.routeStopDirection,
-            includeAccessibility: true
-        )
         let expectedInstallationId = "installation_id_string"
-
-        let mockRepos = MockRepositories()
-        mockRepos.subscriptions = MockSubscriptionsRepository(
-            onUpdateSubscriptions: { installationId, subs, locale in
-                XCTAssertEqual(expectedInstallationId, installationId)
-                XCTAssertEqual(expectedSubscriptions, subs)
-                XCTAssertEqual("en", locale)
-                updateExp.fulfill()
-            },
-            onUpdateAccessibility: { _, _, _ in }
-        )
-        loadKoinMocks(repositories: mockRepos)
+        let favoritesVM = MockFavoritesViewModel()
+        favoritesVM.onSetLocale = { locale in
+            XCTAssertEqual("en", locale)
+            localeExp.fulfill()
+        }
+        favoritesVM.onSetFcmInstallationId = { installationId in
+            XCTAssertEqual(expectedInstallationId, installationId)
+            installationIdExp.fulfill()
+        }
 
         let sut = Text("test").handleFcmInstallationIdSubscriptions(
             fcmInstallationId: expectedInstallationId,
-            includeAccessibility: true,
+            favoritesVM: favoritesVM
         )
 
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
 
-        wait(for: [updateExp], timeout: 1)
-    }
-
-    func testDoesNothingWithNoInstallationId() {
-        let updateExp = expectation(description: "subscriptions updated")
-        updateExp.isInverted = true
-
-        let objects = ObjectCollectionBuilder()
-
-        let route = objects.route { _ in }
-        let stop = objects.stop { _ in }
-
-        let favorites = Favorites(routeStopDirection: [
-            .init(route: route.id, stop: stop.id, direction: 1):
-                .init(notifications: .init(enabled: true, windows: [.init(
-                    startTime: .init(hour: 8, minute: 0, second: 0, nanosecond: 0),
-                    endTime: .init(hour: 9, minute: 0, second: 0, nanosecond: 0),
-                    daysOfWeek: [.saturday, .sunday]
-                )])),
-        ])
-
-        LoadedFavorites.last = favorites
-
-        let mockRepos = MockRepositories()
-        mockRepos.subscriptions = MockSubscriptionsRepository(
-            onUpdateSubscriptions: { _, _, _ in
-                XCTFail("Should not update when installation ID is missing")
-                updateExp.fulfill()
-            },
-            onUpdateAccessibility: { _, _, _ in }
-        )
-        loadKoinMocks(repositories: mockRepos)
-
-        let sut = Text("test").handleFcmInstallationIdSubscriptions(
-            fcmInstallationId: nil,
-            includeAccessibility: true,
-        )
-
-        ViewHosting.host(view: sut)
-        defer { ViewHosting.expel() }
-
-        wait(for: [updateExp], timeout: 1)
+        wait(for: [localeExp, installationIdExp], timeout: 1)
     }
 }

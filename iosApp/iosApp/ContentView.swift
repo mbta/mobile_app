@@ -110,7 +110,6 @@ struct ContentView: View {
         .global($globalData, errorKey: ErrorKey(sheets: [], id: "ContentView"))
         .handleFcmInstallationIdSubscriptions(
             fcmInstallationId: fcmInstallationIdContainer.installationId,
-            includeAccessibility: includeAccessibility
         )
         .onChange(of: contentVM.defaultTab) { newTab in
             // if we aren't on an entrypoint, then the default tab may have loaded after
