@@ -34,7 +34,7 @@ final class NearbyTransitPageTests: XCTestCase {
         let newCameraState = CameraState(
             center: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0),
             padding: .zero,
-            zoom: ViewportProvider.Defaults.zoom,
+            zoom: MapDefaults.shared.zoom,
             bearing: 0.0,
             pitch: 0.0
         )
@@ -69,7 +69,7 @@ final class NearbyTransitPageTests: XCTestCase {
     }
 
     @MainActor func testErrorBanner() {
-        let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
+        let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: MapDefaults.shared.zoom))
 
         let sut = NearbyTransitPage(
             alerts: .init(alerts: [:]),

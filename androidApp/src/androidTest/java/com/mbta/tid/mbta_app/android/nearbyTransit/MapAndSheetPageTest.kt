@@ -24,7 +24,7 @@ import androidx.test.rule.GrantPermissionRule
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraState
 import com.mapbox.maps.EdgeInsets
-import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
+import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState as RawMapViewportState
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.location.IViewportProvider
@@ -40,6 +40,8 @@ import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDoesNotExistDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
+import com.mbta.tid.mbta_app.map.MapDefaults
+import com.mbta.tid.mbta_app.map.MapViewportState
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LocationType
@@ -216,7 +218,7 @@ class MapAndSheetPageTest : KoinTest {
             },
         )
 
-    val viewportProvider = ViewportProvider(MapViewportState())
+    val viewportProvider = ViewportProvider(RawMapViewportState())
 
     @get:Rule
     val runtimePermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -577,7 +579,7 @@ class MapAndSheetPageTest : KoinTest {
         val viewportProvider =
             spy<IViewportProvider>(
                 ViewportProvider(
-                    MapViewportState(
+                    RawMapViewportState(
                         CameraState(
                             // Specifically setting zoom so that we don't fall back to using the
                             // default
@@ -587,17 +589,21 @@ class MapAndSheetPageTest : KoinTest {
                             // follow.
                             Point.fromLngLat(sampleStop.longitude, sampleStop.latitude),
                             EdgeInsets(0.0, 0.0, 0.0, 0.0),
-                            /* zoom = */ ViewportProvider.Companion.Defaults.zoom,
+                            /* zoom = */ MapDefaults.zoom,
                             /* bearing = */ 0.0,
                             /* pitch = */ 0.0,
                         ),
                     ),
                 ),
             )
-        // setting to false so that the only calls to `follow()` will come from backgrounding.
+        // placing in a different state so that the only calls to `follow()` will come from
+        // backgrounding.
         // Otherwise, HomeMapView LaunchedEffect will sometimes also call `follow()` within the
         // duration of the test and throw off the count.
-        viewportProvider.isFollowingPuck = false
+        viewportProvider.applyState(
+            MapViewportState.StopCenter(sampleStop.position),
+            instantly = false,
+        )
         var followCallCount = 0
 
         val flow = MutableStateFlow(null).asStateFlow()

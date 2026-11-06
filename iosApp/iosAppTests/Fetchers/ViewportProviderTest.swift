@@ -24,7 +24,7 @@ final class ViewportProviderTest: XCTestCase {
     func testFollowViewport() async {
         let provider = ViewportProvider()
         XCTAssertNil(provider.viewport)
-        await provider.follow()
+        try? await provider.applyState(state: .FollowingPuck.shared, instantly: true)
         XCTAssertNil(provider.viewport?.camera)
         XCTAssertNotNil(provider.viewport?.followPuck)
     }
@@ -127,10 +127,10 @@ final class ViewportProviderTest: XCTestCase {
     func testSetIsManuallyCentering() {
         let provider = ViewportProvider()
 
-        XCTAssertFalse(provider.isManuallyCentering)
-        provider.setIsManuallyCentering(true)
+        XCTAssertFalse(provider.isCurrentlyPanning)
+        provider.setIsCurrentlyPanning(true)
 
-        XCTAssertTrue(provider.isManuallyCentering)
+        XCTAssertTrue(provider.isCurrentlyPanning)
     }
 
     func testViewportAround() throws {
@@ -156,10 +156,13 @@ final class ViewportProviderTest: XCTestCase {
         }
     }
 
-    func testViewportIsDefault() async {
+    func testViewportIsDefault() async throws {
         let provider = ViewportProvider()
         XCTAssert(provider.isDefault())
-        await provider.animateTo(coordinates: .init(latitude: 0.0, longitude: 0.0))
+        try await provider.applyState(
+            state: .ManuallyPanned(toDefault: false, currentlyPanning: false),
+            instantly: true
+        )
         XCTAssertFalse(provider.isDefault())
 
         let initializedProvider = ViewportProvider(viewport: .followPuck(zoom: 12.0))

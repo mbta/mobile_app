@@ -32,6 +32,7 @@ import com.mbta.tid.mbta_app.android.component.sheet.rememberStandardBottomSheet
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.location.rememberLocationDataManager
 import com.mbta.tid.mbta_app.android.map.ManageMapboxConfig
+import com.mbta.tid.mbta_app.android.map.toMapbox
 import com.mbta.tid.mbta_app.android.pages.MapAndSheetPage
 import com.mbta.tid.mbta_app.android.pages.MorePage
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
@@ -44,6 +45,7 @@ import com.mbta.tid.mbta_app.android.util.ManageErrorBannerBackgrounding
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.fcmInstallationId
 import com.mbta.tid.mbta_app.cache.ScheduleCache
+import com.mbta.tid.mbta_app.map.MapDefaults
 import com.mbta.tid.mbta_app.model.FeaturePromo
 import com.mbta.tid.mbta_app.model.OnboardingScreen
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -111,8 +113,8 @@ fun ContentView(
     val locationDataManager = rememberLocationDataManager()
     val mapViewportState = rememberMapViewportState {
         setCameraOptions {
-            center(ViewportProvider.Companion.Defaults.center)
-            zoom(ViewportProvider.Companion.Defaults.zoom)
+            center(MapDefaults.center.toMapbox())
+            zoom(MapDefaults.zoom)
             pitch(0.0)
             bearing(0.0)
             transitionToFollowPuckState()

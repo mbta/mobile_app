@@ -603,7 +603,7 @@ struct ContentView: View {
         .withLocationStateHandler(locationDataManager) { _, location in
             guard viewportProvider.viewport == nil else { return }
 
-            let defaultCenter = ViewportProvider.Defaults.center
+            let defaultCenter = MapDefaults.shared.center
             viewportProvider.initViewport(
                 location: location
                     ?? CLLocation(latitude: defaultCenter.latitude, longitude: defaultCenter.longitude)

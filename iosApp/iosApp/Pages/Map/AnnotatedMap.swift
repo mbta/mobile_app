@@ -155,17 +155,17 @@ struct AnnotatedMap: View {
         .gestureHandlers(.init(
             onBegin: { gestureType in
                 if centerMovingGestures.contains(gestureType) {
-                    viewportProvider.setIsManuallyCentering(true)
+                    viewportProvider.setIsCurrentlyPanning(true)
                 }
             },
             onEnd: { gestureType, willAnimate in
                 if centerMovingGestures.contains(gestureType), !willAnimate {
-                    viewportProvider.setIsManuallyCentering(false)
+                    viewportProvider.setIsCurrentlyPanning(false)
                 }
             },
             onEndAnimation: { gestureType in
                 if centerMovingGestures.contains(gestureType) {
-                    viewportProvider.setIsManuallyCentering(false)
+                    viewportProvider.setIsCurrentlyPanning(false)
                 }
             }
         ))
