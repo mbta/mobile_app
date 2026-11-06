@@ -16,7 +16,7 @@ import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
-import com.mbta.tid.mbta_app.android.util.fcmToken
+import com.mbta.tid.mbta_app.android.util.fcmInstallationId
 import com.mbta.tid.mbta_app.model.FeaturePromo
 import com.mbta.tid.mbta_app.network.MockPhoenixSocket
 import com.mbta.tid.mbta_app.repositories.DefaultTab
@@ -174,10 +174,10 @@ class ContentViewTests : KoinTest {
     @Test
     fun testFavoritesVmFcmTokenSet() {
         val favoritesVM = MockFavoritesViewModel()
-        var fcmTokenSet: String? = null
-        favoritesVM.onSetFcmToken = { fcmTokenSet = it }
+        var fcmInstallationIdSet: String? = null
+        favoritesVM.onSetFcmInstallationId = { fcmInstallationIdSet = it }
 
-        fcmToken = "test_token"
+        fcmInstallationId = "test_installation_id"
 
         composeTestRule.setContent {
             CompositionLocalProvider(
@@ -187,6 +187,6 @@ class ContentViewTests : KoinTest {
             }
         }
 
-        composeTestRule.waitUntilDefaultTimeout { fcmTokenSet == "test_token" }
+        composeTestRule.waitUntilDefaultTimeout { fcmInstallationIdSet == "test_installation_id" }
     }
 }

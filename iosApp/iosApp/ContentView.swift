@@ -18,7 +18,7 @@ struct ContentView: View {
     @EnvironmentObject var viewportProvider: ViewportProvider
 
     @ObservedObject var contentVM: ContentViewModel
-    @ObservedObject var fcmTokenContainer = FcmTokenContainer.shared
+    @ObservedObject var fcmInstallationIdContainer = FcmInstallationIdContainer.shared
     @ObservedObject var notificationDeepLinkOwner = AppDelegate.notificationDeepLinkOwner
 
     @State private var contentHeight: CGFloat = UIScreen.current?.bounds.height ?? 0
@@ -108,8 +108,8 @@ struct ContentView: View {
         }
         .alerts($alerts)
         .global($globalData, errorKey: ErrorKey(sheets: [], id: "ContentView"))
-        .handleFcmTokenSubscriptions(
-            fcmToken: fcmTokenContainer.token,
+        .handleFcmInstallationIdSubscriptions(
+            fcmInstallationId: fcmInstallationIdContainer.installationId,
         )
         .onChange(of: contentVM.defaultTab) { newTab in
             // if we aren't on an entrypoint, then the default tab may have loaded after
@@ -657,7 +657,7 @@ struct ContentView: View {
                             updatedFavorites: favorites,
                             context: context,
                             defaultDirection: selectedDirection,
-                            fcmToken: fcmTokenContainer.token,
+                            fcmInstallationId: fcmInstallationIdContainer.installationId,
                         )
                     },
                     navCallbacks: navCallbacks

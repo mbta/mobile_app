@@ -20,27 +20,27 @@ final class FcmSubscriptionModifierTests: XCTestCase {
 
     func testSetsLocaleAndFcmToken() {
         let localeExp = expectation(description: "locale set")
-        let tokenExp = expectation(description: "fcm token set")
+        let installationIdExp = expectation(description: "fcm installation id set")
 
-        let expectedToken = "token_string"
+        let expectedInstallationId = "installation_id_string"
         let favoritesVM = MockFavoritesViewModel()
         favoritesVM.onSetLocale = { locale in
             XCTAssertEqual("en", locale)
             localeExp.fulfill()
         }
-        favoritesVM.onSetFcmToken = { token in
-            XCTAssertEqual(expectedToken, token)
-            tokenExp.fulfill()
+        favoritesVM.onSetFcmInstallationId = { installationId in
+            XCTAssertEqual(expectedInstallationId, installationId)
+            installationIdExp.fulfill()
         }
 
-        let sut = Text("test").handleFcmTokenSubscriptions(
-            fcmToken: expectedToken,
+        let sut = Text("test").handleFcmInstallationIdSubscriptions(
+            fcmInstallationId: expectedInstallationId,
             favoritesVM: favoritesVM
         )
 
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
 
-        wait(for: [localeExp, tokenExp], timeout: 1)
+        wait(for: [localeExp, installationIdExp], timeout: 1)
     }
 }

@@ -11,28 +11,30 @@ import Shared
 import SwiftUI
 
 struct FcmSubscriptionModifier: ViewModifier {
-    let fcmToken: String?
+    let fcmInstallationId: String?
     let favoritesVM: IFavoritesViewModel
 
     func body(content: Content) -> some View {
         content
             .onAppear {
                 favoritesVM.setLocale(locale: NSLocalizedString("key/current_locale", comment: ""))
-                favoritesVM.setFcmToken(fcmToken: fcmToken)
+                favoritesVM.setFcmInstallationId(fcmInstallationId: fcmInstallationId)
             }
-            .onChange(of: fcmToken) { newToken in favoritesVM.setFcmToken(fcmToken: newToken) }
+            .onChange(of: fcmInstallationId) { newInstallationId in
+                favoritesVM.setFcmInstallationId(fcmInstallationId: newInstallationId)
+            }
             .enableInjection()
     }
 }
 
 public extension View {
     /** Update subscriptions on the backend when the FCM token is set or changed. */
-    func handleFcmTokenSubscriptions(
-        fcmToken: String?,
+    func handleFcmInstallationIdSubscriptions(
+        fcmInstallationId: String?,
         favoritesVM: IFavoritesViewModel = ViewModelDI().favorites
     ) -> some View {
         modifier(FcmSubscriptionModifier(
-            fcmToken: fcmToken,
+            fcmInstallationId: fcmInstallationId,
             favoritesVM: favoritesVM
         ))
     }

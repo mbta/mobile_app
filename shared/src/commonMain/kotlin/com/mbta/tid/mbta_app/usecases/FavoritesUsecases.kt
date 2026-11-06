@@ -81,7 +81,7 @@ public class FavoritesUsecases(
         newValues: Map<RouteStopDirection, FavoriteSettings?>,
         context: EditFavoritesContext,
         defaultDirection: Int?,
-        fcmToken: String?,
+        fcmInstallationId: String?,
         locale: String?,
         coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
     ) {
@@ -108,7 +108,7 @@ public class FavoritesUsecases(
         }
         breadcrumb("updating favorites: writing ${currentFavorites.size} favorites")
         repository.setFavorites(storedFavorites.copy(routeStopDirection = currentFavorites))
-        fcmToken?.let {
+        fcmInstallationId?.let {
             breadcrumb("updating favorites: reading settings")
             val settings = settingsRepository.getSettings()
             CoroutineScope(coroutineDispatcher).launch {
@@ -119,7 +119,7 @@ public class FavoritesUsecases(
                     )
                 breadcrumb("updating subscriptions")
                 subscriptionsRepository.updateSubscriptions(
-                    fcmToken,
+                    fcmInstallationId,
                     subs,
                     locale,
                 )
