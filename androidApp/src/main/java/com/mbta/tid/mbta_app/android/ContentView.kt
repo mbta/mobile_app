@@ -42,7 +42,7 @@ import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.subscribeToAlerts
 import com.mbta.tid.mbta_app.android.util.ManageErrorBannerBackgrounding
 import com.mbta.tid.mbta_app.android.util.SettingsCache
-import com.mbta.tid.mbta_app.android.util.fcmToken
+import com.mbta.tid.mbta_app.android.util.fcmInstallationId
 import com.mbta.tid.mbta_app.cache.ScheduleCache
 import com.mbta.tid.mbta_app.model.FeaturePromo
 import com.mbta.tid.mbta_app.model.OnboardingScreen
@@ -102,8 +102,8 @@ fun ContentView(
 
     ManageMapboxConfig()
 
-    LaunchedEffect(fcmToken) {
-        favoritesViewModel.setFcmToken(fcmToken)
+    LaunchedEffect(fcmInstallationId) {
+        favoritesViewModel.setFcmInstallationId(fcmInstallationId)
     }
 
     LaunchedEffect(Unit) { favoritesViewModel.setLocale(currentLocale) }

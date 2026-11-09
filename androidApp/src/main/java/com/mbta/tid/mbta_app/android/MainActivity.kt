@@ -13,10 +13,10 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.analytics
-import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.installations.FirebaseInstallations
 import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
-import com.mbta.tid.mbta_app.android.util.fcmToken
+import com.mbta.tid.mbta_app.android.util.fcmInstallationId
 import com.mbta.tid.mbta_app.initializeSentry
 import com.mbta.tid.mbta_app.routes.DeepLinkState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initSentry()
-        getFCMToken()
+        getFCMInstallationId()
         handleIntent(intent)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         enableEdgeToEdge()
@@ -86,7 +86,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun getFCMToken() {
-        FirebaseMessaging.getInstance().token.addOnSuccessListener { fcmToken = it }
+    private fun getFCMInstallationId() {
+        FirebaseInstallations.getInstance().id.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                fcmInstallationId = task.result
+            } else {
+                Log.e("MainActivity", "Failed to get installation id")
+            }
+        }
     }
 }

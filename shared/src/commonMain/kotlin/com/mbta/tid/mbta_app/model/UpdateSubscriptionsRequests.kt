@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 public data class WriteSubscriptionsRequest
 internal constructor(
-    @SerialName("fcm_token") val fcmToken: String,
+    @SerialName("fcm_installation_id") val fcmInstallationId: String,
     val subscriptions: List<SubscriptionRequest>,
     val locale: String?,
 )
@@ -16,7 +16,7 @@ internal constructor(
 @Serializable
 public data class UpdateAccessibilityRequest
 internal constructor(
-    @SerialName("fcm_token") val fcmToken: String,
+    @SerialName("fcm_installation_id") val fcmInstallationId: String,
     @SerialName("include_accessibility") val includeAccessibility: Boolean,
     val locale: String?,
 )

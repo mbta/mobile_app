@@ -569,7 +569,7 @@ internal class FavoritesViewModelTest : KoinTest {
         testViewModelFlow(viewModel).test {
             awaitItemSatisfying { it.favorites == initialFavorites.routeStopDirection }
             assertEquals(0, updateSubscriptionsCount) // no fcm token yet
-            viewModel.setFcmToken("fcmToken")
+            viewModel.setFcmInstallationId("fcmInstallationId")
             awaitItem() // reloadFavorites called
             viewModel.setLocale("es")
             awaitItem() // reloadFavorites called
@@ -577,12 +577,12 @@ internal class FavoritesViewModelTest : KoinTest {
             assertEquals(
                 listOf(
                     Triple(
-                        "fcmToken",
+                        "fcmInstallationId",
                         SubscriptionRequest.fromFavorites(initialFavorites.routeStopDirection),
                         null,
                     ),
                     Triple(
-                        "fcmToken",
+                        "fcmInstallationId",
                         SubscriptionRequest.fromFavorites(initialFavorites.routeStopDirection),
                         "es",
                     ),
@@ -1228,7 +1228,7 @@ internal class FavoritesViewModelTest : KoinTest {
                 mapOf(RouteStopDirection(route1.id, stop1.id, 0) to null),
                 EditFavoritesContext.Favorites,
                 0,
-                "fcmToken",
+                "fcmInstallationId",
                 "en",
             )
             awaitItemSatisfying {

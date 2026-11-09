@@ -43,7 +43,7 @@ import com.mbta.tid.mbta_app.android.more.MoreButton
 import com.mbta.tid.mbta_app.android.more.MoreSectionView
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
-import com.mbta.tid.mbta_app.android.util.fcmToken
+import com.mbta.tid.mbta_app.android.util.fcmInstallationId
 import com.mbta.tid.mbta_app.android.util.key
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.Dependency
@@ -130,7 +130,7 @@ fun MorePage(
                                     onChangeSetting = { setting, newValue ->
                                         when (setting) {
                                             Settings.StationAccessibility -> {
-                                                fcmToken?.let {
+                                                fcmInstallationId?.let {
                                                     viewModel.updateAccessibility(
                                                         it,
                                                         newValue,

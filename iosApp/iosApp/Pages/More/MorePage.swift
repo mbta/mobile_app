@@ -19,7 +19,7 @@ struct MorePage: View {
     @State var showingBuildNumber = false
     @State private var path = NavigationPath()
 
-    @ObservedObject var fcmTokenContainer = FcmTokenContainer.shared
+    @ObservedObject var fcmInstallationIdContainer = FcmInstallationIdContainer.shared
     @EnvironmentObject var settingsCache: SettingsCache
 
     private let translation = NSLocalizedString("key/current_locale", comment: "")
@@ -85,9 +85,9 @@ struct MorePage: View {
                                 onChangeSetting: { setting, newValue in
                                     switch setting {
                                     case .stationAccessibility:
-                                        if let fcmToken = fcmTokenContainer.token {
+                                        if let fcmInstallationId = fcmInstallationIdContainer.installationId {
                                             viewModel.updateAccessibility(
-                                                fcmToken: fcmToken,
+                                                fcmInstallationId: fcmInstallationId,
                                                 includeAccessibility: newValue,
                                                 locale: NSLocalizedString("key/current_locale", comment: "")
                                             )
