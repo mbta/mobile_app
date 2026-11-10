@@ -34,7 +34,7 @@ final class StopDetailsViewTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let filters = StopDetailsPageFilters(stopId: stop.id, routeStopFilter: nil, tripFilter: nil)
+        let filters = StopOverviewPageFilters(stopId: stop.id)
 
         let sut = StopDetailsView(
             filters: filters,
@@ -82,7 +82,7 @@ final class StopDetailsViewTests: XCTestCase {
         }
         let stop = objects.stop { _ in }
 
-        let filters = StopDetailsPageFilters(stopId: stop.id, routeStopFilter: nil, tripFilter: nil)
+        let filters = StopOverviewPageFilters(stopId: stop.id)
 
         let sut = StopDetailsView(
             filters: filters,
@@ -129,7 +129,7 @@ final class StopDetailsViewTests: XCTestCase {
             alert.header = "Alert header"
         }
 
-        let filters = StopDetailsPageFilters(stopId: stop.id, routeStopFilter: nil, tripFilter: nil)
+        let filters = StopOverviewPageFilters(stopId: stop.id)
 
         let sut = StopDetailsView(
             filters: filters,
@@ -211,7 +211,7 @@ final class StopDetailsViewTests: XCTestCase {
             data: [leaf]
         )
 
-        let filters = StopDetailsPageFilters(
+        let filters = RouteStopPageFilters(
             stopId: stop.id,
             routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: .init(tripId: trip.id, vehicleId: vehicle.id, stopSequence: 1, selectionLock: false)
@@ -246,7 +246,7 @@ final class StopDetailsViewTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
-        let filters = StopDetailsPageFilters(stopId: stop.id, routeStopFilter: nil, tripFilter: nil)
+        let filters = StopOverviewPageFilters(stopId: stop.id)
 
         var closeCalled = false
         let sut = StopDetailsView(
@@ -278,13 +278,9 @@ final class StopDetailsViewTests: XCTestCase {
             stop.id = "FAKE_STOP_ID"
         }
 
-        let navManager = NavigationManager(navigationStack: [.stopDetails(
-            stopId: stop.id,
-            routeStopFilter: nil,
-            tripFilter: nil
-        )])
+        let navManager = NavigationManager(navigationStack: [.stopOverview(stopId: stop.id)])
 
-        let filters = StopDetailsPageFilters(stopId: stop.id, routeStopFilter: nil, tripFilter: nil)
+        let filters = StopOverviewPageFilters(stopId: stop.id)
 
         let sut = StopDetailsView(
             filters: filters,
@@ -315,10 +311,10 @@ final class StopDetailsViewTests: XCTestCase {
         }
 
         let navManager = NavigationManager(
-            navigationStack: [.stopDetails(stopId: stop.id, routeStopFilter: nil, tripFilter: nil)]
+            navigationStack: [.stopOverview(stopId: stop.id)]
         )
 
-        let filters = StopDetailsPageFilters(stopId: stop.id, routeStopFilter: nil, tripFilter: nil)
+        let filters = StopOverviewPageFilters(stopId: stop.id)
 
         let sut = StopDetailsView(
             filters: filters,

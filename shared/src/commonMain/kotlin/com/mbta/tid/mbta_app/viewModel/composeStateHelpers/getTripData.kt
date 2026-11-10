@@ -10,7 +10,7 @@ import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
-import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
+import com.mbta.tid.mbta_app.model.tripDetailsPage.TripData
 import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository

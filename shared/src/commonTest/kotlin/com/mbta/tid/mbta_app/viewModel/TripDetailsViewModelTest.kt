@@ -13,7 +13,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.TripResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
-import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
+import com.mbta.tid.mbta_app.model.tripDetailsPage.TripData
 import com.mbta.tid.mbta_app.repositories.ErroringTripRepository
 import com.mbta.tid.mbta_app.repositories.MockPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
@@ -35,7 +35,6 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.component.get
 import org.koin.core.context.startKoin

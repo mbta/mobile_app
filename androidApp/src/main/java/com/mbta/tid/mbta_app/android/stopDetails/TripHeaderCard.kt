@@ -81,8 +81,8 @@ import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.Vehicle
-import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderDebugData
-import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
+import com.mbta.tid.mbta_app.model.tripDetailsPage.TripHeaderDebugData
+import com.mbta.tid.mbta_app.model.tripDetailsPage.TripHeaderSpec
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.time.Duration.Companion.minutes

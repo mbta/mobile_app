@@ -19,9 +19,11 @@ import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDoesNotExistDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
+import com.mbta.tid.mbta_app.model.RouteStopFilter
+import com.mbta.tid.mbta_app.model.RouteStopPageFilters
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
@@ -128,7 +130,8 @@ class MapAndSheetPageTest {
         // The shared view model replays its last filter update, so the effect fires immediately,
         // before any NavHost has had a chance to attach a graph to the nav controller.
         val stopCentricViewModel = MockStopCentricViewModel()
-        stopCentricViewModel.filterUpdates.value = StopDetailsPageFilters(stop.id, null, null)
+        stopCentricViewModel.filterUpdates.value =
+            RouteStopPageFilters(stop.id, RouteStopFilter(Route.Id(""), 0), null)
         val entrypoint = mutableStateOf<SheetRoutes.Entrypoint?>(null)
         val noDeepLink = MutableStateFlow<DeepLinkState?>(null).asStateFlow()
 

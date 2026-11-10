@@ -3579,7 +3579,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routCardsForStopList doesn't filter future trips in filtered stop details`() =
+    fun `RouteCardData routCardsForStopList doesn't filter future trips in route stop`() =
         runBlocking {
             val objects = ObjectCollectionBuilder()
 
@@ -3596,7 +3596,7 @@ class RouteCardDataTest {
                     representativeTrip { headsign = "Typical Out" }
                 }
 
-            // should be included because all trips should be visible in filtered stop details
+            // should be included because all trips should be visible in route stop
             val deviationInbound =
                 objects.routePattern(route1) {
                     directionId = 1
@@ -3695,7 +3695,7 @@ class RouteCardDataTest {
         }
 
     @Test
-    fun `RouteCardData routeCardsForStopList includes cancellations in filtered stop details context`() =
+    fun `RouteCardData routeCardsForStopList includes cancellations in route stop context`() =
         runBlocking {
             val objects = ObjectCollectionBuilder()
             val stop1 = objects.stop()
@@ -4176,7 +4176,7 @@ class RouteCardDataTest {
         }
 
     @Test
-    fun `RouteCardData routeCardsForStopList shows scheduled variants farther in the future on stop details`():
+    fun `RouteCardData routeCardsForStopList shows scheduled variants farther in the future on route stop`():
         Unit = runBlocking {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()

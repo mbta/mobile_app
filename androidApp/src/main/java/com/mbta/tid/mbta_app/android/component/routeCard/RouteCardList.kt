@@ -28,7 +28,7 @@ fun ColumnScope.RouteCardList(
     global: GlobalResponse?,
     now: EasternTimeInstant,
     isFavorite: (RouteStopDirection) -> Boolean,
-    onOpenStopDetails: (String, RouteStopFilter?) -> Unit,
+    onOpenRouteStop: (String, RouteStopFilter) -> Unit,
 ) {
     val contentPadding = PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp)
     val verticalArrangement = Arrangement.spacedBy(14.dp)
@@ -58,7 +58,7 @@ fun ColumnScope.RouteCardList(
             horizontalAlignment = horizontalAlignment,
         ) {
             items(routeCardData) {
-                RouteCard(it, global, now, isFavorite, showStopHeader = true, onOpenStopDetails)
+                RouteCard(it, global, now, isFavorite, showStopHeader = true, onOpenRouteStop)
             }
         }
     }

@@ -11,7 +11,7 @@ import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
+import com.mbta.tid.mbta_app.model.tripDetailsPage.TripData
 import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
@@ -68,7 +68,7 @@ public class TripDetailsViewModel(
     )
 
     public enum class Context {
-        StopDetails,
+        RouteStop,
         TripDetails,
     }
 
@@ -91,7 +91,7 @@ public class TripDetailsViewModel(
         var active: Boolean by remember { mutableStateOf(true) }
         val errorKey =
             ErrorKey(
-                setOf(SheetRoutes.StopDetails::class, SheetRoutes.TripDetails::class),
+                setOf(SheetRoutes.RouteStop::class, SheetRoutes.TripDetails::class),
                 "TripDetailsViewModel",
             )
         val globalData = getGlobalData(errorKey, coroutineDispatcher = coroutineDispatcher)

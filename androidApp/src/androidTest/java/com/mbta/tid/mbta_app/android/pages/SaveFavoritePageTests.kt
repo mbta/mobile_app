@@ -80,7 +80,7 @@ class SaveFavoritePageTests {
                 route.id,
                 stop.id,
                 1,
-                EditFavoritesContext.StopDetails,
+                EditFavoritesContext.RouteStop,
                 { backCalled = true },
                 notificationSettingsViewModel = notificationSettingsVM,
             )
@@ -108,7 +108,7 @@ class SaveFavoritePageTests {
                 route.id,
                 stop.id,
                 0,
-                EditFavoritesContext.StopDetails,
+                EditFavoritesContext.RouteStop,
                 { closed = true },
             )
         }
@@ -134,7 +134,7 @@ class SaveFavoritePageTests {
         }
 
         composeTestRule.setContent {
-            SaveFavoritePage(route.id, stop.id, 0, EditFavoritesContext.StopDetails, {})
+            SaveFavoritePage(route.id, stop.id, 0, EditFavoritesContext.RouteStop, {})
         }
 
         composeTestRule.onNodeWithText("Southbound to").assertCanBeDisplayed()
@@ -169,7 +169,7 @@ class SaveFavoritePageTests {
         }
 
         composeTestRule.setContent {
-            SaveFavoritePage(route.id, stop.id, 0, EditFavoritesContext.StopDetails, {})
+            SaveFavoritePage(route.id, stop.id, 0, EditFavoritesContext.RouteStop, {})
         }
 
         composeTestRule.onNodeWithText("Southbound to").assertCanBeDisplayed()
@@ -199,7 +199,7 @@ class SaveFavoritePageTests {
         }
 
         composeTestRule.setContent {
-            SaveFavoritePage(route.id, stop.id, 0, EditFavoritesContext.StopDetails, {})
+            SaveFavoritePage(route.id, stop.id, 0, EditFavoritesContext.RouteStop, {})
         }
 
         composeTestRule.onNodeWithText("Add Favorite").assertCanBeDisplayed()
@@ -262,7 +262,7 @@ class SaveFavoritePageTests {
                 route.id,
                 stop.id,
                 0,
-                EditFavoritesContext.StopDetails,
+                EditFavoritesContext.RouteStop,
                 { closed = true },
             )
         }
@@ -308,7 +308,7 @@ class SaveFavoritePageTests {
                 route.id,
                 stop.id,
                 0,
-                EditFavoritesContext.StopDetails,
+                EditFavoritesContext.RouteStop,
                 {},
                 notificationSettingsViewModel = notificationSettingsVM,
             )
@@ -327,7 +327,7 @@ class SaveFavoritePageTests {
         loadKoinMocks(objects)
 
         composeTestRule.setContent {
-            SaveFavoritePage(route.id, stop.id, 0, EditFavoritesContext.StopDetails, {})
+            SaveFavoritePage(route.id, stop.id, 0, EditFavoritesContext.RouteStop, {})
         }
 
         composeTestRule.onNodeWithText("Only Northbound to").assertCanBeDisplayed()
@@ -361,7 +361,7 @@ class SaveFavoritePageTests {
         }
 
         composeTestRule.setContent {
-            SaveFavoritePage(route.id, stop.id, 0, EditFavoritesContext.StopDetails, {})
+            SaveFavoritePage(route.id, stop.id, 0, EditFavoritesContext.RouteStop, {})
         }
 
         composeTestRule.waitForIdle()

@@ -19,8 +19,9 @@ import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopFilter
+import com.mbta.tid.mbta_app.model.RouteStopPageFilters
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
+import com.mbta.tid.mbta_app.model.StopOverviewPageFilters
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -123,7 +124,7 @@ class StopDetailsViewTest {
             MockStopCentricViewModel(
                 StopCentricViewModel.State(
                     StopCentricViewModel.RouteData.StopOverview(
-                        StopDetailsPageFilters(stop.id, null, null),
+                        StopOverviewPageFilters(stop.id),
                         listOf(
                             RouteCardData(
                                 lineOrRoute,
@@ -193,7 +194,7 @@ class StopDetailsViewTest {
             MockStopCentricViewModel(
                 StopCentricViewModel.State(
                     StopCentricViewModel.RouteData.RouteStop(
-                        StopDetailsPageFilters(stop.id, RouteStopFilter(route.id, 0), null),
+                        RouteStopPageFilters(stop.id, RouteStopFilter(route.id, 0), null),
                         RouteCardData.RouteStopData(
                             route,
                             stop,
@@ -270,7 +271,7 @@ class StopDetailsViewTest {
             MockStopCentricViewModel(
                 StopCentricViewModel.State(
                     StopCentricViewModel.RouteData.StopOverview(
-                        StopDetailsPageFilters(stop.id, null, null),
+                        StopOverviewPageFilters(stop.id),
                         listOf(
                             RouteCardData(
                                 lineOrRoute,
@@ -340,7 +341,7 @@ class StopDetailsViewTest {
             MockStopCentricViewModel(
                 StopCentricViewModel.State(
                     StopCentricViewModel.RouteData.RouteStop(
-                        StopDetailsPageFilters(stop.id, RouteStopFilter(route.id, 0), null),
+                        RouteStopPageFilters(stop.id, RouteStopFilter(route.id, 0), null),
                         RouteCardData.RouteStopData(
                             route,
                             stop,

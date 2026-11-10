@@ -6,7 +6,7 @@ import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
-import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
+import com.mbta.tid.mbta_app.model.tripDetailsPage.TripData
 import com.mbta.tid.mbta_app.utils.TestData
 import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
@@ -17,7 +17,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.plus
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest

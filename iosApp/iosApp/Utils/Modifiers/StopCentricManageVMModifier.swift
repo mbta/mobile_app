@@ -13,7 +13,7 @@ struct StopCentricManageVMModifier: ViewModifier {
     var viewModel: IStopCentricViewModel
     @Binding var vmState: StopCentricViewModel.State?
     var alerts: AlertsStreamDataResponse?
-    var filters: StopDetailsPageFilters
+    var filters: StopCentricPageFilters
     var now: EasternTimeInstant
 
     func body(content: Content) -> some View {
@@ -59,7 +59,7 @@ public extension View {
         _ viewModel: IStopCentricViewModel,
         _ state: Binding<StopCentricViewModel.State?>,
         alerts: AlertsStreamDataResponse?,
-        filters: StopDetailsPageFilters,
+        filters: StopCentricPageFilters,
         now: EasternTimeInstant
     ) -> some View {
         modifier(StopCentricManageVMModifier(

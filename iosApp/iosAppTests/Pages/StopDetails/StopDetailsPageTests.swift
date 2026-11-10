@@ -37,7 +37,7 @@ final class StopDetailsPageTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let filters = StopDetailsPageFilters(
+        let filters = RouteStopPageFilters(
             stopId: stop.id,
             routeStopFilter: .init(
                 routeId: route.id,
@@ -95,11 +95,7 @@ final class StopDetailsPageTests: XCTestCase {
         let closeExp = expectation(description: "close button pressed")
 
         let sut = StopDetailsPage(
-            filters: .init(
-                stopId: stop.id,
-                routeStopFilter: nil,
-                tripFilter: nil
-            ),
+            filters: StopOverviewPageFilters(stopId: stop.id),
             navCallbacks: .init(onBack: nil, onClose: { closeExp.fulfill() }, backButtonPresentation: .floating),
             alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
@@ -135,7 +131,7 @@ final class StopDetailsPageTests: XCTestCase {
         }
 
         let sut = StopDetailsPage(
-            filters: .init(
+            filters: RouteStopPageFilters(
                 stopId: stop.id,
                 routeStopFilter: routeStopFilter,
                 tripFilter: nil
@@ -187,11 +183,7 @@ final class StopDetailsPageTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let navManager = NavigationManager(navigationStack: [.stopDetails(
-            stopId: stop.id,
-            routeStopFilter: nil,
-            tripFilter: nil
-        )])
+        let navManager = NavigationManager(navigationStack: [.stopOverview(stopId: stop.id)])
 
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let updatedFilter = RouteStopFilter(
@@ -202,7 +194,7 @@ final class StopDetailsPageTests: XCTestCase {
         let stopCentricVM = MockStopCentricViewModel()
 
         let sut = StopDetailsPage(
-            filters: .init(stopId: stop.id, routeStopFilter: nil, tripFilter: nil),
+            filters: StopOverviewPageFilters(stopId: stop.id),
             navCallbacks: .companion.empty,
             alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
@@ -260,14 +252,14 @@ final class StopDetailsPageTests: XCTestCase {
         loadKoinMocks(objects: objects)
 
         let routeStopFilter: RouteStopFilter = .init(routeId: route.id, directionId: 0)
-        let navManager = NavigationManager(navigationStack: [.stopDetails(
+        let navManager = NavigationManager(navigationStack: [.routeStop(
             stopId: stop.id,
             routeStopFilter: routeStopFilter,
             tripFilter: nil
         )])
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
 
-        let initialFilters = StopDetailsPageFilters(
+        let initialFilters = RouteStopPageFilters(
             stopId: stop.id,
             routeStopFilter: routeStopFilter,
             tripFilter: nil

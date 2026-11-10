@@ -160,7 +160,7 @@ final class HomeMapViewTests: XCTestCase {
             loadedStopIds: [stop.id],
         ))
 
-        let initialNav: SheetNavigationStackEntry = try .stopDetails(
+        let initialNav: SheetNavigationStackEntry = try .routeStop(
             stopId: stop.id,
             routeStopFilter: .init(routeId: XCTUnwrap(vehicle.routeId), directionId: vehicle.directionId),
             tripFilter: nil
@@ -251,7 +251,7 @@ final class HomeMapViewTests: XCTestCase {
     func testJoinsVehiclesChannelOnActiveWhenTripDetails() {
         let joinsVehiclesExp = XCTestExpectation(description: "Joins vehicles channel")
         let navManager = NavigationManager(navigationStack: [
-            .stopDetails(
+            .routeStop(
                 stopId: "stop",
                 routeStopFilter: .init(routeId: Route.Id("r"), directionId: 0),
                 tripFilter: .init(tripId: "t", vehicleId: "v", stopSequence: 0, selectionLock: false)
@@ -284,7 +284,7 @@ final class HomeMapViewTests: XCTestCase {
         let joinsVehiclesExp = XCTestExpectation(description: "Joins vehicles channel")
 
         let stop = ObjectCollectionBuilder().stop { _ in }
-        let navManager = NavigationManager(navigationStack: [.stopDetails(
+        let navManager = NavigationManager(navigationStack: [.routeStop(
             stopId: stop.id,
             routeStopFilter: .init(routeId: Route.Id("routeId"), directionId: 0),
             tripFilter: nil
@@ -318,11 +318,7 @@ final class HomeMapViewTests: XCTestCase {
         joinsVehiclesExp.isInverted = true
 
         let stop = ObjectCollectionBuilder().stop { _ in }
-        let navManager = NavigationManager(navigationStack: [.stopDetails(
-            stopId: stop.id,
-            routeStopFilter: nil,
-            tripFilter: nil
-        )])
+        let navManager = NavigationManager(navigationStack: [.stopOverview(stopId: stop.id)])
 
         var sut = HomeMapView(
             alerts: .init(alerts: [:]),
@@ -350,7 +346,7 @@ final class HomeMapViewTests: XCTestCase {
         let leavesVehiclesExp = XCTestExpectation(description: "Leaves vehicles channel")
 
         let stop = ObjectCollectionBuilder().stop { _ in }
-        let navManager = NavigationManager(navigationStack: [.stopDetails(
+        let navManager = NavigationManager(navigationStack: [.routeStop(
             stopId: stop.id,
             routeStopFilter: .init(routeId: Route.Id("routeId"), directionId: 0),
             tripFilter: nil
@@ -387,7 +383,7 @@ final class HomeMapViewTests: XCTestCase {
             vehicle.currentStatus = .inTransitTo
         }
         let navManager = NavigationManager(navigationStack: [
-            .stopDetails(
+            .routeStop(
                 stopId: stop.id,
                 routeStopFilter: .init(routeId: Route.Id("routeId"), directionId: 0),
                 tripFilter: nil

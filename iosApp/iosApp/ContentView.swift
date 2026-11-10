@@ -291,11 +291,7 @@ struct ContentView: View {
                     TabView {
                         RouteDetailsView(
                             selectionId: navEntry.routeId, context: navEntry.context,
-                            onOpenStopDetails: { navManager.pushNavEntry(.stopDetails(
-                                stopId: $0,
-                                routeStopFilter: nil,
-                                tripFilter: nil
-                            )) },
+                            onOpenStopDetails: { navManager.pushNavEntry(.stopOverview(stopId: $0)) },
                             pushNavEntry: { entry in navManager.pushNavEntry(entry) },
                             navCallbacks: navCallbacks,
                             errorBannerVM: errorBannerVM,
@@ -336,16 +332,39 @@ struct ContentView: View {
                     .transition(transition)
                     .animation(.easeOut, value: navEntry)
 
-                case let .stopDetails(stopId, routeStopFilter, tripFilter):
+                case let .routeStop(stopId, routeStopFilter, tripFilter):
                     // Wrapping in a TabView helps the page to animate in as a single unit
                     // Otherwise only the header animates
                     TabView {
                         StopDetailsPage(
-                            filters: .init(
+                            filters: RouteStopPageFilters(
                                 stopId: stopId,
                                 routeStopFilter: routeStopFilter,
                                 tripFilter: tripFilter
                             ),
+                            navCallbacks: navCallbacks,
+                            alerts: alerts,
+                            errorBannerVM: errorBannerVM,
+                            mapVM: mapVM,
+                            routeCardDataVM: routeCardDataVM,
+                            stopCentricVM: stopCentricVM,
+                            navManager: navManager,
+                            viewportProvider: viewportProvider,
+                        )
+                        .toolbar(.hidden, for: .tabBar)
+                    }
+                    // Set id per stop so that transitioning from one stop to another is handled by removing
+                    // the existing stop view & creating a new one
+                    .id(stopId)
+                    .transition(transition)
+                    .animation(.easeOut, value: stopId)
+
+                case let .stopOverview(stopId):
+                    // Wrapping in a TabView helps the page to animate in as a single unit
+                    // Otherwise only the header animates
+                    TabView {
+                        StopDetailsPage(
+                            filters: StopOverviewPageFilters(stopId: stopId),
                             navCallbacks: navCallbacks,
                             alerts: alerts,
                             errorBannerVM: errorBannerVM,
@@ -702,7 +721,7 @@ struct ContentView: View {
             var stop: Stop?
             if let stopId = alert.stopId {
                 navManager.pushNavEntry(
-                    .stopDetails(stopId: stopId, routeStopFilter: nil, tripFilter: nil)
+                    .stopOverview(stopId: stopId)
                 )
                 stop = globalData?.getStop(stopId: alert.stopId)
             }

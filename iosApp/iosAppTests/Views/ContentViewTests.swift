@@ -254,9 +254,9 @@ final class ContentViewTests: XCTestCase {
         let exp1 = sut.inspection.inspect(after: 1) { view in
             try view.actualView().navManager.navigationStack = [
                 .nearby,
-                .stopDetails(stopId: "stop", routeStopFilter: routeStopFilter, tripFilter: tripFilter),
+                .routeStop(stopId: "stop", routeStopFilter: routeStopFilter, tripFilter: tripFilter),
                 .tripDetails(filter: .init(stopId: "stop", routeStopFilter: routeStopFilter, tripFilter: tripFilter)),
-                .stopDetails(stopId: "otherStop", routeStopFilter: nil, tripFilter: nil),
+                .stopOverview(stopId: "otherStop"),
             ]
         }
         let exp2 = sut.inspection.inspect(after: 2) { view in
@@ -267,7 +267,7 @@ final class ContentViewTests: XCTestCase {
                 try view.actualView().navManager.navigationStack,
                 [
                     .nearby,
-                    .stopDetails(stopId: "stop", routeStopFilter: routeStopFilter, tripFilter: tripFilter),
+                    .routeStop(stopId: "stop", routeStopFilter: routeStopFilter, tripFilter: tripFilter),
                     .tripDetails(filter: .init(
                         stopId: "stop",
                         routeStopFilter: routeStopFilter,
@@ -295,7 +295,7 @@ final class ContentViewTests: XCTestCase {
         let exp1 = sut.inspection.inspect(after: 1) { view in
             try view.actualView().navManager.navigationStack = [
                 .nearby,
-                .stopDetails(stopId: "stop", routeStopFilter: routeStopFilter, tripFilter: tripFilter),
+                .routeStop(stopId: "stop", routeStopFilter: routeStopFilter, tripFilter: tripFilter),
             ]
             try view.actualView().searchObserver.isFocused = true
         }

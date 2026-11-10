@@ -9,7 +9,7 @@ import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TrackChange
-import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
+import com.mbta.tid.mbta_app.model.tripDetailsPage.ExplainerType
 import kotlin.test.assertTrue
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule

@@ -15,7 +15,7 @@ import SwiftUI
 struct StopDetailsView: View {
     @ObserveInjection var inject
 
-    var filters: StopDetailsPageFilters
+    var filters: StopCentricPageFilters
 
     var routeData: StopCentricViewModel.RouteData?
     var alerts: AlertsStreamDataResponse?
@@ -37,10 +37,11 @@ struct StopDetailsView: View {
     let inspection = Inspection<Self>()
 
     var body: some View {
-        if let routeStopFilter = filters.routeStopFilter {
+        switch onEnum(of: filters) {
+        case let .routeStopPageFilters(filters):
             StopDetailsFilteredView(
                 stopId: filters.stopId,
-                routeStopFilter: routeStopFilter,
+                routeStopFilter: filters.routeStopFilter,
                 tripFilter: filters.tripFilter,
                 routeData: routeData,
                 alerts: alerts,
@@ -58,7 +59,7 @@ struct StopDetailsView: View {
             )
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .enableInjection()
-        } else {
+        case let .stopOverviewPageFilters(filters):
             StopDetailsUnfilteredView(
                 stopId: filters.stopId,
                 routeData: routeData,

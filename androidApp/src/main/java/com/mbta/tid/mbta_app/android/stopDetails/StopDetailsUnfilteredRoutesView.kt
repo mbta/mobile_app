@@ -166,7 +166,7 @@ fun StopDetailsUnfilteredRoutesView(
                         now,
                         isFavorite = { rsd -> isFavorite(rsd) },
                         showStopHeader = false,
-                        onOpenStopDetails = { _, routeStopFilter ->
+                        onOpenRouteStop = { _, routeStopFilter ->
                             updateRouteStopFilter(routeStopFilter)
                         },
                     )

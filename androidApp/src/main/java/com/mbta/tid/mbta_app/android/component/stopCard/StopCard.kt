@@ -56,7 +56,7 @@ fun StopCard(
     globalData: GlobalResponse?,
     now: EasternTimeInstant,
     isFavorite: (RouteStopDirection) -> Boolean?,
-    onOpenStopDetails: (String, RouteStopFilter) -> Unit,
+    onOpenRouteStop: (String, RouteStopFilter) -> Unit,
 ) {
     StopCardContainer(
         data = data,
@@ -68,7 +68,7 @@ fun StopCard(
                 now,
                 { routeStopDirection -> isFavorite(routeStopDirection) },
             ) { leaf ->
-                onOpenStopDetails(
+                onOpenRouteStop(
                     it.stop.id,
                     RouteStopFilter(leaf.lineOrRoute.id, leaf.direction.id),
                 )

@@ -10,18 +10,9 @@ import Shared
 import SwiftPhoenixClient
 import SwiftUI
 
-struct RouteCardParams: Equatable {
-    let alerts: AlertsStreamDataResponse?
-    let global: GlobalResponse?
-    let now: Date
-    let stopData: StopData?
-    let routeStopFilter: RouteStopFilter?
-    let stopId: String
-}
-
 struct StopDetailsPage: View {
     @ObserveInjection var inject
-    var filters: StopDetailsPageFilters
+    var filters: StopCentricPageFilters
     var navCallbacks: NavigationCallbacks
 
     var alerts: AlertsStreamDataResponse?
@@ -44,11 +35,11 @@ struct StopDetailsPage: View {
     let inspection = Inspection<Self>()
 
     var stopId: String { filters.stopId }
-    var routeStopFilter: RouteStopFilter? { filters.routeStopFilter }
-    var tripFilter: TripDetailsFilter? { filters.tripFilter }
+    var routeStopFilter: RouteStopFilter? { (filters as? RouteStopPageFilters)?.routeStopFilter }
+    var tripFilter: TripDetailsFilter? { (filters as? RouteStopPageFilters)?.tripFilter }
 
     init(
-        filters: StopDetailsPageFilters,
+        filters: StopCentricPageFilters,
         navCallbacks: NavigationCallbacks,
         alerts: AlertsStreamDataResponse?,
         errorBannerVM: IErrorBannerViewModel,
@@ -94,14 +85,14 @@ struct StopDetailsPage: View {
             .favorites($favorites)
             .global(
                 $global,
-                errorKey: .companion.fromSheetTypes(sheetTypes: [.stopDetails], id: "StopDetailsPage")
+                errorKey: .companion.fromSheetTypes(sheetTypes: [.stopOverview, .routeStop], id: "StopDetailsPage")
             )
             .manageVM(stopCentricVM, $vmState, alerts: alerts, filters: filters, now: now.toEasternInstant())
             .manageVM(routeCardDataVM, $routeCardDataState)
             .task {
                 for await filterUpdate in stopCentricVM.filterUpdates {
                     if let filterUpdate {
-                        navManager.setLastStopDetailsPageFilter(filterUpdate)
+                        navManager.setLastRouteStopPageFilter(filterUpdate)
                     }
                 }
             }
@@ -118,8 +109,8 @@ struct StopDetailsPage: View {
             .enableInjection()
     }
 
-    func announceDeparture(_ previousFilters: StopDetailsPageFilters) {
-        guard let context = StopDetailsUtils.shared.getScreenReaderTripDepartureContext(
+    func announceDeparture(_ previousFilters: RouteStopPageFilters) {
+        guard let context = RouteStopUtils.shared.getScreenReaderTripDepartureContext(
             routeCardData: routeCardDataState?.data,
             previousFilters: previousFilters
         ) else { return }

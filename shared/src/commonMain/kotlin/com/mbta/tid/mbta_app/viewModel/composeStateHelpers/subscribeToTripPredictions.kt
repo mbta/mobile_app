@@ -66,7 +66,7 @@ internal fun subscribeToTripPredictions(
 
     suspend fun checkStale() {
         // Skip stale checks when the context is not trip details, because there are already stale
-        // checks on stop details, and they'll clash if both are happening simultaneously
+        // checks on route stop, and they'll clash if both are happening simultaneously
         if (context != TripDetailsViewModel.Context.TripDetails || !active) return
         val lastUpdated = tripPredictionsRepository.lastUpdated
         if (lastUpdated != null) {

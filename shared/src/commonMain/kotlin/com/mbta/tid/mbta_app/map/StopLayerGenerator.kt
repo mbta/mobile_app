@@ -30,7 +30,7 @@ public object StopLayerGenerator {
     public sealed class State {
         public data object Default : State()
 
-        public data class StopDetails(val selectedStopId: String) : State()
+        public data class StopOverview(val selectedStopId: String) : State()
 
         public data class TripDetails(
             val selectedStopId: String?,

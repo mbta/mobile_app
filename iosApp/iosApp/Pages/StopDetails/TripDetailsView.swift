@@ -290,7 +290,7 @@ struct TripDetailsView: View {
     func onTapStop(stop: TripDetailsStopList.Entry) {
         let parentStop = if let global { stop.stop.resolveParent(global: global) }
         else { stop.stop }
-        navManager.appendNavEntry(.stopDetails(stopId: parentStop.id, routeStopFilter: nil, tripFilter: nil))
+        navManager.appendNavEntry(.stopOverview(stopId: parentStop.id))
         analytics.tappedDownstreamStop(
             routeId: tripDetailsVMState?.tripData?.trip?.routeId,
             stopId: stop.stop.id,

@@ -12,79 +12,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Month
 
-class StopDetailsUtilsTest {
-    @Test
-    fun `autoStopFilter provides a default StopDetailsFilter given a single route and direction`() =
-        runBlocking {
-            val objects = ObjectCollectionBuilder()
-            val stop = objects.stop()
-            val route = objects.route()
-            val routePattern =
-                objects.routePattern(route) {
-                    typicality = RoutePattern.Typicality.Typical
-                    representativeTrip { headsign = "A" }
-                }
-            val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
-
-            val routeCardData =
-                RouteCardData.routeCardsForStopList(
-                    listOf(stop.id),
-                    GlobalResponse(objects, mapOf(stop.id to listOf(routePattern.id))),
-                    sortByDistanceFrom = null,
-                    ScheduleResponse(objects),
-                    PredictionsStreamDataResponse(objects),
-                    AlertsStreamDataResponse(objects),
-                    time,
-                    RouteCardData.Context.StopOverview,
-                )
-
-            assertEquals(
-                RouteStopFilter(
-                    routeId = route.id,
-                    directionId = routePattern.directionId,
-                    autoFilter = true,
-                ),
-                StopDetailsUtils.autoRouteStopFilter(routeCardData),
-            )
-        }
-
-    @Test
-    fun `autoStopFilter provides a null stop filter value given multiple routes and directions`() =
-        runBlocking {
-            val objects = ObjectCollectionBuilder()
-            val stop = objects.stop()
-            val route1 = objects.route()
-            val routePattern1 =
-                objects.routePattern(route1) {
-                    typicality = RoutePattern.Typicality.Typical
-                    representativeTrip { headsign = "A" }
-                }
-            val route2 = objects.route()
-            val routePattern2 =
-                objects.routePattern(route2) {
-                    typicality = RoutePattern.Typicality.Typical
-                    representativeTrip { headsign = "B" }
-                }
-            val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
-
-            val routeCardData =
-                RouteCardData.routeCardsForStopList(
-                    listOf(stop.id),
-                    GlobalResponse(
-                        objects,
-                        mapOf(stop.id to listOf(routePattern1.id, routePattern2.id)),
-                    ),
-                    sortByDistanceFrom = null,
-                    ScheduleResponse(objects),
-                    PredictionsStreamDataResponse(objects),
-                    AlertsStreamDataResponse(objects),
-                    time,
-                    RouteCardData.Context.StopOverview,
-                )
-
-            assertEquals(null, StopDetailsUtils.autoRouteStopFilter(checkNotNull(routeCardData)))
-        }
-
+class RouteStopUtilsTest {
     @Test
     fun `autoTripFilter provides a trip filter with the first trip selected`() = runBlocking {
         val objects = ObjectCollectionBuilder()
@@ -155,7 +83,7 @@ class StopDetailsUtilsTest {
 
         assertEquals(
             TripDetailsFilter(trip2.id, vehicle.id, 0, false),
-            StopDetailsUtils.autoTripFilter(data, stopFilter, null, time, global),
+            RouteStopUtils.autoTripFilter(data, stopFilter, null, time, global),
         )
     }
 
@@ -194,7 +122,7 @@ class StopDetailsUtilsTest {
 
         assertEquals(
             null,
-            StopDetailsUtils.autoTripFilter(checkNotNull(routeCardData), null, null, time, global),
+            RouteStopUtils.autoTripFilter(checkNotNull(routeCardData), null, null, time, global),
         )
     }
 
@@ -234,7 +162,7 @@ class StopDetailsUtilsTest {
 
         assertEquals(
             null,
-            StopDetailsUtils.autoTripFilter(
+            RouteStopUtils.autoTripFilter(
                 checkNotNull(routeCardData),
                 stopFilter,
                 null,
@@ -327,7 +255,7 @@ class StopDetailsUtilsTest {
 
         assertEquals(
             currentTripFilter,
-            StopDetailsUtils.autoTripFilter(
+            RouteStopUtils.autoTripFilter(
                 routeCardData,
                 stopFilter,
                 currentTripFilter,
@@ -386,7 +314,7 @@ class StopDetailsUtilsTest {
 
         assertEquals(
             TripDetailsFilter(trip.id, vehicle.id, 0, false),
-            StopDetailsUtils.autoTripFilter(
+            RouteStopUtils.autoTripFilter(
                 routeCardData,
                 stopFilter,
                 currentTripFilter,
@@ -485,7 +413,7 @@ class StopDetailsUtilsTest {
 
         assertEquals(
             TripDetailsFilter(trip2.id, vehicle1.id, 0, false),
-            StopDetailsUtils.autoTripFilter(
+            RouteStopUtils.autoTripFilter(
                 routeCardData,
                 stopFilter,
                 currentTripFilter,
@@ -588,7 +516,7 @@ class StopDetailsUtilsTest {
 
             assertEquals(
                 currentTripFilter,
-                StopDetailsUtils.autoTripFilter(
+                RouteStopUtils.autoTripFilter(
                     routeCardData,
                     stopFilter,
                     currentTripFilter,
@@ -681,7 +609,7 @@ class StopDetailsUtilsTest {
 
         assertEquals(
             TripDetailsFilter(trip3.id, vehicle.id, 0, false),
-            StopDetailsUtils.autoTripFilter(routeCardData, stopFilter, null, time, global),
+            RouteStopUtils.autoTripFilter(routeCardData, stopFilter, null, time, global),
         )
     }
 
@@ -756,7 +684,7 @@ class StopDetailsUtilsTest {
 
             assertEquals(
                 TripDetailsFilter(trip1.id, null, 0, false),
-                StopDetailsUtils.autoTripFilter(routeCardData, stopFilter, null, time, global),
+                RouteStopUtils.autoTripFilter(routeCardData, stopFilter, null, time, global),
             )
         }
 
@@ -891,7 +819,7 @@ class StopDetailsUtilsTest {
 
         assertEquals(
             mapOf(vehicleB.id to vehicleB, vehicleC.id to vehicleC, vehicleE.id to vehicleE),
-            StopDetailsUtils.filterVehiclesByUpcoming(checkNotNull(routeCardData), vehicleResponse),
+            RouteStopUtils.filterVehiclesByUpcoming(checkNotNull(routeCardData), vehicleResponse),
         )
     }
 }

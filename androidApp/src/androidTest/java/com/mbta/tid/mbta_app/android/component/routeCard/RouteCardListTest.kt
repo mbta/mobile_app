@@ -178,7 +178,7 @@ class RouteCardListTest : KoinTest {
                     global = globalResponse,
                     now = EasternTimeInstant.now(),
                     isFavorite = { false },
-                    onOpenStopDetails = { _, _ -> },
+                    onOpenRouteStop = { _, _ -> },
                 )
             }
         }
@@ -206,7 +206,7 @@ class RouteCardListTest : KoinTest {
                     global = globalResponse,
                     now = EasternTimeInstant.now(),
                     isFavorite = { false },
-                    onOpenStopDetails = { _, _ -> },
+                    onOpenRouteStop = { _, _ -> },
                 )
             }
         }
@@ -242,7 +242,7 @@ class RouteCardListTest : KoinTest {
                     global = globalResponse,
                     now = EasternTimeInstant.now(),
                     isFavorite = { false },
-                    onOpenStopDetails = { stopId, _ -> clickedStopId = stopId },
+                    onOpenRouteStop = { stopId, _ -> clickedStopId = stopId },
                 )
             }
         }

@@ -499,9 +499,14 @@ public class MapViewModel(
         globalResponse: GlobalResponse?,
         density: Float?,
     ): LayerState {
-        val currentNavEntryStopDetails =
+        val currentNavEntryStopOverview =
             when (newNavEntry) {
-                is SheetRoutes.StopDetails -> newNavEntry
+                is SheetRoutes.StopOverview -> newNavEntry
+                else -> null
+            }
+        val currentNavEntryRouteStop =
+            when (newNavEntry) {
+                is SheetRoutes.RouteStop -> newNavEntry
                 else -> null
             }
         val currentNavEntryTripDetails =
@@ -511,7 +516,9 @@ public class MapViewModel(
             }
         val stop =
             globalResponse?.getStop(
-                currentNavEntryStopDetails?.stopId ?: currentNavEntryTripDetails?.filter?.stopId,
+                currentNavEntryStopOverview?.stopId
+                    ?: currentNavEntryRouteStop?.stopId
+                    ?: currentNavEntryTripDetails?.filter?.stopId,
             )
         val routePickerOrDetails =
             newNavEntry is SheetRoutes.RoutePicker || newNavEntry is SheetRoutes.RouteDetails
@@ -532,35 +539,34 @@ public class MapViewModel(
                     tripStops = null,
                     true,
                 )
-            } else if (currentNavEntryStopDetails == null) {
-                LayerState.Overview
-            } else {
-                if (stop == null) {
-                    LayerState.Overview
+            } else if (currentNavEntryRouteStop != null && stop != null) {
+                if (currentNavEntryRouteStop.tripFilter != null) {
+                    val vehicle =
+                        currentNavEntryRouteStop.tripFilter.vehicleId?.let { vehicleId ->
+                            vehiclesData.firstOrNull { it.id == vehicleId }
+                        }
+                    LayerState.TripSelected(
+                        stop,
+                        currentNavEntryRouteStop.routeStopFilter,
+                        currentNavEntryRouteStop.tripFilter,
+                        vehicle,
+                        tripStops = null,
+                        false,
+                    )
                 } else {
-                    if (currentNavEntryStopDetails.tripFilter != null) {
-                        val vehicle =
-                            currentNavEntryStopDetails.tripFilter.vehicleId?.let { vehicleId ->
-                                vehiclesData.firstOrNull { it.id == vehicleId }
-                            }
-                        LayerState.TripSelected(
-                            stop,
-                            currentNavEntryStopDetails.routeStopFilter,
-                            currentNavEntryStopDetails.tripFilter,
-                            vehicle,
-                            tripStops = null,
-                            false,
-                        )
-                    } else {
-                        LayerState.StopSelected(stop, currentNavEntryStopDetails.routeStopFilter)
-                    }
+                    LayerState.StopSelected(stop, currentNavEntryRouteStop.routeStopFilter)
                 }
+            } else if (currentNavEntryStopOverview != null && stop != null) {
+                LayerState.StopSelected(stop, null)
+            } else {
+                LayerState.Overview
             }
         // If we're already in this state, there's no need to perform these actions again,
-        // except if we're transitioning from trip to stop details, then the state will be the same
-        // but we still need to recenter
+        // except if we're transitioning from trip to stop overview or route stop, then the state
+        // will be the same but we still need to recenter
         val isNavigatingTripToStop =
-            currentNavEntryStopDetails != null && previousNavEntry is SheetRoutes.TripDetails
+            (currentNavEntryStopOverview != null || currentNavEntryRouteStop != null) &&
+                previousNavEntry is SheetRoutes.TripDetails
         if (newState == currentState && !isNavigatingTripToStop) return currentState
         handleViewportRestoration(newNavEntry, previousNavEntry)
         handleViewportCentering(newState, density)
@@ -624,7 +630,11 @@ public class MapViewModel(
         listOf(SheetRoutes.NearbyTransit::class, SheetRoutes.Favorites::class)
 
     private val deepRoutes: List<KClass<out SheetRoutes>> =
-        listOf(SheetRoutes.StopDetails::class, SheetRoutes.TripDetails::class)
+        listOf(
+            SheetRoutes.StopOverview::class,
+            SheetRoutes.RouteStop::class,
+            SheetRoutes.TripDetails::class,
+        )
 
     private fun handleViewportRestoration(
         currentNavEntry: SheetRoutes?,
@@ -699,7 +709,7 @@ public class MapViewModel(
         val mapDisplayState =
             if (routeStopFilter != null)
                 StopLayerGenerator.State.TripDetails(stopId, routeStopFilter, null)
-            else StopLayerGenerator.State.StopDetails(stopId)
+            else StopLayerGenerator.State.StopOverview(stopId)
 
         return Triple(filteredRouteSourceData, filteredRouteShapes, mapDisplayState)
     }

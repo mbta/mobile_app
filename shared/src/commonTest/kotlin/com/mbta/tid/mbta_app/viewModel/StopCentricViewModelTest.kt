@@ -8,7 +8,8 @@ import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteStopFilter
-import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
+import com.mbta.tid.mbta_app.model.RouteStopPageFilters
+import com.mbta.tid.mbta_app.model.StopOverviewPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
@@ -91,7 +92,7 @@ class StopCentricViewModelTest : KoinTest {
         setUpKoin(objects, dispatcher) { schedules = scheduleRepo }
 
         val viewModel: StopCentricViewModel = get()
-        val filters = StopDetailsPageFilters("place-gover", null, null)
+        val filters = StopOverviewPageFilters("place-gover")
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(EasternTimeInstant.now())
@@ -116,7 +117,7 @@ class StopCentricViewModelTest : KoinTest {
         setUpKoin(objects, dispatcher) { predictions = predictionRepo }
 
         val viewModel: StopCentricViewModel = get()
-        val filters = StopDetailsPageFilters("place-gover", null, null)
+        val filters = StopOverviewPageFilters("place-gover")
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(EasternTimeInstant.now())
@@ -141,8 +142,8 @@ class StopCentricViewModelTest : KoinTest {
         setUpKoin(objects, dispatcher) { predictions = predictionRepo }
 
         val viewModel: StopCentricViewModel = get()
-        val initialFilters = StopDetailsPageFilters("place-gover", null, null)
-        val updatedFilters = StopDetailsPageFilters("place-rugg", null, null)
+        val initialFilters = StopOverviewPageFilters("place-gover")
+        val updatedFilters = StopOverviewPageFilters("place-rugg")
         viewModel.setFilters(initialFilters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(EasternTimeInstant.now())
@@ -179,7 +180,7 @@ class StopCentricViewModelTest : KoinTest {
 
         val viewModel: StopCentricViewModel = get()
         viewModel.setActive(active = true, wasSentToBackground = false)
-        viewModel.setFilters(StopDetailsPageFilters("place-gover", null, null))
+        viewModel.setFilters(StopOverviewPageFilters("place-gover"))
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(EasternTimeInstant.now())
 
@@ -202,7 +203,7 @@ class StopCentricViewModelTest : KoinTest {
         val routeCardVM: RouteCardDataViewModel = get()
         val viewModel: StopCentricViewModel = get()
         val filters =
-            StopDetailsPageFilters(
+            RouteStopPageFilters(
                 "place-gover",
                 RouteStopFilter(Line.Id("line-Green"), 0, false),
                 null,
@@ -229,7 +230,7 @@ class StopCentricViewModelTest : KoinTest {
         setUpKoin(objects, dispatcher) { predictions = predictionRepo }
 
         val viewModel: StopCentricViewModel = get()
-        val filters = StopDetailsPageFilters("place-gover", null, null)
+        val filters = StopOverviewPageFilters("place-gover")
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(EasternTimeInstant.now())
@@ -245,7 +246,7 @@ class StopCentricViewModelTest : KoinTest {
         setUpKoin(objects, dispatcher) { schedules = scheduleRepo }
 
         val viewModel: StopCentricViewModel = get()
-        val filters = StopDetailsPageFilters("place-gover", null, null)
+        val filters = StopOverviewPageFilters("place-gover")
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(EasternTimeInstant.now())
@@ -269,7 +270,7 @@ class StopCentricViewModelTest : KoinTest {
         }
 
         val viewModel: StopCentricViewModel = get()
-        val filters = StopDetailsPageFilters("place-gover", null, null)
+        val filters = StopOverviewPageFilters("place-gover")
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(EasternTimeInstant.now())
@@ -300,7 +301,7 @@ class StopCentricViewModelTest : KoinTest {
         }
 
         val viewModel: StopCentricViewModel = get()
-        val filters = StopDetailsPageFilters("2595", null, null)
+        val filters = StopOverviewPageFilters("2595")
 
         turbineScope {
             val filterUpdatesTurbine = viewModel.filterUpdates.testIn(backgroundScope)
@@ -346,7 +347,7 @@ class StopCentricViewModelTest : KoinTest {
         }
 
         val viewModel: StopCentricViewModel = get()
-        val filters = StopDetailsPageFilters(stop.id, null, null)
+        val filters = StopOverviewPageFilters(stop.id)
 
         turbineScope {
             val filterUpdatesTurbine = viewModel.filterUpdates.testIn(backgroundScope)
@@ -404,7 +405,7 @@ class StopCentricViewModelTest : KoinTest {
 
         val viewModel: StopCentricViewModel = get()
         val initialFilters =
-            StopDetailsPageFilters(
+            RouteStopPageFilters(
                 "place-rugg",
                 RouteStopFilter(Route.Id("Orange"), 0, false),
                 null,
@@ -419,21 +420,27 @@ class StopCentricViewModelTest : KoinTest {
             viewModel.setFilters(initialFilters)
 
             modelTurbine.awaitItemSatisfying {
-                it.routeData?.filteredWith?.routeStopFilter?.directionId == 0
+                val filter = it.routeData?.filteredWith as? RouteStopPageFilters
+                filter?.routeStopFilter?.directionId == 0
             }
-            filterUpdatesTurbine.awaitItemSatisfying { it?.tripFilter?.tripId == trip0.id }
+            filterUpdatesTurbine.awaitItemSatisfying {
+                it?.tripFilter?.tripId == trip0.id
+            }
             viewModel.setFilters(
-                StopDetailsPageFilters(
+                RouteStopPageFilters(
                     "place-rugg",
                     RouteStopFilter(Route.Id("Orange"), 1, false),
                     null,
                 ),
             )
             modelTurbine.awaitItemSatisfying {
-                it.routeData?.filteredWith?.routeStopFilter?.directionId == 1
+                val filter = it.routeData?.filteredWith as? RouteStopPageFilters
+                filter?.routeStopFilter?.directionId == 1
             }
 
-            filterUpdatesTurbine.awaitItemSatisfying { it?.tripFilter?.tripId == trip1.id }
+            filterUpdatesTurbine.awaitItemSatisfying {
+                it?.tripFilter?.tripId == trip1.id
+            }
         }
     }
 }

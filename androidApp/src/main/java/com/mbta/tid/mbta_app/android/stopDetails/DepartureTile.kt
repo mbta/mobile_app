@@ -47,7 +47,7 @@ import com.mbta.tid.mbta_app.model.TrackChange
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.UpcomingTrip
-import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
+import com.mbta.tid.mbta_app.model.routeStopPage.TileData
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
 

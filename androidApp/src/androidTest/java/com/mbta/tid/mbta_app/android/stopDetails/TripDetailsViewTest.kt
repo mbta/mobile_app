@@ -19,8 +19,8 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
-import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
-import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
+import com.mbta.tid.mbta_app.model.tripDetailsPage.TripData
+import com.mbta.tid.mbta_app.model.tripDetailsPage.TripHeaderSpec
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.MockTripDetailsViewModel
@@ -121,7 +121,7 @@ class TripDetailsViewTest {
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText(downstreamStop.name).performClick()
         assertEquals<List<SheetRoutes>>(
-            listOf(SheetRoutes.StopDetails(downstreamStopParent.id, null, null)),
+            listOf(SheetRoutes.StopOverview(downstreamStopParent.id)),
             openedSheetRoutes,
         )
         assertEquals(

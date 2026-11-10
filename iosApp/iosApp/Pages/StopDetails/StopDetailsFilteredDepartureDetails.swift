@@ -163,7 +163,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                 } else { nil }
                 TripDetailsView(
                     tripFilter: tripPageFilter,
-                    context: .stopDetails,
+                    context: .routeStop,
                     now: now,
                     routeAccents: routeAccents,
                     onOpenAlertDetails: { alert in getAlertDetailsHandler(alert.id, spec: .downstream) },
@@ -175,7 +175,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
         .global(
             $global,
-            errorKey: .companion.fromSheetTypes(sheetTypes: [.stopDetails], id: "StopDetailsFilteredDepartureDetails")
+            errorKey: .companion.fromSheetTypes(sheetTypes: [.routeStop], id: "StopDetailsFilteredDepartureDetails")
         )
         .onAppear {
             setViewportToStop()

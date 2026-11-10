@@ -52,7 +52,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.NextScheduleResponse
 import com.mbta.tid.mbta_app.model.response.isStopBlocklisted
-import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
+import com.mbta.tid.mbta_app.model.routeStopPage.TileData
 import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.Settings
@@ -79,7 +79,7 @@ fun StopDetailsFilteredDeparturesView(
 ) {
     val global =
         getGlobalData(
-            ErrorKey(setOf(SheetRoutes.StopDetails::class), "StopDetailsFilteredDeparturesView"),
+            ErrorKey(setOf(SheetRoutes.RouteStop::class), "StopDetailsFilteredDeparturesView"),
         )
     val leafFormat = remember(leaf, now, global) { leaf.format(now, global) }
     val tileData = leafFormat.tileData(selectedDirection.destination)

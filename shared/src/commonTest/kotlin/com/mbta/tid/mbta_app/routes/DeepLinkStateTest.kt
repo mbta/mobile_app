@@ -17,7 +17,7 @@ class DeepLinkStateTest {
     }
 
     @Test
-    fun `matches unfiltered stop`() = parametricTest {
+    fun `matches stop overview`() = parametricTest {
         val variant: AppVariant? = anyEnumValueOrNull()
         assertEquals(
             DeepLinkState.Stop("place-chill", null, null, null),
@@ -26,7 +26,7 @@ class DeepLinkStateTest {
     }
 
     @Test
-    fun `matches filtered stop`() = parametricTest {
+    fun `matches stop route`() = parametricTest {
         val variant: AppVariant? = anyEnumValueOrNull()
         assertEquals(
             DeepLinkState.Stop("place-chill", "Green-B", 1, "12345"),
@@ -35,13 +35,21 @@ class DeepLinkStateTest {
     }
 
     @Test
-    fun `stop has a corresponding SheetRoutes`() = parametricTest {
+    fun `stop overview has a corresponding SheetRoutes`() = parametricTest {
+        val variant: AppVariant? = anyEnumValueOrNull()
+        val deepLink =
+            DeepLinkState.from("${variant?.backendRoot ?: ""}/s/place-chill") as? DeepLinkState.Stop
+        assertEquals(SheetRoutes.StopOverview("place-chill"), deepLink?.sheetRoute)
+    }
+
+    @Test
+    fun `route stop has a corresponding SheetRoutes`() = parametricTest {
         val variant: AppVariant? = anyEnumValueOrNull()
         val deepLink =
             DeepLinkState.from("${variant?.backendRoot ?: ""}/s/place-chill/r/Green-B/d/1/t/12345")
                 as? DeepLinkState.Stop
         assertEquals(
-            SheetRoutes.StopDetails(
+            SheetRoutes.RouteStop(
                 "place-chill",
                 RouteStopFilter(LineOrRoute.Id.fromString("Green-B"), 1, false),
                 TripDetailsFilter("12345", null, null),

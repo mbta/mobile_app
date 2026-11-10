@@ -106,7 +106,7 @@ class ErrorBannerStateRepositoryTest {
 
         repo.setSheetRoute(SheetRoutes.Favorites)
 
-        repo.setDataError(ErrorKey(setOf(SheetRoutes.StopDetails::class), "a"), "") {
+        repo.setDataError(ErrorKey(setOf(SheetRoutes.StopOverview::class), "a"), "") {
             actionsCalled.add("a")
         }
         assertEquals(null, (repo.state.value))
