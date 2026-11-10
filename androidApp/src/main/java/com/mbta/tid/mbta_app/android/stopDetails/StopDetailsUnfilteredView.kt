@@ -16,16 +16,16 @@ import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.Stop
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
-import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
-import com.mbta.tid.mbta_app.viewModel.StopDetailsViewModel
+import com.mbta.tid.mbta_app.viewModel.IStopCentricViewModel
+import com.mbta.tid.mbta_app.viewModel.StopCentricViewModel
 import org.koin.compose.koinInject
 
 @Composable
@@ -34,10 +34,10 @@ fun StopDetailsUnfilteredView(
     now: EasternTimeInstant,
     isFavorite: (RouteStopDirection) -> Boolean?,
     navCallbacks: NavigationCallbacks,
-    updateStopFilter: (StopDetailsFilter?) -> Unit,
+    updateRouteStopFilter: (RouteStopFilter?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     errorBannerViewModel: IErrorBannerViewModel,
-    stopDetailsViewModel: IStopDetailsViewModel = koinInject(),
+    stopCentricViewModel: IStopCentricViewModel = koinInject(),
 ) {
 
     val globalResponse =
@@ -46,11 +46,11 @@ fun StopDetailsUnfilteredView(
 
     val analytics: Analytics = koinInject()
 
-    val state by stopDetailsViewModel.models.collectAsState()
+    val state by stopCentricViewModel.models.collectAsState()
     val routeCardData =
         when (val data = state.routeData) {
-            is StopDetailsViewModel.RouteData.Unfiltered ->
-                if (data.filters.stopId == stopId) data.routeCards else null
+            is StopCentricViewModel.RouteData.StopSummary ->
+                if (data.filteredWith.stopId == stopId) data.routeCards else null
             else -> null
         }
 
@@ -64,7 +64,7 @@ fun StopDetailsUnfilteredView(
                     .flatMap { it.data }
                     .flatMap { it.routePatterns }
                     .minOfOrNull { it.directionId } ?: 0
-            updateStopFilter(StopDetailsFilter(filterId, defaultDirectionId))
+            updateRouteStopFilter(RouteStopFilter(filterId, defaultDirectionId))
         }
     }
 
@@ -95,7 +95,7 @@ fun StopDetailsUnfilteredView(
                 isFavorite,
                 navCallbacks,
                 onTapRoutePill,
-                updateStopFilter,
+                updateRouteStopFilter,
                 openModal,
             )
         }
@@ -120,7 +120,7 @@ fun StopDetailsUnfilteredView(
                     isFavorite = { false },
                     navCallbacks,
                     onTapRoutePill = {},
-                    updateStopFilter = {},
+                    updateRouteStopFilter = {},
                     openModal = {},
                 )
             }

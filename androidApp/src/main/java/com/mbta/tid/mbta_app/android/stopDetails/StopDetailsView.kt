@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.model.RouteStopDirection
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.routes.SheetRoutes
@@ -19,13 +19,13 @@ import org.koin.compose.koinInject
 fun StopDetailsView(
     modifier: Modifier = Modifier,
     stopId: String,
-    stopFilter: StopDetailsFilter?,
+    routeStopFilter: RouteStopFilter?,
     tripFilter: TripDetailsFilter?,
     allAlerts: AlertsStreamDataResponse?,
     now: EasternTimeInstant,
     isFavorite: (RouteStopDirection) -> Boolean?,
     navCallbacks: NavigationCallbacks,
-    updateStopFilter: (StopDetailsFilter?) -> Unit,
+    updateRouteStopFilter: (RouteStopFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     tileScrollState: ScrollState,
     openModal: (ModalRoutes) -> Unit,
@@ -45,16 +45,16 @@ fun StopDetailsView(
         }
     }
 
-    if (stopFilter != null) {
+    if (routeStopFilter != null) {
         StopDetailsFilteredView(
             stopId,
-            stopFilter,
+            routeStopFilter,
             tripFilter,
             allAlerts,
             now,
             isFavorite,
             navCallbacks,
-            updateStopFilter,
+            updateRouteStopFilter,
             updateTripFilter,
             tileScrollState,
             ::openModalAndRecord,
@@ -67,7 +67,7 @@ fun StopDetailsView(
             now,
             isFavorite,
             navCallbacks,
-            updateStopFilter,
+            updateRouteStopFilter,
             ::openModalAndRecord,
             errorBannerViewModel,
         )

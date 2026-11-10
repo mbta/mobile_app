@@ -146,7 +146,7 @@ final class HomeMapViewTests: XCTestCase {
                         hasSchedulesToday: true,
                         subwayServiceStartTime: nil,
                         alertsDownstream: [],
-                        context: .stopDetailsFiltered
+                        context: .routeStop
                     ),
                 ]),
             ],
@@ -162,7 +162,7 @@ final class HomeMapViewTests: XCTestCase {
 
         let initialNav: SheetNavigationStackEntry = try .stopDetails(
             stopId: stop.id,
-            stopFilter: .init(routeId: XCTUnwrap(vehicle.routeId), directionId: vehicle.directionId),
+            routeStopFilter: .init(routeId: XCTUnwrap(vehicle.routeId), directionId: vehicle.directionId),
             tripFilter: nil
         )
         let navManager = NavigationManager(navigationStack: [initialNav])
@@ -253,7 +253,7 @@ final class HomeMapViewTests: XCTestCase {
         let navManager = NavigationManager(navigationStack: [
             .stopDetails(
                 stopId: "stop",
-                stopFilter: .init(routeId: Route.Id("r"), directionId: 0),
+                routeStopFilter: .init(routeId: Route.Id("r"), directionId: 0),
                 tripFilter: .init(tripId: "t", vehicleId: "v", stopSequence: 0, selectionLock: false)
             ),
         ])
@@ -286,7 +286,7 @@ final class HomeMapViewTests: XCTestCase {
         let stop = ObjectCollectionBuilder().stop { _ in }
         let navManager = NavigationManager(navigationStack: [.stopDetails(
             stopId: stop.id,
-            stopFilter: .init(routeId: Route.Id("routeId"), directionId: 0),
+            routeStopFilter: .init(routeId: Route.Id("routeId"), directionId: 0),
             tripFilter: nil
         )])
 
@@ -320,7 +320,7 @@ final class HomeMapViewTests: XCTestCase {
         let stop = ObjectCollectionBuilder().stop { _ in }
         let navManager = NavigationManager(navigationStack: [.stopDetails(
             stopId: stop.id,
-            stopFilter: nil,
+            routeStopFilter: nil,
             tripFilter: nil
         )])
 
@@ -352,7 +352,7 @@ final class HomeMapViewTests: XCTestCase {
         let stop = ObjectCollectionBuilder().stop { _ in }
         let navManager = NavigationManager(navigationStack: [.stopDetails(
             stopId: stop.id,
-            stopFilter: .init(routeId: Route.Id("routeId"), directionId: 0),
+            routeStopFilter: .init(routeId: Route.Id("routeId"), directionId: 0),
             tripFilter: nil
         )])
 
@@ -389,7 +389,7 @@ final class HomeMapViewTests: XCTestCase {
         let navManager = NavigationManager(navigationStack: [
             .stopDetails(
                 stopId: stop.id,
-                stopFilter: .init(routeId: Route.Id("routeId"), directionId: 0),
+                routeStopFilter: .init(routeId: Route.Id("routeId"), directionId: 0),
                 tripFilter: nil
             ),
         ])

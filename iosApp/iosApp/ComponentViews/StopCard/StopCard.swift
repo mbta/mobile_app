@@ -69,7 +69,7 @@ struct StopCardDepartures: View {
                 SheetNavigationLink(
                     value: .stopDetails(
                         stopId: stopData.stop.id,
-                        stopFilter: .init(
+                        routeStopFilter: .init(
                             routeId: leaf.lineOrRoute.id,
                             directionId: leaf.direction.id
                         ),

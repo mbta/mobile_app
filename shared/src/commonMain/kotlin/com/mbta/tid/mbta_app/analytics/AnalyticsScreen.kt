@@ -6,7 +6,7 @@ public enum class AnalyticsScreen(internal val pageName: String) {
     RouteDetails("RouteDetailsPage"),
     RoutePicker("RoutePickerPage"),
     TripDetails("TripDetailsPage"),
-    StopDetailsFiltered("StopDetailsFilteredPage"),
-    StopDetailsUnfiltered("StopDetailsUnfilteredPage"),
+    RouteStop("RouteStopPage"),
+    StopSummary("StopSummaryPage"),
     Settings("SettingsPage"),
 }

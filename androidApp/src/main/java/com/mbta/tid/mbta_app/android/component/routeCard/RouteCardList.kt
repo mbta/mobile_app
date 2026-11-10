@@ -17,7 +17,7 @@ import com.mbta.tid.mbta_app.android.component.ScrollSeparatorLazyColumn
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
@@ -28,7 +28,7 @@ fun ColumnScope.RouteCardList(
     global: GlobalResponse?,
     now: EasternTimeInstant,
     isFavorite: (RouteStopDirection) -> Boolean,
-    onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
+    onOpenStopDetails: (String, RouteStopFilter?) -> Unit,
 ) {
     val contentPadding = PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp)
     val verticalArrangement = Arrangement.spacedBy(14.dp)

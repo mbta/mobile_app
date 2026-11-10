@@ -2,7 +2,7 @@ package com.mbta.tid.mbta_app.routes
 
 import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.model.LineOrRoute
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.parametric.parametricTest
 import kotlin.test.Test
@@ -43,7 +43,7 @@ class DeepLinkStateTest {
         assertEquals(
             SheetRoutes.StopDetails(
                 "place-chill",
-                StopDetailsFilter(LineOrRoute.Id.fromString("Green-B"), 1, false),
+                RouteStopFilter(LineOrRoute.Id.fromString("Green-B"), 1, false),
                 TripDetailsFilter("12345", null, null),
             ),
             deepLink?.sheetRoute,

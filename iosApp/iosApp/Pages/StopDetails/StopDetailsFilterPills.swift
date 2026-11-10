@@ -25,8 +25,8 @@ struct StopDetailsFilterPills: View {
 
     let servedRoutes: [FilterBy]
     let tapRoutePill: (FilterBy) -> Void
-    var filter: StopDetailsFilter?
-    var setFilter: (StopDetailsFilter?) -> Void
+    var filter: RouteStopFilter?
+    var setFilter: (RouteStopFilter?) -> Void
 
     var body: some View {
         let routePillHint = "Applies a filter so that only arrivals from this route are displayed"

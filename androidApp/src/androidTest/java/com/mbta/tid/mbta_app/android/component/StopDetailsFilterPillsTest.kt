@@ -19,8 +19,8 @@ import com.mbta.tid.mbta_app.android.stopDetails.PillFilter
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsFilterPills
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
@@ -52,8 +52,8 @@ class StopDetailsFilterPillsTest {
             shortName = "55"
         }
 
-        val filter: MutableState<StopDetailsFilter?> =
-            mutableStateOf(StopDetailsFilter(routeId = route1.id, directionId = 0))
+        val filter: MutableState<RouteStopFilter?> =
+            mutableStateOf(RouteStopFilter(routeId = route1.id, directionId = 0))
         val pillRoutes =
             listOf(
                 PillFilter.ByRoute(route1, null),
@@ -65,7 +65,7 @@ class StopDetailsFilterPillsTest {
                 servedRoutes = pillRoutes,
                 filter = filter.value,
                 onTapRoutePill = { pillFilter ->
-                    filter.value = StopDetailsFilter(routeId = pillFilter.id, directionId = 0)
+                    filter.value = RouteStopFilter(routeId = pillFilter.id, directionId = 0)
                 },
                 onClearFilter = { filter.value = null },
             )

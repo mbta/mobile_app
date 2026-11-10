@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.routes
 
 import com.mbta.tid.mbta_app.model.LineOrRoute
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import io.ktor.http.Url
 
@@ -22,7 +22,7 @@ public sealed class DeepLinkState {
                 stopId,
                 directionId?.let { direction ->
                     routeId?.let { route ->
-                        StopDetailsFilter(LineOrRoute.Id.fromString(route), direction, false)
+                        RouteStopFilter(LineOrRoute.Id.fromString(route), direction, false)
                     }
                 },
                 tripId?.let { TripDetailsFilter(it, null, null, false) },

@@ -54,7 +54,7 @@ public fun viewModelModule(): Module = module {
     singleOf(::SearchRoutesViewModel).bind(ISearchRoutesViewModel::class)
     singleOf(::SearchViewModel).bind(ISearchViewModel::class)
     single {
-            StopDetailsViewModel(
+            StopCentricViewModel(
                 get(),
                 get(),
                 get(),
@@ -63,7 +63,7 @@ public fun viewModelModule(): Module = module {
                 get(named("coroutineDispatcherIO")),
             )
         }
-        .bind(IStopDetailsViewModel::class)
+        .bind(IStopCentricViewModel::class)
     singleOf(::ToastViewModel).bind(IToastViewModel::class)
     singleOf(::TripDetailsPageViewModel).bind(ITripDetailsPageViewModel::class)
     single {
