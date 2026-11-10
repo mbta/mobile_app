@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.routes
 
 import com.mbta.tid.mbta_app.model.LineOrRoute
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
@@ -20,7 +20,7 @@ public sealed class SheetRoutes {
     @Serializable
     public data class StopDetails(
         val stopId: String,
-        val stopFilter: StopDetailsFilter?,
+        val routeStopFilter: RouteStopFilter?,
         val tripFilter: TripDetailsFilter?,
     ) : SheetRoutes()
 

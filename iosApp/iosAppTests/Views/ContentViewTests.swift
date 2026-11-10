@@ -243,7 +243,7 @@ final class ContentViewTests: XCTestCase {
 
     @MainActor func testBack() {
         let sut = ContentView(contentVM: .init())
-        let stopFilter = StopDetailsFilter(routeId: Route.Id("route"), directionId: 0)
+        let routeStopFilter = RouteStopFilter(routeId: Route.Id("route"), directionId: 0)
         let tripFilter = TripDetailsFilter(
             tripId: "trip",
             vehicleId: "vehicle",
@@ -254,9 +254,9 @@ final class ContentViewTests: XCTestCase {
         let exp1 = sut.inspection.inspect(after: 1) { view in
             try view.actualView().navManager.navigationStack = [
                 .nearby,
-                .stopDetails(stopId: "stop", stopFilter: stopFilter, tripFilter: tripFilter),
-                .tripDetails(filter: .init(stopId: "stop", stopFilter: stopFilter, tripFilter: tripFilter)),
-                .stopDetails(stopId: "otherStop", stopFilter: nil, tripFilter: nil),
+                .stopDetails(stopId: "stop", routeStopFilter: routeStopFilter, tripFilter: tripFilter),
+                .tripDetails(filter: .init(stopId: "stop", routeStopFilter: routeStopFilter, tripFilter: tripFilter)),
+                .stopDetails(stopId: "otherStop", routeStopFilter: nil, tripFilter: nil),
             ]
         }
         let exp2 = sut.inspection.inspect(after: 2) { view in
@@ -267,8 +267,12 @@ final class ContentViewTests: XCTestCase {
                 try view.actualView().navManager.navigationStack,
                 [
                     .nearby,
-                    .stopDetails(stopId: "stop", stopFilter: stopFilter, tripFilter: tripFilter),
-                    .tripDetails(filter: .init(stopId: "stop", stopFilter: stopFilter, tripFilter: tripFilter)),
+                    .stopDetails(stopId: "stop", routeStopFilter: routeStopFilter, tripFilter: tripFilter),
+                    .tripDetails(filter: .init(
+                        stopId: "stop",
+                        routeStopFilter: routeStopFilter,
+                        tripFilter: tripFilter
+                    )),
                 ]
             )
         }
@@ -280,7 +284,7 @@ final class ContentViewTests: XCTestCase {
 
     @MainActor func testBackAppearanceWhileSearching() {
         let sut = ContentView(contentVM: .init())
-        let stopFilter = StopDetailsFilter(routeId: Route.Id("route"), directionId: 0)
+        let routeStopFilter = RouteStopFilter(routeId: Route.Id("route"), directionId: 0)
         let tripFilter = TripDetailsFilter(
             tripId: "trip",
             vehicleId: "vehicle",
@@ -291,7 +295,7 @@ final class ContentViewTests: XCTestCase {
         let exp1 = sut.inspection.inspect(after: 1) { view in
             try view.actualView().navManager.navigationStack = [
                 .nearby,
-                .stopDetails(stopId: "stop", stopFilter: stopFilter, tripFilter: tripFilter),
+                .stopDetails(stopId: "stop", routeStopFilter: routeStopFilter, tripFilter: tripFilter),
             ]
             try view.actualView().searchObserver.isFocused = true
         }

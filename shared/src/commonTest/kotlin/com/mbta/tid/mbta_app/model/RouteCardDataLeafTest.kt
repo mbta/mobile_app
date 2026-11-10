@@ -275,7 +275,7 @@ class RouteCardDataLeafTest {
                     true,
                     null,
                     emptyList(),
-                    RouteCardData.Context.StopDetailsFiltered,
+                    RouteCardData.Context.RouteStop,
                 )
                 .format(now, GlobalResponse(objects)),
         )
@@ -334,7 +334,7 @@ class RouteCardDataLeafTest {
                     true,
                     null,
                     emptyList(),
-                    RouteCardData.Context.StopDetailsFiltered,
+                    RouteCardData.Context.RouteStop,
                 )
                 .format(now, GlobalResponse(objects)),
         )
@@ -994,7 +994,7 @@ class RouteCardDataLeafTest {
                     hasSchedulesToday = true,
                     subwayServiceStartTime = null,
                     emptyList(),
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    anyEnumValueExcept(RouteCardData.Context.RouteStop),
                 )
                 .format(now, RedLine.global),
         )
@@ -1090,7 +1090,7 @@ class RouteCardDataLeafTest {
                         hasSchedulesToday = true,
                         subwayServiceStartTime = null,
                         listOf(downstreamAlert),
-                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                        anyEnumValueExcept(RouteCardData.Context.RouteStop),
                     )
                     .format(now, RedLine.global),
             )
@@ -1157,7 +1157,7 @@ class RouteCardDataLeafTest {
                     hasSchedulesToday = true,
                     subwayServiceStartTime = null,
                     emptyList(),
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    anyEnumValueExcept(RouteCardData.Context.RouteStop),
                 )
                 .format(now, RedLine.global),
         )
@@ -1338,7 +1338,7 @@ class RouteCardDataLeafTest {
                         hasSchedulesToday = true,
                         subwayServiceStartTime = null,
                         emptyList(),
-                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                        anyEnumValueExcept(RouteCardData.Context.RouteStop),
                     )
                     .format(now, RedLine.global),
             )
@@ -1457,7 +1457,7 @@ class RouteCardDataLeafTest {
                         hasSchedulesToday = true,
                         subwayServiceStartTime = null,
                         emptyList(),
-                        RouteCardData.Context.StopDetailsFiltered,
+                        RouteCardData.Context.RouteStop,
                     )
                     .format(now, RedLine.global),
             )
@@ -1531,7 +1531,7 @@ class RouteCardDataLeafTest {
                     hasSchedulesToday = true,
                     subwayServiceStartTime = null,
                     emptyList(),
-                    RouteCardData.Context.StopDetailsFiltered,
+                    RouteCardData.Context.RouteStop,
                 )
                 .format(now, RedLine.global),
         )
@@ -1605,7 +1605,7 @@ class RouteCardDataLeafTest {
                     true,
                     null,
                     emptyList(),
-                    RouteCardData.Context.StopDetailsFiltered,
+                    RouteCardData.Context.RouteStop,
                 )
                 .format(now, GlobalResponse(objects)),
         )
@@ -1719,7 +1719,7 @@ class RouteCardDataLeafTest {
                     true,
                     null,
                     emptyList(),
-                    RouteCardData.Context.StopDetailsFiltered,
+                    RouteCardData.Context.RouteStop,
                 )
                 .format(now, GlobalResponse(objects)),
         )
@@ -1844,7 +1844,7 @@ class RouteCardDataLeafTest {
                     hasSchedulesToday = true,
                     subwayServiceStartTime = null,
                     emptyList(),
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    anyEnumValueExcept(RouteCardData.Context.RouteStop),
                 )
                 .format(now, GreenLine.global),
         )
@@ -1911,7 +1911,7 @@ class RouteCardDataLeafTest {
                     hasSchedulesToday = true,
                     subwayServiceStartTime = null,
                     emptyList(),
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    anyEnumValueExcept(RouteCardData.Context.RouteStop),
                 )
                 .format(now, GreenLine.global),
         )
@@ -2121,7 +2121,7 @@ class RouteCardDataLeafTest {
                     true,
                     null,
                     emptyList(),
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    anyEnumValueExcept(RouteCardData.Context.RouteStop),
                 )
                 .format(now, ProvidenceStoughtonLine.global),
         )
@@ -2201,7 +2201,7 @@ class RouteCardDataLeafTest {
                     hasSchedulesToday = true,
                     subwayServiceStartTime = null,
                     emptyList(),
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    anyEnumValueExcept(RouteCardData.Context.RouteStop),
                 )
                 .format(now, `87`.global),
         )
@@ -2287,7 +2287,7 @@ class RouteCardDataLeafTest {
                     hasSchedulesToday = true,
                     subwayServiceStartTime = null,
                     emptyList(),
-                    RouteCardData.Context.StopDetailsFiltered,
+                    RouteCardData.Context.RouteStop,
                 )
                 .format(now, `87`.global),
         )
@@ -2355,7 +2355,7 @@ class RouteCardDataLeafTest {
                     hasSchedulesToday = true,
                     subwayServiceStartTime = null,
                     emptyList(),
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    anyEnumValueExcept(RouteCardData.Context.RouteStop),
                 )
                 .format(now, `87`.global),
         )
@@ -2422,7 +2422,7 @@ class RouteCardDataLeafTest {
                     hasSchedulesToday = true,
                     subwayServiceStartTime = null,
                     emptyList(),
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    anyEnumValueExcept(RouteCardData.Context.RouteStop),
                 )
                 .format(now, `87`.global),
         )
@@ -2481,7 +2481,7 @@ class RouteCardDataLeafTest {
                     hasSchedulesToday = true,
                     subwayServiceStartTime = null,
                     emptyList(),
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    anyEnumValueExcept(RouteCardData.Context.RouteStop),
                 )
                 .format(now, `87`.global),
         )
@@ -2804,7 +2804,7 @@ class RouteCardDataLeafTest {
                         true,
                         null,
                         emptyList(),
-                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                        anyEnumValueExcept(RouteCardData.Context.RouteStop),
                     )
                     .format(now, GreenLine.global),
             )
@@ -2896,7 +2896,7 @@ class RouteCardDataLeafTest {
                         true,
                         null,
                         emptyList(),
-                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                        anyEnumValueExcept(RouteCardData.Context.RouteStop),
                     )
                     .format(now, GreenLine.global),
             )
@@ -2998,7 +2998,7 @@ class RouteCardDataLeafTest {
                         ),
                         null,
                         emptyList(),
-                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                        anyEnumValueExcept(RouteCardData.Context.RouteStop),
                     )
                     .format(now, GreenLine.global),
             )
@@ -3071,7 +3071,7 @@ class RouteCardDataLeafTest {
                         true,
                         null,
                         emptyList(),
-                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                        anyEnumValueExcept(RouteCardData.Context.RouteStop),
                     )
                     .format(now, GreenLine.global),
             )
@@ -3163,7 +3163,7 @@ class RouteCardDataLeafTest {
                         true,
                         null,
                         emptyList(),
-                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                        anyEnumValueExcept(RouteCardData.Context.RouteStop),
                     )
                     .format(now, GlobalResponse(objects)),
             )
@@ -3199,7 +3199,7 @@ class RouteCardDataLeafTest {
                 allDataLoaded = true,
                 subwayServiceStartTime = null,
                 alertsDownstream = listOf(generalAlert, trip1Alert, trip2Alert),
-                context = RouteCardData.Context.StopDetailsFiltered,
+                context = RouteCardData.Context.RouteStop,
             )
 
         assertEquals(listOf(generalAlert, trip1Alert, trip2Alert), leaf.alertsHere(tripId = null))

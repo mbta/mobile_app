@@ -99,7 +99,7 @@ final class RouteCardStopHeaderTests: XCTestCase {
                     direction: .init(directionId: 0, route: route), routePatterns: [], stopIds: [], upcomingTrips: [],
                     alertsHere: [alert], allDataLoaded: true, hasSchedulesToday: true, subwayServiceStartTime: nil,
                     alertsDownstream: [],
-                    context: .stopDetailsFiltered
+                    context: .routeStop
                 )]
             ),
             globalData: .init(objects: objects),

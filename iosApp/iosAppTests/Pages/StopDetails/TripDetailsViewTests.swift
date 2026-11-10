@@ -295,7 +295,11 @@ final class TripDetailsViewTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let oldNavEntry: SheetNavigationStackEntry = .stopDetails(stopId: "oldStop", stopFilter: nil, tripFilter: nil)
+        let oldNavEntry: SheetNavigationStackEntry = .stopDetails(
+            stopId: "oldStop",
+            routeStopFilter: nil,
+            tripFilter: nil
+        )
         let navManager = NavigationManager(navigationStack: [oldNavEntry])
 
         let tripFilter = TripDetailsPageFilter(
@@ -354,7 +358,7 @@ final class TripDetailsViewTests: XCTestCase {
 
         let newNavEntry: SheetNavigationStackEntry = .stopDetails(
             stopId: nextStop.id,
-            stopFilter: nil,
+            routeStopFilter: nil,
             tripFilter: nil
         )
 

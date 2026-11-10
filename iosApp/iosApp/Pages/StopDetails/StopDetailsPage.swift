@@ -15,7 +15,7 @@ struct RouteCardParams: Equatable {
     let global: GlobalResponse?
     let now: Date
     let stopData: StopData?
-    let stopFilter: StopDetailsFilter?
+    let routeStopFilter: RouteStopFilter?
     let stopId: String
 }
 
@@ -30,12 +30,12 @@ struct StopDetailsPage: View {
     @State var now = Date.now
     // Used only for VO notifications, VM state data is used for displaying other stop details content
     @State var routeCardDataState: RouteCardDataViewModel.State?
-    @State var vmState: StopDetailsViewModel.State?
+    @State var vmState: StopCentricViewModel.State?
 
     var errorBannerVM: IErrorBannerViewModel
     var mapVM: IMapViewModel
     var routeCardDataVM: IRouteCardDataViewModel
-    var stopDetailsVM: IStopDetailsViewModel
+    var stopCentricVM: IStopCentricViewModel
     @ObservedObject var navManager: NavigationManager
     @ObservedObject var viewportProvider: ViewportProvider
 
@@ -44,7 +44,7 @@ struct StopDetailsPage: View {
     let inspection = Inspection<Self>()
 
     var stopId: String { filters.stopId }
-    var stopFilter: StopDetailsFilter? { filters.stopFilter }
+    var routeStopFilter: RouteStopFilter? { filters.routeStopFilter }
     var tripFilter: TripDetailsFilter? { filters.tripFilter }
 
     init(
@@ -54,7 +54,7 @@ struct StopDetailsPage: View {
         errorBannerVM: IErrorBannerViewModel,
         mapVM: IMapViewModel,
         routeCardDataVM: IRouteCardDataViewModel,
-        stopDetailsVM: IStopDetailsViewModel,
+        stopCentricVM: IStopCentricViewModel,
         navManager: NavigationManager,
         viewportProvider: ViewportProvider,
     ) {
@@ -64,7 +64,7 @@ struct StopDetailsPage: View {
         self.errorBannerVM = errorBannerVM
         self.mapVM = mapVM
         self.routeCardDataVM = routeCardDataVM
-        self.stopDetailsVM = stopDetailsVM
+        self.stopCentricVM = stopCentricVM
         self.navManager = navManager
         self.viewportProvider = viewportProvider
     }
@@ -79,12 +79,12 @@ struct StopDetailsPage: View {
             global: global,
             now: now,
             onUpdateFavorites: {},
-            setStopFilter: { filter in navManager.setLastStopDetailsFilter(stopId, filter) },
+            setRouteStopFilter: { filter in navManager.setLastRouteStopFilter(stopId, filter) },
             setTripFilter: { filter in navManager.setLastTripDetailsFilter(stopId, filter) },
             navCallbacks: navCallbacks,
             errorBannerVM: errorBannerVM,
             mapVM: mapVM,
-            stopDetailsVM: stopDetailsVM,
+            stopCentricVM: stopCentricVM,
             navManager: navManager,
         )
     }
@@ -96,10 +96,10 @@ struct StopDetailsPage: View {
                 $global,
                 errorKey: .companion.fromSheetTypes(sheetTypes: [.stopDetails], id: "StopDetailsPage")
             )
-            .manageVM(stopDetailsVM, $vmState, alerts: alerts, filters: filters, now: now.toEasternInstant())
+            .manageVM(stopCentricVM, $vmState, alerts: alerts, filters: filters, now: now.toEasternInstant())
             .manageVM(routeCardDataVM, $routeCardDataState)
             .task {
-                for await filterUpdate in stopDetailsVM.filterUpdates {
+                for await filterUpdate in stopCentricVM.filterUpdates {
                     if let filterUpdate {
                         navManager.setLastStopDetailsPageFilter(filterUpdate)
                     }

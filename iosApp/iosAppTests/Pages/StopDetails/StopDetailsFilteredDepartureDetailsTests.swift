@@ -90,7 +90,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             hasSchedulesToday: true,
             subwayServiceStartTime: subwayServiceStartTime,
             alertsDownstream: alertsDownstream,
-            context: .stopDetailsFiltered
+            context: .routeStop
         )
     }
 
@@ -116,9 +116,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: 0),
+            routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
             selectedDirection: .init(name: nil, destination: nil, id: 0),
@@ -126,7 +126,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: .init(),
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
 
@@ -184,9 +184,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
-            stopFilter: .init(routeId: line.id, directionId: 0),
+            routeStopFilter: .init(routeId: line.id, directionId: 0),
             tripFilter: .init(tripId: trip1.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
             selectedDirection: .init(name: nil, destination: nil, id: 0),
@@ -194,7 +194,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: .init(),
         )
 
@@ -243,9 +243,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: 0),
+            routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: .init(tripId: trip1.trip.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
             selectedDirection: .init(name: nil, destination: nil, id: 0),
@@ -253,7 +253,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: .init(),
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
 
@@ -299,9 +299,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         )
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: 0),
+            routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: .init(tripId: trip1.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
             selectedDirection: .init(name: nil, destination: nil, id: 0),
@@ -309,7 +309,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: .init(),
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().find(text: "Trip cancelled"))
@@ -369,9 +369,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         )
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: 0),
+            routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: .init(tripId: trip1.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
             selectedDirection: .init(name: nil, destination: nil, id: 0),
@@ -379,7 +379,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: .init(),
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
 
@@ -399,9 +399,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: 0),
+            routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
             selectedDirection: .init(name: nil, destination: nil, id: 0),
@@ -409,7 +409,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: .now(),
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: .init(),
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
 
@@ -437,7 +437,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             prediction.departureTime = now.plus(seconds: 15)
         })
 
-        let stopFilter = StopDetailsFilter(routeId: route.id, directionId: 0)
+        let routeStopFilter = RouteStopFilter(routeId: route.id, directionId: 0)
 
         let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip], alerts: [alert], objects: objects)
 
@@ -447,9 +447,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
-            stopFilter: stopFilter,
+            routeStopFilter: routeStopFilter,
             tripFilter: nil,
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
             selectedDirection: .init(name: nil, destination: nil, id: 0),
@@ -457,7 +457,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: navManager,
         )
 
@@ -507,9 +507,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: 0),
+            routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
             selectedDirection: .init(name: nil, destination: nil, id: 0),
@@ -517,7 +517,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: navManager,
         )
 
@@ -577,9 +577,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: 0),
+            routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
             selectedDirection: .init(name: nil, destination: nil, id: 0),
@@ -587,7 +587,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: navManager,
         ).environmentObject(ViewportProvider()).withFixedSettings([.stationAccessibility: true])
 
@@ -618,9 +618,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: 0),
+            routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
             selectedDirection: .init(name: nil, destination: nil, id: 0),
@@ -628,7 +628,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: .init(),
         ).environmentObject(ViewportProvider()).withFixedSettings([.stationAccessibility: true])
 
@@ -664,9 +664,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: 0),
+            routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
             selectedDirection: .init(name: nil, destination: nil, id: 0),
@@ -674,7 +674,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: .init(),
         )
 
@@ -744,16 +744,16 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             predictions: PredictionsStreamDataResponse(objects: objects),
             alerts: alertResponse,
             now: now,
-            context: .stopDetailsFiltered
+            context: .routeStop
         )!.first!
         let routeStopData = try XCTUnwrap(routeCardData.stopData.first)
         let leaf = try XCTUnwrap(routeStopData.data.first { $0.direction.id == 0 })
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
-            stopFilter: .init(routeId: line.id, directionId: 0),
+            routeStopFilter: .init(routeId: line.id, directionId: 0),
             tripFilter: nil,
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
             selectedDirection: .init(name: nil, destination: nil, id: 0),
@@ -761,7 +761,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: .init(),
         )
 
@@ -799,9 +799,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: 0),
+            routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
             selectedDirection: .init(name: nil, destination: nil, id: 0),
@@ -809,7 +809,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: .now(),
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             schedulesRepository: schedulesRepo,
             navManager: .init(),
         )
@@ -858,9 +858,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: 0),
+            routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
             selectedDirection: .init(name: nil, destination: nil, id: 0),
@@ -868,7 +868,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             schedulesRepository: directionReloadRepo,
             navManager: .init(),
         )
@@ -932,9 +932,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         )
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: trip1.directionId),
+            routeStopFilter: .init(routeId: route.id, directionId: trip1.directionId),
             tripFilter: .init(tripId: trip1.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
             selectedDirection: .init(name: nil, destination: nil, id: 0),
@@ -942,7 +942,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: .init(),
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
         XCTAssertNil(try? sut.inspect().find(text: "Good morning!"))
@@ -986,9 +986,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         )
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: trip1.directionId),
+            routeStopFilter: .init(routeId: route.id, directionId: trip1.directionId),
             tripFilter: .init(tripId: trip1.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
             selectedDirection: .init(name: nil, destination: nil, id: 0),
@@ -996,7 +996,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: .init(),
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().find(text: "Good morning!"))

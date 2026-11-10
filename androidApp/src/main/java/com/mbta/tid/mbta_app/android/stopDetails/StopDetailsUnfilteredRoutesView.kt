@@ -44,9 +44,9 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Prediction
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.isStopBlocklisted
@@ -72,7 +72,7 @@ fun StopDetailsUnfilteredRoutesView(
     isFavorite: (RouteStopDirection) -> Boolean?,
     navCallbacks: NavigationCallbacks,
     onTapRoutePill: (PillFilter) -> Unit,
-    updateStopFilter: (StopDetailsFilter?) -> Unit,
+    updateRouteStopFilter: (RouteStopFilter?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
 ) {
     val showStationAccessibility =
@@ -100,7 +100,7 @@ fun StopDetailsUnfilteredRoutesView(
                     StopDetailsFilterPills(
                         servedRoutes = servedRoutes,
                         onTapRoutePill = onTapRoutePill,
-                        onClearFilter = { updateStopFilter(null) },
+                        onClearFilter = { updateRouteStopFilter(null) },
                     )
                 }
             }
@@ -166,8 +166,8 @@ fun StopDetailsUnfilteredRoutesView(
                         now,
                         isFavorite = { rsd -> isFavorite(rsd) },
                         showStopHeader = false,
-                        onOpenStopDetails = { _, stopDetailsFilter ->
-                            updateStopFilter(stopDetailsFilter)
+                        onOpenStopDetails = { _, routeStopFilter ->
+                            updateRouteStopFilter(routeStopFilter)
                         },
                     )
                 }
@@ -227,7 +227,7 @@ private fun StopDetailsRoutesViewPreview() {
 
     val lineOrRoute1 = LineOrRoute.Route(route1)
     val lineOrRoute2 = LineOrRoute.Route(route2)
-    val context = RouteCardData.Context.StopDetailsUnfiltered
+    val context = RouteCardData.Context.StopSummary
     val routeCardData =
         listOf(
             RouteCardData(
@@ -329,7 +329,7 @@ private fun StopDetailsRoutesViewPreview() {
                             NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
                 onTapRoutePill = {},
-                updateStopFilter = {},
+                updateRouteStopFilter = {},
                 openModal = {},
             )
         }

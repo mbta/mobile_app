@@ -43,8 +43,8 @@ import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Matcher
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.Stop
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.UpcomingFormat
@@ -64,7 +64,7 @@ import org.koin.compose.koinInject
 @Composable
 fun StopDetailsFilteredDeparturesView(
     stopId: String,
-    stopFilter: StopDetailsFilter,
+    routeStopFilter: RouteStopFilter,
     tripFilter: TripDetailsFilter?,
     leaf: RouteCardData.Leaf,
     selectedDirection: Direction,
@@ -265,8 +265,8 @@ fun StopDetailsFilteredDeparturesView(
             }
         } else {
             val tripDetailsPageFilter =
-                remember(stopId, stopFilter, tripFilter) {
-                    tripFilter?.let { TripDetailsPageFilter(stopId, stopFilter, it) }
+                remember(stopId, routeStopFilter, tripFilter) {
+                    tripFilter?.let { TripDetailsPageFilter(stopId, routeStopFilter, it) }
                 }
             TripDetailsView(
                 tripFilter = tripDetailsPageFilter,

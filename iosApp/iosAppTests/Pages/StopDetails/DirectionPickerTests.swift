@@ -25,7 +25,7 @@ final class DirectionPickerTests: XCTestCase {
         let setDirection0Exp: XCTestExpectation = .init(description: "updateDirectionId called with 1")
         let setDirection1Exp: XCTestExpectation = .init(description: "updateDirectionId called with 0")
 
-        let filter: StopDetailsFilter? = .init(
+        let filter: RouteStopFilter? = .init(
             routeId: route.id,
             directionId: 0
         )
@@ -54,7 +54,7 @@ final class DirectionPickerTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }
 
-        let filter: StopDetailsFilter? = .init(
+        let filter: RouteStopFilter? = .init(
             routeId: route.id,
             directionId: 0
         )

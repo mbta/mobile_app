@@ -8,7 +8,7 @@ import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
-import com.mbta.tid.mbta_app.viewModel.MockStopDetailsViewModel
+import com.mbta.tid.mbta_app.viewModel.MockStopCentricViewModel
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Before
@@ -36,7 +36,7 @@ class StopDetailsPageTest : KoinTest {
         val alerts = AlertsStreamDataResponse(emptyMap())
         val filters = StopDetailsPageFilters("stop", null, null)
 
-        val viewModel = MockStopDetailsViewModel()
+        val viewModel = MockStopCentricViewModel()
         viewModel.onSetActive = { active, fromBackground -> activeSet = active && !fromBackground }
         viewModel.onSetAlerts = { alertsSet = it == alerts }
         viewModel.onSetFilters = { filtersSet = it == filters }
@@ -47,13 +47,13 @@ class StopDetailsPageTest : KoinTest {
                 filters = filters,
                 allAlerts = alerts,
                 navCallbacks = NavigationCallbacks.empty,
-                updateStopFilter = {},
+                updateRouteStopFilter = {},
                 updateTripFilter = {},
                 tileScrollState = rememberScrollState(),
                 openModal = {},
                 openSheetRoute = {},
                 errorBannerViewModel = koinInject(),
-                stopDetailsViewModel = viewModel,
+                stopCentricViewModel = viewModel,
             )
         }
 
