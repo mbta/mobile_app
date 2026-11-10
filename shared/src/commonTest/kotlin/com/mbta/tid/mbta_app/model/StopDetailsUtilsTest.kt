@@ -35,16 +35,16 @@ class StopDetailsUtilsTest {
                     PredictionsStreamDataResponse(objects),
                     AlertsStreamDataResponse(objects),
                     time,
-                    RouteCardData.Context.StopDetailsUnfiltered,
+                    RouteCardData.Context.StopSummary,
                 )
 
             assertEquals(
-                StopDetailsFilter(
+                RouteStopFilter(
                     routeId = route.id,
                     directionId = routePattern.directionId,
                     autoFilter = true,
                 ),
-                StopDetailsUtils.autoStopFilter(routeCardData),
+                StopDetailsUtils.autoRouteStopFilter(routeCardData),
             )
         }
 
@@ -79,10 +79,10 @@ class StopDetailsUtilsTest {
                     PredictionsStreamDataResponse(objects),
                     AlertsStreamDataResponse(objects),
                     time,
-                    RouteCardData.Context.StopDetailsUnfiltered,
+                    RouteCardData.Context.StopSummary,
                 )
 
-            assertEquals(null, StopDetailsUtils.autoStopFilter(checkNotNull(routeCardData)))
+            assertEquals(null, StopDetailsUtils.autoRouteStopFilter(checkNotNull(routeCardData)))
         }
 
     @Test
@@ -139,7 +139,7 @@ class StopDetailsUtilsTest {
         val global =
             GlobalResponse(objects, mapOf(stop.id to listOf(routePattern1.id, routePattern2.id)))
 
-        val stopFilter = StopDetailsFilter(route2.id, routePattern2.directionId)
+        val stopFilter = RouteStopFilter(route2.id, routePattern2.directionId)
 
         val data =
             RouteCardData.routeCardsForStopList(
@@ -150,7 +150,7 @@ class StopDetailsUtilsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 time,
-                RouteCardData.Context.StopDetailsUnfiltered,
+                RouteCardData.Context.StopSummary,
             )
 
         assertEquals(
@@ -189,7 +189,7 @@ class StopDetailsUtilsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 time,
-                RouteCardData.Context.StopDetailsUnfiltered,
+                RouteCardData.Context.StopSummary,
             )
 
         assertEquals(
@@ -218,7 +218,7 @@ class StopDetailsUtilsTest {
 
         val global =
             GlobalResponse(objects, mapOf(stop.id to listOf(routePattern1.id, routePattern2.id)))
-        val stopFilter = StopDetailsFilter(route1.id, routePattern1.directionId)
+        val stopFilter = RouteStopFilter(route1.id, routePattern1.directionId)
 
         val routeCardData =
             RouteCardData.routeCardsForStopList(
@@ -229,7 +229,7 @@ class StopDetailsUtilsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 time,
-                RouteCardData.Context.StopDetailsFiltered,
+                RouteCardData.Context.RouteStop,
             )
 
         assertEquals(
@@ -310,7 +310,7 @@ class StopDetailsUtilsTest {
 
         val global =
             GlobalResponse(objects, mapOf(stop.id to listOf(routePattern1.id, routePattern2.id)))
-        val stopFilter = StopDetailsFilter(route2.id, routePattern2.directionId)
+        val stopFilter = RouteStopFilter(route2.id, routePattern2.directionId)
         val currentTripFilter = TripDetailsFilter(trip3.id, vehicle.id, 0, false)
 
         val routeCardData =
@@ -322,7 +322,7 @@ class StopDetailsUtilsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 time,
-                RouteCardData.Context.StopDetailsFiltered,
+                RouteCardData.Context.RouteStop,
             )
 
         assertEquals(
@@ -369,7 +369,7 @@ class StopDetailsUtilsTest {
         }
 
         val global = GlobalResponse(objects, mapOf(stop.id to listOf(routePattern.id)))
-        val stopFilter = StopDetailsFilter(route.id, routePattern.directionId)
+        val stopFilter = RouteStopFilter(route.id, routePattern.directionId)
         val currentTripFilter = TripDetailsFilter(trip.id, vehicleId = null, 0, false)
 
         val routeCardData =
@@ -381,7 +381,7 @@ class StopDetailsUtilsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 time,
-                RouteCardData.Context.StopDetailsFiltered,
+                RouteCardData.Context.RouteStop,
             )
 
         assertEquals(
@@ -468,7 +468,7 @@ class StopDetailsUtilsTest {
 
         val global =
             GlobalResponse(objects, mapOf(stop.id to listOf(routePattern1.id, routePattern2.id)))
-        val stopFilter = StopDetailsFilter(route2.id, routePattern2.directionId)
+        val stopFilter = RouteStopFilter(route2.id, routePattern2.directionId)
         val currentTripFilter = TripDetailsFilter(trip0.id, vehicle0.id, 0, false)
 
         val routeCardData =
@@ -480,7 +480,7 @@ class StopDetailsUtilsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 time,
-                RouteCardData.Context.StopDetailsFiltered,
+                RouteCardData.Context.RouteStop,
             )
 
         assertEquals(
@@ -571,7 +571,7 @@ class StopDetailsUtilsTest {
                     objects,
                     mapOf(stop.id to listOf(routePattern1.id, routePattern2.id)),
                 )
-            val stopFilter = StopDetailsFilter(route2.id, routePattern2.directionId)
+            val stopFilter = RouteStopFilter(route2.id, routePattern2.directionId)
             val currentTripFilter = TripDetailsFilter(trip0.id, vehicle0.id, 0, true)
 
             val routeCardData =
@@ -583,7 +583,7 @@ class StopDetailsUtilsTest {
                     PredictionsStreamDataResponse(objects),
                     AlertsStreamDataResponse(objects),
                     time,
-                    RouteCardData.Context.StopDetailsFiltered,
+                    RouteCardData.Context.RouteStop,
                 )
 
             assertEquals(
@@ -665,7 +665,7 @@ class StopDetailsUtilsTest {
         }
 
         val global = GlobalResponse(objects, mapOf(stop.id to listOf(routePattern.id)))
-        val stopFilter = StopDetailsFilter(route.id, routePattern.directionId)
+        val stopFilter = RouteStopFilter(route.id, routePattern.directionId)
 
         val routeCardData =
             RouteCardData.routeCardsForStopList(
@@ -676,7 +676,7 @@ class StopDetailsUtilsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 time,
-                RouteCardData.Context.StopDetailsFiltered,
+                RouteCardData.Context.RouteStop,
             )
 
         assertEquals(
@@ -740,7 +740,7 @@ class StopDetailsUtilsTest {
             }
 
             val global = GlobalResponse(objects, mapOf(stop.id to listOf(routePattern.id)))
-            val stopFilter = StopDetailsFilter(route.id, routePattern.directionId)
+            val stopFilter = RouteStopFilter(route.id, routePattern.directionId)
 
             val routeCardData =
                 RouteCardData.routeCardsForStopList(
@@ -751,7 +751,7 @@ class StopDetailsUtilsTest {
                     PredictionsStreamDataResponse(objects),
                     AlertsStreamDataResponse(objects),
                     time,
-                    RouteCardData.Context.StopDetailsFiltered,
+                    RouteCardData.Context.RouteStop,
                 )
 
             assertEquals(
@@ -886,7 +886,7 @@ class StopDetailsUtilsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 now = time,
-                RouteCardData.Context.StopDetailsFiltered,
+                RouteCardData.Context.RouteStop,
             )
 
         assertEquals(

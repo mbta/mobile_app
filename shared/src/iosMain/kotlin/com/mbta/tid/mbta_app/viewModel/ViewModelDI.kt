@@ -13,7 +13,7 @@ public class ViewModelDI : KoinComponent {
     public val routeCardData: RouteCardDataViewModel by inject()
     public val search: SearchViewModel by inject()
     public val searchRoutes: SearchRoutesViewModel by inject()
-    public val stopDetails: StopDetailsViewModel by inject()
+    public val stopCentric: StopCentricViewModel by inject()
     public val toast: ToastViewModel by inject()
     public val tripDetails: TripDetailsViewModel by inject()
     public val tripDetailsPage: TripDetailsPageViewModel by inject()

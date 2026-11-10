@@ -6,7 +6,7 @@ import com.mbta.tid.mbta_app.map.style.TextAnchor
 import com.mbta.tid.mbta_app.map.style.TextJustify
 import com.mbta.tid.mbta_app.map.style.downcastToColor
 import com.mbta.tid.mbta_app.model.MapStopRoute
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -34,7 +34,7 @@ public object StopLayerGenerator {
 
         public data class TripDetails(
             val selectedStopId: String?,
-            val stopFilter: StopDetailsFilter?,
+            val routeStopFilter: RouteStopFilter?,
             val tripStops: List<String>?,
         ) : State()
     }
@@ -168,9 +168,11 @@ public object StopLayerGenerator {
                                 Exp.get(StopFeaturesBuilder.propIdKey),
                                 Exp.array(contents = state.tripStops.map(::Exp)),
                             )
-                        else if (state.stopFilter != null)
+                        else if (state.routeStopFilter != null)
                             Exp.`in`(
-                                Exp("${state.stopFilter.routeId}/${state.stopFilter.directionId}"),
+                                Exp(
+                                    "${state.routeStopFilter.routeId}/${state.routeStopFilter.directionId}",
+                                ),
                                 Exp.get(StopFeaturesBuilder.propAllRouteDirectionsKey),
                             )
                         else Exp(false),

@@ -34,11 +34,11 @@ final class StopDetailsViewTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let filters = StopDetailsPageFilters(stopId: stop.id, stopFilter: nil, tripFilter: nil)
+        let filters = StopDetailsPageFilters(stopId: stop.id, routeStopFilter: nil, tripFilter: nil)
 
         let sut = StopDetailsView(
             filters: filters,
-            routeData: StopDetailsViewModel.RouteDataUnfiltered(
+            routeData: StopCentricViewModel.RouteDataStopSummary(
                 filteredWith: filters,
                 routeCards: [
                     .init(
@@ -58,12 +58,12 @@ final class StopDetailsViewTests: XCTestCase {
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: .init(),
         )
 
@@ -82,11 +82,11 @@ final class StopDetailsViewTests: XCTestCase {
         }
         let stop = objects.stop { _ in }
 
-        let filters = StopDetailsPageFilters(stopId: stop.id, stopFilter: nil, tripFilter: nil)
+        let filters = StopDetailsPageFilters(stopId: stop.id, routeStopFilter: nil, tripFilter: nil)
 
         let sut = StopDetailsView(
             filters: filters,
-            routeData: StopDetailsViewModel.RouteDataUnfiltered(
+            routeData: StopCentricViewModel.RouteDataStopSummary(
                 filteredWith: filters,
                 routeCards: [.init(
                     lineOrRoute: .route(route),
@@ -103,12 +103,12 @@ final class StopDetailsViewTests: XCTestCase {
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: .init(),
         )
 
@@ -129,11 +129,11 @@ final class StopDetailsViewTests: XCTestCase {
             alert.header = "Alert header"
         }
 
-        let filters = StopDetailsPageFilters(stopId: stop.id, stopFilter: nil, tripFilter: nil)
+        let filters = StopDetailsPageFilters(stopId: stop.id, routeStopFilter: nil, tripFilter: nil)
 
         let sut = StopDetailsView(
             filters: filters,
-            routeData: StopDetailsViewModel.RouteDataUnfiltered(
+            routeData: StopCentricViewModel.RouteDataStopSummary(
                 filteredWith: filters,
                 routeCards: [.init(
                     lineOrRoute: .route(route),
@@ -151,7 +151,7 @@ final class StopDetailsViewTests: XCTestCase {
                             hasSchedulesToday: true,
                             subwayServiceStartTime: nil,
                             alertsDownstream: [],
-                            context: .stopDetailsUnfiltered
+                            context: .stopSummary
                         )]
                     )],
                     at: EasternTimeInstant.now()
@@ -162,12 +162,12 @@ final class StopDetailsViewTests: XCTestCase {
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: .init(),
         )
 
@@ -203,7 +203,7 @@ final class StopDetailsViewTests: XCTestCase {
             upcomingTrips: [.init(trip: trip, prediction: prediction)],
             alertsHere: [], allDataLoaded: true,
             hasSchedulesToday: true, subwayServiceStartTime: nil, alertsDownstream: [],
-            context: .stopDetailsFiltered
+            context: .stopSummary
         )
         let stopData = RouteCardData.RouteStopData(
             lineOrRoute: .route(route),
@@ -213,13 +213,13 @@ final class StopDetailsViewTests: XCTestCase {
 
         let filters = StopDetailsPageFilters(
             stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: 0),
+            routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: .init(tripId: trip.id, vehicleId: vehicle.id, stopSequence: 1, selectionLock: false)
         )
 
         let sut = StopDetailsView(
             filters: filters,
-            routeData: StopDetailsViewModel.RouteDataFiltered(
+            routeData: StopCentricViewModel.RouteDataRouteStop(
                 filteredWith: filters,
                 stopData: stopData
             ),
@@ -228,12 +228,12 @@ final class StopDetailsViewTests: XCTestCase {
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: .init(),
         )
 
@@ -246,7 +246,7 @@ final class StopDetailsViewTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
-        let filters = StopDetailsPageFilters(stopId: stop.id, stopFilter: nil, tripFilter: nil)
+        let filters = StopDetailsPageFilters(stopId: stop.id, routeStopFilter: nil, tripFilter: nil)
 
         var closeCalled = false
         let sut = StopDetailsView(
@@ -257,12 +257,12 @@ final class StopDetailsViewTests: XCTestCase {
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             navCallbacks: .init(onBack: nil, onClose: { closeCalled = true }, backButtonPresentation: .floating),
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: .init(),
         )
 
@@ -280,11 +280,11 @@ final class StopDetailsViewTests: XCTestCase {
 
         let navManager = NavigationManager(navigationStack: [.stopDetails(
             stopId: stop.id,
-            stopFilter: nil,
+            routeStopFilter: nil,
             tripFilter: nil
         )])
 
-        let filters = StopDetailsPageFilters(stopId: stop.id, stopFilter: nil, tripFilter: nil)
+        let filters = StopDetailsPageFilters(stopId: stop.id, routeStopFilter: nil, tripFilter: nil)
 
         let sut = StopDetailsView(
             filters: filters,
@@ -294,12 +294,12 @@ final class StopDetailsViewTests: XCTestCase {
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: .init(),
         )
 
@@ -315,10 +315,10 @@ final class StopDetailsViewTests: XCTestCase {
         }
 
         let navManager = NavigationManager(
-            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
+            navigationStack: [.stopDetails(stopId: stop.id, routeStopFilter: nil, tripFilter: nil)]
         )
 
-        let filters = StopDetailsPageFilters(stopId: stop.id, stopFilter: nil, tripFilter: nil)
+        let filters = StopDetailsPageFilters(stopId: stop.id, routeStopFilter: nil, tripFilter: nil)
 
         let sut = StopDetailsView(
             filters: filters,
@@ -328,12 +328,12 @@ final class StopDetailsViewTests: XCTestCase {
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: .init(),
         )
 

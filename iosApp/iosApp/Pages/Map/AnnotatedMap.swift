@@ -16,7 +16,7 @@ struct AnnotatedMap: View {
 
     private let centerMovingGestures: Set<GestureType> = [.pan, .pinch, .doubleTapToZoomIn, .quickZoom]
 
-    var filter: StopDetailsFilter?
+    var filter: RouteStopFilter?
     var targetedLocation: CLLocationCoordinate2D?
     var globalData: GlobalResponse?
     var selectedVehicle: Vehicle?
@@ -39,7 +39,7 @@ struct AnnotatedMap: View {
     @Environment(\.scenePhase) var scenePhase
 
     init(
-        filter: StopDetailsFilter? = nil,
+        filter: RouteStopFilter? = nil,
         targetedLocation: CLLocationCoordinate2D? = nil,
         globalData: GlobalResponse? = nil,
         selectedVehicle: Vehicle? = nil,

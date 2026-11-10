@@ -194,7 +194,7 @@ struct HomeMapView: View {
     var annotatedMap: some View {
         let vehicles: [Vehicle]? = vehiclesData?.filter { $0.id != selectedVehicle?.id }
         AnnotatedMap(
-            filter: navManager.navigationStack.lastStopDetailsFilter,
+            filter: navManager.navigationStack.lastRouteStopFilter,
             targetedLocation: shouldShowLoadedLocation ? viewportProvider.lastLoadedLocation : nil,
             globalData: globalData,
             selectedVehicle: selectedVehicle,

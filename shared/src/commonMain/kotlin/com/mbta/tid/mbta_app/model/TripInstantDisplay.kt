@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.math.roundToInt
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
 
 /**
@@ -75,8 +74,8 @@ public sealed class TripInstantDisplay {
 
     public enum class Context {
         NearbyTransit,
-        StopDetailsUnfiltered,
-        StopDetailsFiltered,
+        StopSummary,
+        RouteStop,
         TripDetails,
     }
 
@@ -121,7 +120,7 @@ public sealed class TripInstantDisplay {
             scheduleTime
                 ?.takeIf {
                     isScheduleUpcoming &&
-                        ((routeType == RouteType.BUS && context == Context.StopDetailsFiltered) ||
+                        ((routeType == RouteType.BUS && context == Context.RouteStop) ||
                             routeType == RouteType.COMMUTER_RAIL ||
                             routeType == RouteType.FERRY)
                 }
@@ -140,7 +139,7 @@ public sealed class TripInstantDisplay {
             if (prediction?.status != null) {
                 if (routeType == RouteType.COMMUTER_RAIL) {
                     when {
-                        predictionTime != null && context == Context.StopDetailsFiltered ->
+                        predictionTime != null && context == Context.RouteStop ->
                             return TimeWithStatus(
                                 predictionTime,
                                 prediction.status,
@@ -149,8 +148,7 @@ public sealed class TripInstantDisplay {
                             )
                         predictionTime != null ->
                             return Time(predictionTime, lastTrip, isScheduledDeparture)
-                        scheduleTime != null &&
-                            (context == Context.StopDetailsFiltered || lastTrip) ->
+                        scheduleTime != null && (context == Context.RouteStop || lastTrip) ->
                             return ScheduleTimeWithStatusColumn(
                                 scheduleTime,
                                 prediction.status,
@@ -198,7 +196,7 @@ public sealed class TripInstantDisplay {
 
             if (forceAsTime) {
                 val showDelayedSchedule =
-                    context == Context.StopDetailsFiltered &&
+                    context == Context.RouteStop &&
                         scheduleTime?.let {
                             it.local.minute != predictionTime.local.minute ||
                                 it.local.hour != predictionTime.local.hour

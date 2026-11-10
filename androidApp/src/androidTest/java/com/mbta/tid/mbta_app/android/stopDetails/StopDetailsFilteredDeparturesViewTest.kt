@@ -25,8 +25,8 @@ import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Prediction
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
@@ -155,7 +155,7 @@ class StopDetailsFilteredDeparturesViewTest {
 
     @Test
     fun testStopDetailsRouteViewDisplaysCorrectly(): Unit = runBlocking {
-        val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
+        val filterState = RouteStopFilter(routeId = route.id, directionId = 0)
 
         val routeCardData =
             checkNotNull(
@@ -167,7 +167,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    context = RouteCardData.Context.StopDetailsFiltered,
+                    context = RouteCardData.Context.RouteStop,
                 ),
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -176,7 +176,7 @@ class StopDetailsFilteredDeparturesViewTest {
         composeTestRule.setContent {
             StopDetailsFilteredDeparturesView(
                 stopId = stop.id,
-                stopFilter = filterState,
+                routeStopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
                 selectedDirection = routeStopData.data.first().direction,
@@ -196,7 +196,7 @@ class StopDetailsFilteredDeparturesViewTest {
     @Test
     fun testTappingTripSetsFilter() = runBlocking {
         var tripFilter: TripDetailsFilter? = null
-        val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
+        val filterState = RouteStopFilter(route.id, 0)
 
         val routeCardData =
             checkNotNull(
@@ -208,7 +208,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    context = RouteCardData.Context.StopDetailsFiltered,
+                    context = RouteCardData.Context.RouteStop,
                 ),
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -217,7 +217,7 @@ class StopDetailsFilteredDeparturesViewTest {
         composeTestRule.setContent {
             StopDetailsFilteredDeparturesView(
                 stopId = stop.id,
-                stopFilter = filterState,
+                routeStopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
                 selectedDirection = routeStopData.data.first().direction,
@@ -291,18 +291,18 @@ class StopDetailsFilteredDeparturesViewTest {
                 hasSchedulesToday = true,
                 subwayServiceStartTime = null,
                 alertsDownstream = emptyList(),
-                RouteCardData.Context.StopDetailsFiltered,
+                RouteCardData.Context.RouteStop,
             )
         val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf))
 
-        val stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId)
+        val routeStopFilter = RouteStopFilter(route.id, trip.directionId)
         val tripFilter = TripDetailsFilter(trip.id, null, null, false)
 
         loadKoinMocks(objects) { settings = settingsRepository }
         composeTestRule.setContent {
             StopDetailsFilteredDeparturesView(
                 stopId = stop.id,
-                stopFilter = stopFilter,
+                routeStopFilter = routeStopFilter,
                 tripFilter = tripFilter,
                 leaf = leaf,
                 selectedDirection = routeStopData.data.first().direction,
@@ -390,18 +390,18 @@ class StopDetailsFilteredDeparturesViewTest {
                 hasSchedulesToday = true,
                 subwayServiceStartTime = null,
                 alertsDownstream = emptyList(),
-                RouteCardData.Context.StopDetailsFiltered,
+                RouteCardData.Context.RouteStop,
             )
         val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf))
 
-        val stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId)
+        val routeStopFilter = RouteStopFilter(route.id, trip.directionId)
         val tripFilter = TripDetailsFilter(trip.id, null, null, false)
 
         loadKoinMocks(objects) { settings = settingsRepository }
         composeTestRule.setContent {
             StopDetailsFilteredDeparturesView(
                 stopId = stop.id,
-                stopFilter = stopFilter,
+                routeStopFilter = routeStopFilter,
                 tripFilter = tripFilter,
                 leaf = leaf,
                 selectedDirection = routeStopData.data.first().direction,
@@ -445,13 +445,13 @@ class StopDetailsFilteredDeparturesViewTest {
                 true,
                 null,
                 emptyList(),
-                RouteCardData.Context.StopDetailsFiltered,
+                RouteCardData.Context.RouteStop,
             )
 
         composeTestRule.setContent {
             StopDetailsFilteredDeparturesView(
                 stopId = stop.id,
-                stopFilter = StopDetailsFilter(route.id, 0),
+                routeStopFilter = RouteStopFilter(route.id, 0),
                 tripFilter = null,
                 leaf = leaf,
                 selectedDirection = Direction(0, route),
@@ -485,7 +485,7 @@ class StopDetailsFilteredDeparturesViewTest {
         }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
 
-        val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
+        val filterState = RouteStopFilter(route.id, 0)
 
         val routeCardData =
             checkNotNull(
@@ -497,7 +497,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     PredictionsStreamDataResponse(builder),
                     alertResponse,
                     now,
-                    context = RouteCardData.Context.StopDetailsFiltered,
+                    context = RouteCardData.Context.RouteStop,
                 ),
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -506,7 +506,7 @@ class StopDetailsFilteredDeparturesViewTest {
         composeTestRule.setContent {
             StopDetailsFilteredDeparturesView(
                 stopId = stop.id,
-                stopFilter = filterState,
+                routeStopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
                 selectedDirection = routeStopData.data.first().direction,
@@ -565,7 +565,7 @@ class StopDetailsFilteredDeparturesViewTest {
             },
         )
 
-        val filterState = StopDetailsFilter(routeId = line.id, directionId = 0)
+        val filterState = RouteStopFilter(line.id, 0)
         val global = GlobalResponse(objects)
         val routeCardData =
             checkNotNull(
@@ -577,7 +577,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     PredictionsStreamDataResponse(objects),
                     alertResponse,
                     now,
-                    context = RouteCardData.Context.StopDetailsFiltered,
+                    context = RouteCardData.Context.RouteStop,
                 ),
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -587,7 +587,7 @@ class StopDetailsFilteredDeparturesViewTest {
         composeTestRule.setContent {
             StopDetailsFilteredDeparturesView(
                 stopId = stop.id,
-                stopFilter = filterState,
+                routeStopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
                 selectedDirection = routeStopData.data.first().direction,
@@ -624,7 +624,7 @@ class StopDetailsFilteredDeparturesViewTest {
         }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
 
-        val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
+        val filterState = RouteStopFilter(route.id, 0)
 
         val routeCardData =
             checkNotNull(
@@ -636,7 +636,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     PredictionsStreamDataResponse(builder),
                     alertResponse,
                     now,
-                    context = RouteCardData.Context.StopDetailsFiltered,
+                    context = RouteCardData.Context.RouteStop,
                 ),
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -645,7 +645,7 @@ class StopDetailsFilteredDeparturesViewTest {
         composeTestRule.setContent {
             StopDetailsFilteredDeparturesView(
                 stopId = stop.id,
-                stopFilter = filterState,
+                routeStopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
                 selectedDirection = routeStopData.data.first().direction,
@@ -671,7 +671,7 @@ class StopDetailsFilteredDeparturesViewTest {
             informedEntity(listOf(Alert.InformedEntity.Activity.UsingWheelchair), stop = stop.id)
         }
 
-        val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
+        val filterState = RouteStopFilter(route.id, 0)
 
         val routeCardData =
             checkNotNull(
@@ -683,7 +683,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(builder),
                     now,
-                    context = RouteCardData.Context.StopDetailsFiltered,
+                    context = RouteCardData.Context.RouteStop,
                 ),
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -692,7 +692,7 @@ class StopDetailsFilteredDeparturesViewTest {
         composeTestRule.setContent {
             StopDetailsFilteredDeparturesView(
                 stopId = stop.id,
-                stopFilter = filterState,
+                routeStopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
                 selectedDirection = routeStopData.data.first().direction,
@@ -727,7 +727,7 @@ class StopDetailsFilteredDeparturesViewTest {
         }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
 
-        val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
+        val filterState = RouteStopFilter(route.id, 0)
 
         val routeCardData =
             checkNotNull(
@@ -739,7 +739,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     PredictionsStreamDataResponse(builder),
                     alertResponse,
                     now,
-                    context = RouteCardData.Context.StopDetailsFiltered,
+                    context = RouteCardData.Context.RouteStop,
                 ),
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -748,7 +748,7 @@ class StopDetailsFilteredDeparturesViewTest {
         composeTestRule.setContent {
             StopDetailsFilteredDeparturesView(
                 stopId = stop.id,
-                stopFilter = filterState,
+                routeStopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
                 selectedDirection = routeStopData.data.first().direction,
@@ -768,7 +768,7 @@ class StopDetailsFilteredDeparturesViewTest {
     @Test
     fun testShowsNotAccessibleAlert(): Unit = runBlocking {
         settings[Settings.StationAccessibility] = true
-        val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
+        val filterState = RouteStopFilter(route.id, 0)
 
         val routeCardData =
             checkNotNull(
@@ -780,7 +780,7 @@ class StopDetailsFilteredDeparturesViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    RouteCardData.Context.StopDetailsFiltered,
+                    RouteCardData.Context.RouteStop,
                 ),
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -789,7 +789,7 @@ class StopDetailsFilteredDeparturesViewTest {
         composeTestRule.setContent {
             StopDetailsFilteredDeparturesView(
                 stopId = inaccessibleStop.id,
-                stopFilter = filterState,
+                routeStopFilter = filterState,
                 tripFilter = null,
                 leaf = leaf,
                 selectedDirection = routeStopData.data.first().direction,
@@ -826,7 +826,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 true,
                 null,
                 emptyList(),
-                RouteCardData.Context.StopDetailsFiltered,
+                RouteCardData.Context.RouteStop,
             )
 
         val now = EasternTimeInstant.now()
@@ -842,7 +842,7 @@ class StopDetailsFilteredDeparturesViewTest {
         composeTestRule.setContent {
             StopDetailsFilteredDeparturesView(
                 stopId = stop.id,
-                stopFilter = StopDetailsFilter(route.id, 0),
+                routeStopFilter = RouteStopFilter(route.id, 0),
                 tripFilter = null,
                 leaf = leaf,
                 selectedDirection = Direction(0, route),
@@ -881,7 +881,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 true,
                 null,
                 emptyList(),
-                RouteCardData.Context.StopDetailsFiltered,
+                RouteCardData.Context.RouteStop,
             )
 
         val now = EasternTimeInstant.now()
@@ -906,7 +906,7 @@ class StopDetailsFilteredDeparturesViewTest {
         composeTestRule.setContent {
             StopDetailsFilteredDeparturesView(
                 stopId = stop.id,
-                stopFilter = StopDetailsFilter(route.id, 0),
+                routeStopFilter = RouteStopFilter(route.id, 0),
                 tripFilter = null,
                 leaf = leaf,
                 selectedDirection = selectedDirection,
@@ -972,18 +972,18 @@ class StopDetailsFilteredDeparturesViewTest {
                 hasSchedulesToday = true,
                 subwayServiceStartTime = subwayStartTime,
                 alertsDownstream = emptyList(),
-                RouteCardData.Context.StopDetailsFiltered,
+                RouteCardData.Context.RouteStop,
             )
         val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf))
 
-        val stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId)
+        val routeStopFilter = RouteStopFilter(route.id, trip.directionId)
         val tripFilter = TripDetailsFilter(trip.id, null, null, false)
 
         loadKoinMocks(objects) { settings = settingsRepository }
         composeTestRule.setContent {
             StopDetailsFilteredDeparturesView(
                 stopId = stop.id,
-                stopFilter = stopFilter,
+                routeStopFilter = routeStopFilter,
                 tripFilter = tripFilter,
                 leaf = leaf,
                 selectedDirection = routeStopData.data.first().direction,
@@ -1055,18 +1055,18 @@ class StopDetailsFilteredDeparturesViewTest {
                 hasSchedulesToday = true,
                 subwayServiceStartTime = subwayStartTime,
                 alertsDownstream = emptyList(),
-                RouteCardData.Context.StopDetailsFiltered,
+                RouteCardData.Context.RouteStop,
             )
         val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf))
 
-        val stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId)
+        val routeStopFilter = RouteStopFilter(route.id, trip.directionId)
         val tripFilter = TripDetailsFilter(trip.id, null, null, false)
 
         loadKoinMocks(objects) { settings = settingsRepository }
         composeTestRule.setContent {
             StopDetailsFilteredDeparturesView(
                 stopId = stop.id,
-                stopFilter = stopFilter,
+                routeStopFilter = routeStopFilter,
                 tripFilter = tripFilter,
                 leaf = leaf,
                 selectedDirection = routeStopData.data.first().direction,

@@ -12,12 +12,12 @@ import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RoutePatternKey
 import com.mbta.tid.mbta_app.model.RouteSegment
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SegmentAlertState
 import com.mbta.tid.mbta_app.model.SegmentedRouteShape
 import com.mbta.tid.mbta_app.model.Shape
 import com.mbta.tid.mbta_app.model.StopAlertState
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
@@ -728,7 +728,7 @@ class RouteFeaturesBuilderTest {
         val filteredShapes =
             RouteFeaturesBuilder.filteredRouteShapesForStop(
                 basicMapResponse,
-                StopDetailsFilter(
+                RouteStopFilter(
                     MapTestDataHelper.routeRed.id,
                     MapTestDataHelper.patternRed10.directionId,
                 ),
@@ -739,7 +739,7 @@ class RouteFeaturesBuilderTest {
         val glFilteredShapes =
             RouteFeaturesBuilder.filteredRouteShapesForStop(
                 GreenLineTestHelper.stopMapResponse,
-                StopDetailsFilter(Line.Id("line-Green"), 0),
+                RouteStopFilter(Line.Id("line-Green"), 0),
                 null,
             )
         assertEquals(glFilteredShapes.count(), 3)
@@ -756,7 +756,7 @@ class RouteFeaturesBuilderTest {
         val filteredShapes =
             RouteFeaturesBuilder.filteredRouteShapesForStop(
                 basicMapResponse,
-                StopDetailsFilter(
+                RouteStopFilter(
                     MapTestDataHelper.routeRed.id,
                     MapTestDataHelper.patternRed10.directionId,
                 ),
@@ -786,7 +786,7 @@ class RouteFeaturesBuilderTest {
                                         true,
                                         null,
                                         emptyList(),
-                                        RouteCardData.Context.StopDetailsFiltered,
+                                        RouteCardData.Context.RouteStop,
                                     ),
                                 ),
                             ),
@@ -810,7 +810,7 @@ class RouteFeaturesBuilderTest {
         val glFilteredShapes =
             RouteFeaturesBuilder.filteredRouteShapesForStop(
                 GreenLineTestHelper.stopMapResponse,
-                StopDetailsFilter(Line.Id("line-Green"), 0),
+                RouteStopFilter(Line.Id("line-Green"), 0),
                 listOf(
                     RouteCardData(
                         glLineOrRoute,
@@ -838,7 +838,7 @@ class RouteFeaturesBuilderTest {
                                         true,
                                         null,
                                         emptyList(),
-                                        RouteCardData.Context.StopDetailsFiltered,
+                                        RouteCardData.Context.RouteStop,
                                     ),
                                 ),
                             ),

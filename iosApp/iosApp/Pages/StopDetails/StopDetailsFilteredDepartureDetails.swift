@@ -18,9 +18,9 @@ struct NextScheduleKeys: Equatable {
 struct StopDetailsFilteredDepartureDetails: View {
     @ObserveInjection var inject
     var stopId: String
-    var stopFilter: StopDetailsFilter
+    var routeStopFilter: RouteStopFilter
     var tripFilter: TripDetailsFilter?
-    var setStopFilter: (StopDetailsFilter?) -> Void
+    var setRouteStopFilter: (RouteStopFilter) -> Void
     var setTripFilter: (TripDetailsFilter?) -> Void
 
     var leaf: RouteCardData.Leaf
@@ -34,7 +34,7 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     var errorBannerVM: IErrorBannerViewModel
     var mapVM: IMapViewModel
-    var stopDetailsVM: IStopDetailsViewModel
+    var stopCentricVM: IStopCentricViewModel
     var schedulesRepository: ISchedulesRepository
 
     @ObservedObject var navManager: NavigationManager
@@ -81,9 +81,9 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     init(
         stopId: String,
-        stopFilter: StopDetailsFilter,
+        routeStopFilter: RouteStopFilter,
         tripFilter: TripDetailsFilter?,
-        setStopFilter: @escaping (StopDetailsFilter?) -> Void,
+        setRouteStopFilter: @escaping (RouteStopFilter) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
         leaf: RouteCardData.Leaf,
         selectedDirection: Direction,
@@ -91,14 +91,14 @@ struct StopDetailsFilteredDepartureDetails: View {
         now: EasternTimeInstant,
         errorBannerVM: IErrorBannerViewModel,
         mapVM: IMapViewModel,
-        stopDetailsVM: IStopDetailsViewModel,
+        stopCentricVM: IStopCentricViewModel,
         schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
         navManager: NavigationManager,
     ) {
         self.stopId = stopId
-        self.stopFilter = stopFilter
+        self.routeStopFilter = routeStopFilter
         self.tripFilter = tripFilter
-        self.setStopFilter = setStopFilter
+        self.setRouteStopFilter = setRouteStopFilter
         self.setTripFilter = setTripFilter
         self.leaf = leaf
         self.selectedDirection = selectedDirection
@@ -106,7 +106,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         self.now = now
         self.errorBannerVM = errorBannerVM
         self.mapVM = mapVM
-        self.stopDetailsVM = stopDetailsVM
+        self.stopCentricVM = stopCentricVM
         self.schedulesRepository = schedulesRepository
         self.navManager = navManager
     }
@@ -159,7 +159,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                 .accessibilityHeading(.h4)
             } else {
                 let tripPageFilter: TripDetailsPageFilter? = if let tripFilter {
-                    .init(stopId: stopId, stopFilter: stopFilter, tripFilter: tripFilter)
+                    .init(stopId: stopId, routeStopFilter: routeStopFilter, tripFilter: tripFilter)
                 } else { nil }
                 TripDetailsView(
                     tripFilter: tripPageFilter,

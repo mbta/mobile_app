@@ -36,7 +36,7 @@ import com.mbta.tid.mbta_app.android.util.contrast
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 
 sealed interface PillFilter {
     val id: LineOrRoute.Id
@@ -56,13 +56,13 @@ sealed interface PillFilter {
 @Composable
 fun StopDetailsFilterPills(
     servedRoutes: List<PillFilter>,
-    filter: StopDetailsFilter? = null,
+    filter: RouteStopFilter? = null,
     onTapRoutePill: (PillFilter) -> Unit,
     onClearFilter: () -> Unit,
 ) {
 
     @Composable
-    fun pillHint(appliedFilter: StopDetailsFilter?, pillFilter: PillFilter): String {
+    fun pillHint(appliedFilter: RouteStopFilter?, pillFilter: PillFilter): String {
         val filteredToPill = appliedFilter?.routeId == pillFilter.id
         return if (filteredToPill) {
             stringResource(R.string.stop_filter_pills_remove_hint)
