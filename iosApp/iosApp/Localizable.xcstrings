@@ -21607,6 +21607,7 @@
       }
     },
     "This stop is drop-off only" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {

@@ -111,42 +111,4 @@ final class IosAppUITests: XCTestCase {
     func defaultAccessibilityAudit(_ app: XCUIApplication) {
         try? app.performAccessibilityAudit(for: [.elementDetection, .hitRegion, .sufficientElementDescription, .trait])
     }
-
-    func addNotificationsPermissionPromptHandler() {
-        addUIInterruptionMonitor(withDescription: "Push Notifications Alert") { alert -> Bool in
-            if alert.buttons["Allow"].exists {
-                alert.buttons["Allow"].tap()
-                return true
-            }
-            return false
-        }
-    }
-
-    func addLocationPermissionPromptHandler() {
-        addUIInterruptionMonitor(withDescription: "Location Permission Alert") { alert -> Bool in
-            let allowLocationButton = alert.buttons["Allow Once"]
-            if allowLocationButton.exists {
-                allowLocationButton.tap()
-                return true
-            }
-            return false
-        }
-    }
-}
-
-extension XCUIElement {
-    /// Waits for the element to exist and taps it. Fails the test if it doesn't appear.
-    func tapAfter(
-        timeout: TimeInterval = 10.0,
-        file: StaticString = #file,
-        line: UInt = #line,
-        beforeTapAction: () -> Void = {}
-    ) {
-        if waitForExistence(timeout: timeout) {
-            beforeTapAction()
-            tap()
-        } else {
-            XCTFail("Element \(description) did not appear within \(timeout) seconds.", file: file, line: line)
-        }
-    }
 }
