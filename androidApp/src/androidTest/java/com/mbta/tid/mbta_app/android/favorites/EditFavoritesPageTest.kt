@@ -4,6 +4,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -276,6 +277,7 @@ class EditFavoritesPageTest : KoinTest {
         }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("66"))
+        composeTestRule.onNode(hasText("Sample Stop 1") and isHeading()).assertCanBeDisplayed()
         composeTestRule.onNodeWithText("66").assertCanBeDisplayed()
         composeTestRule.onNodeWithText("Downtown").assertCanBeDisplayed()
 
