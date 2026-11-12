@@ -102,6 +102,10 @@ final class IosAppUITests: XCTestCase {
         app.buttons["Add another time period"].firstMatch.tapAfter()
 
         defaultAccessibilityAudit(app)
+        app.buttons["Save"].firstMatch.tapAfter()
+        app.buttons["Done"].firstMatch.tapAfter()
+        XCTAssertTrue(app.staticTexts["Davis"].waitForExistence(timeout: 10))
+        defaultAccessibilityAudit(app)
     }
 
     func defaultAccessibilityAudit(_ app: XCUIApplication) {
