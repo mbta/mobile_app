@@ -63,7 +63,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
     }
 
     func follow(instantly: Bool = false) {
-        Task { try await applyState(state: .FollowingPuck.shared, instantly: instantly) }
+        Task { try await applyState(state: .FollowingPuck.shared, followInstantly: instantly) }
     }
 
     func vehicleOverview(vehicle: Vehicle, stop: Stop?) {
@@ -72,7 +72,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
                 vehiclePosition: vehicle.position, targetStopPosition: stop?.position,
                 density: nil
             ),
-            instantly: false
+            followInstantly: false
         ) }
     }
 
@@ -81,11 +81,14 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
     }
 
     func stopCenter(stop: Stop) {
-        Task { try await applyState(state: .StopCenter(stopPosition: stop.position), instantly: false) }
+        Task { try await applyState(state: .StopCenter(stopPosition: stop.position), followInstantly: false) }
     }
 
     func panToDefaultCenter() {
-        Task { try await applyState(state: .ManuallyPanned(toDefault: true, currentlyPanning: true), instantly: false) }
+        Task { try await applyState(
+            state: .ManuallyPanned(toDefault: true, currentlyPanning: true),
+            followInstantly: false
+        ) }
     }
 
     func initViewport(location: CLLocation) {
@@ -223,11 +226,11 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
     }
 
     // swiftlint:disable:next identifier_name
-    @MainActor func __applyState(state: MapViewportState, instantly: Bool) async throws {
+    @MainActor func __applyState(state: MapViewportState, followInstantly: Bool) async throws {
         self.state = state
         switch onEnum(of: state) {
         case .followingPuck:
-            let animation = instantly ? ViewportAnimation.default(maxDuration: .zero) : ViewportAnimation.default
+            let animation = followInstantly ? ViewportAnimation.default(maxDuration: .zero) : ViewportAnimation.default
             withViewportAnimation(animation) {
                 self.viewport = .followPuck(zoom: currentSubjectZoomSafe())
             }

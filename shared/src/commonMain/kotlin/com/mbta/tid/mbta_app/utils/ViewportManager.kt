@@ -3,7 +3,7 @@ package com.mbta.tid.mbta_app.utils
 import com.mbta.tid.mbta_app.map.MapViewportState
 
 public interface ViewportManager {
-    public suspend fun applyState(state: MapViewportState, instantly: Boolean = false)
+    public suspend fun applyState(state: MapViewportState, followInstantly: Boolean = false)
 
     public suspend fun saveNearbyTransitViewport()
 

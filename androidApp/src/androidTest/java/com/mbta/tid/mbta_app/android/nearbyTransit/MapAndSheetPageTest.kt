@@ -602,7 +602,7 @@ class MapAndSheetPageTest : KoinTest {
         // duration of the test and throw off the count.
         viewportProvider.applyState(
             MapViewportState.StopCenter(sampleStop.position),
-            instantly = false,
+            followInstantly = false,
         )
         var followCallCount = 0
 

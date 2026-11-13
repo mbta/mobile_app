@@ -67,13 +67,13 @@ interface IViewportProvider {
 
     fun setIsCurrentlyPanning(isCurrentlyPanning: Boolean)
 
-    suspend fun follow(transitionAnimationDuration: Long? = null)
+    suspend fun follow(instantly: Boolean = false)
 
     suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float?)
 
     suspend fun stopCenter(stop: Stop)
 
-    suspend fun applyState(state: MapViewportState, instantly: Boolean)
+    suspend fun applyState(state: MapViewportState, followInstantly: Boolean)
 
     fun isDefault(): Boolean
 
@@ -211,8 +211,8 @@ class ViewportProvider(
         }
     }
 
-    override suspend fun follow(transitionAnimationDuration: Long?) {
-        applyState(MapViewportState.FollowingPuck, instantly = transitionAnimationDuration == 0L)
+    override suspend fun follow(instantly: Boolean) {
+        applyState(MapViewportState.FollowingPuck, followInstantly = instantly)
     }
 
     override suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float?) {
@@ -223,12 +223,12 @@ class ViewportProvider(
         applyState(MapViewportState.StopCenter(stop.position))
     }
 
-    override suspend fun applyState(state: MapViewportState, instantly: Boolean) {
+    override suspend fun applyState(state: MapViewportState, followInstantly: Boolean) {
         this.state = state
         when (state) {
             MapViewportState.FollowingPuck -> {
                 val transitionOptions =
-                    if (instantly)
+                    if (followInstantly)
                         DefaultViewportTransitionOptions.Builder().maxDurationMs(0).build()
                     else Defaults.viewportTransition
                 animateViewport { viewport, completionListener ->

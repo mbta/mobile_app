@@ -24,7 +24,7 @@ final class ViewportProviderTest: XCTestCase {
     func testFollowViewport() async {
         let provider = ViewportProvider()
         XCTAssertNil(provider.viewport)
-        try? await provider.applyState(state: .FollowingPuck.shared, instantly: true)
+        try? await provider.applyState(state: .FollowingPuck.shared, followInstantly: true)
         XCTAssertNil(provider.viewport?.camera)
         XCTAssertNotNil(provider.viewport?.followPuck)
     }
@@ -161,7 +161,7 @@ final class ViewportProviderTest: XCTestCase {
         XCTAssert(provider.isDefault())
         try await provider.applyState(
             state: .ManuallyPanned(toDefault: false, currentlyPanning: false),
-            instantly: true
+            followInstantly: true
         )
         XCTAssertFalse(provider.isDefault())
 
