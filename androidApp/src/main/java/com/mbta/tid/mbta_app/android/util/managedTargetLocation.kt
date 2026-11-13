@@ -6,7 +6,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import org.maplibre.spatialk.geojson.Position
@@ -19,7 +18,7 @@ fun managedTargetLocation(nearbyTransit: NearbyTransit, reset: () -> Unit = {}):
     LaunchedEffect(location) {
         if (
             nearbyTransit.viewportProvider.isFollowingPuck &&
-                !nearbyTransit.viewportProvider.isManuallyCentering
+                !nearbyTransit.viewportProvider.isCurrentlyPanning
         ) {
             position.value = location?.let { Position(it.longitude, it.latitude) }
         }
@@ -35,8 +34,8 @@ fun managedTargetLocation(nearbyTransit: NearbyTransit, reset: () -> Unit = {}):
         }
     }
 
-    LaunchedEffect(nearbyTransit.viewportProvider.isManuallyCentering) {
-        if (nearbyTransit.viewportProvider.isManuallyCentering) {
+    LaunchedEffect(nearbyTransit.viewportProvider.isCurrentlyPanning) {
+        if (nearbyTransit.viewportProvider.isCurrentlyPanning) {
             reset()
         }
     }

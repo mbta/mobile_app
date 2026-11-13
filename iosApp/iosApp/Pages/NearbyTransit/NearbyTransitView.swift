@@ -73,14 +73,14 @@ struct NearbyTransitView: View {
         .onChange(of: nearbyTransitState?.awaitingPredictionsAfterBackground) { awaitingPredictions in
             if let awaitingPredictions { setIsReturningFromBackground(awaitingPredictions) }
         }
-        .onChange(of: viewportProvider.isManuallyCentering) { isCentering in
-            if let location, !isCentering, navManager.isNearbyVisible() {
+        .onChange(of: viewportProvider.isCurrentlyPanning) { isPanning in
+            if let location, !isPanning, navManager.isNearbyVisible() {
                 nearbyVM.setLocation(location: location.positionKt)
             }
         }
         .onReceive(viewportProvider.cameraStatePublisherThrottled) { newCameraState in
             location = newCameraState.center
-            guard navManager.isNearbyVisible(), !viewportProvider.isManuallyCentering, let location else { return }
+            guard navManager.isNearbyVisible(), !viewportProvider.isCurrentlyPanning, let location else { return }
             nearbyVM.setLocation(location: location.positionKt)
         }
         .onReceive(viewportProvider.cameraStatePublisher) { newCameraState in

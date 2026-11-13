@@ -19,12 +19,13 @@ import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffold
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
-import com.mbta.tid.mbta_app.android.location.ViewportProvider.Companion.Defaults
+import com.mbta.tid.mbta_app.android.map.toMapbox
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.pages.NearbyTransitPage
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.util.toPoint
+import com.mbta.tid.mbta_app.map.MapDefaults
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LineOrRoute
@@ -183,11 +184,11 @@ class NearbyTransitPageTest : KoinTest {
 
     val globalResponse = GlobalResponse(builder)
 
-    fun cameraState(point: Point = Defaults.center): CameraState =
+    fun cameraState(point: Point = MapDefaults.center.toMapbox()): CameraState =
         CameraState(
             point,
             EdgeInsets(0.0, 0.0, 0.0, 0.0),
-            Defaults.zoom,
+            MapDefaults.zoom,
             0.0,
             0.0,
         )

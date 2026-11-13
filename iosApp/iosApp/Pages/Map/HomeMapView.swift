@@ -119,8 +119,8 @@ struct HomeMapView: View {
                     handleNavStackChange(entry: currentNavEntry)
                 }
             }
-            .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
-                guard isManuallyCentering, navManager.navigationStack.lastSafe().allowTargeting else { return }
+            .onChange(of: viewportProvider.isCurrentlyPanning) { isCurrentlyPanning in
+                guard isCurrentlyPanning, navManager.navigationStack.lastSafe().allowTargeting else { return }
                 // This will be set to false after nearby is loaded to avoid the crosshair dissapearing and re-appearing
                 viewportProvider.isTargeting = true
             }

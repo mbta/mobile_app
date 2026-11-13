@@ -50,8 +50,8 @@ fun NearbyTransitPage(
 
     LaunchedEffect(now) { nearbyViewModel.setNow(now) }
     LaunchedEffect(alertData) { nearbyViewModel.setAlerts(alertData) }
-    LaunchedEffect(targetLocation, nearbyTransit.viewportProvider.isManuallyCentering) {
-        if (!nearbyTransit.viewportProvider.isManuallyCentering) {
+    LaunchedEffect(targetLocation, nearbyTransit.viewportProvider.isCurrentlyPanning) {
+        if (!nearbyTransit.viewportProvider.isCurrentlyPanning) {
             nearbyViewModel.setLocation(targetLocation)
         }
     }
@@ -74,7 +74,7 @@ fun NearbyTransitPage(
             cameraStateUnthrottled?.center?.toPosition()?.let { currentPosition ->
                 if (
                     it.isRoughlyEqualTo(currentPosition) &&
-                        !nearbyTransit.viewportProvider.isManuallyCentering
+                        !nearbyTransit.viewportProvider.isCurrentlyPanning
                 ) {
                     nearbyTransit.lastLoadedLocation = it
                     nearbyTransit.isTargeting = false

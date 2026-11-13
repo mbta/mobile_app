@@ -170,7 +170,7 @@ final class ContentViewTests: XCTestCase {
         var cameraUpdate = 0
         let cancelSink = sut.viewportProvider.cameraStatePublisher.sink { updatedCamera in
             if cameraUpdate == 0 {
-                XCTAssertEqual(ViewportProvider.Defaults.center, updatedCamera.center)
+                XCTAssertEqual(MapDefaults.shared.center.toMapbox(), updatedCamera.center)
                 cameraExp.fulfill()
                 cameraUpdate += 1
             }

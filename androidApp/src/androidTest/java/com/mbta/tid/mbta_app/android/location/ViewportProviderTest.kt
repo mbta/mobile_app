@@ -9,11 +9,14 @@ import androidx.compose.ui.unit.dp
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
-import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
+import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState as RawMapViewportState
 import com.mapbox.maps.plugin.viewport.ViewportStatus
 import com.mapbox.maps.plugin.viewport.state.OverviewViewportState
+import com.mbta.tid.mbta_app.android.map.toMapbox
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.util.MapAnimationDefaults
+import com.mbta.tid.mbta_app.map.MapDefaults
+import com.mbta.tid.mbta_app.map.MapViewportState
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Vehicle
 import kotlin.test.assertFalse
@@ -32,6 +35,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.withTimeout
 import org.junit.Rule
 import org.junit.Test
+import org.maplibre.spatialk.geojson.Position
 
 class ViewportProviderTest {
 
@@ -39,9 +43,10 @@ class ViewportProviderTest {
 
     @Test
     fun testFollowUpdatesState() = runBlocking {
-        val viewportProvider = ViewportProvider(MapViewportState())
-        viewportProvider.isFollowingPuck = false
-        viewportProvider.isVehicleOverview = true
+        val viewportProvider = ViewportProvider(RawMapViewportState())
+        viewportProvider.applyState(
+            MapViewportState.VehicleOverview(Position(0.0, 0.0), null, null),
+        )
 
         composeTestRule.setContent { LaunchedEffect(Unit) { viewportProvider.follow() } }
         composeTestRule.waitUntilDefaultTimeout { viewportProvider.isFollowingPuck }
@@ -62,10 +67,10 @@ class ViewportProviderTest {
             longitude = -71.0702
         }
         val mapViewportState =
-            MapViewportState().apply {
+            RawMapViewportState().apply {
                 setCameraOptions {
-                    center(ViewportProvider.Companion.Defaults.center)
-                    zoom(ViewportProvider.Companion.Defaults.zoom)
+                    center(MapDefaults.center.toMapbox())
+                    zoom(MapDefaults.zoom)
                     pitch(0.0)
                     bearing(0.0)
                     transitionToFollowPuckState()
@@ -127,7 +132,7 @@ class ViewportProviderTest {
 
     @Test
     fun testLockTimeout() = runBlocking {
-        val viewportProvider = ViewportProvider(MapViewportState())
+        val viewportProvider = ViewportProvider(RawMapViewportState())
         withTimeout(MapAnimationDefaults.duration * 3) {
             assertNull(viewportProvider.withViewport<Nothing> { suspendCancellableCoroutine {} })
         }

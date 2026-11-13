@@ -11,14 +11,12 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.dp
-import com.mapbox.geojson.Point
-import com.mapbox.maps.CameraState
-import com.mapbox.maps.EdgeInsets
-import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
+import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState as RawMapViewportState
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
+import com.mbta.tid.mbta_app.map.MapViewportState
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
@@ -68,7 +66,7 @@ class HomeMapViewTests {
                 Dispatchers.Default,
                 Dispatchers.IO,
             )
-        val viewportProvider = ViewportProvider(MapViewportState())
+        val viewportProvider = ViewportProvider(RawMapViewportState())
         val configManager = MapboxConfigManager()
         configManager.loadConfig()
         locationManager.hasPermission = false
@@ -110,9 +108,9 @@ class HomeMapViewTests {
                 Dispatchers.Default,
                 Dispatchers.IO,
             )
-        val viewportProvider = ViewportProvider(MapViewportState())
+        val viewportProvider = ViewportProvider(RawMapViewportState())
         viewModel.setViewportManager(viewportProvider)
-        viewportProvider.isFollowingPuck = true
+        viewportProvider.applyState(MapViewportState.FollowingPuck)
         val configManager = MapboxConfigManager()
         configManager.loadConfig()
         locationManager.hasPermission = true
@@ -141,11 +139,6 @@ class HomeMapViewTests {
     @Test
     fun testRecenterShownWhenPermissionsAndMapNotAtDefaultCenter(): Unit = runBlocking {
         val locationManager = MockLocationDataManager()
-        val customLocation =
-            Point.fromLngLat(
-                ViewportProvider.Companion.Defaults.center.latitude() + 1,
-                ViewportProvider.Companion.Defaults.center.longitude() + 1,
-            )
 
         val viewModel =
             MapViewModel(
@@ -160,13 +153,10 @@ class HomeMapViewTests {
                 Dispatchers.Default,
                 Dispatchers.IO,
             )
-        val viewportProvider =
-            ViewportProvider(
-                MapViewportState(
-                    initialCameraState =
-                        CameraState(customLocation, EdgeInsets(0.0, 0.0, 0.0, 0.0), 0.0, 0.0, 0.0),
-                ),
-            )
+        val viewportProvider = ViewportProvider(RawMapViewportState())
+        viewportProvider.applyState(
+            MapViewportState.ManuallyPanned(toDefault = false, currentlyPanning = false),
+        )
         viewModel.setViewportManager(viewportProvider)
         val configManager = MapboxConfigManager()
         configManager.loadConfig()
@@ -208,7 +198,7 @@ class HomeMapViewTests {
                 Dispatchers.Default,
                 Dispatchers.IO,
             )
-        val viewportProvider = ViewportProvider(MapViewportState())
+        val viewportProvider = ViewportProvider(RawMapViewportState())
         viewModel.setViewportManager(viewportProvider)
         val configManager = MapboxConfigManager()
         configManager.loadConfig()
@@ -248,7 +238,7 @@ class HomeMapViewTests {
                 Dispatchers.Default,
                 Dispatchers.IO,
             )
-        val viewportProvider = ViewportProvider(MapViewportState())
+        val viewportProvider = ViewportProvider(RawMapViewportState())
         viewModel.setViewportManager(viewportProvider)
         val configManager = MapboxConfigManager()
         configManager.loadConfig()
@@ -289,7 +279,7 @@ class HomeMapViewTests {
                 Dispatchers.Default,
                 Dispatchers.IO,
             )
-        val viewportProvider = ViewportProvider(MapViewportState())
+        val viewportProvider = ViewportProvider(RawMapViewportState())
         viewModel.setViewportManager(viewportProvider)
         val configManager = MapboxConfigManager()
         configManager.loadConfig()
@@ -330,7 +320,7 @@ class HomeMapViewTests {
                 Dispatchers.Default,
                 Dispatchers.IO,
             )
-        val viewportProvider = ViewportProvider(MapViewportState())
+        val viewportProvider = ViewportProvider(RawMapViewportState())
         viewModel.setViewportManager(viewportProvider)
         val configManager = MapboxConfigManager()
         configManager.loadConfig()
@@ -362,7 +352,7 @@ class HomeMapViewTests {
         val locationManager = MockLocationDataManager()
         locationManager.hasPermission = true
 
-        val viewportProvider = ViewportProvider(MapViewportState())
+        val viewportProvider = ViewportProvider(RawMapViewportState())
 
         AutofillProvider.forMockMode.types.register(StateFlow::class) { MutableStateFlow(null) }
 
@@ -424,7 +414,7 @@ class HomeMapViewTests {
                 Dispatchers.Default,
                 Dispatchers.IO,
             )
-        val viewportProvider = ViewportProvider(MapViewportState())
+        val viewportProvider = ViewportProvider(RawMapViewportState())
         viewModel.setViewportManager(viewportProvider)
         val configManager = MapboxConfigManager()
         configManager.loadConfig()
@@ -470,7 +460,7 @@ class HomeMapViewTests {
                 Dispatchers.Default,
                 Dispatchers.IO,
             )
-        val viewportProvider = ViewportProvider(MapViewportState())
+        val viewportProvider = ViewportProvider(RawMapViewportState())
         viewModel.setViewportManager(viewportProvider)
         val configManager = MapboxConfigManager()
         configManager.loadConfig()
@@ -512,7 +502,7 @@ class HomeMapViewTests {
                 Dispatchers.Default,
                 Dispatchers.IO,
             )
-        val viewportProvider = ViewportProvider(MapViewportState())
+        val viewportProvider = ViewportProvider(RawMapViewportState())
         viewModel.setViewportManager(viewportProvider)
         open class MockConfigManager : IMapboxConfigManager {
             private val _configLoadAttempted = MutableStateFlow(false)

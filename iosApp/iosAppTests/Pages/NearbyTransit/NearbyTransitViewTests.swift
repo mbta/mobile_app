@@ -28,7 +28,7 @@ final class NearbyTransitViewTests: XCTestCase {
     func testPending() throws {
         let sut = NearbyTransitView(
             alerts: .init(alerts: [:]),
-            initialLocation: ViewportProvider.Defaults.center,
+            initialLocation: MapDefaults.shared.center.toMapbox(),
             setIsReturningFromBackground: { _ in },
             noNearbyStops: noNearbyStops,
             nearbyVM: MockNearbyViewModel(),
@@ -50,7 +50,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         var sut = NearbyTransitView(
             alerts: .init(alerts: [:]),
-            initialLocation: ViewportProvider.Defaults.center,
+            initialLocation: MapDefaults.shared.center.toMapbox(),
             setIsReturningFromBackground: { _ in },
             noNearbyStops: noNearbyStops,
             nearbyVM: mockNearbyVM,

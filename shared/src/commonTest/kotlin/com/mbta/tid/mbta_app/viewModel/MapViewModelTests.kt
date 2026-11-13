@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.viewModel
 import app.cash.turbine.test
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
+import com.mbta.tid.mbta_app.map.MapViewportState
 import com.mbta.tid.mbta_app.map.StopLayerGenerator
 import com.mbta.tid.mbta_app.mocks.MockClock
 import com.mbta.tid.mbta_app.model.Alert
@@ -10,7 +11,6 @@ import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.SegmentAlertState
-import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
@@ -20,7 +20,6 @@ import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
-import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.repositories.IStopRepository
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.routes.SheetRoutes
@@ -35,7 +34,6 @@ import dev.mokkery.matcher.any
 import dev.mokkery.matcher.matches
 import dev.mokkery.mock
 import dev.mokkery.resetCalls
-import dev.mokkery.verify
 import dev.mokkery.verify.VerifyMode
 import dev.mokkery.verifySuspend
 import kotlin.test.AfterTest
@@ -51,7 +49,6 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -70,27 +67,17 @@ internal class MapViewModelTests : KoinTest {
     class MockViewportManager(
         private val saveNearbyTransitViewportCalled: () -> Unit = {},
         private val restoreNearbyTransitViewportCalled: () -> Unit = {},
-        private val stopCenterCalled: (stop: Stop) -> Unit = {},
-        private val vehicleOverviewCalled:
-            (vehicle: Vehicle, stop: Stop?, density: Float?) -> Unit =
-            { _, _, _ ->
-            },
-        private val followCalled: (transitionAnimationDuration: Long?) -> Unit = {},
+        private val applyStateCalled: (MapViewportState, Boolean) -> Unit = { _, _ -> },
         private val isDefaultCalled: () -> Boolean = { true },
     ) : ViewportManager {
         override suspend fun saveNearbyTransitViewport() = saveNearbyTransitViewportCalled()
 
         override suspend fun restoreNearbyTransitViewport() = restoreNearbyTransitViewportCalled()
 
-        override suspend fun stopCenter(stop: Stop) = stopCenterCalled(stop)
+        override suspend fun applyState(state: MapViewportState, instantly: Boolean) =
+            applyStateCalled(state, instantly)
 
-        override suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float?) =
-            vehicleOverviewCalled(vehicle, stop, density)
-
-        override suspend fun follow(transitionAnimationDuration: Long?) =
-            followCalled(transitionAnimationDuration)
-
-        override suspend fun isDefault(): Boolean = isDefaultCalled()
+        override fun isDefault(): Boolean = isDefaultCalled()
     }
 
     fun setUpKoin(
@@ -180,12 +167,10 @@ internal class MapViewModelTests : KoinTest {
     fun recenter() = runTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
         setUpKoin(dispatcher)
-        var timesFollowCalled = 0
-        var timesVehicleOverViewCalled = 0
+        val statesApplied = mutableListOf<MapViewportState>()
         val viewportProvider =
             MockViewportManager(
-                vehicleOverviewCalled = { _, _, _ -> timesVehicleOverViewCalled += 1 },
-                followCalled = { timesFollowCalled += 1 },
+                applyStateCalled = { state, _ -> statesApplied.add(state) },
             )
         val viewModel: MapViewModel = get()
 
@@ -198,7 +183,7 @@ internal class MapViewModelTests : KoinTest {
             viewModel.recenter()
             // This delay approach seems potentially flakey
             delay(10)
-            assertEquals(1, timesFollowCalled)
+            assertEquals(listOf<MapViewportState>(MapViewportState.FollowingPuck), statesApplied)
             val stop = TestData.stops["70113"]!!
             viewModel.selectedStop(stop, null)
             assertEquals(
@@ -207,7 +192,14 @@ internal class MapViewModelTests : KoinTest {
             )
             viewModel.recenter()
             delay(10)
-            assertEquals(2, timesFollowCalled)
+            assertEquals(
+                listOf(
+                    MapViewportState.FollowingPuck,
+                    MapViewportState.StopCenter(stop.position),
+                    MapViewportState.FollowingPuck,
+                ),
+                statesApplied,
+            )
             viewModel.selectedTrip(null, null, tripDetailsFilter, vehicle, false)
             assertEquals(
                 MapViewModel.State(
@@ -224,13 +216,40 @@ internal class MapViewModelTests : KoinTest {
                 awaitItem(),
             )
             delay(10)
-            assertEquals(1, timesVehicleOverViewCalled)
+            assertEquals(
+                listOf(
+                    MapViewportState.FollowingPuck,
+                    MapViewportState.StopCenter(stop.position),
+                    MapViewportState.FollowingPuck,
+                    MapViewportState.VehicleOverview(vehicle.position, null, 1f),
+                ),
+                statesApplied,
+            )
             viewModel.recenter(MapViewModel.Event.RecenterType.Trip)
             delay(10)
-            assertEquals(2, timesVehicleOverViewCalled)
+            assertEquals(
+                listOf(
+                    MapViewportState.FollowingPuck,
+                    MapViewportState.StopCenter(stop.position),
+                    MapViewportState.FollowingPuck,
+                    MapViewportState.VehicleOverview(vehicle.position, null, 1f),
+                    MapViewportState.VehicleOverview(vehicle.position, null, 1f),
+                ),
+                statesApplied,
+            )
             viewModel.recenter(MapViewModel.Event.RecenterType.CurrentLocation)
             delay(10)
-            assertEquals(3, timesFollowCalled)
+            assertEquals(
+                listOf(
+                    MapViewportState.FollowingPuck,
+                    MapViewportState.StopCenter(stop.position),
+                    MapViewportState.FollowingPuck,
+                    MapViewportState.VehicleOverview(vehicle.position, null, 1f),
+                    MapViewportState.VehicleOverview(vehicle.position, null, 1f),
+                    MapViewportState.FollowingPuck,
+                ),
+                statesApplied,
+            )
         }
     }
 
@@ -368,10 +387,10 @@ internal class MapViewModelTests : KoinTest {
         }
         val tripFilter = TripDetailsFilter("trip", vehicle.id, 5)
         val stopFilter = StopDetailsFilter(Route.Id("Green-B"), 0)
-        val overviews = mutableListOf<Pair<Vehicle, Stop?>>()
+        val statesApplied = mutableListOf<MapViewportState>()
         val viewportProvider =
             MockViewportManager(
-                vehicleOverviewCalled = { vehicle, stop, _ -> overviews.add(vehicle to stop) },
+                applyStateCalled = { state, _ -> statesApplied.add(state) },
             )
         val layerManager = mock<IMapLayerManager>(MockMode.autofill)
         val tripLayersAdded = CompletableDeferred<Unit>()
@@ -402,7 +421,7 @@ internal class MapViewModelTests : KoinTest {
                 expectedTarget,
                 (expectMostRecentItem().layerState as MapViewModel.LayerState.TripSelected).stop,
             )
-            assertEquals(emptyList(), overviews)
+            assertEquals(emptyList(), statesApplied)
             tripLayersAdded.await()
 
             val updates =
@@ -423,7 +442,14 @@ internal class MapViewModelTests : KoinTest {
             for ((updatedVehicle, expectedStop) in updates) {
                 viewModel.selectedVehicleUpdated(updatedVehicle, true)
                 advanceTimeBy(100.milliseconds)
-                assertEquals(updatedVehicle to expectedStop, overviews.last())
+                assertEquals(
+                    MapViewportState.VehicleOverview(
+                        updatedVehicle.position,
+                        expectedStop?.position,
+                        1f,
+                    ),
+                    statesApplied.last(),
+                )
                 assertEquals(
                     expectedTarget,
                     (expectMostRecentItem().layerState as MapViewModel.LayerState.TripSelected)
@@ -433,21 +459,27 @@ internal class MapViewModelTests : KoinTest {
 
             // Panning pauses automatic updates; recentering still uses trip-details framing.
             val passedVehicle = vehicle.copy(currentStopSequence = 6)
-            val overviewCount = overviews.size
+            val statesAppliedCount = statesApplied.size
             viewModel.selectedVehicleUpdated(passedVehicle, false)
             advanceTimeBy(100.milliseconds)
             expectMostRecentItem()
-            assertEquals(overviewCount, overviews.size)
+            assertEquals(statesAppliedCount, statesApplied.size)
             viewModel.recenter(MapViewModel.Event.RecenterType.Trip)
             advanceTimeBy(100.milliseconds)
-            assertEquals(passedVehicle to null, overviews.last())
-            assertEquals(overviewCount + 1, overviews.size)
+            assertEquals(
+                MapViewportState.VehicleOverview(passedVehicle.position, null, 1f),
+                statesApplied.last(),
+            )
+            assertEquals(statesAppliedCount + 1, statesApplied.size)
 
             // Stop details continues to frame the target even after the vehicle passes it.
             viewModel.vehiclesChanged(listOf(passedVehicle))
             viewModel.navChanged(SheetRoutes.StopDetails(stop.id, stopFilter, tripFilter))
             advanceTimeBy(100.milliseconds)
-            assertEquals(passedVehicle to stop, overviews.last())
+            assertEquals(
+                MapViewportState.VehicleOverview(passedVehicle.position, stop.position, 1f),
+                statesApplied.last(),
+            )
 
             viewModel.navChanged(
                 SheetRoutes.TripDetails(
@@ -459,7 +491,14 @@ internal class MapViewModelTests : KoinTest {
                 ),
             )
             advanceTimeBy(100.milliseconds)
-            assertEquals(passedVehicle to expectedTarget, overviews.last())
+            assertEquals(
+                MapViewportState.VehicleOverview(
+                    passedVehicle.position,
+                    expectedTarget.position,
+                    1f,
+                ),
+                statesApplied.last(),
+            )
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -468,8 +507,9 @@ internal class MapViewModelTests : KoinTest {
     fun tripDetailsWithoutVehicleCentersTargetStop() = runTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
         setUpKoin(dispatcher)
-        val centeredStops = mutableListOf<Stop>()
-        val viewportProvider = MockViewportManager(stopCenterCalled = { centeredStops.add(it) })
+        val statesApplied = mutableListOf<MapViewportState>()
+        val viewportProvider =
+            MockViewportManager(applyStateCalled = { state, _ -> statesApplied.add(state) })
         val viewModel: MapViewModel = get()
         viewModel.setViewportManager(viewportProvider)
         val stop = TestData.getStop("70113")
@@ -488,7 +528,10 @@ internal class MapViewModelTests : KoinTest {
             )
             advanceTimeBy(100.milliseconds)
             expectMostRecentItem()
-            assertEquals(listOf(stop), centeredStops)
+            assertEquals(
+                listOf<MapViewportState>(MapViewportState.StopCenter(stop.position)),
+                statesApplied,
+            )
         }
     }
 
@@ -654,35 +697,6 @@ internal class MapViewModelTests : KoinTest {
                     any(),
                 )
             }
-        }
-    }
-
-    @Test
-    fun `applies timeout to events`() = runTest {
-        val dispatcher = StandardTestDispatcher(testScheduler)
-        val sentryRepository = mock<ISentryRepository>(MockMode.autofill)
-        setUpKoin(dispatcher) { sentry = sentryRepository }
-
-        val viewportManager =
-            mock<ViewportManager>(MockMode.autofill) {
-                everySuspend { isDefault() } calls { suspendCancellableCoroutine {} }
-            }
-
-        val viewModel: MapViewModel = get()
-
-        testViewModelFlow(viewModel).test {
-            viewModel.setViewportManager(viewportManager)
-            viewModel.locationPermissionsChanged(true)
-            advanceTimeBy(11.seconds)
-            verify {
-                sentryRepository.captureException(
-                    matches<MoleculeViewModel.TimeoutException> {
-                        it.message ==
-                            "Timeout in MapViewModel handling event LocationPermissionsChanged(hasPermission=true)"
-                    },
-                )
-            }
-            cancelAndIgnoreRemainingEvents()
         }
     }
 

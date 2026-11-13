@@ -62,13 +62,13 @@ import com.mbta.tid.mbta_app.android.component.LocationAuthButton
 import com.mbta.tid.mbta_app.android.component.routeIcon
 import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
-import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.getStopIdAt
 import com.mbta.tid.mbta_app.android.util.plus
 import com.mbta.tid.mbta_app.android.util.toPoint
 import com.mbta.tid.mbta_app.android.util.typeText
+import com.mbta.tid.mbta_app.map.MapDefaults
 import com.mbta.tid.mbta_app.map.StopLayerGenerator
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.repositories.ErrorKey
@@ -128,8 +128,7 @@ fun HomeMapView(
         remember(viewportProvider.cameraStateFlow) {
             viewportProvider.cameraStateFlow.map { it.zoom }
         }
-    val zoomLevel by
-        cameraZoomFlow.collectAsStateWithLifecycle(ViewportProvider.Companion.Defaults.zoom)
+    val zoomLevel by cameraZoomFlow.collectAsStateWithLifecycle(MapDefaults.zoom)
 
     val showCurrentLocation = currentNavEntry?.showCurrentLocation ?: true
     val pulsingRingColor: Int = colorResource(R.color.key_inverse).toArgb()
@@ -260,7 +259,7 @@ fun HomeMapView(
                 }
 
                 DisposableMapEffect { map ->
-                    val listener = ManuallyCenteringListener(viewportProvider)
+                    val listener = CurrentlyPanningListener(viewportProvider)
                     map.gestures.addOnMoveListener(listener)
                     map.gestures.addOnScaleListener(listener)
                     map.gestures.addOnShoveListener(listener)
@@ -396,8 +395,8 @@ fun HomeMapView(
                 }
             }
 
-            LaunchedEffect(viewportProvider.isManuallyCentering) {
-                if (viewportProvider.isManuallyCentering && currentNavEntry?.allowTargeting == true)
+            LaunchedEffect(viewportProvider.isCurrentlyPanning) {
+                if (viewportProvider.isCurrentlyPanning && currentNavEntry?.allowTargeting == true)
                     isTargeting = true
             }
 

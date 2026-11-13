@@ -72,8 +72,8 @@ fun FavoritesPage(
 
     LaunchedEffect(now) { favoritesViewModel.setNow(now) }
     LaunchedEffect(alertData) { favoritesViewModel.setAlerts(alertData) }
-    LaunchedEffect(targetLocation, nearbyTransit.viewportProvider.isManuallyCentering) {
-        if (!nearbyTransit.viewportProvider.isManuallyCentering) {
+    LaunchedEffect(targetLocation, nearbyTransit.viewportProvider.isCurrentlyPanning) {
+        if (!nearbyTransit.viewportProvider.isCurrentlyPanning) {
             favoritesViewModel.setLocation(targetLocation)
         }
     }
@@ -102,7 +102,7 @@ fun FavoritesPage(
             cameraStateUnthrottled?.center?.let { currentPosition ->
                 if (
                     it.isRoughlyEqualTo(currentPosition.toPosition()) &&
-                        !nearbyTransit.viewportProvider.isManuallyCentering
+                        !nearbyTransit.viewportProvider.isCurrentlyPanning
                 ) {
                     nearbyTransit.lastLoadedLocation = it
                     nearbyTransit.isTargeting = false
