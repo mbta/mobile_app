@@ -268,7 +268,7 @@ final class HomeMapViewTests: XCTestCase {
             selectedVehicle: .constant(nil),
             locationDataManager: .init(),
             navManager: navManager,
-            viewportProvider: ViewportProvider(viewport: .camera(center: ViewportProvider.Defaults.center)),
+            viewportProvider: ViewportProvider(viewport: .camera(center: MapDefaults.shared.center.toMapbox())),
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -300,7 +300,7 @@ final class HomeMapViewTests: XCTestCase {
             selectedVehicle: .constant(nil),
             locationDataManager: .init(),
             navManager: navManager,
-            viewportProvider: ViewportProvider(viewport: .camera(center: ViewportProvider.Defaults.center)),
+            viewportProvider: ViewportProvider(viewport: .camera(center: MapDefaults.shared.center.toMapbox())),
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -334,7 +334,7 @@ final class HomeMapViewTests: XCTestCase {
             selectedVehicle: .constant(nil),
             locationDataManager: .init(),
             navManager: navManager,
-            viewportProvider: ViewportProvider(viewport: .camera(center: ViewportProvider.Defaults.center)),
+            viewportProvider: ViewportProvider(viewport: .camera(center: MapDefaults.shared.center.toMapbox())),
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -366,7 +366,7 @@ final class HomeMapViewTests: XCTestCase {
             selectedVehicle: .constant(nil),
             locationDataManager: .init(),
             navManager: navManager,
-            viewportProvider: ViewportProvider(viewport: .camera(center: ViewportProvider.Defaults.center)),
+            viewportProvider: ViewportProvider(viewport: .camera(center: MapDefaults.shared.center.toMapbox())),
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -405,7 +405,7 @@ final class HomeMapViewTests: XCTestCase {
             selectedVehicle: .constant(nil),
             locationDataManager: .init(),
             navManager: navManager,
-            viewportProvider: ViewportProvider(viewport: .camera(center: ViewportProvider.Defaults.center)),
+            viewportProvider: ViewportProvider(viewport: .camera(center: MapDefaults.shared.center.toMapbox())),
         )
 
         let hasAppeared = sut.on(\.didAppear) { view in

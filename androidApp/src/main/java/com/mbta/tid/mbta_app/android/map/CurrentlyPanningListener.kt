@@ -8,35 +8,35 @@ import com.mapbox.maps.plugin.gestures.OnScaleListener
 import com.mapbox.maps.plugin.gestures.OnShoveListener
 import com.mbta.tid.mbta_app.android.location.IViewportProvider
 
-class ManuallyCenteringListener(private val viewportProvider: IViewportProvider) :
+class CurrentlyPanningListener(private val viewportProvider: IViewportProvider) :
     OnMoveListener, OnScaleListener, OnShoveListener {
     override fun onMove(detector: MoveGestureDetector) = false
 
     override fun onMoveBegin(detector: MoveGestureDetector) {
-        viewportProvider.setIsManuallyCentering(true)
+        viewportProvider.setIsCurrentlyPanning(true)
     }
 
     override fun onMoveEnd(detector: MoveGestureDetector) {
-        viewportProvider.setIsManuallyCentering(false)
+        viewportProvider.setIsCurrentlyPanning(false)
     }
 
     override fun onScale(detector: StandardScaleGestureDetector) {}
 
     override fun onScaleBegin(detector: StandardScaleGestureDetector) {
-        viewportProvider.setIsManuallyCentering(true)
+        viewportProvider.setIsCurrentlyPanning(true)
     }
 
     override fun onScaleEnd(detector: StandardScaleGestureDetector) {
-        viewportProvider.setIsManuallyCentering(false)
+        viewportProvider.setIsCurrentlyPanning(false)
     }
 
     override fun onShove(detector: ShoveGestureDetector) {}
 
     override fun onShoveBegin(detector: ShoveGestureDetector) {
-        viewportProvider.setIsManuallyCentering(true)
+        viewportProvider.setIsCurrentlyPanning(true)
     }
 
     override fun onShoveEnd(detector: ShoveGestureDetector) {
-        viewportProvider.setIsManuallyCentering(false)
+        viewportProvider.setIsCurrentlyPanning(false)
     }
 }

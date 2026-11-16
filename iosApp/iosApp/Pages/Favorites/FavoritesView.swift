@@ -129,14 +129,14 @@ struct FavoritesView: View {
         .onChange(of: alerts) { favoritesVM.setAlerts(alerts: $0) }
         .onChange(of: location?.positionKt) { favoritesVM.setLocation(location: $0) }
         .onChange(of: now) { favoritesVM.setNow(now: $0.toEasternInstant()) }
-        .onChange(of: viewportProvider.isManuallyCentering) { isCentering in
-            if let location, !isCentering, navManager.isFavoritesVisible() {
+        .onChange(of: viewportProvider.isCurrentlyPanning) { isPanning in
+            if let location, !isPanning, navManager.isFavoritesVisible() {
                 favoritesVM.setLocation(location: location.positionKt)
             }
         }
         .onReceive(viewportProvider.cameraStatePublisherThrottled) { newCameraState in
             location = newCameraState.center
-            guard let location, !viewportProvider.isManuallyCentering, navManager.isFavoritesVisible() else { return }
+            guard let location, !viewportProvider.isCurrentlyPanning, navManager.isFavoritesVisible() else { return }
             favoritesVM.setLocation(location: location.positionKt)
         }
         .onReceive(viewportProvider.cameraStatePublisher) { newCameraState in
