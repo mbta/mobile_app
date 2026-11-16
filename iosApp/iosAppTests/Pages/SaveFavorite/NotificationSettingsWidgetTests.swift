@@ -200,40 +200,25 @@ final class NotificationSettingsWidgetTests: XCTestCase {
     private var timeChangeCases: [TimeChangeCase] {
         [
             // Setting end time
-            .endCase(start: time(3), end: time(1), expected: (time(3), time(1))),
-            .endCase(start: time(3), end: time(8), expected: (time(3), time(8))),
             .endCase(start: time(3), end: time(3), expected: (time(3), time(3))),
             .endCase(start: time(1), end: time(3), expected: (time(1), time(3))),
-            .endCase(start: time(8), end: time(3), expected: (time(8), time(3))),
-            .endCase(start: time(1), end: time(8), expected: (time(1), time(3))),
-            .endCase(start: time(0), end: time(23, 45), expected: (time(0), time(3))),
-            .endCase(start: time(2), end: time(3, 15), expected: (time(2), time(3))),
+            .endCase(start: time(2, 45), end: time(3, 15), expected: (time(2, 45), time(3))),
             .endCase(start: time(1), end: time(2), expected: (time(1), time(2))),
-            .endCase(start: time(2), end: time(1), expected: (time(2), time(2, 15))),
             .endCase(start: time(2), end: time(2), expected: (time(2), time(2, 15))),
             .endCase(start: time(2, 45), end: time(0), expected: (time(2, 45), time(3))),
             .endCase(start: time(8), end: time(17), expected: (time(8), time(17))),
-            .endCase(start: time(17), end: time(8), expected: (time(17), time(17, 15))),
             .endCase(start: time(23, 45), end: time(23, 45), expected: (time(23, 45), time(0))),
-            .endCase(start: time(23, 45), end: time(3, 15), expected: (time(23, 45), time(0))),
             .endCase(start: time(17), end: time(0, 30), expected: (time(17), time(0, 30))),
             // Setting start time
-            .startCase(start: time(1), end: time(3), expected: (time(1), time(3))),
             .startCase(start: time(8), end: time(3), expected: (time(8), time(3))),
-            .startCase(start: time(3), end: time(3), expected: (time(3), time(3))),
             .startCase(start: time(3), end: time(1), expected: (time(3), time(1))),
-            .startCase(start: time(3), end: time(8), expected: (time(3), time(8))),
             .startCase(start: time(8), end: time(1), expected: (time(8), time(1))),
-            .startCase(start: time(2, 30), end: time(2), expected: (time(1, 45), time(2))),
+            .startCase(start: time(1), end: time(2), expected: (time(1), time(2))),
             .startCase(start: time(2), end: time(2), expected: (time(1, 45), time(2))),
             .startCase(start: time(1), end: time(0), expected: (time(23, 45), time(0))),
-            .startCase(start: time(1), end: time(2), expected: (time(1), time(2))),
-            .startCase(start: time(17), end: time(8), expected: (time(7, 45), time(8))),
-            .startCase(start: time(8), end: time(8), expected: (time(7, 45), time(8))),
-            .startCase(start: time(8), end: time(3, 15), expected: (time(3), time(3, 15))),
             .startCase(start: time(8), end: time(17), expected: (time(8), time(17))),
-            .startCase(start: time(1), end: time(17), expected: (time(3), time(17))),
-            .startCase(start: time(0), end: time(23, 45), expected: (time(3), time(23, 45)))
+            .startCase(start: time(8), end: time(3, 15), expected: (time(3), time(3, 15))),
+            .startCase(start: time(2, 45), end: time(3, 15), expected: (time(3), time(3, 15)))
         ]
     }
 

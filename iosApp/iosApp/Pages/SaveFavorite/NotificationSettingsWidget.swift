@@ -192,8 +192,6 @@ struct WindowWidget: View {
         )
     }
 
-    /// Returns the end time to use when the rider selects `endTime`, keeping the timeframe valid.
-    /// Times before the service boundary (3:00 AM) are "after midnight", times after it are "during the day".
     static func adjustedEndTime(
         startTime: Kotlinx_datetimeLocalTime,
         endTime: Kotlinx_datetimeLocalTime
@@ -215,7 +213,6 @@ struct WindowWidget: View {
         }
     }
 
-    /// Returns the start time to use when the rider selects `startTime`, keeping the timeframe valid.
     static func adjustedStartTime(
         startTime: Kotlinx_datetimeLocalTime,
         endTime: Kotlinx_datetimeLocalTime
@@ -246,20 +243,20 @@ struct WindowWidget: View {
             let start = timeDescription(startTime, newWindow.startType)
             let end = timeDescription(newWindow.endTime, newWindow.endType)
             announceTimeAdjustment(startTime == window.startTime
-                ? String(
-                    localized: "Start time kept at \(start) because end time is \(end).",
+                ? String(format: NSLocalizedString(
+                    "Start time kept at %1$@ because end time is %2$@.",
                     comment: """
                     VoiceOver announcement when the selected start time is rejected and the start time is unchanged, \
                     e.g. "Start time kept at 3:00 AM, start of service because end time is 5:00 PM."
                     """
-                )
-                : String(
-                    localized: "Start time changed to \(start) because end time is \(end).",
+                ), start, end)
+                : String(format: NSLocalizedString(
+                    "Start time changed to %1$@ because end time is %2$@.",
                     comment: """
                     VoiceOver announcement when the selected start time is adjusted to fit the end time, \
                     e.g. "Start time changed to 4:45 PM because end time is 5:00 PM."
                     """
-                ))
+                ), start, end))
         }
         return DateComponents.fromLocalTime(startTime)
     }
@@ -273,20 +270,20 @@ struct WindowWidget: View {
             let start = timeDescription(newWindow.startTime, newWindow.startType)
             let end = timeDescription(endTime, newWindow.endType)
             announceTimeAdjustment(endTime == window.endTime
-                ? String(
-                    localized: "End time kept at \(end) because start time is \(start).",
+                ? String(format: NSLocalizedString(
+                    "End time kept at %1$@ because start time is %2$@.",
                     comment: """
                     VoiceOver announcement when the selected end time is rejected and the end time is unchanged, \
                     e.g. "End time kept at 3:00 AM, end of service because start time is 1:00 AM."
                     """
-                )
-                : String(
-                    localized: "End time changed to \(end) because start time is \(start).",
+                ), end, start)
+                : String(format: NSLocalizedString(
+                    "End time changed to %1$@ because start time is %2$@.",
                     comment: """
                     VoiceOver announcement when the selected end time is adjusted to fit the start time, \
                     e.g. "End time changed to 5:15 PM because start time is 5:00 PM."
                     """
-                ))
+                ), end, start))
         }
         return DateComponents.fromLocalTime(endTime)
     }
@@ -361,9 +358,18 @@ enum TimeIconPosition {
 
 private func timeNoteString(_ type: FavoriteSettings.NotificationsWindowType) -> String? {
     switch onEnum(of: type) {
-    case .nextDay: String(localized: "next day")
-    case .serviceEnd: String(localized: "end of service")
-    case .serviceStart: String(localized: "start of service")
+    case .nextDay: NSLocalizedString(
+            "next day",
+            comment: "Note next to a notification window end time that is after midnight"
+        )
+    case .serviceEnd: NSLocalizedString(
+            "end of service",
+            comment: "Used when an alert ends at the end of a service day"
+        )
+    case .serviceStart: NSLocalizedString(
+            "start of service",
+            comment: "Used when an alert begins at the start of a service day"
+        )
     default: nil
     }
 }
@@ -415,7 +421,6 @@ struct TimeInput: View {
     let label: Text
     let time: DateComponents
     let type: FavoriteSettings.NotificationsWindowType
-    /// Applies the selected time and returns the time that was actually set, which may have been adjusted.
     let setTime: (DateComponents) -> DateComponents
 
     private struct AppliedSelection: Equatable {
@@ -423,9 +428,7 @@ struct TimeInput: View {
         let id = UUID()
     }
 
-    /// The view model only publishes changes, so if an adjusted selection matches the current time,
-    /// nothing would re-render and the picker would keep showing the rejected time. Tracking the
-    /// applied selection locally (with a unique id) forces an immediate re-render with the adjusted time.
+    /// Applied selection locally (with a unique id) forces an immediate re-render with the adjusted time.
     @State private var appliedSelection: AppliedSelection?
 
     private var displayedTime: DateComponents { appliedSelection?.time ?? time }
