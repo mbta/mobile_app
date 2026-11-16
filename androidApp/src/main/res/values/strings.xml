@@ -134,6 +134,8 @@
     <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">End</string>
     <string name="end_of_service">end of service</string>
+    <string name="end_time_changed_because_start_time">End time changed to %1$s because start time is %2$s.</string>
+    <string name="end_time_kept_because_start_time">End time kept at %1$s because start time is %2$s.</string>
     <string name="error_loading_data">Error loading data</string>
     <string name="escalator_closed_sentence_case">Escalator closed</string>
     <string name="escalator_closure">Escalator Closure</string>
@@ -389,6 +391,8 @@
     <string name="star_route_hint">pin route to the top of the list</string>
     <string name="start">Start</string>
     <string name="start_of_service">start of service</string>
+    <string name="start_time_changed_because_end_time">Start time changed to %1$s because end time is %2$s.</string>
+    <string name="start_time_kept_because_end_time">Start time kept at %1$s because end time is %2$s.</string>
     <string name="start_to_end_of_service">start to end of service</string>
     <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">Starting tomorrow until further notice</string>

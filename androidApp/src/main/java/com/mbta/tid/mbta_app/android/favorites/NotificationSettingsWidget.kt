@@ -49,6 +49,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -261,13 +263,49 @@ private fun WindowWidget(
     setWindow: (Window) -> Unit,
     deleteWindow: (() -> Unit)?,
 ) {
-    fun setStartTime(start: LocalTime) {
-        val end = Window.safeEndTime(start, window.endTime)
-        setWindow(window.copy(startTime = start, endTime = end))
+    val resources = LocalResources.current
+    val view = LocalView.current
+
+    fun timeDescription(time: LocalTime, type: Window.Type): String {
+        val timeString =
+            EasternTimeInstant(EasternTimeInstant.now().local.date, time).formattedTime()
+        val note = timeNoteResource(type)?.let { resources.getString(it) }
+        return if (note != null) "$timeString, $note" else timeString
     }
 
-    fun setEndTime(end: LocalTime) =
-        setWindow(window.copy(endTime = Window.safeEndTime(window.startTime, end)))
+    @Suppress("DEPRECATION") fun announce(message: String) = view.announceForAccessibility(message)
+
+    fun setStartTime(requested: LocalTime) {
+        val start = Window.adjustedStartTime(requested, window.endTime)
+        val newWindow = window.copy(startTime = start)
+        setWindow(newWindow)
+        if (start != requested) {
+            announce(
+                resources.getString(
+                    if (start == window.startTime) R.string.start_time_kept_because_end_time
+                    else R.string.start_time_changed_because_end_time,
+                    timeDescription(start, newWindow.startType),
+                    timeDescription(newWindow.endTime, newWindow.endType),
+                ),
+            )
+        }
+    }
+
+    fun setEndTime(requested: LocalTime) {
+        val end = Window.adjustedEndTime(window.startTime, requested)
+        val newWindow = window.copy(endTime = end)
+        setWindow(newWindow)
+        if (end != requested) {
+            announce(
+                resources.getString(
+                    if (end == window.endTime) R.string.end_time_kept_because_start_time
+                    else R.string.end_time_changed_because_start_time,
+                    timeDescription(end, newWindow.endType),
+                    timeDescription(newWindow.startTime, newWindow.startType),
+                ),
+            )
+        }
+    }
 
     Row(
         Modifier.haloContainer(
@@ -352,6 +390,14 @@ private fun WindowWidget(
     }
 }
 
+private fun timeNoteResource(type: Window.Type): Int? =
+    when (type) {
+        Window.Type.ServiceStart -> R.string.service_day_start
+        Window.Type.ServiceEnd -> R.string.service_day_end
+        Window.Type.NextDay -> R.string.next_day
+        Window.Type.Basic -> null
+    }
+
 @Composable
 private fun TimeNote(type: Window.Type) {
     val arrangement =
@@ -367,15 +413,9 @@ private fun TimeNote(type: Window.Type) {
         Modifier.clearAndSetSemantics {}.padding(horizontal = 8.dp),
         horizontalArrangement = arrangement,
     ) {
-        if (type != Window.Type.Basic) {
+        timeNoteResource(type)?.let { note ->
             Text(
-                stringResource(
-                    when (type) {
-                        Window.Type.ServiceStart -> R.string.service_day_start
-                        Window.Type.ServiceEnd -> R.string.service_day_end
-                        Window.Type.NextDay -> R.string.next_day
-                    },
-                ),
+                stringResource(note),
                 style = Typography.footnote,
                 color = colorResource(R.color.deemphasized),
             )
