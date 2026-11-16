@@ -204,11 +204,12 @@ class NotificationSettingsWidgetTest : KoinTest {
         composeTestRule.onNodeWithContentDescription("Select minutes").performClick()
         composeTestRule.onNodeWithContentDescription("45 minutes").performClick()
         composeTestRule.onNodeWithText("Okay").performClick()
+        // start time after the end time is moved to 15 minutes before the end time
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasTextMatching(Regex("10:45\\sAM", RegexOption.IGNORE_CASE)),
+            hasTextMatching(Regex("9:45\\sAM", RegexOption.IGNORE_CASE)),
         )
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasTextMatching(Regex("11:00\\sAM", RegexOption.IGNORE_CASE)),
+            hasTextMatching(Regex("10:00\\sAM", RegexOption.IGNORE_CASE)),
         )
     }
 

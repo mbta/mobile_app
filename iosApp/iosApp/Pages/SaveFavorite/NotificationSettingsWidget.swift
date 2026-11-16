@@ -175,68 +175,12 @@ struct WindowWidget: View {
         )
     }
 
-    private static let minimumDurationMinutes = 15
-    private static let minutesPerDay = 24 * 60
-
-    private static func minutesOfDay(_ time: Kotlinx_datetimeLocalTime) -> Int {
-        Int(time.hour) * 60 + Int(time.minute)
-    }
-
-    private static func localTime(minutesOfDay minutes: Int) -> Kotlinx_datetimeLocalTime {
-        let wrapped = (minutes % minutesPerDay + minutesPerDay) % minutesPerDay
-        return Kotlinx_datetimeLocalTime(
-            hour: Int32(wrapped / 60),
-            minute: Int32(wrapped % 60),
-            second: 0,
-            nanosecond: 0
-        )
-    }
-
-    static func adjustedEndTime(
-        startTime: Kotlinx_datetimeLocalTime,
-        endTime: Kotlinx_datetimeLocalTime
-    ) -> Kotlinx_datetimeLocalTime {
-        let boundary = FavoriteSettings.Notifications.companion.serviceBoundary
-        if startTime == boundary || endTime == boundary { return endTime }
-
-        let boundaryMinutes = minutesOfDay(boundary)
-        let start = minutesOfDay(startTime)
-        let end = minutesOfDay(endTime)
-        switch (start < boundaryMinutes, end < boundaryMinutes) {
-        // An after midnight timeframe can't cross the service boundary
-        case (true, false): return boundary
-        // A daytime start with an after midnight end spans midnight within the service day
-        case (false, true): return endTime
-        default:
-            return end - start >= minimumDurationMinutes
-                ? endTime : localTime(minutesOfDay: start + minimumDurationMinutes)
-        }
-    }
-
-    static func adjustedStartTime(
-        startTime: Kotlinx_datetimeLocalTime,
-        endTime: Kotlinx_datetimeLocalTime
-    ) -> Kotlinx_datetimeLocalTime {
-        let boundary = FavoriteSettings.Notifications.companion.serviceBoundary
-        if startTime == boundary || endTime == boundary { return startTime }
-
-        let boundaryMinutes = minutesOfDay(boundary)
-        let start = minutesOfDay(startTime)
-        let end = minutesOfDay(endTime)
-        switch (start < boundaryMinutes, end < boundaryMinutes) {
-        // A daytime timeframe can't start after midnight, past the service boundary
-        case (true, false): return boundary
-        // A daytime start with an after midnight end spans midnight within the service day
-        case (false, true): return startTime
-        default:
-            return end - start >= minimumDurationMinutes
-                ? startTime : localTime(minutesOfDay: end - minimumDurationMinutes)
-        }
-    }
-
     private func setStartTime(_ time: DateComponents) -> DateComponents {
         let requestedStartTime = time.toLocalTime()
-        let startTime = Self.adjustedStartTime(startTime: requestedStartTime, endTime: window.endTime)
+        let startTime = FavoriteSettings.NotificationsWindow.companion.adjustedStartTime(
+            startTime: requestedStartTime,
+            endTime: window.endTime
+        )
         let newWindow = window.doCopy(startTime: startTime, endTime: window.endTime)
         setWindow(newWindow)
         if startTime != requestedStartTime {
@@ -263,7 +207,10 @@ struct WindowWidget: View {
 
     private func setEndTime(_ time: DateComponents) -> DateComponents {
         let requestedEndTime = time.toLocalTime()
-        let endTime = Self.adjustedEndTime(startTime: window.startTime, endTime: requestedEndTime)
+        let endTime = FavoriteSettings.NotificationsWindow.companion.adjustedEndTime(
+            startTime: window.startTime,
+            endTime: requestedEndTime
+        )
         let newWindow = window.doCopy(startTime: window.startTime, endTime: endTime)
         setWindow(newWindow)
         if endTime != requestedEndTime {
