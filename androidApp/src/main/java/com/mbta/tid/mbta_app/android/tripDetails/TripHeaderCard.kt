@@ -444,7 +444,18 @@ private fun VehicleDescription(
                     .then(onTrackChangeTap?.let { Modifier.clickable { it() } } ?: Modifier),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                VehicleStatusDescription(spec.vehicle.currentStatus, spec.atTerminal)
+                // TODO: Based on TripRouteAccents, include vehicle label
+                Row() {
+                    if (routeAccents.type == RouteType.FERRY) {
+                        Text(
+                            spec.vehicle.label,
+                            modifier = Modifier.placeholderIfLoading(),
+                            style = Typography.footnoteItalic,
+                        )
+                        Text(" • ", style = Typography.footnoteItalic)
+                    }
+                    VehicleStatusDescription(spec.vehicle.currentStatus, spec.atTerminal)
+                }
                 Text(
                     stop.name,
                     style = Typography.headlineBold,
