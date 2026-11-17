@@ -23,7 +23,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
     case routeDetails(SheetRoutes.RouteDetails)
     case routePicker(SheetRoutes.RoutePicker)
     case saveFavorite(routeId: LineOrRoute.Id, stopId: String, selectedDirection: Int32, context: EditFavoritesContext)
-    case stopDetails(stopId: String, stopFilter: StopDetailsFilter?, tripFilter: TripDetailsFilter?)
+    case stopDetails(stopId: String, routeStopFilter: RouteStopFilter?, tripFilter: TripDetailsFilter?)
     case tripDetails(filter: TripDetailsPageFilter)
 
     var id: Int {
@@ -51,7 +51,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
         case .more: .settings
         case .nearby: .nearbyTransit
         case .routeDetails: .routeDetails
-        case let .stopDetails(_, stopFilter, _): stopFilter == nil ? .stopDetailsUnfiltered : .stopDetailsFiltered
+        case let .stopDetails(_, routeStopFilter, _): routeStopFilter == nil ? .stopOverview : .routeStop
         case .tripDetails: .tripDetails
         default: nil
         }
@@ -111,9 +111,9 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
         case .nearby: SheetRoutes.NearbyTransit()
         case .favorites: SheetRoutes.Favorites()
         case .editFavorites: SheetRoutes.EditFavorites()
-        case let .stopDetails(stopId, stopFilter, tripFilter): SheetRoutes.StopDetails(
+        case let .stopDetails(stopId, routeStopFilter, tripFilter): SheetRoutes.StopDetails(
                 stopId: stopId,
-                stopFilter: stopFilter,
+                routeStopFilter: routeStopFilter,
                 tripFilter: tripFilter
             )
         case let .routeDetails(sheetRoute): sheetRoute
@@ -122,6 +122,22 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
         case .alertDetails: nil
         case .more: nil
         case .saveFavorite: nil
+        }
+    }
+
+    static func fromSheetRoute(_ sheetRoute: SheetRoutes) -> Self {
+        switch onEnum(of: sheetRoute) {
+        case .nearbyTransit: .nearby
+        case .favorites: .favorites
+        case .editFavorites: .editFavorites
+        case let .stopDetails(sheetRoute): .stopDetails(
+                stopId: sheetRoute.stopId,
+                routeStopFilter: sheetRoute.routeStopFilter,
+                tripFilter: sheetRoute.tripFilter
+            )
+        case let .routeDetails(sheetRoute): .routeDetails(sheetRoute)
+        case let .routePicker(sheetRoute): .routePicker(sheetRoute)
+        case let .tripDetails(sheetRoute): .tripDetails(filter: sheetRoute.filter)
         }
     }
 }
@@ -162,31 +178,31 @@ struct NearbyCoverItem: Identifiable {
 }
 
 extension [SheetNavigationStackEntry] {
-    /// Retrieves and updates the bottom-most ``StopDetailsFilter`` in the navigation stack.
+    /// Retrieves and updates the bottom-most ``RouteStopFilter`` in the navigation stack.
     ///
     /// Implemented as an extension property so that
     /// [`Binding.subscript(dynamicMember:)`][binding-subscript]
     /// can automatically create a binding to the filter based on the binding to the stack.
     ///
     /// [binding-subscript]: https://developer.apple.com/documentation/swiftui/binding/subscript(dynamicmember:)
-    var lastStopDetailsFilter: StopDetailsFilter? {
+    var lastRouteStopFilter: RouteStopFilter? {
         get {
             switch self.last {
-            case let .stopDetails(stopId: _, stopFilter: filter, tripFilter: _): filter
+            case let .stopDetails(stopId: _, routeStopFilter: filter, tripFilter: _): filter
             case _: nil
             }
         }
         set {
             if case let .stopDetails(
                 stopId: stopId,
-                stopFilter: lastFilter,
+                routeStopFilter: lastFilter,
                 tripFilter: _
             ) = self.last {
-                if StopDetailsFilter.companion.shouldPopLastStopEntry(lastFilter: lastFilter, newFilter: newValue) {
+                if RouteStopFilter.companion.shouldPopLastStopEntry(lastFilter: lastFilter, newFilter: newValue) {
                     _ = self.popLast()
                 }
-                if self.shouldSkipStopFilterUpdate(newStop: stopId, newFilter: newValue) { return }
-                self.append(.stopDetails(stopId: stopId, stopFilter: newValue, tripFilter: nil))
+                if self.shouldSkipRouteStopFilterUpdate(newStop: stopId, newFilter: newValue) { return }
+                self.append(.stopDetails(stopId: stopId, routeStopFilter: newValue, tripFilter: nil))
             }
         }
     }
@@ -194,14 +210,14 @@ extension [SheetNavigationStackEntry] {
     var lastTripDetailsFilter: TripDetailsFilter? {
         get {
             switch self.last {
-            case let .stopDetails(stopId: _, stopFilter: _, tripFilter: filter): filter
+            case let .stopDetails(stopId: _, routeStopFilter: _, tripFilter: filter): filter
             default: nil
             }
         }
         set {
-            if case let .stopDetails(stopId: stopId, stopFilter: stopFilter, tripFilter: _) = self.last {
+            if case let .stopDetails(stopId: stopId, routeStopFilter: routeStopFilter, tripFilter: _) = self.last {
                 _ = self.popLast()
-                self.append(.stopDetails(stopId: stopId, stopFilter: stopFilter, tripFilter: newValue))
+                self.append(.stopDetails(stopId: stopId, routeStopFilter: routeStopFilter, tripFilter: newValue))
             }
         }
     }
@@ -209,33 +225,33 @@ extension [SheetNavigationStackEntry] {
     var lastStopDetailsPageFilters: StopDetailsPageFilters? {
         get {
             switch self.last {
-            case let .stopDetails(stopId: stopId, stopFilter: stopFilter, tripFilter: tripFilter):
-                .init(stopId: stopId, stopFilter: stopFilter, tripFilter: tripFilter)
+            case let .stopDetails(stopId: stopId, routeStopFilter: routeStopFilter, tripFilter: tripFilter):
+                .init(stopId: stopId, routeStopFilter: routeStopFilter, tripFilter: tripFilter)
             case _: nil
             }
         }
         set {
             if case let .stopDetails(
                 stopId: stopId,
-                stopFilter: lastStopFilter,
+                routeStopFilter: lastRouteStopFilter,
                 tripFilter: lastTripFilter,
             ) = self.last {
-                let shouldPop = StopDetailsFilter.companion.shouldPopLastStopEntry(
-                    lastFilter: lastStopFilter,
-                    newFilter: newValue?.stopFilter
+                let shouldPop = RouteStopFilter.companion.shouldPopLastStopEntry(
+                    lastFilter: lastRouteStopFilter,
+                    newFilter: newValue?.routeStopFilter
                 )
                 if shouldPop || lastTripFilter != newValue?.tripFilter {
                     _ = self.popLast()
                 }
                 if let newValue {
-                    let shouldSkip = shouldSkipStopFilterUpdate(
+                    let shouldSkip = shouldSkipRouteStopFilterUpdate(
                         newStop: newValue.stopId,
-                        newFilter: newValue.stopFilter
+                        newFilter: newValue.routeStopFilter
                     )
                     if shouldSkip, lastTripFilter == newValue.tripFilter { return }
                     self.append(.stopDetails(
                         stopId: newValue.stopId,
-                        stopFilter: newValue.stopFilter,
+                        routeStopFilter: newValue.routeStopFilter,
                         tripFilter: newValue.tripFilter
                     ))
                 }
@@ -251,7 +267,7 @@ extension [SheetNavigationStackEntry] {
             }
         }
         return switch lastStopEntry {
-        case let .stopDetails(stopId: id, stopFilter: _, tripFilter: _): id
+        case let .stopDetails(stopId: id, routeStopFilter: _, tripFilter: _): id
         default: nil
         }
     }
@@ -260,12 +276,12 @@ extension [SheetNavigationStackEntry] {
         self.last ?? .nearby
     }
 
-    func shouldSkipStopFilterUpdate(newStop: String, newFilter: StopDetailsFilter?) -> Bool {
+    func shouldSkipRouteStopFilterUpdate(newStop: String, newFilter: RouteStopFilter?) -> Bool {
         // If the new filter is nil and there is already a nil filter in the stack for the same stop ID,
         // we don't want a duplicate unfiltered entry, so skip appending a new one
         if case let .stopDetails(
             stopId: lastStop,
-            stopFilter: lastFilter,
+            routeStopFilter: lastFilter,
             tripFilter: _
         ) = self.last {
             lastStop == newStop && newFilter == nil && lastFilter == nil

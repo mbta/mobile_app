@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,8 +39,8 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.Stop
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -51,50 +50,50 @@ import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
-import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
-import com.mbta.tid.mbta_app.viewModel.StopDetailsViewModel
+import com.mbta.tid.mbta_app.viewModel.IStopCentricViewModel
+import com.mbta.tid.mbta_app.viewModel.StopCentricViewModel
 import org.koin.compose.koinInject
 
 @Composable
 fun StopDetailsFilteredView(
     stopId: String,
-    stopFilter: StopDetailsFilter,
+    routeStopFilter: RouteStopFilter,
     tripFilter: TripDetailsFilter?,
     allAlerts: AlertsStreamDataResponse?,
     now: EasternTimeInstant,
     isFavorite: (RouteStopDirection) -> Boolean?,
     navCallbacks: NavigationCallbacks,
-    updateStopFilter: (StopDetailsFilter?) -> Unit,
+    updateRouteStopFilter: (RouteStopFilter) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     tileScrollState: ScrollState,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
     errorBannerViewModel: IErrorBannerViewModel,
-    stopDetailsViewModel: IStopDetailsViewModel = koinInject(),
+    stopCentricViewModel: IStopCentricViewModel = koinInject(),
 ) {
-    val state by stopDetailsViewModel.models.collectAsState()
+    val state by stopCentricViewModel.models.collectAsState()
     val global: GlobalResponse? =
         getGlobalData(ErrorKey(setOf(SheetRoutes.StopDetails::class), "StopDetailsFilteredView"))
 
-    val lineOrRoute: LineOrRoute? = global?.getLineOrRoute(stopFilter.routeId)
+    val lineOrRoute: LineOrRoute? = global?.getLineOrRoute(routeStopFilter.routeId)
 
     val stop = global?.getStop(stopId)
     val realtimeStopData =
         when (val data = state.routeData) {
-            is StopDetailsViewModel.RouteData.Filtered -> data.stopData
+            is StopCentricViewModel.RouteData.RouteStop -> data.stopData
             else -> null
         }
 
     val leaf =
         realtimeStopData?.data?.firstOrNull {
             it.stop.id == stopId &&
-                it.lineOrRoute.id == stopFilter.routeId &&
-                it.direction.id == stopFilter.directionId
+                it.lineOrRoute.id == routeStopFilter.routeId &&
+                it.direction.id == routeStopFilter.directionId
         }
 
     @Composable
     fun Header(lineOrRoute: LineOrRoute, stop: Stop) {
-        val rsd = RouteStopDirection(lineOrRoute.id, stop.id, stopFilter.directionId)
+        val rsd = RouteStopDirection(lineOrRoute.id, stop.id, routeStopFilter.directionId)
 
         return Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
             StopDetailsFilteredHeader(
@@ -107,7 +106,7 @@ fun StopDetailsFilteredView(
                         SaveFavorite(
                             lineOrRoute.id,
                             stop.id,
-                            selectedDirection = stopFilter.directionId,
+                            selectedDirection = routeStopFilter.directionId,
                             context = EditFavoritesContext.StopDetails,
                         ),
                     )
@@ -132,9 +131,9 @@ fun StopDetailsFilteredView(
             Column(modifier = Modifier.loading()) {
                 val routeData =
                     LoadingPlaceholders.routeCardData(
-                        stopFilter.routeId,
+                        routeStopFilter.routeId,
                         trips = 10,
-                        RouteCardData.Context.StopDetailsFiltered,
+                        RouteCardData.Context.RouteStop,
                         now,
                     )
                 val stopData = routeData.stopData.single()
@@ -142,7 +141,7 @@ fun StopDetailsFilteredView(
 
                 StopDetailsFilteredDeparturesView(
                     stopId = stopId,
-                    stopFilter = stopFilter,
+                    routeStopFilter = routeStopFilter,
                     tripFilter = tripFilter,
                     leaf = placeholderLeaf,
                     selectedDirection = stopData.data.first().direction,
@@ -176,7 +175,7 @@ fun StopDetailsFilteredView(
             !stop.isLastStopForAllPatterns(it.id, allPatternsForStop, global)
         }
 
-        val rsd = RouteStopDirection(lineOrRoute.id, stop.id, stopFilter.directionId)
+        val rsd = RouteStopDirection(lineOrRoute.id, stop.id, routeStopFilter.directionId)
 
         Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
             Header(lineOrRoute, stop)
@@ -194,18 +193,20 @@ fun StopDetailsFilteredView(
                         availableDirections = availableDirections.map { it.id },
                         directions = directions,
                         route = lineOrRoute.sortRoute,
-                        selectedDirectionId = stopFilter.directionId,
-                        updateDirectionId = { updateStopFilter(stopFilter.copy(directionId = it)) },
+                        selectedDirectionId = routeStopFilter.directionId,
+                        updateDirectionId = {
+                            updateRouteStopFilter(routeStopFilter.copy(directionId = it))
+                        },
                         modifier = Modifier.padding(horizontal = 10.dp),
                     )
 
                     if (leaf != null) {
                         StopDetailsFilteredDeparturesView(
                             stopId = stopId,
-                            stopFilter = stopFilter,
+                            routeStopFilter = routeStopFilter,
                             tripFilter = tripFilter,
                             leaf = leaf,
-                            selectedDirection = directions[stopFilter.directionId],
+                            selectedDirection = directions[rsd.direction],
                             allAlerts = allAlerts,
                             now = now,
                             updateTripFilter = updateTripFilter,
@@ -227,9 +228,9 @@ fun StopDetailsFilteredView(
     } else {
         val routeData =
             LoadingPlaceholders.routeCardData(
-                stopFilter.routeId,
+                routeStopFilter.routeId,
                 10,
-                RouteCardData.Context.StopDetailsFiltered,
+                RouteCardData.Context.RouteStop,
                 now,
             )
 

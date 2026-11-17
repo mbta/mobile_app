@@ -38,11 +38,11 @@ extension HomeMapView {
     }
 
     func handleNavStackChange(entry: SheetNavigationStackEntry) {
-        let filter: StopDetailsFilter? = switch entry {
-        case let .stopDetails(_, stopFilter, _):
-            stopFilter
+        let filter: RouteStopFilter? = switch entry {
+        case let .stopDetails(_, routeStopFilter, _):
+            routeStopFilter
         case let .tripDetails(tripPageFilter):
-            tripPageFilter.stopFilter
+            tripPageFilter.routeStopFilter
         default:
             nil
         }
@@ -105,24 +105,24 @@ extension HomeMapView {
         }
         analytics.tappedOnStop(stopId: stop.id)
         navManager.popToEntrypoint()
-        navManager.pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil))
+        navManager.pushNavEntry(.stopDetails(stopId: stop.id, routeStopFilter: nil, tripFilter: nil))
         return true
     }
 
     func handleTapVehicle(_ vehicle: Vehicle) {
         guard let tripId = vehicle.tripId else { return }
         let currentNavEntry = navManager.navigationStack.lastSafe()
-        let (stopId, stopFilter, tripFilter): (String?, StopDetailsFilter?,
-                                               TripDetailsFilter?) = switch currentNavEntry {
-        case let .stopDetails(stopId: stopId, stopFilter: stopFilter, tripFilter: tripFilter): (
+        let (stopId, routeStopFilter, tripFilter): (String?, RouteStopFilter?,
+                                                    TripDetailsFilter?) = switch currentNavEntry {
+        case let .stopDetails(stopId: stopId, routeStopFilter: routeStopFilter, tripFilter: tripFilter): (
                 stopId,
-                stopFilter,
+                routeStopFilter,
                 tripFilter
             )
-        case let .tripDetails(filter: filter): (filter.stopId, filter.stopFilter, filter.tripDetailsFilter)
+        case let .tripDetails(filter: filter): (filter.stopId, filter.routeStopFilter, filter.tripDetailsFilter)
         default: (nil, nil, nil)
         }
-        guard let stopId, let stopFilter else { return }
+        guard let stopId, let routeStopFilter else { return }
         let routeCard = routeCardDataState?.data?
             .first(where: { $0.lineOrRoute.containsRoute(routeId: vehicle.routeId) })
         let upcoming = routeCard?
@@ -131,7 +131,7 @@ extension HomeMapView {
             .flatMap(\.upcomingTrips)
             .first { upcoming in upcoming.trip.id == tripId }
         let stopSequence = upcoming?.stopSequence ?? tripFilter?.stopSequence
-        let routeId = upcoming?.routeId ?? vehicle.routeId ?? routeCard?.lineOrRoute.id ?? stopFilter.routeId
+        let routeId = upcoming?.routeId ?? vehicle.routeId ?? routeCard?.lineOrRoute.id ?? routeStopFilter.routeId
 
         analytics.tappedVehicle(routeId: routeId)
 
@@ -145,7 +145,7 @@ extension HomeMapView {
             tripId: tripId,
             vehicleId: vehicle.id,
             routeId: routeId,
-            directionId: stopFilter.directionId,
+            directionId: routeStopFilter.directionId,
             stopId: stopId,
             stopSequence: stopSequence
         )))

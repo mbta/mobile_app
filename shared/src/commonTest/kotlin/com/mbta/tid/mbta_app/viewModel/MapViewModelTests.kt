@@ -10,8 +10,8 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.SegmentAlertState
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.Vehicle
@@ -141,16 +141,16 @@ internal class MapViewModelTests : KoinTest {
             delay(10)
             assertEquals(1, timesRestoreViewportCalled)
             assertEquals(1, timesSaveViewportCalled)
-            val stopFilter = StopDetailsFilter(Route.Id(""), 0)
+            val routeStopFilter = RouteStopFilter(Route.Id(""), 0)
             val tripFilter = TripDetailsFilter("", "", 0)
             viewModel.navChanged(
-                SheetRoutes.TripDetails(TripDetailsPageFilter("", stopFilter, tripFilter)),
+                SheetRoutes.TripDetails(TripDetailsPageFilter("", routeStopFilter, tripFilter)),
             )
             assertEquals(
                 MapViewModel.State(
                     MapViewModel.LayerState.TripSelected(
                         null,
-                        stopFilter,
+                        routeStopFilter,
                         tripFilter,
                         null,
                         null,
@@ -386,7 +386,7 @@ internal class MapViewModelTests : KoinTest {
             currentStopSequence = 4
         }
         val tripFilter = TripDetailsFilter("trip", vehicle.id, 5)
-        val stopFilter = StopDetailsFilter(Route.Id("Green-B"), 0)
+        val stopFilter = RouteStopFilter(Route.Id("Green-B"), 0)
         val statesApplied = mutableListOf<MapViewportState>()
         val viewportProvider =
             MockViewportManager(
@@ -521,7 +521,7 @@ internal class MapViewModelTests : KoinTest {
                 SheetRoutes.TripDetails(
                     TripDetailsPageFilter(
                         stop.id,
-                        StopDetailsFilter(Route.Id("Green-B"), 0),
+                        RouteStopFilter(Route.Id("Green-B"), 0),
                         TripDetailsFilter("trip", null, 5),
                     ),
                 ),

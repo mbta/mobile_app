@@ -1,5 +1,5 @@
 //
-//  StopDetailsManageVMModifier.swift
+//  StopCentricManageVMModifier.swift
 //  iosApp
 //
 //  Created by esimon on 9/8/25.
@@ -9,9 +9,9 @@
 import Shared
 import SwiftUI
 
-struct StopDetailsManageVMModifier: ViewModifier {
-    var viewModel: IStopDetailsViewModel
-    @Binding var vmState: StopDetailsViewModel.State?
+struct StopCentricManageVMModifier: ViewModifier {
+    var viewModel: IStopCentricViewModel
+    @Binding var vmState: StopCentricViewModel.State?
     var alerts: AlertsStreamDataResponse?
     var filters: StopDetailsPageFilters
     var now: EasternTimeInstant
@@ -46,7 +46,7 @@ struct StopDetailsManageVMModifier: ViewModifier {
             .onDisappear {
                 // Only set to inactive if the loaded filter matches the current value, this will be true
                 // when the page is closed, but not when the loading view disappears or the filter is changed
-                if let selectedFilters = vmState?.routeData?.filters, filters == selectedFilters {
+                if let selectedFilters = vmState?.routeData?.filteredWith, filters == selectedFilters {
                     viewModel.setActive(active: false, wasSentToBackground: false)
                 }
             }
@@ -56,13 +56,13 @@ struct StopDetailsManageVMModifier: ViewModifier {
 
 public extension View {
     func manageVM(
-        _ viewModel: IStopDetailsViewModel,
-        _ state: Binding<StopDetailsViewModel.State?>,
+        _ viewModel: IStopCentricViewModel,
+        _ state: Binding<StopCentricViewModel.State?>,
         alerts: AlertsStreamDataResponse?,
         filters: StopDetailsPageFilters,
         now: EasternTimeInstant
     ) -> some View {
-        modifier(StopDetailsManageVMModifier(
+        modifier(StopCentricManageVMModifier(
             viewModel: viewModel,
             vmState: state,
             alerts: alerts,

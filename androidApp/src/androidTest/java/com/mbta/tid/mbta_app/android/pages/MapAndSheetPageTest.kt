@@ -30,7 +30,7 @@ import com.mbta.tid.mbta_app.routes.DeepLinkState
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
-import com.mbta.tid.mbta_app.viewModel.MockStopDetailsViewModel
+import com.mbta.tid.mbta_app.viewModel.MockStopCentricViewModel
 import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.every
@@ -127,8 +127,8 @@ class MapAndSheetPageTest {
             MutableStateFlow(MapViewModel.State(MapViewModel.LayerState.Overview, true))
         // The shared view model replays its last filter update, so the effect fires immediately,
         // before any NavHost has had a chance to attach a graph to the nav controller.
-        val stopDetailsViewModel = MockStopDetailsViewModel()
-        stopDetailsViewModel.filterUpdates.value = StopDetailsPageFilters(stop.id, null, null)
+        val stopCentricViewModel = MockStopCentricViewModel()
+        stopCentricViewModel.filterUpdates.value = StopDetailsPageFilters(stop.id, null, null)
         val entrypoint = mutableStateOf<SheetRoutes.Entrypoint?>(null)
         val noDeepLink = MutableStateFlow<DeepLinkState?>(null).asStateFlow()
 
@@ -152,7 +152,7 @@ class MapAndSheetPageTest {
                 hideNavBar = {},
                 bottomBar = {},
                 mapViewModel = mapViewModel,
-                stopDetailsViewModel = stopDetailsViewModel,
+                stopCentricViewModel = stopCentricViewModel,
             )
         }
 

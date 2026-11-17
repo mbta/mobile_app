@@ -9,7 +9,7 @@ public interface RouteDirection {
 }
 
 @Serializable
-public data class StopDetailsFilter
+public data class RouteStopFilter
 @DefaultArgumentInterop.Enabled
 constructor(
     override val routeId: LineOrRoute.Id,
@@ -24,8 +24,8 @@ constructor(
          * replaced with the new value.
          */
         public fun shouldPopLastStopEntry(
-            lastFilter: StopDetailsFilter?,
-            newFilter: StopDetailsFilter?,
+            lastFilter: RouteStopFilter?,
+            newFilter: RouteStopFilter?,
         ): Boolean {
             return lastFilter != null || newFilter?.autoFilter == true
         }
@@ -45,10 +45,10 @@ public data class TripDetailsFilter(
 @Serializable
 public data class StopDetailsPageFilters(
     val stopId: String,
-    val stopFilter: StopDetailsFilter?,
+    val routeStopFilter: RouteStopFilter?,
     val tripFilter: TripDetailsFilter?,
 ) {
-    public var routeStopDirection: RouteStopDirection? = stopFilter?.let {
+    public val routeStopDirection: RouteStopDirection? = routeStopFilter?.let {
         RouteStopDirection(it.routeId, stopId, it.directionId)
     }
 }
@@ -65,18 +65,18 @@ public data class TripDetailsPageFilter(
     val tripDetailsFilter: TripDetailsFilter
         get() = TripDetailsFilter(tripId, vehicleId = vehicleId, stopSequence = stopSequence)
 
-    val stopFilter: StopDetailsFilter
-        get() = StopDetailsFilter(routeId = routeId, directionId = directionId)
+    val routeStopFilter: RouteStopFilter
+        get() = RouteStopFilter(routeId = routeId, directionId = directionId)
 
     public constructor(
         stopId: String,
-        stopFilter: StopDetailsFilter,
+        routeStopFilter: RouteStopFilter,
         tripFilter: TripDetailsFilter,
     ) : this(
         tripFilter.tripId,
         tripFilter.vehicleId,
-        stopFilter.routeId,
-        stopFilter.directionId,
+        routeStopFilter.routeId,
+        routeStopFilter.directionId,
         stopId,
         tripFilter.stopSequence,
     )

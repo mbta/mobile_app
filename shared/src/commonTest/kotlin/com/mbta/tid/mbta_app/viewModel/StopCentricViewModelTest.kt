@@ -7,7 +7,7 @@ import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -43,7 +43,7 @@ import org.koin.dsl.module
 import org.koin.test.KoinTest
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class StopDetailsViewModelTest : KoinTest {
+class StopCentricViewModelTest : KoinTest {
     val objects = TestData.clone()
 
     private fun setUpKoin(
@@ -90,14 +90,14 @@ class StopDetailsViewModelTest : KoinTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
         setUpKoin(objects, dispatcher) { schedules = scheduleRepo }
 
-        val viewModel: StopDetailsViewModel = get()
+        val viewModel: StopCentricViewModel = get()
         val filters = StopDetailsPageFilters("place-gover", null, null)
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(EasternTimeInstant.now())
 
         testViewModelFlow(viewModel).test {
-            awaitItemSatisfying { it.routeData is StopDetailsViewModel.RouteData.Unfiltered }
+            awaitItemSatisfying { it.routeData is StopCentricViewModel.RouteData.StopOverview }
             assertTrue(schedulesLoaded)
         }
     }
@@ -115,14 +115,14 @@ class StopDetailsViewModelTest : KoinTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
         setUpKoin(objects, dispatcher) { predictions = predictionRepo }
 
-        val viewModel: StopDetailsViewModel = get()
+        val viewModel: StopCentricViewModel = get()
         val filters = StopDetailsPageFilters("place-gover", null, null)
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(EasternTimeInstant.now())
 
         testViewModelFlow(viewModel).test {
-            awaitItemSatisfying { it.routeData is StopDetailsViewModel.RouteData.Unfiltered }
+            awaitItemSatisfying { it.routeData is StopCentricViewModel.RouteData.StopOverview }
             assertTrue(predictionsLoaded)
         }
     }
@@ -140,7 +140,7 @@ class StopDetailsViewModelTest : KoinTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
         setUpKoin(objects, dispatcher) { predictions = predictionRepo }
 
-        val viewModel: StopDetailsViewModel = get()
+        val viewModel: StopCentricViewModel = get()
         val initialFilters = StopDetailsPageFilters("place-gover", null, null)
         val updatedFilters = StopDetailsPageFilters("place-rugg", null, null)
         viewModel.setFilters(initialFilters)
@@ -149,14 +149,14 @@ class StopDetailsViewModelTest : KoinTest {
 
         testViewModelFlow(viewModel).test {
             awaitItemSatisfying {
-                it.routeData is StopDetailsViewModel.RouteData.Unfiltered &&
-                    it.routeData.filters == initialFilters
+                it.routeData is StopCentricViewModel.RouteData.StopOverview &&
+                    it.routeData.filteredWith == initialFilters
             }
             assertEquals(1, predictionLoadCount)
             viewModel.setFilters(updatedFilters)
             awaitItemSatisfying {
-                it.routeData is StopDetailsViewModel.RouteData.Unfiltered &&
-                    it.routeData.filters == updatedFilters
+                it.routeData is StopCentricViewModel.RouteData.StopOverview &&
+                    it.routeData.filteredWith == updatedFilters
             }
             assertEquals(2, predictionLoadCount)
         }
@@ -177,14 +177,14 @@ class StopDetailsViewModelTest : KoinTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
         setUpKoin(objects, dispatcher) { predictions = predictionRepo }
 
-        val viewModel: StopDetailsViewModel = get()
+        val viewModel: StopCentricViewModel = get()
         viewModel.setActive(active = true, wasSentToBackground = false)
         viewModel.setFilters(StopDetailsPageFilters("place-gover", null, null))
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(EasternTimeInstant.now())
 
         testViewModelFlow(viewModel).test {
-            awaitItemSatisfying { it.routeData is StopDetailsViewModel.RouteData.Unfiltered }
+            awaitItemSatisfying { it.routeData is StopCentricViewModel.RouteData.StopOverview }
             assertEquals(1, predictionLoadCount)
             assertEquals(0, predictionDisconnectCount)
             viewModel.setActive(active = false, wasSentToBackground = false)
@@ -200,11 +200,11 @@ class StopDetailsViewModelTest : KoinTest {
         setUpKoin(objects, dispatcher)
 
         val routeCardVM: RouteCardDataViewModel = get()
-        val viewModel: StopDetailsViewModel = get()
+        val viewModel: StopCentricViewModel = get()
         val filters =
             StopDetailsPageFilters(
                 "place-gover",
-                StopDetailsFilter(Line.Id("line-Green"), 0, false),
+                RouteStopFilter(Line.Id("line-Green"), 0, false),
                 null,
             )
 
@@ -215,7 +215,7 @@ class StopDetailsViewModelTest : KoinTest {
             viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
             viewModel.setNow(EasternTimeInstant.now())
             modelTurbine.awaitItemSatisfying {
-                it.routeData is StopDetailsViewModel.RouteData.Filtered
+                it.routeData is StopCentricViewModel.RouteData.RouteStop
             }
             routeCardTurbine.awaitItemSatisfying { it.data != null }
         }
@@ -228,7 +228,7 @@ class StopDetailsViewModelTest : KoinTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
         setUpKoin(objects, dispatcher) { predictions = predictionRepo }
 
-        val viewModel: StopDetailsViewModel = get()
+        val viewModel: StopCentricViewModel = get()
         val filters = StopDetailsPageFilters("place-gover", null, null)
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
@@ -244,7 +244,7 @@ class StopDetailsViewModelTest : KoinTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
         setUpKoin(objects, dispatcher) { schedules = scheduleRepo }
 
-        val viewModel: StopDetailsViewModel = get()
+        val viewModel: StopCentricViewModel = get()
         val filters = StopDetailsPageFilters("place-gover", null, null)
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
@@ -268,7 +268,7 @@ class StopDetailsViewModelTest : KoinTest {
             errorBanner = errorBannerStateRepository
         }
 
-        val viewModel: StopDetailsViewModel = get()
+        val viewModel: StopCentricViewModel = get()
         val filters = StopDetailsPageFilters("place-gover", null, null)
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
@@ -299,7 +299,7 @@ class StopDetailsViewModelTest : KoinTest {
             predictions = predictionRepo
         }
 
-        val viewModel: StopDetailsViewModel = get()
+        val viewModel: StopCentricViewModel = get()
         val filters = StopDetailsPageFilters("2595", null, null)
 
         turbineScope {
@@ -312,7 +312,7 @@ class StopDetailsViewModelTest : KoinTest {
 
             modelTurbine.awaitItemSatisfying { it.routeData != null }
             filterUpdatesTurbine.awaitItemSatisfying {
-                it?.stopFilter == StopDetailsFilter(Route.Id("87"), 1, true)
+                it?.routeStopFilter == RouteStopFilter(Route.Id("87"), 1, true)
             }
         }
     }
@@ -345,7 +345,7 @@ class StopDetailsViewModelTest : KoinTest {
             predictions = predictionRepo
         }
 
-        val viewModel: StopDetailsViewModel = get()
+        val viewModel: StopCentricViewModel = get()
         val filters = StopDetailsPageFilters(stop.id, null, null)
 
         turbineScope {
@@ -402,11 +402,11 @@ class StopDetailsViewModelTest : KoinTest {
             predictions = predictionRepo
         }
 
-        val viewModel: StopDetailsViewModel = get()
+        val viewModel: StopCentricViewModel = get()
         val initialFilters =
             StopDetailsPageFilters(
                 "place-rugg",
-                StopDetailsFilter(Route.Id("Orange"), 0, false),
+                RouteStopFilter(Route.Id("Orange"), 0, false),
                 null,
             )
 
@@ -418,16 +418,20 @@ class StopDetailsViewModelTest : KoinTest {
             viewModel.setActive(active = true, wasSentToBackground = false)
             viewModel.setFilters(initialFilters)
 
-            modelTurbine.awaitItemSatisfying { it.routeData?.filters?.stopFilter?.directionId == 0 }
+            modelTurbine.awaitItemSatisfying {
+                it.routeData?.filteredWith?.routeStopFilter?.directionId == 0
+            }
             filterUpdatesTurbine.awaitItemSatisfying { it?.tripFilter?.tripId == trip0.id }
             viewModel.setFilters(
                 StopDetailsPageFilters(
                     "place-rugg",
-                    StopDetailsFilter(Route.Id("Orange"), 1, false),
+                    RouteStopFilter(Route.Id("Orange"), 1, false),
                     null,
                 ),
             )
-            modelTurbine.awaitItemSatisfying { it.routeData?.filters?.stopFilter?.directionId == 1 }
+            modelTurbine.awaitItemSatisfying {
+                it.routeData?.filteredWith?.routeStopFilter?.directionId == 1
+            }
 
             filterUpdatesTurbine.awaitItemSatisfying { it?.tripFilter?.tripId == trip1.id }
         }

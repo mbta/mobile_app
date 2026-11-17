@@ -11,8 +11,8 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
@@ -23,9 +23,9 @@ import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
-import com.mbta.tid.mbta_app.viewModel.MockStopDetailsViewModel
-import com.mbta.tid.mbta_app.viewModel.StopDetailsViewModel
-import com.mbta.tid.mbta_app.viewModel.StopDetailsViewModel.RouteData
+import com.mbta.tid.mbta_app.viewModel.MockStopCentricViewModel
+import com.mbta.tid.mbta_app.viewModel.StopCentricViewModel
+import com.mbta.tid.mbta_app.viewModel.StopCentricViewModel.RouteData
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.runBlocking
@@ -141,7 +141,7 @@ class StopDetailsFilteredViewTest {
 
     @Test
     fun testStopDetailsRouteViewDisplaysCorrectly(): Unit = runBlocking {
-        val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
+        val filterState = RouteStopFilter(route.id, 0)
         val routeCardData =
             checkNotNull(
                 RouteCardData.routeCardsForStopList(
@@ -152,7 +152,7 @@ class StopDetailsFilteredViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    context = RouteCardData.Context.StopDetailsFiltered,
+                    context = RouteCardData.Context.RouteStop,
                 ),
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -160,22 +160,22 @@ class StopDetailsFilteredViewTest {
         composeTestRule.setContent {
             StopDetailsFilteredView(
                 stopId = stop.id,
-                stopFilter = filterState,
+                routeStopFilter = filterState,
                 tripFilter = null,
                 allAlerts = null,
                 now = now,
                 errorBannerViewModel = koinInject(),
-                updateStopFilter = {},
+                updateRouteStopFilter = {},
                 updateTripFilter = {},
                 tileScrollState = rememberScrollState(),
                 isFavorite = { false },
                 openModal = {},
                 openSheetRoute = {},
                 navCallbacks = NavigationCallbacks.empty,
-                stopDetailsViewModel =
-                    MockStopDetailsViewModel(
-                        StopDetailsViewModel.State(
-                            RouteData.Filtered(
+                stopCentricViewModel =
+                    MockStopCentricViewModel(
+                        StopCentricViewModel.State(
+                            RouteData.RouteStop(
                                 StopDetailsPageFilters(stop.id, filterState, null),
                                 routeStopData,
                             ),
@@ -192,7 +192,7 @@ class StopDetailsFilteredViewTest {
     fun testTappingTripSetsFilter() = runBlocking {
         var tripFilter: TripDetailsFilter? = null
 
-        val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
+        val filterState = RouteStopFilter(routeId = route.id, directionId = 0)
 
         val routeCardData =
             checkNotNull(
@@ -204,7 +204,7 @@ class StopDetailsFilteredViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    context = RouteCardData.Context.StopDetailsFiltered,
+                    context = RouteCardData.Context.RouteStop,
                 ),
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -212,22 +212,22 @@ class StopDetailsFilteredViewTest {
         composeTestRule.setContent {
             StopDetailsFilteredView(
                 stopId = stop.id,
-                stopFilter = filterState,
+                routeStopFilter = filterState,
                 tripFilter = null,
                 allAlerts = null,
                 now = now,
                 errorBannerViewModel = koinInject(),
-                updateStopFilter = {},
+                updateRouteStopFilter = {},
                 updateTripFilter = { tripFilter = it },
                 tileScrollState = rememberScrollState(),
                 isFavorite = { false },
                 openModal = {},
                 openSheetRoute = {},
                 navCallbacks = NavigationCallbacks.empty,
-                stopDetailsViewModel =
-                    MockStopDetailsViewModel(
-                        StopDetailsViewModel.State(
-                            RouteData.Filtered(
+                stopCentricViewModel =
+                    MockStopCentricViewModel(
+                        StopCentricViewModel.State(
+                            RouteData.RouteStop(
                                 StopDetailsPageFilters(stop.id, filterState, null),
                                 routeStopData,
                             ),
@@ -252,7 +252,7 @@ class StopDetailsFilteredViewTest {
             informedEntity(listOf(Alert.InformedEntity.Activity.UsingWheelchair), stop = stop.id)
         }
 
-        val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
+        val filterState = RouteStopFilter(routeId = route.id, directionId = 0)
 
         val routeCardData =
             checkNotNull(
@@ -264,7 +264,7 @@ class StopDetailsFilteredViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(builder),
                     now,
-                    context = RouteCardData.Context.StopDetailsFiltered,
+                    context = RouteCardData.Context.RouteStop,
                 ),
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -272,22 +272,22 @@ class StopDetailsFilteredViewTest {
         composeTestRule.setContent {
             StopDetailsFilteredView(
                 stopId = stop.id,
-                stopFilter = filterState,
+                routeStopFilter = filterState,
                 tripFilter = null,
                 allAlerts = null,
                 now = now,
                 errorBannerViewModel = koinInject(),
-                updateStopFilter = {},
+                updateRouteStopFilter = {},
                 updateTripFilter = {},
                 tileScrollState = rememberScrollState(),
                 isFavorite = { false },
                 openModal = {},
                 openSheetRoute = {},
                 navCallbacks = NavigationCallbacks.empty,
-                stopDetailsViewModel =
-                    MockStopDetailsViewModel(
-                        StopDetailsViewModel.State(
-                            RouteData.Filtered(
+                stopCentricViewModel =
+                    MockStopCentricViewModel(
+                        StopCentricViewModel.State(
+                            RouteData.RouteStop(
                                 StopDetailsPageFilters(stop.id, filterState, null),
                                 routeStopData,
                             ),
@@ -302,7 +302,7 @@ class StopDetailsFilteredViewTest {
     @Test
     fun testShowsNotAccessibleAlert(): Unit = runBlocking {
         settings[Settings.StationAccessibility] = true
-        val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
+        val filterState = RouteStopFilter(routeId = route.id, directionId = 0)
 
         val routeCardData =
             checkNotNull(
@@ -314,7 +314,7 @@ class StopDetailsFilteredViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    RouteCardData.Context.StopDetailsFiltered,
+                    RouteCardData.Context.RouteStop,
                 ),
             )
         val routeStopData = routeCardData.single().stopData.single()
@@ -322,22 +322,22 @@ class StopDetailsFilteredViewTest {
         composeTestRule.setContent {
             StopDetailsFilteredView(
                 stopId = inaccessibleStop.id,
-                stopFilter = filterState,
+                routeStopFilter = filterState,
                 tripFilter = null,
                 allAlerts = null,
                 now = now,
                 errorBannerViewModel = koinInject(),
-                updateStopFilter = {},
+                updateRouteStopFilter = {},
                 updateTripFilter = {},
                 tileScrollState = rememberScrollState(),
                 isFavorite = { false },
                 openModal = {},
                 openSheetRoute = {},
                 navCallbacks = NavigationCallbacks.empty,
-                stopDetailsViewModel =
-                    MockStopDetailsViewModel(
-                        StopDetailsViewModel.State(
-                            RouteData.Filtered(
+                stopCentricViewModel =
+                    MockStopCentricViewModel(
+                        StopCentricViewModel.State(
+                            RouteData.RouteStop(
                                 StopDetailsPageFilters(stop.id, filterState, null),
                                 routeStopData,
                             ),

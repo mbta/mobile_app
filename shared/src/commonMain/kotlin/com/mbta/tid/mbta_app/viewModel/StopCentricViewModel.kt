@@ -8,7 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.RouteCardData
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.StopDetailsUtils
 import com.mbta.tid.mbta_app.model.hasContext
@@ -30,8 +30,8 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-public interface IStopDetailsViewModel {
-    public val models: StateFlow<StopDetailsViewModel.State>
+public interface IStopCentricViewModel {
+    public val models: StateFlow<StopCentricViewModel.State>
 
     public val filterUpdates: StateFlow<StopDetailsPageFilters?>
 
@@ -44,7 +44,7 @@ public interface IStopDetailsViewModel {
     public fun setNow(now: EasternTimeInstant)
 }
 
-public class StopDetailsViewModel(
+public class StopCentricViewModel(
     private val routeCardDataViewModel: IRouteCardDataViewModel,
     private val errorBannerRepository: IErrorBannerStateRepository,
     private val predictionsRepository: IPredictionsRepository,
@@ -52,8 +52,8 @@ public class StopDetailsViewModel(
     private val schedulesRepository: ISchedulesRepository,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) :
-    MoleculeViewModel<StopDetailsViewModel.Event, StopDetailsViewModel.State>(),
-    IStopDetailsViewModel {
+    MoleculeViewModel<StopCentricViewModel.Event, StopCentricViewModel.State>(),
+    IStopCentricViewModel {
     public sealed class Event {
         public data class SetActive(val active: Boolean, val wasSentToBackground: Boolean) : Event()
     }
@@ -64,22 +64,17 @@ public class StopDetailsViewModel(
     )
 
     public sealed class RouteData {
-        public data class Filtered(
-            val filteredWith: StopDetailsPageFilters,
+        public abstract val filteredWith: StopDetailsPageFilters
+
+        public data class RouteStop(
+            override val filteredWith: StopDetailsPageFilters,
             val stopData: RouteCardData.RouteStopData,
         ) : RouteData()
 
-        public data class Unfiltered(
-            val filteredWith: StopDetailsPageFilters,
+        public data class StopOverview(
+            override val filteredWith: StopDetailsPageFilters,
             val routeCards: List<RouteCardData>,
         ) : RouteData()
-
-        public val filters: StopDetailsPageFilters
-            get() =
-                when (this) {
-                    is Filtered -> this.filteredWith
-                    is Unfiltered -> this.filteredWith
-                }
     }
 
     @set:JvmName("setAlertsState")
@@ -95,7 +90,7 @@ public class StopDetailsViewModel(
         var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
 
         var active: Boolean by remember { mutableStateOf(true) }
-        val errorKey = ErrorKey(setOf(SheetRoutes.StopDetails::class), "StopDetailsViewModel")
+        val errorKey = ErrorKey(setOf(SheetRoutes.StopDetails::class), "StopCentricViewModel")
         val globalData = getGlobalData(errorKey, coroutineDispatcher = coroutineDispatcher)
 
         val stopIds =
@@ -112,7 +107,9 @@ public class StopDetailsViewModel(
             getDepartureData(
                 stopIds?.toSet(),
                 now,
-                filters?.let { SheetRoutes.StopDetails(it.stopId, it.stopFilter, it.tripFilter) },
+                filters?.let {
+                    SheetRoutes.StopDetails(it.stopId, it.routeStopFilter, it.tripFilter)
+                },
                 active,
                 errorKey,
                 onAnyMessageReceived = { awaitingPredictionsAfterBackground = false },
@@ -145,7 +142,7 @@ public class StopDetailsViewModel(
                 routeCardData = null
                 routeData = null
                 return@LaunchedEffect
-            } else if (routeData?.filters?.stopId != filters?.stopId) {
+            } else if (routeData?.filteredWith?.stopId != filters?.stopId) {
                 routeCardData = null
                 routeData = null
             }
@@ -159,22 +156,21 @@ public class StopDetailsViewModel(
                     responses.predictions,
                     alerts,
                     now,
-                    if (resolvedFilters.stopFilter != null)
-                        RouteCardData.Context.StopDetailsFiltered
-                    else RouteCardData.Context.StopDetailsUnfiltered,
+                    if (resolvedFilters.routeStopFilter != null) RouteCardData.Context.RouteStop
+                    else RouteCardData.Context.StopOverview,
                 )
 
             routeData =
                 when {
-                    routeCardData?.hasContext(RouteCardData.Context.StopDetailsFiltered) == true ->
+                    routeCardData?.hasContext(RouteCardData.Context.RouteStop) == true ->
                         routeCardData
-                            ?.find { it.lineOrRoute.id == resolvedFilters.stopFilter?.routeId }
+                            ?.find { it.lineOrRoute.id == resolvedFilters.routeStopFilter?.routeId }
                             ?.stopData
                             ?.firstOrNull()
-                            ?.let { RouteData.Filtered(resolvedFilters, it) }
+                            ?.let { RouteData.RouteStop(resolvedFilters, it) }
 
-                    routeCardData?.hasContext(RouteCardData.Context.StopDetailsUnfiltered) ==
-                        true -> routeCardData?.let { RouteData.Unfiltered(resolvedFilters, it) }
+                    routeCardData?.hasContext(RouteCardData.Context.StopOverview) == true ->
+                        routeCardData?.let { RouteData.StopOverview(resolvedFilters, it) }
 
                     else -> null
                 }
@@ -183,14 +179,14 @@ public class StopDetailsViewModel(
         fun applyFilterUpdate(
             routeCardData: List<RouteCardData>?,
             currentFilters: StopDetailsPageFilters,
-            stopDetailsFilterOverride: StopDetailsFilter? = null,
+            routeStopFilterOverride: RouteStopFilter? = null,
         ) {
             if (routeCardData == null) return
 
             val autoTripFilter =
                 StopDetailsUtils.autoTripFilter(
                     routeCardData,
-                    stopDetailsFilterOverride ?: currentFilters.stopFilter,
+                    routeStopFilterOverride ?: currentFilters.routeStopFilter,
                     currentFilters.tripFilter,
                     now,
                     globalData,
@@ -198,13 +194,13 @@ public class StopDetailsViewModel(
 
             if (
                 autoTripFilter != currentFilters.tripFilter ||
-                    (stopDetailsFilterOverride != null &&
-                        stopDetailsFilterOverride != currentFilters.stopFilter)
+                    (routeStopFilterOverride != null &&
+                        routeStopFilterOverride != currentFilters.routeStopFilter)
             ) {
                 _filterUpdates.tryEmit(
                     StopDetailsPageFilters(
                         currentFilters.stopId,
-                        stopDetailsFilterOverride ?: currentFilters.stopFilter,
+                        routeStopFilterOverride ?: currentFilters.routeStopFilter,
                         autoTripFilter,
                     ),
                 )
@@ -222,9 +218,10 @@ public class StopDetailsViewModel(
                 return@LaunchedEffect
             }
 
-            val autoStopFilter =
-                resolvedFilters.stopFilter ?: StopDetailsUtils.autoStopFilter(resolvedRouteCardData)
-            applyFilterUpdate(resolvedRouteCardData, resolvedFilters, autoStopFilter)
+            val autoRouteStopFilter =
+                resolvedFilters.routeStopFilter
+                    ?: StopDetailsUtils.autoRouteStopFilter(resolvedRouteCardData)
+            applyFilterUpdate(resolvedRouteCardData, resolvedFilters, autoRouteStopFilter)
         }
 
         val state =
@@ -259,17 +256,17 @@ public class StopDetailsViewModel(
     }
 }
 
-public class MockStopDetailsViewModel
+public class MockStopCentricViewModel
 @DefaultArgumentInterop.Enabled
-constructor(initialState: StopDetailsViewModel.State = StopDetailsViewModel.State()) :
-    IStopDetailsViewModel {
+constructor(initialState: StopCentricViewModel.State = StopCentricViewModel.State()) :
+    IStopCentricViewModel {
 
     public var onSetActive: (active: Boolean, wasSentToBackground: Boolean) -> Unit = { _, _ -> }
     public var onSetAlerts: (alerts: AlertsStreamDataResponse?) -> Unit = {}
     public var onSetFilters: (filters: StopDetailsPageFilters) -> Unit = {}
     public var onSetNow: (now: EasternTimeInstant) -> Unit = {}
 
-    override val models: MutableStateFlow<StopDetailsViewModel.State> =
+    override val models: MutableStateFlow<StopCentricViewModel.State> =
         MutableStateFlow(initialState)
     override val filterUpdates: MutableStateFlow<StopDetailsPageFilters?> = MutableStateFlow(null)
 

@@ -17,30 +17,30 @@ struct StopDetailsView: View {
 
     var filters: StopDetailsPageFilters
 
-    var routeData: StopDetailsViewModel.RouteData?
+    var routeData: StopCentricViewModel.RouteData?
     var alerts: AlertsStreamDataResponse?
     var favorites: Favorites?
     var global: GlobalResponse?
     var now: Date
 
     var onUpdateFavorites: () -> Void
-    var setStopFilter: (StopDetailsFilter?) -> Void
+    var setRouteStopFilter: (RouteStopFilter?) -> Void
     var setTripFilter: (TripDetailsFilter?) -> Void
     var navCallbacks: NavigationCallbacks
 
     var errorBannerVM: IErrorBannerViewModel
     var mapVM: IMapViewModel
-    var stopDetailsVM: IStopDetailsViewModel
+    var stopCentricVM: IStopCentricViewModel
 
     @ObservedObject var navManager: NavigationManager
 
     let inspection = Inspection<Self>()
 
     var body: some View {
-        if let stopFilter = filters.stopFilter {
+        if let routeStopFilter = filters.routeStopFilter {
             StopDetailsFilteredView(
                 stopId: filters.stopId,
-                stopFilter: stopFilter,
+                routeStopFilter: routeStopFilter,
                 tripFilter: filters.tripFilter,
                 routeData: routeData,
                 alerts: alerts,
@@ -48,12 +48,12 @@ struct StopDetailsView: View {
                 global: global,
                 now: now,
                 onUpdateFavorites: onUpdateFavorites,
-                setStopFilter: setStopFilter,
+                setRouteStopFilter: setRouteStopFilter,
                 setTripFilter: setTripFilter,
                 navCallbacks: navCallbacks,
                 errorBannerVM: errorBannerVM,
                 mapVM: mapVM,
-                stopDetailsVM: stopDetailsVM,
+                stopCentricVM: stopCentricVM,
                 navManager: navManager,
             )
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
@@ -65,7 +65,7 @@ struct StopDetailsView: View {
                 favorites: favorites,
                 global: global,
                 now: now.toEasternInstant(),
-                setStopFilter: setStopFilter,
+                setRouteStopFilter: setRouteStopFilter,
                 navCallbacks: navCallbacks,
                 errorBannerVM: errorBannerVM,
                 navManager: navManager,

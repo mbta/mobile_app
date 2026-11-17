@@ -59,7 +59,7 @@ class TripInstantDisplayTest {
                 context =
                     anyOf(
                         TripInstantDisplay.Context.NearbyTransit,
-                        TripInstantDisplay.Context.StopDetailsUnfiltered,
+                        TripInstantDisplay.Context.StopOverview,
                     ),
                 lastTrip = lastTrip,
             ),
@@ -81,7 +81,7 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = RouteType.COMMUTER_RAIL,
                 now = now,
-                context = TripInstantDisplay.Context.StopDetailsFiltered,
+                context = TripInstantDisplay.Context.RouteStop,
                 lastTrip = lastTrip,
             ),
         )
@@ -119,7 +119,7 @@ class TripInstantDisplayTest {
                     vehicle = null,
                     routeType = RouteType.COMMUTER_RAIL,
                     now = now,
-                    context = anyEnumValueExcept(TripInstantDisplay.Context.StopDetailsFiltered),
+                    context = anyEnumValueExcept(TripInstantDisplay.Context.RouteStop),
                     lastTrip = false,
                 ),
             )
@@ -161,7 +161,7 @@ class TripInstantDisplayTest {
                     vehicle = null,
                     routeType = RouteType.COMMUTER_RAIL,
                     now = now,
-                    context = TripInstantDisplay.Context.StopDetailsFiltered,
+                    context = TripInstantDisplay.Context.RouteStop,
                     lastTrip = lastTrip,
                 ),
             )
@@ -1011,7 +1011,7 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = RouteType.COMMUTER_RAIL,
                 now,
-                context = TripInstantDisplay.Context.StopDetailsFiltered,
+                context = TripInstantDisplay.Context.RouteStop,
                 lastTrip = lastTrip,
             ),
         )
@@ -1042,7 +1042,7 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = RouteType.COMMUTER_RAIL,
                 now,
-                context = TripInstantDisplay.Context.StopDetailsFiltered,
+                context = TripInstantDisplay.Context.RouteStop,
                 lastTrip = lastTrip,
             ),
         )
@@ -1073,7 +1073,7 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = RouteType.COMMUTER_RAIL,
                 now,
-                context = TripInstantDisplay.Context.StopDetailsFiltered,
+                context = TripInstantDisplay.Context.RouteStop,
                 lastTrip = lastTrip,
             ),
         )
@@ -1109,7 +1109,7 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = RouteType.COMMUTER_RAIL,
                 now,
-                context = TripInstantDisplay.Context.StopDetailsFiltered,
+                context = TripInstantDisplay.Context.RouteStop,
                 lastTrip = lastTrip,
             ),
         )
@@ -1297,7 +1297,7 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = RouteType.BUS,
                 now = now,
-                context = TripInstantDisplay.Context.StopDetailsFiltered,
+                context = TripInstantDisplay.Context.RouteStop,
                 lastTrip = lastTrip,
             ),
         )
@@ -1321,7 +1321,7 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = RouteType.BUS,
                 now = now,
-                context = TripInstantDisplay.Context.StopDetailsFiltered,
+                context = TripInstantDisplay.Context.RouteStop,
                 lastTrip = lastTrip,
             ),
         )
@@ -1345,7 +1345,7 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = RouteType.LIGHT_RAIL,
                 now = now,
-                context = TripInstantDisplay.Context.StopDetailsFiltered,
+                context = TripInstantDisplay.Context.RouteStop,
                 lastTrip = lastTrip,
             ),
         )
@@ -1369,7 +1369,7 @@ class TripInstantDisplayTest {
                 vehicle = null,
                 routeType = RouteType.BUS,
                 now = now,
-                context = anyEnumValueExcept(TripInstantDisplay.Context.StopDetailsFiltered),
+                context = anyEnumValueExcept(TripInstantDisplay.Context.RouteStop),
                 lastTrip = lastTrip,
             ),
         )

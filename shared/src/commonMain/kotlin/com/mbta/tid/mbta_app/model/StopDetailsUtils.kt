@@ -9,29 +9,30 @@ public object StopDetailsUtils {
      * If the stop serves only 1 route in a single direction, returns a new filter for that route
      * and direction.
      */
-    public fun autoStopFilter(routeCardData: List<RouteCardData>?): StopDetailsFilter? {
+    public fun autoRouteStopFilter(routeCardData: List<RouteCardData>?): RouteStopFilter? {
         val route = routeCardData?.singleOrNull() ?: return null
         val directions = route.stopData.flatMap { it.data }.map { it.direction.id }.toSet()
         if (directions.size != 1) {
             return null
         }
         val direction = directions.first()
-        return StopDetailsFilter(route.lineOrRoute.id, direction, autoFilter = true)
+        return RouteStopFilter(route.lineOrRoute.id, direction, autoFilter = true)
     }
 
     public fun autoTripFilter(
         routeCardData: List<RouteCardData>?,
-        stopFilter: StopDetailsFilter?,
+        routeStopFilter: RouteStopFilter?,
         currentTripFilter: TripDetailsFilter?,
         filterAtTime: EasternTimeInstant,
         globalData: GlobalResponse?,
     ): TripDetailsFilter? {
         val route =
-            routeCardData?.find { it.lineOrRoute.id == stopFilter?.routeId }
+            routeCardData?.find { it.lineOrRoute.id == routeStopFilter?.routeId }
                 ?: return currentTripFilter
         val leaf =
-            route.stopData.singleOrNull()?.data?.find { it.direction.id == stopFilter?.directionId }
-                ?: return currentTripFilter
+            route.stopData.singleOrNull()?.data?.find {
+                it.direction.id == routeStopFilter?.directionId
+            } ?: return currentTripFilter
         if (currentTripFilter?.selectionLock == true) return currentTripFilter
 
         val leafFormat = leaf.format(filterAtTime, globalData)
@@ -81,7 +82,7 @@ public object StopDetailsUtils {
         routeCardData: List<RouteCardData>?,
         previousFilters: StopDetailsPageFilters,
     ): ScreenReaderContext? {
-        val stopFilter = previousFilters.stopFilter ?: return null
+        val stopFilter = previousFilters.routeStopFilter ?: return null
         val selectedRoute =
             routeCardData?.firstOrNull { it.lineOrRoute.id == stopFilter.routeId } ?: return null
         val selectedStop = selectedRoute.stopData.singleOrNull() ?: return null

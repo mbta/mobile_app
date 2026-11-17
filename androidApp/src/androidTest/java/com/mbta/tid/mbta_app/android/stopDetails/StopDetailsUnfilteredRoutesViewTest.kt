@@ -11,8 +11,8 @@ import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -119,7 +119,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    RouteCardData.Context.StopDetailsUnfiltered,
+                    RouteCardData.Context.StopOverview,
                 ),
             )
 
@@ -127,7 +127,7 @@ class StopDetailsUnfilteredRoutesViewTest {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
+            val filterState = remember { mutableStateOf<RouteStopFilter?>(null) }
 
             StopDetailsUnfilteredRoutesView(
                 stop = stop,
@@ -139,7 +139,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                 isFavorite = { false },
                 navCallbacks = NavigationCallbacks.empty,
                 onTapRoutePill = {},
-                updateStopFilter = filterState::value::set,
+                updateRouteStopFilter = filterState::value::set,
             ) {}
         }
 
@@ -161,7 +161,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    RouteCardData.Context.StopDetailsUnfiltered,
+                    RouteCardData.Context.StopOverview,
                 ),
             )
 
@@ -169,7 +169,7 @@ class StopDetailsUnfilteredRoutesViewTest {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
+            val filterState = remember { mutableStateOf<RouteStopFilter?>(null) }
 
             StopDetailsUnfilteredRoutesView(
                 stop = inaccessibleStop,
@@ -181,7 +181,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                 isFavorite = { false },
                 navCallbacks = NavigationCallbacks.empty,
                 onTapRoutePill = {},
-                updateStopFilter = filterState::value::set,
+                updateRouteStopFilter = filterState::value::set,
             ) {}
         }
 
@@ -208,7 +208,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(mapOf(alert.id to alert)),
                     now,
-                    RouteCardData.Context.StopDetailsUnfiltered,
+                    RouteCardData.Context.StopOverview,
                 ),
             )
 
@@ -216,7 +216,7 @@ class StopDetailsUnfilteredRoutesViewTest {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
+            val filterState = remember { mutableStateOf<RouteStopFilter?>(null) }
 
             StopDetailsUnfilteredRoutesView(
                 stop = stop,
@@ -228,7 +228,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                 isFavorite = { false },
                 navCallbacks = NavigationCallbacks.empty,
                 onTapRoutePill = {},
-                updateStopFilter = filterState::value::set,
+                updateRouteStopFilter = filterState::value::set,
             ) {}
         }
 

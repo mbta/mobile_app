@@ -1596,8 +1596,8 @@ class RouteCardDataTest {
     fun `ListBuilder addAlerts filters to relevant routes`() = parametricTest {
         val context =
             anyOf(
-                RouteCardData.Context.StopDetailsUnfiltered,
-                RouteCardData.Context.StopDetailsFiltered,
+                RouteCardData.Context.StopOverview,
+                RouteCardData.Context.RouteStop,
             )
         val now = EasternTimeInstant.now()
         val objects = TestData.clone()
@@ -3611,7 +3611,7 @@ class RouteCardDataTest {
                     patternIdsByStop =
                         mapOf(stop1.id to listOf(typicalOutbound.id, deviationInbound.id)),
                 )
-            val context = RouteCardData.Context.StopDetailsFiltered
+            val context = RouteCardData.Context.RouteStop
             val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
             val typicalOutboundPrediction = objects.prediction {
@@ -3715,7 +3715,7 @@ class RouteCardDataTest {
                     objects,
                     patternIdsByStop = mapOf(stop1.id to listOf(typicalOutbound.id)),
                 )
-            val context = RouteCardData.Context.StopDetailsFiltered
+            val context = RouteCardData.Context.RouteStop
             val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
             val typicalOutboundSchedule = objects.schedule {
@@ -4234,7 +4234,7 @@ class RouteCardDataTest {
         }
 
         val lineOrRoute = LineOrRoute.Route(route)
-        val context = RouteCardData.Context.StopDetailsFiltered
+        val context = RouteCardData.Context.RouteStop
 
         assertEquals(
             listOf(

@@ -17,7 +17,7 @@ import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteCardData
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
@@ -56,7 +56,7 @@ class SubscribeToVehiclesTest {
 
         var vehicles: List<Vehicle> = emptyList()
 
-        var stateFilter = mutableStateOf(StopDetailsFilter(Route.Id("route_1"), 1))
+        var stateFilter = mutableStateOf(RouteStopFilter(Route.Id("route_1"), 1))
 
         composeTestRule.setContent {
             var filter by remember { stateFilter }
@@ -73,7 +73,7 @@ class SubscribeToVehiclesTest {
         composeTestRule.waitUntilDefaultTimeout { listOf(vehicle) == vehicles }
 
         composeTestRule.runOnUiThread {
-            stateFilter.value = StopDetailsFilter(Route.Id("route_2"), 1)
+            stateFilter.value = RouteStopFilter(Route.Id("route_2"), 1)
         }
         composeTestRule.waitUntilDefaultTimeout { connectProps == Pair(Route.Id("route_2"), 1) }
     }
@@ -96,7 +96,7 @@ class SubscribeToVehiclesTest {
 
         var vehicles: List<Vehicle> = emptyList()
 
-        var stateFilter = mutableStateOf(StopDetailsFilter(Route.Id("route_1"), 1))
+        var stateFilter = mutableStateOf(RouteStopFilter(Route.Id("route_1"), 1))
 
         composeTestRule.setContent {
             CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
@@ -180,7 +180,7 @@ class SubscribeToVehiclesTest {
                                         true,
                                         null,
                                         emptyList(),
-                                        RouteCardData.Context.StopDetailsFiltered,
+                                        RouteCardData.Context.RouteStop,
                                     ),
                                 ),
                             ),
@@ -191,7 +191,7 @@ class SubscribeToVehiclesTest {
 
         var vehicles: List<Vehicle> = emptyList()
 
-        val stateFilter = mutableStateOf(StopDetailsFilter(line.id, 0))
+        val stateFilter = mutableStateOf(RouteStopFilter(line.id, 0))
 
         val routeCardDataVM =
             MockRouteCardDataViewModel(RouteCardDataViewModel.State(routeCardData))
@@ -265,7 +265,7 @@ class SubscribeToVehiclesTest {
                                         true,
                                         null,
                                         emptyList(),
-                                        RouteCardData.Context.StopDetailsFiltered,
+                                        RouteCardData.Context.RouteStop,
                                     ),
                                 ),
                             ),
@@ -276,7 +276,7 @@ class SubscribeToVehiclesTest {
 
         var vehicles: List<Vehicle> = emptyList()
 
-        val stateFilter = mutableStateOf(StopDetailsFilter(route.id, 0))
+        val stateFilter = mutableStateOf(RouteStopFilter(route.id, 0))
 
         val routeCardDataVM =
             MockRouteCardDataViewModel(RouteCardDataViewModel.State(routeCardData))

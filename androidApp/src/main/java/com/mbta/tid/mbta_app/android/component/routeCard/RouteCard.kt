@@ -15,7 +15,7 @@ import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -52,12 +52,12 @@ fun RouteCard(
     now: EasternTimeInstant,
     isFavorite: (RouteStopDirection) -> Boolean?,
     showStopHeader: Boolean,
-    onOpenStopDetails: (String, StopDetailsFilter) -> Unit,
+    onOpenStopDetails: (String, RouteStopFilter) -> Unit,
 ) {
     RouteCardContainer(data = data, showStopHeader = showStopHeader, globalData = globalData) {
         Departures(it, globalData, now, { routeStopDirection -> isFavorite(routeStopDirection) }) {
             leaf ->
-            onOpenStopDetails(it.stop.id, StopDetailsFilter(data.lineOrRoute.id, leaf.direction.id))
+            onOpenStopDetails(leaf.stop.id, RouteStopFilter(data.lineOrRoute.id, leaf.direction.id))
         }
     }
 }

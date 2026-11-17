@@ -19,7 +19,7 @@ class NavigationManager: ObservableObject {
             let navEntry = navigationStack.lastSafe()
             do {
                 switch navEntry {
-                case let .stopDetails(stopId: stopId, stopFilter: _, tripFilter: _):
+                case let .stopDetails(stopId: stopId, routeStopFilter: _, tripFilter: _):
                     try await visitHistoryUsecase.addVisit(visit: .StopVisit(stopId: stopId))
                 default: break
                 }
@@ -80,22 +80,22 @@ class NavigationManager: ObservableObject {
         let currentEntry = navigationStack.lastSafe()
         if case let .stopDetails(
             stopId: targetStop,
-            stopFilter: newFilter,
+            routeStopFilter: newFilter,
             tripFilter: _
         ) = entry,
             case let .stopDetails(
                 stopId: lastStop,
-                stopFilter: lastFilter,
+                routeStopFilter: lastFilter,
                 tripFilter: _
             ) = currentEntry,
             targetStop == lastStop {
             // When the stop filter changes, we want a new entry to be added (i.e. no pop) only when
             // you're on the unfiltered (lastFilter == nil) page, but if there is already a filter,
             // the entry with the old filter should be popped and replaced with the new value.
-            if StopDetailsFilter.companion.shouldPopLastStopEntry(lastFilter: lastFilter, newFilter: newFilter) {
+            if RouteStopFilter.companion.shouldPopLastStopEntry(lastFilter: lastFilter, newFilter: newFilter) {
                 _ = navigationStack.popLast()
             }
-            if navigationStack.shouldSkipStopFilterUpdate(newStop: targetStop, newFilter: newFilter) { return }
+            if navigationStack.shouldSkipRouteStopFilterUpdate(newStop: targetStop, newFilter: newFilter) { return }
             navigationStack.append(entry)
         } else if case .tripDetails = currentEntry, case .tripDetails = entry {
             _ = navigationStack.popLast()
@@ -121,7 +121,7 @@ class NavigationManager: ObservableObject {
      */
     func setLastStopDetailsPageFilter(_ filters: StopDetailsPageFilters) {
         if filters.stopId == navigationStack.lastStopId,
-           navigationStack.lastStopDetailsFilter != filters.stopFilter || navigationStack
+           navigationStack.lastRouteStopFilter != filters.routeStopFilter || navigationStack
            .lastTripDetailsFilter != filters.tripFilter {
             navigationStack.lastStopDetailsPageFilters = filters
         }
@@ -130,9 +130,9 @@ class NavigationManager: ObservableObject {
     /**
      set the filter for the given stop if it is the last stop in the stack
      */
-    func setLastStopDetailsFilter(_ stopId: String, _ filter: StopDetailsFilter?) {
-        if stopId == navigationStack.lastStopId, navigationStack.lastStopDetailsFilter != filter {
-            navigationStack.lastStopDetailsFilter = filter
+    func setLastRouteStopFilter(_ stopId: String, _ filter: RouteStopFilter?) {
+        if stopId == navigationStack.lastStopId, navigationStack.lastRouteStopFilter != filter {
+            navigationStack.lastRouteStopFilter = filter
         }
     }
 

@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.routes
 
 import com.mbta.tid.mbta_app.model.Route
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import kotlin.test.Test
@@ -34,7 +34,7 @@ class SheetRouteTest {
         assertFalse(
             SheetRoutes.pageChanged(
                 SheetRoutes.StopDetails("a", null, null),
-                SheetRoutes.StopDetails("a", StopDetailsFilter(Route.Id("route1"), 1), null),
+                SheetRoutes.StopDetails("a", RouteStopFilter(Route.Id("route1"), 1), null),
             ),
         )
     }
@@ -71,22 +71,22 @@ class SheetRouteTest {
 
         assertFalse(
             SheetRoutes.shouldResetSheetHeight(
-                SheetRoutes.StopDetails("a", StopDetailsFilter(Route.Id("b"), 0), null),
-                SheetRoutes.StopDetails("a", StopDetailsFilter(Route.Id("b"), 1), null),
+                SheetRoutes.StopDetails("a", RouteStopFilter(Route.Id("b"), 0), null),
+                SheetRoutes.StopDetails("a", RouteStopFilter(Route.Id("b"), 1), null),
             ),
         )
 
         assertTrue(
             SheetRoutes.shouldResetSheetHeight(
                 SheetRoutes.NearbyTransit,
-                SheetRoutes.StopDetails("a", StopDetailsFilter(Route.Id("b"), 1), null),
+                SheetRoutes.StopDetails("a", RouteStopFilter(Route.Id("b"), 1), null),
             ),
         )
 
         assertTrue(
             SheetRoutes.shouldResetSheetHeight(
                 SheetRoutes.Favorites,
-                SheetRoutes.StopDetails("a", StopDetailsFilter(Route.Id("b"), 1), null),
+                SheetRoutes.StopDetails("a", RouteStopFilter(Route.Id("b"), 1), null),
             ),
         )
     }
