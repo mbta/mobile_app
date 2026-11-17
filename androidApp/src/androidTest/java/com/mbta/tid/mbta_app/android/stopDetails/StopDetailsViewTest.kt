@@ -122,7 +122,7 @@ class StopDetailsViewTest {
         val unfilteredVM =
             MockStopCentricViewModel(
                 StopCentricViewModel.State(
-                    StopCentricViewModel.RouteData.StopSummary(
+                    StopCentricViewModel.RouteData.StopOverview(
                         StopDetailsPageFilters(stop.id, null, null),
                         listOf(
                             RouteCardData(
@@ -144,7 +144,7 @@ class StopDetailsViewTest {
                                                 hasSchedulesToday = true,
                                                 subwayServiceStartTime = null,
                                                 alertsDownstream = emptyList(),
-                                                context = RouteCardData.Context.StopSummary,
+                                                context = RouteCardData.Context.StopOverview,
                                             ),
                                         ),
                                     ),
@@ -269,7 +269,7 @@ class StopDetailsViewTest {
         val unfilteredVM =
             MockStopCentricViewModel(
                 StopCentricViewModel.State(
-                    StopCentricViewModel.RouteData.StopSummary(
+                    StopCentricViewModel.RouteData.StopOverview(
                         StopDetailsPageFilters(stop.id, null, null),
                         listOf(
                             RouteCardData(
@@ -291,7 +291,7 @@ class StopDetailsViewTest {
                                                 hasSchedulesToday = true,
                                                 subwayServiceStartTime = null,
                                                 alertsDownstream = emptyList(),
-                                                context = RouteCardData.Context.StopSummary,
+                                                context = RouteCardData.Context.StopOverview,
                                             ),
                                         ),
                                     ),

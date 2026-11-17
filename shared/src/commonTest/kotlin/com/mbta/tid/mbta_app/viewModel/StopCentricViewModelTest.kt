@@ -97,7 +97,7 @@ class StopCentricViewModelTest : KoinTest {
         viewModel.setNow(EasternTimeInstant.now())
 
         testViewModelFlow(viewModel).test {
-            awaitItemSatisfying { it.routeData is StopCentricViewModel.RouteData.StopSummary }
+            awaitItemSatisfying { it.routeData is StopCentricViewModel.RouteData.StopOverview }
             assertTrue(schedulesLoaded)
         }
     }
@@ -122,7 +122,7 @@ class StopCentricViewModelTest : KoinTest {
         viewModel.setNow(EasternTimeInstant.now())
 
         testViewModelFlow(viewModel).test {
-            awaitItemSatisfying { it.routeData is StopCentricViewModel.RouteData.StopSummary }
+            awaitItemSatisfying { it.routeData is StopCentricViewModel.RouteData.StopOverview }
             assertTrue(predictionsLoaded)
         }
     }
@@ -149,13 +149,13 @@ class StopCentricViewModelTest : KoinTest {
 
         testViewModelFlow(viewModel).test {
             awaitItemSatisfying {
-                it.routeData is StopCentricViewModel.RouteData.StopSummary &&
+                it.routeData is StopCentricViewModel.RouteData.StopOverview &&
                     it.routeData.filteredWith == initialFilters
             }
             assertEquals(1, predictionLoadCount)
             viewModel.setFilters(updatedFilters)
             awaitItemSatisfying {
-                it.routeData is StopCentricViewModel.RouteData.StopSummary &&
+                it.routeData is StopCentricViewModel.RouteData.StopOverview &&
                     it.routeData.filteredWith == updatedFilters
             }
             assertEquals(2, predictionLoadCount)
@@ -184,7 +184,7 @@ class StopCentricViewModelTest : KoinTest {
         viewModel.setNow(EasternTimeInstant.now())
 
         testViewModelFlow(viewModel).test {
-            awaitItemSatisfying { it.routeData is StopCentricViewModel.RouteData.StopSummary }
+            awaitItemSatisfying { it.routeData is StopCentricViewModel.RouteData.StopOverview }
             assertEquals(1, predictionLoadCount)
             assertEquals(0, predictionDisconnectCount)
             viewModel.setActive(active = false, wasSentToBackground = false)

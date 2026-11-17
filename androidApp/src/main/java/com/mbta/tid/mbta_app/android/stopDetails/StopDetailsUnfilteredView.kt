@@ -49,7 +49,7 @@ fun StopDetailsUnfilteredView(
     val state by stopCentricViewModel.models.collectAsState()
     val routeCardData =
         when (val data = state.routeData) {
-            is StopCentricViewModel.RouteData.StopSummary ->
+            is StopCentricViewModel.RouteData.StopOverview ->
                 if (data.filteredWith.stopId == stopId) data.routeCards else null
             else -> null
         }

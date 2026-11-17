@@ -63,7 +63,7 @@ struct StopDetailsUnfilteredView: View {
     }
 
     var routeCardData: [RouteCardData]? {
-        if case let .stopSummary(data) = onEnum(of: routeData),
+        if case let .stopOverview(data) = onEnum(of: routeData),
            data.filteredWith.stopId == stopId {
             data.routeCards
         } else { nil }

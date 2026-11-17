@@ -51,7 +51,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
         case .more: .settings
         case .nearby: .nearbyTransit
         case .routeDetails: .routeDetails
-        case let .stopDetails(_, routeStopFilter, _): routeStopFilter == nil ? .stopSummary : .routeStop
+        case let .stopDetails(_, routeStopFilter, _): routeStopFilter == nil ? .stopOverview : .routeStop
         case .tripDetails: .tripDetails
         default: nil
         }

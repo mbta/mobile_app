@@ -41,11 +41,11 @@ public data class RouteCardData(
     public enum class Context {
         NearbyTransit,
         RouteStop,
-        StopSummary,
+        StopOverview,
         Favorites;
 
         internal fun isStopCentric(): Boolean {
-            return this == RouteStop || this == StopSummary
+            return this == RouteStop || this == StopOverview
         }
 
         internal fun toTripInstantDisplayContext(): TripInstantDisplay.Context {
@@ -53,7 +53,7 @@ public data class RouteCardData(
                 NearbyTransit,
                 Favorites -> TripInstantDisplay.Context.NearbyTransit
                 RouteStop -> TripInstantDisplay.Context.RouteStop
-                StopSummary -> TripInstantDisplay.Context.StopSummary
+                StopOverview -> TripInstantDisplay.Context.StopOverview
             }
         }
     }
@@ -1106,7 +1106,7 @@ public data class RouteCardData(
                 this.upcomingTrips?.filter { trip ->
                     if (
                         context == Context.NearbyTransit ||
-                            context == Context.StopSummary ||
+                            context == Context.StopOverview ||
                             isSubway
                     ) {
                         !trip.isCancelled

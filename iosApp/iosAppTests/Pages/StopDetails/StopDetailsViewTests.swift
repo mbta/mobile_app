@@ -38,7 +38,7 @@ final class StopDetailsViewTests: XCTestCase {
 
         let sut = StopDetailsView(
             filters: filters,
-            routeData: StopCentricViewModel.RouteDataStopSummary(
+            routeData: StopCentricViewModel.RouteDataStopOverview(
                 filteredWith: filters,
                 routeCards: [
                     .init(
@@ -86,7 +86,7 @@ final class StopDetailsViewTests: XCTestCase {
 
         let sut = StopDetailsView(
             filters: filters,
-            routeData: StopCentricViewModel.RouteDataStopSummary(
+            routeData: StopCentricViewModel.RouteDataStopOverview(
                 filteredWith: filters,
                 routeCards: [.init(
                     lineOrRoute: .route(route),
@@ -133,7 +133,7 @@ final class StopDetailsViewTests: XCTestCase {
 
         let sut = StopDetailsView(
             filters: filters,
-            routeData: StopCentricViewModel.RouteDataStopSummary(
+            routeData: StopCentricViewModel.RouteDataStopOverview(
                 filteredWith: filters,
                 routeCards: [.init(
                     lineOrRoute: .route(route),
@@ -151,7 +151,7 @@ final class StopDetailsViewTests: XCTestCase {
                             hasSchedulesToday: true,
                             subwayServiceStartTime: nil,
                             alertsDownstream: [],
-                            context: .stopSummary
+                            context: .stopOverview
                         )]
                     )],
                     at: EasternTimeInstant.now()
@@ -203,7 +203,7 @@ final class StopDetailsViewTests: XCTestCase {
             upcomingTrips: [.init(trip: trip, prediction: prediction)],
             alertsHere: [], allDataLoaded: true,
             hasSchedulesToday: true, subwayServiceStartTime: nil, alertsDownstream: [],
-            context: .stopSummary
+            context: .stopOverview
         )
         let stopData = RouteCardData.RouteStopData(
             lineOrRoute: .route(route),

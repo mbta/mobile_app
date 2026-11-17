@@ -71,7 +71,7 @@ public class StopCentricViewModel(
             val stopData: RouteCardData.RouteStopData,
         ) : RouteData()
 
-        public data class StopSummary(
+        public data class StopOverview(
             override val filteredWith: StopDetailsPageFilters,
             val routeCards: List<RouteCardData>,
         ) : RouteData()
@@ -157,7 +157,7 @@ public class StopCentricViewModel(
                     alerts,
                     now,
                     if (resolvedFilters.routeStopFilter != null) RouteCardData.Context.RouteStop
-                    else RouteCardData.Context.StopSummary,
+                    else RouteCardData.Context.StopOverview,
                 )
 
             routeData =
@@ -169,8 +169,8 @@ public class StopCentricViewModel(
                             ?.firstOrNull()
                             ?.let { RouteData.RouteStop(resolvedFilters, it) }
 
-                    routeCardData?.hasContext(RouteCardData.Context.StopSummary) == true ->
-                        routeCardData?.let { RouteData.StopSummary(resolvedFilters, it) }
+                    routeCardData?.hasContext(RouteCardData.Context.StopOverview) == true ->
+                        routeCardData?.let { RouteData.StopOverview(resolvedFilters, it) }
 
                     else -> null
                 }

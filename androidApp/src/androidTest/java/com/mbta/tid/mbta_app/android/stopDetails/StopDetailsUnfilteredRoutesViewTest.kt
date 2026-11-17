@@ -119,7 +119,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    RouteCardData.Context.StopSummary,
+                    RouteCardData.Context.StopOverview,
                 ),
             )
 
@@ -161,7 +161,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    RouteCardData.Context.StopSummary,
+                    RouteCardData.Context.StopOverview,
                 ),
             )
 
@@ -208,7 +208,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(mapOf(alert.id to alert)),
                     now,
-                    RouteCardData.Context.StopSummary,
+                    RouteCardData.Context.StopOverview,
                 ),
             )
 

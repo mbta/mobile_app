@@ -74,7 +74,7 @@ public sealed class TripInstantDisplay {
 
     public enum class Context {
         NearbyTransit,
-        StopSummary,
+        StopOverview,
         RouteStop,
         TripDetails,
     }

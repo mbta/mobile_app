@@ -227,7 +227,7 @@ private fun StopDetailsRoutesViewPreview() {
 
     val lineOrRoute1 = LineOrRoute.Route(route1)
     val lineOrRoute2 = LineOrRoute.Route(route2)
-    val context = RouteCardData.Context.StopSummary
+    val context = RouteCardData.Context.StopOverview
     val routeCardData =
         listOf(
             RouteCardData(

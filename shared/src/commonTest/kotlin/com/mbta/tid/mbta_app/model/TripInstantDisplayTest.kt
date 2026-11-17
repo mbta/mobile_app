@@ -59,7 +59,7 @@ class TripInstantDisplayTest {
                 context =
                     anyOf(
                         TripInstantDisplay.Context.NearbyTransit,
-                        TripInstantDisplay.Context.StopSummary,
+                        TripInstantDisplay.Context.StopOverview,
                     ),
                 lastTrip = lastTrip,
             ),

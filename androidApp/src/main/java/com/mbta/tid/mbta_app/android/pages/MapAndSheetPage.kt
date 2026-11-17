@@ -615,7 +615,7 @@ fun MapAndSheetPage(
             if (filters.routeStopFilter != null) {
                 analytics.track(AnalyticsScreen.RouteStop)
             } else {
-                analytics.track(AnalyticsScreen.StopSummary)
+                analytics.track(AnalyticsScreen.StopOverview)
             }
         }
 

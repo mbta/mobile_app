@@ -35,7 +35,7 @@ class StopDetailsUtilsTest {
                     PredictionsStreamDataResponse(objects),
                     AlertsStreamDataResponse(objects),
                     time,
-                    RouteCardData.Context.StopSummary,
+                    RouteCardData.Context.StopOverview,
                 )
 
             assertEquals(
@@ -79,7 +79,7 @@ class StopDetailsUtilsTest {
                     PredictionsStreamDataResponse(objects),
                     AlertsStreamDataResponse(objects),
                     time,
-                    RouteCardData.Context.StopSummary,
+                    RouteCardData.Context.StopOverview,
                 )
 
             assertEquals(null, StopDetailsUtils.autoRouteStopFilter(checkNotNull(routeCardData)))
@@ -150,7 +150,7 @@ class StopDetailsUtilsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 time,
-                RouteCardData.Context.StopSummary,
+                RouteCardData.Context.StopOverview,
             )
 
         assertEquals(
@@ -189,7 +189,7 @@ class StopDetailsUtilsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 time,
-                RouteCardData.Context.StopSummary,
+                RouteCardData.Context.StopOverview,
             )
 
         assertEquals(

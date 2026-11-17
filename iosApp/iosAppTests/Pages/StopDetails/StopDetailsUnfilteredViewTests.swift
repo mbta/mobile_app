@@ -116,12 +116,12 @@ import XCTest
             predictions: .init(objects: XCTUnwrap(builder)),
             alerts: .init(alerts: [:]),
             now: XCTUnwrap(now),
-            context: .stopSummary
+            context: .stopOverview
         )!
 
         let sut = try StopDetailsUnfilteredView(
             stopId: XCTUnwrap(stop?.id),
-            routeData: StopCentricViewModel.RouteDataStopSummary(
+            routeData: StopCentricViewModel.RouteDataStopOverview(
                 filteredWith: .init(stopId: XCTUnwrap(stop?.id), routeStopFilter: nil, tripFilter: nil),
                 routeCards: routeCardData
             ),
@@ -155,12 +155,12 @@ import XCTest
             predictions: .init(objects: XCTUnwrap(builder)),
             alerts: .init(alerts: [:]),
             now: XCTUnwrap(now),
-            context: .stopSummary
+            context: .stopOverview
         )!
 
         let sut = try StopDetailsUnfilteredView(
             stopId: XCTUnwrap(inaccessibleStop?.id),
-            routeData: StopCentricViewModel.RouteDataStopSummary(
+            routeData: StopCentricViewModel.RouteDataStopOverview(
                 filteredWith: .init(stopId: XCTUnwrap(inaccessibleStop?.id), routeStopFilter: nil, tripFilter: nil),
                 routeCards: routeCardData
             ),
@@ -204,12 +204,12 @@ import XCTest
             predictions: .init(objects: XCTUnwrap(builder)),
             alerts: .init(alerts: [alert.id: alert]),
             now: XCTUnwrap(now),
-            context: .stopSummary
+            context: .stopOverview
         )!
 
         let unfilteredView = try StopDetailsUnfilteredView(
             stopId: XCTUnwrap(stop?.id),
-            routeData: StopCentricViewModel.RouteDataStopSummary(
+            routeData: StopCentricViewModel.RouteDataStopOverview(
                 filteredWith: .init(stopId: XCTUnwrap(stop?.id), routeStopFilter: nil, tripFilter: nil),
                 routeCards: routeCardData
             ),

@@ -1596,7 +1596,7 @@ class RouteCardDataTest {
     fun `ListBuilder addAlerts filters to relevant routes`() = parametricTest {
         val context =
             anyOf(
-                RouteCardData.Context.StopSummary,
+                RouteCardData.Context.StopOverview,
                 RouteCardData.Context.RouteStop,
             )
         val now = EasternTimeInstant.now()
