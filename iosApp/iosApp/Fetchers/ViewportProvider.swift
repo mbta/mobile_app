@@ -14,14 +14,13 @@ import SwiftUI
 class ViewportProvider: ObservableObject, Shared.ViewportManager {
     enum Defaults {
         static let animation: ViewportAnimation = .easeInOut(duration: 1)
-        static let center: CLLocationCoordinate2D = .init(latitude: 42.3575, longitude: -71.0601)
-        static let zoom: CGFloat = MapDefaults.shared.defaultZoomThreshold
         static let overviewPadding: SwiftUI.EdgeInsets = .init(top: 75, leading: 50, bottom: 75, trailing: 50)
     }
 
-    @Published private(set) var isManuallyCentering: Bool
-    @Published private(set) var isFollowingPuck: Bool = false
-    @Published private(set) var isVehicleOverview: Bool = false
+    @Published private(set) var state: MapViewportState
+    var isCurrentlyPanning: Bool { (state as? MapViewportState.ManuallyPanned)?.currentlyPanning == true }
+    var isFollowingPuck: Bool { state == .FollowingPuck.shared }
+    var isVehicleOverview: Bool { state is MapViewportState.VehicleOverview }
     @Published var isTargeting: Bool = false
     @Published var lastLoadedLocation: CLLocationCoordinate2D? = nil
 
@@ -32,20 +31,22 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
 
     private let cameraStateSubject: CurrentValueSubject<CameraState?, Never>
 
-    init(viewport: Viewport? = nil, isManuallyCentering: Bool = false) {
+    init(viewport: Viewport? = nil) {
         self.viewport = viewport
         let viewportCamera = viewport?.camera
         let initialCameraState = viewport == nil ? nil : CameraState(
-            center: viewportCamera?.center ?? Defaults.center,
+            center: viewportCamera?.center ?? MapDefaults.shared.center.toMapbox(),
             padding: viewportCamera?.padding ?? .zero,
-            zoom: viewportCamera?.zoom ?? Defaults.zoom,
+            zoom: viewportCamera?.zoom ?? MapDefaults.shared.zoom,
             bearing: viewportCamera?.bearing ?? 0.0,
             pitch: viewportCamera?.pitch ?? 0.0
         )
 
-        isFollowingPuck = viewport?.isFollowing ?? true
+        state = (viewport?.isFollowing ?? false) ? .FollowingPuck.shared : .ManuallyPanned(
+            toDefault: true,
+            currentlyPanning: false
+        )
         cameraStateSubject = .init(initialCameraState)
-        self.isManuallyCentering = isManuallyCentering
 
         cameraStatePublisher =
             cameraStateSubject
@@ -61,46 +62,33 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
         ).eraseToAnyPublisher()
     }
 
-    @MainActor func follow(animation: ViewportAnimation = Defaults.animation) {
-        isFollowingPuck = true
-        isVehicleOverview = false
-        withViewportAnimation(animation) {
-            self.viewport = .followPuck(zoom: currentSubjectZoomSafe())
-        }
+    func follow(instantly: Bool = false) {
+        Task { try await applyState(state: .FollowingPuck.shared, followInstantly: instantly) }
     }
 
-    @MainActor func vehicleOverview(vehicle: Vehicle, stop: Stop?) {
-        let geometry: GeometryConvertible = if let stop {
-            MultiPoint([vehicle.coordinate, stop.coordinate])
-        } else {
-            Point(vehicle.coordinate)
-        }
-
-        isFollowingPuck = false
-        isVehicleOverview = true
-        animateTo(viewport: .overview(
-            geometry: geometry,
-            geometryPadding: Defaults.overviewPadding,
-            maxZoom: 16
-        ))
+    func vehicleOverview(vehicle: Vehicle, stop: Stop?) {
+        Task { try await applyState(
+            state: .VehicleOverview(
+                vehiclePosition: vehicle.position, targetStopPosition: stop?.position,
+                density: nil
+            ),
+            followInstantly: false
+        ) }
     }
 
     func isDefault() -> Bool {
-        viewport == nil || viewport?.camera?.center?.isRoughlyEqualTo(Defaults.center) ?? false
+        (state as? MapViewportState.ManuallyPanned)?.toDefault ?? false
     }
 
-    @MainActor func stopCenter(stop: Stop) {
-        isFollowingPuck = false
-        isVehicleOverview = false
-        animateTo(coordinates: stop.coordinate)
+    func stopCenter(stop: Stop) {
+        Task { try await applyState(state: .StopCenter(stopPosition: stop.position), followInstantly: false) }
     }
 
-    @MainActor func panToDefaultCenter() {
-        setIsManuallyCentering(true)
-        animateTo(
-            coordinates: ViewportProvider.Defaults.center,
-            zoom: 13.75
-        )
+    func panToDefaultCenter() {
+        Task { try await applyState(
+            state: .ManuallyPanned(toDefault: true, currentlyPanning: true),
+            followInstantly: false
+        ) }
     }
 
     func initViewport(location: CLLocation) {
@@ -108,7 +96,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
             let cameraState: CameraState = .init(
                 center: location.coordinate,
                 padding: .zero,
-                zoom: Defaults.zoom,
+                zoom: MapDefaults.shared.zoom,
                 bearing: 0,
                 pitch: 0
             )
@@ -136,41 +124,46 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
         if viewport?.isFollowing ?? false {
             viewport = .followPuck(zoom: currentSubjectZoomSafe())
         } else {
-            viewport = .camera(center: camera?.center ?? Defaults.center, zoom: currentSubjectZoomSafe())
+            viewport = .camera(
+                center: camera?.center ?? MapDefaults.shared.center.toMapbox(),
+                zoom: currentSubjectZoomSafe()
+            )
         }
     }
 
-    func setIsManuallyCentering(_ isManuallyCentering: Bool) {
-        self.isManuallyCentering = isManuallyCentering
-        if isManuallyCentering {
-            isFollowingPuck = false
-            isVehicleOverview = false
-        }
+    func setIsCurrentlyPanning(_ isCurrentlyPanning: Bool) {
+        state = .ManuallyPanned(toDefault: false, currentlyPanning: isCurrentlyPanning)
     }
 
     func currentSubjectZoomSafe() -> CGFloat {
-        cameraStateSubject.value?.zoom ?? Defaults.zoom
+        cameraStateSubject.value?.zoom ?? CGFloat(MapDefaults.shared.zoom)
     }
 
     @MainActor func animateTo(
         coordinates: CLLocationCoordinate2D,
         animation: ViewportAnimation = Defaults.animation,
-        zoom: CGFloat? = nil
+        zoom: CGFloat? = nil,
+        completion: @escaping () -> Void = {},
     ) {
         animateTo(
             viewport: .camera(
                 center: coordinates,
                 zoom: zoom == nil ? currentSubjectZoomSafe() : zoom
             ),
-            animation: animation
+            animation: animation,
+            completion: completion,
         )
     }
 
-    @MainActor private func animateTo(viewport: Viewport, animation: ViewportAnimation = Defaults.animation) {
+    @MainActor private func animateTo(
+        viewport: Viewport,
+        animation: ViewportAnimation = Defaults.animation,
+        completion: @escaping () -> Void = {},
+    ) {
         withViewportAnimation(animation) {
             self.viewport = viewport
         } completion: { _ in
-            Task { @MainActor in self.isManuallyCentering = false }
+            completion()
         }
     }
 
@@ -198,7 +191,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
 
     // swiftlint:disable:next identifier_name
     func __isDefault() async throws -> KotlinBoolean {
-        KotlinBoolean(bool: viewport?.camera?.center?.isRoughlyEqualTo(Defaults.center) ?? false)
+        KotlinBoolean(bool: isDefault())
     }
 
     // swiftlint:disable:next identifier_name
@@ -226,29 +219,44 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
         if savedNearbyTransitViewport == .idle {
             let cameraState = cameraStateSubject.value
             savedNearbyTransitViewport = .camera(
-                center: cameraState?.center ?? Defaults.center,
+                center: cameraState?.center ?? MapDefaults.shared.center.toMapbox(),
                 zoom: currentSubjectZoomSafe()
             )
         }
     }
 
     // swiftlint:disable:next identifier_name
-    func __follow(transitionAnimationDuration: KotlinLong?) async throws {
-        let animation = if let transitionAnimationDuration {
-            ViewportAnimation.default(maxDuration: TimeInterval(truncating: transitionAnimationDuration))
-        } else {
-            ViewportAnimation.default
+    @MainActor func __applyState(state: MapViewportState, followInstantly: Bool) async throws {
+        self.state = state
+        switch onEnum(of: state) {
+        case .followingPuck:
+            let animation = followInstantly ? ViewportAnimation.default(maxDuration: .zero) : ViewportAnimation.default
+            withViewportAnimation(animation) {
+                self.viewport = .followPuck(zoom: currentSubjectZoomSafe())
+            }
+        case let .manuallyPanned(state):
+            if state.toDefault {
+                animateTo(
+                    coordinates: MapDefaults.shared.center.toMapbox(),
+                    zoom: 13.75,
+                    completion: { self.state = .ManuallyPanned(toDefault: true, currentlyPanning: false) }
+                )
+            }
+        case let .stopCenter(state):
+            animateTo(coordinates: state.stopPosition.toMapbox())
+        case let .vehicleOverview(state):
+            let vehicle = state.vehiclePosition
+            let geometry: GeometryConvertible = if let stop = state.targetStopPosition {
+                MultiPoint([vehicle.toMapbox(), stop.toMapbox()])
+            } else {
+                Point(vehicle.toMapbox())
+            }
+
+            animateTo(viewport: .overview(
+                geometry: geometry,
+                geometryPadding: Defaults.overviewPadding,
+                maxZoom: 16
+            ))
         }
-        await follow(animation: animation)
-    }
-
-    // swiftlint:disable:next identifier_name
-    func __stopCenter(stop: Stop) async throws {
-        await animateTo(coordinates: stop.coordinate)
-    }
-
-    // swiftlint:disable:next identifier_name
-    func __vehicleOverview(vehicle: Vehicle, stop: Stop?, density _: KotlinFloat?) async throws {
-        await vehicleOverview(vehicle: vehicle, stop: stop)
     }
 }

@@ -37,6 +37,8 @@ struct StopCardHeader<Subheader: View>: View {
                 Text(stop.name)
                     .font(Typography.bodySemibold)
                     .foregroundStyle(Color.text)
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityHeading(.h2)
 
                 subheader
             }

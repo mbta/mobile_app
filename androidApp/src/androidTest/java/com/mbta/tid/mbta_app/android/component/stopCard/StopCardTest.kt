@@ -1,5 +1,7 @@
 package com.mbta.tid.mbta_app.android.component.stopCard
 
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
@@ -57,6 +59,6 @@ class StopCardTest {
         }
 
         composeTestRule.onNodeWithText(route.label, ignoreCase = true).assertCanBeDisplayed()
-        composeTestRule.onNodeWithText(stop.name).assertCanBeDisplayed()
+        composeTestRule.onNode(hasText(stop.name) and isHeading()).assertCanBeDisplayed()
     }
 }

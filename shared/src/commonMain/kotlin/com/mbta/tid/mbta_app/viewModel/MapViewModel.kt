@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.map.ColorPalette
+import com.mbta.tid.mbta_app.map.MapViewportState
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.RouteSourceData
 import com.mbta.tid.mbta_app.map.StopFeaturesBuilder
@@ -246,11 +247,11 @@ public class MapViewModel(
                     when (layerState) {
                         is LayerState.Overview,
                         is LayerState.StopSelected -> {
-                            followPuck(null)
+                            followPuck()
                         }
                         is LayerState.TripSelected -> {
                             when (event.type) {
-                                RecenterType.CurrentLocation -> followPuck(null)
+                                RecenterType.CurrentLocation -> followPuck()
                                 RecenterType.Trip -> {
                                     val currentState = layerState as LayerState.TripSelected
                                     handleViewportCentering(
@@ -305,7 +306,7 @@ public class MapViewModel(
                 }
                 is Event.LocationPermissionsChanged -> {
                     if (event.hasPermission && viewportManager.isDefault()) {
-                        followPuck(0)
+                        followPuck(instantly = true)
                         layerManager?.run { resetPuckPosition() }
                     }
                 }
@@ -576,13 +577,17 @@ public class MapViewModel(
             when (layerState) {
                 LayerState.Overview -> {}
                 is LayerState.StopSelected -> {
-                    viewportManager.stopCenter(layerState.stop)
+                    viewportManager.applyState(
+                        MapViewportState.StopCenter(layerState.stop.position),
+                    )
                 }
                 is LayerState.TripSelected -> {
                     // there is no vehicle associated with the trip, so just center on the stop
                     // if there is one
                     if (layerState.tripFilter.vehicleId == null) {
-                        layerState.stop?.let { viewportManager.stopCenter(it) }
+                        layerState.stop?.let {
+                            viewportManager.applyState(MapViewportState.StopCenter(it.position))
+                        }
                     } else {
                         val isFollowing = layerState.following || isTripDetails
                         val targetSequence = layerState.tripFilter.stopSequence
@@ -596,7 +601,13 @@ public class MapViewModel(
                         // if there is a vehicle id associated with the trip but there
                         // isn't a vehicle yet, wait for one to load before centering
                         layerState.vehicle?.let {
-                            viewportManager.vehicleOverview(it, stop, density)
+                            viewportManager.applyState(
+                                MapViewportState.VehicleOverview(
+                                    it.position,
+                                    stop?.position,
+                                    density,
+                                ),
+                            )
                         }
                     }
                 }
@@ -634,9 +645,9 @@ public class MapViewModel(
         }
     }
 
-    private fun followPuck(animationDuration: Long?) {
+    private fun followPuck(instantly: Boolean = false) {
         CoroutineScope(defaultCoroutineDispatcher).launch {
-            viewportManager.follow(animationDuration)
+            viewportManager.applyState(MapViewportState.FollowingPuck, instantly)
         }
     }
 

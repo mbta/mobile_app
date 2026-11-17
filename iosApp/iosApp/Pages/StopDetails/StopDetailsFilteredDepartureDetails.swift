@@ -178,14 +178,14 @@ struct StopDetailsFilteredDepartureDetails: View {
             errorKey: .companion.fromSheetTypes(sheetTypes: [.stopDetails], id: "StopDetailsFilteredDepartureDetails")
         )
         .onAppear {
-            handleViewportForStatus(noPredictionsStatus)
+            setViewportToStop()
             loadNextScheduleForStatus(noPredictionsStatus, selectedDirection)
         }
         .onChange(of: NextScheduleKeys(
             selectedDirection: selectedDirection,
             noPredictionStatus: noPredictionsStatus
         )) { keys in
-            handleViewportForStatus(keys.noPredictionStatus)
+            setViewportToStop()
             loadNextScheduleForStatus(keys.noPredictionStatus, keys.selectedDirection)
         }
         .onChange(of: selectedTripIsCancelled) { if $0 { setViewportToStop() } }
@@ -195,15 +195,6 @@ struct StopDetailsFilteredDepartureDetails: View {
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .ignoresSafeArea(.all)
         .enableInjection()
-    }
-
-    func handleViewportForStatus(_ status: UpcomingFormat.NoTripsFormat?) {
-        if let status {
-            switch onEnum(of: status) {
-            case .subwayEarlyMorning, .predictionsUnavailable: setViewportToStop(midZoom: true)
-            case .noSchedulesToday, .serviceEndedToday: setViewportToStop()
-            }
-        }
     }
 
     func loadNextScheduleForStatus(_ status: UpcomingFormat.NoTripsFormat?, _ selectedDirection: Direction) {
@@ -226,7 +217,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
     }
 
-    func setViewportToStop(midZoom _: Bool = false) {
+    func setViewportToStop() {
         guard let stop else { return }
         viewportProvider.stopCenter(stop: stop)
     }

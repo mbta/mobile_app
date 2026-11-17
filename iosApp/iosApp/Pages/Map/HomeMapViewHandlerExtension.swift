@@ -28,7 +28,7 @@ extension HomeMapView {
 
         // If location data is provided, follow the user's location
         if locationDataManager.currentLocation != nil {
-            viewportProvider.follow(animation: .easeInOut(duration: .zero))
+            viewportProvider.follow(instantly: true)
         }
         didAppear?(self)
     }

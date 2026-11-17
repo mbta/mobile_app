@@ -14,6 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
@@ -43,7 +45,7 @@ fun StopHeader(stop: Stop, modifier: Modifier = Modifier, subheader: @Composable
             Text(
                 stop.name,
                 style = Typography.bodySemibold,
-                modifier = Modifier.placeholderIfLoading().fillMaxWidth(),
+                modifier = Modifier.placeholderIfLoading().fillMaxWidth().semantics { heading() },
                 overflow = TextOverflow.Visible,
             )
             subheader()
