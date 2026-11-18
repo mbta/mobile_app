@@ -495,6 +495,7 @@ private constructor(
         public lateinit var currentStatus: Vehicle.CurrentStatus
         public var currentStopSequence: Int? = null
         public var directionId: Int = 0
+        public var label: String? = null
         public var latitude: Double = 1.2
         public var longitude: Double = 3.4
         public var occupancyStatus: Vehicle.OccupancyStatus =
@@ -528,6 +529,7 @@ private constructor(
                 currentStatus,
                 currentStopSequence,
                 directionId,
+                label,
                 latitude,
                 longitude,
                 occupancyStatus,

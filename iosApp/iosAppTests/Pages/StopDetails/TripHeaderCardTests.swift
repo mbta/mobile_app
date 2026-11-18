@@ -107,11 +107,12 @@ final class TripHeaderCardTests: XCTestCase {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { stop in stop.name = "Stop Name" }
-        let route = objects.route { _ in }
+        let route = objects.route { $0.type = .bus }
         let trip = objects.trip { _ in }
         let vehicle = objects.vehicle { vehicle in
             vehicle.currentStatus = .inTransitTo
             vehicle.tripId = trip.id
+            vehicle.label = "Vehicle 123"
         }
         let sut = TripHeaderCard(
             spec: .vehicle(vehicle, stop, nil, false),
@@ -125,6 +126,33 @@ final class TripHeaderCardTests: XCTestCase {
         )
 
         try XCTAssertNotNil(sut.inspect().find(text: stop.name))
+        XCTAssertThrowsError(try sut.inspect().find(text: "Vehicle 123"))
+    }
+
+    func testDisplaysFerryVehicleLabel() throws {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let route = objects.route { $0.type = .ferry }
+        let trip = objects.trip { _ in }
+        let vehicle = objects.vehicle {
+            $0.currentStatus = .inTransitTo
+            $0.tripId = trip.id
+            $0.label = "Ferry 123"
+        }
+        let sut = TripHeaderCard(
+            spec: .vehicle(vehicle, stop, nil, false),
+            trip: trip,
+            targeted: false,
+            route: route,
+            routeAccents: .init(route: route),
+            onTap: nil,
+            now: EasternTimeInstant.now(),
+            onFollowTrip: nil
+        )
+
+        try XCTAssertNotNil(sut.inspect().find(text: "Ferry 123"))
+        try XCTAssertNotNil(sut.inspect().find(text: " • "))
+        try XCTAssertNotNil(sut.inspect().find(text: "Next stop"))
     }
 
     func testDisplaysStatusDescription() throws {

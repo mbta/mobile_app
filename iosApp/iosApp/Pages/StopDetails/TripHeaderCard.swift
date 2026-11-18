@@ -289,8 +289,16 @@ struct TripHeaderCard: View {
         if vehicle.tripId == trip.id {
             VStack(alignment: .leading, spacing: 2) {
                 VStack(alignment: .leading, spacing: 4) {
-                    vehicleStatusDescription(vehicle.currentStatus, atTerminal)
-                        .font(Typography.footnote)
+                    HStack(spacing: 0) {
+                        if routeAccents.type == .ferry, let label = vehicle.label {
+                            Text(label)
+                                .font(Typography.footnoteItalic)
+                            Text(" • ")
+                                .font(Typography.footnoteItalic)
+                        }
+                        vehicleStatusDescription(vehicle.currentStatus, atTerminal)
+                            .font(Typography.footnote)
+                    }
                     Text(stop.name)
                         .font(Typography.headlineBold)
                     if let track = entry?.trackNumber, targeted {
@@ -525,6 +533,7 @@ struct TripVehicleCard_Previews: PreviewProvider {
             currentStatus: __Bridge__Vehicle_CurrentStatus.inTransitTo,
             currentStopSequence: 30,
             directionId: 1,
+            label: "1234",
             latitude: 0.0,
             longitude: 0.0,
             occupancyStatus: .noDataAvailable,
