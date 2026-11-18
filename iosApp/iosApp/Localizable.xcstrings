@@ -9409,6 +9409,12 @@
         }
       }
     },
+    "End time changed to %1$@ because start time is %2$@." : {
+      "comment" : "VoiceOver announcement when the selected end time is adjusted to fit the start time, e.g. \"End time changed to 5:15 PM because start time is 5:00 PM.\""
+    },
+    "End time kept at %1$@ because start time is %2$@." : {
+      "comment" : "VoiceOver announcement when the selected end time is rejected and the end time is unchanged, e.g. \"End time kept at 3:00 AM, end of service because start time is 1:00 AM.\""
+    },
     "Error loading data" : {
       "comment" : "Displayed when loading necessary information fails",
       "localizations" : {
@@ -13944,6 +13950,7 @@
       }
     },
     "next day" : {
+      "comment" : "Note next to a notification window end time that is after midnight",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -19709,6 +19716,12 @@
           }
         }
       }
+    },
+    "Start time changed to %1$@ because end time is %2$@." : {
+      "comment" : "VoiceOver announcement when the selected start time is adjusted to fit the end time, e.g. \"Start time changed to 4:45 PM because end time is 5:00 PM.\""
+    },
+    "Start time kept at %1$@ because end time is %2$@." : {
+      "comment" : "VoiceOver announcement when the selected start time is rejected and the start time is unchanged, e.g. \"Start time kept at 3:00 AM, start of service because end time is 5:00 PM.\""
     },
     "start to end of service" : {
       "comment" : "Description for the all-day notification preset",
