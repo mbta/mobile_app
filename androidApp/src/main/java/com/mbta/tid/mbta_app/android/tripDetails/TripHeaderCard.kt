@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -444,17 +445,8 @@ private fun VehicleDescription(
                     .then(onTrackChangeTap?.let { Modifier.clickable { it() } } ?: Modifier),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                Row() {
-                    if (routeAccents.type == RouteType.FERRY) {
-                        spec.vehicle.label?.let { label ->
-                            Text(
-                                label,
-                                modifier = Modifier.placeholderIfLoading(),
-                                style = Typography.footnoteItalic,
-                            )
-                            Text(" • ", style = Typography.footnoteItalic)
-                        }
-                    }
+                FlowRow {
+                    VehicleLabel(spec.vehicle, routeAccents)
                     VehicleStatusDescription(spec.vehicle.currentStatus, spec.atTerminal)
                 }
                 Text(
@@ -467,6 +459,22 @@ private fun VehicleDescription(
             if (!spec.atTerminal && !spec.vehicle.hasCarLevelCrowding) {
                 val vehicleCrowdingLevel = spec.vehicle.occupancyStatus.crowdingLevel
                 if (vehicleCrowdingLevel != null) VehicleCrowding(vehicleCrowdingLevel)
+            }
+        }
+    }
+}
+
+@Composable
+private fun VehicleLabel(vehicle: Vehicle, routeAccents: TripRouteAccents) {
+    if (routeAccents.type == RouteType.FERRY) {
+        vehicle.label?.let { label ->
+            Row() {
+                Text(
+                    label,
+                    modifier = Modifier.placeholderIfLoading(),
+                    style = Typography.footnoteItalic,
+                )
+                Text(" • ", style = Typography.footnoteItalic)
             }
         }
     }

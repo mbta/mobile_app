@@ -289,15 +289,17 @@ struct TripHeaderCard: View {
         if vehicle.tripId == trip.id {
             VStack(alignment: .leading, spacing: 2) {
                 VStack(alignment: .leading, spacing: 4) {
-                    HStack(spacing: 0) {
-                        if routeAccents.type == .ferry, let label = vehicle.label {
-                            Text(label)
-                                .font(Typography.footnoteItalic)
-                            Text(" • ")
-                                .font(Typography.footnoteItalic)
+                    ViewThatFits(in: .horizontal) {
+                        HStack(spacing: 0) {
+                            vehicleLabel(vehicle)
+                            vehicleStatusDescription(vehicle.currentStatus, atTerminal)
+                                .font(Typography.footnote)
                         }
-                        vehicleStatusDescription(vehicle.currentStatus, atTerminal)
-                            .font(Typography.footnote)
+                        VStack(alignment: .leading) {
+                            vehicleLabel(vehicle)
+                            vehicleStatusDescription(vehicle.currentStatus, atTerminal)
+                                .font(Typography.footnote)
+                        }
                     }
                     Text(stop.name)
                         .font(Typography.headlineBold)
@@ -311,6 +313,17 @@ struct TripHeaderCard: View {
                 vehicleCrowding
             }
             .accessibilityElement(children: .combine)
+        }
+    }
+
+    @ViewBuilder private func vehicleLabel(_ vehicle: Vehicle) -> some View {
+        if routeAccents.type == .ferry, let label = vehicle.label {
+            HStack(spacing: 0) {
+                Text(label)
+                    .font(Typography.footnoteItalic)
+                Text(" • ")
+                    .font(Typography.footnoteItalic)
+            }
         }
     }
 
