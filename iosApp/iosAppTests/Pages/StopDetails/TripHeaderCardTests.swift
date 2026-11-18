@@ -55,7 +55,7 @@ final class TripHeaderCardTests: XCTestCase {
             ),
             .init(spec: .noVehicle),
             .init(
-                spec: .finishingAnotherTrip,
+                spec: .finishingAnotherTrip(vehicle),
                 vehicle: vehicle,
                 updateText: "vehicle updated 01m 05s ago",
                 sequenceText: "current stop sequence: 3"
@@ -276,11 +276,12 @@ final class TripHeaderCardTests: XCTestCase {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { stop in stop.name = "Stop Name" }
-        let route = objects.route { _ in }
+        let route = objects.route { $0.type = .bus }
         let trip = objects.trip { _ in }
+        let vehicle = objects.vehicle { $0.label = "Vehicle 123" }
 
         let sut = TripHeaderCard(
-            spec: .finishingAnotherTrip,
+            spec: .finishingAnotherTrip(vehicle),
             trip: trip,
             targeted: false,
             route: route,
@@ -290,7 +291,29 @@ final class TripHeaderCardTests: XCTestCase {
             onFollowTrip: nil,
         )
         try XCTAssertNotNil(sut.inspect().find(text: "Finishing another trip"))
+        XCTAssertThrowsError(try sut.inspect().find(text: "Vehicle 123"))
         try XCTAssertThrowsError(sut.inspect().find(text: stop.name))
+    }
+
+    func testFinishingAnotherTripDisplaysFerryVehicleLabel() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route { $0.type = .ferry }
+        let trip = objects.trip { _ in }
+        let vehicle = objects.vehicle { $0.label = "Ferry 123" }
+        let sut = TripHeaderCard(
+            spec: .finishingAnotherTrip(vehicle),
+            trip: trip,
+            targeted: false,
+            route: route,
+            routeAccents: .init(route: route),
+            onTap: nil,
+            now: EasternTimeInstant.now(),
+            onFollowTrip: nil
+        )
+
+        try XCTAssertNotNil(sut.inspect().find(text: "Ferry 123"))
+        try XCTAssertNotNil(sut.inspect().find(text: " • "))
+        try XCTAssertNotNil(sut.inspect().find(text: "Finishing another trip"))
     }
 
     func testNoVehicle() throws {
@@ -523,9 +546,10 @@ final class TripHeaderCardTests: XCTestCase {
         let stop = objects.stop { stop in stop.name = "stop" }
         let route = objects.route { $0.type = .bus }
         let trip = objects.trip { _ in }
+        let finishingVehicle = objects.vehicle { _ in }
 
         let withTap = TripHeaderCard(
-            spec: .finishingAnotherTrip,
+            spec: .finishingAnotherTrip(finishingVehicle),
             trip: trip,
             targeted: true,
             route: route,
@@ -540,7 +564,7 @@ final class TripHeaderCardTests: XCTestCase {
         )
 
         let withoutTap = TripHeaderCard(
-            spec: .finishingAnotherTrip,
+            spec: .finishingAnotherTrip(finishingVehicle),
             trip: trip,
             targeted: true,
             route: route,

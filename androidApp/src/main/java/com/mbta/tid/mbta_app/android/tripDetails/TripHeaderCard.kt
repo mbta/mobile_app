@@ -132,12 +132,15 @@ fun TripHeaderCard(
             .semantics(mergeDescendants = true) {}
 
     CompositionLocalProvider(LocalContentColor provides colorResource(R.color.text)) {
+        val heightModifier =
+            if (spec is TripHeaderSpec.FinishingAnotherTrip) Modifier
+            else Modifier.height(IntrinsicSize.Min)
         Box(
-            Modifier.height(IntrinsicSize.Min).fillMaxWidth(),
+            heightModifier.fillMaxWidth(),
             contentAlignment = Alignment.BottomStart,
         ) {
             Row(cardModifier) {
-                Box(Modifier.height(IntrinsicSize.Min)) {
+                Box(heightModifier) {
                     Row(
                         Modifier.padding(horizontal = 14.dp).heightIn(min = 56.dp).semantics {
                             heading()
@@ -341,7 +344,8 @@ private fun Description(
 ) {
     Box(modifier) {
         when (spec) {
-            TripHeaderSpec.FinishingAnotherTrip -> FinishingAnotherTripDescription()
+            is TripHeaderSpec.FinishingAnotherTrip ->
+                FinishingAnotherTripDescription(spec.vehicle, routeAccents)
             TripHeaderSpec.NoVehicle -> NoVehicleDescription()
             is TripHeaderSpec.Scheduled ->
                 ScheduleDescription(spec.entry, targeted, routeAccents, onTrackChangeTap)
@@ -352,8 +356,11 @@ private fun Description(
 }
 
 @Composable
-private fun FinishingAnotherTripDescription() {
-    Text(stringResource(R.string.finishing_another_trip), style = Typography.footnote)
+private fun FinishingAnotherTripDescription(vehicle: Vehicle, routeAccents: TripRouteAccents) {
+    FlowRow {
+        VehicleLabel(vehicle, routeAccents)
+        Text(stringResource(R.string.finishing_another_trip), style = Typography.footnote)
+    }
 }
 
 @Composable
@@ -523,11 +530,16 @@ private fun vehicleStatusString(
 @Composable
 private fun TripMarker(spec: TripHeaderSpec, targeted: Boolean, routeAccents: TripRouteAccents) {
     Box(
-        Modifier.width(36.dp).fillMaxHeight().clearAndSetSemantics {},
+        Modifier.width(36.dp)
+            .then(
+                if (spec is TripHeaderSpec.FinishingAnotherTrip) Modifier
+                else Modifier.fillMaxHeight(),
+            )
+            .clearAndSetSemantics {},
         contentAlignment = Alignment.Center,
     ) {
         when (spec) {
-            TripHeaderSpec.FinishingAnotherTrip,
+            is TripHeaderSpec.FinishingAnotherTrip,
             TripHeaderSpec.NoVehicle -> VehicleCircle(routeAccents)
             is TripHeaderSpec.Scheduled -> StopDot(routeAccents, targeted = targeted)
             is TripHeaderSpec.VehicleOnTrip ->
@@ -601,7 +613,7 @@ private fun RowScope.TripIndicator(
         when (spec) {
             // For these two cases, if an info callback is provided, we show the icon, but don't add
             // a clickable modifier, since the entire card is already made clickable
-            TripHeaderSpec.FinishingAnotherTrip,
+            is TripHeaderSpec.FinishingAnotherTrip,
             TripHeaderSpec.NoVehicle -> if (onInfoClick != null) InfoCircle()
             is TripHeaderSpec.VehicleOnTrip ->
                 if (onFollowTrip != null) FollowButton(routeAccents, onFollowTrip)
@@ -808,7 +820,7 @@ private fun TripHeaderCardPreview() {
 
             TripHeaderCard(
                 trip = trip,
-                spec = TripHeaderSpec.FinishingAnotherTrip,
+                spec = TripHeaderSpec.FinishingAnotherTrip(vehicle),
                 targeted = false,
                 route = red,
                 routeAccents = TripRouteAccents(commuter),

@@ -11,7 +11,7 @@ import Shared
 import SwiftUI
 
 enum TripHeaderSpec {
-    case finishingAnotherTrip
+    case finishingAnotherTrip(Vehicle)
     case noVehicle
     case scheduled(Stop, TripDetailsStopList.Entry)
     case vehicle(Vehicle, Stop, TripDetailsStopList.Entry?, Bool)
@@ -227,7 +227,7 @@ struct TripHeaderCard: View {
 
     @ViewBuilder private var description: some View {
         switch spec {
-        case .finishingAnotherTrip: finishingAnotherTripDescription
+        case let .finishingAnotherTrip(vehicle): finishingAnotherTripDescription(vehicle)
         case .noVehicle: noVehicleDescription
         case let .scheduled(_, stopEntry): scheduleDescription(stopEntry)
         case let .vehicle(vehicle, stop, stopEntry, atTerminal): vehicleDescription(
@@ -239,8 +239,18 @@ struct TripHeaderCard: View {
         }
     }
 
-    @ViewBuilder private var finishingAnotherTripDescription: some View {
-        Text("Finishing another trip").font(Typography.footnote)
+    @ViewBuilder private func finishingAnotherTripDescription(_ vehicle: Vehicle) -> some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 0) {
+                vehicleLabel(vehicle)
+                Text("Finishing another trip").font(Typography.footnote)
+            }
+            .fixedSize(horizontal: true, vertical: false)
+            VStack(alignment: .leading) {
+                vehicleLabel(vehicle)
+                Text("Finishing another trip").font(Typography.footnote)
+            }
+        }
     }
 
     @ViewBuilder private var noVehicleDescription: some View {

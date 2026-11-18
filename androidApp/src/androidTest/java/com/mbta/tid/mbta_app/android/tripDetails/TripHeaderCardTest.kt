@@ -238,7 +238,7 @@ class TripHeaderCardTest {
         composeTestRule.setContent {
             TripHeaderCard(
                 trip,
-                TripHeaderSpec.FinishingAnotherTrip,
+                TripHeaderSpec.FinishingAnotherTrip(objects.vehicle {}),
                 false,
                 route,
                 TripRouteAccents(route),

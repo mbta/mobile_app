@@ -163,7 +163,7 @@ struct TripDetailsView: View {
                 }
                 return vehicle.tripId == trip.id
                     ? .vehicle(vehicle, vehicleStop, entry, atTerminal)
-                    : .finishingAnotherTrip
+                    : .finishingAnotherTrip(vehicle)
             } else if stops.stops.contains(where: { entry in entry.prediction != nil }) {
                 return .noVehicle
             } else if let terminalStop, let terminalEntry = stops.startTerminalEntry {

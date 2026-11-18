@@ -90,7 +90,7 @@ fun TripStops(
 
     val showFirstStopSeparately =
         when (headerSpec) {
-            TripHeaderSpec.FinishingAnotherTrip,
+            is TripHeaderSpec.FinishingAnotherTrip,
             TripHeaderSpec.NoVehicle -> true
             else -> false
         }
