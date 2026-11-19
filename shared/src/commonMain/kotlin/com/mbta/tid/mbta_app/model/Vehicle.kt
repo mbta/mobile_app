@@ -15,6 +15,7 @@ public data class Vehicle(
     @SerialName("current_status") val currentStatus: CurrentStatus,
     @SerialName("current_stop_sequence") val currentStopSequence: Int?,
     @SerialName("direction_id") val directionId: Int,
+    val label: String?,
     val latitude: Double,
     val longitude: Double,
     @SerialName("occupancy_status") val occupancyStatus: OccupancyStatus,

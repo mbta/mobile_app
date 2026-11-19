@@ -335,7 +335,7 @@ final class TripStopsTests: XCTestCase {
             targetId: stop3.id,
             stops: stops,
             stopSequence: 3,
-            headerSpec: .finishingAnotherTrip,
+            headerSpec: .finishingAnotherTrip(vehicle),
             now: now,
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },

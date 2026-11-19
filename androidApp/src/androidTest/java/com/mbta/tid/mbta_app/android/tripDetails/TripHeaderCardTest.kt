@@ -46,8 +46,9 @@ class TripHeaderCardTest {
         val vehicle = objects.vehicle {
             currentStatus = Vehicle.CurrentStatus.InTransitTo
             tripId = trip.id
+            label = "Vehicle 123"
         }
-        val route = objects.route {}
+        val route = objects.route { type = RouteType.BUS }
 
         composeTestRule.setContent {
             TripHeaderCard(
@@ -61,6 +62,40 @@ class TripHeaderCardTest {
         }
 
         composeTestRule.onNodeWithText(stop.name, useUnmergedTree = true).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Vehicle 123", useUnmergedTree = true).assertDoesNotExist()
+    }
+
+    @Test
+    fun testDisplaysFerryVehicleLabel() {
+        val now = EasternTimeInstant.now()
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop {}
+        val trip = objects.trip()
+        val route = objects.route { type = RouteType.FERRY }
+        val vehicleState =
+            mutableStateOf(
+                objects.vehicle {
+                    currentStatus = Vehicle.CurrentStatus.InTransitTo
+                    tripId = trip.id
+                    label = "Ferry 123"
+                },
+            )
+
+        composeTestRule.setContent {
+            val vehicle by vehicleState
+            TripHeaderCard(
+                trip,
+                TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
+                false,
+                route,
+                TripRouteAccents(route),
+                now,
+            )
+        }
+
+        composeTestRule.onNodeWithText("Ferry 123", useUnmergedTree = true).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText(" • ", useUnmergedTree = true).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Next stop", useUnmergedTree = true).assertCanBeDisplayed()
     }
 
     @Test
@@ -203,7 +238,9 @@ class TripHeaderCardTest {
         composeTestRule.setContent {
             TripHeaderCard(
                 trip,
-                TripHeaderSpec.FinishingAnotherTrip,
+                TripHeaderSpec.FinishingAnotherTrip(
+                    objects.vehicle { currentStatus = Vehicle.CurrentStatus.IncomingAt },
+                ),
                 false,
                 route,
                 TripRouteAccents(route),

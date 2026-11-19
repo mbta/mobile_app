@@ -409,7 +409,7 @@ class TripStopsTest {
                 targetId = stop3.id,
                 stops,
                 stopSequence = 3,
-                TripHeaderSpec.FinishingAnotherTrip,
+                TripHeaderSpec.FinishingAnotherTrip(vehicle),
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},

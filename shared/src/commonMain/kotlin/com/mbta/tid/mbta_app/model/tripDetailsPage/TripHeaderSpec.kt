@@ -5,7 +5,7 @@ import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.Vehicle
 
 public sealed class TripHeaderSpec {
-    public data object FinishingAnotherTrip : TripHeaderSpec()
+    public data class FinishingAnotherTrip(val vehicle: Vehicle) : TripHeaderSpec()
 
     public data object NoVehicle : TripHeaderSpec()
 
@@ -41,7 +41,7 @@ public sealed class TripHeaderSpec {
                         atTerminal,
                     )
                 } else {
-                    FinishingAnotherTrip
+                    FinishingAnotherTrip(vehicle)
                 }
             } else if (stops.stops.any { it.prediction != null }) {
                 NoVehicle

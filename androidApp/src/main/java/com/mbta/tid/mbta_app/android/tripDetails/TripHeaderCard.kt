@@ -7,7 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -131,12 +131,14 @@ fun TripHeaderCard(
             .semantics(mergeDescendants = true) {}
 
     CompositionLocalProvider(LocalContentColor provides colorResource(R.color.text)) {
+        val hasStickDiagram =
+            spec is TripHeaderSpec.Scheduled || spec is TripHeaderSpec.VehicleOnTrip
         Box(
-            Modifier.height(IntrinsicSize.Min).fillMaxWidth(),
+            Modifier.fillMaxWidth(),
             contentAlignment = Alignment.BottomStart,
         ) {
             Row(cardModifier) {
-                Box(Modifier.height(IntrinsicSize.Min)) {
+                Box {
                     Row(
                         Modifier.padding(horizontal = 14.dp).heightIn(min = 56.dp).semantics {
                             heading()
@@ -184,9 +186,8 @@ fun TripHeaderCard(
                             }
                         }
                     }
-                    when (spec) {
-                        is TripHeaderSpec.Scheduled,
-                        is TripHeaderSpec.VehicleOnTrip ->
+                    if (hasStickDiagram) {
+                        Box(Modifier.matchParentSize().zIndex(-1f)) {
                             StickDiagram(
                                 routeAccents.color,
                                 listOf(
@@ -199,31 +200,28 @@ fun TripHeaderCard(
                                         toVPos = RouteBranchSegment.VPos.Bottom,
                                     ),
                                 ),
-                                Modifier.zIndex(-1f).padding(start = 12.dp).fillMaxHeight(),
+                                Modifier.padding(start = 12.dp).fillMaxHeight(),
                             )
-                        else -> {}
+                        }
                     }
                 }
             }
-            when (spec) {
-                is TripHeaderSpec.Scheduled,
-                is TripHeaderSpec.VehicleOnTrip ->
-                    // Small 2x4 dp portion of route line over the outer card border
-                    StickDiagram(
-                        routeAccents.color,
-                        listOf(
-                            RouteBranchSegment.StickConnection(
-                                fromStop = "",
-                                toStop = "",
-                                fromLane = RouteBranchSegment.Lane.Center,
-                                toLane = RouteBranchSegment.Lane.Center,
-                                fromVPos = RouteBranchSegment.VPos.Top,
-                                toVPos = RouteBranchSegment.VPos.Bottom,
-                            ),
+            if (hasStickDiagram) {
+                // Small 2x4 dp portion of route line over the outer card border
+                StickDiagram(
+                    routeAccents.color,
+                    listOf(
+                        RouteBranchSegment.StickConnection(
+                            fromStop = "",
+                            toStop = "",
+                            fromLane = RouteBranchSegment.Lane.Center,
+                            toLane = RouteBranchSegment.Lane.Center,
+                            fromVPos = RouteBranchSegment.VPos.Top,
+                            toVPos = RouteBranchSegment.VPos.Bottom,
                         ),
-                        Modifier.zIndex(1f).padding(start = 14.dp).height(2.dp),
-                    )
-                else -> {}
+                    ),
+                    Modifier.zIndex(1f).padding(start = 14.dp).height(2.dp),
+                )
             }
         }
     }
@@ -340,7 +338,8 @@ private fun Description(
 ) {
     Box(modifier) {
         when (spec) {
-            TripHeaderSpec.FinishingAnotherTrip -> FinishingAnotherTripDescription()
+            is TripHeaderSpec.FinishingAnotherTrip ->
+                FinishingAnotherTripDescription(spec.vehicle, routeAccents)
             TripHeaderSpec.NoVehicle -> NoVehicleDescription()
             is TripHeaderSpec.Scheduled ->
                 ScheduleDescription(spec.entry, targeted, routeAccents, onTrackChangeTap)
@@ -351,8 +350,11 @@ private fun Description(
 }
 
 @Composable
-private fun FinishingAnotherTripDescription() {
-    Text(stringResource(R.string.finishing_another_trip), style = Typography.footnote)
+private fun FinishingAnotherTripDescription(vehicle: Vehicle, routeAccents: TripRouteAccents) {
+    FlowRow {
+        VehicleLabel(vehicle, routeAccents)
+        Text(stringResource(R.string.finishing_another_trip), style = Typography.footnote)
+    }
 }
 
 @Composable
@@ -389,7 +391,6 @@ private fun ScheduleDescription(
         ) {
             TightWrapText(
                 stringResource(R.string.scheduled_to_depart),
-                Modifier.weight(1f, fill = false),
                 style = Typography.footnote,
             )
             Text(stop.name, style = Typography.headlineBold)
@@ -444,7 +445,10 @@ private fun VehicleDescription(
                     .then(onTrackChangeTap?.let { Modifier.clickable { it() } } ?: Modifier),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                VehicleStatusDescription(spec.vehicle.currentStatus, spec.atTerminal)
+                FlowRow {
+                    VehicleLabel(spec.vehicle, routeAccents)
+                    VehicleStatusDescription(spec.vehicle.currentStatus, spec.atTerminal)
+                }
                 Text(
                     stop.name,
                     style = Typography.headlineBold,
@@ -455,6 +459,22 @@ private fun VehicleDescription(
             if (!spec.atTerminal && !spec.vehicle.hasCarLevelCrowding) {
                 val vehicleCrowdingLevel = spec.vehicle.occupancyStatus.crowdingLevel
                 if (vehicleCrowdingLevel != null) VehicleCrowding(vehicleCrowdingLevel)
+            }
+        }
+    }
+}
+
+@Composable
+private fun VehicleLabel(vehicle: Vehicle, routeAccents: TripRouteAccents) {
+    if (routeAccents.type == RouteType.FERRY) {
+        vehicle.label?.let { label ->
+            Row() {
+                Text(
+                    label,
+                    modifier = Modifier.placeholderIfLoading(),
+                    style = Typography.footnoteItalic,
+                )
+                Text(" • ", style = Typography.footnoteItalic)
             }
         }
     }
@@ -503,11 +523,11 @@ private fun vehicleStatusString(
 @Composable
 private fun TripMarker(spec: TripHeaderSpec, targeted: Boolean, routeAccents: TripRouteAccents) {
     Box(
-        Modifier.width(36.dp).fillMaxHeight().clearAndSetSemantics {},
+        Modifier.width(36.dp).clearAndSetSemantics {},
         contentAlignment = Alignment.Center,
     ) {
         when (spec) {
-            TripHeaderSpec.FinishingAnotherTrip,
+            is TripHeaderSpec.FinishingAnotherTrip,
             TripHeaderSpec.NoVehicle -> VehicleCircle(routeAccents)
             is TripHeaderSpec.Scheduled -> StopDot(routeAccents, targeted = targeted)
             is TripHeaderSpec.VehicleOnTrip ->
@@ -581,7 +601,7 @@ private fun RowScope.TripIndicator(
         when (spec) {
             // For these two cases, if an info callback is provided, we show the icon, but don't add
             // a clickable modifier, since the entire card is already made clickable
-            TripHeaderSpec.FinishingAnotherTrip,
+            is TripHeaderSpec.FinishingAnotherTrip,
             TripHeaderSpec.NoVehicle -> if (onInfoClick != null) InfoCircle()
             is TripHeaderSpec.VehicleOnTrip ->
                 if (onFollowTrip != null) FollowButton(routeAccents, onFollowTrip)
@@ -788,7 +808,7 @@ private fun TripHeaderCardPreview() {
 
             TripHeaderCard(
                 trip = trip,
-                spec = TripHeaderSpec.FinishingAnotherTrip,
+                spec = TripHeaderSpec.FinishingAnotherTrip(vehicle),
                 targeted = false,
                 route = red,
                 routeAccents = TripRouteAccents(commuter),

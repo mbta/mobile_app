@@ -18,6 +18,7 @@ class VehicleTest {
             put("carriages", JsonNull)
             put("current_stop_sequence", JsonNull)
             put("direction_id", 0)
+            put("label", "G-12345")
             put("latitude", 1.0)
             put("longitude", 2.0)
             put("updated_at", "2025-12-05T15:52:00-04:00")
