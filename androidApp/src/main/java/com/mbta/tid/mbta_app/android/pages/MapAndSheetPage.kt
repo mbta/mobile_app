@@ -628,16 +628,13 @@ fun MapAndSheetPage(
         }
 
         SheetPage(colorResource(R.color.fill2)) {
-            StopDetailsPage(
+            StopOverviewPage(
                 modifier = modifier,
                 filters = filters,
                 allAlerts = nearbyTransit.alertData,
                 navCallbacks = navCallbacks,
                 updateRouteStopFilter = { updateRouteStopFilter(navRoute.stopId, it) },
-                updateTripFilter = { updateTripFilter(navRoute.stopId, it) },
-                tileScrollState = tileScrollState,
                 openModal = ::openModal,
-                openSheetRoute = navController::navigate,
                 errorBannerViewModel = errorBannerViewModel,
             )
         }
@@ -657,7 +654,7 @@ fun MapAndSheetPage(
         }
 
         SheetPage(colorResource(R.color.fill2)) {
-            StopDetailsPage(
+            RouteStopPage(
                 modifier = modifier,
                 filters = filters,
                 allAlerts = nearbyTransit.alertData,
@@ -746,7 +743,7 @@ fun MapAndSheetPage(
             RouteDetailsView(
                 selectionId = navRoute.routeId,
                 context = navRoute.context,
-                onOpenStopDetails = ::handleStopNavigation,
+                onOpenStopOverview = ::handleStopNavigation,
                 navCallbacks = navCallbacks,
                 openModal = ::openModal,
                 errorBannerViewModel = errorBannerViewModel,

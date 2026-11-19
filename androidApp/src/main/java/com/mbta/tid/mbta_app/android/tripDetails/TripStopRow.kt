@@ -1,0 +1,373 @@
+package com.mbta.tid.mbta_app.android.tripDetails
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.ModalRoutes
+import com.mbta.tid.mbta_app.android.MyApplicationTheme
+import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.StopListContext
+import com.mbta.tid.mbta_app.android.component.StopListRow
+import com.mbta.tid.mbta_app.android.component.StopPlacement
+import com.mbta.tid.mbta_app.android.component.UpcomingTripView
+import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
+import com.mbta.tid.mbta_app.android.util.FormattedAlert
+import com.mbta.tid.mbta_app.android.util.SettingsCache
+import com.mbta.tid.mbta_app.android.util.TripRouteAccents
+import com.mbta.tid.mbta_app.android.util.containsWrappableText
+import com.mbta.tid.mbta_app.android.util.fromHex
+import com.mbta.tid.mbta_app.android.util.modifiers.DestinationPredictionBalance
+import com.mbta.tid.mbta_app.android.util.trackChangeTapCallback
+import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.Alert.Effect
+import com.mbta.tid.mbta_app.model.MapStopRoute
+import com.mbta.tid.mbta_app.model.Matcher
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Route
+import com.mbta.tid.mbta_app.model.RouteBranchSegment
+import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.SegmentAlertState
+import com.mbta.tid.mbta_app.model.Trip
+import com.mbta.tid.mbta_app.model.TripDetailsStopList
+import com.mbta.tid.mbta_app.model.UpcomingFormat
+import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlin.time.Duration.Companion.minutes
+import org.koin.compose.KoinIsolatedContext
+import org.koin.dsl.koinApplication
+import org.koin.dsl.module
+
+@Composable
+fun TripStopRow(
+    entry: TripDetailsStopList.Entry,
+    trip: Trip,
+    now: EasternTimeInstant,
+    onTapLink: (TripDetailsStopList.Entry) -> Unit,
+    onOpenAlertDetails: (Alert) -> Unit,
+    route: Route,
+    routeAccents: TripRouteAccents,
+    globalData: GlobalResponse?,
+    modifier: Modifier = Modifier,
+    showDownstreamAlert: Boolean = false,
+    targeted: Boolean = false,
+    firstStop: Boolean = false,
+    lastStop: Boolean = false,
+    openModal: (ModalRoutes) -> Unit = {},
+) {
+    val activeElevatorAlerts = entry.activeElevatorAlerts(now)
+
+    val disruption = entry.disruption?.takeIf { showDownstreamAlert }
+
+    val onTapRow: () -> Unit = {
+        if (!targeted) onTapLink(entry)
+        else entry.trackChangeTapCallback(route, openModal)?.invoke()
+    }
+
+    StopListRow(
+        stop = entry.stop,
+        stopLane = RouteBranchSegment.Lane.Center,
+        stickConnections =
+            RouteBranchSegment.StickConnection.forward(
+                "".takeUnless { firstStop },
+                entry.stop.id,
+                "".takeUnless { lastStop },
+                RouteBranchSegment.Lane.Center,
+            ),
+        onClick = onTapRow,
+        routeAccents = routeAccents,
+        stopListContext = StopListContext.Trip(Matcher.Data(route.id), trip.directionId, trip.id),
+        globalData = globalData,
+        modifier = modifier,
+        activeElevatorAlerts = activeElevatorAlerts.size,
+        connectingRoutes = entry.routes,
+        disruption = disruption,
+        getAlertState = { fromStop, toStop ->
+            when {
+                fromStop == entry.stop.id &&
+                    showDownstreamAlert &&
+                    disruption?.alert?.effect == Effect.Shuttle -> SegmentAlertState.Shuttle
+                else -> SegmentAlertState.Normal
+            }
+        },
+        stopPlacement = StopPlacement(firstStop, lastStop),
+        onOpenAlertDetails = onOpenAlertDetails,
+        targeted = targeted,
+        trackNumber = if (targeted) entry.trackNumber else null,
+        rightSideContent = { rightSideModifier ->
+            CompositionLocalProvider(LocalContentColor provides colorResource(R.color.text)) {
+                val state = upcomingTripViewState(entry, trip, now, route)
+                if (state != null) {
+                    UpcomingTripView(
+                        state,
+                        rightSideModifier.then(
+                            DestinationPredictionBalance.predictionWidth(
+                                state.containsWrappableText(),
+                            ),
+                        ),
+                        routeType = routeAccents.type,
+                        hideRealtimeIndicators = true,
+                        maxTextAlpha = 0.6f,
+                    )
+                }
+            }
+        },
+    )
+}
+
+private fun upcomingTripViewState(
+    stop: TripDetailsStopList.Entry,
+    trip: Trip,
+    now: EasternTimeInstant,
+    route: Route,
+): UpcomingTripViewState? {
+    return when (val formatted = stop.format(trip, now, route)) {
+        is UpcomingFormat.Some ->
+            UpcomingTripViewState.Some(formatted.trips.singleOrNull()?.format ?: return null)
+        is UpcomingFormat.Disruption ->
+            UpcomingTripViewState.Disruption(
+                FormattedAlert(formatted.alert),
+                iconName = formatted.iconName,
+            )
+        else -> null
+    }
+}
+
+@Preview
+@Composable
+private fun TripStopRowPreview() {
+    val koin = koinApplication {
+        modules(module { single { SettingsCache(MockSettingsRepository()) } })
+    }
+    val objects = ObjectCollectionBuilder("TripStopRowPreview")
+    val trip = objects.trip()
+    val now = EasternTimeInstant.now()
+    val red = objects.route {
+        color = "DA291C"
+        longName = "Red Line"
+        textColor = "FFFFFF"
+        type = RouteType.HEAVY_RAIL
+    }
+    val redAccents = TripRouteAccents(red)
+    val globalData = GlobalResponse(objects)
+    KoinIsolatedContext(koin) {
+        MyApplicationTheme {
+            Column(Modifier.background(colorResource(R.color.fill3))) {
+                TripStopRow(
+                    entry =
+                        TripDetailsStopList.Entry(
+                            objects.stop {
+                                name = "Charles/MGH"
+                                wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+                            },
+                            stopSequence = 10,
+                            disruption = null,
+                            schedule = null,
+                            prediction = objects.prediction { status = "Stopped 5 stops away" },
+                            vehicle = null,
+                            routes =
+                                listOf(
+                                    red,
+                                    objects.route {
+                                        longName = "Green Line"
+                                        color = "00843D"
+                                        textColor = "FFFFFF"
+                                    },
+                                ),
+                        ),
+                    trip,
+                    now,
+                    onTapLink = {},
+                    onOpenAlertDetails = {},
+                    red,
+                    redAccents,
+                    globalData,
+                )
+                TripStopRow(
+                    entry =
+                        TripDetailsStopList.Entry(
+                            objects.stop { name = "Park Street" },
+                            stopSequence = 10,
+                            disruption = null,
+                            schedule = null,
+                            prediction = objects.prediction { departureTime = now.plus(5.minutes) },
+                            vehicle = null,
+                            routes =
+                                listOf(
+                                    red,
+                                    objects.route {
+                                        longName = "Green Line"
+                                        color = "00843D"
+                                        textColor = "FFFFFF"
+                                    },
+                                ),
+                        ),
+                    trip,
+                    now,
+                    onTapLink = {},
+                    onOpenAlertDetails = {},
+                    red,
+                    redAccents,
+                    globalData,
+                )
+                TripStopRow(
+                    entry =
+                        TripDetailsStopList.Entry(
+                            objects.stop { name = "South Station" },
+                            stopSequence = 10,
+                            disruption = null,
+                            schedule = null,
+                            prediction = objects.prediction { departureTime = now.plus(5.minutes) },
+                            predictionStop = objects.stop { platformCode = "1" },
+                            vehicle = null,
+                            routes = emptyList(),
+                            elevatorAlerts = listOf(objects.alert {}),
+                        ),
+                    trip,
+                    now,
+                    onTapLink = {},
+                    onOpenAlertDetails = {},
+                    objects.route { type = RouteType.COMMUTER_RAIL },
+                    TripRouteAccents.default.copy(
+                        type = RouteType.COMMUTER_RAIL,
+                        color = Color.fromHex("DA291C"),
+                    ),
+                    globalData,
+                )
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun TripStopRowDisruptionsPreview() {
+    val koin = koinApplication {
+        modules(module { single { SettingsCache(MockSettingsRepository()) } })
+    }
+    val objects = ObjectCollectionBuilder("TripStopRowDisruptionsPreview")
+    val trip = objects.trip()
+    val now = EasternTimeInstant.now()
+    val red = objects.route {
+        color = "DA291C"
+        longName = "Red Line"
+        textColor = "FFFFFF"
+        type = RouteType.HEAVY_RAIL
+    }
+    val redAccents = TripRouteAccents(red)
+    val globalData = GlobalResponse(objects)
+    KoinIsolatedContext(koin) {
+        MyApplicationTheme {
+            Box {
+                Box(
+                    Modifier.matchParentSize()
+                        .padding(6.dp)
+                        .background(colorResource(R.color.fill3)),
+                )
+                Column(Modifier.padding(top = 6.dp)) {
+                    TripStopRow(
+                        entry =
+                            TripDetailsStopList.Entry(
+                                objects.stop { name = "Charles/MGH" },
+                                stopSequence = 10,
+                                disruption =
+                                    UpcomingFormat.Disruption(
+                                        objects.alert { effect = Effect.StopClosure },
+                                        mapStopRoute = MapStopRoute.RED,
+                                    ),
+                                schedule = null,
+                                prediction = objects.prediction { status = "Stopped 5 stops away" },
+                                vehicle = null,
+                                routes =
+                                    listOf(
+                                        red,
+                                        objects.route {
+                                            longName = "Green Line"
+                                            color = "00843D"
+                                            textColor = "FFFFFF"
+                                        },
+                                    ),
+                            ),
+                        trip,
+                        now,
+                        onTapLink = {},
+                        onOpenAlertDetails = {},
+                        red,
+                        redAccents,
+                        globalData,
+                        showDownstreamAlert = true,
+                    )
+                    TripStopRow(
+                        entry =
+                            TripDetailsStopList.Entry(
+                                objects.stop { name = "Park Street" },
+                                stopSequence = 10,
+                                disruption = null,
+                                schedule = null,
+                                prediction =
+                                    objects.prediction { departureTime = now.plus(5.minutes) },
+                                vehicle = null,
+                                routes =
+                                    listOf(
+                                        red,
+                                        objects.route {
+                                            longName = "Green Line"
+                                            color = "00843D"
+                                            textColor = "FFFFFF"
+                                        },
+                                    ),
+                            ),
+                        trip,
+                        now,
+                        onTapLink = {},
+                        onOpenAlertDetails = {},
+                        red,
+                        redAccents,
+                        globalData,
+                        showDownstreamAlert = true,
+                    )
+                    TripStopRow(
+                        entry =
+                            TripDetailsStopList.Entry(
+                                objects.stop { name = "South Station" },
+                                stopSequence = 10,
+                                disruption =
+                                    UpcomingFormat.Disruption(
+                                        objects.alert { effect = Effect.Shuttle },
+                                        MapStopRoute.RED,
+                                    ),
+                                schedule = null,
+                                prediction =
+                                    objects.prediction { departureTime = now.plus(5.minutes) },
+                                predictionStop = objects.stop { platformCode = "1" },
+                                vehicle = null,
+                                routes = emptyList(),
+                                elevatorAlerts = listOf(objects.alert {}),
+                            ),
+                        trip,
+                        now,
+                        onTapLink = {},
+                        onOpenAlertDetails = {},
+                        objects.route { type = RouteType.COMMUTER_RAIL },
+                        TripRouteAccents.default.copy(
+                            type = RouteType.COMMUTER_RAIL,
+                            color = Color.fromHex("DA291C"),
+                        ),
+                        globalData,
+                        showDownstreamAlert = true,
+                    )
+                }
+            }
+        }
+    }
+}
