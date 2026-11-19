@@ -44,7 +44,8 @@ public data class ErrorKey(public val sheets: Set<KClass<out SheetRoutes>>, publ
     }
 
     public enum class SheetType {
-        StopDetails,
+        StopOverview,
+        RouteStop,
         TripDetails,
         RouteDetails,
         EditFavorites,
@@ -54,7 +55,8 @@ public data class ErrorKey(public val sheets: Set<KClass<out SheetRoutes>>, publ
 
         internal fun toSheetRoutesClass(): KClass<out SheetRoutes> {
             return when (this) {
-                StopDetails -> SheetRoutes.StopDetails::class
+                StopOverview -> SheetRoutes.StopOverview::class
+                RouteStop -> SheetRoutes.RouteStop::class
                 TripDetails -> SheetRoutes.TripDetails::class
                 RouteDetails -> SheetRoutes.RouteDetails::class
                 EditFavorites -> SheetRoutes.EditFavorites::class

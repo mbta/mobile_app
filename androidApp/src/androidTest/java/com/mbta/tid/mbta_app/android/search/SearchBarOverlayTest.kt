@@ -108,7 +108,7 @@ class SearchBarOverlayTest : KoinTest {
             )
         }
 
-        currentNavEntry.value = SheetRoutes.StopDetails(visitedStop.id, null, null)
+        currentNavEntry.value = SheetRoutes.StopOverview(visitedStop.id)
 
         composeTestRule.waitForIdle()
 

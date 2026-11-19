@@ -17,16 +17,14 @@ public sealed class DeepLinkState {
         val directionId: Int?,
         val tripId: String?,
     ) : DeepLinkState() {
-        val sheetRoute: SheetRoutes.StopDetails =
-            SheetRoutes.StopDetails(
-                stopId,
-                directionId?.let { direction ->
-                    routeId?.let { route ->
-                        RouteStopFilter(LineOrRoute.Id.fromString(route), direction, false)
-                    }
-                },
-                tripId?.let { TripDetailsFilter(it, null, null, false) },
-            )
+        val sheetRoute: SheetRoutes =
+            if (routeId != null && directionId != null)
+                SheetRoutes.RouteStop(
+                    stopId,
+                    RouteStopFilter(LineOrRoute.Id.fromString(routeId), directionId, false),
+                    tripId?.let { TripDetailsFilter(it, null, null, false) },
+                )
+            else SheetRoutes.StopOverview(stopId)
     }
 
     public companion object {

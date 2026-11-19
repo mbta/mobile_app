@@ -2,7 +2,7 @@ package com.mbta.tid.mbta_app.android.nearbyTransit
 
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteStopFilter
-import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
+import com.mbta.tid.mbta_app.model.RouteStopPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import junit.framework.TestCase.assertFalse
@@ -16,37 +16,33 @@ class MapAndSheetTabViewModelTest {
     fun testUpdatesStopDetailsPageFilterUpdates() {
         val vm = NearbyTransitTabViewModel()
         val initialFilter =
-            StopDetailsPageFilters(
+            RouteStopPageFilters(
                 "stop1",
                 RouteStopFilter(Route.Id("route_1"), 1),
                 TripDetailsFilter("trip_1", null, 0, false),
             )
         val initialNav =
-            SheetRoutes.StopDetails(
+            SheetRoutes.RouteStop(
                 initialFilter.stopId,
                 initialFilter.routeStopFilter,
                 initialFilter.tripFilter,
             )
         val newFilter =
-            StopDetailsPageFilters(
+            RouteStopPageFilters(
                 "stop1",
                 RouteStopFilter(Route.Id("route_1"), 0),
                 TripDetailsFilter("trip_2", null, 0, false),
             )
         val newNav =
-            SheetRoutes.StopDetails(
-                newFilter.stopId,
-                newFilter.routeStopFilter,
-                newFilter.tripFilter,
-            )
+            SheetRoutes.RouteStop(newFilter.stopId, newFilter.routeStopFilter, newFilter.tripFilter)
 
         var popCalled = false
         var pushedRoute: SheetRoutes? = null
 
-        vm.setStopDetailsFilters(null, initialFilter, { popCalled = true }, { pushedRoute = it })
+        vm.setRouteStopFilters(null, initialFilter, { popCalled = true }, { pushedRoute = it })
         assertEquals(initialNav, pushedRoute)
         assertFalse(popCalled)
-        vm.setStopDetailsFilters(pushedRoute, newFilter, { popCalled = true }, { pushedRoute = it })
+        vm.setRouteStopFilters(pushedRoute, newFilter, { popCalled = true }, { pushedRoute = it })
         assertEquals(newNav, pushedRoute)
         assertTrue(popCalled)
     }
@@ -79,7 +75,7 @@ class MapAndSheetTabViewModelTest {
         var pushedRoute: SheetRoutes? = null
 
         vm.setRouteStopFilter(
-            SheetRoutes.StopDetails("a", RouteStopFilter(Route.Id("route"), 1), null),
+            SheetRoutes.RouteStop("a", RouteStopFilter(Route.Id("route"), 1), null),
             "a",
             newFilter,
             { popCalled = true },
@@ -88,7 +84,7 @@ class MapAndSheetTabViewModelTest {
         assertEquals(
             newFilter,
             when (val actual = pushedRoute) {
-                is SheetRoutes.StopDetails -> actual.routeStopFilter
+                is SheetRoutes.RouteStop -> actual.routeStopFilter
                 else -> false
             },
         )
@@ -105,7 +101,7 @@ class MapAndSheetTabViewModelTest {
         var pushCalled = false
 
         vm.setRouteStopFilter(
-            SheetRoutes.StopDetails("a", sameFilter, null),
+            SheetRoutes.RouteStop("a", sameFilter, null),
             "a",
             sameFilter,
             { popCalled = true },
@@ -124,7 +120,7 @@ class MapAndSheetTabViewModelTest {
         var pushedRoute: SheetRoutes? = null
 
         vm.setRouteStopFilter(
-            SheetRoutes.StopDetails("a", null, null),
+            SheetRoutes.StopOverview("a"),
             "a",
             newFilter,
             { popCalled = true },
@@ -133,7 +129,7 @@ class MapAndSheetTabViewModelTest {
         assertEquals(
             newFilter,
             when (val actual = pushedRoute) {
-                is SheetRoutes.StopDetails -> actual.routeStopFilter
+                is SheetRoutes.RouteStop -> actual.routeStopFilter
                 else -> false
             },
         )

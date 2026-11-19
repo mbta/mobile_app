@@ -41,7 +41,7 @@ fun StopDetailsUnfilteredView(
 ) {
 
     val globalResponse =
-        getGlobalData(ErrorKey(setOf(SheetRoutes.StopDetails::class), "StopDetailsUnfilteredView"))
+        getGlobalData(ErrorKey(setOf(SheetRoutes.StopOverview::class), "StopDetailsUnfilteredView"))
     val stop: Stop? = globalResponse?.getStop(stopId)
 
     val analytics: Analytics = koinInject()
@@ -102,7 +102,7 @@ fun StopDetailsUnfilteredView(
     } else {
         CompositionLocalProvider(IsLoadingSheetContents provides true) {
             Column(modifier = Modifier.loading()) {
-                val placeholderData = LoadingPlaceholders.stopDetailsRouteCards()
+                val placeholderData = LoadingPlaceholders.stopOverviewRouteCards()
                 val filterRoutes =
                     if (globalResponse != null) {
                         getFilterPillRoutes(placeholderData, globalResponse)

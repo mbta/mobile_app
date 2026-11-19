@@ -187,7 +187,7 @@ struct StopDetailsUnfilteredView: View {
     }
 
     @ViewBuilder private func loadingBody() -> some View {
-        let placeholderCards = LoadingPlaceholders.shared.stopDetailsRouteCards()
+        let placeholderCards = LoadingPlaceholders.shared.stopOverviewRouteCards()
         VStack(spacing: 0) {
             ForEach(placeholderCards, id: \.id) { card in
                 RouteCard(

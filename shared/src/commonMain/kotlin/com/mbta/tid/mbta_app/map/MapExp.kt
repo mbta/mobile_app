@@ -48,7 +48,7 @@ internal object MapExp {
     fun selectedExp(state: StopLayerGenerator.State) =
         when (state) {
             StopLayerGenerator.State.Default -> Exp(false)
-            is StopLayerGenerator.State.StopDetails ->
+            is StopLayerGenerator.State.StopOverview ->
                 Exp.eq(Exp.get(StopFeaturesBuilder.propIdKey), Exp(state.selectedStopId))
             is StopLayerGenerator.State.TripDetails if state.selectedStopId != null ->
                 Exp.eq(Exp.get(StopFeaturesBuilder.propIdKey), Exp(state.selectedStopId))

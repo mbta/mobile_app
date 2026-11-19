@@ -31,7 +31,7 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 fun NearbyTransitPage(
     nearbyTransit: NearbyTransit,
-    onOpenStopDetails: (String, RouteStopFilter?) -> Unit,
+    onOpenRouteStop: (String, RouteStopFilter) -> Unit,
     openSearch: () -> Unit,
     nearbyViewModel: INearbyViewModel,
     errorBannerViewModel: IErrorBannerViewModel,
@@ -104,7 +104,7 @@ fun NearbyTransitPage(
             global = globalResponse,
             now = now,
             isFavorite = { rsd -> (favorites?.keys ?: emptySet()).contains(rsd) },
-            onOpenStopDetails = onOpenStopDetails,
+            onOpenRouteStop = onOpenRouteStop,
         )
     }
 }

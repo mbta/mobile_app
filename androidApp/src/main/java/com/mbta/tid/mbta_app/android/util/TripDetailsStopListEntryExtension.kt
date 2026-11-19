@@ -6,7 +6,7 @@ import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.TrackChange
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
-import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
+import com.mbta.tid.mbta_app.model.tripDetailsPage.ExplainerType
 
 fun TripDetailsStopList.Entry.trackChangeTapCallback(
     route: Route,

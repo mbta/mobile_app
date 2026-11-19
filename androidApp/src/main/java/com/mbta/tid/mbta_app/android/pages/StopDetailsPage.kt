@@ -15,7 +15,8 @@ import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteStopFilter
-import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
+import com.mbta.tid.mbta_app.model.RouteStopPageFilters
+import com.mbta.tid.mbta_app.model.StopCentricPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.routes.SheetRoutes
@@ -30,7 +31,7 @@ import org.koin.compose.koinInject
 @Composable
 fun StopDetailsPage(
     modifier: Modifier = Modifier,
-    filters: StopDetailsPageFilters,
+    filters: StopCentricPageFilters,
     allAlerts: AlertsStreamDataResponse?,
     navCallbacks: NavigationCallbacks,
     updateRouteStopFilter: (RouteStopFilter?) -> Unit,
@@ -61,7 +62,7 @@ fun StopDetailsPage(
         defaultDirection: Int,
     ) {
         coroutineScope.launch {
-            updateFavorites(updatedFavorites, EditFavoritesContext.StopDetails, defaultDirection)
+            updateFavorites(updatedFavorites, EditFavoritesContext.RouteStop, defaultDirection)
         }
     }
 
@@ -87,8 +88,8 @@ fun StopDetailsPage(
     StopDetailsView(
         modifier,
         stopId,
-        filters.routeStopFilter,
-        filters.tripFilter,
+        (filters as? RouteStopPageFilters)?.routeStopFilter,
+        (filters as? RouteStopPageFilters)?.tripFilter,
         allAlerts,
         now,
         ::isFavorite,

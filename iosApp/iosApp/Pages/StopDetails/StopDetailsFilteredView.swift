@@ -96,7 +96,7 @@ struct StopDetailsFilteredView: View {
 
     var realtimeStopData: RouteCardData.RouteStopData? {
         if case let .routeStop(data) = onEnum(of: routeData), data.filteredWith.stopId == stopId,
-           data.filteredWith.routeStopFilter?.routeId == routeStopFilter.routeId {
+           data.filteredWith.routeStopFilter.routeId == routeStopFilter.routeId {
             data.stopData
         } else {
             nil
@@ -135,7 +135,7 @@ struct StopDetailsFilteredView: View {
         .manageVM(
             tripDetailsVM,
             alerts: alerts,
-            context: .stopDetails,
+            context: .routeStop,
             filters: tripPageFilter,
         )
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
@@ -285,7 +285,7 @@ struct StopDetailsFilteredView: View {
                                 routeId: lineOrRoute.id,
                                 stopId: stopId,
                                 selectedDirection: routeStopFilter.directionId,
-                                context: .stopDetails
+                                context: .routeStop
                             )
                         )
                     },

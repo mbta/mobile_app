@@ -18,8 +18,8 @@ import com.mbta.tid.mbta_app.model.TrackChange
 import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.Vehicle
-import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
-import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
+import com.mbta.tid.mbta_app.model.tripDetailsPage.ExplainerType
+import com.mbta.tid.mbta_app.model.tripDetailsPage.TripHeaderSpec
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.assertEquals

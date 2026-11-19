@@ -39,7 +39,7 @@ extension HomeMapView {
 
     func handleNavStackChange(entry: SheetNavigationStackEntry) {
         let filter: RouteStopFilter? = switch entry {
-        case let .stopDetails(_, routeStopFilter, _):
+        case let .routeStop(_, routeStopFilter, _):
             routeStopFilter
         case let .tripDetails(tripPageFilter):
             tripPageFilter.routeStopFilter
@@ -69,13 +69,13 @@ extension HomeMapView {
             routeId: routeId,
             directionId: directionId,
             errorKey: .companion.fromSheetTypes(
-                sheetTypes: [.stopDetails, .tripDetails],
+                sheetTypes: [.routeStop, .tripDetails],
                 id: "HomeMapView.joinVehiclesChannel"
             ),
         ) { outcome in
             if case let .ok(result) = onEnum(of: outcome) {
                 if let routeCardData = routeCardDataState?.data {
-                    vehiclesData = Array(StopDetailsUtils.shared.filterVehiclesByUpcoming(
+                    vehiclesData = Array(RouteStopUtils.shared.filterVehiclesByUpcoming(
                         routeCardData: routeCardData,
                         vehicles: result.data
                     ).values)
@@ -105,7 +105,7 @@ extension HomeMapView {
         }
         analytics.tappedOnStop(stopId: stop.id)
         navManager.popToEntrypoint()
-        navManager.pushNavEntry(.stopDetails(stopId: stop.id, routeStopFilter: nil, tripFilter: nil))
+        navManager.pushNavEntry(.stopOverview(stopId: stop.id))
         return true
     }
 
@@ -114,7 +114,7 @@ extension HomeMapView {
         let currentNavEntry = navManager.navigationStack.lastSafe()
         let (stopId, routeStopFilter, tripFilter): (String?, RouteStopFilter?,
                                                     TripDetailsFilter?) = switch currentNavEntry {
-        case let .stopDetails(stopId: stopId, routeStopFilter: routeStopFilter, tripFilter: tripFilter): (
+        case let .routeStop(stopId: stopId, routeStopFilter: routeStopFilter, tripFilter: tripFilter): (
                 stopId,
                 routeStopFilter,
                 tripFilter

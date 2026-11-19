@@ -38,7 +38,7 @@ struct SearchResultsContainer: View {
     }
 
     func handleStopTap(stopId: String) {
-        navManager.pushNavEntry(.stopDetails(stopId: stopId, routeStopFilter: nil, tripFilter: nil))
+        navManager.pushNavEntry(.stopOverview(stopId: stopId))
     }
 
     func handleRouteTap(routeId: LineOrRoute.Id) {

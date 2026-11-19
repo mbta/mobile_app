@@ -142,8 +142,11 @@ fun FavoritesPage(
     val isFavorite = { rsd: RouteStopDirection ->
         (state.favorites?.keys ?: emptySet()).contains(rsd)
     }
-    val onOpenStopDetails = { stopId: String, filter: RouteStopFilter? ->
-        openSheetRoute(SheetRoutes.StopDetails(stopId, filter, null))
+    val onOpenRouteStop = { stopId: String, filter: RouteStopFilter? ->
+        val sheetRoute =
+            if (filter != null) SheetRoutes.RouteStop(stopId, filter, null)
+            else SheetRoutes.StopOverview(stopId)
+        openSheetRoute(sheetRoute)
     }
 
     Column {
@@ -189,7 +192,7 @@ fun FavoritesPage(
             global = globalResponse,
             now = now,
             isFavorite = isFavorite,
-            onOpenStopDetails = onOpenStopDetails,
+            onOpenRouteStop = onOpenRouteStop,
         )
     }
 }

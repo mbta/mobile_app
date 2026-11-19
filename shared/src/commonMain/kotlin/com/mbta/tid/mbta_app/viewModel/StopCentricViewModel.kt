@@ -9,9 +9,11 @@ import androidx.compose.runtime.setValue
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopFilter
-import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
-import com.mbta.tid.mbta_app.model.StopDetailsUtils
-import com.mbta.tid.mbta_app.model.hasContext
+import com.mbta.tid.mbta_app.model.RouteStopPageFilters
+import com.mbta.tid.mbta_app.model.RouteStopUtils
+import com.mbta.tid.mbta_app.model.StopCentricPageFilters
+import com.mbta.tid.mbta_app.model.StopOverviewPageFilters
+import com.mbta.tid.mbta_app.model.StopOverviewUtils
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
@@ -33,13 +35,13 @@ import kotlinx.coroutines.flow.StateFlow
 public interface IStopCentricViewModel {
     public val models: StateFlow<StopCentricViewModel.State>
 
-    public val filterUpdates: StateFlow<StopDetailsPageFilters?>
+    public val filterUpdates: StateFlow<RouteStopPageFilters?>
 
     public fun setActive(active: Boolean, wasSentToBackground: Boolean = false)
 
     public fun setAlerts(alerts: AlertsStreamDataResponse?)
 
-    public fun setFilters(filters: StopDetailsPageFilters)
+    public fun setFilters(filters: StopCentricPageFilters)
 
     public fun setNow(now: EasternTimeInstant)
 }
@@ -64,15 +66,15 @@ public class StopCentricViewModel(
     )
 
     public sealed class RouteData {
-        public abstract val filteredWith: StopDetailsPageFilters
+        public abstract val filteredWith: StopCentricPageFilters
 
         public data class RouteStop(
-            override val filteredWith: StopDetailsPageFilters,
+            override val filteredWith: RouteStopPageFilters,
             val stopData: RouteCardData.RouteStopData,
         ) : RouteData()
 
         public data class StopOverview(
-            override val filteredWith: StopDetailsPageFilters,
+            override val filteredWith: StopOverviewPageFilters,
             val routeCards: List<RouteCardData>,
         ) : RouteData()
     }
@@ -80,7 +82,7 @@ public class StopCentricViewModel(
     @set:JvmName("setAlertsState")
     private var alerts by mutableStateOf<AlertsStreamDataResponse?>(null)
     @set:JvmName("setFiltersState")
-    private var filters by mutableStateOf<StopDetailsPageFilters?>(null)
+    private var filters by mutableStateOf<StopCentricPageFilters?>(null)
     @set:JvmName("setNowState") private var now by mutableStateOf(EasternTimeInstant.now())
 
     @Composable
@@ -90,7 +92,11 @@ public class StopCentricViewModel(
         var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
 
         var active: Boolean by remember { mutableStateOf(true) }
-        val errorKey = ErrorKey(setOf(SheetRoutes.StopDetails::class), "StopCentricViewModel")
+        val errorKey =
+            ErrorKey(
+                setOf(SheetRoutes.StopOverview::class, SheetRoutes.RouteStop::class),
+                "StopCentricViewModel",
+            )
         val globalData = getGlobalData(errorKey, coroutineDispatcher = coroutineDispatcher)
 
         val stopIds =
@@ -103,13 +109,25 @@ public class StopCentricViewModel(
                 }
             }
 
+        val sheetRoute =
+            remember(filters) {
+                when (val filters = filters) {
+                    null -> null
+                    is StopOverviewPageFilters -> SheetRoutes.StopOverview(filters.stopId)
+                    is RouteStopPageFilters ->
+                        SheetRoutes.RouteStop(
+                            filters.stopId,
+                            filters.routeStopFilter,
+                            filters.tripFilter,
+                        )
+                }
+            }
+
         val departureData =
             getDepartureData(
                 stopIds?.toSet(),
                 now,
-                filters?.let {
-                    SheetRoutes.StopDetails(it.stopId, it.routeStopFilter, it.tripFilter)
-                },
+                sheetRoute,
                 active,
                 errorKey,
                 onAnyMessageReceived = { awaitingPredictionsAfterBackground = false },
@@ -156,51 +174,53 @@ public class StopCentricViewModel(
                     responses.predictions,
                     alerts,
                     now,
-                    if (resolvedFilters.routeStopFilter != null) RouteCardData.Context.RouteStop
+                    if (resolvedFilters is RouteStopPageFilters) RouteCardData.Context.RouteStop
                     else RouteCardData.Context.StopOverview,
                 )
 
             routeData =
-                when {
-                    routeCardData?.hasContext(RouteCardData.Context.RouteStop) == true ->
+                when (resolvedFilters) {
+                    is RouteStopPageFilters ->
                         routeCardData
-                            ?.find { it.lineOrRoute.id == resolvedFilters.routeStopFilter?.routeId }
+                            ?.find { it.lineOrRoute.id == resolvedFilters.routeStopFilter.routeId }
                             ?.stopData
                             ?.firstOrNull()
                             ?.let { RouteData.RouteStop(resolvedFilters, it) }
 
-                    routeCardData?.hasContext(RouteCardData.Context.StopOverview) == true ->
+                    is StopOverviewPageFilters ->
                         routeCardData?.let { RouteData.StopOverview(resolvedFilters, it) }
-
-                    else -> null
                 }
         }
 
         fun applyFilterUpdate(
             routeCardData: List<RouteCardData>?,
-            currentFilters: StopDetailsPageFilters,
+            currentFilters: StopCentricPageFilters,
             routeStopFilterOverride: RouteStopFilter? = null,
         ) {
             if (routeCardData == null) return
 
+            val currentRouteStopFilters = currentFilters as? RouteStopPageFilters
+
             val autoTripFilter =
-                StopDetailsUtils.autoTripFilter(
+                RouteStopUtils.autoTripFilter(
                     routeCardData,
-                    routeStopFilterOverride ?: currentFilters.routeStopFilter,
-                    currentFilters.tripFilter,
+                    routeStopFilterOverride ?: currentRouteStopFilters?.routeStopFilter,
+                    currentRouteStopFilters?.tripFilter,
                     now,
                     globalData,
                 )
 
+            val newRouteStopFilter =
+                routeStopFilterOverride ?: currentRouteStopFilters?.routeStopFilter ?: return
+
             if (
-                autoTripFilter != currentFilters.tripFilter ||
-                    (routeStopFilterOverride != null &&
-                        routeStopFilterOverride != currentFilters.routeStopFilter)
+                autoTripFilter != currentRouteStopFilters?.tripFilter ||
+                    newRouteStopFilter != currentRouteStopFilters?.routeStopFilter
             ) {
                 _filterUpdates.tryEmit(
-                    StopDetailsPageFilters(
+                    RouteStopPageFilters(
                         currentFilters.stopId,
-                        routeStopFilterOverride ?: currentFilters.routeStopFilter,
+                        newRouteStopFilter,
                         autoTripFilter,
                     ),
                 )
@@ -219,8 +239,11 @@ public class StopCentricViewModel(
             }
 
             val autoRouteStopFilter =
-                resolvedFilters.routeStopFilter
-                    ?: StopDetailsUtils.autoRouteStopFilter(resolvedRouteCardData)
+                when (resolvedFilters) {
+                    is RouteStopPageFilters -> resolvedFilters.routeStopFilter
+                    is StopOverviewPageFilters ->
+                        StopOverviewUtils.autoRouteStopFilter(resolvedRouteCardData)
+                }
             applyFilterUpdate(resolvedRouteCardData, resolvedFilters, autoRouteStopFilter)
         }
 
@@ -235,8 +258,8 @@ public class StopCentricViewModel(
     override val models: StateFlow<State>
         get() = internalModels
 
-    private val _filterUpdates = MutableStateFlow<StopDetailsPageFilters?>(null)
-    public override val filterUpdates: StateFlow<StopDetailsPageFilters?> = _filterUpdates
+    private val _filterUpdates = MutableStateFlow<RouteStopPageFilters?>(null)
+    public override val filterUpdates: StateFlow<RouteStopPageFilters?> = _filterUpdates
 
     override fun setActive(active: Boolean, wasSentToBackground: Boolean): Unit =
         fireEvent(Event.SetActive(active, wasSentToBackground))
@@ -245,7 +268,7 @@ public class StopCentricViewModel(
         this.alerts = alerts
     }
 
-    override fun setFilters(filters: StopDetailsPageFilters): Unit {
+    override fun setFilters(filters: StopCentricPageFilters): Unit {
         this.filters = filters
         // If the filter is set, the last pushed update should be cleared
         _filterUpdates.tryEmit(null)
@@ -263,19 +286,19 @@ constructor(initialState: StopCentricViewModel.State = StopCentricViewModel.Stat
 
     public var onSetActive: (active: Boolean, wasSentToBackground: Boolean) -> Unit = { _, _ -> }
     public var onSetAlerts: (alerts: AlertsStreamDataResponse?) -> Unit = {}
-    public var onSetFilters: (filters: StopDetailsPageFilters) -> Unit = {}
+    public var onSetFilters: (filters: StopCentricPageFilters) -> Unit = {}
     public var onSetNow: (now: EasternTimeInstant) -> Unit = {}
 
     override val models: MutableStateFlow<StopCentricViewModel.State> =
         MutableStateFlow(initialState)
-    override val filterUpdates: MutableStateFlow<StopDetailsPageFilters?> = MutableStateFlow(null)
+    override val filterUpdates: MutableStateFlow<RouteStopPageFilters?> = MutableStateFlow(null)
 
     override fun setActive(active: Boolean, wasSentToBackground: Boolean): Unit =
         onSetActive(active, wasSentToBackground)
 
     override fun setAlerts(alerts: AlertsStreamDataResponse?): Unit = onSetAlerts(alerts)
 
-    override fun setFilters(filters: StopDetailsPageFilters): Unit = onSetFilters(filters)
+    override fun setFilters(filters: StopCentricPageFilters): Unit = onSetFilters(filters)
 
     override fun setNow(now: EasternTimeInstant): Unit = onSetNow(now)
 }

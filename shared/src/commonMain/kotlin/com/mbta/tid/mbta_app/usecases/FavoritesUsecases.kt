@@ -132,7 +132,7 @@ public class FavoritesUsecases(
 
 public enum class EditFavoritesContext {
     Favorites,
-    StopDetails,
+    RouteStop,
     RouteDetails,
     InitialLaunch,
 }

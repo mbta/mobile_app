@@ -12,8 +12,8 @@ import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopFilter
+import com.mbta.tid.mbta_app.model.RouteStopPageFilters
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -176,7 +176,7 @@ class StopDetailsFilteredViewTest {
                     MockStopCentricViewModel(
                         StopCentricViewModel.State(
                             RouteData.RouteStop(
-                                StopDetailsPageFilters(stop.id, filterState, null),
+                                RouteStopPageFilters(stop.id, filterState, null),
                                 routeStopData,
                             ),
                         ),
@@ -228,7 +228,7 @@ class StopDetailsFilteredViewTest {
                     MockStopCentricViewModel(
                         StopCentricViewModel.State(
                             RouteData.RouteStop(
-                                StopDetailsPageFilters(stop.id, filterState, null),
+                                RouteStopPageFilters(stop.id, filterState, null),
                                 routeStopData,
                             ),
                         ),
@@ -288,7 +288,7 @@ class StopDetailsFilteredViewTest {
                     MockStopCentricViewModel(
                         StopCentricViewModel.State(
                             RouteData.RouteStop(
-                                StopDetailsPageFilters(stop.id, filterState, null),
+                                RouteStopPageFilters(stop.id, filterState, null),
                                 routeStopData,
                             ),
                         ),
@@ -338,7 +338,7 @@ class StopDetailsFilteredViewTest {
                     MockStopCentricViewModel(
                         StopCentricViewModel.State(
                             RouteData.RouteStop(
-                                StopDetailsPageFilters(stop.id, filterState, null),
+                                RouteStopPageFilters(stop.id, filterState, null),
                                 routeStopData,
                             ),
                         ),

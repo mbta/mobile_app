@@ -1345,7 +1345,7 @@ class RouteCardDataLeafTest {
         }
 
     @Test
-    fun `formats Red Line southbound as branching all upcoming trips with Braintree suspension stop details`() =
+    fun `formats Red Line southbound as branching all upcoming trips with Braintree suspension route stop`() =
         runBlocking {
 
             // ⚠ Southbound to Ashmont 3 min, 12 min, 15 min
@@ -2208,7 +2208,7 @@ class RouteCardDataLeafTest {
     }
 
     @Test
-    fun `formats bus as non-branching in StopDetailsFiltered even if next two trips match`() {
+    fun `formats bus as non-branching in RouteStop even if next two trips match`() {
         val objects = `87`.objects()
         val now = EasternTimeInstant.now()
 

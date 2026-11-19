@@ -1,4 +1,4 @@
-package com.mbta.tid.mbta_app.model.stopDetailsPage
+package com.mbta.tid.mbta_app.model.tripDetailsPage
 
 import com.mbta.tid.mbta_app.model.TrackChange
 import kotlinx.serialization.Serializable

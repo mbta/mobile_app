@@ -160,7 +160,7 @@ class StopLayerGeneratorTest {
         val stopLayers =
             StopLayerGenerator.createStopLayers(
                 ColorPalette.light,
-                StopLayerGenerator.State.StopDetails(
+                StopLayerGenerator.State.StopOverview(
                     selectedStopId = checkNotNull(alewifeFeature.id),
                 ),
             )
@@ -182,7 +182,7 @@ class StopLayerGeneratorTest {
     }
 
     @Test
-    fun `state stop details filter applies correctly`() = runBlocking {
+    fun `state route stop filter applies correctly`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val subwayRoute = objects.route {
             id = "Orange"

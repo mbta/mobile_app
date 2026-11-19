@@ -52,12 +52,12 @@ fun RouteCard(
     now: EasternTimeInstant,
     isFavorite: (RouteStopDirection) -> Boolean?,
     showStopHeader: Boolean,
-    onOpenStopDetails: (String, RouteStopFilter) -> Unit,
+    onOpenRouteStop: (String, RouteStopFilter) -> Unit,
 ) {
     RouteCardContainer(data = data, showStopHeader = showStopHeader, globalData = globalData) {
         Departures(it, globalData, now, { routeStopDirection -> isFavorite(routeStopDirection) }) {
             leaf ->
-            onOpenStopDetails(leaf.stop.id, RouteStopFilter(data.lineOrRoute.id, leaf.direction.id))
+            onOpenRouteStop(leaf.stop.id, RouteStopFilter(data.lineOrRoute.id, leaf.direction.id))
         }
     }
 }
@@ -83,7 +83,7 @@ class Previews() {
                     data.now,
                     { false },
                     showStopHeader = true,
-                    onOpenStopDetails = { _, _ -> },
+                    onOpenRouteStop = { _, _ -> },
                 )
             }
         }

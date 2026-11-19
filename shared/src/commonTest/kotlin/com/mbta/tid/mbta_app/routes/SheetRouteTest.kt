@@ -10,40 +10,40 @@ import kotlin.test.assertTrue
 
 class SheetRouteTest {
     @Test
-    fun testPageChangedNearbyToStopDetails() {
+    fun testPageChangedNearbyToStopOverview() {
         assertTrue(
             SheetRoutes.pageChanged(
                 SheetRoutes.NearbyTransit,
-                SheetRoutes.StopDetails("a", null, null),
+                SheetRoutes.StopOverview("a"),
             ),
         )
     }
 
     @Test
-    fun testPageChangedWhenStopDetailsDifferentStops() {
+    fun testPageChangedWhenStopOverviewDifferentStops() {
         assertTrue(
             SheetRoutes.pageChanged(
-                SheetRoutes.StopDetails("a", null, null),
-                SheetRoutes.StopDetails("b", null, null),
+                SheetRoutes.StopOverview("a"),
+                SheetRoutes.StopOverview("b"),
             ),
         )
     }
 
     @Test
-    fun testPageNotChangedWhenStopDetailsSameStopDifferentFilters() {
+    fun testPageNotChangedWhenStopOverviewToRouteStop() {
         assertFalse(
             SheetRoutes.pageChanged(
-                SheetRoutes.StopDetails("a", null, null),
-                SheetRoutes.StopDetails("a", RouteStopFilter(Route.Id("route1"), 1), null),
+                SheetRoutes.StopOverview("a"),
+                SheetRoutes.RouteStop("a", RouteStopFilter(Route.Id("route1"), 1), null),
             ),
         )
     }
 
     @Test
-    fun testRetainSheetSizeWhenNotStopDetailsOrEntrypoint() {
+    fun testRetainSheetSizeWhenNotStopOrEntrypoint() {
         assertFalse(
             SheetRoutes.retainSheetSize(
-                SheetRoutes.StopDetails("a", null, null),
+                SheetRoutes.StopOverview("a"),
                 SheetRoutes.NearbyTransit,
             ),
         )
@@ -61,32 +61,32 @@ class SheetRouteTest {
     }
 
     @Test
-    fun testShouldResetSheetHeightStopDetails() {
+    fun testShouldResetSheetHeightStopCentric() {
         assertTrue(
             SheetRoutes.shouldResetSheetHeight(
-                SheetRoutes.StopDetails("a", null, null),
-                SheetRoutes.StopDetails("b", null, null),
+                SheetRoutes.StopOverview("a"),
+                SheetRoutes.StopOverview("b"),
             ),
         )
 
         assertFalse(
             SheetRoutes.shouldResetSheetHeight(
-                SheetRoutes.StopDetails("a", RouteStopFilter(Route.Id("b"), 0), null),
-                SheetRoutes.StopDetails("a", RouteStopFilter(Route.Id("b"), 1), null),
+                SheetRoutes.RouteStop("a", RouteStopFilter(Route.Id("b"), 0), null),
+                SheetRoutes.RouteStop("a", RouteStopFilter(Route.Id("b"), 1), null),
             ),
         )
 
         assertTrue(
             SheetRoutes.shouldResetSheetHeight(
                 SheetRoutes.NearbyTransit,
-                SheetRoutes.StopDetails("a", RouteStopFilter(Route.Id("b"), 1), null),
+                SheetRoutes.RouteStop("a", RouteStopFilter(Route.Id("b"), 1), null),
             ),
         )
 
         assertTrue(
             SheetRoutes.shouldResetSheetHeight(
                 SheetRoutes.Favorites,
-                SheetRoutes.StopDetails("a", RouteStopFilter(Route.Id("b"), 1), null),
+                SheetRoutes.RouteStop("a", RouteStopFilter(Route.Id("b"), 1), null),
             ),
         )
     }

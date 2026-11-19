@@ -30,10 +30,10 @@ import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
-import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
-import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderDebugData
-import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
+import com.mbta.tid.mbta_app.model.tripDetailsPage.ExplainerType
+import com.mbta.tid.mbta_app.model.tripDetailsPage.TripData
+import com.mbta.tid.mbta_app.model.tripDetailsPage.TripHeaderDebugData
+import com.mbta.tid.mbta_app.model.tripDetailsPage.TripHeaderSpec
 import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -65,7 +65,7 @@ fun TripDetailsView(
 
     val tripDetailsContext: TripDetailsViewModel.Context =
         if (isTripDetailsPage) TripDetailsViewModel.Context.TripDetails
-        else TripDetailsViewModel.Context.StopDetails
+        else TripDetailsViewModel.Context.RouteStop
 
     LaunchedEffect(tripFilter) { tripDetailsVM.setFilters(tripFilter) }
     LaunchedEffect(allAlerts) { tripDetailsVM.setAlerts(allAlerts) }
@@ -87,7 +87,7 @@ fun TripDetailsView(
     fun onTapStop(stop: TripDetailsStopList.Entry) {
         val parentStationId =
             globalResponse?.getStop(stop.stop.id)?.resolveParent(globalResponse)?.id ?: stop.stop.id
-        openSheetRoute(SheetRoutes.StopDetails(parentStationId, null, null))
+        openSheetRoute(SheetRoutes.StopOverview(parentStationId))
         analytics.tappedDownstreamStop(
             routeId = tripData?.trip?.routeId,
             stopId = parentStationId,

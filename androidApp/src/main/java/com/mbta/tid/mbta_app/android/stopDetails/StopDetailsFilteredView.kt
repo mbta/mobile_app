@@ -73,7 +73,7 @@ fun StopDetailsFilteredView(
 ) {
     val state by stopCentricViewModel.models.collectAsState()
     val global: GlobalResponse? =
-        getGlobalData(ErrorKey(setOf(SheetRoutes.StopDetails::class), "StopDetailsFilteredView"))
+        getGlobalData(ErrorKey(setOf(SheetRoutes.RouteStop::class), "StopDetailsFilteredView"))
 
     val lineOrRoute: LineOrRoute? = global?.getLineOrRoute(routeStopFilter.routeId)
 
@@ -107,7 +107,7 @@ fun StopDetailsFilteredView(
                             lineOrRoute.id,
                             stop.id,
                             selectedDirection = routeStopFilter.directionId,
-                            context = EditFavoritesContext.StopDetails,
+                            context = EditFavoritesContext.RouteStop,
                         ),
                     )
                 },

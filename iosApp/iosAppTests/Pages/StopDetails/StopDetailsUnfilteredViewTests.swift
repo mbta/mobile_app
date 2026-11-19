@@ -122,7 +122,7 @@ import XCTest
         let sut = try StopDetailsUnfilteredView(
             stopId: XCTUnwrap(stop?.id),
             routeData: StopCentricViewModel.RouteDataStopOverview(
-                filteredWith: .init(stopId: XCTUnwrap(stop?.id), routeStopFilter: nil, tripFilter: nil),
+                filteredWith: .init(stopId: XCTUnwrap(stop?.id)),
                 routeCards: routeCardData
             ),
             favorites: .init(routeStopDirection: [:]),
@@ -161,7 +161,7 @@ import XCTest
         let sut = try StopDetailsUnfilteredView(
             stopId: XCTUnwrap(inaccessibleStop?.id),
             routeData: StopCentricViewModel.RouteDataStopOverview(
-                filteredWith: .init(stopId: XCTUnwrap(inaccessibleStop?.id), routeStopFilter: nil, tripFilter: nil),
+                filteredWith: .init(stopId: XCTUnwrap(inaccessibleStop?.id)),
                 routeCards: routeCardData
             ),
             favorites: .init(routeStopDirection: [:]),
@@ -210,7 +210,7 @@ import XCTest
         let unfilteredView = try StopDetailsUnfilteredView(
             stopId: XCTUnwrap(stop?.id),
             routeData: StopCentricViewModel.RouteDataStopOverview(
-                filteredWith: .init(stopId: XCTUnwrap(stop?.id), routeStopFilter: nil, tripFilter: nil),
+                filteredWith: .init(stopId: XCTUnwrap(stop?.id)),
                 routeCards: routeCardData
             ),
             favorites: .init(routeStopDirection: [:]),

@@ -380,7 +380,7 @@ private fun SaveFavoritePagePreviewAdd() {
                 routeId = Route.Id("Orange"),
                 stopId = "place-welln",
                 initialDirection = 0,
-                context = EditFavoritesContext.StopDetails,
+                context = EditFavoritesContext.RouteStop,
                 goBack = {},
                 toastViewModel = MockToastViewModel(),
             )
@@ -436,7 +436,7 @@ private fun SaveFavoritePagePreviewEdit() {
                 routeId = Route.Id("Orange"),
                 stopId = "place-welln",
                 initialDirection = 0,
-                context = EditFavoritesContext.StopDetails,
+                context = EditFavoritesContext.RouteStop,
                 goBack = {},
                 toastViewModel = MockToastViewModel(),
             )

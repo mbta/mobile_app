@@ -133,7 +133,7 @@ final class SaveFavoritePageTests: XCTestCase {
             routeId: route.id,
             stopId: stop.id,
             initialSelectedDirection: 0,
-            context: .stopDetails,
+            context: .routeStop,
             updateFavorites: { updatedFavorites = $0 },
             navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
             notificationSettingsVM: notificationSettingsVM
@@ -169,7 +169,7 @@ final class SaveFavoritePageTests: XCTestCase {
             routeId: route.id,
             stopId: stop.id,
             initialSelectedDirection: 0,
-            context: .stopDetails,
+            context: .routeStop,
             updateFavorites: { _ in },
             navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
             notificationSettingsVM: notificationSettingsVM
@@ -205,7 +205,7 @@ final class SaveFavoritePageTests: XCTestCase {
             routeId: route.id,
             stopId: stop.id,
             initialSelectedDirection: 0,
-            context: .stopDetails,
+            context: .routeStop,
             updateFavorites: { _ in },
             navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
             notificationSettingsVM: notificationSettingsVM
@@ -246,7 +246,7 @@ final class SaveFavoritePageTests: XCTestCase {
             routeId: route.id,
             stopId: stop.id,
             initialSelectedDirection: 0,
-            context: .stopDetails,
+            context: .routeStop,
             updateFavorites: { _ in },
             navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
         )

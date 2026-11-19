@@ -48,7 +48,7 @@ fun ColumnScope.StopCardList(
     global: GlobalResponse?,
     now: EasternTimeInstant,
     isFavorite: (RouteStopDirection) -> Boolean,
-    onOpenStopDetails: (String, RouteStopFilter?) -> Unit,
+    onOpenRouteStop: (String, RouteStopFilter?) -> Unit,
 ) {
     val contentPadding = PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp)
     val verticalArrangement = Arrangement.spacedBy(14.dp)
@@ -77,7 +77,7 @@ fun ColumnScope.StopCardList(
             verticalArrangement = verticalArrangement,
             horizontalAlignment = horizontalAlignment,
         ) {
-            items(stopCardData) { StopCard(it, global, now, isFavorite, onOpenStopDetails) }
+            items(stopCardData) { StopCard(it, global, now, isFavorite, onOpenRouteStop) }
         }
     }
 }
@@ -333,7 +333,7 @@ private fun StopCardListPreview() {
             global,
             now,
             isFavorite = { true },
-            onOpenStopDetails = { _, _ -> },
+            onOpenRouteStop = { _, _ -> },
         )
     }
 }

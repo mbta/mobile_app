@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
+import com.mbta.tid.mbta_app.model.routeStopPage.TileData
 import com.mbta.tid.mbta_app.parametric.parametricTest
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test

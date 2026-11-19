@@ -1,4 +1,4 @@
-package com.mbta.tid.mbta_app.model.stopDetailsPage
+package com.mbta.tid.mbta_app.model.tripDetailsPage
 
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.TripDetailsStopList

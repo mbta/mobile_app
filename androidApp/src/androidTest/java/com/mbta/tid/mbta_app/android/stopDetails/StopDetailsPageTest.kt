@@ -5,7 +5,7 @@ import androidx.compose.ui.test.junit4.v2.createComposeRule
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.pages.StopDetailsPage
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
-import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
+import com.mbta.tid.mbta_app.model.StopOverviewPageFilters
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.MockStopCentricViewModel
@@ -34,7 +34,7 @@ class StopDetailsPageTest : KoinTest {
         var nowSet = false
 
         val alerts = AlertsStreamDataResponse(emptyMap())
-        val filters = StopDetailsPageFilters("stop", null, null)
+        val filters = StopOverviewPageFilters("stop")
 
         val viewModel = MockStopCentricViewModel()
         viewModel.onSetActive = { active, fromBackground -> activeSet = active && !fromBackground }
