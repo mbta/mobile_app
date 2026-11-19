@@ -291,7 +291,7 @@ struct ContentView: View {
                     TabView {
                         RouteDetailsView(
                             selectionId: navEntry.routeId, context: navEntry.context,
-                            onOpenStopDetails: { navManager.pushNavEntry(.stopOverview(stopId: $0)) },
+                            onOpenStopOverview: { navManager.pushNavEntry(.stopOverview(stopId: $0)) },
                             pushNavEntry: { entry in navManager.pushNavEntry(entry) },
                             navCallbacks: navCallbacks,
                             errorBannerVM: errorBannerVM,
@@ -336,7 +336,7 @@ struct ContentView: View {
                     // Wrapping in a TabView helps the page to animate in as a single unit
                     // Otherwise only the header animates
                     TabView {
-                        StopDetailsPage(
+                        RouteStopPage(
                             filters: RouteStopPageFilters(
                                 stopId: stopId,
                                 routeStopFilter: routeStopFilter,
@@ -363,12 +363,11 @@ struct ContentView: View {
                     // Wrapping in a TabView helps the page to animate in as a single unit
                     // Otherwise only the header animates
                     TabView {
-                        StopDetailsPage(
+                        StopOverviewPage(
                             filters: StopOverviewPageFilters(stopId: stopId),
                             navCallbacks: navCallbacks,
                             alerts: alerts,
                             errorBannerVM: errorBannerVM,
-                            mapVM: mapVM,
                             routeCardDataVM: routeCardDataVM,
                             stopCentricVM: stopCentricVM,
                             navManager: navManager,

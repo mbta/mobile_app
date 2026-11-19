@@ -1,5 +1,5 @@
 //
-//  StopDetailsFilteredHeader.swift
+//  RouteStopHeader.swift
 //  iosApp
 //
 //  Created by esimon on 11/26/24.
@@ -9,7 +9,7 @@
 import Shared
 import SwiftUI
 
-struct StopDetailsFilteredHeader: View {
+struct RouteStopHeader: View {
     @ObserveInjection var inject
     var route: Route?
     var line: Line?
@@ -28,15 +28,15 @@ struct StopDetailsFilteredHeader: View {
             Text(
                 "\(routeLabel) \(routeTypeLabel) at \(stop.name)",
                 comment: """
-                VoiceOver text for the stop details page header,
+                VoiceOver text for the route stop page header,
                 describes the selected route and and stop, ex '[Red Line] [train] at [Porter]'
                 """
             )
 
         } else {
             Text(
-                "Stop details",
-                comment: "Stop details header fallback voiceover text when data fails to load"
+                "Route stop",
+                comment: "Route stop header fallback voiceover text when data fails to load"
             )
         }
         SheetHeader(
@@ -89,7 +89,7 @@ struct StopDetailsFilteredHeader: View {
     }
 }
 
-struct StopDetailsFilteredHeader_Previews: PreviewProvider {
+struct RouteStopHeader_Previews: PreviewProvider {
     static var previews: some View {
         let objects = ObjectCollectionBuilder()
         let route = objects.route { route in
@@ -120,21 +120,21 @@ struct StopDetailsFilteredHeader_Previews: PreviewProvider {
             stop.name = "South Station"
         }
         VStack {
-            StopDetailsFilteredHeader(
+            RouteStopHeader(
                 route: route,
                 line: nil,
                 stop: stop,
                 direction: 0,
                 navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating)
             )
-            StopDetailsFilteredHeader(
+            RouteStopHeader(
                 route: longestStopNameRoute,
                 line: nil,
                 stop: longestStopName,
                 direction: 0,
                 navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating)
             )
-            StopDetailsFilteredHeader(
+            RouteStopHeader(
                 route: crRoute,
                 line: nil,
                 stop: crStop,

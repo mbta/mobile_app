@@ -1,5 +1,5 @@
 //
-//  StopDetailsNoTripCardTests.swift
+//  RouteStopNoTripCardTests.swift
 //  iosAppTests
 //
 //  Created by esimon on 1/3/25.
@@ -12,14 +12,14 @@ import SwiftUI
 import ViewInspector
 import XCTest
 
-final class StopDetailsNoTripCardTests: XCTestCase {
+final class RouteStopNoTripCardTests: XCTestCase {
     override func setUp() {
         executionTimeAllowance = 60
     }
 
     func testSubwayEarlyMorning() throws {
         let serviceStart = EasternTimeInstant(year: 2025, month: .november, day: 17, hour: 10, minute: 25, second: 0)
-        let sut = StopDetailsNoTripCard(
+        let sut = RouteStopNoTripCard(
             status: UpcomingFormat.NoTripsFormatSubwayEarlyMorning(scheduledTime: serviceStart),
             accentColor: Color.text,
             directionLabel: "Forest Hills",
@@ -38,7 +38,7 @@ final class StopDetailsNoTripCardTests: XCTestCase {
     }
 
     func testPredictionsUnavailable() throws {
-        let sut = StopDetailsNoTripCard(
+        let sut = RouteStopNoTripCard(
             status: UpcomingFormat.NoTripsFormatPredictionsUnavailable(),
             accentColor: Color.text,
             directionLabel: "Forest Hills",
@@ -61,7 +61,7 @@ final class StopDetailsNoTripCardTests: XCTestCase {
             date: now.local.date.plus(days: 1),
             time: .init(hour: 9, minute: 15, second: 0, nanosecond: 0)
         ) }
-        let sut = StopDetailsNoTripCard(
+        let sut = RouteStopNoTripCard(
             status: UpcomingFormat.NoTripsFormatServiceEndedToday(),
             accentColor: Color.text,
             directionLabel: "Winthrop",
@@ -83,7 +83,7 @@ final class StopDetailsNoTripCardTests: XCTestCase {
             date: now.local.date,
             time: .init(hour: 9, minute: 15, second: 0, nanosecond: 0)
         ) }
-        let sut = StopDetailsNoTripCard(
+        let sut = RouteStopNoTripCard(
             status: UpcomingFormat.NoTripsFormatNoSchedulesToday(),
             accentColor: Color.text,
             directionLabel: "Fitchburg",

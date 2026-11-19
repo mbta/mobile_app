@@ -40,7 +40,6 @@
       "parallelizable" : true,
       "skippedTests" : [
         "FavoritesModifierTests\/testLoadsFromRepo()",
-        "HomeMapViewTests\/testFollowsPuckWhenUserLocationIsKnown()",
         "OnboardingPageTests\/testFlow()"
       ],
       "target" : {
