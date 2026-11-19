@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.ModalRoutes.SaveFavorite
 import com.mbta.tid.mbta_app.android.R
@@ -94,19 +93,6 @@ fun RouteStopView(
                 it.direction.id == routeStopFilter.directionId
         }
 
-    val analytics: Analytics = koinInject()
-
-    fun openModalAndRecord(modal: ModalRoutes) {
-        openModal(modal)
-        if (modal is ModalRoutes.AlertDetails) {
-            analytics.tappedAlertDetails(
-                routeId = modal.lineId ?: modal.routeIds?.firstOrNull(),
-                stopId = modal.stopId ?: "",
-                alertId = modal.alertId,
-            )
-        }
-    }
-
     @Composable
     fun Header(lineOrRoute: LineOrRoute, stop: Stop) {
         val rsd = RouteStopDirection(lineOrRoute.id, stop.id, routeStopFilter.directionId)
@@ -118,7 +104,7 @@ fun RouteStopView(
                 stop,
                 isFavorite = isFavorite(rsd),
                 onFavorite = {
-                    openModalAndRecord(
+                    openModal(
                         SaveFavorite(
                             lineOrRoute.id,
                             stop.id,
@@ -228,7 +214,7 @@ fun RouteStopView(
                             updateTripFilter = updateTripFilter,
                             tileScrollState = tileScrollState,
                             isFavorite = isFavorite(rsd) ?: false,
-                            openModal = ::openModalAndRecord,
+                            openModal = openModal,
                             openSheetRoute = openSheetRoute,
                         )
                     } else {

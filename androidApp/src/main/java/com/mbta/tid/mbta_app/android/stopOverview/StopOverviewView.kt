@@ -56,17 +56,6 @@ fun StopOverviewView(
             else -> null
         }
 
-    fun openModalAndRecord(modal: ModalRoutes) {
-        openModal(modal)
-        if (modal is ModalRoutes.AlertDetails) {
-            analytics.tappedAlertDetails(
-                routeId = modal.lineId ?: modal.routeIds?.firstOrNull(),
-                stopId = modal.stopId ?: "",
-                alertId = modal.alertId,
-            )
-        }
-    }
-
     val onTapRoutePill = { pillFilter: PillFilter ->
         analytics.tappedRouteFilter(pillFilter.id, stopId)
         val filterId = pillFilter.id
@@ -109,7 +98,7 @@ fun StopOverviewView(
                 navCallbacks,
                 onTapRoutePill,
                 updateRouteStopFilter,
-                { it: ModalRoutes -> openModalAndRecord(it) },
+                openModal,
             )
         }
     } else {

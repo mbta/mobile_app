@@ -228,8 +228,17 @@ fun MapAndSheetPage(
         // modalSheetState.show() is implied by the `if (currentModal != null)`
     }
 
+    val analytics: Analytics = koinInject()
+
     fun openModal(modal: ModalRoutes) {
         openModalWithCloseCallback(modal, {})
+        if (modal is ModalRoutes.AlertDetails) {
+            analytics.tappedAlertDetails(
+                routeId = modal.lineId ?: modal.routeIds?.firstOrNull(),
+                stopId = modal.stopId ?: "",
+                alertId = modal.alertId,
+            )
+        }
     }
 
     fun closeModal() {
@@ -351,8 +360,6 @@ fun MapAndSheetPage(
     val searchFocusRequester = remember { FocusRequester() }
 
     fun openSearch() = searchFocusRequester.requestFocus()
-
-    val analytics: Analytics = koinInject()
 
     val navCallbacks =
         NavigationCallbacks(
