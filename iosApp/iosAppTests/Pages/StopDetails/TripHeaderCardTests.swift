@@ -302,7 +302,10 @@ final class TripHeaderCardTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let route = objects.route { $0.type = .ferry }
         let trip = objects.trip { _ in }
-        let vehicle = objects.vehicle { $0.label = "Ferry 123" }
+        let vehicle = objects.vehicle {
+            $0.currentStatus = .inTransitTo
+            $0.label = "Ferry 123"
+        }
         let sut = TripHeaderCard(
             spec: .finishingAnotherTrip(vehicle),
             trip: trip,
