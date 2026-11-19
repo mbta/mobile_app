@@ -13,7 +13,7 @@ struct RouteDetailsView: View {
     @ObserveInjection var inject
     let selectionId: LineOrRoute.Id
     let context: RouteDetailsContext
-    let onOpenStopDetails: (String) -> Void
+    let onOpenStopOverview: (String) -> Void
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let navCallbacks: NavigationCallbacks
     let errorBannerVM: IErrorBannerViewModel
@@ -37,7 +37,7 @@ struct RouteDetailsView: View {
                     globalData: globalData,
                     onClick: { row in
                         switch row {
-                        case let .details(stop: stop): onOpenStopDetails(stop.id)
+                        case let .details(stop: stop): onOpenStopOverview(stop.id)
                         case let .favorites(isFavorited: _, onTapStar: onTapStar): onTapStar()
                         }
                     },

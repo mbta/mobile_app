@@ -1,5 +1,5 @@
 //
-//  StopDetailsFilteredDepartureDetailsTests.swift
+//  RouteStopDeparturesViewTests.swift
 //  iosAppTests
 //
 //  Created by esimon on 12/2/24.
@@ -12,7 +12,7 @@ import SwiftUI
 import ViewInspector
 import XCTest
 
-final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
+final class RouteStopDeparturesViewTests: XCTestCase {
     override func setUp() {
         executionTimeAllowance = 60
     }
@@ -114,7 +114,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip1, trip2, trip3], objects: objects)
 
-        let sut = StopDetailsFilteredDepartureDetails(
+        let sut = RouteStopDeparturesView(
             stopId: stop.id,
             routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
@@ -182,7 +182,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             objects: objects
         )
 
-        let sut = StopDetailsFilteredDepartureDetails(
+        let sut = RouteStopDeparturesView(
             stopId: stop.id,
             routeStopFilter: .init(routeId: line.id, directionId: 0),
             tripFilter: .init(tripId: trip1.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
@@ -241,7 +241,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             objects: objects
         )
 
-        let sut = StopDetailsFilteredDepartureDetails(
+        let sut = RouteStopDeparturesView(
             stopId: stop.id,
             routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: .init(tripId: trip1.trip.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
@@ -297,7 +297,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             upcomingTrips: [upcoming1, upcoming2],
             objects: objects
         )
-        let sut = StopDetailsFilteredDepartureDetails(
+        let sut = RouteStopDeparturesView(
             stopId: stop.id,
             routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: .init(tripId: trip1.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
@@ -367,7 +367,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             alerts: [alert],
             objects: objects
         )
-        let sut = StopDetailsFilteredDepartureDetails(
+        let sut = RouteStopDeparturesView(
             stopId: stop.id,
             routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: .init(tripId: trip1.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
@@ -397,7 +397,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let leaf = makeLeaf(line: line, routes: [route], stop: stop, upcomingTrips: [], objects: objects)
 
-        let sut = StopDetailsFilteredDepartureDetails(
+        let sut = RouteStopDeparturesView(
             stopId: stop.id,
             routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
@@ -415,7 +415,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         XCTAssertThrowsError(try sut.inspect().find(TripDetailsView.self))
         XCTAssertThrowsError(try sut.inspect().find(DepartureTile.self))
-        XCTAssertNotNil(try sut.inspect().find(StopDetailsNoTripCard.self))
+        XCTAssertNotNil(try sut.inspect().find(RouteStopNoTripCard.self))
     }
 
     @MainActor
@@ -445,7 +445,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let navManager = NavigationManager()
 
-        let sut = StopDetailsFilteredDepartureDetails(
+        let sut = RouteStopDeparturesView(
             stopId: stop.id,
             routeStopFilter: routeStopFilter,
             tripFilter: nil,
@@ -505,7 +505,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             objects: objects
         )
 
-        let sut = StopDetailsFilteredDepartureDetails(
+        let sut = RouteStopDeparturesView(
             stopId: stop.id,
             routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
@@ -575,7 +575,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             objects: objects
         )
 
-        let sut = StopDetailsFilteredDepartureDetails(
+        let sut = RouteStopDeparturesView(
             stopId: stop.id,
             routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
@@ -616,7 +616,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip], objects: objects)
 
-        let sut = StopDetailsFilteredDepartureDetails(
+        let sut = RouteStopDeparturesView(
             stopId: stop.id,
             routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
@@ -662,7 +662,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip], alerts: [alert], objects: objects)
 
-        let sut = StopDetailsFilteredDepartureDetails(
+        let sut = RouteStopDeparturesView(
             stopId: stop.id,
             routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
@@ -749,7 +749,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let routeStopData = try XCTUnwrap(routeCardData.stopData.first)
         let leaf = try XCTUnwrap(routeStopData.data.first { $0.direction.id == 0 })
 
-        let sut = StopDetailsFilteredDepartureDetails(
+        let sut = RouteStopDeparturesView(
             stopId: stop.id,
             routeStopFilter: .init(routeId: line.id, directionId: 0),
             tripFilter: nil,
@@ -797,7 +797,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [], objects: objects)
 
-        let sut = StopDetailsFilteredDepartureDetails(
+        let sut = RouteStopDeparturesView(
             stopId: stop.id,
             routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
@@ -856,7 +856,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [], objects: objects)
 
-        let sut = StopDetailsFilteredDepartureDetails(
+        let sut = RouteStopDeparturesView(
             stopId: stop.id,
             routeStopFilter: .init(routeId: route.id, directionId: 0),
             tripFilter: nil,
@@ -930,7 +930,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             objects: objects,
             subwayServiceStartTime: subwayStartTime
         )
-        let sut = StopDetailsFilteredDepartureDetails(
+        let sut = RouteStopDeparturesView(
             stopId: stop.id,
             routeStopFilter: .init(routeId: route.id, directionId: trip1.directionId),
             tripFilter: .init(tripId: trip1.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
@@ -984,7 +984,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             objects: objects,
             subwayServiceStartTime: subwayStartTime
         )
-        let sut = StopDetailsFilteredDepartureDetails(
+        let sut = RouteStopDeparturesView(
             stopId: stop.id,
             routeStopFilter: .init(routeId: route.id, directionId: trip1.directionId),
             tripFilter: .init(tripId: trip1.id, vehicleId: nil, stopSequence: nil, selectionLock: false),

@@ -124,7 +124,7 @@ final class RouteCardTests: XCTestCase {
         ).withFixedSettings([:])
         XCTAssertNotNil(try nearbySut.inspect().find(text: stop.name))
 
-        let stopDetailsSut = RouteCard(
+        let stopOverviewSut = RouteCard(
             cardData: RouteCardData(
                 lineOrRoute: .route(route),
                 stopData: [.init(
@@ -140,7 +140,7 @@ final class RouteCardTests: XCTestCase {
             pushNavEntry: { _ in },
             showStopHeader: false
         ).withFixedSettings([:])
-        XCTAssertThrowsError(try stopDetailsSut.inspect().find(text: stop.name))
+        XCTAssertThrowsError(try stopOverviewSut.inspect().find(text: stop.name))
     }
 
     func testShowsDepartures() throws {

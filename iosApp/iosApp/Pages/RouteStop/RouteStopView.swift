@@ -1,20 +1,21 @@
 //
-//  StopDetailsFilteredView.swift
+//  RouteStopView.swift
 //  iosApp
 //
-//  Created by esimon on 11/25/24.
+//  Created by Brady, Kayla on 6/20/24.
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-import os
+import Foundation
+import OrderedCollections
 import Shared
+import SwiftPhoenixClient
 import SwiftUI
 
-struct StopDetailsFilteredView: View {
+struct RouteStopView: View {
     @ObserveInjection var inject
-    var stopId: String
-    var routeStopFilter: RouteStopFilter
-    var tripFilter: TripDetailsFilter?
+
+    var filters: RouteStopPageFilters
 
     var routeData: StopCentricViewModel.RouteData?
     var alerts: AlertsStreamDataResponse?
@@ -30,20 +31,19 @@ struct StopDetailsFilteredView: View {
     var errorBannerVM: IErrorBannerViewModel
     var mapVM: IMapViewModel
     var stopCentricVM: IStopCentricViewModel
-    var tripDetailsVM: ITripDetailsViewModel
     var favoritesVM: IFavoritesViewModel
+    var tripDetailsVM: ITripDetailsViewModel
+
     @ObservedObject var navManager: NavigationManager
 
-    @EnvironmentObject var settingsCache: SettingsCache
-
-    var analytics: Analytics = AnalyticsProvider.shared
+    var stopId: String { filters.stopId }
+    var routeStopFilter: RouteStopFilter { filters.routeStopFilter }
+    var tripFilter: TripDetailsFilter? { filters.tripFilter }
 
     let inspection = Inspection<Self>()
 
     init(
-        stopId: String,
-        routeStopFilter: RouteStopFilter,
-        tripFilter: TripDetailsFilter?,
+        filters: RouteStopPageFilters,
         routeData: StopCentricViewModel.RouteData?,
         alerts: AlertsStreamDataResponse?,
         favorites: Favorites?,
@@ -60,9 +60,7 @@ struct StopDetailsFilteredView: View {
         tripDetailsVM: ITripDetailsViewModel = ViewModelDI().tripDetails,
         navManager: NavigationManager,
     ) {
-        self.stopId = stopId
-        self.routeStopFilter = routeStopFilter
-        self.tripFilter = tripFilter
+        self.filters = filters
         self.routeData = routeData
         self.alerts = alerts
         self.favorites = favorites
@@ -81,11 +79,11 @@ struct StopDetailsFilteredView: View {
     }
 
     var isFavorite: Bool {
-        if let routeStopDirection { favorites?.isFavorite(routeStopDirection) ?? false } else { false }
+        favorites?.isFavorite(routeStopDirection) ?? false
     }
 
     var nowInstant: EasternTimeInstant { now.toEasternInstant() }
-    var routeStopDirection: RouteStopDirection? { .init(
+    var routeStopDirection: RouteStopDirection { .init(
         route: routeStopFilter.routeId,
         stop: stopId,
         direction: routeStopFilter.directionId
@@ -161,11 +159,7 @@ struct StopDetailsFilteredView: View {
         VStack(spacing: 0) {
             ZStack {
                 Color.fill2.ignoresSafeArea(.all)
-                header(
-                    lineOrRoute: lineOrRoute,
-                    directions: directions,
-                    availableDirections: availableDirections
-                )
+                header(lineOrRoute: lineOrRoute, stop: stop)
             }
             .fixedSize(horizontal: false, vertical: true)
 
@@ -203,7 +197,7 @@ struct StopDetailsFilteredView: View {
     @ViewBuilder
     func departures(directions: [Direction]) -> some View {
         if let leaf {
-            StopDetailsFilteredDepartureDetails(
+            RouteStopDeparturesView(
                 stopId: stopId,
                 routeStopFilter: routeStopFilter,
                 tripFilter: tripFilter,
@@ -248,7 +242,7 @@ struct StopDetailsFilteredView: View {
         )
 
         let leaf = routeData.stopData.first!.data.first!
-        return StopDetailsFilteredDepartureDetails(
+        return RouteStopDeparturesView(
             stopId: stopId,
             routeStopFilter: routeStopFilter,
             tripFilter: tripFilter,
@@ -266,14 +260,14 @@ struct StopDetailsFilteredView: View {
     }
 
     @ViewBuilder
-    func header(lineOrRoute: LineOrRoute, directions _: [Direction], availableDirections _: [Direction]) -> some View {
+    func header(lineOrRoute: LineOrRoute, stop: Stop) -> some View {
         let line: Line? = switch onEnum(of: lineOrRoute) {
         case let .line(line): line.line
         default: nil
         }
         VStack(spacing: 0) {
             VStack(spacing: 0) {
-                StopDetailsFilteredHeader(
+                RouteStopHeader(
                     route: lineOrRoute.sortRoute,
                     line: line,
                     stop: stop,

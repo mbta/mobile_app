@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-/// In the filtered stop details state, non-vehicle-based upcoming trips should not link to the trip details page.
+/// In the route stop state, non-vehicle-based upcoming trips should not link to the trip details page.
 /// This will render a button if there there is a SheetNavigationStackEntry to navigate to, otherwise it renders a
 /// regular label.
 struct OptionalNavigationLink<Label: View>: View {

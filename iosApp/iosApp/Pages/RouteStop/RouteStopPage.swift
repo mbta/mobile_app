@@ -1,5 +1,5 @@
 //
-//  StopDetailsPage.swift
+//  RouteStopPage.swift
 //  iosApp
 //
 //  Created by Horn, Melody on 2024-03-28.
@@ -10,16 +10,16 @@ import Shared
 import SwiftPhoenixClient
 import SwiftUI
 
-struct StopDetailsPage: View {
+struct RouteStopPage: View {
     @ObserveInjection var inject
-    var filters: StopCentricPageFilters
+    var filters: RouteStopPageFilters
     var navCallbacks: NavigationCallbacks
 
     var alerts: AlertsStreamDataResponse?
     @State var favorites: Favorites? = LoadedFavorites.last
     @State var global: GlobalResponse?
     @State var now = Date.now
-    // Used only for VO notifications, VM state data is used for displaying other stop details content
+    // Used only for VO notifications, VM state data is used for displaying other route stop content
     @State var routeCardDataState: RouteCardDataViewModel.State?
     @State var vmState: StopCentricViewModel.State?
 
@@ -35,11 +35,9 @@ struct StopDetailsPage: View {
     let inspection = Inspection<Self>()
 
     var stopId: String { filters.stopId }
-    var routeStopFilter: RouteStopFilter? { (filters as? RouteStopPageFilters)?.routeStopFilter }
-    var tripFilter: TripDetailsFilter? { (filters as? RouteStopPageFilters)?.tripFilter }
 
     init(
-        filters: StopCentricPageFilters,
+        filters: RouteStopPageFilters,
         navCallbacks: NavigationCallbacks,
         alerts: AlertsStreamDataResponse?,
         errorBannerVM: IErrorBannerViewModel,
@@ -61,8 +59,8 @@ struct StopDetailsPage: View {
     }
 
     @ViewBuilder
-    var stopDetails: some View {
-        StopDetailsView(
+    var routeStop: some View {
+        RouteStopView(
             filters: filters,
             routeData: vmState?.routeData,
             alerts: alerts,
@@ -81,11 +79,11 @@ struct StopDetailsPage: View {
     }
 
     var body: some View {
-        stopDetails
+        routeStop
             .favorites($favorites)
             .global(
                 $global,
-                errorKey: .companion.fromSheetTypes(sheetTypes: [.stopOverview, .routeStop], id: "StopDetailsPage")
+                errorKey: .companion.fromSheetTypes(sheetTypes: [.routeStop], id: "RouteStopPage")
             )
             .manageVM(stopCentricVM, $vmState, alerts: alerts, filters: filters, now: now.toEasternInstant())
             .manageVM(routeCardDataVM, $routeCardDataState)

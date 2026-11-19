@@ -1,9 +1,9 @@
 //
-//  StopDetailsFilteredViewTests.swift
+//  RouteStopViewTests.swift
 //  iosAppTests
 //
-//  Created by Kayla Brady on 7/2/25.
-//  Copyright © 2025 MBTA. All rights reserved.
+//  Created by Brady, Kayla on 6/20/24.
+//  Copyright © 2024 MBTA. All rights reserved.
 //
 
 import Combine
@@ -13,9 +13,246 @@ import SwiftUI
 import ViewInspector
 import XCTest
 
-final class StopDetailsFilteredViewTests: XCTestCase {
+final class RouteStopViewTests: XCTestCase {
     override func setUp() {
         executionTimeAllowance = 60
+    }
+
+    func testShowsElevatorAlerts() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route { route in
+            route.shortName = "Blue"
+        }
+        let stop = objects.stop { _ in }
+        let alert = objects.alert { alert in
+            alert.effect = .elevatorClosure
+            alert.header = "Alert header"
+        }
+
+        let filters = RouteStopPageFilters(
+            stopId: stop.id,
+            routeStopFilter: .init(routeId: route.id, directionId: 0),
+            tripFilter: nil
+        )
+
+        let sut = RouteStopView(
+            filters: filters,
+            routeData: StopCentricViewModel.RouteDataRouteStop(
+                filteredWith: filters,
+                stopData: .init(
+                    lineOrRoute: .route(route),
+                    stop: stop,
+                    data: [.init(
+                        lineOrRoute: .route(route),
+                        stop: stop,
+                        direction: .init(directionId: 0, route: route),
+                        routePatterns: [],
+                        stopIds: [],
+                        upcomingTrips: [],
+                        alertsHere: [alert],
+                        allDataLoaded: true,
+                        hasSchedulesToday: true,
+                        subwayServiceStartTime: nil,
+                        alertsDownstream: [],
+                        context: .stopOverview
+                    )]
+                )
+            ),
+            alerts: .init(alerts: [alert.id: alert]),
+            favorites: .init(routeStopDirection: [:]),
+            global: .init(objects: objects),
+            now: Date.now,
+            onUpdateFavorites: {},
+            setRouteStopFilter: { _ in },
+            setTripFilter: { _ in },
+            navCallbacks: .companion.empty,
+            errorBannerVM: MockErrorBannerViewModel(),
+            mapVM: MockMapViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
+            navManager: .init(),
+        )
+
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
+        XCTAssertNil(try? sut.inspect().find(AlertCard.self))
+        XCTAssertNil(try? sut.inspect().find(text: try XCTUnwrap(alert.header)))
+    }
+
+    func testDisplaysVehicleData() {
+        let now = EasternTimeInstant.now()
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route { route in
+            route.shortName = "57"
+        }
+        let stop = objects.stop { _ in }
+        let routePattern = objects.routePattern(route: route) { _ in }
+        let trip = objects.trip(routePattern: routePattern) { _ in }
+        let prediction = objects.prediction { prediction in
+            prediction.departureTime = now.plus(seconds: 100)
+        }
+        let vehicle = objects.vehicle { vehicle in
+            vehicle.tripId = trip.id
+            vehicle.currentStatus = .inTransitTo
+        }
+
+        let leaf = RouteCardData.Leaf(
+            lineOrRoute: .route(route),
+            stop: stop,
+            direction: .init(directionId: 0, route: route),
+            routePatterns: [routePattern],
+            stopIds: Set([stop.id]),
+            upcomingTrips: [.init(trip: trip, prediction: prediction)],
+            alertsHere: [], allDataLoaded: true,
+            hasSchedulesToday: true, subwayServiceStartTime: nil, alertsDownstream: [],
+            context: .stopOverview
+        )
+        let stopData = RouteCardData.RouteStopData(
+            lineOrRoute: .route(route),
+            stop: stop,
+            data: [leaf]
+        )
+
+        let filters = RouteStopPageFilters(
+            stopId: stop.id,
+            routeStopFilter: .init(routeId: route.id, directionId: 0),
+            tripFilter: .init(tripId: trip.id, vehicleId: vehicle.id, stopSequence: 1, selectionLock: false)
+        )
+
+        let sut = RouteStopView(
+            filters: filters,
+            routeData: StopCentricViewModel.RouteDataRouteStop(
+                filteredWith: filters,
+                stopData: stopData
+            ),
+            alerts: .init(alerts: [:]),
+            favorites: .init(routeStopDirection: [:]),
+            global: .init(objects: objects),
+            now: Date.now,
+            onUpdateFavorites: {},
+            setRouteStopFilter: { _ in },
+            setTripFilter: { _ in },
+            navCallbacks: .companion.empty,
+            errorBannerVM: MockErrorBannerViewModel(),
+            mapVM: MockMapViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
+            navManager: .init(),
+        )
+
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
+        defer { ViewHosting.expel() }
+        XCTAssertNotNil(try? sut.inspect().find(TripDetailsView.self))
+    }
+
+    @MainActor func testCloseButtonCloses() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route()
+        let stop = objects.stop { _ in }
+
+        let filters = RouteStopPageFilters(
+            stopId: stop.id,
+            routeStopFilter: .init(routeId: route.id, directionId: 0),
+            tripFilter: nil
+        )
+
+        var closeCalled = false
+        let sut = RouteStopView(
+            filters: filters,
+            routeData: nil,
+            alerts: .init(alerts: [:]),
+            favorites: .init(routeStopDirection: [:]),
+            global: .init(objects: objects),
+            now: Date.now,
+            onUpdateFavorites: {},
+            setRouteStopFilter: { _ in },
+            setTripFilter: { _ in },
+            navCallbacks: .init(onBack: nil, onClose: { closeCalled = true }, backButtonPresentation: .floating),
+            errorBannerVM: MockErrorBannerViewModel(),
+            mapVM: MockMapViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
+            navManager: .init(),
+        )
+
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
+        try sut.inspect().find(viewWithAccessibilityLabel: "Close").button().tap()
+        XCTAssert(closeCalled)
+    }
+
+    func testDebugModeNotShownByDefault() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route()
+        let stop = objects.stop { stop in
+            stop.id = "FAKE_STOP_ID"
+        }
+
+        let navManager = NavigationManager(navigationStack: [.stopOverview(stopId: stop.id)])
+
+        let filters = RouteStopPageFilters(
+            stopId: stop.id,
+            routeStopFilter: .init(routeId: route.id, directionId: 0),
+            tripFilter: nil
+        )
+
+        let sut = RouteStopView(
+            filters: filters,
+            routeData: nil,
+            alerts: .init(alerts: [:]),
+            favorites: .init(routeStopDirection: [:]),
+            global: .init(objects: objects),
+            now: Date.now,
+            onUpdateFavorites: {},
+            setRouteStopFilter: { _ in },
+            setTripFilter: { _ in },
+            navCallbacks: .companion.empty,
+            errorBannerVM: MockErrorBannerViewModel(),
+            mapVM: MockMapViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
+            navManager: .init(),
+        )
+
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
+        XCTAssertThrowsError(try sut.inspect().find(text: "stop id: FAKE_STOP_ID"))
+    }
+
+    func testDebugModeShown() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route()
+        let stop = objects.stop { stop in
+            stop.id = "FAKE_STOP_ID"
+        }
+
+        let navManager = NavigationManager(
+            navigationStack: [.stopOverview(stopId: stop.id)]
+        )
+
+        let filters = RouteStopPageFilters(
+            stopId: stop.id,
+            routeStopFilter: .init(routeId: route.id, directionId: 0),
+            tripFilter: nil
+        )
+
+        let sut = RouteStopView(
+            filters: filters,
+            routeData: nil,
+            alerts: .init(alerts: [:]),
+            favorites: .init(routeStopDirection: [:]),
+            global: .init(objects: objects),
+            now: Date.now,
+            onUpdateFavorites: {},
+            setRouteStopFilter: { _ in },
+            setTripFilter: { _ in },
+            navCallbacks: .companion.empty,
+            errorBannerVM: MockErrorBannerViewModel(),
+            mapVM: MockMapViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
+            navManager: .init(),
+        )
+
+        ViewHosting.host(view: sut.withFixedSettings([.devDebugMode: true]))
+        defer { ViewHosting.expel() }
+        try sut.inspect().findAll(ViewType.Text.self).forEach { view in try print(view.string()) }
+        XCTAssertNotNil(try sut.inspect().find(text: "stop id: FAKE_STOP_ID"))
     }
 
     @MainActor func testSaveEnhancedFavoriteTriggersSaveFlow() {
@@ -26,10 +263,12 @@ final class StopDetailsFilteredViewTests: XCTestCase {
 
         let favoritesRepository = MockFavoritesRepository()
 
-        let sut = StopDetailsFilteredView(
-            stopId: stop.id,
-            routeStopFilter: .init(routeId: route.id, directionId: directionId),
-            tripFilter: nil,
+        let sut = RouteStopView(
+            filters: .init(
+                stopId: stop.id,
+                routeStopFilter: .init(routeId: route.id, directionId: directionId),
+                tripFilter: nil
+            ),
             routeData: nil,
             alerts: .init(alerts: [:]),
             favorites: .init(routeStopDirection: [:]),
@@ -154,11 +393,13 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         let stopCentricVM = MockStopCentricViewModel(initialState: .init(routeData: routeData,
                                                                          awaitingPredictionsAfterBackground: false))
 
-        let sut = StopDetailsFilteredView(
-            stopId: stop.id,
-            // key piece: directionId here is 1
-            routeStopFilter: .init(routeId: route.id, directionId: 1),
-            tripFilter: nil,
+        let sut = RouteStopView(
+            filters: .init(
+                stopId: stop.id,
+                // key piece: directionId here is 1
+                routeStopFilter: .init(routeId: route.id, directionId: 1),
+                tripFilter: nil
+            ),
             routeData: routeData,
             alerts: .init(alerts: [:]),
             favorites: .init(routeStopDirection: [:]),
@@ -240,10 +481,12 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         let stopCentricVM = MockStopCentricViewModel(initialState: .init(routeData: nil,
                                                                          awaitingPredictionsAfterBackground: false))
 
-        let sut = StopDetailsFilteredView(
-            stopId: stop.id,
-            routeStopFilter: .init(routeId: route.id, directionId: directionId),
-            tripFilter: nil,
+        let sut = RouteStopView(
+            filters: .init(
+                stopId: stop.id,
+                routeStopFilter: .init(routeId: route.id, directionId: directionId),
+                tripFilter: nil
+            ),
             routeData: nil,
             alerts: .init(alerts: [:]),
             favorites: .init(routeStopDirection: [:]),
@@ -338,10 +581,12 @@ final class StopDetailsFilteredViewTests: XCTestCase {
 
         let setRouteStopFilterExp = XCTestExpectation(description: "setRouteStopFilter called for GL direction 1")
 
-        let sut = try StopDetailsFilteredView(
-            stopId: stop.id,
-            routeStopFilter: .init(routeId: XCTUnwrap(route.lineId), directionId: directionId),
-            tripFilter: nil,
+        let sut = try RouteStopView(
+            filters: .init(
+                stopId: stop.id,
+                routeStopFilter: .init(routeId: XCTUnwrap(route.lineId), directionId: directionId),
+                tripFilter: nil
+            ),
             routeData: nil,
             alerts: .init(alerts: [:]),
             favorites: .init(routeStopDirection: [:]),
