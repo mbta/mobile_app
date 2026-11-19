@@ -8187,7 +8187,51 @@
       }
     },
     "displays more information about later trips" : {
-      "comment" : "Screen reader hint for tapping the predictions not available yet tile in stop details"
+      "comment" : "Screen reader hint for tapping the predictions not available yet tile in stop details",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "displays more information about later trips"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "displays more information about later trips"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "displays more information about later trips"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "displays more information about later trips"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "displays more information about later trips"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "displays more information about later trips"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "displays more information about later trips"
+          }
+        }
+      }
     },
     "displays more information about this trip" : {
       "comment" : "Screen reader hint for tapping a departure card in stop details",
@@ -15975,7 +16019,51 @@
       }
     },
     "Predictions not\navailable yet" : {
-      "comment" : "Label for a departure tile shown after the last predicted trip when later trips are scheduled, or an informational header on an explainer card.\nThe line break is intentional, the tile is sized to fit the longest line, so please put the break where it gives two lines of roughly similar length (ideally towards the middle). Please keep it to two (or one) lines, since the tile is only a little taller than that."
+      "comment" : "Label for a departure tile shown after the last predicted trip when later trips are scheduled, or an informational header on an explainer card.\nThe line break is intentional, the tile is sized to fit the longest line, so please put the break where it gives two lines of roughly similar length (ideally towards the middle). Please keep it to two (or one) lines, since the tile is only a little taller than that.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Predictions not\navailable yet"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Predictions not\navailable yet"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Predictions not\navailable yet"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Predictions not\navailable yet"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Predictions not\navailable yet"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Predictions not\navailable yet"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Predictions not\navailable yet"
+          }
+        }
+      }
     },
     "Predictions unavailable" : {
       "comment" : "The status label when no predictions exist for a route and direction",
@@ -24452,7 +24540,51 @@
       }
     },
     "We don’t have predictions for later trips yet, but they’ll appear here closer to the time of service." : {
-      "comment" : "Explanation for the predictions not available yet card on stop details"
+      "comment" : "Explanation for the predictions not available yet card on stop details",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "We don’t have predictions for later trips yet, but they’ll appear here closer to the time of service."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "We don’t have predictions for later trips yet, but they’ll appear here closer to the time of service."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "We don’t have predictions for later trips yet, but they’ll appear here closer to the time of service."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "We don’t have predictions for later trips yet, but they’ll appear here closer to the time of service."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "We don’t have predictions for later trips yet, but they’ll appear here closer to the time of service."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "We don’t have predictions for later trips yet, but they’ll appear here closer to the time of service."
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "We don’t have predictions for later trips yet, but they’ll appear here closer to the time of service."
+          }
+        }
+      }
     },
     "We now show **arrivals** and detailed **vehicle locations** all at once. Let us know what you think!" : {
       "comment" : "Promo text that displays when users first open the app after a redesign of the stop page",
