@@ -26,7 +26,7 @@ import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 fun RouteDetailsView(
     selectionId: LineOrRoute.Id,
     context: RouteDetailsContext,
-    onOpenStopDetails: (String) -> Unit,
+    onOpenStopOverview: (String) -> Unit,
     navCallbacks: NavigationCallbacks,
     openModal: (ModalRoutes) -> Unit,
     errorBannerViewModel: IErrorBannerViewModel,
@@ -45,7 +45,7 @@ fun RouteDetailsView(
         globalData,
         onClick = {
             when (it) {
-                is RouteDetailsRowContext.Details -> onOpenStopDetails(it.stop.id)
+                is RouteDetailsRowContext.Details -> onOpenStopOverview(it.stop.id)
                 is RouteDetailsRowContext.Favorites -> it.onTapStar()
             }
         },

@@ -29,7 +29,7 @@ import com.mbta.tid.mbta_app.android.component.StopListGroupToggle
 import com.mbta.tid.mbta_app.android.component.StopListRow
 import com.mbta.tid.mbta_app.android.component.StopListToggleGroup
 import com.mbta.tid.mbta_app.android.component.StopPlacement
-import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
+import com.mbta.tid.mbta_app.android.util.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList

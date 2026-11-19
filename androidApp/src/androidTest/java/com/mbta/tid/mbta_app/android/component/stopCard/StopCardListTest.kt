@@ -222,7 +222,7 @@ class StopCardListTest {
 
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun testOpenStopDetails(): Unit = runBlocking {
+    fun testOpenRouteStop(): Unit = runBlocking {
         val routeCardData =
             RouteCardData.routeCardsForStopList(
                 listOf(sampleStop.id),
