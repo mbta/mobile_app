@@ -101,6 +101,14 @@ final class IosAppUITests: XCTestCase {
         app.switches["Get disruption notifications"].firstMatch.tapAfter()
         app.buttons["Add another time period"].firstMatch.tapAfter()
 
+        let mondaySwitches = app.switches.matching(NSPredicate(format: "label == %@", "Monday"))
+        guard mondaySwitches.element(boundBy: 1).wait(for: \.isHittable, toEqual: true, timeout: 10),
+              mondaySwitches.allElementsBoundByIndex.filter(\.isHittable).count == 2
+        else {
+            XCTFail("Second time period didn't appear")
+            return
+        }
+
         defaultAccessibilityAudit(app)
     }
 
