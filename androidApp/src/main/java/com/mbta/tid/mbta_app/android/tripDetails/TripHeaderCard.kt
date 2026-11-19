@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -132,15 +131,14 @@ fun TripHeaderCard(
             .semantics(mergeDescendants = true) {}
 
     CompositionLocalProvider(LocalContentColor provides colorResource(R.color.text)) {
-        val heightModifier =
-            if (spec is TripHeaderSpec.FinishingAnotherTrip) Modifier
-            else Modifier.height(IntrinsicSize.Min)
+        val hasStickDiagram =
+            spec is TripHeaderSpec.Scheduled || spec is TripHeaderSpec.VehicleOnTrip
         Box(
-            heightModifier.fillMaxWidth(),
+            Modifier.fillMaxWidth(),
             contentAlignment = Alignment.BottomStart,
         ) {
             Row(cardModifier) {
-                Box(heightModifier) {
+                Box {
                     Row(
                         Modifier.padding(horizontal = 14.dp).heightIn(min = 56.dp).semantics {
                             heading()
@@ -188,9 +186,8 @@ fun TripHeaderCard(
                             }
                         }
                     }
-                    when (spec) {
-                        is TripHeaderSpec.Scheduled,
-                        is TripHeaderSpec.VehicleOnTrip ->
+                    if (hasStickDiagram) {
+                        Box(Modifier.matchParentSize().zIndex(-1f)) {
                             StickDiagram(
                                 routeAccents.color,
                                 listOf(
@@ -203,31 +200,28 @@ fun TripHeaderCard(
                                         toVPos = RouteBranchSegment.VPos.Bottom,
                                     ),
                                 ),
-                                Modifier.zIndex(-1f).padding(start = 12.dp).fillMaxHeight(),
+                                Modifier.padding(start = 12.dp).fillMaxHeight(),
                             )
-                        else -> {}
+                        }
                     }
                 }
             }
-            when (spec) {
-                is TripHeaderSpec.Scheduled,
-                is TripHeaderSpec.VehicleOnTrip ->
-                    // Small 2x4 dp portion of route line over the outer card border
-                    StickDiagram(
-                        routeAccents.color,
-                        listOf(
-                            RouteBranchSegment.StickConnection(
-                                fromStop = "",
-                                toStop = "",
-                                fromLane = RouteBranchSegment.Lane.Center,
-                                toLane = RouteBranchSegment.Lane.Center,
-                                fromVPos = RouteBranchSegment.VPos.Top,
-                                toVPos = RouteBranchSegment.VPos.Bottom,
-                            ),
+            if (hasStickDiagram) {
+                // Small 2x4 dp portion of route line over the outer card border
+                StickDiagram(
+                    routeAccents.color,
+                    listOf(
+                        RouteBranchSegment.StickConnection(
+                            fromStop = "",
+                            toStop = "",
+                            fromLane = RouteBranchSegment.Lane.Center,
+                            toLane = RouteBranchSegment.Lane.Center,
+                            fromVPos = RouteBranchSegment.VPos.Top,
+                            toVPos = RouteBranchSegment.VPos.Bottom,
                         ),
-                        Modifier.zIndex(1f).padding(start = 14.dp).height(2.dp),
-                    )
-                else -> {}
+                    ),
+                    Modifier.zIndex(1f).padding(start = 14.dp).height(2.dp),
+                )
             }
         }
     }
@@ -397,7 +391,6 @@ private fun ScheduleDescription(
         ) {
             TightWrapText(
                 stringResource(R.string.scheduled_to_depart),
-                Modifier.weight(1f, fill = false),
                 style = Typography.footnote,
             )
             Text(stop.name, style = Typography.headlineBold)
@@ -530,12 +523,7 @@ private fun vehicleStatusString(
 @Composable
 private fun TripMarker(spec: TripHeaderSpec, targeted: Boolean, routeAccents: TripRouteAccents) {
     Box(
-        Modifier.width(36.dp)
-            .then(
-                if (spec is TripHeaderSpec.FinishingAnotherTrip) Modifier
-                else Modifier.fillMaxHeight(),
-            )
-            .clearAndSetSemantics {},
+        Modifier.width(36.dp).clearAndSetSemantics {},
         contentAlignment = Alignment.Center,
     ) {
         when (spec) {
