@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.material3.Icon
@@ -25,6 +26,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.analytics.Analytics
@@ -61,6 +63,11 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
+private enum class InfoCardType {
+    cancelledTrip,
+    predictionsNotAvailable,
+}
+
 @Composable
 fun StopDetailsFilteredDeparturesView(
     stopId: String,
@@ -85,6 +92,10 @@ fun StopDetailsFilteredDeparturesView(
     val tileData = leafFormat.tileData(selectedDirection.destination)
     val noPredictionsStatus = leafFormat.noPredictionsStatus()
     val isAllServiceDisrupted = leafFormat.isAllServiceDisrupted
+    val showPredictionsNotYetAvailable =
+        remember(leaf, tileData) { leaf.hasLaterTripsWithoutPredictions(tileData) }
+    var predictionsNotYetAvailableSelected by
+        remember(routeStopFilter, showPredictionsNotYetAvailable) { mutableStateOf(false) }
 
     val lineOrRoute = leaf.lineOrRoute
     val stop = leaf.stop
@@ -166,6 +177,46 @@ fun StopDetailsFilteredDeparturesView(
         )
     }
 
+    @Composable
+    fun InfoCard(type: InfoCardType) {
+        val detailString =
+            when (type) {
+                InfoCardType.cancelledTrip -> stringResource(R.string.trip_cancelled_details)
+                InfoCardType.predictionsNotAvailable ->
+                    stringResource(R.string.predictions_not_available_yet_details)
+            }
+        val headerString =
+            when (type) {
+                InfoCardType.cancelledTrip -> stringResource(R.string.trip_cancelled)
+                InfoCardType.predictionsNotAvailable ->
+                    stringResource(R.string.predictions_not_available_yet)
+            }
+        val iconPainter =
+            when (type) {
+                InfoCardType.cancelledTrip -> routeSlashIcon(routeType = routeAccents.type)
+                InfoCardType.predictionsNotAvailable -> painterResource(R.drawable.live_data_slash)
+            }
+        val iconModifier =
+            when (type) {
+                InfoCardType.cancelledTrip -> Modifier.testTag("route_slash_icon")
+                InfoCardType.predictionsNotAvailable -> Modifier.size(48.dp).padding(3.dp)
+            }
+        Box(modifier = Modifier.padding(horizontal = 10.dp)) {
+            StopDetailsIconCard(
+                routeAccents.color,
+                details = { Text(detailString) },
+                header = { modifier -> Text(headerString, modifier = modifier) },
+                icon = { modifier ->
+                    Icon(
+                        painter = iconPainter,
+                        contentDescription = null,
+                        modifier = modifier.then(iconModifier),
+                    )
+                },
+            )
+        }
+    }
+
     Column(Modifier.navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (!isAllServiceDisrupted && tileData.isNotEmpty()) {
             DepartureTiles(
@@ -174,11 +225,17 @@ fun StopDetailsFilteredDeparturesView(
                 stop,
                 tileData,
                 downstreamAlerts,
-                updateTripFilter,
+                updateTripFilter = {
+                    predictionsNotYetAvailableSelected = false
+                    updateTripFilter(it)
+                },
                 isFavorite,
                 analytics,
                 bringIntoViewRequesters,
                 tileScrollState,
+                showPredictionsNotYetAvailable = showPredictionsNotYetAvailable,
+                predictionsNotYetAvailableSelected = predictionsNotYetAvailableSelected,
+                onTapPredictionsNotYetAvailable = { predictionsNotYetAvailableSelected = true },
             )
         }
 
@@ -246,23 +303,10 @@ fun StopDetailsFilteredDeparturesView(
                     nextScheduleResponse = nextScheduleResponse,
                 )
             }
+        } else if (predictionsNotYetAvailableSelected) {
+            InfoCard(InfoCardType.predictionsNotAvailable)
         } else if (selectedTripIsCancelled) {
-            Box(modifier = Modifier.padding(horizontal = 10.dp, vertical = 16.dp)) {
-                StopDetailsIconCard(
-                    routeAccents.color,
-                    details = { Text(stringResource(R.string.trip_cancelled_details)) },
-                    header = { modifier ->
-                        Text(stringResource(R.string.trip_cancelled), modifier = modifier)
-                    },
-                    icon = { modifier ->
-                        Icon(
-                            painter = routeSlashIcon(routeType = routeAccents.type),
-                            contentDescription = null,
-                            modifier = modifier.testTag("route_slash_icon"),
-                        )
-                    },
-                )
-            }
+            InfoCard(InfoCardType.cancelledTrip)
         } else {
             val tripDetailsPageFilter =
                 remember(stopId, routeStopFilter, tripFilter) {
@@ -296,6 +340,9 @@ private fun DepartureTiles(
     analytics: Analytics,
     bringIntoViewRequesters: MutableMap<String, BringIntoViewRequester>,
     scrollState: ScrollState,
+    showPredictionsNotYetAvailable: Boolean,
+    predictionsNotYetAvailableSelected: Boolean,
+    onTapPredictionsNotYetAvailable: () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     Row(
@@ -332,7 +379,13 @@ private fun DepartureTiles(
                 modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester),
                 showRoutePill = lineOrRoute is LineOrRoute.Line,
                 showHeadsign = true,
-                isSelected = tileData.isSelected(tripFilter),
+                isSelected = !predictionsNotYetAvailableSelected && tileData.isSelected(tripFilter),
+            )
+        }
+        if (showPredictionsNotYetAvailable) {
+            PredictionsNotYetAvailableTile(
+                onTap = onTapPredictionsNotYetAvailable,
+                isSelected = predictionsNotYetAvailableSelected,
             )
         }
     }
