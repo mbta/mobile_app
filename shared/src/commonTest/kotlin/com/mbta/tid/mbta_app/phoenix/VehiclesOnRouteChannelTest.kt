@@ -28,6 +28,7 @@ class VehiclesOnRouteChannelTest {
                             put("current_status", "in_transit_to")
                             put("current_stop_sequence", 30)
                             put("direction_id", 0)
+                            put("label", "1886")
                             put("latitude", 42.359901428222656)
                             put("longitude", -71.09449005126953)
                             put("occupancy_status", "full")
@@ -78,6 +79,7 @@ class VehiclesOnRouteChannelTest {
                             Vehicle.CurrentStatus.InTransitTo,
                             30,
                             0,
+                            "1886",
                             42.359901428222656,
                             -71.09449005126953,
                             Vehicle.OccupancyStatus.Full,
