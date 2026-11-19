@@ -331,7 +331,7 @@ struct TripHeaderCard: View {
             HStack(spacing: 0) {
                 Text(label)
                     .font(Typography.footnoteItalic)
-                Text(" • ")
+                Text(verbatim: " • ")
                     .font(Typography.footnoteItalic)
             }
         }
