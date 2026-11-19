@@ -552,7 +552,7 @@ final class TripHeaderCardTests: XCTestCase {
         let stop = objects.stop { stop in stop.name = "stop" }
         let route = objects.route { $0.type = .bus }
         let trip = objects.trip { _ in }
-        let finishingVehicle = objects.vehicle { _ in }
+        let finishingVehicle = objects.vehicle { $0.currentStatus = .inTransitTo }
 
         let withTap = TripHeaderCard(
             spec: .finishingAnotherTrip(finishingVehicle),
