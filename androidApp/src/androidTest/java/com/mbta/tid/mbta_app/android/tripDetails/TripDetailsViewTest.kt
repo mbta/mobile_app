@@ -1,0 +1,306 @@
+package com.mbta.tid.mbta_app.android.tripDetails
+
+import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.analytics.MockAnalytics
+import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.assertCanBeDisplayed
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
+import com.mbta.tid.mbta_app.android.util.TripRouteAccents
+import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
+import com.mbta.tid.mbta_app.model.TripDetailsStopList
+import com.mbta.tid.mbta_app.model.Vehicle
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
+import com.mbta.tid.mbta_app.model.tripDetailsPage.TripData
+import com.mbta.tid.mbta_app.model.tripDetailsPage.TripHeaderSpec
+import com.mbta.tid.mbta_app.routes.SheetRoutes
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.MockTripDetailsViewModel
+import com.mbta.tid.mbta_app.viewModel.TripDetailsViewModel
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+
+@OptIn(ExperimentalTestApi::class)
+class TripDetailsViewTest {
+    @get:Rule val composeTestRule = createComposeRule(effectContext = UnconfinedTestDispatcher())
+
+    val now = EasternTimeInstant.now()
+    val objects = ObjectCollectionBuilder()
+    val route = objects.route()
+    val routePattern = objects.routePattern(route)
+    val stop = objects.stop()
+    val trip = objects.trip(routePattern)
+    val vehicle = objects.vehicle {
+        currentStatus = Vehicle.CurrentStatus.InTransitTo
+        tripId = trip.id
+    }
+    val stopSequence = 10
+
+    val downstreamStopSequence = 20
+    lateinit var downstreamStop: Stop
+    val downstreamStopParent = objects.stop {
+        downstreamStop = childStop { name = "North Station" }
+    }
+    val schedule = objects.schedule {
+        this.trip = this@TripDetailsViewTest.trip
+        stopId = downstreamStop.id
+        stopSequence = downstreamStopSequence
+        departureTime = now + 5.minutes
+    }
+    val prediction = objects.prediction(schedule) { departureTime = now + 5.minutes }
+
+    val globalResponse = GlobalResponse(objects)
+    val alertData = AlertsStreamDataResponse(objects)
+
+    val tripFilter = TripDetailsPageFilter(trip.id, vehicle.id, route.id, 0, stop.id, stopSequence)
+    val tripData =
+        TripData(
+            tripFilter,
+            trip,
+            TripSchedulesResponse.Schedules(listOf(schedule)),
+            PredictionsStreamDataResponse(objects),
+            vehicle,
+        )
+
+    @Before
+    fun setUp() {
+        loadKoinMocks(objects)
+    }
+
+    @Test
+    fun testOpensDownstreamStop() {
+        val openedSheetRoutes = mutableListOf<SheetRoutes>()
+        val loggedEvents = mutableListOf<Pair<String, Map<String, String>>>()
+        val analytics =
+            MockAnalytics(
+                onLogEvent = { event, properties -> loggedEvents.add(event to properties) },
+            )
+        val tripDetailsStopList = runBlocking {
+            TripDetailsStopList.fromPieces(
+                trip,
+                tripData.tripSchedules,
+                tripData.tripPredictions,
+                vehicle,
+                alertData,
+                globalResponse,
+            )
+        }
+
+        val tripVMState = TripDetailsViewModel.State(tripData, tripDetailsStopList)
+        val viewModel = MockTripDetailsViewModel(tripVMState)
+
+        composeTestRule.setContent {
+            TripDetailsView(
+                tripFilter,
+                allAlerts = alertData,
+                onOpenAlertDetails = {},
+                openSheetRoute = openedSheetRoutes::add,
+                openModal = {},
+                now,
+                TripRouteAccents.default,
+                isTripDetailsPage = false,
+                tripDetailsVM = viewModel,
+                analytics = analytics,
+            )
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText(downstreamStop.name).performClick()
+        assertEquals<List<SheetRoutes>>(
+            listOf(SheetRoutes.StopOverview(downstreamStopParent.id)),
+            openedSheetRoutes,
+        )
+        assertEquals(
+            listOf(
+                Pair(
+                    "tapped_downstream_stop",
+                    mapOf(
+                        "route_id" to route.id.idText,
+                        "stop_id" to downstreamStopParent.id,
+                        "trip_id" to trip.id,
+                        "connecting_route_id" to "",
+                    ),
+                ),
+            ),
+            loggedEvents,
+        )
+    }
+
+    @Test
+    fun testDownstreamAlertShown() {
+        val openedSheetRoutes = mutableListOf<SheetRoutes>()
+        val loggedEvents = mutableListOf<Pair<String, Map<String, String>>>()
+        val analytics =
+            MockAnalytics(
+                onLogEvent = { event, properties -> loggedEvents.add(event to properties) },
+            )
+
+        objects.alert {
+            cause = Alert.Cause.Parade
+            effect = Alert.Effect.StopClosure
+            informedEntity(directionId = 0, route = route.id.idText, stop = downstreamStop.id)
+        }
+
+        val alerts = AlertsStreamDataResponse(objects)
+        val tripDetailsStopList = runBlocking {
+            TripDetailsStopList.fromPieces(
+                trip,
+                tripData.tripSchedules,
+                tripData.tripPredictions,
+                vehicle,
+                alerts,
+                globalResponse,
+            )
+        }
+
+        val tripVMState = TripDetailsViewModel.State(tripData, tripDetailsStopList)
+        val viewModel = MockTripDetailsViewModel(tripVMState)
+
+        composeTestRule.setContent {
+            TripDetailsView(
+                tripFilter,
+                allAlerts = alerts,
+                onOpenAlertDetails = {},
+                openSheetRoute = openedSheetRoutes::add,
+                openModal = {},
+                now,
+                TripRouteAccents.default,
+                isTripDetailsPage = false,
+                tripDetailsVM = viewModel,
+                analytics = analytics,
+            )
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText(downstreamStop.name).assertCanBeDisplayed()
+        composeTestRule.onNodeWithText("Stop skipped").assertCanBeDisplayed()
+    }
+
+    @Test
+    fun testFollowButton() {
+        var onFollowCalled = false
+
+        composeTestRule.setContent {
+            TripDetails(
+                trip = trip,
+                headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
+                vehicleOnOtherTrip = tripData.vehicleOnOtherTrip,
+                onHeaderTap = null,
+                onOpenAlertDetails = {},
+                onFollowTrip = { onFollowCalled = true },
+                onTapStop = {},
+                route = route,
+                tripFilter = tripFilter,
+                stopList = TripDetailsStopList(trip, emptyList()),
+                now = now,
+                isTripDetailsPage = false,
+                globalResponse = GlobalResponse(objects),
+                openModal = {},
+            )
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Follow"))
+        composeTestRule.onNodeWithText("Follow").performClick()
+        assertTrue(onFollowCalled)
+    }
+
+    @Test
+    fun testNoFollowButtonWhenOnTripDetails() {
+        composeTestRule.setContent {
+            TripDetails(
+                trip = trip,
+                headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
+                vehicleOnOtherTrip = tripData.vehicleOnOtherTrip,
+                onHeaderTap = null,
+                onOpenAlertDetails = {},
+                onFollowTrip = {},
+                onTapStop = {},
+                route = route,
+                tripFilter = tripFilter,
+                stopList = TripDetailsStopList(trip, emptyList()),
+                now = now,
+                isTripDetailsPage = true,
+                globalResponse = GlobalResponse(objects),
+                openModal = {},
+            )
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Follow").assertDoesNotExist()
+    }
+
+    @Test
+    fun testDisplaysTripCompleteCard() {
+        composeTestRule.setContent {
+            TripDetails(
+                trip = trip,
+                headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
+                vehicleOnOtherTrip = true,
+                onHeaderTap = null,
+                onOpenAlertDetails = {},
+                onFollowTrip = {},
+                onTapStop = {},
+                route = route,
+                tripFilter = tripFilter,
+                stopList = TripDetailsStopList(trip, emptyList()),
+                now = now,
+                isTripDetailsPage = true,
+                globalResponse = GlobalResponse(objects),
+                openModal = {},
+            )
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Follow").assertDoesNotExist()
+        composeTestRule.onNodeWithText("Trip complete").assertCanBeDisplayed()
+    }
+
+    @Test
+    fun testDisplaysTripNotAvailableCard() {
+        val openedSheetRoutes = mutableListOf<SheetRoutes>()
+        val loggedEvents = mutableListOf<Pair<String, Map<String, String>>>()
+        val analytics =
+            MockAnalytics(
+                onLogEvent = { event, properties -> loggedEvents.add(event to properties) },
+            )
+
+        val unavailableTripData = TripData(tripFilter, null, null, null, vehicle)
+
+        val tripVMState = TripDetailsViewModel.State(unavailableTripData, null)
+        val viewModel = MockTripDetailsViewModel(tripVMState)
+
+        composeTestRule.setContent {
+            TripDetailsView(
+                tripFilter,
+                allAlerts = AlertsStreamDataResponse(objects),
+                onOpenAlertDetails = {},
+                openSheetRoute = openedSheetRoutes::add,
+                openModal = {},
+                now,
+                TripRouteAccents.default,
+                isTripDetailsPage = false,
+                tripDetailsVM = viewModel,
+                analytics = analytics,
+            )
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Trip not available").assertCanBeDisplayed()
+    }
+}

@@ -228,8 +228,17 @@ fun MapAndSheetPage(
         // modalSheetState.show() is implied by the `if (currentModal != null)`
     }
 
+    val analytics: Analytics = koinInject()
+
     fun openModal(modal: ModalRoutes) {
         openModalWithCloseCallback(modal, {})
+        if (modal is ModalRoutes.AlertDetails) {
+            analytics.tappedAlertDetails(
+                routeId = modal.lineId ?: modal.routeIds?.firstOrNull(),
+                stopId = modal.stopId ?: "",
+                alertId = modal.alertId,
+            )
+        }
     }
 
     fun closeModal() {
@@ -351,8 +360,6 @@ fun MapAndSheetPage(
     val searchFocusRequester = remember { FocusRequester() }
 
     fun openSearch() = searchFocusRequester.requestFocus()
-
-    val analytics: Analytics = koinInject()
 
     val navCallbacks =
         NavigationCallbacks(
@@ -628,16 +635,13 @@ fun MapAndSheetPage(
         }
 
         SheetPage(colorResource(R.color.fill2)) {
-            StopDetailsPage(
+            StopOverviewPage(
                 modifier = modifier,
                 filters = filters,
                 allAlerts = nearbyTransit.alertData,
                 navCallbacks = navCallbacks,
                 updateRouteStopFilter = { updateRouteStopFilter(navRoute.stopId, it) },
-                updateTripFilter = { updateTripFilter(navRoute.stopId, it) },
-                tileScrollState = tileScrollState,
                 openModal = ::openModal,
-                openSheetRoute = navController::navigate,
                 errorBannerViewModel = errorBannerViewModel,
             )
         }
@@ -657,7 +661,7 @@ fun MapAndSheetPage(
         }
 
         SheetPage(colorResource(R.color.fill2)) {
-            StopDetailsPage(
+            RouteStopPage(
                 modifier = modifier,
                 filters = filters,
                 allAlerts = nearbyTransit.alertData,
@@ -746,7 +750,7 @@ fun MapAndSheetPage(
             RouteDetailsView(
                 selectionId = navRoute.routeId,
                 context = navRoute.context,
-                onOpenStopDetails = ::handleStopNavigation,
+                onOpenStopOverview = ::handleStopNavigation,
                 navCallbacks = navCallbacks,
                 openModal = ::openModal,
                 errorBannerViewModel = errorBannerViewModel,

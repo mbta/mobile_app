@@ -264,7 +264,7 @@ class HomeMapViewTests {
     }
 
     @Test
-    fun testLocationAuthNotShownStopDetails() = runBlocking {
+    fun testLocationAuthNotShownStopOverview() = runBlocking {
         val locationManager = MockLocationDataManager()
         val viewModel =
             MapViewModel(
@@ -305,7 +305,7 @@ class HomeMapViewTests {
     }
 
     @Test
-    fun testOverviewNotShownWhenNoPermissionsStopDetails() = runBlocking {
+    fun testOverviewNotShownWhenNoPermissionsStopOverview() = runBlocking {
         val locationManager = MockLocationDataManager()
         val viewModel =
             MapViewModel(
@@ -348,7 +348,7 @@ class HomeMapViewTests {
     }
 
     @Test
-    fun testRecenterButtonVisibilityWhenOnStopDetails(): Unit = runBlocking {
+    fun testRecenterButtonVisibilityWhenOnStopOverview(): Unit = runBlocking {
         val locationManager = MockLocationDataManager()
         locationManager.hasPermission = true
 

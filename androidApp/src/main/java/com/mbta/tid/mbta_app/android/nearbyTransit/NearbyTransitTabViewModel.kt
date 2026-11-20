@@ -147,8 +147,8 @@ class NearbyTransitTabViewModel : ViewModel() {
         newStopId: String,
         newFilter: RouteStopFilter?,
     ): Boolean {
-        // If the new filter is null and there is already a null filter in the stack for the same
-        // stop ID, we don't want a duplicate unfiltered entry, so skip appending a new one
+        // If the new filter is null and there is already a StopOverview in the stack for the same
+        // stop ID, we don't want a duplicate StopOverview, so skip appending a new one
 
         return when (lastNavEntry) {
             is SheetRoutes.StopOverview -> {

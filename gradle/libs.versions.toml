@@ -24,7 +24,7 @@ compose-material-icons = "1.7.8"
 compose-placeholder-material3= "1.0.12"
 compose-shimmer= "1.5.0"
 # changelog: https://github.com/CycloneDX/cyclonedx-gradle-plugin/releases
-cyclonedx = "3.5.1"
+cyclonedx = "3.6.0"
 # changelog: https://developer.android.com/jetpack/androidx/releases/datastore
 cyclonedxCoreJava = "13.4.0"
 datastorePreferencesCore = "1.2.1"
@@ -49,12 +49,12 @@ molecule = "2.2.0"
 okhttp = "5.5.1"
 okio = "3.18.2"
 playServicesLocation = "21.4.0"
-sentry-android-gradle = "6.25.0"
+sentry-android-gradle = "6.26.0"
 sentry-kmp = "0.27.0"
 skie = "0.10.16"
 spatialk = "0.8.0"
 # changelog: https://github.com/diffplug/spotless/blob/main/plugin-gradle/CHANGES.md
-spotless = "8.10.4"
+spotless = "8.11.0"
 turbine = "1.2.1"
 testLogger = "4.0.0"
 

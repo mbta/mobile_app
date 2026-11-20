@@ -13,7 +13,7 @@ import org.junit.Test
 class MapAndSheetTabViewModelTest {
 
     @Test
-    fun testUpdatesStopDetailsPageFilterUpdates() {
+    fun testUpdatesRouteStopPageFilterUpdates() {
         val vm = NearbyTransitTabViewModel()
         val initialFilter =
             RouteStopPageFilters(
@@ -48,7 +48,7 @@ class MapAndSheetTabViewModelTest {
     }
 
     @Test
-    fun testSetStopDetailsFilterPushedWhenNotInStopDetails() {
+    fun testSetRouteStopFilterPushedWhenNotInRouteStop() {
         val vm = NearbyTransitTabViewModel()
         val newFilter = RouteStopFilter(Route.Id("route_1"), 1)
 
@@ -67,7 +67,7 @@ class MapAndSheetTabViewModelTest {
     }
 
     @Test
-    fun testSetStopDetailsFilterOldFilterPopped() {
+    fun testSetRouteStopFilterOldFilterPopped() {
         val vm = NearbyTransitTabViewModel()
         val newFilter = RouteStopFilter(Route.Id("route_1"), 0)
 
@@ -93,7 +93,7 @@ class MapAndSheetTabViewModelTest {
     }
 
     @Test
-    fun testSetStopDetailsFilterDoesNothingIfFilterMatches() {
+    fun testSetRouteStopFilterDoesNothingIfFilterMatches() {
         val vm = NearbyTransitTabViewModel()
         val sameFilter = RouteStopFilter(Route.Id("route_1"), 0)
 
@@ -112,7 +112,7 @@ class MapAndSheetTabViewModelTest {
     }
 
     @Test
-    fun testSetStopDetailsFilterOldFilterPoppedWhenNewAutoFilter() {
+    fun testSetRouteStopFilterOldFilterPoppedWhenNewAutoFilter() {
         val vm = NearbyTransitTabViewModel()
         val newFilter = RouteStopFilter(Route.Id("route_1"), 0, autoFilter = true)
 
