@@ -9,7 +9,7 @@
 import Shared
 
 extension [RouteCardData] {
-    var servedRouteFilters: [StopDetailsFilterPills.FilterBy] {
+    var servedRouteFilters: [StopOverviewFilterPills.FilterBy] {
         map { routeCardData in
             switch onEnum(of: routeCardData.lineOrRoute) {
             case let .line(line): .line(line.line)

@@ -67,15 +67,13 @@ class NavigationManager: ObservableObject {
         }
     }
 
-    /// Adding a second bool argument here is a hack until we can remove the feature flag and set the new stop details
-    /// entry directly, until then, we need a way to distinguish between entries coming from the map or not.
     /**
      Updates the stack so that the given entry is the last entry.
      Optionally pops the previous entry to prevent the stack from building too deep. For example, when pushing
-     a `stopDetails` entry for a new stop on top of a `stopDetails` entry for a different stop, the previous entry
-     would be popped to ensure there is only one `stopDetails` entry in the stack.
+     a `stopOverview`/`routeStop` entry for a new stop on top of an entry for a different stop, the previous entry
+     would be popped to ensure there is only one `stopOverview`/`routeStop` entry in the stack.
      */
-    func pushNavEntry(_ entry: SheetNavigationStackEntry, mapSelection _: Bool = false) {
+    func pushNavEntry(_ entry: SheetNavigationStackEntry) {
         if entry.isEntrypoint {
             navigationStack.removeAll()
         }
@@ -83,7 +81,7 @@ class NavigationManager: ObservableObject {
         switch (entry, currentEntry) {
         case let (.routeStop(_, newFilter, _), .routeStop(_, lastFilter, _)):
             // When the stop filter changes, we want a new entry to be added (i.e. no pop) only when
-            // you're on the unfiltered (lastFilter == nil) page, but if there is already a filter,
+            // you're on the overview (lastFilter == nil) page, but if there is already a filter,
             // the entry with the old filter should be popped and replaced with the new value.
             if RouteStopFilter.companion.shouldPopLastStopEntry(lastFilter: lastFilter, newFilter: newFilter) {
                 _ = navigationStack.popLast()
@@ -91,7 +89,7 @@ class NavigationManager: ObservableObject {
             navigationStack.append(entry)
         case let (.routeStop(_, newFilter, _), .stopOverview(_)):
             // When the stop filter changes, we want a new entry to be added (i.e. no pop) only when
-            // you're on the unfiltered (lastFilter == nil) page, but if there is already a filter,
+            // you're on the overview (lastFilter == nil) page, but if there is already a filter,
             // the entry with the old filter should be popped and replaced with the new value.
             if RouteStopFilter.companion.shouldPopLastStopEntry(lastFilter: nil, newFilter: newFilter) {
                 _ = navigationStack.popLast()
@@ -99,7 +97,7 @@ class NavigationManager: ObservableObject {
             navigationStack.append(entry)
         case let (.stopOverview(_), .routeStop(_, lastFilter, _)):
             // When the stop filter changes, we want a new entry to be added (i.e. no pop) only when
-            // you're on the unfiltered (lastFilter == nil) page, but if there is already a filter,
+            // you're on the overview (lastFilter == nil) page, but if there is already a filter,
             // the entry with the old filter should be popped and replaced with the new value.
             if RouteStopFilter.companion.shouldPopLastStopEntry(lastFilter: lastFilter, newFilter: nil) {
                 _ = navigationStack.popLast()
@@ -107,7 +105,7 @@ class NavigationManager: ObservableObject {
             navigationStack.append(entry)
         case let (.stopOverview(targetStop), .stopOverview(lastStop)):
             // When the stop filter changes, we want a new entry to be added (i.e. no pop) only when
-            // you're on the unfiltered (lastFilter == nil) page, but if there is already a filter,
+            // you're on the overview (lastFilter == nil) page, but if there is already a filter,
             // the entry with the old filter should be popped and replaced with the new value.
             if RouteStopFilter.companion.shouldPopLastStopEntry(lastFilter: nil, newFilter: nil) {
                 _ = navigationStack.popLast()

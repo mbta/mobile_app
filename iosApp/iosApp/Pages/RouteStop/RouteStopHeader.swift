@@ -1,5 +1,5 @@
 //
-//  StopDetailsFilteredHeader.swift
+//  RouteStopHeader.swift
 //  iosApp
 //
 //  Created by esimon on 11/26/24.
@@ -9,36 +9,28 @@
 import Shared
 import SwiftUI
 
-struct StopDetailsFilteredHeader: View {
+struct RouteStopHeader: View {
     @ObserveInjection var inject
-    var route: Route?
+    var route: Route
     var line: Line?
-    var stop: Stop?
+    var stop: Stop
     var direction: Int32
     var isFavorite: Bool = false
     var onFavorite: () -> Void = {}
     var navCallbacks: NavigationCallbacks
 
     var body: some View {
-        let routeLabel = line?.longName ?? route?.label
-        let routeTypeLabel = if let type = route?.type, type != .ferry {
-            type.typeText(isOnly: true)
+        let routeLabel = line?.longName ?? route.label
+        let routeTypeLabel = if route.type != .ferry {
+            route.type.typeText(isOnly: true)
         } else { "" }
-        let accessibilityLabel = if let routeLabel, let stop {
-            Text(
-                "\(routeLabel) \(routeTypeLabel) at \(stop.name)",
-                comment: """
-                VoiceOver text for the stop details page header,
-                describes the selected route and and stop, ex '[Red Line] [train] at [Porter]'
-                """
-            )
-
-        } else {
-            Text(
-                "Stop details",
-                comment: "Stop details header fallback voiceover text when data fails to load"
-            )
-        }
+        let accessibilityLabel = Text(
+            "\(routeLabel) \(routeTypeLabel) at \(stop.name)",
+            comment: """
+            VoiceOver text for the route stop page header,
+            describes the selected route and and stop, ex '[Red Line] [train] at [Porter]'
+            """
+        )
         SheetHeader(
             title: {
                 HStack(alignment: .center, spacing: 8) {
@@ -47,13 +39,11 @@ struct StopDetailsFilteredHeader: View {
                     if let line {
                         RoutePill(route: nil, line: line, type: .fixed)
                             .accessibilityLabel(pillAccessibilityLabel)
-                    } else if let route {
+                    } else {
                         RoutePill(route: route, type: .fixed)
                             .accessibilityLabel(pillAccessibilityLabel)
                     }
-                    if let stop {
-                        Text(stopLabel(stop)).font(Typography.headline).layoutPriority(1)
-                    }
+                    Text(stopLabel(stop)).font(Typography.headline).layoutPriority(1)
                     Spacer(minLength: 0)
                 }
                 .accessibilityElement()
@@ -89,7 +79,7 @@ struct StopDetailsFilteredHeader: View {
     }
 }
 
-struct StopDetailsFilteredHeader_Previews: PreviewProvider {
+struct RouteStopHeader_Previews: PreviewProvider {
     static var previews: some View {
         let objects = ObjectCollectionBuilder()
         let route = objects.route { route in
@@ -120,21 +110,21 @@ struct StopDetailsFilteredHeader_Previews: PreviewProvider {
             stop.name = "South Station"
         }
         VStack {
-            StopDetailsFilteredHeader(
+            RouteStopHeader(
                 route: route,
                 line: nil,
                 stop: stop,
                 direction: 0,
                 navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating)
             )
-            StopDetailsFilteredHeader(
+            RouteStopHeader(
                 route: longestStopNameRoute,
                 line: nil,
                 stop: longestStopName,
                 direction: 0,
                 navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating)
             )
-            StopDetailsFilteredHeader(
+            RouteStopHeader(
                 route: crRoute,
                 line: nil,
                 stop: crStop,

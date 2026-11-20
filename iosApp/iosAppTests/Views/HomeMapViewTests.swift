@@ -280,7 +280,7 @@ final class HomeMapViewTests: XCTestCase {
         wait(for: [hasAppeared, joinsVehiclesExp], timeout: 5)
     }
 
-    func testJoinsVehiclesChannelOnActiveWhenFilteredStopDetails() {
+    func testJoinsVehiclesChannelOnActiveWhenRouteStop() {
         let joinsVehiclesExp = XCTestExpectation(description: "Joins vehicles channel")
 
         let stop = ObjectCollectionBuilder().stop { _ in }
@@ -312,7 +312,7 @@ final class HomeMapViewTests: XCTestCase {
         wait(for: [hasAppeared, joinsVehiclesExp], timeout: 5)
     }
 
-    func testDoesntJoinsVehiclesChannelOnActiveWhenUnfilteredtopDetails() {
+    func testDoesntJoinsVehiclesChannelOnActiveWhenStopOverview() {
         let joinsVehiclesExp = XCTestExpectation(description: "Joins vehicles channel")
 
         joinsVehiclesExp.isInverted = true

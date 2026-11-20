@@ -1,5 +1,5 @@
 //
-//  StopDetailsFilteredHeaderTests.swift
+//  RouteStopHeaderTests.swift
 //  iosAppTests
 //
 //  Created by esimon on 12/2/24.
@@ -12,7 +12,7 @@ import SwiftUI
 import ViewInspector
 import XCTest
 
-final class StopDetailsFilteredHeaderTests: XCTestCase {
+final class RouteStopHeaderTests: XCTestCase {
     override func setUp() {
         executionTimeAllowance = 60
     }
@@ -21,7 +21,7 @@ final class StopDetailsFilteredHeaderTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let stop = objects.stop { _ in }
-        let sut = StopDetailsFilteredHeader(route: route, stop: stop, direction: 0, navCallbacks: .companion.empty)
+        let sut = RouteStopHeader(route: route, stop: stop, direction: 0, navCallbacks: .companion.empty)
         XCTAssertNotNil(try sut.inspect().find(text: "at **\(stop.name)**"))
     }
 
@@ -29,7 +29,7 @@ final class StopDetailsFilteredHeaderTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let stop = objects.stop { _ in }
-        let sut = StopDetailsFilteredHeader(route: route, stop: stop, direction: 0, navCallbacks: .companion.empty)
+        let sut = RouteStopHeader(route: route, stop: stop, direction: 0, navCallbacks: .companion.empty)
         XCTAssertNotNil(try sut.inspect().find(RoutePill.self))
     }
 
@@ -38,7 +38,7 @@ final class StopDetailsFilteredHeaderTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let stop = objects.stop { _ in }
-        let sut = StopDetailsFilteredHeader(
+        let sut = RouteStopHeader(
             route: route,
             stop: stop,
             direction: 0,
@@ -54,7 +54,7 @@ final class StopDetailsFilteredHeaderTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let stop = objects.stop { _ in }
-        let sut = StopDetailsFilteredHeader(
+        let sut = RouteStopHeader(
             route: route,
             stop: stop,
             direction: 0,

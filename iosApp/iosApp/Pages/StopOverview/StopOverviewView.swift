@@ -1,28 +1,31 @@
 //
-//  StopDetailsUnfilteredView.swift
+//  StopOverviewView.swift
 //  iosApp
 //
-//  Created by esimon on 11/25/24.
+//  Created by Brady, Kayla on 6/20/24.
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
+import Foundation
 import OrderedCollections
 import Shared
 import SwiftPhoenixClient
 import SwiftUI
 
-struct StopDetailsUnfilteredView: View {
+struct StopOverviewView: View {
     @ObserveInjection var inject
-    var stopId: String
+
+    var filters: StopOverviewPageFilters
 
     var routeData: StopCentricViewModel.RouteData?
+    var alerts: AlertsStreamDataResponse?
     var favorites: Favorites?
     var global: GlobalResponse?
     var now: EasternTimeInstant
 
     var setRouteStopFilter: (RouteStopFilter?) -> Void
+    var navCallbacks: NavigationCallbacks
 
-    let navCallbacks: NavigationCallbacks
     var errorBannerVM: IErrorBannerViewModel
 
     @ObservedObject var navManager: NavigationManager
@@ -33,7 +36,7 @@ struct StopDetailsUnfilteredView: View {
     let inspection = Inspection<Self>()
 
     init(
-        stopId: String,
+        filters: StopOverviewPageFilters,
         routeData: StopCentricViewModel.RouteData?,
         favorites: Favorites?,
         global: GlobalResponse?,
@@ -43,7 +46,7 @@ struct StopDetailsUnfilteredView: View {
         errorBannerVM: IErrorBannerViewModel,
         navManager: NavigationManager,
     ) {
-        self.stopId = stopId
+        self.filters = filters
         self.routeData = routeData
         self.favorites = favorites
         self.global = global
@@ -53,6 +56,8 @@ struct StopDetailsUnfilteredView: View {
         self.errorBannerVM = errorBannerVM
         self.navManager = navManager
     }
+
+    var stopId: String { filters.stopId }
 
     var stop: Stop? {
         global?.getStop(stopId: stopId)
@@ -69,7 +74,7 @@ struct StopDetailsUnfilteredView: View {
         } else { nil }
     }
 
-    var servedRoutes: [StopDetailsFilterPills.FilterBy] { routeCardData?.servedRouteFilters ?? [] }
+    var servedRoutes: [StopOverviewFilterPills.FilterBy] { routeCardData?.servedRouteFilters ?? [] }
 
     var elevatorAlerts: [Shared.Alert]? {
         if let routeCardData {
@@ -105,7 +110,7 @@ struct StopDetailsUnfilteredView: View {
                         .init([.bottom], hasPillFilters ? 8 : 16),
                     ])
                     if hasPillFilters {
-                        StopDetailsFilterPills(
+                        StopOverviewFilterPills(
                             servedRoutes: servedRoutes,
                             tapRoutePill: tapRoutePill,
                             filter: nil,
@@ -204,7 +209,7 @@ struct StopDetailsUnfilteredView: View {
         }.loadingPlaceholder()
     }
 
-    func tapRoutePill(_ filterBy: StopDetailsFilterPills.FilterBy) {
+    func tapRoutePill(_ filterBy: StopOverviewFilterPills.FilterBy) {
         let filterId = switch filterBy {
         case let .line(line):
             line.id

@@ -1,5 +1,5 @@
 //
-//  StopDetailsPageTests.swift
+//  RouteStopPageTests.swift
 //  iosAppTests
 //
 //  Created by Simon, Emma on 4/5/24.
@@ -15,7 +15,7 @@ import SwiftUI
 import ViewInspector
 import XCTest
 
-final class StopDetailsPageTests: XCTestCase {
+final class RouteStopPageTests: XCTestCase {
     override func setUp() {
         executionTimeAllowance = 60
     }
@@ -70,7 +70,7 @@ final class StopDetailsPageTests: XCTestCase {
             awaitingPredictionsAfterBackground: false
         ))
 
-        let sut = StopDetailsPage(
+        let sut = RouteStopPage(
             filters: filters,
             navCallbacks: .companion.empty,
             alerts: .init(alerts: [:]),
@@ -83,31 +83,55 @@ final class StopDetailsPageTests: XCTestCase {
         )
 
         try await ViewHosting.host(sut.environmentObject(ViewportProvider()).withFixedSettings([:])) {
-            XCTAssertNotNil(try sut.inspect().find(StopDetailsFilteredView.self))
             XCTAssertNotNil(try sut.inspect().find(DepartureTile.self))
         }
     }
 
-    func testCloseButton() throws {
+    @MainActor func testCloseButton() {
         let objects = ObjectCollectionBuilder()
+        let route = objects.route()
         let stop = objects.stop { _ in }
+
+        loadKoinMocks(objects: objects)
+
+        let filters = RouteStopPageFilters(
+            stopId: stop.id,
+            routeStopFilter: .init(routeId: route.id, directionId: 0),
+            tripFilter: nil
+        )
 
         let closeExp = expectation(description: "close button pressed")
 
-        let sut = StopDetailsPage(
-            filters: StopOverviewPageFilters(stopId: stop.id),
+        let sut = RouteStopPage(
+            filters: filters,
             navCallbacks: .init(onBack: nil, onClose: { closeExp.fulfill() }, backButtonPresentation: .floating),
             alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
             routeCardDataVM: MockRouteCardDataViewModel(),
-            stopCentricVM: MockStopCentricViewModel(),
+            stopCentricVM: MockStopCentricViewModel(initialState: .init(
+                routeData: StopCentricViewModel.RouteDataRouteStop(
+                    filteredWith: filters,
+                    stopData: .init(
+                        route: route,
+                        stop: stop,
+                        data: []
+                    )
+                ),
+                awaitingPredictionsAfterBackground: false
+            )),
             navManager: .init(),
             viewportProvider: .init()
-        ).withFixedSettings([:])
+        )
 
-        try sut.inspect().find(viewWithAccessibilityLabel: "Close").button().tap()
-        wait(for: [closeExp], timeout: 1)
+        let exp = sut.inspection.inspect(after: 1) { view in
+            try view.find(viewWithAccessibilityLabel: "Close").button().tap()
+        }
+
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+        defer { ViewHosting.expel() }
+
+        wait(for: [closeExp, exp], timeout: 2)
     }
 
     func testRejoinsPredictionsAfterBackgrounding() throws {
@@ -130,7 +154,7 @@ final class StopDetailsPageTests: XCTestCase {
             }
         }
 
-        let sut = StopDetailsPage(
+        let sut = RouteStopPage(
             filters: RouteStopPageFilters(
                 stopId: stop.id,
                 routeStopFilter: routeStopFilter,
@@ -154,71 +178,6 @@ final class StopDetailsPageTests: XCTestCase {
 
         try sut.inspect().findAndCallOnChange(newValue: ScenePhase.active)
         wait(for: [joinExpectation], timeout: 1)
-    }
-
-    @MainActor
-    func testAppliesStopFilterAutomatically() {
-        let objects = ObjectCollectionBuilder()
-
-        let route = objects.route()
-        let stop = objects.stop { _ in }
-
-        let tripId = "trip"
-        let routePattern = objects.routePattern(route: route) { pattern in
-            pattern.representativeTripId = tripId
-        }
-        let trip = objects.trip(routePattern: routePattern) { trip in
-            trip.id = tripId
-            trip.directionId = 0
-            trip.stopIds = [stop.id]
-            trip.routePatternId = routePattern.id
-        }
-        objects.schedule { schedule in
-            schedule.trip = trip
-            schedule.routeId = route.id.idText
-            schedule.stopId = stop.id
-            schedule.stopSequence = 0
-            schedule.departureTime = EasternTimeInstant.now().plus(minutes: 10)
-        }
-
-        loadKoinMocks(objects: objects)
-
-        let navManager = NavigationManager(navigationStack: [.stopOverview(stopId: stop.id)])
-
-        let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
-        let updatedFilter = RouteStopFilter(
-            routeId: route.id,
-            directionId: routePattern.directionId,
-            autoFilter: true
-        )
-        let stopCentricVM = MockStopCentricViewModel()
-
-        let sut = StopDetailsPage(
-            filters: StopOverviewPageFilters(stopId: stop.id),
-            navCallbacks: .companion.empty,
-            alerts: .init(alerts: [:]),
-            errorBannerVM: MockErrorBannerViewModel(),
-            mapVM: MockMapViewModel(),
-            routeCardDataVM: MockRouteCardDataViewModel(),
-            stopCentricVM: stopCentricVM,
-            navManager: navManager,
-            viewportProvider: viewportProvider
-        )
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        defer { ViewHosting.expel() }
-
-        stopCentricVM.filterUpdates.tryEmit(value: .init(
-            stopId: stop.id,
-            routeStopFilter: updatedFilter,
-            tripFilter: nil
-        ))
-
-        sut.inspection.inspect(after: 1) { _ in
-            XCTAssertEqual(
-                navManager.navigationStack.lastRouteStopFilter,
-                updatedFilter
-            )
-        }
     }
 
     @MainActor
@@ -273,7 +232,7 @@ final class StopDetailsPageTests: XCTestCase {
             stopId: stop.id, routeStopFilter: routeStopFilter, tripFilter: updatedTripFilter
         ))
 
-        let sut = StopDetailsPage(
+        let sut = RouteStopPage(
             filters: initialFilters,
             navCallbacks: .companion.empty,
             alerts: .init(alerts: [:]),
@@ -288,11 +247,13 @@ final class StopDetailsPageTests: XCTestCase {
         ViewHosting.host(view: sut.withFixedSettings([:]))
         defer { ViewHosting.expel() }
 
-        sut.inspection.inspect(after: 1) { _ in
+        let exp = sut.inspection.inspect(after: 1) { _ in
             XCTAssertEqual(
                 navManager.navigationStack.lastTripDetailsFilter,
                 updatedTripFilter
             )
         }
+
+        wait(for: [exp], timeout: 2)
     }
 }
