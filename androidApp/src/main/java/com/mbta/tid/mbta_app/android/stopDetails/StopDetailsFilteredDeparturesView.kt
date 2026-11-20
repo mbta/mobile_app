@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -62,11 +63,6 @@ import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
-
-private enum class InfoCardType {
-    cancelledTrip,
-    predictionsNotAvailable,
-}
 
 @Composable
 fun StopDetailsFilteredDeparturesView(
@@ -178,29 +174,12 @@ fun StopDetailsFilteredDeparturesView(
     }
 
     @Composable
-    fun InfoCard(type: InfoCardType) {
-        val detailString =
-            when (type) {
-                InfoCardType.cancelledTrip -> stringResource(R.string.trip_cancelled_details)
-                InfoCardType.predictionsNotAvailable ->
-                    stringResource(R.string.predictions_not_available_yet_details)
-            }
-        val headerString =
-            when (type) {
-                InfoCardType.cancelledTrip -> stringResource(R.string.trip_cancelled)
-                InfoCardType.predictionsNotAvailable ->
-                    stringResource(R.string.predictions_not_available_yet)
-            }
-        val iconPainter =
-            when (type) {
-                InfoCardType.cancelledTrip -> routeSlashIcon(routeType = routeAccents.type)
-                InfoCardType.predictionsNotAvailable -> painterResource(R.drawable.live_data_slash)
-            }
-        val iconModifier =
-            when (type) {
-                InfoCardType.cancelledTrip -> Modifier.testTag("route_slash_icon")
-                InfoCardType.predictionsNotAvailable -> Modifier.size(48.dp).padding(3.dp)
-            }
+    fun InfoCard(
+        detailString: String,
+        headerString: String,
+        iconPainter: Painter,
+        iconModifier: Modifier,
+    ) {
         Box(modifier = Modifier.padding(horizontal = 10.dp)) {
             StopDetailsIconCard(
                 routeAccents.color,
@@ -304,9 +283,19 @@ fun StopDetailsFilteredDeparturesView(
                 )
             }
         } else if (predictionsNotYetAvailableSelected) {
-            InfoCard(InfoCardType.predictionsNotAvailable)
+            InfoCard(
+                stringResource(R.string.predictions_not_available_yet_details),
+                stringResource(R.string.predictions_not_available_yet),
+                painterResource(R.drawable.live_data_slash),
+                Modifier.size(48.dp).padding(3.dp),
+            )
         } else if (selectedTripIsCancelled) {
-            InfoCard(InfoCardType.cancelledTrip)
+            InfoCard(
+                stringResource(R.string.trip_cancelled_details),
+                stringResource(R.string.trip_cancelled),
+                routeSlashIcon(routeType = routeAccents.type),
+                Modifier.testTag("route_slash_icon"),
+            )
         } else {
             val tripDetailsPageFilter =
                 remember(stopId, routeStopFilter, tripFilter) {

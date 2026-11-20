@@ -6,10 +6,6 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.resolveParentId
 import kotlin.collections.orEmpty
 
-/** API best practices call for hiding scheduled times on subway, which includes the Silver Line. */
-internal val Route.hidesScheduledTimes: Boolean
-    get() = type.isSubway() || id in silverRoutes
-
 /**
  * Conceptually, an [UpcomingTrip] represents a trip's future arrival and departure at a stop.
  *

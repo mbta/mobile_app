@@ -132,8 +132,14 @@ struct PredictionsNotAvailableYetTile: View {
         )
     }
 
-    var body: some View {
+    private var labelWithIcon: Text {
         let textColor = isSelected ? Color.text : Color.routeColorContrastText
+        return label + Text(Image(uiImage: infoIcon))
+            .foregroundColor(textColor.opacity(0.5))
+            .baselineOffset((capHeight - iconDiameter) / 2)
+    }
+
+    var body: some View {
         DepartureTileContainer(
             onTap: onTap,
             isSelected: isSelected,
@@ -143,8 +149,7 @@ struct PredictionsNotAvailableYetTile: View {
                 comment: "Screen reader hint for tapping the predictions not available yet tile in stop details"
             )
         ) {
-            (label + Text(Image(uiImage: infoIcon)).foregroundColor(textColor.opacity(0.5))
-                .baselineOffset((capHeight - iconDiameter) / 2))
+            labelWithIcon
                 .font(Typography.footnote)
                 .multilineTextAlignment(.leading)
                 .fixedSize()
