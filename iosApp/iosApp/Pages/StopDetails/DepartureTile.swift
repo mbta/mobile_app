@@ -38,9 +38,15 @@ struct DepartureTile: View {
     private var hasPill: Bool { hasRoutePill || data.upcoming.trackChange != nil }
 
     var body: some View {
-        let backgroundColor = isSelected ? Color.fill3 : Color.routeColorContrast
-
-        Button(action: onTap) {
+        DepartureTileContainer(
+            onTap: onTap,
+            isSelected: isSelected,
+            maxWidth: maxTileWidth,
+            accessibilityHint: NSLocalizedString(
+                "displays more information about this trip",
+                comment: "Screen reader hint for tapping a departure card in stop details"
+            )
+        ) {
             VStack(alignment: .leading, spacing: 4) {
                 if let headsign = data.headsign {
                     if let computedMultilineWidth {
@@ -97,9 +103,94 @@ struct DepartureTile: View {
                     TripStatus(predictions: data.formatted)
                 }
             }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 10)
-            .frame(maxWidth: maxTileWidth, minHeight: 56, maxHeight: .infinity)
+        }
+        .enableInjection()
+    }
+}
+
+/// Shown after the last ``DepartureTile`` when there are trips scheduled later than the last predicted trip, but we
+/// don’t have predictions for them yet.
+struct PredictionsNotAvailableYetTile: View {
+    @ObserveInjection var inject
+    var onTap: () -> Void
+    var isSelected: Bool = false
+
+    @ScaledMetric(relativeTo: .footnote) private var iconSize: CGFloat = 16
+    @ScaledMetric(relativeTo: .footnote) private var iconLeadingPadding: CGFloat = 5
+    /// Inter’s cap height is ~0.727em, used to vertically center the icon on the text
+    @ScaledMetric(relativeTo: .footnote) private var capHeight: CGFloat = 13 * 0.727
+
+    private var label: Text {
+        Text(
+            "Predictions not\navailable yet",
+            comment: """
+            Label for a departure tile shown after the last predicted trip when later trips are scheduled, or an informational header on an explainer card.
+            The line break is intentional, the tile is sized to fit the longest line, so please put the break \
+            where it gives two lines of roughly similar length (ideally towards the middle).
+            Please keep it to two (or one) lines, since the tile is only a little taller than that.
+            """
+        )
+    }
+
+    private var labelWithIcon: Text {
+        let textColor = isSelected ? Color.text : Color.routeColorContrastText
+        return label + Text(Image(uiImage: infoIcon))
+            .foregroundColor(textColor.opacity(0.5))
+            .baselineOffset((capHeight - iconDiameter) / 2)
+    }
+
+    var body: some View {
+        DepartureTileContainer(
+            onTap: onTap,
+            isSelected: isSelected,
+            maxWidth: nil,
+            accessibilityHint: NSLocalizedString(
+                "displays more information about later trips",
+                comment: "Screen reader hint for tapping the predictions not available yet tile in stop details"
+            )
+        ) {
+            labelWithIcon
+                .font(Typography.footnote)
+                .multilineTextAlignment(.leading)
+                .fixedSize()
+                .accessibilityLabel(label)
+        }
+        .enableInjection()
+    }
+
+    private var iconDiameter: CGFloat { iconSize - iconLeadingPadding }
+
+    /// `Text(Image)` always renders an image at its intrinsic size, so the vector icon is redrawn at the scaled size,
+    /// with leading padding to separate it from the text. The canvas is only as tall as the icon so that it doesn't
+    /// stretch the line box (which made the text look top-aligned in the tile).
+    private var infoIcon: UIImage {
+        let canvas = CGSize(width: iconSize, height: iconDiameter)
+        return UIGraphicsImageRenderer(size: canvas).image { _ in
+            UIImage(resource: .faCircleInfo).draw(in: CGRect(
+                x: iconLeadingPadding,
+                y: 0,
+                width: iconDiameter,
+                height: iconDiameter
+            ))
+        }.withRenderingMode(.alwaysTemplate)
+    }
+}
+
+private struct DepartureTileContainer<Content: View>: View {
+    var onTap: () -> Void
+    var isSelected: Bool
+    var maxWidth: CGFloat?
+    var accessibilityHint: String
+    @ViewBuilder var content: () -> Content
+
+    var body: some View {
+        let backgroundColor = isSelected ? Color.fill3 : Color.routeColorContrast
+
+        Button(action: onTap) {
+            content()
+                .padding(.horizontal, 8)
+                .padding(.vertical, 10)
+                .frame(maxWidth: maxWidth, minHeight: 56, maxHeight: .infinity)
         }
         .background(backgroundColor)
         // Setting tint helps preserve contrast with accessibility setting "Show Borders" turned on
@@ -110,11 +201,7 @@ struct DepartureTile: View {
         .overlay(RoundedRectangle(cornerRadius: 8).stroke(isSelected ? Color.halo : Color.clear, lineWidth: 2))
         .accessibilityAddTraits(isSelected ? [.isHeader, .isSelected, .updatesFrequently] : [])
         .accessibilityHeading(isSelected ? .h3 : .unspecified)
-        .accessibilityHint(isSelected ? "" : NSLocalizedString(
-            "displays more information about this trip",
-            comment: "Screen reader hint for tapping a departure card in stop details"
-        ))
-        .enableInjection()
+        .accessibilityHint(isSelected ? "" : accessibilityHint)
     }
 }
 
@@ -218,6 +305,7 @@ struct DepartureTile: View {
                 pillDecoration: .onPrediction(route: routeB),
                 isSelected: false
             )
+            PredictionsNotAvailableYetTile(onTap: {})
         }
         .padding(16)
         .background(Color(hex: "00843D"))

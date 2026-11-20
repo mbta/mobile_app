@@ -1083,4 +1083,108 @@ class RouteStopDeparturesViewTest {
         composeTestRule.onNodeWithTag("sunrise").assertIsNotDisplayed()
         composeTestRule.onNodeWithText("Good morning!").assertIsNotDisplayed()
     }
+
+    private fun laterTripsLeaf(includeLaterSchedule: Boolean): RouteCardData.Leaf {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route {
+            id = "route_1"
+            type = RouteType.LIGHT_RAIL
+        }
+        val stop = objects.stop { id = "stop_1" }
+        val predictedTrip = objects.trip {
+            routeId = route.id.idText
+            directionId = 0
+        }
+        val predicted =
+            UpcomingTrip(
+                predictedTrip,
+                objects.prediction {
+                    trip = predictedTrip
+                    stopId = stop.id
+                    departureTime = now.plus(5.minutes)
+                },
+            )
+        val scheduledTrip = objects.trip {
+            routeId = route.id.idText
+            directionId = 0
+        }
+        val scheduled =
+            UpcomingTrip(
+                scheduledTrip,
+                objects.schedule {
+                    trip = scheduledTrip
+                    stopId = stop.id
+                    departureTime = now.plus(30.minutes)
+                },
+            )
+        loadKoinMocks(objects) { settings = settingsRepository }
+        return RouteCardData.Leaf(
+            LineOrRoute.Route(route),
+            stop,
+            Direction(0, route),
+            emptyList(),
+            setOf(stop.id),
+            if (includeLaterSchedule) listOf(predicted, scheduled) else listOf(predicted),
+            alertsHere = emptyList(),
+            allDataLoaded = true,
+            hasSchedulesToday = true,
+            subwayServiceStartTime = null,
+            alertsDownstream = emptyList(),
+            RouteCardData.Context.RouteStop,
+        )
+    }
+
+    private fun setLaterTripsContent(leaf: RouteCardData.Leaf) {
+        composeTestRule.setContent {
+            StopDetailsFilteredDeparturesView(
+                stopId = leaf.stop.id,
+                routeStopFilter = RouteStopFilter(leaf.lineOrRoute.id, leaf.direction.id),
+                tripFilter = null,
+                leaf = leaf,
+                selectedDirection = leaf.direction,
+                allAlerts = null,
+                now = now,
+                updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
+                isFavorite = false,
+                openModal = {},
+                openSheetRoute = {},
+            )
+        }
+    }
+
+    @Test
+    fun testShowsPredictionsNotYetAvailableTile() {
+        setLaterTripsContent(laterTripsLeaf(includeLaterSchedule = true))
+
+        composeTestRule.onNodeWithText("5 min").assertExists()
+        composeTestRule
+            .onNodeWithText(
+                "We don’t have predictions for later trips yet, but they’ll appear here closer to the time of service.",
+                substring = true,
+            )
+            .assertDoesNotExist()
+
+        composeTestRule
+            .onNodeWithText("Predictions not available\u00A0yet", substring = true)
+            .assertHasClickAction()
+            .performClick()
+
+        composeTestRule
+            .onNodeWithText(
+                "We don’t have predictions for later trips yet, but they’ll appear here closer to the time of service.",
+                substring = true,
+            )
+            .assertExists()
+    }
+
+    @Test
+    fun testHidesPredictionsNotYetAvailableTileWithoutLaterSchedules() {
+        setLaterTripsContent(laterTripsLeaf(includeLaterSchedule = false))
+
+        composeTestRule.onNodeWithText("5 min").assertExists()
+        composeTestRule
+            .onNodeWithText("Predictions not available\u00A0yet", substring = true)
+            .assertDoesNotExist()
+    }
 }

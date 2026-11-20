@@ -51,4 +51,8 @@ public data class Route(
         }
 
     internal val isShuttle: Boolean = id.idText.startsWith("Shuttle")
+
+    /** API best practices call for hiding scheduled times on subway and SL */
+    val hidesScheduledTimes: Boolean
+        get() = type.isSubway() || id in silverRoutes
 }
