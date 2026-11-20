@@ -90,3 +90,28 @@ public class MockSubscriptionsRepository(
         onUpdateAccessibility(fcmInstallationId, includeAccessibility, locale)
     }
 }
+
+public class RecordedMockSubscriptionsRepository() : ISubscriptionsRepository {
+
+    public val updateSubscriptionsHistory:
+        MutableList<Triple<String, List<SubscriptionRequest>, String?>> =
+        mutableListOf()
+    public val updateAccessibilityHistory: MutableList<Triple<String, Boolean, String?>> =
+        mutableListOf()
+
+    override suspend fun updateSubscriptions(
+        fcmInstallationId: String,
+        subscriptions: List<SubscriptionRequest>,
+        locale: String?,
+    ) {
+        updateSubscriptionsHistory += Triple(fcmInstallationId, subscriptions, locale)
+    }
+
+    override suspend fun updateAccessibility(
+        fcmInstallationId: String,
+        includeAccessibility: Boolean,
+        locale: String?,
+    ) {
+        updateAccessibilityHistory += Triple(fcmInstallationId, includeAccessibility, locale)
+    }
+}
