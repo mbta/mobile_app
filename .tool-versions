@@ -1,5 +1,5 @@
 ruby 4.0.9
-java temurin-17.0.21+9
+java temurin-17.0.21+100000002
 python 3.15.2
 nodejs 26.13.1
 direnv 2.38.2
