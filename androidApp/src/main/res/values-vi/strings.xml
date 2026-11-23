@@ -304,6 +304,14 @@
     <string name="policy_change_sentence_case">Thay đổi chính sách</string>
     <string name="power_problem">Vấn đề về Điện</string>
     <string name="power_problem_lowercase">vấn đề về điện</string>
+    <!-- Label for a departure tile shown after the last predicted trip when later trips are scheduled, or an informational header on an explainer card.
+    The line break is intentional, the tile is sized to fit the longest line, so please put the break where it gives two lines of roughly similar length (ideally towards the middle).
+    Please keep it to two (or one) lines, since the tile is only a little taller than that. -->
+    <string name="predictions_not_available_yet">Chưa có\ndự đoán</string>
+    <!-- Explanation for the predictions not available yet card on stop details -->
+    <string name="predictions_not_available_yet_details">Chúng tôi chưa có dự đoán nào cho các chuyến tiếp theo, nhưng các chuyến này sẽ xuất hiện ở đây khi gần đến giờ chạy.</string>
+    <!-- Screen reader hint for tapping the predictions not available yet tile in stop details -->
+    <string name="predictions_not_available_yet_on_click_label">hiển thị thêm thông tin về các chuyến tiếp theo</string>
     <string name="predictions_unavailable_details">Dịch vụ đang hoạt động, nhưng không có thời gian đến dự kiến. Xem bản đồ để biết vị trí của %1$s ngay lúc này.</string>
     <string name="predictions_unavailable_details_hide_maps">Dịch vụ đang hoạt động nhưng không có thời gian đến dự kiến.</string>
     <string name="presence_of_whales">Sự xuất hiện của cá voi</string>
