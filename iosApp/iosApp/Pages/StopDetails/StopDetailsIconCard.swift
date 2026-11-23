@@ -15,12 +15,14 @@ struct StopDetailsIconCard<Header: View, Details: View>: View {
     var details: Details?
     var header: Header
     var icon: Image
+    var iconPadding: CGFloat = 0
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: 16) {
                 icon
                     .resizable().scaledToFit()
+                    .padding(iconPadding)
                     .frame(width: 35, height: 35)
                     .frame(width: 48, height: 48)
                     .foregroundStyle(accentColor)
@@ -39,7 +41,8 @@ struct StopDetailsIconCard<Header: View, Details: View>: View {
         .padding(16)
         .background(Color.fill3)
         .clipShape(RoundedRectangle(cornerRadius: 8))
-        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.halo, lineWidth: 1))
+        .padding(1)
+        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.halo, lineWidth: 2))
         .padding(.horizontal, 16)
         .enableInjection()
     }
