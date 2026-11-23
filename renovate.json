@@ -30,7 +30,7 @@
     },
     {
       "description": "group Swift Mapbox dependencies",
-      "groupName": "mapbox",
+      "groupName": "swift-mapbox",
       "matchManagers": [
         "xcodegen"
       ],
@@ -46,11 +46,11 @@
       ]
     },
     {
-      "description": "simplify Swift dependency identification",
+      "additionalBranchPrefix": "swift/",
+      "description": "avoid Swift/non-Swift collisions",
       "matchManagers": [
         "xcodegen"
-      ],
-      "overrideDepName": "{{ packageName }}"
+      ]
     },
     {
       "description": "ignore buildSrc (keeping in sync with Gradle would be hard)",
