@@ -13,40 +13,41 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.InlineTextContent
-import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.Placeholder
-import androidx.compose.ui.text.PlaceholderVerticalAlign
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
-import com.mbta.tid.mbta_app.android.component.TightWrapText
 import com.mbta.tid.mbta_app.android.component.TrackChangePill
 import com.mbta.tid.mbta_app.android.component.TrackChangePillStyle
 import com.mbta.tid.mbta_app.android.component.TrackChangePillType
@@ -130,7 +131,12 @@ fun PredictionsNotYetAvailableTile(
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
 ) {
-    val iconId = "infoIcon"
+    val density = LocalDensity.current
+    val iconDiameter = with(density) { 11.sp.toDp() }
+    // Inter’s cap height is 1490 out of 2048 em (https://rsms.me/inter/#faq-technical-details),
+    // used to vertically center the icon on the text
+    val capHeight = with(density) { Typography.footnote.fontSize.toDp() * (1490f / 2048f) }
+    var iconOffset by remember { mutableStateOf(0.dp) }
     val textColor =
         if (isSelected) colorResource(R.color.text)
         else colorResource(R.color.route_color_contrast_text)
@@ -140,38 +146,27 @@ fun PredictionsNotYetAvailableTile(
         stringResource(R.string.predictions_not_available_yet_on_click_label),
         modifier,
         isSelected,
+        maxWidth = Dp.Unspecified,
     ) {
-        Row(
-            modifier = Modifier.widthIn(max = 112.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            TightWrapText(
+        Box(contentAlignment = Alignment.BottomEnd) {
+            Text(
                 text =
-                    buildAnnotatedString {
-                        append(stringResource(R.string.predictions_not_available_yet))
-                        appendInlineContent(iconId)
-                    },
+                    stringResource(R.string.predictions_not_available_yet) +
+                        "\u00A0\u00A0\u00A0\u00A0\u00A0",
                 color = textColor,
                 style = Typography.footnote,
-                inlineContent =
-                    mapOf(
-                        iconId to
-                            InlineTextContent(
-                                placeholder =
-                                    Placeholder(
-                                        16.sp,
-                                        16.sp,
-                                        PlaceholderVerticalAlign.Center,
-                                    ),
-                            ) {
-                                Icon(
-                                    painterResource(R.drawable.fa_circle_info),
-                                    contentDescription = null,
-                                    Modifier.size(16.dp).padding(start = 5.dp),
-                                    tint = textColor.copy(alpha = 0.5f),
-                                )
-                            },
-                    ),
+                onTextLayout = { layout ->
+                    iconOffset =
+                        with(density) { (layout.lastBaseline - layout.size.height).toDp() } +
+                            (iconDiameter - capHeight) / 2
+                },
+            )
+            Icon(
+                painterResource(R.drawable.fa_circle_info),
+                contentDescription = null,
+                modifier =
+                    Modifier.offset { IntOffset(-2, iconOffset.roundToPx()) }.size(iconDiameter),
+                tint = textColor.copy(alpha = 0.5f),
             )
         }
     }
@@ -183,6 +178,7 @@ private fun DepartureTileContainer(
     onClickLabel: String,
     modifier: Modifier,
     isSelected: Boolean,
+    maxWidth: Dp = 195.dp,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
@@ -193,7 +189,7 @@ private fun DepartureTileContainer(
             )
             .heightIn(min = 56.dp)
             .width(IntrinsicSize.Max)
-            .sizeIn(maxWidth = 195.dp)
+            .sizeIn(maxWidth = maxWidth)
             .fillMaxHeight()
             .haloContainer(
                 borderWidth = 2.dp,

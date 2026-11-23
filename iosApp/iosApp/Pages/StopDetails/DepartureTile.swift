@@ -115,10 +115,10 @@ struct PredictionsNotAvailableYetTile: View {
     var onTap: () -> Void
     var isSelected: Bool = false
 
-    @ScaledMetric(relativeTo: .footnote) private var iconSize: CGFloat = 16
-    @ScaledMetric(relativeTo: .footnote) private var iconLeadingPadding: CGFloat = 5
-    /// Inter’s cap height is ~0.727em, used to vertically center the icon on the text
-    @ScaledMetric(relativeTo: .footnote) private var capHeight: CGFloat = 13 * 0.727
+    @ScaledMetric(relativeTo: .footnote) private var iconDiameter: CGFloat = 11
+    /// Inter’s cap height is 1490 out of 2048 em (https://rsms.me/inter/#faq-technical-details),
+    /// used to vertically center the icon on the text
+    @ScaledMetric(relativeTo: .footnote) private var capHeight: CGFloat = 13 * (1490 / 2048)
 
     private var label: Text {
         Text(
@@ -132,13 +132,6 @@ struct PredictionsNotAvailableYetTile: View {
         )
     }
 
-    private var labelWithIcon: Text {
-        let textColor = isSelected ? Color.text : Color.routeColorContrastText
-        return label + Text(Image(uiImage: infoIcon))
-            .foregroundColor(textColor.opacity(0.5))
-            .baselineOffset((capHeight - iconDiameter) / 2)
-    }
-
     var body: some View {
         DepartureTileContainer(
             onTap: onTap,
@@ -149,30 +142,21 @@ struct PredictionsNotAvailableYetTile: View {
                 comment: "Screen reader hint for tapping the predictions not available yet tile in stop details"
             )
         ) {
-            labelWithIcon
-                .font(Typography.footnote)
-                .multilineTextAlignment(.leading)
-                .fixedSize()
-                .accessibilityLabel(label)
+            let textColor = isSelected ? Color.text : Color.routeColorContrastText
+            ZStack(alignment: .trailingLastTextBaseline) {
+                (label + Text(verbatim: "\u{200D}\u{00A0}\u{00A0}\u{00A0}\u{00A0}\u{00A0}\u{200D}"))
+                    .font(Typography.footnote)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize()
+                Image(.faCircleInfo)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: iconDiameter, height: iconDiameter)
+                    .offset(y: (iconDiameter - capHeight) / 2)
+                    .foregroundColor(textColor.opacity(0.5))
+            }
         }
         .enableInjection()
-    }
-
-    private var iconDiameter: CGFloat { iconSize - iconLeadingPadding }
-
-    /// `Text(Image)` always renders an image at its intrinsic size, so the vector icon is redrawn at the scaled size,
-    /// with leading padding to separate it from the text. The canvas is only as tall as the icon so that it doesn't
-    /// stretch the line box (which made the text look top-aligned in the tile).
-    private var infoIcon: UIImage {
-        let canvas = CGSize(width: iconSize, height: iconDiameter)
-        return UIGraphicsImageRenderer(size: canvas).image { _ in
-            UIImage(resource: .faCircleInfo).draw(in: CGRect(
-                x: iconLeadingPadding,
-                y: 0,
-                width: iconDiameter,
-                height: iconDiameter
-            ))
-        }.withRenderingMode(.alwaysTemplate)
     }
 }
 

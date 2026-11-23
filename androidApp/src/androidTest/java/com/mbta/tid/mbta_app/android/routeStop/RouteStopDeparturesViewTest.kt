@@ -1136,7 +1136,7 @@ class RouteStopDeparturesViewTest {
 
     private fun setLaterTripsContent(leaf: RouteCardData.Leaf) {
         composeTestRule.setContent {
-            StopDetailsFilteredDeparturesView(
+            RouteStopDeparturesView(
                 stopId = leaf.stop.id,
                 routeStopFilter = RouteStopFilter(leaf.lineOrRoute.id, leaf.direction.id),
                 tripFilter = null,
@@ -1166,7 +1166,7 @@ class RouteStopDeparturesViewTest {
             .assertDoesNotExist()
 
         composeTestRule
-            .onNodeWithText("Predictions not available\u00A0yet", substring = true)
+            .onNodeWithText("Predictions not\navailable yet", substring = true)
             .assertHasClickAction()
             .performClick()
 
@@ -1184,7 +1184,7 @@ class RouteStopDeparturesViewTest {
 
         composeTestRule.onNodeWithText("5 min").assertExists()
         composeTestRule
-            .onNodeWithText("Predictions not available\u00A0yet", substring = true)
+            .onNodeWithText("Predictions not\navailable yet", substring = true)
             .assertDoesNotExist()
     }
 }
