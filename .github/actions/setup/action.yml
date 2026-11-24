@@ -105,7 +105,7 @@ runs:
         aws-region: us-east-1
     - name: Fetch AWS secrets for Android
       if: steps.settings.outputs.aws-secrets-android == 'true' && inputs.aws-role != ''
-      uses: aws-actions/aws-secretsmanager-get-secrets@2297f9a879480a9e3af9b293ed15c70caf8e1c88 # v3.0.2
+      uses: aws-actions/aws-secretsmanager-get-secrets@e952bd7125c27e5be0060e50955b90a7e5addd99 # v4.0.0
       with:
         secret-ids: |
           mobile-app-android-upload-key-passphrase
