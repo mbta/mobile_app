@@ -272,7 +272,6 @@ struct TripHeaderCard: View {
                     TrackNumber(track: track)
                 }
             }
-
             .tappableWhenAction(onTrackChangeTap, hint: moreInformationHint)
         }
     }
@@ -323,7 +322,6 @@ struct TripHeaderCard: View {
                         TrackNumber(track: track)
                     }
                 }
-
                 .tappableWhenAction(onTrackChangeTap, hint: moreInformationHint)
                 vehicleCrowding
             }
