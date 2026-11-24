@@ -62,6 +62,7 @@ sealed class StopListContext {
     abstract val directionIdMatcher: Matcher<Int>
     abstract val tripIdMatcher: Matcher<String>
 
+    @Serializable
     data class Trip(
         override val routeIdMatcher: Matcher<Route.Id>,
         val directionId: Int,
@@ -71,6 +72,7 @@ sealed class StopListContext {
         override val tripIdMatcher: Matcher<String> = Matcher.Data(tripId)
     }
 
+    @Serializable
     data class RouteDetails(
         override val routeIdMatcher: Matcher<Route.Id>,
         val directionId: Int,

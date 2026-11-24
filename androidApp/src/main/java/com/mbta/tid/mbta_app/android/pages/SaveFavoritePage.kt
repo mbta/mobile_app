@@ -132,7 +132,9 @@ fun SaveFavoritePage(
 
     val savedFavorite = favorites?.get(selectedRouteStopDirection)
     val saveMode = if (savedFavorite != null) Mode.Edit else Mode.Add
-    var wasAdding by rememberSaveable { mutableStateOf(favorites != null && saveMode == Mode.Add) }
+    var wasAdding: Boolean by rememberSaveable {
+        mutableStateOf(favorites != null && saveMode == Mode.Add)
+    }
     val showDirectionToggle = stopDirections.size > 1 && wasAdding
 
     LaunchedEffect(saveMode, favorites) {

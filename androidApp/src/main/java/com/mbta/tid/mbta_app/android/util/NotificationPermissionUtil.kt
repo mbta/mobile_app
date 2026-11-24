@@ -39,7 +39,7 @@ fun notificationPermissionState(onPermissionResult: (Boolean) -> Unit = {}): Per
         val notificationManager = remember {
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         }
-        var notificationsEnabled by rememberSaveable {
+        var notificationsEnabled: Boolean by rememberSaveable {
             mutableStateOf(notificationManager.areNotificationsEnabled())
         }
 

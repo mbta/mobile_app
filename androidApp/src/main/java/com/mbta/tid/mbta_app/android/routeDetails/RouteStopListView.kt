@@ -121,7 +121,7 @@ fun RouteStopListView(
     var selectedDirection by rememberSaveable {
         mutableIntStateOf(parameters.availableDirections.firstOrNull() ?: 0)
     }
-    var selectedRouteId by
+    var selectedRouteId: Route.Id by
         rememberSaveable(saver = stateJsonSaver()) {
             mutableStateOf(defaultSelectedRouteId ?: routeIds.first())
         }
