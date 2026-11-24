@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.usecases
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import com.mbta.tid.mbta_app.model.response.AlertsStreamUpdateResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
@@ -28,22 +27,26 @@ constructor(
     private var globalUpdateJob: Job? = null
 
     public fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit) {
-        fun injectAndReceive(result: ApiResult<AlertsStreamUpdateResponse>) {
-            val injectedResult =
+        fun injectAndReceive(alerts: AlertsStreamDataResponse) {
+            val injectedAlerts = alerts.injectFacilities(globalState.value)
+            currentAlerts = injectedAlerts
+            onReceive(ApiResult.Ok(injectedAlerts))
+        }
+        alertsRepository.connect(
+            onJoin = { result ->
                 when (result) {
                     is ApiResult.Ok ->
-                        ApiResult.Ok(
-                            result.data
-                                .mergeInto(currentAlerts)
-                                .also { currentAlerts = it }
-                                .injectFacilities(globalState.value),
-                        )
-
-                    is ApiResult.Error -> ApiResult.Error(result.code, result.message)
+                        injectAndReceive(AlertsStreamDataResponse(result.data.update))
+                    is ApiResult.Error -> onReceive(ApiResult.Error(result.code, result.message))
                 }
-            onReceive(injectedResult)
-        }
-        alertsRepository.connect(::injectAndReceive)
+            },
+            onReceive = { result ->
+                when (result) {
+                    is ApiResult.Ok -> injectAndReceive(result.data.mergeInto(currentAlerts))
+                    is ApiResult.Error -> onReceive(ApiResult.Error(result.code, result.message))
+                }
+            },
+        )
 
         globalUpdateJob?.cancel()
         globalUpdateJob =
