@@ -266,8 +266,9 @@ struct TripHeaderCard: View {
                     Text("Scheduled to depart").font(Typography.footnote)
                     Text(stopEntry.stop.name)
                         .font(Typography.headlineBold)
-                }.accessibilityElement(children: .combine)
-                    .accessibilityLabel(scheduleDescriptionAccessibilityText(stopEntry))
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(scheduleDescriptionAccessibilityText(stopEntry))
                 if let track = stopEntry.trackNumber, targeted {
                     TrackNumber(track: track)
                 }
@@ -315,8 +316,9 @@ struct TripHeaderCard: View {
                         }
                         Text(stop.name)
                             .font(Typography.headlineBold)
-                    }.accessibilityElement(children: .combine)
-                        .accessibilityLabel(vehicleDescriptionAccessibilityText(vehicle, stop, atTerminal))
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(vehicleDescriptionAccessibilityText(vehicle, stop, atTerminal))
 
                     if let track = entry?.trackNumber, targeted {
                         TrackNumber(track: track)
