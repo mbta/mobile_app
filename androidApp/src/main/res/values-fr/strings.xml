@@ -134,6 +134,8 @@
     <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">Fin</string>
     <string name="end_of_service">fin de service</string>
+    <string name="end_time_changed_because_start_time">L\'heure de fin a été remplacée par %1$s, car l\'heure de début est %2$s.</string>
+    <string name="end_time_kept_because_start_time">L\'heure de fin est maintenue à %1$s, car l\'heure de début est %2$s.</string>
     <string name="error_loading_data">Erreur lors du chargement des données</string>
     <string name="escalator_closed_sentence_case">escalator hors service</string>
     <string name="escalator_closure">Escalator hors service</string>
@@ -397,6 +399,8 @@
     <string name="star_route_hint">épingler cet itinéraire</string>
     <string name="start">Commencer</string>
     <string name="start_of_service">début de service</string>
+    <string name="start_time_changed_because_end_time">L\'heure de début a été remplacée par %1$s, car l\'heure de fin est %2$s.</string>
+    <string name="start_time_kept_because_end_time">L\'heure de début est maintenue à %1$s, car l\'heure de fin est %2$s.</string>
     <string name="start_to_end_of_service">Du début à la fin du service</string>
     <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">À compter de demain et jusqu’à nouvel ordre</string>

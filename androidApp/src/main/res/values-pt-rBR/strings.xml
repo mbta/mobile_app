@@ -134,6 +134,8 @@
     <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">Fim</string>
     <string name="end_of_service">fim da operação</string>
+    <string name="end_time_changed_because_start_time">O horário de término foi alterado para %1$s porque o horário de início é %2$s.</string>
+    <string name="end_time_kept_because_start_time">O horário de término foi mantido em %1$s porque o horário de início é %2$s.</string>
     <string name="error_loading_data">Erro ao carregar dados</string>
     <string name="escalator_closed_sentence_case">Escada rolante interditada</string>
     <string name="escalator_closure">Interdição de escada rolante</string>
@@ -397,6 +399,8 @@
     <string name="star_route_hint">fixar rota no topo da lista</string>
     <string name="start">Início</string>
     <string name="start_of_service">início da operação</string>
+    <string name="start_time_changed_because_end_time">O horário de início foi alterado para %1$s porque o horário de término é %2$s.</string>
+    <string name="start_time_kept_because_end_time">O horário de início foi mantido em %1$s porque o horário de término é %2$s.</string>
     <string name="start_to_end_of_service">do início ao fim da operação</string>
     <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">A partir de amanhã até novo aviso</string>

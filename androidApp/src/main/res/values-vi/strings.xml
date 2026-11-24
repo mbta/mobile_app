@@ -131,6 +131,8 @@
     <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">Kết thúc</string>
     <string name="end_of_service">kết thúc dịch vụ</string>
+    <string name="end_time_changed_because_start_time">Thời gian kết thúc đã đổi thành %1$s vì thời gian bắt đầu là %2$s.</string>
+    <string name="end_time_kept_because_start_time">Thời gian kết thúc vẫn là %1$s vì thời gian bắt đầu là %2$s.</string>
     <string name="error_loading_data">Lỗi khi tải dữ liệu</string>
     <string name="escalator_closed_sentence_case">Thang cuốn ngừng hoạt động</string>
     <string name="escalator_closure">Thang cuốn Ngừng hoạt động</string>
@@ -394,6 +396,8 @@
     <string name="star_route_hint">ghim tuyến đường ở đầu danh sách</string>
     <string name="start">Bắt đầu</string>
     <string name="start_of_service">bắt đầu dịch vụ</string>
+    <string name="start_time_changed_because_end_time">Thời gian bắt đầu đã đổi thành %1$s vì thời gian kết thúc là %2$s.</string>
+    <string name="start_time_kept_because_end_time">Thời gian bắt đầu vẫn là %1$s vì thời gian kết thúc là %2$s.</string>
     <string name="start_to_end_of_service">từ khi bắt đầu đến khi kết thúc dịch vụ</string>
     <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">Bắt đầu từ ngày mai cho đến khi có thông báo mới</string>
