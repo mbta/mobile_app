@@ -1,5 +1,5 @@
 //
-//  StopDetailsFilterPillsTests.swift
+//  StopOverviewFilterPillsTests.swift
 //  iosAppTests
 //
 //  Created by Simon, Emma on 4/17/24.
@@ -12,12 +12,12 @@ import SwiftUI
 import ViewInspector
 import XCTest
 
-final class StopDetailsFilterPillsTests: XCTestCase {
+final class StopOverviewFilterPillsTests: XCTestCase {
     func testRoutePillsDisplay() throws {
         let objects = ObjectCollectionBuilder()
         let route1 = objects.route()
         let route2 = objects.route()
-        let sut = StopDetailsFilterPills(
+        let sut = StopOverviewFilterPills(
             servedRoutes: [.route(route1), .route(route2)],
             tapRoutePill: { _ in },
             filter: nil,
@@ -33,7 +33,7 @@ final class StopDetailsFilterPillsTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let route1 = objects.route()
         let route2 = objects.route()
-        let sut = StopDetailsFilterPills(
+        let sut = StopOverviewFilterPills(
             servedRoutes: [.route(route1), .route(route2)],
             tapRoutePill: { _ in },
             filter: .init(routeId: route1.id, directionId: 0),
@@ -50,7 +50,7 @@ final class StopDetailsFilterPillsTests: XCTestCase {
         let route1 = objects.route()
         let route2 = objects.route()
         let tapExpectation = XCTestExpectation()
-        let sut = StopDetailsFilterPills(
+        let sut = StopOverviewFilterPills(
             servedRoutes: [.route(route1), .route(route2)],
             tapRoutePill: { filter in
                 tapExpectation.fulfill()
@@ -75,7 +75,7 @@ final class StopDetailsFilterPillsTests: XCTestCase {
         let route2 = objects.route()
         let line = objects.line()
         let tapExpectation = XCTestExpectation()
-        let sut = StopDetailsFilterPills(
+        let sut = StopOverviewFilterPills(
             servedRoutes: [.route(route1), .route(route2), .line(line)],
             tapRoutePill: { filter in
                 tapExpectation.fulfill()

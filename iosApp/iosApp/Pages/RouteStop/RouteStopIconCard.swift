@@ -1,5 +1,5 @@
 //
-//  StopDetailsIconCard.swift
+//  RouteStopIconCard.swift
 //  iosApp
 //
 //  Created by esimon on 1/7/25.
@@ -9,7 +9,7 @@
 import Shared
 import SwiftUI
 
-struct StopDetailsIconCard<Header: View, Details: View>: View {
+struct RouteStopIconCard<Header: View, Details: View>: View {
     @ObserveInjection var inject
     var accentColor: Color
     var details: Details?

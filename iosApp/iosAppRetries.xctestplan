@@ -22,9 +22,7 @@
       "parallelizable" : false,
       "skippedTests" : [
         "FavoritesModifierTests\/testLoadsFromRepo()",
-        "HomeMapViewTests\/testFollowsPuckWhenUserLocationIsKnown()",
         "OnboardingPageTests\/testFlow()",
-        "SaveFavoritesFlowTest\/testFavoritingOnlyDirectionPresentsDialogWhenNonBus()"
       ],
       "target" : {
         "containerPath" : "container:iosApp.xcodeproj",
@@ -34,8 +32,6 @@
     },
     {
       "skippedTests" : [
-        "EndToEndOpenStopDetailsTest\/testOpenStopDetails()",
-        "HomeMapViewUITests\/testRecentersToUserLocation()",
         "IosAppUITests\/testMapShown()"
       ],
       "target" : {

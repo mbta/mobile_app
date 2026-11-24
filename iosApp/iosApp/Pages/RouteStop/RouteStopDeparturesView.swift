@@ -1,5 +1,5 @@
 //
-//  StopDetailsFilteredDepartureDetails.swift
+//  RouteStopDeparturesView.swift
 //  iosApp
 //
 //  Created by esimon on 12/2/24.
@@ -15,7 +15,7 @@ struct NextScheduleKeys: Equatable {
 }
 
 // swiftlint:disable:next type_body_length
-struct StopDetailsFilteredDepartureDetails: View {
+struct RouteStopDeparturesView: View {
     @ObserveInjection var inject
     var stopId: String
     var routeStopFilter: RouteStopFilter
@@ -136,7 +136,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                                                                   tripId: tripFilter?.tripId) {
                 EmptyView()
             } else if let noPredictionsStatus {
-                StopDetailsNoTripCard(
+                RouteStopNoTripCard(
                     status: noPredictionsStatus,
                     accentColor: routeAccents.color,
                     directionLabel: selectedDirection.destination ?? selectedDirection.name ?? "",
@@ -147,11 +147,11 @@ struct StopDetailsFilteredDepartureDetails: View {
                 .accessibilityHeading(.h3)
                 .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
             } else if predictionsNotAvailableYetSelected {
-                StopDetailsIconCard(
+                RouteStopIconCard(
                     accentColor: routeAccents.color,
                     details: Text(
                         "We don’t have predictions for later trips yet, but they’ll appear here closer to the time of service.",
-                        comment: "Explanation for the predictions not available yet card on stop details"
+                        comment: "Explanation for the predictions not available yet card on route stop"
                     ),
                     header: Text("Predictions not\navailable yet"),
                     icon: Image(.liveDataSlash),
@@ -159,15 +159,15 @@ struct StopDetailsFilteredDepartureDetails: View {
                 )
                 .accessibilityHeading(.h4)
             } else if selectedTripIsCancelled {
-                StopDetailsIconCard(
+                RouteStopIconCard(
                     accentColor: routeAccents.color,
                     details: Text(
                         "This trip has been cancelled. We’re sorry for the inconvenience.",
-                        comment: "Explanation for a cancelled trip on stop details"
+                        comment: "Explanation for a cancelled trip on route stop"
                     ),
                     header: Text(
                         "Trip cancelled",
-                        comment: "Header for a cancelled trip card on stop details"
+                        comment: "Header for a cancelled trip card on route stop"
                     ),
                     icon: routeSlashIcon(routeAccents.type)
                 )
@@ -190,7 +190,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
         .global(
             $global,
-            errorKey: .companion.fromSheetTypes(sheetTypes: [.routeStop], id: "StopDetailsFilteredDepartureDetails")
+            errorKey: .companion.fromSheetTypes(sheetTypes: [.routeStop], id: "RouteStopDeparturesView")
         )
         .onAppear {
             setViewportToStop()

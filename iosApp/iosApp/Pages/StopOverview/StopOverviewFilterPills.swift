@@ -1,5 +1,5 @@
 //
-//  StopDetailsFilterPills.swift
+//  StopOverviewFilterPills.swift
 //  iosApp
 //
 //  Created by Simon, Emma on 4/17/24.
@@ -9,7 +9,7 @@
 import Shared
 import SwiftUI
 
-struct StopDetailsFilterPills: View {
+struct StopOverviewFilterPills: View {
     @ObserveInjection var inject
     enum FilterBy {
         var id: LineOrRoute.Id {

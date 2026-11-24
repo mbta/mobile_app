@@ -1,5 +1,5 @@
 //
-//  StopDetailsNoTripCard.swift
+//  RouteStopNoTripCard.swift
 //  iosApp
 //
 //  Created by esimon on 1/3/25.
@@ -9,7 +9,7 @@
 import Shared
 import SwiftUI
 
-struct StopDetailsNoTripCard: View {
+struct RouteStopNoTripCard: View {
     @ObserveInjection var inject
     var status: UpcomingFormat.NoTripsFormat
     var accentColor: Color
@@ -21,7 +21,7 @@ struct StopDetailsNoTripCard: View {
     @EnvironmentObject var settingsCache: SettingsCache
 
     var body: some View {
-        StopDetailsIconCard(
+        RouteStopIconCard(
             accentColor: accentColor,
             details: detailText,
             header: headerText,
@@ -103,7 +103,7 @@ struct StopDetailsNoTripCard: View {
         String(format: NSLocalizedString(
             "Service is running, but predicted arrival times aren’t available. Check the map to see where %@ are right now.",
             comment: """
-            Explanation under the 'Predictions unavailable' header in stop details when maps are enabled.
+            Explanation under the 'Predictions unavailable' header in route stop page when maps are enabled.
             The interpolated value can be "buses" or "trains".
             """
         ), routeType.typeText(isOnly: false))
@@ -112,7 +112,7 @@ struct StopDetailsNoTripCard: View {
     var predictionsUnavailableStringNoMap: String {
         NSLocalizedString(
             "Service is running, but predicted arrival times aren’t available.",
-            comment: "Explanation under the 'Predictions unavailable' header in stop details."
+            comment: "Explanation under the 'Predictions unavailable' header in route stop page."
         )
     }
 }

@@ -292,17 +292,17 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
         return if targeted, stopPlacement.isFirst {
             String(format: NSLocalizedString(
                 "%@, selected stop, first stop",
-                comment: "Screen reader text for a stop name on the stop details page when that stop is both selected and first"
+                comment: "Screen reader text for a stop name on the trip details page when that stop is both selected and first"
             ), name)
         } else if targeted {
             String(format: NSLocalizedString(
                 "%@, selected stop",
-                comment: "Screen reader text for a stop name on the stop details page when that stop is the selected one"
+                comment: "Screen reader text for a stop name on the trip details page when that stop is the selected one"
             ), name)
         } else if stopPlacement.isFirst {
             String(format: NSLocalizedString(
                 "%@, first stop",
-                comment: "Screen reader text for a stop name on the stop details page when that stop is the first stop on the line"
+                comment: "Screen reader text for a stop name on the trip details page when that stop is the first stop on the line"
             ), name)
         } else {
             name

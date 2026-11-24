@@ -69,8 +69,8 @@ struct DepartureTile: View {
                                             Color.clear.onAppear {
                                                 let width = geo.size.width
                                                 /*
-                                                 Sometimes at large text sizes, when navigating from unfiltered stop
-                                                 details, the first TYPICAL_LEAF_ROWS or BRANCHING_LEAF_ROWS end up
+                                                 Sometimes at large text sizes, when navigating from stop summary,
+                                                 the first TYPICAL_LEAF_ROWS or BRANCHING_LEAF_ROWS end up
                                                  with a geo.size.width of 0.0. This results in the tile stretching
                                                  very tall with no visible headsign. If for some reason the width is
                                                  0.0, set it to the max width of 195 so that it at least renders.

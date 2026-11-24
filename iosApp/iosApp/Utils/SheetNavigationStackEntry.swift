@@ -151,7 +151,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
 /// Struct that holds a SheetNavigationStackEntry. To be used with `sheet(item:onDismiss:content:)`
 /// the ids of two `SheetItem`s will differ only if a new sheet should be opened when switching from one to
 /// the other.
-/// For example, if switching between two `.stopDetails` entries, a new sheet should only be opened if the stop ID
+/// For example, if switching between two `.routeStop` entries, a new sheet should only be opened if the stop ID
 /// changes.
 struct SheetItem: Identifiable {
     let stackEntry: SheetNavigationStackEntry

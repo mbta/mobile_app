@@ -844,7 +844,7 @@
       }
     },
     "%@ %@ at %@" : {
-      "comment" : "VoiceOver text for the stop details page header,\ndescribes the selected route and and stop, ex '[Red Line] [train] at [Porter]'",
+      "comment" : "VoiceOver text for the route stop page header,\ndescribes the selected route and and stop, ex '[Red Line] [train] at [Porter]'",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1668,7 +1668,7 @@
       }
     },
     "%@, first stop" : {
-      "comment" : "Screen reader text for a stop name on the stop details page when that stop is the first stop on the line",
+      "comment" : "Screen reader text for a stop name on the trip details page when that stop is the first stop on the line",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1715,7 +1715,7 @@
       }
     },
     "%@, selected stop" : {
-      "comment" : "Screen reader text for a stop name on the stop details page when that stop is the selected one",
+      "comment" : "Screen reader text for a stop name on the trip details page when that stop is the selected one",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1762,7 +1762,7 @@
       }
     },
     "%@, selected stop, first stop" : {
-      "comment" : "Screen reader text for a stop name on the stop details page when that stop is both selected and first",
+      "comment" : "Screen reader text for a stop name on the trip details page when that stop is both selected and first",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -18116,7 +18116,7 @@
       }
     },
     "Service is running, but predicted arrival times aren’t available." : {
-      "comment" : "Explanation under the 'Predictions unavailable' header in stop details.",
+      "comment" : "Explanation under the 'Predictions unavailable' header in route stop page.",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -18163,7 +18163,7 @@
       }
     },
     "Service is running, but predicted arrival times aren’t available. Check the map to see where %@ are right now." : {
-      "comment" : "Explanation under the 'Predictions unavailable' header in stop details when maps are enabled.\nThe interpolated value can be \"buses\" or \"trains\".",
+      "comment" : "Explanation under the 'Predictions unavailable' header in route stop page when maps are enabled.\nThe interpolated value can be \"buses\" or \"trains\".",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -20086,53 +20086,6 @@
         }
       }
     },
-    "Stop details" : {
-      "comment" : "Stop details header fallback voiceover text when data fails to load",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Detalles de la parada"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Détails de l’arrêt"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Detay sou arè a"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Detalhes da parada"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chi tiết điểm dừng"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "站点详情"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "站點詳情"
-          }
-        }
-      }
-    },
     "Stop moved" : {
       "comment" : "Possible alert effect",
       "localizations" : {
@@ -21748,7 +21701,7 @@
       }
     },
     "This trip has been cancelled. We’re sorry for the inconvenience." : {
-      "comment" : "Explanation for a cancelled trip on stop details",
+      "comment" : "Explanation for a cancelled trip on route stop",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -23017,7 +22970,7 @@
       }
     },
     "Trip cancelled" : {
-      "comment" : "Header for a cancelled trip card on stop details\nPossible alert effect",
+      "comment" : "Header for a cancelled trip card on route stop\nPossible alert effect",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -24540,7 +24493,7 @@
       }
     },
     "We don’t have predictions for later trips yet, but they’ll appear here closer to the time of service." : {
-      "comment" : "Explanation for the predictions not available yet card on stop details",
+      "comment" : "Explanation for the predictions not available yet card on route stop",
       "localizations" : {
         "es" : {
           "stringUnit" : {
