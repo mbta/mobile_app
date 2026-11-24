@@ -390,6 +390,7 @@ private fun ScheduleDescription(
                             resources,
                         )
                 },
+                verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 TightWrapText(
                     stringResource(R.string.scheduled_to_depart),
@@ -439,7 +440,7 @@ private fun VehicleDescription(
                 Modifier.then(onTrackChangeTap?.let { Modifier.clickable { it() } } ?: Modifier),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                FlowRow(
+                Column(
                     Modifier.clearAndSetSemantics {
                         contentDescription =
                             vehicleDescriptionAccessibilityText(
@@ -449,15 +450,18 @@ private fun VehicleDescription(
                                 resources,
                             )
                     },
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    VehicleLabel(spec.vehicle, routeAccents)
-                    VehicleStatusDescription(spec.vehicle.currentStatus, spec.atTerminal)
+                    FlowRow() {
+                        VehicleLabel(spec.vehicle, routeAccents)
+                        VehicleStatusDescription(spec.vehicle.currentStatus, spec.atTerminal)
+                    }
+                    Text(
+                        stop.name,
+                        style = Typography.headlineBold,
+                        modifier = Modifier.placeholderIfLoading(),
+                    )
                 }
-                Text(
-                    stop.name,
-                    style = Typography.headlineBold,
-                    modifier = Modifier.placeholderIfLoading(),
-                )
                 spec.entry?.trackNumber?.let { if (targeted) TrackNumber(it) }
             }
             if (!spec.atTerminal && !spec.vehicle.hasCarLevelCrowding) {
