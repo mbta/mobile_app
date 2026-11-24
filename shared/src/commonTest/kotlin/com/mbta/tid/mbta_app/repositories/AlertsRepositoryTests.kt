@@ -48,7 +48,7 @@ class AlertsRepositoryTests {
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
         assertNull(alertsRepo.channel)
-        alertsRepo.connect(onReceive = { /* no-op */ })
+        alertsRepo.connect(onJoin = {}, onReceive = { /* no-op */ })
         advanceUntilIdle()
         assertNotNull(alertsRepo.channel)
     }
@@ -70,7 +70,7 @@ class AlertsRepositoryTests {
         every { channel.attach() } returns push
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
-        alertsRepo.connect(onReceive = {})
+        alertsRepo.connect(onJoin = {}, onReceive = {})
         advanceUntilIdle()
         verify { alertsRepo.disconnect() }
         advanceUntilIdle()
@@ -139,6 +139,7 @@ class AlertsRepositoryTests {
         }
         every { socket.getChannel(any(), any()) } returns MockChannel()
         alertsRepo.connect(
+            onJoin = {},
             onReceive = { outcome ->
                 val data = outcome.dataOrThrow()
                 assertNotNull(data)
@@ -180,6 +181,7 @@ class AlertsRepositoryTests {
         }
         every { socket.getChannel(any(), any()) } returns MockChannel()
         alertsRepo.connect(
+            onJoin = {},
             onReceive = { outcome ->
                 assertIs<ApiResult.Error<*>>(outcome)
                 assertNotNull(outcome.message)

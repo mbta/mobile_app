@@ -54,6 +54,33 @@ class AlertsUsecaseTest {
     }
 
     @Test
+    fun `rejoin replaces current alerts`() = runTest {
+        val objects = ObjectCollectionBuilder()
+        val removedAlert = objects.alert {}
+        val retainedAlert = objects.alert {}
+        val repository = MockAlertsRepository(AlertsStreamUpdateResponse(objects))
+        val usecase =
+            AlertsUsecase(
+                repository,
+                IdleGlobalRepository(),
+                StandardTestDispatcher(testScheduler),
+            )
+        var result: ApiResult<AlertsStreamDataResponse>? = null
+        usecase.connect { result = it }
+        assertNotNull(result?.dataOrThrow()?.getAlert(removedAlert.id))
+
+        repository.receiveJoinResult(
+            ApiResult.Ok(
+                AlertsStreamUpdateResponse(emptyList(), mapOf(retainedAlert.id to retainedAlert)),
+            ),
+        )
+
+        assertNull(result.dataOrThrow().getAlert(removedAlert.id))
+        assertEquals(retainedAlert, result.dataOrThrow().getAlert(retainedAlert.id))
+        usecase.disconnect()
+    }
+
+    @Test
     fun `global data is still injected when alert data changes`() {
         val objects = ObjectCollectionBuilder()
         val facility = objects.facility { type = Facility.Type.Elevator }

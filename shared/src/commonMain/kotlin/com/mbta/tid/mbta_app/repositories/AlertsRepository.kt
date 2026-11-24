@@ -6,12 +6,15 @@ import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.phoenix.AlertsChannel
-import com.mbta.tid.mbta_app.phoenix.ChannelOwner
+import com.mbta.tid.mbta_app.phoenix.AsymmetricChannelOwner
 import kotlinx.coroutines.CoroutineDispatcher
 import org.koin.core.component.KoinComponent
 
 public interface IAlertsRepository {
-    public fun connect(onReceive: (ApiResult<AlertsStreamUpdateResponse>) -> Unit)
+    public fun connect(
+        onJoin: (ApiResult<AlertsStreamUpdateResponse>) -> Unit,
+        onReceive: (ApiResult<AlertsStreamUpdateResponse>) -> Unit,
+    )
 
     public fun disconnect()
 }
@@ -23,7 +26,7 @@ internal class AlertsRepository(
     ioDispatcher: CoroutineDispatcher,
 ) : IAlertsRepository, KoinComponent {
     private val channelOwner =
-        ChannelOwner<AlertsStreamUpdateResponse>(
+        AsymmetricChannelOwner<AlertsStreamUpdateResponse, AlertsStreamUpdateResponse>(
             socket,
             ioDispatcher,
             debugRepository,
@@ -31,10 +34,15 @@ internal class AlertsRepository(
         )
     internal var channel: PhoenixChannel? by channelOwner::channel
 
-    override fun connect(onReceive: (ApiResult<AlertsStreamUpdateResponse>) -> Unit) {
+    override fun connect(
+        onJoin: (ApiResult<AlertsStreamUpdateResponse>) -> Unit,
+        onReceive: (ApiResult<AlertsStreamUpdateResponse>) -> Unit,
+    ) {
         channelOwner.connect(
             AlertsChannel,
             AlertsChannel::parseMessage,
+            AlertsChannel::parseMessage,
+            onJoin,
             {
                 when (it) {
                     is ApiResult.Ok -> println("Received ${it.data.update.size} alerts")
@@ -66,11 +74,16 @@ internal constructor(
     ) : this(ApiResult.Ok(response), onConnect, onDisconnect)
 
     private var receiveCallback: ((ApiResult<AlertsStreamUpdateResponse>) -> Unit)? = null
+    private var joinCallback: ((ApiResult<AlertsStreamUpdateResponse>) -> Unit)? = null
 
-    override fun connect(onReceive: (ApiResult<AlertsStreamUpdateResponse>) -> Unit) {
+    override fun connect(
+        onJoin: (ApiResult<AlertsStreamUpdateResponse>) -> Unit,
+        onReceive: (ApiResult<AlertsStreamUpdateResponse>) -> Unit,
+    ) {
+        joinCallback = onJoin
         receiveCallback = onReceive
         onConnect()
-        onReceive(result)
+        receiveJoinResult(result)
     }
 
     override fun disconnect() {
@@ -79,5 +92,9 @@ internal constructor(
 
     internal fun receiveResult(result: ApiResult<AlertsStreamUpdateResponse>) {
         receiveCallback?.let { it(result) }
+    }
+
+    internal fun receiveJoinResult(result: ApiResult<AlertsStreamUpdateResponse>) {
+        joinCallback?.invoke(result)
     }
 }

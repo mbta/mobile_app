@@ -356,7 +356,10 @@ final class ContentViewTests: XCTestCase {
             self.disconnectExp = disconnectExp
         }
 
-        func connect(onReceive _: @escaping (ApiResult<AlertsStreamUpdateResponse>) -> Void) {
+        func connect(
+            onJoin _: @escaping (ApiResult<AlertsStreamUpdateResponse>) -> Void,
+            onReceive _: @escaping (ApiResult<AlertsStreamUpdateResponse>) -> Void
+        ) {
             connectExp?.fulfill()
         }
 

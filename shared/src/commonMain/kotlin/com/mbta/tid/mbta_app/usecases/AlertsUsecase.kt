@@ -28,13 +28,13 @@ constructor(
     private var globalUpdateJob: Job? = null
 
     public fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit) {
-        fun injectAndReceive(result: ApiResult<AlertsStreamUpdateResponse>) {
+        fun injectAndReceive(result: ApiResult<AlertsStreamUpdateResponse>, isSnapshot: Boolean) {
             val injectedResult =
                 when (result) {
                     is ApiResult.Ok ->
                         ApiResult.Ok(
                             result.data
-                                .mergeInto(currentAlerts)
+                                .mergeInto(if (isSnapshot) null else currentAlerts)
                                 .also { currentAlerts = it }
                                 .injectFacilities(globalState.value),
                         )
@@ -43,7 +43,10 @@ constructor(
                 }
             onReceive(injectedResult)
         }
-        alertsRepository.connect(::injectAndReceive)
+        alertsRepository.connect(
+            onJoin = { injectAndReceive(it, isSnapshot = true) },
+            onReceive = { injectAndReceive(it, isSnapshot = false) },
+        )
 
         globalUpdateJob?.cancel()
         globalUpdateJob =
