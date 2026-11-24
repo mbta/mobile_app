@@ -13,23 +13,23 @@ import SwiftUI
 struct StopDetailsFilteredView: View {
     @ObserveInjection var inject
     var stopId: String
-    var stopFilter: StopDetailsFilter
+    var routeStopFilter: RouteStopFilter
     var tripFilter: TripDetailsFilter?
 
-    var routeData: StopDetailsViewModel.RouteData?
+    var routeData: StopCentricViewModel.RouteData?
     var alerts: AlertsStreamDataResponse?
     var favorites: Favorites?
     var global: GlobalResponse?
     var now: Date
 
     var onUpdateFavorites: () -> Void
-    var setStopFilter: (StopDetailsFilter?) -> Void
+    var setRouteStopFilter: (RouteStopFilter) -> Void
     var setTripFilter: (TripDetailsFilter?) -> Void
     var navCallbacks: NavigationCallbacks
 
     var errorBannerVM: IErrorBannerViewModel
     var mapVM: IMapViewModel
-    var stopDetailsVM: IStopDetailsViewModel
+    var stopCentricVM: IStopCentricViewModel
     var tripDetailsVM: ITripDetailsViewModel
     var favoritesVM: IFavoritesViewModel
     @ObservedObject var navManager: NavigationManager
@@ -42,26 +42,26 @@ struct StopDetailsFilteredView: View {
 
     init(
         stopId: String,
-        stopFilter: StopDetailsFilter,
+        routeStopFilter: RouteStopFilter,
         tripFilter: TripDetailsFilter?,
-        routeData: StopDetailsViewModel.RouteData?,
+        routeData: StopCentricViewModel.RouteData?,
         alerts: AlertsStreamDataResponse?,
         favorites: Favorites?,
         global: GlobalResponse?,
         now: Date,
         onUpdateFavorites: @escaping () -> Void,
-        setStopFilter: @escaping (StopDetailsFilter?) -> Void,
+        setRouteStopFilter: @escaping (RouteStopFilter) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
         navCallbacks: NavigationCallbacks,
         errorBannerVM: IErrorBannerViewModel,
         mapVM: IMapViewModel,
-        stopDetailsVM: IStopDetailsViewModel,
+        stopCentricVM: IStopCentricViewModel,
         favoritesVM: IFavoritesViewModel = ViewModelDI().favorites,
         tripDetailsVM: ITripDetailsViewModel = ViewModelDI().tripDetails,
         navManager: NavigationManager,
     ) {
         self.stopId = stopId
-        self.stopFilter = stopFilter
+        self.routeStopFilter = routeStopFilter
         self.tripFilter = tripFilter
         self.routeData = routeData
         self.alerts = alerts
@@ -69,12 +69,12 @@ struct StopDetailsFilteredView: View {
         self.global = global
         self.now = now
         self.onUpdateFavorites = onUpdateFavorites
-        self.setStopFilter = setStopFilter
+        self.setRouteStopFilter = setRouteStopFilter
         self.setTripFilter = setTripFilter
         self.navCallbacks = navCallbacks
         self.errorBannerVM = errorBannerVM
         self.mapVM = mapVM
-        self.stopDetailsVM = stopDetailsVM
+        self.stopCentricVM = stopCentricVM
         self.favoritesVM = favoritesVM
         self.tripDetailsVM = tripDetailsVM
         self.navManager = navManager
@@ -86,17 +86,17 @@ struct StopDetailsFilteredView: View {
 
     var nowInstant: EasternTimeInstant { now.toEasternInstant() }
     var routeStopDirection: RouteStopDirection? { .init(
-        route: stopFilter.routeId,
+        route: routeStopFilter.routeId,
         stop: stopId,
-        direction: stopFilter.directionId
+        direction: routeStopFilter.directionId
     ) }
     var stop: Stop? { global?.getStop(stopId: stopId) }
 
-    var lineOrRoute: LineOrRoute? { global?.getLineOrRoute(lineOrRouteId: stopFilter.routeId) }
+    var lineOrRoute: LineOrRoute? { global?.getLineOrRoute(lineOrRouteId: routeStopFilter.routeId) }
 
     var realtimeStopData: RouteCardData.RouteStopData? {
-        if case let .filtered(data) = onEnum(of: routeData), routeData?.filters.stopId == stopId,
-           routeData?.filters.stopFilter?.routeId == stopFilter.routeId {
+        if case let .routeStop(data) = onEnum(of: routeData), data.filteredWith.stopId == stopId,
+           data.filteredWith.routeStopFilter.routeId == routeStopFilter.routeId {
             data.stopData
         } else {
             nil
@@ -105,7 +105,7 @@ struct StopDetailsFilteredView: View {
 
     var tripPageFilter: TripDetailsPageFilter? {
         if let tripFilter {
-            .init(stopId: stopId, stopFilter: stopFilter, tripFilter: tripFilter)
+            .init(stopId: stopId, routeStopFilter: routeStopFilter, tripFilter: tripFilter)
         } else {
             nil
         }
@@ -114,8 +114,8 @@ struct StopDetailsFilteredView: View {
     var leaf: RouteCardData.Leaf? {
         realtimeStopData?.data
             .first {
-                $0.stop.id == stopId && $0.lineOrRoute.id == stopFilter.routeId && $0.direction.id == stopFilter
-                    .directionId
+                $0.stop.id == stopId && $0.lineOrRoute.id == routeStopFilter.routeId && $0.direction
+                    .id == routeStopFilter.directionId
             }
     }
 
@@ -135,7 +135,7 @@ struct StopDetailsFilteredView: View {
         .manageVM(
             tripDetailsVM,
             alerts: alerts,
-            context: .stopDetails,
+            context: .routeStop,
             filters: tripPageFilter,
         )
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
@@ -182,9 +182,9 @@ struct StopDetailsFilteredView: View {
                             availableDirections: availableDirections.map(\.id),
                             directions: directions,
                             route: lineOrRoute.sortRoute,
-                            selectedDirectionId: stopFilter.directionId,
-                            updateDirectionId: { setStopFilter(StopDetailsFilter(
-                                routeId: stopFilter.routeId,
+                            selectedDirectionId: routeStopFilter.directionId,
+                            updateDirectionId: { setRouteStopFilter(RouteStopFilter(
+                                routeId: routeStopFilter.routeId,
                                 directionId: $0
                             )) }
                         )
@@ -205,17 +205,17 @@ struct StopDetailsFilteredView: View {
         if let leaf {
             StopDetailsFilteredDepartureDetails(
                 stopId: stopId,
-                stopFilter: stopFilter,
+                routeStopFilter: routeStopFilter,
                 tripFilter: tripFilter,
-                setStopFilter: setStopFilter,
+                setRouteStopFilter: setRouteStopFilter,
                 setTripFilter: setTripFilter,
                 leaf: leaf,
-                selectedDirection: directions[Int(stopFilter.directionId)],
+                selectedDirection: directions[Int(routeStopFilter.directionId)],
                 favorite: isFavorite,
                 now: now.toEasternInstant(),
                 errorBannerVM: errorBannerVM,
                 mapVM: mapVM,
-                stopDetailsVM: stopDetailsVM,
+                stopCentricVM: stopCentricVM,
                 navManager: navManager,
             )
         } else {
@@ -226,9 +226,9 @@ struct StopDetailsFilteredView: View {
     @ViewBuilder
     func loading() -> some View {
         let routeData = LoadingPlaceholders.shared.routeCardData(
-            routeId: stopFilter.routeId,
+            routeId: routeStopFilter.routeId,
             trips: 10,
-            context: .stopDetailsFiltered,
+            context: .routeStop,
             now: nowInstant
         )
 
@@ -241,18 +241,18 @@ struct StopDetailsFilteredView: View {
 
     func loadingDepartures() -> some View {
         let routeData = LoadingPlaceholders.shared.routeCardData(
-            routeId: stopFilter.routeId,
+            routeId: routeStopFilter.routeId,
             trips: 10,
-            context: .stopDetailsFiltered,
+            context: .routeStop,
             now: nowInstant
         )
 
         let leaf = routeData.stopData.first!.data.first!
         return StopDetailsFilteredDepartureDetails(
             stopId: stopId,
-            stopFilter: stopFilter,
+            routeStopFilter: routeStopFilter,
             tripFilter: tripFilter,
-            setStopFilter: setStopFilter,
+            setRouteStopFilter: setRouteStopFilter,
             setTripFilter: setTripFilter,
             leaf: leaf,
             selectedDirection: leaf.direction,
@@ -260,7 +260,7 @@ struct StopDetailsFilteredView: View {
             now: now.toEasternInstant(),
             errorBannerVM: errorBannerVM,
             mapVM: mapVM,
-            stopDetailsVM: stopDetailsVM,
+            stopCentricVM: stopCentricVM,
             navManager: navManager,
         ).loadingPlaceholder()
     }
@@ -277,15 +277,15 @@ struct StopDetailsFilteredView: View {
                     route: lineOrRoute.sortRoute,
                     line: line,
                     stop: stop,
-                    direction: stopFilter.directionId,
+                    direction: routeStopFilter.directionId,
                     isFavorite: isFavorite,
                     onFavorite: {
                         navManager.pushNavEntry(
                             .saveFavorite(
                                 routeId: lineOrRoute.id,
                                 stopId: stopId,
-                                selectedDirection: stopFilter.directionId,
-                                context: .stopDetails
+                                selectedDirection: routeStopFilter.directionId,
+                                context: .routeStop
                             )
                         )
                     },

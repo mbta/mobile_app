@@ -31,12 +31,12 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ActionButton
 import com.mbta.tid.mbta_app.android.component.ActionButtonKind
 import com.mbta.tid.mbta_app.android.component.routeIcon
-import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
+import com.mbta.tid.mbta_app.android.util.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.overRouteColor
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
+import com.mbta.tid.mbta_app.model.tripDetailsPage.ExplainerType
 
 @Composable
 fun ExplainerPage(type: ExplainerType, routeAccents: TripRouteAccents, goBack: () -> Unit) {

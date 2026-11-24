@@ -15,32 +15,33 @@ import SwiftUI
 struct StopDetailsView: View {
     @ObserveInjection var inject
 
-    var filters: StopDetailsPageFilters
+    var filters: StopCentricPageFilters
 
-    var routeData: StopDetailsViewModel.RouteData?
+    var routeData: StopCentricViewModel.RouteData?
     var alerts: AlertsStreamDataResponse?
     var favorites: Favorites?
     var global: GlobalResponse?
     var now: Date
 
     var onUpdateFavorites: () -> Void
-    var setStopFilter: (StopDetailsFilter?) -> Void
+    var setRouteStopFilter: (RouteStopFilter?) -> Void
     var setTripFilter: (TripDetailsFilter?) -> Void
     var navCallbacks: NavigationCallbacks
 
     var errorBannerVM: IErrorBannerViewModel
     var mapVM: IMapViewModel
-    var stopDetailsVM: IStopDetailsViewModel
+    var stopCentricVM: IStopCentricViewModel
 
     @ObservedObject var navManager: NavigationManager
 
     let inspection = Inspection<Self>()
 
     var body: some View {
-        if let stopFilter = filters.stopFilter {
+        switch onEnum(of: filters) {
+        case let .routeStopPageFilters(filters):
             StopDetailsFilteredView(
                 stopId: filters.stopId,
-                stopFilter: stopFilter,
+                routeStopFilter: filters.routeStopFilter,
                 tripFilter: filters.tripFilter,
                 routeData: routeData,
                 alerts: alerts,
@@ -48,24 +49,24 @@ struct StopDetailsView: View {
                 global: global,
                 now: now,
                 onUpdateFavorites: onUpdateFavorites,
-                setStopFilter: setStopFilter,
+                setRouteStopFilter: setRouteStopFilter,
                 setTripFilter: setTripFilter,
                 navCallbacks: navCallbacks,
                 errorBannerVM: errorBannerVM,
                 mapVM: mapVM,
-                stopDetailsVM: stopDetailsVM,
+                stopCentricVM: stopCentricVM,
                 navManager: navManager,
             )
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .enableInjection()
-        } else {
+        case let .stopOverviewPageFilters(filters):
             StopDetailsUnfilteredView(
                 stopId: filters.stopId,
                 routeData: routeData,
                 favorites: favorites,
                 global: global,
                 now: now.toEasternInstant(),
-                setStopFilter: setStopFilter,
+                setRouteStopFilter: setRouteStopFilter,
                 navCallbacks: navCallbacks,
                 errorBannerVM: errorBannerVM,
                 navManager: navManager,

@@ -116,19 +116,19 @@ import XCTest
             predictions: .init(objects: XCTUnwrap(builder)),
             alerts: .init(alerts: [:]),
             now: XCTUnwrap(now),
-            context: .stopDetailsUnfiltered
+            context: .stopOverview
         )!
 
         let sut = try StopDetailsUnfilteredView(
             stopId: XCTUnwrap(stop?.id),
-            routeData: StopDetailsViewModel.RouteDataUnfiltered(
-                filteredWith: .init(stopId: XCTUnwrap(stop?.id), stopFilter: nil, tripFilter: nil),
+            routeData: StopCentricViewModel.RouteDataStopOverview(
+                filteredWith: .init(stopId: XCTUnwrap(stop?.id)),
                 routeCards: routeCardData
             ),
             favorites: .init(routeStopDirection: [:]),
             global: .init(objects: XCTUnwrap(builder)),
             now: XCTUnwrap(now),
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: errorBannerViewModel,
             navManager: .init(),
@@ -155,19 +155,19 @@ import XCTest
             predictions: .init(objects: XCTUnwrap(builder)),
             alerts: .init(alerts: [:]),
             now: XCTUnwrap(now),
-            context: .stopDetailsUnfiltered
+            context: .stopOverview
         )!
 
         let sut = try StopDetailsUnfilteredView(
             stopId: XCTUnwrap(inaccessibleStop?.id),
-            routeData: StopDetailsViewModel.RouteDataUnfiltered(
-                filteredWith: .init(stopId: XCTUnwrap(inaccessibleStop?.id), stopFilter: nil, tripFilter: nil),
+            routeData: StopCentricViewModel.RouteDataStopOverview(
+                filteredWith: .init(stopId: XCTUnwrap(inaccessibleStop?.id)),
                 routeCards: routeCardData
             ),
             favorites: .init(routeStopDirection: [:]),
             global: .init(objects: XCTUnwrap(builder)),
             now: XCTUnwrap(now),
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: errorBannerViewModel,
             navManager: .init(),
@@ -204,19 +204,19 @@ import XCTest
             predictions: .init(objects: XCTUnwrap(builder)),
             alerts: .init(alerts: [alert.id: alert]),
             now: XCTUnwrap(now),
-            context: .stopDetailsUnfiltered
+            context: .stopOverview
         )!
 
         let unfilteredView = try StopDetailsUnfilteredView(
             stopId: XCTUnwrap(stop?.id),
-            routeData: StopDetailsViewModel.RouteDataUnfiltered(
-                filteredWith: .init(stopId: XCTUnwrap(stop?.id), stopFilter: nil, tripFilter: nil),
+            routeData: StopCentricViewModel.RouteDataStopOverview(
+                filteredWith: .init(stopId: XCTUnwrap(stop?.id)),
                 routeCards: routeCardData
             ),
             favorites: .init(routeStopDirection: [:]),
             global: .init(objects: XCTUnwrap(builder)),
             now: XCTUnwrap(now),
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: errorBannerViewModel,
             navManager: .init(),

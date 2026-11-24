@@ -19,7 +19,9 @@ class NavigationManager: ObservableObject {
             let navEntry = navigationStack.lastSafe()
             do {
                 switch navEntry {
-                case let .stopDetails(stopId: stopId, stopFilter: _, tripFilter: _):
+                case let .stopOverview(stopId: stopId):
+                    try await visitHistoryUsecase.addVisit(visit: .StopVisit(stopId: stopId))
+                case let .routeStop(stopId: stopId, routeStopFilter: _, tripFilter: _):
                     try await visitHistoryUsecase.addVisit(visit: .StopVisit(stopId: stopId))
                 default: break
                 }
@@ -78,29 +80,44 @@ class NavigationManager: ObservableObject {
             navigationStack.removeAll()
         }
         let currentEntry = navigationStack.lastSafe()
-        if case let .stopDetails(
-            stopId: targetStop,
-            stopFilter: newFilter,
-            tripFilter: _
-        ) = entry,
-            case let .stopDetails(
-                stopId: lastStop,
-                stopFilter: lastFilter,
-                tripFilter: _
-            ) = currentEntry,
-            targetStop == lastStop {
+        switch (entry, currentEntry) {
+        case let (.routeStop(_, newFilter, _), .routeStop(_, lastFilter, _)):
             // When the stop filter changes, we want a new entry to be added (i.e. no pop) only when
             // you're on the unfiltered (lastFilter == nil) page, but if there is already a filter,
             // the entry with the old filter should be popped and replaced with the new value.
-            if StopDetailsFilter.companion.shouldPopLastStopEntry(lastFilter: lastFilter, newFilter: newFilter) {
+            if RouteStopFilter.companion.shouldPopLastStopEntry(lastFilter: lastFilter, newFilter: newFilter) {
                 _ = navigationStack.popLast()
             }
-            if navigationStack.shouldSkipStopFilterUpdate(newStop: targetStop, newFilter: newFilter) { return }
             navigationStack.append(entry)
-        } else if case .tripDetails = currentEntry, case .tripDetails = entry {
+        case let (.routeStop(_, newFilter, _), .stopOverview(_)):
+            // When the stop filter changes, we want a new entry to be added (i.e. no pop) only when
+            // you're on the unfiltered (lastFilter == nil) page, but if there is already a filter,
+            // the entry with the old filter should be popped and replaced with the new value.
+            if RouteStopFilter.companion.shouldPopLastStopEntry(lastFilter: nil, newFilter: newFilter) {
+                _ = navigationStack.popLast()
+            }
+            navigationStack.append(entry)
+        case let (.stopOverview(_), .routeStop(_, lastFilter, _)):
+            // When the stop filter changes, we want a new entry to be added (i.e. no pop) only when
+            // you're on the unfiltered (lastFilter == nil) page, but if there is already a filter,
+            // the entry with the old filter should be popped and replaced with the new value.
+            if RouteStopFilter.companion.shouldPopLastStopEntry(lastFilter: lastFilter, newFilter: nil) {
+                _ = navigationStack.popLast()
+            }
+            navigationStack.append(entry)
+        case let (.stopOverview(targetStop), .stopOverview(lastStop)):
+            // When the stop filter changes, we want a new entry to be added (i.e. no pop) only when
+            // you're on the unfiltered (lastFilter == nil) page, but if there is already a filter,
+            // the entry with the old filter should be popped and replaced with the new value.
+            if RouteStopFilter.companion.shouldPopLastStopEntry(lastFilter: nil, newFilter: nil) {
+                _ = navigationStack.popLast()
+            }
+            if targetStop == lastStop { return }
+            navigationStack.append(entry)
+        case (.tripDetails, .tripDetails):
             _ = navigationStack.popLast()
             navigationStack.append(entry)
-        } else {
+        default:
             navigationStack.append(entry)
         }
 
@@ -119,20 +136,31 @@ class NavigationManager: ObservableObject {
     /**
      set the filter for the given stop if it is the last stop in the stack
      */
-    func setLastStopDetailsPageFilter(_ filters: StopDetailsPageFilters) {
+    func setLastStopOverviewPageFilter(_ filters: StopOverviewPageFilters) {
         if filters.stopId == navigationStack.lastStopId,
-           navigationStack.lastStopDetailsFilter != filters.stopFilter || navigationStack
-           .lastTripDetailsFilter != filters.tripFilter {
-            navigationStack.lastStopDetailsPageFilters = filters
+           navigationStack.lastRouteStopFilter != nil || navigationStack
+           .lastTripDetailsFilter != nil {
+            navigationStack.lastStopOverviewPageFilters = filters
         }
     }
 
     /**
      set the filter for the given stop if it is the last stop in the stack
      */
-    func setLastStopDetailsFilter(_ stopId: String, _ filter: StopDetailsFilter?) {
-        if stopId == navigationStack.lastStopId, navigationStack.lastStopDetailsFilter != filter {
-            navigationStack.lastStopDetailsFilter = filter
+    func setLastRouteStopPageFilter(_ filters: RouteStopPageFilters) {
+        if filters.stopId == navigationStack.lastStopId,
+           navigationStack.lastRouteStopFilter != filters.routeStopFilter || navigationStack
+           .lastTripDetailsFilter != filters.tripFilter {
+            navigationStack.lastRouteStopPageFilters = filters
+        }
+    }
+
+    /**
+     set the filter for the given stop if it is the last stop in the stack
+     */
+    func setLastRouteStopFilter(_ stopId: String, _ filter: RouteStopFilter?) {
+        if stopId == navigationStack.lastStopId, navigationStack.lastRouteStopFilter != filter {
+            navigationStack.lastRouteStopFilter = filter
         }
     }
 
@@ -152,7 +180,8 @@ class NavigationManager: ObservableObject {
     func getTargetStop(global: GlobalResponse) -> Stop? {
         switch navigationStack.last {
         case .nearby: nil
-        case let .stopDetails(stopId: stopId, _, _): global.getStop(stopId: stopId)
+        case let .stopOverview(stopId: stopId): global.getStop(stopId: stopId)
+        case let .routeStop(stopId: stopId, _, _): global.getStop(stopId: stopId)
         default: nil
         }
     }

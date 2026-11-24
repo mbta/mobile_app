@@ -26,9 +26,9 @@ import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopCardData
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
@@ -48,7 +48,7 @@ fun ColumnScope.StopCardList(
     global: GlobalResponse?,
     now: EasternTimeInstant,
     isFavorite: (RouteStopDirection) -> Boolean,
-    onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
+    onOpenRouteStop: (String, RouteStopFilter?) -> Unit,
 ) {
     val contentPadding = PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp)
     val verticalArrangement = Arrangement.spacedBy(14.dp)
@@ -77,7 +77,7 @@ fun ColumnScope.StopCardList(
             verticalArrangement = verticalArrangement,
             horizontalAlignment = horizontalAlignment,
         ) {
-            items(stopCardData) { StopCard(it, global, now, isFavorite, onOpenStopDetails) }
+            items(stopCardData) { StopCard(it, global, now, isFavorite, onOpenRouteStop) }
         }
     }
 }
@@ -333,7 +333,7 @@ private fun StopCardListPreview() {
             global,
             now,
             isFavorite = { true },
-            onOpenStopDetails = { _, _ -> },
+            onOpenRouteStop = { _, _ -> },
         )
     }
 }

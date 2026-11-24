@@ -7,9 +7,9 @@ import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopAlertState
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.Test
@@ -160,7 +160,7 @@ class StopLayerGeneratorTest {
         val stopLayers =
             StopLayerGenerator.createStopLayers(
                 ColorPalette.light,
-                StopLayerGenerator.State.StopDetails(
+                StopLayerGenerator.State.StopOverview(
                     selectedStopId = checkNotNull(alewifeFeature.id),
                 ),
             )
@@ -182,7 +182,7 @@ class StopLayerGeneratorTest {
     }
 
     @Test
-    fun `state stop details filter applies correctly`() = runBlocking {
+    fun `state route stop filter applies correctly`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val subwayRoute = objects.route {
             id = "Orange"
@@ -233,7 +233,8 @@ class StopLayerGeneratorTest {
                 ColorPalette.light,
                 StopLayerGenerator.State.TripDetails(
                     selectedStopId = null,
-                    stopFilter = StopDetailsFilter(routeId = selectedBusRoute.id, directionId = 0),
+                    routeStopFilter =
+                        RouteStopFilter(routeId = selectedBusRoute.id, directionId = 0),
                     tripStops = null,
                 ),
             )
@@ -325,7 +326,8 @@ class StopLayerGeneratorTest {
                 ColorPalette.light,
                 StopLayerGenerator.State.TripDetails(
                     selectedStopId = null,
-                    stopFilter = StopDetailsFilter(routeId = selectedBusRoute.id, directionId = 0),
+                    routeStopFilter =
+                        RouteStopFilter(routeId = selectedBusRoute.id, directionId = 0),
                     tripStops = listOf(typicalBusStop.id, atypicalBusStop.id),
                 ),
             )

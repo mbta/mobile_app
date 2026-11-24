@@ -33,7 +33,7 @@ import com.mbta.tid.mbta_app.android.util.managedTargetLocation
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.android.util.toPosition
 import com.mbta.tid.mbta_app.model.RouteStopDirection
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.routes.SheetRoutes
@@ -142,8 +142,11 @@ fun FavoritesPage(
     val isFavorite = { rsd: RouteStopDirection ->
         (state.favorites?.keys ?: emptySet()).contains(rsd)
     }
-    val onOpenStopDetails = { stopId: String, filter: StopDetailsFilter? ->
-        openSheetRoute(SheetRoutes.StopDetails(stopId, filter, null))
+    val onOpenRouteStop = { stopId: String, filter: RouteStopFilter? ->
+        val sheetRoute =
+            if (filter != null) SheetRoutes.RouteStop(stopId, filter, null)
+            else SheetRoutes.StopOverview(stopId)
+        openSheetRoute(sheetRoute)
     }
 
     Column {
@@ -189,7 +192,7 @@ fun FavoritesPage(
             global = globalResponse,
             now = now,
             isFavorite = isFavorite,
-            onOpenStopDetails = onOpenStopDetails,
+            onOpenRouteStop = onOpenRouteStop,
         )
     }
 }

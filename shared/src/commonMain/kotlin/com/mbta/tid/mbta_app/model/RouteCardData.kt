@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.model.routeStopPage.TileData
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.jvm.JvmName
 import kotlin.math.max
@@ -40,20 +41,20 @@ public data class RouteCardData(
 
     public enum class Context {
         NearbyTransit,
-        StopDetailsFiltered,
-        StopDetailsUnfiltered,
+        RouteStop,
+        StopOverview,
         Favorites;
 
-        internal fun isStopDetails(): Boolean {
-            return this == StopDetailsFiltered || this == StopDetailsUnfiltered
+        internal fun isStopCentric(): Boolean {
+            return this == RouteStop || this == StopOverview
         }
 
         internal fun toTripInstantDisplayContext(): TripInstantDisplay.Context {
             return when (this) {
                 NearbyTransit,
                 Favorites -> TripInstantDisplay.Context.NearbyTransit
-                StopDetailsFiltered -> TripInstantDisplay.Context.StopDetailsFiltered
-                StopDetailsUnfiltered -> TripInstantDisplay.Context.StopDetailsUnfiltered
+                RouteStop -> TripInstantDisplay.Context.RouteStop
+                StopOverview -> TripInstantDisplay.Context.StopOverview
             }
         }
     }
@@ -217,12 +218,11 @@ public data class RouteCardData(
             // but if all trips will be hidden, keep them
             val tripsShown = tripsUpcoming.filter { it.format != null }.ifEmpty { tripsUpcoming }
             val tripsToConsider =
-                if (isBus && context != Context.StopDetailsFiltered)
-                    tripsShown.take(TYPICAL_LEAF_ROWS)
+                if (isBus && context != Context.RouteStop) tripsShown.take(TYPICAL_LEAF_ROWS)
                 else tripsShown
 
             for ((trip, _) in tripsToConsider) {
-                if (context.isStopDetails() || trip.isUpcoming()) {
+                if (context.isStopCentric() || trip.isUpcoming()) {
                     val existingPatterns =
                         potentialService.getOrPut(Pair(trip.routeId, trip.headsign)) {
                             mutableSetOf()
@@ -390,7 +390,7 @@ public data class RouteCardData(
             }
 
             val maxRowsToShow =
-                if (context == Context.StopDetailsFiltered) {
+                if (context == Context.RouteStop) {
                     // We want to show every upcoming trip, plus a row for any headsign with a
                     // disruption or unavailable predictions. This comfortably overestimates the #
                     // of
@@ -522,7 +522,7 @@ public data class RouteCardData(
 
             val countTripsToDisplay =
                 when {
-                    context == Context.StopDetailsFiltered -> null
+                    context == Context.RouteStop -> null
                     isBranching && routeType != RouteType.BUS -> BRANCHING_LEAF_ROWS
                     else -> TYPICAL_LEAF_ROWS
                 }
@@ -585,6 +585,27 @@ public data class RouteCardData(
                 )
             }
         }
+
+        /**
+         * Whether there are trips scheduled to depart this stop later than the last of the given
+         * departure [tiles] that don't have predictions yet.
+         *
+         * Only applies to routes where we hide scheduled times (subway and Silver Line), since
+         * scheduled trips on other modes are already displayed as tiles. Any predicted trip
+         * departing later than a scheduled trip (including added trips with a different ID) is
+         * considered to cover that scheduled trip.
+         */
+        public fun hasLaterTripsWithoutPredictions(tiles: List<TileData>): Boolean {
+            if (!lineOrRoute.sortRoute.hidesScheduledTimes) return false
+            val lastTileTime = tiles.mapNotNull { it.upcoming.time }.maxOrNull() ?: return false
+            return upcomingTrips.any { upcoming ->
+                val scheduledTime = upcoming.schedule?.stopTime
+                upcoming.prediction == null &&
+                    scheduledTime != null &&
+                    scheduledTime > lastTileTime &&
+                    upcoming.isArrivalOnly() == false
+            }
+        }
     }
 
     /** The distance from the given position to the first stop in this route card. */
@@ -640,7 +661,7 @@ public data class RouteCardData(
                     .filterIrrelevantData(now, null, context, globalData)
                     .addAlerts(
                         alerts,
-                        includeMinorAlerts = context.isStopDetails(),
+                        includeMinorAlerts = context.isStopCentric(),
                         now,
                         globalData,
                     )
@@ -981,7 +1002,7 @@ public data class RouteCardData(
             globalData: GlobalResponse,
         ): ListBuilder {
 
-            val showAllPatternsWhileLoading = context.isStopDetails()
+            val showAllPatternsWhileLoading = context.isStopCentric()
             for (entry in this.data) {
                 val (_, byStopId) = entry
                 for (stopEntry in byStopId.stopData) {
@@ -1107,7 +1128,7 @@ public data class RouteCardData(
                 this.upcomingTrips?.filter { trip ->
                     if (
                         context == Context.NearbyTransit ||
-                            context == Context.StopDetailsUnfiltered ||
+                            context == Context.StopOverview ||
                             isSubway
                     ) {
                         !trip.isCancelled

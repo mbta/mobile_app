@@ -145,10 +145,10 @@ public object LoadingPlaceholders {
         )
     }
 
-    public fun stopDetailsRouteCards(): List<RouteCardData> =
+    public fun stopOverviewRouteCards(): List<RouteCardData> =
         (1..5).map {
             routeCardData(
-                context = RouteCardData.Context.StopDetailsUnfiltered,
+                context = RouteCardData.Context.StopOverview,
                 now = EasternTimeInstant.now(),
             )
         }

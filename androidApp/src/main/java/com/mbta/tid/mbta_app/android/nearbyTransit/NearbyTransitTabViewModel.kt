@@ -2,9 +2,10 @@ package com.mbta.tid.mbta_app.android.nearbyTransit
 
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.ViewModel
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
-import com.mbta.tid.mbta_app.model.StopDetailsFilter.Companion.shouldPopLastStopEntry
-import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
+import com.mbta.tid.mbta_app.model.RouteStopFilter
+import com.mbta.tid.mbta_app.model.RouteStopFilter.Companion.shouldPopLastStopEntry
+import com.mbta.tid.mbta_app.model.RouteStopPageFilters
+import com.mbta.tid.mbta_app.model.StopOverviewPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,19 +20,33 @@ class NearbyTransitTabViewModel : ViewModel() {
         _searchBarHeight.value = height
     }
 
-    fun setStopDetailsFilters(
+    fun setStopOverviewFilters(
         lastNavEntry: SheetRoutes?,
-        filters: StopDetailsPageFilters,
+        filters: StopOverviewPageFilters,
+        pushNavEntry: (SheetRoutes) -> Unit,
+    ) {
+        if (lastNavEntry is SheetRoutes.StopOverview && filters.stopId == lastNavEntry.stopId) {
+            return
+        }
+
+        pushNavEntry(
+            SheetRoutes.StopOverview(filters.stopId),
+        )
+    }
+
+    fun setRouteStopFilters(
+        lastNavEntry: SheetRoutes?,
+        filters: RouteStopPageFilters,
         popLastNavEntry: () -> Unit,
         pushNavEntry: (SheetRoutes) -> Unit,
     ) {
-        if (lastNavEntry is SheetRoutes.StopDetails && filters.stopId == lastNavEntry.stopId) {
+        if (lastNavEntry is SheetRoutes.RouteStop && filters.stopId == lastNavEntry.stopId) {
             if (
-                lastNavEntry.stopFilter == filters.stopFilter &&
+                lastNavEntry.routeStopFilter == filters.routeStopFilter &&
                     lastNavEntry.tripFilter == filters.tripFilter
             ) {
                 return
-            } else if (lastNavEntry.stopFilter == filters.stopFilter) {
+            } else if (lastNavEntry.routeStopFilter == filters.routeStopFilter) {
                 setTripFilter(
                     lastNavEntry,
                     filters.stopId,
@@ -41,50 +56,72 @@ class NearbyTransitTabViewModel : ViewModel() {
                 )
                 return
             } else if (lastNavEntry.tripFilter == filters.tripFilter) {
-                setStopFilter(
+                setRouteStopFilter(
                     lastNavEntry,
                     filters.stopId,
-                    filters.stopFilter,
+                    filters.routeStopFilter,
                     popLastNavEntry,
                     pushNavEntry,
                 )
                 return
             }
 
-            if (shouldPopLastStopEntry(lastNavEntry.stopFilter, filters.stopFilter)) {
+            if (shouldPopLastStopEntry(lastNavEntry.routeStopFilter, filters.routeStopFilter)) {
                 popLastNavEntry()
             }
-            if (shouldSkipStopFilterUpdate(lastNavEntry, lastNavEntry.stopId, filters.stopFilter)) {
+            if (
+                shouldSkipRouteStopFilterUpdate(
+                    lastNavEntry,
+                    lastNavEntry.stopId,
+                    filters.routeStopFilter,
+                )
+            ) {
                 return
             }
         }
 
         pushNavEntry(
-            SheetRoutes.StopDetails(filters.stopId, filters.stopFilter, filters.tripFilter),
+            SheetRoutes.RouteStop(filters.stopId, filters.routeStopFilter, filters.tripFilter),
         )
     }
 
-    fun setStopFilter(
+    fun setRouteStopFilter(
         lastNavEntry: SheetRoutes?,
         stopId: String,
-        stopFilter: StopDetailsFilter?,
+        routeStopFilter: RouteStopFilter?,
         popLastNavEntry: () -> Unit,
         pushNavEntry: (SheetRoutes) -> Unit,
     ) {
-
-        if (lastNavEntry is SheetRoutes.StopDetails && stopId == lastNavEntry.stopId) {
-            if (lastNavEntry.stopFilter == stopFilter) {
+        if (lastNavEntry is SheetRoutes.StopOverview && stopId == lastNavEntry.stopId) {
+            if (routeStopFilter == null) {
                 return
             }
-            if (shouldPopLastStopEntry(lastNavEntry.stopFilter, stopFilter)) {
+            if (shouldPopLastStopEntry(null, routeStopFilter)) {
                 popLastNavEntry()
             }
-            if (shouldSkipStopFilterUpdate(lastNavEntry, lastNavEntry.stopId, stopFilter)) {
+            if (
+                shouldSkipRouteStopFilterUpdate(lastNavEntry, lastNavEntry.stopId, routeStopFilter)
+            ) {
                 return
             }
-            pushNavEntry(SheetRoutes.StopDetails(lastNavEntry.stopId, stopFilter, null))
+        } else if (lastNavEntry is SheetRoutes.RouteStop && stopId == lastNavEntry.stopId) {
+            if (lastNavEntry.routeStopFilter == routeStopFilter) {
+                return
+            }
+            if (shouldPopLastStopEntry(lastNavEntry.routeStopFilter, routeStopFilter)) {
+                popLastNavEntry()
+            }
+            if (
+                shouldSkipRouteStopFilterUpdate(lastNavEntry, lastNavEntry.stopId, routeStopFilter)
+            ) {
+                return
+            }
+        }
+
+        if (routeStopFilter != null) {
+            pushNavEntry(SheetRoutes.RouteStop(stopId, routeStopFilter, null))
         } else {
-            pushNavEntry(SheetRoutes.StopDetails(stopId, stopFilter, null))
+            pushNavEntry(SheetRoutes.StopOverview(stopId))
         }
     }
 
@@ -96,28 +133,26 @@ class NearbyTransitTabViewModel : ViewModel() {
         pushNavEntry: (SheetRoutes) -> Unit,
     ) {
         if (
-            lastNavEntry is SheetRoutes.StopDetails &&
+            lastNavEntry is SheetRoutes.RouteStop &&
                 lastNavEntry.stopId == stopId &&
                 lastNavEntry.tripFilter != tripFilter
         ) {
             popLastNavEntry()
-            pushNavEntry(SheetRoutes.StopDetails(stopId, lastNavEntry.stopFilter, tripFilter))
+            pushNavEntry(SheetRoutes.RouteStop(stopId, lastNavEntry.routeStopFilter, tripFilter))
         }
     }
 
-    private fun shouldSkipStopFilterUpdate(
+    private fun shouldSkipRouteStopFilterUpdate(
         lastNavEntry: SheetRoutes?,
         newStopId: String,
-        newFilter: StopDetailsFilter?,
+        newFilter: RouteStopFilter?,
     ): Boolean {
-        // If the new filter is null and there is already a null filter in the stack for the same
-        // stop ID, we don't want a duplicate unfiltered entry, so skip appending a new one
+        // If the new filter is null and there is already a StopOverview in the stack for the same
+        // stop ID, we don't want a duplicate StopOverview, so skip appending a new one
 
         return when (lastNavEntry) {
-            is SheetRoutes.StopDetails -> {
-                lastNavEntry.stopId == newStopId &&
-                    lastNavEntry.stopFilter == null &&
-                    newFilter == null
+            is SheetRoutes.StopOverview -> {
+                lastNavEntry.stopId == newStopId && newFilter == null
             }
             else -> false
         }

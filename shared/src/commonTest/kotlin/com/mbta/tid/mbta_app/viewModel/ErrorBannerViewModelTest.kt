@@ -214,12 +214,12 @@ internal class ErrorBannerViewModelTest : KoinTest {
 
         testViewModelFlow(viewModel).test {
             assertEquals(ErrorBannerViewModel.State(false, false, null), awaitItem())
-            viewModel.setSheetRoute(SheetRoutes.StopDetails("stop1", null, null))
+            viewModel.setSheetRoute(SheetRoutes.StopOverview("stop1"))
             advanceUntilIdle()
             viewModel.checkPredictionsStale(
                 lastUpdated,
                 2,
-                SheetRoutes.StopDetails("stop2", null, null),
+                SheetRoutes.StopOverview("stop2"),
                 action,
             )
             advanceUntilIdle()

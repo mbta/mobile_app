@@ -28,7 +28,7 @@ struct ContentView: View {
     @State var favoritesVM = ViewModelDI().favorites
     @State var nearbyVM = ViewModelDI().nearby
     @State var routeCardDataVM = ViewModelDI().routeCardData
-    @State var stopDetailsVM = ViewModelDI().stopDetails
+    @State var stopCentricVM = ViewModelDI().stopCentric
     @State var toastVM = ViewModelDI().toast
 
     @State var scheduleCache = RepositoryDI().scheduleCache
@@ -291,11 +291,7 @@ struct ContentView: View {
                     TabView {
                         RouteDetailsView(
                             selectionId: navEntry.routeId, context: navEntry.context,
-                            onOpenStopDetails: { navManager.pushNavEntry(.stopDetails(
-                                stopId: $0,
-                                stopFilter: nil,
-                                tripFilter: nil
-                            )) },
+                            onOpenStopDetails: { navManager.pushNavEntry(.stopOverview(stopId: $0)) },
                             pushNavEntry: { entry in navManager.pushNavEntry(entry) },
                             navCallbacks: navCallbacks,
                             errorBannerVM: errorBannerVM,
@@ -336,14 +332,14 @@ struct ContentView: View {
                     .transition(transition)
                     .animation(.easeOut, value: navEntry)
 
-                case let .stopDetails(stopId, stopFilter, tripFilter):
+                case let .routeStop(stopId, routeStopFilter, tripFilter):
                     // Wrapping in a TabView helps the page to animate in as a single unit
                     // Otherwise only the header animates
                     TabView {
                         StopDetailsPage(
-                            filters: .init(
+                            filters: RouteStopPageFilters(
                                 stopId: stopId,
-                                stopFilter: stopFilter,
+                                routeStopFilter: routeStopFilter,
                                 tripFilter: tripFilter
                             ),
                             navCallbacks: navCallbacks,
@@ -351,7 +347,30 @@ struct ContentView: View {
                             errorBannerVM: errorBannerVM,
                             mapVM: mapVM,
                             routeCardDataVM: routeCardDataVM,
-                            stopDetailsVM: stopDetailsVM,
+                            stopCentricVM: stopCentricVM,
+                            navManager: navManager,
+                            viewportProvider: viewportProvider,
+                        )
+                        .toolbar(.hidden, for: .tabBar)
+                    }
+                    // Set id per stop so that transitioning from one stop to another is handled by removing
+                    // the existing stop view & creating a new one
+                    .id(stopId)
+                    .transition(transition)
+                    .animation(.easeOut, value: stopId)
+
+                case let .stopOverview(stopId):
+                    // Wrapping in a TabView helps the page to animate in as a single unit
+                    // Otherwise only the header animates
+                    TabView {
+                        StopDetailsPage(
+                            filters: StopOverviewPageFilters(stopId: stopId),
+                            navCallbacks: navCallbacks,
+                            alerts: alerts,
+                            errorBannerVM: errorBannerVM,
+                            mapVM: mapVM,
+                            routeCardDataVM: routeCardDataVM,
+                            stopCentricVM: stopCentricVM,
                             navManager: navManager,
                             viewportProvider: viewportProvider,
                         )
@@ -696,18 +715,13 @@ struct ContentView: View {
 
         switch onEnum(of: deepLinkState) {
         case let .stop(stop):
-            let nav = stop.sheetRoute
-            navManager.pushNavEntry(.stopDetails(
-                stopId: nav.stopId,
-                stopFilter: nav.stopFilter,
-                tripFilter: nav.tripFilter
-            ))
+            navManager.pushNavEntry(.fromSheetRoute(stop.sheetRoute))
 
         case let .alert(alert):
             var stop: Stop?
             if let stopId = alert.stopId {
                 navManager.pushNavEntry(
-                    .stopDetails(stopId: stopId, stopFilter: nil, tripFilter: nil)
+                    .stopOverview(stopId: stopId)
                 )
                 stop = globalData?.getStop(stopId: alert.stopId)
             }

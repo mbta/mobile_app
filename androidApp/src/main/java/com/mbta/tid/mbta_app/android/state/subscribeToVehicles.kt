@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mbta.tid.mbta_app.model.RouteDirection
-import com.mbta.tid.mbta_app.model.StopDetailsUtils
+import com.mbta.tid.mbta_app.model.RouteStopUtils
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
@@ -92,7 +92,7 @@ fun subscribeToVehicles(
 
     return vehicleData
         ?.let { response ->
-            routeCardData?.let { StopDetailsUtils.filterVehiclesByUpcoming(it, response) }
+            routeCardData?.let { RouteStopUtils.filterVehiclesByUpcoming(it, response) }
                 ?: response.vehicles
         }
         ?.values

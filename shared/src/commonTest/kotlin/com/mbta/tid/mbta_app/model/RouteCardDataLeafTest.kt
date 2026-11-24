@@ -8,6 +8,8 @@ import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.runBlocking
@@ -275,7 +277,7 @@ class RouteCardDataLeafTest {
                     true,
                     null,
                     emptyList(),
-                    RouteCardData.Context.StopDetailsFiltered,
+                    RouteCardData.Context.RouteStop,
                 )
                 .format(now, GlobalResponse(objects)),
         )
@@ -334,7 +336,7 @@ class RouteCardDataLeafTest {
                     true,
                     null,
                     emptyList(),
-                    RouteCardData.Context.StopDetailsFiltered,
+                    RouteCardData.Context.RouteStop,
                 )
                 .format(now, GlobalResponse(objects)),
         )
@@ -994,7 +996,7 @@ class RouteCardDataLeafTest {
                     hasSchedulesToday = true,
                     subwayServiceStartTime = null,
                     emptyList(),
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    anyEnumValueExcept(RouteCardData.Context.RouteStop),
                 )
                 .format(now, RedLine.global),
         )
@@ -1090,7 +1092,7 @@ class RouteCardDataLeafTest {
                         hasSchedulesToday = true,
                         subwayServiceStartTime = null,
                         listOf(downstreamAlert),
-                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                        anyEnumValueExcept(RouteCardData.Context.RouteStop),
                     )
                     .format(now, RedLine.global),
             )
@@ -1157,7 +1159,7 @@ class RouteCardDataLeafTest {
                     hasSchedulesToday = true,
                     subwayServiceStartTime = null,
                     emptyList(),
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    anyEnumValueExcept(RouteCardData.Context.RouteStop),
                 )
                 .format(now, RedLine.global),
         )
@@ -1338,14 +1340,14 @@ class RouteCardDataLeafTest {
                         hasSchedulesToday = true,
                         subwayServiceStartTime = null,
                         emptyList(),
-                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                        anyEnumValueExcept(RouteCardData.Context.RouteStop),
                     )
                     .format(now, RedLine.global),
             )
         }
 
     @Test
-    fun `formats Red Line southbound as branching all upcoming trips with Braintree suspension stop details`() =
+    fun `formats Red Line southbound as branching all upcoming trips with Braintree suspension route stop`() =
         runBlocking {
 
             // ⚠ Southbound to Ashmont 3 min, 12 min, 15 min
@@ -1457,7 +1459,7 @@ class RouteCardDataLeafTest {
                         hasSchedulesToday = true,
                         subwayServiceStartTime = null,
                         emptyList(),
-                        RouteCardData.Context.StopDetailsFiltered,
+                        RouteCardData.Context.RouteStop,
                     )
                     .format(now, RedLine.global),
             )
@@ -1531,7 +1533,7 @@ class RouteCardDataLeafTest {
                     hasSchedulesToday = true,
                     subwayServiceStartTime = null,
                     emptyList(),
-                    RouteCardData.Context.StopDetailsFiltered,
+                    RouteCardData.Context.RouteStop,
                 )
                 .format(now, RedLine.global),
         )
@@ -1605,7 +1607,7 @@ class RouteCardDataLeafTest {
                     true,
                     null,
                     emptyList(),
-                    RouteCardData.Context.StopDetailsFiltered,
+                    RouteCardData.Context.RouteStop,
                 )
                 .format(now, GlobalResponse(objects)),
         )
@@ -1719,7 +1721,7 @@ class RouteCardDataLeafTest {
                     true,
                     null,
                     emptyList(),
-                    RouteCardData.Context.StopDetailsFiltered,
+                    RouteCardData.Context.RouteStop,
                 )
                 .format(now, GlobalResponse(objects)),
         )
@@ -1844,7 +1846,7 @@ class RouteCardDataLeafTest {
                     hasSchedulesToday = true,
                     subwayServiceStartTime = null,
                     emptyList(),
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    anyEnumValueExcept(RouteCardData.Context.RouteStop),
                 )
                 .format(now, GreenLine.global),
         )
@@ -1911,7 +1913,7 @@ class RouteCardDataLeafTest {
                     hasSchedulesToday = true,
                     subwayServiceStartTime = null,
                     emptyList(),
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    anyEnumValueExcept(RouteCardData.Context.RouteStop),
                 )
                 .format(now, GreenLine.global),
         )
@@ -2121,7 +2123,7 @@ class RouteCardDataLeafTest {
                     true,
                     null,
                     emptyList(),
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    anyEnumValueExcept(RouteCardData.Context.RouteStop),
                 )
                 .format(now, ProvidenceStoughtonLine.global),
         )
@@ -2201,14 +2203,14 @@ class RouteCardDataLeafTest {
                     hasSchedulesToday = true,
                     subwayServiceStartTime = null,
                     emptyList(),
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    anyEnumValueExcept(RouteCardData.Context.RouteStop),
                 )
                 .format(now, `87`.global),
         )
     }
 
     @Test
-    fun `formats bus as non-branching in StopDetailsFiltered even if next two trips match`() {
+    fun `formats bus as non-branching in RouteStop even if next two trips match`() {
         val objects = `87`.objects()
         val now = EasternTimeInstant.now()
 
@@ -2287,7 +2289,7 @@ class RouteCardDataLeafTest {
                     hasSchedulesToday = true,
                     subwayServiceStartTime = null,
                     emptyList(),
-                    RouteCardData.Context.StopDetailsFiltered,
+                    RouteCardData.Context.RouteStop,
                 )
                 .format(now, `87`.global),
         )
@@ -2355,7 +2357,7 @@ class RouteCardDataLeafTest {
                     hasSchedulesToday = true,
                     subwayServiceStartTime = null,
                     emptyList(),
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    anyEnumValueExcept(RouteCardData.Context.RouteStop),
                 )
                 .format(now, `87`.global),
         )
@@ -2422,7 +2424,7 @@ class RouteCardDataLeafTest {
                     hasSchedulesToday = true,
                     subwayServiceStartTime = null,
                     emptyList(),
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    anyEnumValueExcept(RouteCardData.Context.RouteStop),
                 )
                 .format(now, `87`.global),
         )
@@ -2481,7 +2483,7 @@ class RouteCardDataLeafTest {
                     hasSchedulesToday = true,
                     subwayServiceStartTime = null,
                     emptyList(),
-                    anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    anyEnumValueExcept(RouteCardData.Context.RouteStop),
                 )
                 .format(now, `87`.global),
         )
@@ -2804,7 +2806,7 @@ class RouteCardDataLeafTest {
                         true,
                         null,
                         emptyList(),
-                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                        anyEnumValueExcept(RouteCardData.Context.RouteStop),
                     )
                     .format(now, GreenLine.global),
             )
@@ -2896,7 +2898,7 @@ class RouteCardDataLeafTest {
                         true,
                         null,
                         emptyList(),
-                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                        anyEnumValueExcept(RouteCardData.Context.RouteStop),
                     )
                     .format(now, GreenLine.global),
             )
@@ -2998,7 +3000,7 @@ class RouteCardDataLeafTest {
                         ),
                         null,
                         emptyList(),
-                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                        anyEnumValueExcept(RouteCardData.Context.RouteStop),
                     )
                     .format(now, GreenLine.global),
             )
@@ -3071,7 +3073,7 @@ class RouteCardDataLeafTest {
                         true,
                         null,
                         emptyList(),
-                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                        anyEnumValueExcept(RouteCardData.Context.RouteStop),
                     )
                     .format(now, GreenLine.global),
             )
@@ -3163,7 +3165,7 @@ class RouteCardDataLeafTest {
                         true,
                         null,
                         emptyList(),
-                        anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                        anyEnumValueExcept(RouteCardData.Context.RouteStop),
                     )
                     .format(now, GlobalResponse(objects)),
             )
@@ -3199,7 +3201,7 @@ class RouteCardDataLeafTest {
                 allDataLoaded = true,
                 subwayServiceStartTime = null,
                 alertsDownstream = listOf(generalAlert, trip1Alert, trip2Alert),
-                context = RouteCardData.Context.StopDetailsFiltered,
+                context = RouteCardData.Context.RouteStop,
             )
 
         assertEquals(listOf(generalAlert, trip1Alert, trip2Alert), leaf.alertsHere(tripId = null))
@@ -3213,5 +3215,154 @@ class RouteCardDataLeafTest {
         assertEquals(listOf(generalAlert, trip1Alert), leaf.alertsDownstream(tripId = trip1.id))
         assertEquals(listOf(generalAlert, trip2Alert), leaf.alertsDownstream(tripId = trip2.id))
         assertEquals(listOf(generalAlert), leaf.alertsDownstream(tripId = trip3.id))
+    }
+
+    private class LaterTripsFixture(
+        routeId: String = "Red",
+        routeType: RouteType = RouteType.HEAVY_RAIL,
+    ) {
+        val now = EasternTimeInstant.now()
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route {
+            id = routeId
+            type = routeType
+        }
+        val stop = objects.stop()
+
+        fun predicted(minutes: Int, withSchedule: Boolean = true): UpcomingTrip {
+            val trip = objects.trip { routeId = route.id.idText }
+            val schedule =
+                if (withSchedule)
+                    objects.schedule {
+                        this.trip = trip
+                        stopId = stop.id
+                        arrivalTime = now + minutes.minutes
+                        departureTime = now + minutes.minutes
+                    }
+                else null
+            val prediction = objects.prediction {
+                this.trip = trip
+                stopId = stop.id
+                arrivalTime = now + minutes.minutes
+                departureTime = now + minutes.minutes
+            }
+            return objects.upcomingTrip(schedule, prediction)
+        }
+
+        fun scheduled(minutes: Int, departs: Boolean = true): UpcomingTrip {
+            val trip = objects.trip { routeId = route.id.idText }
+            val schedule = objects.schedule {
+                this.trip = trip
+                stopId = stop.id
+                arrivalTime = now + minutes.minutes
+                departureTime = if (departs) now + minutes.minutes else null
+            }
+            return objects.upcomingTrip(schedule)
+        }
+
+        fun hasLaterTripsWithoutPredictions(vararg upcomingTrips: UpcomingTrip): Boolean {
+            val leaf =
+                RouteCardData.Leaf(
+                    lineOrRoute = LineOrRoute.Route(route),
+                    stop = stop,
+                    direction = Direction(0, route),
+                    routePatterns = emptyList(),
+                    stopIds = setOf(stop.id),
+                    upcomingTrips = upcomingTrips.toList().sorted(),
+                    alertsHere = emptyList(),
+                    allDataLoaded = true,
+                    hasSchedulesToday = true,
+                    subwayServiceStartTime = null,
+                    alertsDownstream = emptyList(),
+                    context = RouteCardData.Context.RouteStop,
+                )
+            val tiles = leaf.format(now, GlobalResponse(objects)).tileData(null)
+            return leaf.hasLaterTripsWithoutPredictions(tiles)
+        }
+    }
+
+    @Test
+    fun `hasLaterTripsWithoutPredictions when subway has schedules after last prediction`() {
+        val fixture = LaterTripsFixture()
+        assertTrue(
+            fixture.hasLaterTripsWithoutPredictions(
+                fixture.predicted(5),
+                fixture.predicted(10),
+                fixture.scheduled(20),
+            ),
+        )
+    }
+
+    @Test
+    fun `hasLaterTripsWithoutPredictions for Silver Line`() {
+        val fixture = LaterTripsFixture("742", RouteType.BUS)
+        assertTrue(
+            fixture.hasLaterTripsWithoutPredictions(fixture.predicted(5), fixture.scheduled(20)),
+        )
+    }
+
+    @Test
+    fun `hasLaterTripsWithoutPredictions is false when all schedules are predicted`() {
+        val fixture = LaterTripsFixture()
+        assertFalse(
+            fixture.hasLaterTripsWithoutPredictions(fixture.predicted(5), fixture.predicted(10)),
+        )
+    }
+
+    @Test
+    fun `hasLaterTripsWithoutPredictions is false when a later added trip is predicted`() {
+        val fixture = LaterTripsFixture()
+        assertFalse(
+            fixture.hasLaterTripsWithoutPredictions(
+                fixture.predicted(5),
+                fixture.scheduled(20),
+                fixture.predicted(25, withSchedule = false),
+            ),
+        )
+    }
+
+    @Test
+    fun `hasLaterTripsWithoutPredictions ignores arrival only schedules`() {
+        val fixture = LaterTripsFixture()
+        assertFalse(
+            fixture.hasLaterTripsWithoutPredictions(
+                fixture.predicted(5),
+                fixture.scheduled(20, departs = false),
+            ),
+        )
+    }
+
+    @Test
+    fun `hasLaterTripsWithoutPredictions ignores later schedules with non-stopping predictions`() {
+        val fixture = LaterTripsFixture()
+        val cancelledTrip = fixture.objects.trip { routeId = fixture.route.id.idText }
+        val cancelled =
+            fixture.objects.upcomingTrip(
+                fixture.objects.schedule {
+                    trip = cancelledTrip
+                    stopId = fixture.stop.id
+                    departureTime = fixture.now + 20.minutes
+                },
+                fixture.objects.prediction {
+                    trip = cancelledTrip
+                    stopId = fixture.stop.id
+                    scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+                },
+            )
+        assertFalse(fixture.hasLaterTripsWithoutPredictions(fixture.predicted(5), cancelled))
+    }
+
+    @Test
+    fun `hasLaterTripsWithoutPredictions is false when there are no tiles`() {
+        val fixture = LaterTripsFixture()
+        assertFalse(fixture.hasLaterTripsWithoutPredictions(fixture.scheduled(20)))
+    }
+
+    @Test
+    fun `hasLaterTripsWithoutPredictions is false for modes that show schedules`() {
+        val fixture = LaterTripsFixture("CR-Worcester", RouteType.COMMUTER_RAIL)
+        assertFalse(
+            fixture.hasLaterTripsWithoutPredictions(fixture.predicted(5), fixture.scheduled(20)),
+        )
     }
 }

@@ -18,9 +18,9 @@ struct NextScheduleKeys: Equatable {
 struct StopDetailsFilteredDepartureDetails: View {
     @ObserveInjection var inject
     var stopId: String
-    var stopFilter: StopDetailsFilter
+    var routeStopFilter: RouteStopFilter
     var tripFilter: TripDetailsFilter?
-    var setStopFilter: (StopDetailsFilter?) -> Void
+    var setRouteStopFilter: (RouteStopFilter) -> Void
     var setTripFilter: (TripDetailsFilter?) -> Void
 
     var leaf: RouteCardData.Leaf
@@ -34,7 +34,7 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     var errorBannerVM: IErrorBannerViewModel
     var mapVM: IMapViewModel
-    var stopDetailsVM: IStopDetailsViewModel
+    var stopCentricVM: IStopCentricViewModel
     var schedulesRepository: ISchedulesRepository
 
     @ObservedObject var navManager: NavigationManager
@@ -53,6 +53,8 @@ struct StopDetailsFilteredDepartureDetails: View {
     var tiles: [TileData] { leafFormat.tileData(directionDestination: selectedDirection.destination) }
     var noPredictionsStatus: UpcomingFormat.NoTripsFormat? { leafFormat.noPredictionsStatus() }
     var isAllServiceDisrupted: Bool { leafFormat.isAllServiceDisrupted }
+    var showPredictionsNotAvailableYet: Bool { leaf.hasLaterTripsWithoutPredictions(tiles: tiles) }
+    @State var predictionsNotAvailableYetSelected = false
 
     var patternsHere: [RoutePattern] { leaf.routePatterns }
     var displayAlerts: Shared.DisplayAlerts {
@@ -78,12 +80,13 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     @AccessibilityFocusState private var selectedDepartureFocus: String?
     private let cardFocusId = "_card"
+    private let predictionsNotAvailableYetTileId = "_predictionsNotAvailableYet"
 
     init(
         stopId: String,
-        stopFilter: StopDetailsFilter,
+        routeStopFilter: RouteStopFilter,
         tripFilter: TripDetailsFilter?,
-        setStopFilter: @escaping (StopDetailsFilter?) -> Void,
+        setRouteStopFilter: @escaping (RouteStopFilter) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
         leaf: RouteCardData.Leaf,
         selectedDirection: Direction,
@@ -91,14 +94,14 @@ struct StopDetailsFilteredDepartureDetails: View {
         now: EasternTimeInstant,
         errorBannerVM: IErrorBannerViewModel,
         mapVM: IMapViewModel,
-        stopDetailsVM: IStopDetailsViewModel,
+        stopCentricVM: IStopCentricViewModel,
         schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
         navManager: NavigationManager,
     ) {
         self.stopId = stopId
-        self.stopFilter = stopFilter
+        self.routeStopFilter = routeStopFilter
         self.tripFilter = tripFilter
-        self.setStopFilter = setStopFilter
+        self.setRouteStopFilter = setRouteStopFilter
         self.setTripFilter = setTripFilter
         self.leaf = leaf
         self.selectedDirection = selectedDirection
@@ -106,7 +109,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         self.now = now
         self.errorBannerVM = errorBannerVM
         self.mapVM = mapVM
-        self.stopDetailsVM = stopDetailsVM
+        self.stopCentricVM = stopCentricVM
         self.schedulesRepository = schedulesRepository
         self.navManager = navManager
     }
@@ -143,6 +146,18 @@ struct StopDetailsFilteredDepartureDetails: View {
                 )
                 .accessibilityHeading(.h3)
                 .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
+            } else if predictionsNotAvailableYetSelected {
+                StopDetailsIconCard(
+                    accentColor: routeAccents.color,
+                    details: Text(
+                        "We don’t have predictions for later trips yet, but they’ll appear here closer to the time of service.",
+                        comment: "Explanation for the predictions not available yet card on stop details"
+                    ),
+                    header: Text("Predictions not\navailable yet"),
+                    icon: Image(.liveDataSlash),
+                    iconPadding: 3
+                )
+                .accessibilityHeading(.h4)
             } else if selectedTripIsCancelled {
                 StopDetailsIconCard(
                     accentColor: routeAccents.color,
@@ -159,11 +174,11 @@ struct StopDetailsFilteredDepartureDetails: View {
                 .accessibilityHeading(.h4)
             } else {
                 let tripPageFilter: TripDetailsPageFilter? = if let tripFilter {
-                    .init(stopId: stopId, stopFilter: stopFilter, tripFilter: tripFilter)
+                    .init(stopId: stopId, routeStopFilter: routeStopFilter, tripFilter: tripFilter)
                 } else { nil }
                 TripDetailsView(
                     tripFilter: tripPageFilter,
-                    context: .stopDetails,
+                    context: .routeStop,
                     now: now,
                     routeAccents: routeAccents,
                     onOpenAlertDetails: { alert in getAlertDetailsHandler(alert.id, spec: .downstream) },
@@ -175,7 +190,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
         .global(
             $global,
-            errorKey: .companion.fromSheetTypes(sheetTypes: [.stopDetails], id: "StopDetailsFilteredDepartureDetails")
+            errorKey: .companion.fromSheetTypes(sheetTypes: [.routeStop], id: "StopDetailsFilteredDepartureDetails")
         )
         .onAppear {
             setViewportToStop()
@@ -189,6 +204,8 @@ struct StopDetailsFilteredDepartureDetails: View {
             loadNextScheduleForStatus(keys.noPredictionStatus, keys.selectedDirection)
         }
         .onChange(of: selectedTripIsCancelled) { if $0 { setViewportToStop() } }
+        .onChange(of: routeStopFilter) { _ in predictionsNotAvailableYetSelected = false }
+        .onChange(of: showPredictionsNotAvailableYet) { _ in predictionsNotAvailableYetSelected = false }
         .onChange(of: tripFilter) { tripFilter in
             selectedDepartureFocus = tiles.first { $0.isSelected(tripFilter: tripFilter) }?.id ?? cardFocusId
         }
@@ -230,6 +247,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                     DepartureTile(
                         data: tileData,
                         onTap: {
+                            predictionsNotAvailableYetSelected = false
                             navManager.navigationStack.lastTripDetailsFilter = .init(
                                 tripId: tileData.upcoming.trip.id,
                                 vehicleId: tileData.upcoming.prediction?.vehicleId,
@@ -247,9 +265,21 @@ struct StopDetailsFilteredDepartureDetails: View {
                             view.scrollTo(tileData.id)
                         },
                         pillDecoration: pillDecoration(tileData: tileData),
-                        isSelected: tileData.isSelected(tripFilter: tripFilter)
+                        isSelected: !predictionsNotAvailableYetSelected && tileData.isSelected(tripFilter: tripFilter)
                     )
                     .accessibilityFocused($selectedDepartureFocus, equals: tileData.id)
+                    .padding(.horizontal, 4)
+                }
+                if showPredictionsNotAvailableYet {
+                    PredictionsNotAvailableYetTile(
+                        onTap: {
+                            predictionsNotAvailableYetSelected = true
+                            view.scrollTo(predictionsNotAvailableYetTileId)
+                        },
+                        isSelected: predictionsNotAvailableYetSelected
+                    )
+                    .id(predictionsNotAvailableYetTileId)
+                    .accessibilityFocused($selectedDepartureFocus, equals: predictionsNotAvailableYetTileId)
                     .padding(.horizontal, 4)
                 }
             }

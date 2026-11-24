@@ -11,7 +11,7 @@ import Shared
 import SwiftUI
 
 enum TripHeaderSpec {
-    case finishingAnotherTrip
+    case finishingAnotherTrip(Vehicle)
     case noVehicle
     case scheduled(Stop, TripDetailsStopList.Entry)
     case vehicle(Vehicle, Stop, TripDetailsStopList.Entry?, Bool)
@@ -227,7 +227,7 @@ struct TripHeaderCard: View {
 
     @ViewBuilder private var description: some View {
         switch spec {
-        case .finishingAnotherTrip: finishingAnotherTripDescription
+        case let .finishingAnotherTrip(vehicle): finishingAnotherTripDescription(vehicle)
         case .noVehicle: noVehicleDescription
         case let .scheduled(_, stopEntry): scheduleDescription(stopEntry)
         case let .vehicle(vehicle, stop, stopEntry, atTerminal): vehicleDescription(
@@ -239,8 +239,18 @@ struct TripHeaderCard: View {
         }
     }
 
-    @ViewBuilder private var finishingAnotherTripDescription: some View {
-        Text("Finishing another trip").font(Typography.footnote)
+    @ViewBuilder private func finishingAnotherTripDescription(_ vehicle: Vehicle) -> some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 0) {
+                vehicleLabel(vehicle)
+                Text("Finishing another trip").font(Typography.footnote)
+            }
+            .fixedSize(horizontal: true, vertical: false)
+            VStack(alignment: .leading) {
+                vehicleLabel(vehicle)
+                Text("Finishing another trip").font(Typography.footnote)
+            }
+        }
     }
 
     @ViewBuilder private var noVehicleDescription: some View {
@@ -252,15 +262,17 @@ struct TripHeaderCard: View {
     ) -> some View {
         if let stopEntry {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Scheduled to depart").font(Typography.footnote)
-                Text(stopEntry.stop.name)
-                    .font(Typography.headlineBold)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Scheduled to depart").font(Typography.footnote)
+                    Text(stopEntry.stop.name)
+                        .font(Typography.headlineBold)
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(scheduleDescriptionAccessibilityText(stopEntry))
                 if let track = stopEntry.trackNumber, targeted {
                     TrackNumber(track: track)
                 }
             }
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel(scheduleDescriptionAccessibilityText(stopEntry))
             .tappableWhenAction(onTrackChangeTap, hint: moreInformationHint)
         }
     }
@@ -289,20 +301,44 @@ struct TripHeaderCard: View {
         if vehicle.tripId == trip.id {
             VStack(alignment: .leading, spacing: 2) {
                 VStack(alignment: .leading, spacing: 4) {
-                    vehicleStatusDescription(vehicle.currentStatus, atTerminal)
-                        .font(Typography.footnote)
-                    Text(stop.name)
-                        .font(Typography.headlineBold)
+                    VStack(alignment: .leading, spacing: 4) {
+                        ViewThatFits(in: .horizontal) {
+                            HStack(spacing: 0) {
+                                vehicleLabel(vehicle)
+                                vehicleStatusDescription(vehicle.currentStatus, atTerminal)
+                                    .font(Typography.footnote)
+                            }
+                            VStack(alignment: .leading) {
+                                vehicleLabel(vehicle)
+                                vehicleStatusDescription(vehicle.currentStatus, atTerminal)
+                                    .font(Typography.footnote)
+                            }
+                        }
+                        Text(stop.name)
+                            .font(Typography.headlineBold)
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(vehicleDescriptionAccessibilityText(vehicle, stop, atTerminal))
+
                     if let track = entry?.trackNumber, targeted {
                         TrackNumber(track: track)
                     }
                 }
-                .accessibilityElement(children: .combine)
-                .accessibilityLabel(vehicleDescriptionAccessibilityText(vehicle, stop, atTerminal))
                 .tappableWhenAction(onTrackChangeTap, hint: moreInformationHint)
                 vehicleCrowding
             }
             .accessibilityElement(children: .combine)
+        }
+    }
+
+    @ViewBuilder private func vehicleLabel(_ vehicle: Vehicle) -> some View {
+        if routeAccents.type == .ferry, let label = vehicle.label {
+            HStack(spacing: 0) {
+                Text(label)
+                    .font(Typography.footnoteItalic)
+                Text(verbatim: " • ")
+                    .font(Typography.footnoteItalic)
+            }
         }
     }
 
@@ -525,6 +561,7 @@ struct TripVehicleCard_Previews: PreviewProvider {
             currentStatus: __Bridge__Vehicle_CurrentStatus.inTransitTo,
             currentStopSequence: 30,
             directionId: 1,
+            label: "1234",
             latitude: 0.0,
             longitude: 0.0,
             occupancyStatus: .noDataAvailable,

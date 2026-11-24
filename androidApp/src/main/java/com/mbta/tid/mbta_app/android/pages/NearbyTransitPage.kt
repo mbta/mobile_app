@@ -22,7 +22,7 @@ import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.android.util.managedTargetLocation
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.android.util.toPosition
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.INearbyViewModel
@@ -31,7 +31,7 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 fun NearbyTransitPage(
     nearbyTransit: NearbyTransit,
-    onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
+    onOpenRouteStop: (String, RouteStopFilter) -> Unit,
     openSearch: () -> Unit,
     nearbyViewModel: INearbyViewModel,
     errorBannerViewModel: IErrorBannerViewModel,
@@ -104,7 +104,7 @@ fun NearbyTransitPage(
             global = globalResponse,
             now = now,
             isFavorite = { rsd -> (favorites?.keys ?: emptySet()).contains(rsd) },
-            onOpenStopDetails = onOpenStopDetails,
+            onOpenRouteStop = onOpenRouteStop,
         )
     }
 }

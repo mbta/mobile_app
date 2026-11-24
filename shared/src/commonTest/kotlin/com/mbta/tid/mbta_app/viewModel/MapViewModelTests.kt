@@ -10,8 +10,8 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.SegmentAlertState
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.Vehicle
@@ -130,8 +130,8 @@ internal class MapViewModelTests : KoinTest {
             viewModel.navChanged(SheetRoutes.NearbyTransit)
             assertEquals(MapViewModel.State(MapViewModel.LayerState.Overview, false), awaitItem())
             val stop = TestData.stops["70113"]!!
-            val stopDetails = SheetRoutes.StopDetails(stop.id, null, null)
-            viewModel.navChanged(stopDetails)
+            val stopOverview = SheetRoutes.StopOverview(stop.id)
+            viewModel.navChanged(stopOverview)
             assertEquals(
                 MapViewModel.State(MapViewModel.LayerState.StopSelected(stop, null), false),
                 awaitItem(),
@@ -141,16 +141,16 @@ internal class MapViewModelTests : KoinTest {
             delay(10)
             assertEquals(1, timesRestoreViewportCalled)
             assertEquals(1, timesSaveViewportCalled)
-            val stopFilter = StopDetailsFilter(Route.Id(""), 0)
+            val routeStopFilter = RouteStopFilter(Route.Id(""), 0)
             val tripFilter = TripDetailsFilter("", "", 0)
             viewModel.navChanged(
-                SheetRoutes.TripDetails(TripDetailsPageFilter("", stopFilter, tripFilter)),
+                SheetRoutes.TripDetails(TripDetailsPageFilter("", routeStopFilter, tripFilter)),
             )
             assertEquals(
                 MapViewModel.State(
                     MapViewModel.LayerState.TripSelected(
                         null,
-                        stopFilter,
+                        routeStopFilter,
                         tripFilter,
                         null,
                         null,
@@ -386,7 +386,7 @@ internal class MapViewModelTests : KoinTest {
             currentStopSequence = 4
         }
         val tripFilter = TripDetailsFilter("trip", vehicle.id, 5)
-        val stopFilter = StopDetailsFilter(Route.Id("Green-B"), 0)
+        val stopFilter = RouteStopFilter(Route.Id("Green-B"), 0)
         val statesApplied = mutableListOf<MapViewportState>()
         val viewportProvider =
             MockViewportManager(
@@ -472,9 +472,9 @@ internal class MapViewModelTests : KoinTest {
             )
             assertEquals(statesAppliedCount + 1, statesApplied.size)
 
-            // Stop details continues to frame the target even after the vehicle passes it.
+            // Route stop continues to frame the target even after the vehicle passes it.
             viewModel.vehiclesChanged(listOf(passedVehicle))
-            viewModel.navChanged(SheetRoutes.StopDetails(stop.id, stopFilter, tripFilter))
+            viewModel.navChanged(SheetRoutes.RouteStop(stop.id, stopFilter, tripFilter))
             advanceTimeBy(100.milliseconds)
             assertEquals(
                 MapViewportState.VehicleOverview(passedVehicle.position, stop.position, 1f),
@@ -521,7 +521,7 @@ internal class MapViewModelTests : KoinTest {
                 SheetRoutes.TripDetails(
                     TripDetailsPageFilter(
                         stop.id,
-                        StopDetailsFilter(Route.Id("Green-B"), 0),
+                        RouteStopFilter(Route.Id("Green-B"), 0),
                         TripDetailsFilter("trip", null, 5),
                     ),
                 ),
@@ -537,7 +537,7 @@ internal class MapViewModelTests : KoinTest {
 
     @Test
     @Ignore // TODO: Address flakiness
-    fun whenInStopDetailsNotResetToAllRailOnAlertChange() = runTest {
+    fun whenInStopOverviewNotResetToAllRailOnAlertChange() = runTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
         setUpKoin(dispatcher)
 
@@ -569,7 +569,7 @@ internal class MapViewModelTests : KoinTest {
         viewModel.setViewportManager(viewportProvider)
         viewModel.layerManagerInitialized(layerManger)
         viewModel.densityChanged(1f)
-        viewModel.navChanged(SheetRoutes.StopDetails(chestnutHill.id, null, null))
+        viewModel.navChanged(SheetRoutes.StopOverview(chestnutHill.id))
         advanceUntilIdle()
 
         testViewModelFlow(viewModel).test {
@@ -649,7 +649,7 @@ internal class MapViewModelTests : KoinTest {
         viewModel.setViewportManager(viewportProvider)
         viewModel.layerManagerInitialized(layerManger)
         viewModel.densityChanged(1f)
-        viewModel.navChanged(SheetRoutes.StopDetails(chestnutHill.id, null, null))
+        viewModel.navChanged(SheetRoutes.StopOverview(chestnutHill.id))
         advanceUntilIdle()
 
         testViewModelFlow(viewModel).test {

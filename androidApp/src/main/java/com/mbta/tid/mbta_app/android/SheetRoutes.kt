@@ -7,7 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.toRoute
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.LineOrRoute
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
@@ -28,7 +28,7 @@ val SheetRoutes.Companion.typeMap
             typeOf<LineOrRoute.Id>() to LineOrRouteIdParameterType,
             typeOf<RouteDetailsContext>() to RouteDetailsContextParameterType,
             typeOf<RoutePickerPath>() to RoutePickerPathParameterType,
-            typeOf<StopDetailsFilter?>() to StopFilterParameterType,
+            typeOf<RouteStopFilter>() to RouteStopFilterParameterType,
             typeOf<TripDetailsFilter?>() to TripFilterParameterType,
             typeOf<TripDetailsPageFilter>() to TripPageFilterParameterType,
         )
@@ -38,8 +38,10 @@ fun SheetRoutes.Companion.fromNavBackStackEntry(backStackEntry: NavBackStackEntr
         backStackEntry.toRoute<SheetRoutes.EditFavorites>()
     } else if (backStackEntry.destination.route?.contains("Favorites") == true) {
         backStackEntry.toRoute<SheetRoutes.Favorites>()
-    } else if (backStackEntry.destination.route?.contains("StopDetails") == true) {
-        backStackEntry.toRoute<SheetRoutes.StopDetails>()
+    } else if (backStackEntry.destination.route?.contains("StopOverview") == true) {
+        backStackEntry.toRoute<SheetRoutes.StopOverview>()
+    } else if (backStackEntry.destination.route?.contains("RouteStop") == true) {
+        backStackEntry.toRoute<SheetRoutes.RouteStop>()
     } else if (backStackEntry.destination.route?.contains("RouteDetails") == true) {
         backStackEntry.toRoute<SheetRoutes.RouteDetails>()
     } else if (backStackEntry.destination.route?.contains("RoutePicker") == true) {
@@ -72,6 +74,6 @@ val RouteDetailsContextParameterType =
     jsonNavType<RouteDetailsContext>(default = RouteDetailsContext.Details)
 
 val RoutePickerPathParameterType = jsonNavType<RoutePickerPath>(default = RoutePickerPath.Root)
-val StopFilterParameterType = jsonNavType<StopDetailsFilter?>()
+val RouteStopFilterParameterType = jsonNavType<RouteStopFilter>()
 val TripFilterParameterType = jsonNavType<TripDetailsFilter?>()
 val TripPageFilterParameterType = jsonNavType<TripDetailsPageFilter>()

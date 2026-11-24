@@ -33,11 +33,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.stopDetails.AlertCard
-import com.mbta.tid.mbta_app.android.stopDetails.StopDot
-import com.mbta.tid.mbta_app.android.stopDetails.StopIconDot
-import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
+import com.mbta.tid.mbta_app.android.util.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.DestinationPredictionBalance
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer

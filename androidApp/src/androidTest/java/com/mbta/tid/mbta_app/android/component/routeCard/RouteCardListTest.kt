@@ -178,7 +178,7 @@ class RouteCardListTest : KoinTest {
                     global = globalResponse,
                     now = EasternTimeInstant.now(),
                     isFavorite = { false },
-                    onOpenStopDetails = { _, _ -> },
+                    onOpenRouteStop = { _, _ -> },
                 )
             }
         }
@@ -206,7 +206,7 @@ class RouteCardListTest : KoinTest {
                     global = globalResponse,
                     now = EasternTimeInstant.now(),
                     isFavorite = { false },
-                    onOpenStopDetails = { _, _ -> },
+                    onOpenRouteStop = { _, _ -> },
                 )
             }
         }
@@ -220,7 +220,7 @@ class RouteCardListTest : KoinTest {
 
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun testOpenStopDetails(): Unit = runBlocking {
+    fun testOpenRouteStop(): Unit = runBlocking {
         val routeCardData =
             RouteCardData.routeCardsForStopList(
                 listOf(sampleStop.id),
@@ -242,7 +242,7 @@ class RouteCardListTest : KoinTest {
                     global = globalResponse,
                     now = EasternTimeInstant.now(),
                     isFavorite = { false },
-                    onOpenStopDetails = { stopId, _ -> clickedStopId = stopId },
+                    onOpenRouteStop = { stopId, _ -> clickedStopId = stopId },
                 )
             }
         }

@@ -82,7 +82,7 @@ class RouteCardTest {
     }
 
     @Test
-    fun testStopDetailsCard() {
+    fun testHideStopHeader() {
         val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}

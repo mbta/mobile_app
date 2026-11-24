@@ -307,6 +307,14 @@
     <string name="policy_change_sentence_case">Chanjman règleman</string>
     <string name="power_problem">Pwoblèm Kouran</string>
     <string name="power_problem_lowercase">pwoblèm kouran</string>
+    <!-- Label for a departure tile shown after the last predicted trip when later trips are scheduled, or an informational header on an explainer card.
+    The line break is intentional, the tile is sized to fit the longest line, so please put the break where it gives two lines of roughly similar length (ideally towards the middle).
+    Please keep it to two (or one) lines, since the tile is only a little taller than that. -->
+    <string name="predictions_not_available_yet">Prediksyon yo\npoko disponib</string>
+    <!-- Explanation for the predictions not available yet card on stop details -->
+    <string name="predictions_not_available_yet_details">Nou poko gen prediksyon pou vwayaj pita yo, men y ap parèt isit la lè lè sèvis la ap pwoche.</string>
+    <!-- Screen reader hint for tapping the predictions not available yet tile in stop details -->
+    <string name="predictions_not_available_yet_on_click_label">montre plis enfòmasyon sou vwayaj ki vin apre yo</string>
     <string name="predictions_unavailable_details">Sèvis la ap fonksyone, men prediksyon lè arive yo pa disponib. Verifye kat la pou wè ki kote %1$s yo ye kounye a.</string>
     <string name="predictions_unavailable_details_hide_maps">Sèvis la ap fonksyone, men prediksyon lè arive yo pa disponib.</string>
     <string name="presence_of_whales">Prezans Balèn</string>

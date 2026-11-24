@@ -154,7 +154,7 @@ constructor(
             now,
             route.type,
             context,
-            route.type.isSubway() || route.id in silverRoutes,
+            route.hidesScheduledTimes,
             lastTrip,
         )
 

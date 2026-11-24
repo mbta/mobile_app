@@ -1,0 +1,23 @@
+package com.mbta.tid.mbta_app.model.tripDetailsPage
+
+import com.mbta.tid.mbta_app.model.Trip
+import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
+import com.mbta.tid.mbta_app.model.Vehicle
+import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
+import kotlinx.serialization.Serializable
+
+@Serializable
+public data class TripData(
+    val tripFilter: TripDetailsPageFilter,
+    val trip: Trip?,
+    val tripSchedules: TripSchedulesResponse?,
+    val tripPredictions: PredictionsStreamDataResponse?,
+    val vehicle: Vehicle?,
+) {
+    public val vehicleOnOtherTrip: Boolean =
+        (trip != null && (trip.id != vehicle?.tripId || trip.directionId != vehicle.directionId))
+}
+
+public val TripData?.vehicleOnOtherTrip: Boolean
+    get() = this != null && vehicleOnOtherTrip

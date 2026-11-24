@@ -23,9 +23,9 @@ struct RouteCardDepartures: View {
             ForEach(Array(stopData.data.enumerated()), id: \.element) { index, leaf in
                 let formatted = leaf.format(now: now, globalData: global)
                 SheetNavigationLink(
-                    value: .stopDetails(
+                    value: .routeStop(
                         stopId: stopData.stop.id,
-                        stopFilter: .init(
+                        routeStopFilter: .init(
                             routeId: stopData.lineOrRoute.id,
                             directionId: leaf.direction.id
                         ),

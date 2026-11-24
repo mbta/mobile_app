@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.routes
 
 import com.mbta.tid.mbta_app.model.LineOrRoute
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
@@ -17,10 +17,12 @@ public sealed class SheetRoutes {
 
     @Serializable public data object NearbyTransit : SheetRoutes(), Entrypoint
 
+    @Serializable public data class StopOverview(val stopId: String) : SheetRoutes()
+
     @Serializable
-    public data class StopDetails(
+    public data class RouteStop(
         val stopId: String,
-        val stopFilter: StopDetailsFilter?,
+        val routeStopFilter: RouteStopFilter,
         val tripFilter: TripDetailsFilter?,
     ) : SheetRoutes()
 
@@ -62,7 +64,7 @@ public sealed class SheetRoutes {
     public val vehicleId: String?
         get() =
             when (this) {
-                is StopDetails -> this.tripFilter?.vehicleId
+                is RouteStop -> this.tripFilter?.vehicleId
                 is TripDetails -> this.filter.vehicleId
                 else -> null
             }
@@ -70,7 +72,8 @@ public sealed class SheetRoutes {
     public val hasFloatingBackButton: Boolean
         get() =
             when (this) {
-                is StopDetails,
+                is StopOverview,
+                is RouteStop,
                 is TripDetails -> true
                 is RouteDetails,
                 is EditFavorites,
@@ -86,23 +89,38 @@ public sealed class SheetRoutes {
         }
 
         /**
-         * Whether the page within the nearby transit tab changed. Moving from StopDetails to
-         * StopDetails is only considered a page change if the stopId changed.
+         * Whether the page within the nearby transit tab changed. Moving from
+         * StopOverview/RouteStop to StopOverview/RouteStop is only considered a page change if the
+         * stopId changed.
          */
         internal fun pageChanged(first: SheetRoutes?, second: SheetRoutes?): Boolean {
-            return if (first is StopDetails && second is StopDetails) {
-                first.stopId != second.stopId
+            val firstStopId =
+                when (first) {
+                    is StopOverview -> first.stopId
+                    is RouteStop -> first.stopId
+                    else -> null
+                }
+            val secondStopId =
+                when (second) {
+                    is StopOverview -> second.stopId
+                    is RouteStop -> second.stopId
+                    else -> null
+                }
+            return if (firstStopId != null && secondStopId != null) {
+                firstStopId != secondStopId
             } else {
                 first != second
             }
         }
 
         /**
-         * We want to retain sheet size unless moving into or out of stop details, or between tabs
+         * We want to retain sheet size unless moving into or out of stop overview/route stop, or
+         * between tabs
          */
         internal fun retainSheetSize(first: SheetRoutes?, second: SheetRoutes?): Boolean {
             val transitionSet = setOf(first?.let { it::class }, second?.let { it::class })
-            return !transitionSet.contains(StopDetails::class) &&
+            return !transitionSet.contains(StopOverview::class) &&
+                !transitionSet.contains(RouteStop::class) &&
                 transitionSet != setOf(NearbyTransit::class, Favorites::class) &&
                 transitionSet != setOf(NearbyTransit::class) &&
                 transitionSet != setOf(Favorites::class)

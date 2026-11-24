@@ -71,13 +71,13 @@ final class TripDetailsViewTests: XCTestCase {
                 vehicle: vehicle,
                 routes: [route]
             )]),
-            context: .stopDetails,
+            context: .routeStop,
             awaitingPredictionsAfterBackground: false
         ))
 
         var sut = TripDetailsView(
             tripFilter: tripFilter,
-            context: .stopDetails,
+            context: .routeStop,
             now: now,
             routeAccents: .init(route: route),
             onOpenAlertDetails: { _ in },
@@ -156,13 +156,13 @@ final class TripDetailsViewTests: XCTestCase {
                     routes: [route]
                 ),
             ], startTerminalEntry: firstStopEntry),
-            context: .stopDetails,
+            context: .routeStop,
             awaitingPredictionsAfterBackground: false
         ))
 
         var sut = TripDetailsView(
             tripFilter: tripFilter,
-            context: .stopDetails,
+            context: .routeStop,
             now: now,
             routeAccents: .init(route: route),
             onOpenAlertDetails: { _ in },
@@ -237,13 +237,13 @@ final class TripDetailsViewTests: XCTestCase {
                 vehicle: nil,
                 routes: [route]
             )]),
-            context: .stopDetails,
+            context: .routeStop,
             awaitingPredictionsAfterBackground: false
         ))
 
         var sut = TripDetailsView(
             tripFilter: tripFilter,
-            context: .stopDetails,
+            context: .routeStop,
             now: now,
             routeAccents: .init(route: route),
             onOpenAlertDetails: { _ in },
@@ -295,7 +295,7 @@ final class TripDetailsViewTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let oldNavEntry: SheetNavigationStackEntry = .stopDetails(stopId: "oldStop", stopFilter: nil, tripFilter: nil)
+        let oldNavEntry: SheetNavigationStackEntry = .stopOverview(stopId: "oldStop")
         let navManager = NavigationManager(navigationStack: [oldNavEntry])
 
         let tripFilter = TripDetailsPageFilter(
@@ -336,13 +336,13 @@ final class TripDetailsViewTests: XCTestCase {
                     routes: [route]
                 )
             ]),
-            context: .stopDetails,
+            context: .routeStop,
             awaitingPredictionsAfterBackground: false
         ))
 
         let sut = TripDetailsView(
             tripFilter: tripFilter,
-            context: .stopDetails,
+            context: .routeStop,
             now: now,
             routeAccents: .init(route: route),
             onOpenAlertDetails: { _ in },
@@ -352,11 +352,7 @@ final class TripDetailsViewTests: XCTestCase {
             navManager: navManager,
         )
 
-        let newNavEntry: SheetNavigationStackEntry = .stopDetails(
-            stopId: nextStop.id,
-            stopFilter: nil,
-            tripFilter: nil
-        )
+        let newNavEntry: SheetNavigationStackEntry = .stopOverview(stopId: nextStop.id)
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
         defer { ViewHosting.expel() }
@@ -426,13 +422,13 @@ final class TripDetailsViewTests: XCTestCase {
                 vehicle: vehicle,
                 routes: [route]
             )]),
-            context: .stopDetails,
+            context: .routeStop,
             awaitingPredictionsAfterBackground: false
         ))
 
         var sut = TripDetailsView(
             tripFilter: tripFilter,
-            context: .stopDetails,
+            context: .routeStop,
             now: now,
             routeAccents: .init(route: route),
             onOpenAlertDetails: { _ in },
@@ -509,7 +505,7 @@ final class TripDetailsViewTests: XCTestCase {
                 vehicle: vehicle,
                 routes: [route]
             )]),
-            context: .stopDetails,
+            context: .tripDetails,
             awaitingPredictionsAfterBackground: false
         ))
 
@@ -587,7 +583,7 @@ final class TripDetailsViewTests: XCTestCase {
                 vehicle: vehicle,
                 routes: [route]
             )]),
-            context: .stopDetails,
+            context: .routeStop,
             awaitingPredictionsAfterBackground: false
         ))
 
@@ -665,7 +661,7 @@ final class TripDetailsViewTests: XCTestCase {
                 vehicle: vehicle,
                 routes: [route]
             )]),
-            context: .stopDetails,
+            context: .routeStop,
             awaitingPredictionsAfterBackground: false
         ))
 

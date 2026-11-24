@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.component
 
+import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -7,7 +8,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import kotlin.math.ceil
@@ -17,7 +20,13 @@ import kotlin.math.floor
 // Workaround for that bug, which causes all Text components with line breaks to take up
 // the maximum available width, leaving a bunch of empty whitespace after the string.
 @Composable
-fun TightWrapText(text: String, modifier: Modifier = Modifier, style: TextStyle = TextStyle()) {
+fun TightWrapText(
+    text: AnnotatedString,
+    modifier: Modifier = Modifier,
+    color: Color = Color.Unspecified,
+    inlineContent: Map<String, InlineTextContent> = mapOf(),
+    style: TextStyle = TextStyle(),
+) {
     var textLayoutResult: TextLayoutResult? by remember { mutableStateOf(null) }
     Text(
         text = text,
@@ -44,7 +53,17 @@ fun TightWrapText(text: String, modifier: Modifier = Modifier, style: TextStyle 
                     }
                 }
             },
+        color = color,
         onTextLayout = { textLayoutResult = it },
+        inlineContent = inlineContent,
         style = style,
     )
 }
+
+@Composable
+fun TightWrapText(
+    text: String,
+    modifier: Modifier = Modifier,
+    color: Color = Color.Unspecified,
+    style: TextStyle = TextStyle(),
+) = TightWrapText(AnnotatedString(text), modifier, color, style = style)

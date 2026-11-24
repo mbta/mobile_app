@@ -15,12 +15,12 @@ struct StopDetailsUnfilteredView: View {
     @ObserveInjection var inject
     var stopId: String
 
-    var routeData: StopDetailsViewModel.RouteData?
+    var routeData: StopCentricViewModel.RouteData?
     var favorites: Favorites?
     var global: GlobalResponse?
     var now: EasternTimeInstant
 
-    var setStopFilter: (StopDetailsFilter?) -> Void
+    var setRouteStopFilter: (RouteStopFilter?) -> Void
 
     let navCallbacks: NavigationCallbacks
     var errorBannerVM: IErrorBannerViewModel
@@ -34,11 +34,11 @@ struct StopDetailsUnfilteredView: View {
 
     init(
         stopId: String,
-        routeData: StopDetailsViewModel.RouteData?,
+        routeData: StopCentricViewModel.RouteData?,
         favorites: Favorites?,
         global: GlobalResponse?,
         now: EasternTimeInstant,
-        setStopFilter: @escaping (StopDetailsFilter?) -> Void,
+        setRouteStopFilter: @escaping (RouteStopFilter?) -> Void,
         navCallbacks: NavigationCallbacks,
         errorBannerVM: IErrorBannerViewModel,
         navManager: NavigationManager,
@@ -48,7 +48,7 @@ struct StopDetailsUnfilteredView: View {
         self.favorites = favorites
         self.global = global
         self.now = now
-        self.setStopFilter = setStopFilter
+        self.setRouteStopFilter = setRouteStopFilter
         self.navCallbacks = navCallbacks
         self.errorBannerVM = errorBannerVM
         self.navManager = navManager
@@ -63,7 +63,7 @@ struct StopDetailsUnfilteredView: View {
     }
 
     var routeCardData: [RouteCardData]? {
-        if case let .unfiltered(data) = onEnum(of: routeData),
+        if case let .stopOverview(data) = onEnum(of: routeData),
            data.filteredWith.stopId == stopId {
             data.routeCards
         } else { nil }
@@ -109,7 +109,7 @@ struct StopDetailsUnfilteredView: View {
                             servedRoutes: servedRoutes,
                             tapRoutePill: tapRoutePill,
                             filter: nil,
-                            setFilter: setStopFilter
+                            setFilter: setRouteStopFilter
                         ).padding(.bottom, 10)
                     }
                 }
@@ -187,7 +187,7 @@ struct StopDetailsUnfilteredView: View {
     }
 
     @ViewBuilder private func loadingBody() -> some View {
-        let placeholderCards = LoadingPlaceholders.shared.stopDetailsRouteCards()
+        let placeholderCards = LoadingPlaceholders.shared.stopOverviewRouteCards()
         VStack(spacing: 0) {
             ForEach(placeholderCards, id: \.id) { card in
                 RouteCard(
@@ -218,6 +218,6 @@ struct StopDetailsUnfilteredView: View {
         let defaultDirectionId = route.stopData.flatMap { stopData in
             stopData.data.map(\.direction.id)
         }.min() ?? 0
-        setStopFilter(.init(routeId: filterId, directionId: defaultDirectionId))
+        setRouteStopFilter(.init(routeId: filterId, directionId: defaultDirectionId))
     }
 }

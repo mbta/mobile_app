@@ -264,7 +264,7 @@ class HomeMapViewTests {
     }
 
     @Test
-    fun testLocationAuthNotShownStopDetails() = runBlocking {
+    fun testLocationAuthNotShownStopOverview() = runBlocking {
         val locationManager = MockLocationDataManager()
         val viewModel =
             MapViewModel(
@@ -291,7 +291,7 @@ class HomeMapViewTests {
                 isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
-                currentNavEntry = SheetRoutes.StopDetails("stopId", null, null),
+                currentNavEntry = SheetRoutes.StopOverview("stopId"),
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
@@ -305,7 +305,7 @@ class HomeMapViewTests {
     }
 
     @Test
-    fun testOverviewNotShownWhenNoPermissionsStopDetails() = runBlocking {
+    fun testOverviewNotShownWhenNoPermissionsStopOverview() = runBlocking {
         val locationManager = MockLocationDataManager()
         val viewModel =
             MapViewModel(
@@ -332,7 +332,7 @@ class HomeMapViewTests {
                 isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
-                currentNavEntry = SheetRoutes.StopDetails("stopId", null, null),
+                currentNavEntry = SheetRoutes.StopOverview("stopId"),
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
@@ -348,7 +348,7 @@ class HomeMapViewTests {
     }
 
     @Test
-    fun testRecenterButtonVisibilityWhenOnStopDetails(): Unit = runBlocking {
+    fun testRecenterButtonVisibilityWhenOnStopOverview(): Unit = runBlocking {
         val locationManager = MockLocationDataManager()
         locationManager.hasPermission = true
 
@@ -378,7 +378,7 @@ class HomeMapViewTests {
                 isTargetingState = isTargetingState,
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
-                currentNavEntry = SheetRoutes.StopDetails(TestData.getStop("121").id, null, null),
+                currentNavEntry = SheetRoutes.StopOverview(TestData.getStop("121").id),
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),

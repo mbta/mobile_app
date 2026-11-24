@@ -11,9 +11,14 @@ import kotlin.reflect.safeCast
 val NavHostController.currentRoute: SheetRoutes?
     get() = this.currentBackStackEntry?.let { SheetRoutes.fromNavBackStackEntry(it) }
 
-/** If the current nav entry is StopDetails, this is the selected stop ID, otherwise null */
+/**
+ * If the current nav entry is StopOverview or RouteStop, this is the selected stop ID, otherwise
+ * null
+ */
 val NavHostController.selectedStopId: String?
-    get() = this.currentRouteAs(SheetRoutes.StopDetails::class)?.stopId
+    get() =
+        this.currentRouteAs(SheetRoutes.StopOverview::class)?.stopId
+            ?: this.currentRouteAs(SheetRoutes.RouteStop::class)?.stopId
 
 /** Return the current stack entry as the provided type if they match, otherwise return null */
 fun <T : SheetRoutes> NavHostController.currentRouteAs(routeType: KClass<T>): T? =

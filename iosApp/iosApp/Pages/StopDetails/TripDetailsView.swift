@@ -163,7 +163,7 @@ struct TripDetailsView: View {
                 }
                 return vehicle.tripId == trip.id
                     ? .vehicle(vehicle, vehicleStop, entry, atTerminal)
-                    : .finishingAnotherTrip
+                    : .finishingAnotherTrip(vehicle)
             } else if stops.stops.contains(where: { entry in entry.prediction != nil }) {
                 return .noVehicle
             } else if let terminalStop, let terminalEntry = stops.startTerminalEntry {
@@ -259,7 +259,7 @@ struct TripDetailsView: View {
         tripDetails(
             .init(
                 stopId: "",
-                stopFilter: .init(routeId: Route.Id(""), directionId: 0),
+                routeStopFilter: .init(routeId: Route.Id(""), directionId: 0),
                 tripFilter: .init(tripId: "", vehicleId: nil, stopSequence: nil, selectionLock: false)
             ),
             placeholderInfo.trip,
@@ -274,11 +274,11 @@ struct TripDetailsView: View {
 
     private func setVehicle(_ vehicle: Vehicle?) {
         let stop = global?.getStop(stopId: navManager.navigationStack.lastStopId)
-        let stopFilter = navManager.navigationStack.lastStopDetailsFilter
+        let routeStopFilter = navManager.navigationStack.lastRouteStopFilter
         let tripDetailsFilter = navManager.navigationStack.lastTripDetailsFilter
         if let tripDetailsFilter {
             mapVM.selectedTrip(
-                stopFilter: stopFilter,
+                routeStopFilter: routeStopFilter,
                 stop: stop,
                 tripFilter: tripDetailsFilter,
                 vehicle: vehicle,
@@ -290,7 +290,7 @@ struct TripDetailsView: View {
     func onTapStop(stop: TripDetailsStopList.Entry) {
         let parentStop = if let global { stop.stop.resolveParent(global: global) }
         else { stop.stop }
-        navManager.appendNavEntry(.stopDetails(stopId: parentStop.id, stopFilter: nil, tripFilter: nil))
+        navManager.appendNavEntry(.stopOverview(stopId: parentStop.id))
         analytics.tappedDownstreamStop(
             routeId: tripDetailsVMState?.tripData?.trip?.routeId,
             stopId: stop.stop.id,

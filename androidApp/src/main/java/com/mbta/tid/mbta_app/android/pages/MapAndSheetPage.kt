@@ -88,8 +88,9 @@ import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
-import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
+import com.mbta.tid.mbta_app.model.RouteStopFilter
+import com.mbta.tid.mbta_app.model.RouteStopPageFilters
+import com.mbta.tid.mbta_app.model.StopOverviewPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.Vehicle
@@ -107,7 +108,7 @@ import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.INearbyViewModel
 import com.mbta.tid.mbta_app.viewModel.IRouteCardDataViewModel
-import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
+import com.mbta.tid.mbta_app.viewModel.IStopCentricViewModel
 import com.mbta.tid.mbta_app.viewModel.ITripDetailsViewModel
 import com.mbta.tid.mbta_app.viewModel.TripDetailsViewModel
 import kotlin.time.Clock
@@ -154,7 +155,7 @@ fun MapAndSheetPage(
     favoritesViewModel: IFavoritesViewModel = koinInject(),
     nearbyViewModel: INearbyViewModel = koinInject(),
     routeCardDataViewModel: IRouteCardDataViewModel = koinInject(),
-    stopDetailsViewModel: IStopDetailsViewModel = koinInject(),
+    stopCentricViewModel: IStopCentricViewModel = koinInject(),
     tripDetailsViewModel: ITripDetailsViewModel = koinInject(),
     mapboxConfigManager: IMapboxConfigManager = koinInject(),
 ) {
@@ -186,8 +187,8 @@ fun MapAndSheetPage(
     val tileScrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
 
-    fun updateStopDetailsFilters(filters: StopDetailsPageFilters) {
-        nearbyTabViewModel.setStopDetailsFilters(
+    fun updateRouteStopFilters(filters: RouteStopPageFilters) {
+        nearbyTabViewModel.setRouteStopFilters(
             currentNavEntry,
             filters,
             { navController.popBackStack() },
@@ -195,8 +196,8 @@ fun MapAndSheetPage(
         )
     }
 
-    fun updateStopFilter(stopId: String, stopFilter: StopDetailsFilter?) {
-        nearbyTabViewModel.setStopFilter(
+    fun updateRouteStopFilter(stopId: String, stopFilter: RouteStopFilter?) {
+        nearbyTabViewModel.setRouteStopFilter(
             currentNavEntry,
             stopId,
             stopFilter,
@@ -227,8 +228,17 @@ fun MapAndSheetPage(
         // modalSheetState.show() is implied by the `if (currentModal != null)`
     }
 
+    val analytics: Analytics = koinInject()
+
     fun openModal(modal: ModalRoutes) {
         openModalWithCloseCallback(modal, {})
+        if (modal is ModalRoutes.AlertDetails) {
+            analytics.tappedAlertDetails(
+                routeId = modal.lineId ?: modal.routeIds?.firstOrNull(),
+                stopId = modal.stopId ?: "",
+                alertId = modal.alertId,
+            )
+        }
     }
 
     fun closeModal() {
@@ -243,22 +253,22 @@ fun MapAndSheetPage(
             }
     }
 
-    val filters =
-        (when (currentNavEntry) {
-            is SheetRoutes.StopDetails ->
-                StopDetailsPageFilters(
+    val routeStopFilters =
+        when (currentNavEntry) {
+            is SheetRoutes.RouteStop ->
+                RouteStopPageFilters(
                     currentNavEntry.stopId,
-                    currentNavEntry.stopFilter,
+                    currentNavEntry.routeStopFilter,
                     currentNavEntry.tripFilter,
                 )
             is SheetRoutes.TripDetails ->
-                StopDetailsPageFilters(
+                RouteStopPageFilters(
                     currentNavEntry.filter.stopId,
-                    currentNavEntry.filter.stopFilter,
+                    currentNavEntry.filter.routeStopFilter,
                     currentNavEntry.filter.tripDetailsFilter,
                 )
             else -> null
-        })
+        }
 
     val mapUpdate by tripDetailsViewModel.mapUpdates.collectAsStateWithLifecycle(null)
     LaunchedEffect(mapUpdate) {
@@ -267,7 +277,7 @@ fun MapAndSheetPage(
                 val follow =
                     currentNavEntry is SheetRoutes.TripDetails &&
                         nearbyTransit.viewportProvider.isVehicleOverview
-                filters?.tripFilter?.let {
+                routeStopFilters?.tripFilter?.let {
                     mapViewModel.selectedVehicleUpdated(update.vehicle, follow)
                 }
             }
@@ -286,7 +296,7 @@ fun MapAndSheetPage(
         when (state) {
             is DeepLinkState.Alert -> {
                 state.stopId?.let {
-                    navController.navigate(SheetRoutes.StopDetails(it, null, null))
+                    navController.navigate(SheetRoutes.StopOverview(it))
                 }
                 openModal(state.modalRoute)
             }
@@ -298,35 +308,48 @@ fun MapAndSheetPage(
     }
 
     LaunchedEffect(currentNavEntry) {
+        val (previousStopId, previousFilter) =
+            when (previousNavEntry) {
+                is SheetRoutes.RouteStop ->
+                    Pair(previousNavEntry.stopId, previousNavEntry.routeStopFilter)
+                is SheetRoutes.StopOverview -> Pair(previousNavEntry.stopId, null)
+                else -> Pair(null, null)
+            }
+        val (currentStopId, currentFilter) =
+            when (currentNavEntry) {
+                is SheetRoutes.RouteStop ->
+                    Pair(currentNavEntry.stopId, currentNavEntry.routeStopFilter)
+                is SheetRoutes.StopOverview -> Pair(currentNavEntry.stopId, null)
+                else -> Pair(null, null)
+            }
         if (
-            previousNavEntry is SheetRoutes.StopDetails &&
-                currentNavEntry is SheetRoutes.StopDetails &&
-                (previousNavEntry.stopId != currentNavEntry.stopId ||
-                    previousNavEntry.stopFilter != currentNavEntry.stopFilter)
+            previousStopId != null &&
+                currentStopId != null &&
+                (previousStopId != currentStopId || previousFilter != currentFilter)
         ) {
             tileScrollState.scrollTo(0)
         }
     }
 
-    val filterUpdates by stopDetailsViewModel.filterUpdates.collectAsStateWithLifecycle()
+    val filterUpdates by stopCentricViewModel.filterUpdates.collectAsStateWithLifecycle()
     LaunchedEffect(filterUpdates, navControllerInitialized) {
         // filterUpdates is a StateFlow on a shared view model, so it can replay a value before the
         // NavHost has attached its graph. Defer until the controller is ready rather than drop it.
         if (!navControllerInitialized) return@LaunchedEffect
-        filterUpdates?.let { updateStopDetailsFilters(it) }
+        filterUpdates?.let { updateRouteStopFilters(it) }
     }
 
     val vehiclesData: List<Vehicle> =
         subscribeToVehicles(
             routeDirection =
                 when (currentNavEntry) {
-                    is SheetRoutes.StopDetails -> currentNavEntry.stopFilter
-                    is SheetRoutes.TripDetails -> currentNavEntry.filter.stopFilter
+                    is SheetRoutes.RouteStop -> currentNavEntry.routeStopFilter
+                    is SheetRoutes.TripDetails -> currentNavEntry.filter.routeStopFilter
                     else -> null
                 },
             errorKey =
                 ErrorKey(
-                    setOf(SheetRoutes.TripDetails::class, SheetRoutes.StopDetails::class),
+                    setOf(SheetRoutes.TripDetails::class, SheetRoutes.RouteStop::class),
                     "VehiclesViewModel.subscribeToVehicles",
                 ),
         )
@@ -337,8 +360,6 @@ fun MapAndSheetPage(
     val searchFocusRequester = remember { FocusRequester() }
 
     fun openSearch() = searchFocusRequester.requestFocus()
-
-    val analytics: Analytics = koinInject()
 
     val navCallbacks =
         NavigationCallbacks(
@@ -394,7 +415,7 @@ fun MapAndSheetPage(
         if (navController.selectedStopId == stopId) return
 
         updateVisitHistory(stopId)
-        navController.navigate(SheetRoutes.StopDetails(stopId, null, null)) {
+        navController.navigate(SheetRoutes.StopOverview(stopId)) {
             popUpTo(SheetRoutes.NearbyTransit)
         }
     }
@@ -439,23 +460,22 @@ fun MapAndSheetPage(
     fun handleVehicleTap(vehicle: Vehicle) {
         val tripId = vehicle.tripId ?: return
         val routeCardData = routeCardDataState.data
-        val (stopId, stopFilter, tripFilter) =
+        val (stopId, routeStopFilter, tripFilter) =
             when (currentNavEntry) {
-                is SheetRoutes.StopDetails ->
+                is SheetRoutes.RouteStop ->
                     Triple(
                         currentNavEntry.stopId,
-                        currentNavEntry.stopFilter,
+                        currentNavEntry.routeStopFilter,
                         currentNavEntry.tripFilter,
                     )
                 is SheetRoutes.TripDetails ->
                     Triple(
                         currentNavEntry.filter.stopId,
-                        currentNavEntry.filter.stopFilter,
+                        currentNavEntry.filter.routeStopFilter,
                         currentNavEntry.filter.tripDetailsFilter,
                     )
                 else -> null
             } ?: return
-        if (stopFilter == null) return
 
         val routeCard = routeCardData?.find { it.lineOrRoute.containsRoute(vehicle.routeId) }
         val upcoming =
@@ -472,8 +492,8 @@ fun MapAndSheetPage(
         handleTripDetailsNavigation(
             tripId = tripId,
             vehicleId = vehicle.id,
-            routeId = vehicle.routeId ?: routeId ?: stopFilter.routeId as? Route.Id ?: return,
-            directionId = stopFilter.directionId,
+            routeId = vehicle.routeId ?: routeId ?: routeStopFilter.routeId as? Route.Id ?: return,
+            directionId = routeStopFilter.directionId,
             stopId = stopId,
             stopSequence = tripFilter?.stopSequence,
         )
@@ -565,7 +585,7 @@ fun MapAndSheetPage(
                         global = null,
                         now = now,
                         isFavorite = { false },
-                        onOpenStopDetails = { _, _ -> },
+                        onOpenRouteStop = { _, _ -> },
                     )
                 }
             }
@@ -603,29 +623,50 @@ fun MapAndSheetPage(
     }
 
     @Composable
-    fun StopDetailsSheetContents(backStackEntry: NavBackStackEntry) {
-        val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
-        val filters =
-            StopDetailsPageFilters(navRoute.stopId, navRoute.stopFilter, navRoute.tripFilter)
+    fun StopOverviewSheetContents(backStackEntry: NavBackStackEntry) {
+        val navRoute: SheetRoutes.StopOverview = backStackEntry.toRoute()
+        val filters = StopOverviewPageFilters(navRoute.stopId)
 
         LaunchedEffect(navRoute) {
             if (navBarVisible) {
                 hideNavBar()
             }
-            if (filters.stopFilter != null) {
-                analytics.track(AnalyticsScreen.StopDetailsFiltered)
-            } else {
-                analytics.track(AnalyticsScreen.StopDetailsUnfiltered)
-            }
+            analytics.track(AnalyticsScreen.StopOverview)
         }
 
         SheetPage(colorResource(R.color.fill2)) {
-            StopDetailsPage(
+            StopOverviewPage(
                 modifier = modifier,
                 filters = filters,
                 allAlerts = nearbyTransit.alertData,
                 navCallbacks = navCallbacks,
-                updateStopFilter = { updateStopFilter(navRoute.stopId, it) },
+                updateRouteStopFilter = { updateRouteStopFilter(navRoute.stopId, it) },
+                openModal = ::openModal,
+                errorBannerViewModel = errorBannerViewModel,
+            )
+        }
+    }
+
+    @Composable
+    fun RouteStopSheetContents(backStackEntry: NavBackStackEntry) {
+        val navRoute: SheetRoutes.RouteStop = backStackEntry.toRoute()
+        val filters =
+            RouteStopPageFilters(navRoute.stopId, navRoute.routeStopFilter, navRoute.tripFilter)
+
+        LaunchedEffect(navRoute) {
+            if (navBarVisible) {
+                hideNavBar()
+            }
+            analytics.track(AnalyticsScreen.RouteStop)
+        }
+
+        SheetPage(colorResource(R.color.fill2)) {
+            RouteStopPage(
+                modifier = modifier,
+                filters = filters,
+                allAlerts = nearbyTransit.alertData,
+                navCallbacks = navCallbacks,
+                updateRouteStopFilter = { updateRouteStopFilter(navRoute.stopId, it) },
                 updateTripFilter = { updateTripFilter(navRoute.stopId, it) },
                 tileScrollState = tileScrollState,
                 openModal = ::openModal,
@@ -709,7 +750,7 @@ fun MapAndSheetPage(
             RouteDetailsView(
                 selectionId = navRoute.routeId,
                 context = navRoute.context,
-                onOpenStopDetails = ::handleStopNavigation,
+                onOpenStopOverview = ::handleStopNavigation,
                 navCallbacks = navCallbacks,
                 openModal = ::openModal,
                 errorBannerViewModel = errorBannerViewModel,
@@ -727,9 +768,9 @@ fun MapAndSheetPage(
         SheetPage {
             NearbyTransitPage(
                 nearbyTransit,
-                onOpenStopDetails = { stopId, filter ->
+                onOpenRouteStop = { stopId, filter ->
                     updateVisitHistory(stopId)
-                    navController.navigate(SheetRoutes.StopDetails(stopId, filter, null))
+                    navController.navigate(SheetRoutes.RouteStop(stopId, filter, null))
                 },
                 openSearch = ::openSearch,
                 nearbyViewModel = nearbyViewModel,
@@ -746,20 +787,22 @@ fun MapAndSheetPage(
             modifier = modifier,
             enterTransition = {
                 val initialRoute = SheetRoutes.fromNavBackStackEntry(this.initialState)
-                val (initialStopId, initialStopFilter) =
+                val (initialStopId, initialRouteStopFilter) =
                     when (initialRoute) {
-                        is SheetRoutes.StopDetails ->
-                            Pair(initialRoute.stopId, initialRoute.stopFilter)
+                        is SheetRoutes.StopOverview -> Pair(initialRoute.stopId, null)
+                        is SheetRoutes.RouteStop ->
+                            Pair(initialRoute.stopId, initialRoute.routeStopFilter)
 
                         else -> Pair(null, null)
                     }
 
                 val targetRoute = SheetRoutes.fromNavBackStackEntry(this.targetState)
 
-                val (targetStopId, targetStopFilter) =
+                val (targetStopId, targetRouteStopFilter) =
                     when (targetRoute) {
-                        is SheetRoutes.StopDetails ->
-                            Pair(targetRoute.stopId, targetRoute.stopFilter)
+                        is SheetRoutes.StopOverview -> Pair(targetRoute.stopId, null)
+                        is SheetRoutes.RouteStop ->
+                            Pair(targetRoute.stopId, targetRoute.routeStopFilter)
 
                         else -> Pair(null, null)
                     }
@@ -769,7 +812,7 @@ fun MapAndSheetPage(
                     initialStopId != null &&
                         targetStopId != null &&
                         initialStopId == targetStopId &&
-                        initialStopFilter?.routeId == targetStopFilter?.routeId
+                        initialRouteStopFilter?.routeId == targetRouteStopFilter?.routeId
                 ) {
                     EnterTransition.None
                 } else if (initialRoute == targetRoute) {
@@ -793,8 +836,11 @@ fun MapAndSheetPage(
             composable<SheetRoutes.EditFavorites>(typeMap = SheetRoutes.typeMap) {
                 EditFavoritesSheetContents()
             }
-            composable<SheetRoutes.StopDetails>(typeMap = SheetRoutes.typeMap) { backStackEntry ->
-                StopDetailsSheetContents(backStackEntry)
+            composable<SheetRoutes.StopOverview>(typeMap = SheetRoutes.typeMap) { backStackEntry ->
+                StopOverviewSheetContents(backStackEntry)
+            }
+            composable<SheetRoutes.RouteStop>(typeMap = SheetRoutes.typeMap) { backStackEntry ->
+                RouteStopSheetContents(backStackEntry)
             }
             composable<SheetRoutes.TripDetails>(typeMap = SheetRoutes.typeMap) { backStackEntry ->
                 TripDetailsSheetContents(backStackEntry)

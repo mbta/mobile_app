@@ -28,7 +28,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
 
         let sut = StopDetailsFilteredView(
             stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: directionId),
+            routeStopFilter: .init(routeId: route.id, directionId: directionId),
             tripFilter: nil,
             routeData: nil,
             alerts: .init(alerts: [:]),
@@ -36,12 +36,12 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: .init()
         )
 
@@ -129,7 +129,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             hasSchedulesToday: true,
             subwayServiceStartTime: nil,
             alertsDownstream: [],
-            context: .stopDetailsFiltered
+            context: .routeStop
         ), RouteCardData.Leaf(
             lineOrRoute: LineOrRoute.Route(route: route),
             stop: stop,
@@ -142,22 +142,22 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             hasSchedulesToday: true,
             subwayServiceStartTime: nil,
             alertsDownstream: [],
-            context: .stopDetailsFiltered
+            context: .routeStop
         )])
 
-        let routeData = StopDetailsViewModel.RouteDataFiltered(
-            filteredWith: .init(stopId: stop.id, stopFilter: .init(routeId: route.id, directionId: 1),
+        let routeData = StopCentricViewModel.RouteDataRouteStop(
+            filteredWith: .init(stopId: stop.id, routeStopFilter: .init(routeId: route.id, directionId: 1),
                                 tripFilter: nil),
             stopData: stopData
         )
 
-        let stopDetailsVM = MockStopDetailsViewModel(initialState: .init(routeData: routeData,
+        let stopCentricVM = MockStopCentricViewModel(initialState: .init(routeData: routeData,
                                                                          awaitingPredictionsAfterBackground: false))
 
         let sut = StopDetailsFilteredView(
             stopId: stop.id,
             // key piece: directionId here is 1
-            stopFilter: .init(routeId: route.id, directionId: 1),
+            routeStopFilter: .init(routeId: route.id, directionId: 1),
             tripFilter: nil,
             routeData: routeData,
             alerts: .init(alerts: [:]),
@@ -165,12 +165,12 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: stopDetailsVM,
+            stopCentricVM: stopCentricVM,
             navManager: .init()
         )
 
@@ -237,12 +237,12 @@ final class StopDetailsFilteredViewTests: XCTestCase {
 
         let favoritesRepository = MockFavoritesRepository()
 
-        let stopDetailsVM = MockStopDetailsViewModel(initialState: .init(routeData: nil,
+        let stopCentricVM = MockStopCentricViewModel(initialState: .init(routeData: nil,
                                                                          awaitingPredictionsAfterBackground: false))
 
         let sut = StopDetailsFilteredView(
             stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: directionId),
+            routeStopFilter: .init(routeId: route.id, directionId: directionId),
             tripFilter: nil,
             routeData: nil,
             alerts: .init(alerts: [:]),
@@ -250,12 +250,12 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},
-            setStopFilter: { _ in },
+            setRouteStopFilter: { _ in },
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: stopDetailsVM,
+            stopCentricVM: stopCentricVM,
             navManager: .init()
         )
 
@@ -308,7 +308,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             hasSchedulesToday: true,
             subwayServiceStartTime: nil,
             alertsDownstream: [],
-            context: .stopDetailsFiltered
+            context: .routeStop
         ), RouteCardData.Leaf(
             lineOrRoute: LineOrRoute.Route(route: route),
             stop: stop,
@@ -321,26 +321,26 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             hasSchedulesToday: true,
             subwayServiceStartTime: nil,
             alertsDownstream: [],
-            context: .stopDetailsFiltered
+            context: .routeStop
         )])
 
-        let routeData = try StopDetailsViewModel.RouteDataFiltered(
+        let routeData = try StopCentricViewModel.RouteDataRouteStop(
             filteredWith: .init(
                 stopId: stop.id,
-                stopFilter: .init(routeId: XCTUnwrap(route.lineId), directionId: 0),
+                routeStopFilter: .init(routeId: XCTUnwrap(route.lineId), directionId: 0),
                 tripFilter: nil
             ),
             stopData: stopData
         )
 
-        let stopDetailsVM = MockStopDetailsViewModel(initialState: .init(routeData: routeData,
+        let stopCentricVM = MockStopCentricViewModel(initialState: .init(routeData: routeData,
                                                                          awaitingPredictionsAfterBackground: false))
 
-        let setStopFilterExp = XCTestExpectation(description: "setStopFilter called for GL direction 1")
+        let setRouteStopFilterExp = XCTestExpectation(description: "setRouteStopFilter called for GL direction 1")
 
         let sut = try StopDetailsFilteredView(
             stopId: stop.id,
-            stopFilter: .init(routeId: XCTUnwrap(route.lineId), directionId: directionId),
+            routeStopFilter: .init(routeId: XCTUnwrap(route.lineId), directionId: directionId),
             tripFilter: nil,
             routeData: nil,
             alerts: .init(alerts: [:]),
@@ -348,18 +348,18 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},
-            setStopFilter: {
-                filter in if filter?.directionId == 1, filter?.routeId.idText == "line-Green" {
-                    setStopFilterExp.fulfill()
+            setRouteStopFilter: {
+                filter in if filter.directionId == 1, filter.routeId.idText == "line-Green" {
+                    setRouteStopFilterExp.fulfill()
                 } else {
-                    XCTFail("setStopFilter called with wrong params \(filter?.directionId) \(filter?.routeId)")
+                    XCTFail("setRouteStopFilter called with wrong params \(filter.directionId) \(filter.routeId)")
                 }
             },
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
-            stopDetailsVM: stopDetailsVM,
+            stopCentricVM: stopCentricVM,
             navManager: .init()
         )
 
@@ -370,6 +370,6 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             .devDebugMode: false,
         ]))
         defer { ViewHosting.expel() }
-        wait(for: [exp, setStopFilterExp], timeout: 4)
+        wait(for: [exp, setRouteStopFilterExp], timeout: 4)
     }
 }

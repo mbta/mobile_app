@@ -87,7 +87,7 @@ packages:
     exactVersion: 6.0.1
   Firebase:
     url: https://github.com/firebase/firebase-ios-sdk
-    exactVersion: 12.19.2
+    exactVersion: 12.19.3
   Inject:
     url: https://github.com/krzysztofzablocki/Inject.git
     exactVersion: 1.6.0
@@ -105,7 +105,7 @@ packages:
     exactVersion: 8.58.2
   swift-collections:
     url: https://github.com/apple/swift-collections.git
-    exactVersion: 1.7.2
+    exactVersion: 1.7.6
   SwiftPhoenixClient:
     url: https://github.com/davidstump/SwiftPhoenixClient
     exactVersion: 5.3.5

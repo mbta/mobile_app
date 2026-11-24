@@ -37,16 +37,16 @@ final class StopDetailsPageTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let filters = StopDetailsPageFilters(
+        let filters = RouteStopPageFilters(
             stopId: stop.id,
-            stopFilter: .init(
+            routeStopFilter: .init(
                 routeId: route.id,
                 directionId: routePattern.directionId
             ),
             tripFilter: nil
         )
-        let stopDetailsVM = MockStopDetailsViewModel(initialState: .init(
-            routeData: StopDetailsViewModel.RouteDataFiltered(
+        let stopCentricVM = MockStopCentricViewModel(initialState: .init(
+            routeData: StopCentricViewModel.RouteDataRouteStop(
                 filteredWith: filters,
                 stopData: .init(
                     route: route,
@@ -63,7 +63,7 @@ final class StopDetailsPageTests: XCTestCase {
                         hasSchedulesToday: true,
                         subwayServiceStartTime: nil,
                         alertsDownstream: [],
-                        context: .stopDetailsFiltered
+                        context: .routeStop
                     )]
                 )
             ),
@@ -77,7 +77,7 @@ final class StopDetailsPageTests: XCTestCase {
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
             routeCardDataVM: MockRouteCardDataViewModel(),
-            stopDetailsVM: stopDetailsVM,
+            stopCentricVM: stopCentricVM,
             navManager: .init(),
             viewportProvider: viewportProvider
         )
@@ -95,17 +95,13 @@ final class StopDetailsPageTests: XCTestCase {
         let closeExp = expectation(description: "close button pressed")
 
         let sut = StopDetailsPage(
-            filters: .init(
-                stopId: stop.id,
-                stopFilter: nil,
-                tripFilter: nil
-            ),
+            filters: StopOverviewPageFilters(stopId: stop.id),
             navCallbacks: .init(onBack: nil, onClose: { closeExp.fulfill() }, backButtonPresentation: .floating),
             alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
             routeCardDataVM: MockRouteCardDataViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
             navManager: .init(),
             viewportProvider: .init()
         ).withFixedSettings([:])
@@ -120,13 +116,13 @@ final class StopDetailsPageTests: XCTestCase {
         let stop = objects.stop { _ in }
 
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
-        let stopFilter: StopDetailsFilter? = .init(routeId: route.id, directionId: 0)
+        let routeStopFilter: RouteStopFilter = .init(routeId: route.id, directionId: 0)
         let joinExpectation = expectation(description: "joins predictions")
         joinExpectation.expectedFulfillmentCount = 2
         let leaveExpectation = expectation(description: "leaves predictions")
 
-        let stopDetailsVM = MockStopDetailsViewModel()
-        stopDetailsVM.onSetActive = { active, background in
+        let stopCentricVM = MockStopCentricViewModel()
+        stopCentricVM.onSetActive = { active, background in
             if !active.boolValue, background.boolValue {
                 leaveExpectation.fulfill()
             } else if active.boolValue, !background.boolValue {
@@ -135,9 +131,9 @@ final class StopDetailsPageTests: XCTestCase {
         }
 
         let sut = StopDetailsPage(
-            filters: .init(
+            filters: RouteStopPageFilters(
                 stopId: stop.id,
-                stopFilter: stopFilter,
+                routeStopFilter: routeStopFilter,
                 tripFilter: nil
             ),
             navCallbacks: .companion.empty,
@@ -145,7 +141,7 @@ final class StopDetailsPageTests: XCTestCase {
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
             routeCardDataVM: MockRouteCardDataViewModel(),
-            stopDetailsVM: stopDetailsVM,
+            stopCentricVM: stopCentricVM,
             navManager: .init(),
             viewportProvider: viewportProvider
         )
@@ -187,43 +183,39 @@ final class StopDetailsPageTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let navManager = NavigationManager(navigationStack: [.stopDetails(
-            stopId: stop.id,
-            stopFilter: nil,
-            tripFilter: nil
-        )])
+        let navManager = NavigationManager(navigationStack: [.stopOverview(stopId: stop.id)])
 
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
-        let updatedFilter = StopDetailsFilter(
+        let updatedFilter = RouteStopFilter(
             routeId: route.id,
             directionId: routePattern.directionId,
             autoFilter: true
         )
-        let stopDetailsVM = MockStopDetailsViewModel()
+        let stopCentricVM = MockStopCentricViewModel()
 
         let sut = StopDetailsPage(
-            filters: .init(stopId: stop.id, stopFilter: nil, tripFilter: nil),
+            filters: StopOverviewPageFilters(stopId: stop.id),
             navCallbacks: .companion.empty,
             alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
             routeCardDataVM: MockRouteCardDataViewModel(),
-            stopDetailsVM: stopDetailsVM,
+            stopCentricVM: stopCentricVM,
             navManager: navManager,
             viewportProvider: viewportProvider
         )
         ViewHosting.host(view: sut.withFixedSettings([:]))
         defer { ViewHosting.expel() }
 
-        stopDetailsVM.filterUpdates.tryEmit(value: .init(
+        stopCentricVM.filterUpdates.tryEmit(value: .init(
             stopId: stop.id,
-            stopFilter: updatedFilter,
+            routeStopFilter: updatedFilter,
             tripFilter: nil
         ))
 
         sut.inspection.inspect(after: 1) { _ in
             XCTAssertEqual(
-                navManager.navigationStack.lastStopDetailsFilter,
+                navManager.navigationStack.lastRouteStopFilter,
                 updatedFilter
             )
         }
@@ -259,26 +251,26 @@ final class StopDetailsPageTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let stopFilter: StopDetailsFilter = .init(routeId: route.id, directionId: 0)
-        let navManager = NavigationManager(navigationStack: [.stopDetails(
+        let routeStopFilter: RouteStopFilter = .init(routeId: route.id, directionId: 0)
+        let navManager = NavigationManager(navigationStack: [.routeStop(
             stopId: stop.id,
-            stopFilter: stopFilter,
+            routeStopFilter: routeStopFilter,
             tripFilter: nil
         )])
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
 
-        let initialFilters = StopDetailsPageFilters(
+        let initialFilters = RouteStopPageFilters(
             stopId: stop.id,
-            stopFilter: stopFilter,
+            routeStopFilter: routeStopFilter,
             tripFilter: nil
         )
         let updatedTripFilter = TripDetailsFilter(
             tripId: trip.id, vehicleId: nil, stopSequence: 0, selectionLock: false
         )
 
-        let stopDetailsVM = MockStopDetailsViewModel()
-        stopDetailsVM.filterUpdates.tryEmit(value: .init(
-            stopId: stop.id, stopFilter: stopFilter, tripFilter: updatedTripFilter
+        let stopCentricVM = MockStopCentricViewModel()
+        stopCentricVM.filterUpdates.tryEmit(value: .init(
+            stopId: stop.id, routeStopFilter: routeStopFilter, tripFilter: updatedTripFilter
         ))
 
         let sut = StopDetailsPage(
@@ -288,7 +280,7 @@ final class StopDetailsPageTests: XCTestCase {
             errorBannerVM: MockErrorBannerViewModel(),
             mapVM: MockMapViewModel(),
             routeCardDataVM: MockRouteCardDataViewModel(),
-            stopDetailsVM: stopDetailsVM,
+            stopCentricVM: stopCentricVM,
             navManager: navManager,
             viewportProvider: viewportProvider
         )

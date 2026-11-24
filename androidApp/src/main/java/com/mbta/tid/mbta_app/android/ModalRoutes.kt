@@ -1,10 +1,10 @@
 package com.mbta.tid.mbta_app.android
 
-import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
+import com.mbta.tid.mbta_app.android.util.TripRouteAccents
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
-import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
+import com.mbta.tid.mbta_app.model.tripDetailsPage.ExplainerType
 import com.mbta.tid.mbta_app.routes.DeepLinkState
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import kotlinx.serialization.SerialName

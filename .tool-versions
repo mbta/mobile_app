@@ -1,6 +1,6 @@
 ruby 4.0.9
-java temurin-17.0.21+9
+java temurin-25.0.5+100000002.0.LTS
 python 3.15.2
-nodejs 26.13.0
+nodejs 26.13.1
 direnv 2.38.2
 xcodegen 2.42.0

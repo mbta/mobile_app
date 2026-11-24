@@ -1596,8 +1596,8 @@ class RouteCardDataTest {
     fun `ListBuilder addAlerts filters to relevant routes`() = parametricTest {
         val context =
             anyOf(
-                RouteCardData.Context.StopDetailsUnfiltered,
-                RouteCardData.Context.StopDetailsFiltered,
+                RouteCardData.Context.StopOverview,
+                RouteCardData.Context.RouteStop,
             )
         val now = EasternTimeInstant.now()
         val objects = TestData.clone()
@@ -3579,7 +3579,7 @@ class RouteCardDataTest {
     }
 
     @Test
-    fun `RouteCardData routCardsForStopList doesn't filter future trips in filtered stop details`() =
+    fun `RouteCardData routCardsForStopList doesn't filter future trips in route stop`() =
         runBlocking {
             val objects = ObjectCollectionBuilder()
 
@@ -3596,7 +3596,7 @@ class RouteCardDataTest {
                     representativeTrip { headsign = "Typical Out" }
                 }
 
-            // should be included because all trips should be visible in filtered stop details
+            // should be included because all trips should be visible in route stop
             val deviationInbound =
                 objects.routePattern(route1) {
                     directionId = 1
@@ -3611,7 +3611,7 @@ class RouteCardDataTest {
                     patternIdsByStop =
                         mapOf(stop1.id to listOf(typicalOutbound.id, deviationInbound.id)),
                 )
-            val context = RouteCardData.Context.StopDetailsFiltered
+            val context = RouteCardData.Context.RouteStop
             val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
             val typicalOutboundPrediction = objects.prediction {
@@ -3695,7 +3695,7 @@ class RouteCardDataTest {
         }
 
     @Test
-    fun `RouteCardData routeCardsForStopList includes cancellations in filtered stop details context`() =
+    fun `RouteCardData routeCardsForStopList includes cancellations in route stop context`() =
         runBlocking {
             val objects = ObjectCollectionBuilder()
             val stop1 = objects.stop()
@@ -3715,7 +3715,7 @@ class RouteCardDataTest {
                     objects,
                     patternIdsByStop = mapOf(stop1.id to listOf(typicalOutbound.id)),
                 )
-            val context = RouteCardData.Context.StopDetailsFiltered
+            val context = RouteCardData.Context.RouteStop
             val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
             val typicalOutboundSchedule = objects.schedule {
@@ -4176,7 +4176,7 @@ class RouteCardDataTest {
         }
 
     @Test
-    fun `RouteCardData routeCardsForStopList shows scheduled variants farther in the future on stop details`():
+    fun `RouteCardData routeCardsForStopList shows scheduled variants farther in the future on route stop`():
         Unit = runBlocking {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
@@ -4234,7 +4234,7 @@ class RouteCardDataTest {
         }
 
         val lineOrRoute = LineOrRoute.Route(route)
-        val context = RouteCardData.Context.StopDetailsFiltered
+        val context = RouteCardData.Context.RouteStop
 
         assertEquals(
             listOf(

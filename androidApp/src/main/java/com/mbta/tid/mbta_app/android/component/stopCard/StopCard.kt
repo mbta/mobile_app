@@ -29,8 +29,8 @@ import com.mbta.tid.mbta_app.model.LeafFormat
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.StopCardData
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -56,7 +56,7 @@ fun StopCard(
     globalData: GlobalResponse?,
     now: EasternTimeInstant,
     isFavorite: (RouteStopDirection) -> Boolean?,
-    onOpenStopDetails: (String, StopDetailsFilter) -> Unit,
+    onOpenRouteStop: (String, RouteStopFilter) -> Unit,
 ) {
     StopCardContainer(
         data = data,
@@ -68,9 +68,9 @@ fun StopCard(
                 now,
                 { routeStopDirection -> isFavorite(routeStopDirection) },
             ) { leaf ->
-                onOpenStopDetails(
+                onOpenRouteStop(
                     it.stop.id,
-                    StopDetailsFilter(leaf.lineOrRoute.id, leaf.direction.id),
+                    RouteStopFilter(leaf.lineOrRoute.id, leaf.direction.id),
                 )
             }
         },

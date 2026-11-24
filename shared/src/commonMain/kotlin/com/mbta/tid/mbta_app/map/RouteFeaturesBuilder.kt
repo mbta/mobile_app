@@ -13,11 +13,11 @@ import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteSegment
+import com.mbta.tid.mbta_app.model.RouteStopFilter
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SegmentAlertState
 import com.mbta.tid.mbta_app.model.SegmentedRouteShape
 import com.mbta.tid.mbta_app.model.Stop
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.greenRoutes
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
@@ -290,7 +290,7 @@ public object RouteFeaturesBuilder {
 
     public fun filteredRouteShapesForStop(
         stopMapData: StopMapResponse,
-        filter: StopDetailsFilter,
+        filter: RouteStopFilter,
         routeCardData: List<RouteCardData>?,
     ): List<MapFriendlyRouteResponse.RouteWithSegmentedShapes> {
         /**
