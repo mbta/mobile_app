@@ -301,7 +301,7 @@ struct TripHeaderCard: View {
         if vehicle.tripId == trip.id {
             VStack(alignment: .leading, spacing: 2) {
                 VStack(alignment: .leading, spacing: 4) {
-                    VStack(alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 4) {
                         ViewThatFits(in: .horizontal) {
                             HStack(spacing: 0) {
                                 vehicleLabel(vehicle)
