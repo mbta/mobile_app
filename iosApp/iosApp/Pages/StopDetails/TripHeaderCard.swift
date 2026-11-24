@@ -262,15 +262,17 @@ struct TripHeaderCard: View {
     ) -> some View {
         if let stopEntry {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Scheduled to depart").font(Typography.footnote)
-                Text(stopEntry.stop.name)
-                    .font(Typography.headlineBold)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Scheduled to depart").font(Typography.footnote)
+                    Text(stopEntry.stop.name)
+                        .font(Typography.headlineBold)
+                }.accessibilityElement(children: .combine)
+                    .accessibilityLabel(scheduleDescriptionAccessibilityText(stopEntry))
                 if let track = stopEntry.trackNumber, targeted {
                     TrackNumber(track: track)
                 }
             }
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel(scheduleDescriptionAccessibilityText(stopEntry))
+
             .tappableWhenAction(onTrackChangeTap, hint: moreInformationHint)
         }
     }
@@ -299,26 +301,29 @@ struct TripHeaderCard: View {
         if vehicle.tripId == trip.id {
             VStack(alignment: .leading, spacing: 2) {
                 VStack(alignment: .leading, spacing: 4) {
-                    ViewThatFits(in: .horizontal) {
-                        HStack(spacing: 0) {
-                            vehicleLabel(vehicle)
-                            vehicleStatusDescription(vehicle.currentStatus, atTerminal)
-                                .font(Typography.footnote)
+                    VStack(alignment: .leading) {
+                        ViewThatFits(in: .horizontal) {
+                            HStack(spacing: 0) {
+                                vehicleLabel(vehicle)
+                                vehicleStatusDescription(vehicle.currentStatus, atTerminal)
+                                    .font(Typography.footnote)
+                            }
+                            VStack(alignment: .leading) {
+                                vehicleLabel(vehicle)
+                                vehicleStatusDescription(vehicle.currentStatus, atTerminal)
+                                    .font(Typography.footnote)
+                            }
                         }
-                        VStack(alignment: .leading) {
-                            vehicleLabel(vehicle)
-                            vehicleStatusDescription(vehicle.currentStatus, atTerminal)
-                                .font(Typography.footnote)
-                        }
-                    }
-                    Text(stop.name)
-                        .font(Typography.headlineBold)
+                        Text(stop.name)
+                            .font(Typography.headlineBold)
+                    }.accessibilityElement(children: .combine)
+                        .accessibilityLabel(vehicleDescriptionAccessibilityText(vehicle, stop, atTerminal))
+
                     if let track = entry?.trackNumber, targeted {
                         TrackNumber(track: track)
                     }
                 }
-                .accessibilityElement(children: .combine)
-                .accessibilityLabel(vehicleDescriptionAccessibilityText(vehicle, stop, atTerminal))
+
                 .tappableWhenAction(onTrackChangeTap, hint: moreInformationHint)
                 vehicleCrowding
             }
