@@ -105,7 +105,7 @@ packages:
     exactVersion: 8.58.2
   swift-collections:
     url: https://github.com/apple/swift-collections.git
-    exactVersion: 1.7.2
+    exactVersion: 1.7.6
   SwiftPhoenixClient:
     url: https://github.com/davidstump/SwiftPhoenixClient
     exactVersion: 5.3.5
