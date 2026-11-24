@@ -28,8 +28,9 @@ constructor(
 
     public fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit) {
         fun injectAndReceive(alerts: AlertsStreamDataResponse) {
-            currentAlerts = alerts
-            onReceive(ApiResult.Ok(alerts.injectFacilities(globalState.value)))
+            val injectedAlerts = alerts.injectFacilities(globalState.value)
+            currentAlerts = injectedAlerts
+            onReceive(ApiResult.Ok(injectedAlerts))
         }
         alertsRepository.connect(
             onJoin = { result ->
