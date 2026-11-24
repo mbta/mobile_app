@@ -373,7 +373,15 @@ private fun ScheduleDescription(
     if (startTerminalEntry != null) {
         val stop = startTerminalEntry.stop
         Column(
-            Modifier.semantics {
+            Modifier.then(
+                onTrackChangeTap?.let {
+                    Modifier.clip(RoundedCornerShape(8.dp)).clickable { onTrackChangeTap() }
+                } ?: Modifier,
+            ),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Column(
+                Modifier.semantics {
                     contentDescription =
                         scheduleDescriptionAccessibilityText(
                             startTerminalEntry,
@@ -381,19 +389,15 @@ private fun ScheduleDescription(
                             routeAccents,
                             resources,
                         )
-                }
-                .then(
-                    onTrackChangeTap?.let {
-                        Modifier.clip(RoundedCornerShape(8.dp)).clickable { onTrackChangeTap() }
-                    } ?: Modifier,
-                ),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            TightWrapText(
-                stringResource(R.string.scheduled_to_depart),
-                style = Typography.footnote,
-            )
-            Text(stop.name, style = Typography.headlineBold)
+                },
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                TightWrapText(
+                    stringResource(R.string.scheduled_to_depart),
+                    style = Typography.footnote,
+                )
+                Text(stop.name, style = Typography.headlineBold)
+            }
             startTerminalEntry.trackNumber?.let { if (targeted) TrackNumber(it) }
         }
     }
@@ -433,7 +437,11 @@ private fun VehicleDescription(
         val stop = spec.stop
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Column(
-                Modifier.clearAndSetSemantics {
+                Modifier.then(onTrackChangeTap?.let { Modifier.clickable { it() } } ?: Modifier),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Column(
+                    Modifier.clearAndSetSemantics {
                         contentDescription =
                             vehicleDescriptionAccessibilityText(
                                 spec,
@@ -441,19 +449,19 @@ private fun VehicleDescription(
                                 routeAccents,
                                 resources,
                             )
+                    },
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    FlowRow() {
+                        VehicleLabel(spec.vehicle, routeAccents)
+                        VehicleStatusDescription(spec.vehicle.currentStatus, spec.atTerminal)
                     }
-                    .then(onTrackChangeTap?.let { Modifier.clickable { it() } } ?: Modifier),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                FlowRow {
-                    VehicleLabel(spec.vehicle, routeAccents)
-                    VehicleStatusDescription(spec.vehicle.currentStatus, spec.atTerminal)
+                    Text(
+                        stop.name,
+                        style = Typography.headlineBold,
+                        modifier = Modifier.placeholderIfLoading(),
+                    )
                 }
-                Text(
-                    stop.name,
-                    style = Typography.headlineBold,
-                    modifier = Modifier.placeholderIfLoading(),
-                )
                 spec.entry?.trackNumber?.let { if (targeted) TrackNumber(it) }
             }
             if (!spec.atTerminal && !spec.vehicle.hasCarLevelCrowding) {
