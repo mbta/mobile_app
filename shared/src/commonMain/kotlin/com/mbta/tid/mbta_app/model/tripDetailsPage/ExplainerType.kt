@@ -5,11 +5,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 public sealed class ExplainerType {
-    public object NoPrediction : ExplainerType()
+    @Serializable public object NoPrediction : ExplainerType()
 
-    public object FinishingAnotherTrip : ExplainerType()
+    @Serializable public object FinishingAnotherTrip : ExplainerType()
 
-    public object NoVehicle : ExplainerType()
+    @Serializable public object NoVehicle : ExplainerType()
 
+    @Serializable
     public class ScheduledTrackChange(public val data: TrackChange.Scheduled) : ExplainerType()
 }
