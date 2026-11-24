@@ -53,6 +53,8 @@ struct RouteStopDeparturesView: View {
     var tiles: [TileData] { leafFormat.tileData(directionDestination: selectedDirection.destination) }
     var noPredictionsStatus: UpcomingFormat.NoTripsFormat? { leafFormat.noPredictionsStatus() }
     var isAllServiceDisrupted: Bool { leafFormat.isAllServiceDisrupted }
+    var showPredictionsNotAvailableYet: Bool { leaf.hasLaterTripsWithoutPredictions(tiles: tiles) }
+    @State var predictionsNotAvailableYetSelected = false
 
     var patternsHere: [RoutePattern] { leaf.routePatterns }
     var displayAlerts: Shared.DisplayAlerts {
@@ -78,6 +80,7 @@ struct RouteStopDeparturesView: View {
 
     @AccessibilityFocusState private var selectedDepartureFocus: String?
     private let cardFocusId = "_card"
+    private let predictionsNotAvailableYetTileId = "_predictionsNotAvailableYet"
 
     init(
         stopId: String,
@@ -143,6 +146,18 @@ struct RouteStopDeparturesView: View {
                 )
                 .accessibilityHeading(.h3)
                 .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
+            } else if predictionsNotAvailableYetSelected {
+                RouteStopIconCard(
+                    accentColor: routeAccents.color,
+                    details: Text(
+                        "We don’t have predictions for later trips yet, but they’ll appear here closer to the time of service.",
+                        comment: "Explanation for the predictions not available yet card on route stop"
+                    ),
+                    header: Text("Predictions not\navailable yet"),
+                    icon: Image(.liveDataSlash),
+                    iconPadding: 3
+                )
+                .accessibilityHeading(.h4)
             } else if selectedTripIsCancelled {
                 RouteStopIconCard(
                     accentColor: routeAccents.color,
@@ -189,6 +204,8 @@ struct RouteStopDeparturesView: View {
             loadNextScheduleForStatus(keys.noPredictionStatus, keys.selectedDirection)
         }
         .onChange(of: selectedTripIsCancelled) { if $0 { setViewportToStop() } }
+        .onChange(of: routeStopFilter) { _ in predictionsNotAvailableYetSelected = false }
+        .onChange(of: showPredictionsNotAvailableYet) { _ in predictionsNotAvailableYetSelected = false }
         .onChange(of: tripFilter) { tripFilter in
             selectedDepartureFocus = tiles.first { $0.isSelected(tripFilter: tripFilter) }?.id ?? cardFocusId
         }
@@ -230,6 +247,7 @@ struct RouteStopDeparturesView: View {
                     DepartureTile(
                         data: tileData,
                         onTap: {
+                            predictionsNotAvailableYetSelected = false
                             navManager.navigationStack.lastTripDetailsFilter = .init(
                                 tripId: tileData.upcoming.trip.id,
                                 vehicleId: tileData.upcoming.prediction?.vehicleId,
@@ -247,9 +265,21 @@ struct RouteStopDeparturesView: View {
                             view.scrollTo(tileData.id)
                         },
                         pillDecoration: pillDecoration(tileData: tileData),
-                        isSelected: tileData.isSelected(tripFilter: tripFilter)
+                        isSelected: !predictionsNotAvailableYetSelected && tileData.isSelected(tripFilter: tripFilter)
                     )
                     .accessibilityFocused($selectedDepartureFocus, equals: tileData.id)
+                    .padding(.horizontal, 4)
+                }
+                if showPredictionsNotAvailableYet {
+                    PredictionsNotAvailableYetTile(
+                        onTap: {
+                            predictionsNotAvailableYetSelected = true
+                            view.scrollTo(predictionsNotAvailableYetTileId)
+                        },
+                        isSelected: predictionsNotAvailableYetSelected
+                    )
+                    .id(predictionsNotAvailableYetTileId)
+                    .accessibilityFocused($selectedDepartureFocus, equals: predictionsNotAvailableYetTileId)
                     .padding(.horizontal, 4)
                 }
             }

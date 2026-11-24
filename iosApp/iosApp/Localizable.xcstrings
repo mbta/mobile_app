@@ -8186,6 +8186,53 @@
         }
       }
     },
+    "displays more information about later trips" : {
+      "comment" : "Screen reader hint for tapping the predictions not available yet tile in stop details",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "muestra más información sobre los viajes posteriores"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "affiche plus d’informations sur les trajets ultérieurs"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "montre plis enfòmasyon sou vwayaj ki vin apre yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "exibe mais informações sobre viagens futuras"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hiển thị thêm thông tin về các chuyến tiếp theo"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示有关后续行程的更多信息"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "顯示有關後續班次的更多資訊"
+          }
+        }
+      }
+    },
     "displays more information about this trip" : {
       "comment" : "Screen reader hint for tapping a departure card in route stop",
       "localizations" : {
@@ -15967,6 +16014,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "目前無法提供路況預報資訊"
+          }
+        }
+      }
+    },
+    "Predictions not\navailable yet" : {
+      "comment" : "Label for a departure tile shown after the last predicted trip when later trips are scheduled, or an informational header on an explainer card.\nThe line break is intentional, the tile is sized to fit the longest line, so please put the break where it gives two lines of roughly similar length (ideally towards the middle).\nPlease keep it to two (or one) lines, since the tile is only a little taller than that.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no hay\npredicciones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prévisions non disponibles\npour le moment"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prediksyon yo\npoko disponib"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previsões ainda\nnão estão disponíveis"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chưa có\ndự đoán"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂无预计\n到站时间"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "尚無預估\n發車時間"
           }
         }
       }
@@ -24394,6 +24488,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "目前尚無此班次的即時預測，但當接近預定時間時就會顯示。如果行程延誤或取消，我們會在這裡通知您。"
+          }
+        }
+      }
+    },
+    "We don’t have predictions for later trips yet, but they’ll appear here closer to the time of service." : {
+      "comment" : "Explanation for the predictions not available yet card on stop details",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no tenemos predicciones para los viajes posteriores, pero aparecerán aquí a medida que se acerque la hora del servicio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas encore de prévisions pour les prochains trajets, mais elles apparaîtront ici à l’approche de l’heure prévue."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nou poko gen prediksyon pou vwayaj pita yo, men y ap parèt isit la lè lè sèvis la ap pwoche."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ainda não temos previsões para viagens futuras, mas elas aparecerão aqui mais perto do horário do serviço."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chúng tôi chưa có dự đoán nào cho các chuyến tiếp theo, nhưng các chuyến này sẽ xuất hiện ở đây khi gần đến giờ chạy."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目前还无法提供更晚出行时间的预测信息。随着运营时间临近，相关预测信息会显示在这里。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目前尚無後續班次的預估時間，臨近發車時將在此處顯示相關資訊。"
           }
         }
       }

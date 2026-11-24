@@ -13,9 +13,13 @@ import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.appModule
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.endToEnd.endToEndMockData
+import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Vehicle
+import com.mbta.tid.mbta_app.repositories.ISubscriptionsRepository
+import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.RecordedMockSubscriptionsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.viewModelModule
@@ -80,13 +84,15 @@ Load the Koin mock repositories using the provided objects
 public fun loadKoinMocks(
     objects: ObjectCollectionBuilder,
     settings: Map<Settings, Boolean> = emptyMap(),
+    favorites: Favorites = Favorites(),
 ) {
-    loadKoinMocks(objects, settings, null, null, null)
+    loadKoinMocks(objects, settings, favorites, null, null, null)
 }
 
 public fun loadKoinMocks(
     objects: ObjectCollectionBuilder,
     settings: Map<Settings, Boolean> = emptyMap(),
+    favorites: Favorites = Favorites(),
     selectedRouteId: String?,
     selectedTripId: String?,
     selectedVehicleId: String?,
@@ -94,6 +100,7 @@ public fun loadKoinMocks(
     val repositories = MockRepositories()
     repositories.useObjects(objects, selectedRouteId, selectedTripId, selectedVehicleId)
     repositories.settings = MockSettingsRepository(settings)
+    repositories.favorites = MockFavoritesRepository(favorites)
 
     loadKoinModules(listOf(repositoriesModule(repositories)))
 }
@@ -127,7 +134,10 @@ public fun startKoinIOSTestApp() {
     loadDefaultRepoModules()
 }
 
-public fun startKoinE2E(settings: Map<Settings, Boolean> = emptyMap()) {
+public fun startKoinE2E(
+    settings: Map<Settings, Boolean> = emptyMap(),
+    favorites: Favorites = Favorites(),
+) {
     startKoin {
         modules(
             platformModule() +
@@ -142,7 +152,12 @@ public fun startKoinE2E(settings: Map<Settings, Boolean> = emptyMap()) {
         )
     }
     val (objects, tripId, vehicleId) = endToEndMockData()
-    loadKoinMocks(objects, settings, "Red", tripId, vehicleId)
+    loadKoinMocks(objects, settings, favorites, "Red", tripId, vehicleId)
+    loadKoinModules(
+        module {
+            single<ISubscriptionsRepository> { RecordedMockSubscriptionsRepository() }
+        },
+    )
 }
 
 // rather than having 2^n variants of copy via SKIE, define the exact one we need

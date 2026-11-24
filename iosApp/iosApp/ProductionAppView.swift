@@ -39,7 +39,32 @@ struct ProductionAppView: View {
             if CommandLine.arguments.contains("--skip-map") {
                 settings[Settings.hideMaps] = KotlinBoolean(bool: true)
             }
-            HelpersKt.startKoinE2E(settings: settings)
+
+            var favorites = Favorites(routeStopDirection: [:])
+            if CommandLine.arguments.contains("--mock-favorites") {
+                favorites = Favorites(routeStopDirection: [.init(route: Route.Id("Red"),
+                                                                 stop: "place-davis",
+                                                                 direction: 0): .init(notifications: .init(
+                        enabled: true,
+                        windows: [FavoriteSettings.NotificationsWindow(
+                            startTime: .init(
+                                hour: 1,
+                                minute: 0,
+                                second: 0,
+                                nanosecond: 0
+                            ),
+                            endTime: .init(
+                                hour: 2,
+                                minute: 0,
+                                second: 0,
+                                nanosecond: 0
+                            ),
+                            daysOfWeek: [.thursday]
+                        )]
+                    ))])
+            }
+
+            HelpersKt.startKoinE2E(settings: settings, favorites: favorites)
             self.init(socket: MockSocket())
         } else {
             let socket = Self.initSocket()

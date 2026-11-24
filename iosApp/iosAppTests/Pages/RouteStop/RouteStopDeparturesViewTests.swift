@@ -1001,4 +1001,75 @@ final class RouteStopDeparturesViewTests: XCTestCase {
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().find(text: "Good morning!"))
     }
+
+    private func makePredictionsNotAvailableYetSut(
+        includeLaterSchedule: Bool
+    ) -> RouteStopDeparturesView {
+        let objects = ObjectCollectionBuilder()
+        let now = EasternTimeInstant.now()
+        let stop = objects.stop { _ in }
+        let route = objects.route { route in
+            route.id = "Red"
+            route.type = .heavyRail
+        }
+        let predicted = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip { _ in }
+            prediction.stopId = stop.id
+            prediction.departureTime = now.plus(minutes: 5)
+        })
+        let scheduled = objects.upcomingTrip(schedule: objects.schedule { schedule in
+            schedule.trip = objects.trip { _ in }
+            schedule.stopId = stop.id
+            schedule.departureTime = now.plus(minutes: 30)
+        })
+        let leaf = makeLeaf(
+            route: route,
+            stop: stop,
+            upcomingTrips: includeLaterSchedule ? [predicted, scheduled] : [predicted],
+            objects: objects
+        )
+        return RouteStopDeparturesView(
+            stopId: stop.id,
+            routeStopFilter: .init(routeId: route.id, directionId: 0),
+            tripFilter: nil,
+            setRouteStopFilter: { _ in },
+            setTripFilter: { _ in },
+            leaf: leaf,
+            selectedDirection: .init(name: nil, destination: nil, id: 0),
+            favorite: false,
+            now: now,
+            errorBannerVM: MockErrorBannerViewModel(),
+            mapVM: MockMapViewModel(),
+            stopCentricVM: MockStopCentricViewModel(),
+            navManager: .init(),
+        )
+    }
+
+    @MainActor
+    func testShowsPredictionsNotAvailableYetTile() {
+        let sut = makePredictionsNotAvailableYetSut(includeLaterSchedule: true)
+        let details = "We don’t have predictions for later trips yet, but they’ll appear here closer to the time of service."
+
+        let tapExp = sut.inspection.inspect(after: 0.5) { view in
+            XCTAssertNotNil(try view.find(text: "5 min"))
+            XCTAssertThrowsError(try view.find(text: details))
+            try view.find(PredictionsNotAvailableYetTile.self).find(ViewType.Button.self).tap()
+        }
+        let cardExp = sut.inspection.inspect(after: 1) { view in
+            XCTAssertNotNil(try view.find(text: details))
+            XCTAssertNotNil(try view.find(StopDetailsIconCard<Text, Text>.self))
+        }
+
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
+        defer { ViewHosting.expel() }
+        wait(for: [tapExp, cardExp], timeout: 3)
+    }
+
+    func testHidesPredictionsNotAvailableYetTileWithoutLaterSchedules() throws {
+        let sut = makePredictionsNotAvailableYetSut(includeLaterSchedule: false)
+            .environmentObject(ViewportProvider()).withFixedSettings([:])
+
+        XCTAssertNotNil(try sut.inspect().find(text: "5 min"))
+        XCTAssertThrowsError(try sut.inspect().find(PredictionsNotAvailableYetTile.self))
+    }
 }
