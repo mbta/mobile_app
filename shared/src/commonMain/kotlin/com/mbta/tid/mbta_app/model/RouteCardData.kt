@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.model.routeStopPage.TileData
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.jvm.JvmName
 import kotlin.math.max
@@ -582,6 +583,27 @@ public data class RouteCardData(
                     warningAlert,
                     now,
                 )
+            }
+        }
+
+        /**
+         * Whether there are trips scheduled to depart this stop later than the last of the given
+         * departure [tiles] that don't have predictions yet.
+         *
+         * Only applies to routes where we hide scheduled times (subway and Silver Line), since
+         * scheduled trips on other modes are already displayed as tiles. Any predicted trip
+         * departing later than a scheduled trip (including added trips with a different ID) is
+         * considered to cover that scheduled trip.
+         */
+        public fun hasLaterTripsWithoutPredictions(tiles: List<TileData>): Boolean {
+            if (!lineOrRoute.sortRoute.hidesScheduledTimes) return false
+            val lastTileTime = tiles.mapNotNull { it.upcoming.time }.maxOrNull() ?: return false
+            return upcomingTrips.any { upcoming ->
+                val scheduledTime = upcoming.schedule?.stopTime
+                upcoming.prediction == null &&
+                    scheduledTime != null &&
+                    scheduledTime > lastTileTime &&
+                    upcoming.isArrivalOnly() == false
             }
         }
     }

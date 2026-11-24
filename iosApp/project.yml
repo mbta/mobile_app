@@ -87,7 +87,7 @@ packages:
     exactVersion: 6.0.1
   Firebase:
     url: https://github.com/firebase/firebase-ios-sdk
-    exactVersion: 12.19.2
+    exactVersion: 12.19.3
   Inject:
     url: https://github.com/krzysztofzablocki/Inject.git
     exactVersion: 1.6.0

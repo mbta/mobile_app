@@ -304,6 +304,14 @@
     <string name="policy_change_sentence_case">政策變更</string>
     <string name="power_problem">電力故障</string>
     <string name="power_problem_lowercase">電力故障</string>
+    <!-- Label for a departure tile shown after the last predicted trip when later trips are scheduled, or an informational header on an explainer card.
+    The line break is intentional, the tile is sized to fit the longest line, so please put the break where it gives two lines of roughly similar length (ideally towards the middle).
+    Please keep it to two (or one) lines, since the tile is only a little taller than that. -->
+    <string name="predictions_not_available_yet">尚無預估\n發車時間</string>
+    <!-- Explanation for the predictions not available yet card on stop details -->
+    <string name="predictions_not_available_yet_details">目前尚無後續班次的預估時間，臨近發車時將在此處顯示相關資訊。</string>
+    <!-- Screen reader hint for tapping the predictions not available yet tile in stop details -->
+    <string name="predictions_not_available_yet_on_click_label">顯示有關後續班次的更多資訊</string>
     <string name="predictions_unavailable_details">服務運行中，但無法提供預計到達時間。查看地圖，瞭解%1$s目前所在的位置。</string>
     <string name="predictions_unavailable_details_hide_maps">服務運行中，但無法提供預計到達時間。</string>
     <string name="presence_of_whales">鯨魚出沒</string>

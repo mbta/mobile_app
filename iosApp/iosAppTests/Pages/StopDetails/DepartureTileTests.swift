@@ -165,4 +165,19 @@ final class DepartureTileTests: XCTestCase {
         let selected = DepartureTile(data: tileData, onTap: {}, isSelected: true)
         XCTAssertEqual("", try selected.inspect().find(ViewType.Button.self).accessibilityHint().string())
     }
+
+    func testPredictionsNotAvailableYetTile() throws {
+        var tapped = false
+        let sut = PredictionsNotAvailableYetTile(onTap: { tapped = true })
+        let button = try sut.inspect().find(ViewType.Button.self)
+        XCTAssertEqual(
+            "displays more information about later trips",
+            try button.accessibilityHint().string()
+        )
+        try button.tap()
+        XCTAssertTrue(tapped)
+
+        let selected = PredictionsNotAvailableYetTile(onTap: {}, isSelected: true)
+        XCTAssertEqual("", try selected.inspect().find(ViewType.Button.self).accessibilityHint().string())
+    }
 }
