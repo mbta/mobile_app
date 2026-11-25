@@ -301,8 +301,10 @@ platform :ios do
         )
       end
     rescue Spaceship::UnexpectedResponse => e
-      if e.error_info == 'Another build is in review. - Another build in the same train is already in beta review. Please submit it again once it gets completed.'
-        UI.important 'Build uploaded to App Store Connect, but external testing submission was skipped because another build in this train is already in beta review'
+      if e.error_info == 'Another build is in review. - Another build in the same train is already in beta review. ' \
+                         'Please submit it again once it gets completed.'
+        UI.important 'Build uploaded to App Store Connect, but external testing submission was skipped ' \
+                     'because another build in this train is already in beta review'
       elsif e.error_info == 'Builds cannot be assigned to this internal group. - Cannot add internal group to a build.'
         UI.important 'Ignoring App Store Connect error about internal groups - in practice it works fine'
       else

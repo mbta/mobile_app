@@ -442,14 +442,7 @@ class NotificationSettingsWidgetTest : KoinTest {
         composeTestRule.onNodeWithText("Evening").assertIsSelected()
 
         composeTestRule
-            .onNode(hasTextMatching(Regex("4:00\\sPM", RegexOption.IGNORE_CASE)))
-            .performClick()
-
-        composeTestRule.onNodeWithContentDescription("10 o'clock").performClick()
-        composeTestRule.onNodeWithText("Okay").performClick()
-
-        composeTestRule
-            .onNode(hasTextMatching(Regex("10:15\\sPM", RegexOption.IGNORE_CASE)))
+            .onNode(hasTextMatching(Regex("8:00\\sPM", RegexOption.IGNORE_CASE)))
             .performClick()
 
         composeTestRule.onNodeWithContentDescription("1 o'clock").performClick()
