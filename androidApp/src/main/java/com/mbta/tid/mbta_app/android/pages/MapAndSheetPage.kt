@@ -48,6 +48,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.AnalyticsScreen
+import com.mbta.tid.mbta_app.android.EntrypointSaver
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.alertDetails.AlertDetailsPage
@@ -170,6 +171,8 @@ fun MapAndSheetPage(
 
     val currentNavEntry = currentNavBackStackEntry?.let { SheetRoutes.fromNavBackStackEntry(it) }
     val previousNavEntry: SheetRoutes? = rememberPrevious(currentNavEntry)
+    var lastEntrypointNav: SheetRoutes.Entrypoint? by
+        rememberSaveable(stateSaver = SheetRoutes.EntrypointSaver) { mutableStateOf(null) }
 
     val navControllerInitialized = currentNavBackStackEntry != null
 
@@ -220,6 +223,7 @@ fun MapAndSheetPage(
         // Before the graph is attached, NavHost uses the entrypoint as its start destination.
         if (navController.currentBackStackEntry == null) return
         navController.navigate(entrypoint) { popUpTo(entrypoint) }
+        lastEntrypointNav = entrypoint
     }
 
     fun openModalWithCloseCallback(modal: ModalRoutes, onClose: () -> Unit) {
@@ -517,10 +521,11 @@ fun MapAndSheetPage(
     LaunchedEffect(nearbyTransit.alertData) { mapViewModel.alertsChanged(nearbyTransit.alertData) }
 
     LaunchedEffect(sheetNavEntrypoint) {
-        if (sheetNavEntrypoint != null) {
+        if (sheetNavEntrypoint != null && sheetNavEntrypoint != lastEntrypointNav) {
             navigateToEntrypoint(sheetNavEntrypoint)
         }
     }
+
     LaunchedEffect(currentNavEntry) {
         if (currentNavEntry?.showSearchBar == true && searchExpanded) {
             nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Hidden)
