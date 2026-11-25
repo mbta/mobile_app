@@ -43,7 +43,6 @@ extension SharedString {
                 "Feature Flags",
                 comment: "More page section header, only displayed in the developer app for enabling in-progress features"
             )
-        case .forceNotificationsBeta: "Reset and force notifications beta" // dev only, no i18n
         case .mapDisplay:
             NSLocalizedString(
                 "Map Display",

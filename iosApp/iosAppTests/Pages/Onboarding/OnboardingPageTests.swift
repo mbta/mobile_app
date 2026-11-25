@@ -74,10 +74,6 @@ final class OnboardingPageTests: XCTestCase {
 
         func __notificationsBetaPromptShouldShow() async throws -> KotlinBoolean { false }
 
-        func __notificationsBetaResetAndForce() async throws {}
-
-        func __notificationsBetaTargetingOverride() async throws -> KotlinBoolean? { nil }
-
         func __notificationsFavoritesHintShouldShow() async throws -> KotlinBoolean { false }
 
         func __notificationsFavoriteHintDismissed() async throws {}
