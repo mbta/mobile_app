@@ -206,7 +206,7 @@ constructor(val notifications: Notifications = Notifications.disabled) {
                  * Returns the end time to use when the rider selects [endTime], keeping the window
                  * valid. Times before the 3am [serviceBoundary] are "after midnight", times after
                  * it are "during the day". An after midnight window can't cross the boundary, and
-                 * otherwise the end must be at least 15 minutes after the start.
+                 * otherwise the end must be after the start.
                  */
                 public fun adjustedEndTime(startTime: LocalTime, endTime: LocalTime): LocalTime {
                     if (startTime == serviceBoundary || endTime == serviceBoundary) return endTime
@@ -215,7 +215,7 @@ constructor(val notifications: Notifications = Notifications.disabled) {
                     return when {
                         startTime < serviceBoundary && endTime > serviceBoundary -> serviceBoundary
                         startTime > serviceBoundary && endTime < serviceBoundary -> endTime
-                        end - start >= MINIMUM_DURATION_MINUTES -> endTime
+                        end > start -> endTime
                         else -> localTime(start + MINIMUM_DURATION_MINUTES)
                     }
                 }
@@ -223,7 +223,7 @@ constructor(val notifications: Notifications = Notifications.disabled) {
                 /**
                  * Returns the start time to use when the rider selects [startTime], keeping the
                  * window valid. A daytime window can't start after midnight, and otherwise the
-                 * start must be at least 15 minutes before the end.
+                 * start must be before the end.
                  */
                 public fun adjustedStartTime(startTime: LocalTime, endTime: LocalTime): LocalTime {
                     if (startTime == serviceBoundary || endTime == serviceBoundary) return startTime
@@ -232,7 +232,7 @@ constructor(val notifications: Notifications = Notifications.disabled) {
                     return when {
                         startTime < serviceBoundary && endTime > serviceBoundary -> serviceBoundary
                         startTime > serviceBoundary && endTime < serviceBoundary -> startTime
-                        end - start >= MINIMUM_DURATION_MINUTES -> startTime
+                        end > start -> startTime
                         else -> localTime(end - MINIMUM_DURATION_MINUTES)
                     }
                 }

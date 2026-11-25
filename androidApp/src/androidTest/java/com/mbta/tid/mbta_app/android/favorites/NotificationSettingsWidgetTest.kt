@@ -6,7 +6,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsOff
@@ -210,6 +214,23 @@ class NotificationSettingsWidgetTest : KoinTest {
         )
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
             hasTextMatching(Regex("10:00\\sAM", RegexOption.IGNORE_CASE)),
+        )
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
+            SemanticsMatcher.expectValue(SemanticsProperties.LiveRegion, LiveRegionMode.Polite)
+                .and(
+                    SemanticsMatcher("announces adjusted start time") { node ->
+                        node.config
+                            .getOrNull(SemanticsProperties.ContentDescription)
+                            .orEmpty()
+                            .any {
+                                Regex(
+                                        "Start time changed to 9:45\\sAM because end time is 10:00\\sAM\\.",
+                                        RegexOption.IGNORE_CASE,
+                                    )
+                                    .matches(it)
+                            }
+                    },
+                ),
         )
     }
 
