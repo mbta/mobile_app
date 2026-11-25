@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import kotlinx.serialization.Serializable
 
 public sealed class TrackChange {
 
@@ -10,6 +11,7 @@ public sealed class TrackChange {
      */
     public data class Alert(val alert: com.mbta.tid.mbta_app.model.Alert) : TrackChange()
 
+    @Serializable
     public data class Scheduled(
         val platformCode: String,
         val platformName: String?,

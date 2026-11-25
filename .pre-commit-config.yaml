@@ -63,3 +63,10 @@ repos:
         entry: bundle exec rubocop -A
         language: system
         files: '\.rb$|file$'
+      - id: check-android-saver
+        stages: [pre-commit]
+        name: check android saver
+        entry: ./bin/check-android-saver.py
+        language: system
+        files: '.kt$'
+        pass_filenames: false
