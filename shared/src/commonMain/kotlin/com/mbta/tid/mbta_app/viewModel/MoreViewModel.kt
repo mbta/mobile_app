@@ -99,14 +99,6 @@ public class MoreViewModel(
                             settings = Settings.SearchRouteResults,
                         ),
                         MoreItem.Action(
-                            label = SharedString.ForceNotificationsBeta,
-                            action = {
-                                CoroutineScope(coroutineDispatcher).launch {
-                                    onboardingRepository.notificationsBetaResetAndForce()
-                                }
-                            },
-                        ),
-                        MoreItem.Action(
                             label = SharedString.Crash,
                             action = {
                                 throw RuntimeException("Crash button pressed")

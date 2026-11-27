@@ -14,7 +14,6 @@ import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlinx.coroutines.runBlocking
 import org.koin.core.context.startKoin
@@ -152,36 +151,6 @@ class OnboardingRepositoryTest : KoinTest {
 
         assertEquals(
             preferencesOf(booleanPreferencesKey("notificationsFavoritesHintShouldShow") to false),
-            storage.preferences,
-        )
-    }
-
-    @Test
-    fun `notifications beta dev reset wipes properties and sets override`() = runBlocking {
-        val storage = MockDatastoreStorage()
-        storage.preferences =
-            preferencesOf(
-                booleanPreferencesKey("notificationsFavoritesHintShouldShow") to false,
-                stringSetPreferencesKey("onboardingScreensCompleted") to
-                    setOf(OnboardingScreen.NotificationsBeta.name, OnboardingScreen.Location.name),
-            )
-        startKoin(isScreenReaderEnabled = false, storage = storage)
-        val repo = OnboardingRepository()
-
-        assertFalse(repo.notificationsFavoritesHintShouldShow())
-        assertNull(repo.notificationsBetaTargetingOverride())
-
-        repo.notificationsBetaResetAndForce()
-
-        assertTrue(repo.notificationsFavoritesHintShouldShow())
-        assertTrue(repo.notificationsBetaTargetingOverride() ?: false)
-
-        assertEquals(
-            preferencesOf(
-                booleanPreferencesKey("notificationsBetaTargetingOverride") to true,
-                stringSetPreferencesKey("onboardingScreensCompleted") to
-                    setOf(OnboardingScreen.Location.name),
-            ),
             storage.preferences,
         )
     }

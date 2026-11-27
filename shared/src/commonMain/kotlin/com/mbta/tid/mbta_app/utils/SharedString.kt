@@ -8,7 +8,6 @@ public enum class SharedString {
     DebugMode,
     FareInformation,
     FeatureFlagsSection,
-    ForceNotificationsBeta,
     MapDisplay,
     MTicketApp,
     Notifications,

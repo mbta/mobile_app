@@ -17,13 +17,9 @@ public interface IOnboardingRepository {
 
     public suspend fun markOnboardingCompleted(screen: OnboardingScreen)
 
-    public suspend fun notificationsBetaResetAndForce()
-
     public suspend fun notificationsFavoritesHintShouldShow(): Boolean
 
     public suspend fun notificationsFavoriteHintDismissed()
-
-    public suspend fun notificationsBetaTargetingOverride(): Boolean?
 }
 
 internal class OnboardingRepository : IOnboardingRepository, KoinComponent {
@@ -32,9 +28,6 @@ internal class OnboardingRepository : IOnboardingRepository, KoinComponent {
     private val dataStore: DataStore<Preferences> by inject()
 
     private val onboardingCompletedKey = stringSetPreferencesKey("onboardingScreensCompleted")
-
-    private val notificationsBetaTargetingOverride =
-        booleanPreferencesKey("notificationsBetaTargetingOverride")
     private val notificationsFavoritesHint =
         booleanPreferencesKey("notificationsFavoritesHintShouldShow")
 
@@ -65,18 +58,6 @@ internal class OnboardingRepository : IOnboardingRepository, KoinComponent {
         }
     }
 
-    override suspend fun notificationsBetaResetAndForce() {
-        dataStore.edit {
-            listOf(notificationsFavoritesHint).forEach { key -> it.remove(key) }
-            it[onboardingCompletedKey] =
-                (it[onboardingCompletedKey] ?: emptySet()) - OnboardingScreen.NotificationsBeta.name
-            it[notificationsBetaTargetingOverride] = true
-        }
-    }
-
-    override suspend fun notificationsBetaTargetingOverride(): Boolean? =
-        getOnboardingStateBool(notificationsBetaTargetingOverride)
-
     override suspend fun notificationsFavoriteHintDismissed(): Unit =
         setOnboardingStateBool(notificationsFavoritesHint, false)
 
@@ -95,22 +76,15 @@ public class MockOnboardingRepository
 @DefaultArgumentInterop.Enabled
 constructor(
     public var onMarkComplete: (OnboardingScreen) -> Unit = {},
-    public var onNotificationsBetaReset: () -> Unit = {},
     public var onNotificationsFavoriteHintDismissed: () -> Unit = {},
 ) : IOnboardingRepository, KoinComponent {
     public var pendingOnboarding: List<OnboardingScreen> = emptyList()
     public var notificationsFavoritesHintShouldShow: Boolean = false
-    public var notificationsTargetingOverride: Boolean? = null
 
     override suspend fun getPendingOnboarding(): List<OnboardingScreen> = pendingOnboarding
 
     override suspend fun markOnboardingCompleted(screen: OnboardingScreen): Unit =
         onMarkComplete(screen)
-
-    override suspend fun notificationsBetaResetAndForce(): Unit = onNotificationsBetaReset()
-
-    override suspend fun notificationsBetaTargetingOverride(): Boolean? =
-        notificationsTargetingOverride
 
     override suspend fun notificationsFavoritesHintShouldShow(): Boolean =
         notificationsFavoritesHintShouldShow
