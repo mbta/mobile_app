@@ -9,6 +9,7 @@ import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import com.mbta.tid.mbta_app.repositories.IConfigRepository
 import com.mbta.tid.mbta_app.repositories.ICurrentAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.IDebugRepository
+import com.mbta.tid.mbta_app.repositories.IDepartureGroupingPreferencesRepository
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
@@ -66,6 +67,9 @@ public fun repositoriesModule(repositories: IRepositories): Module {
     return module {
         single<IConfigRepository> { repositories.config }
         single<ITabPreferencesRepository> { repositories.tabPreferences }
+        single<IDepartureGroupingPreferencesRepository> {
+            repositories.departureGroupingPreferences
+        }
         single<IDebugRepository> { repositories.debug }
         single<IErrorBannerStateRepository> { repositories.errorBanner }
         single<IGlobalRepository> { repositories.global }

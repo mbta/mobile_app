@@ -17,6 +17,7 @@ import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.CachedSchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ConfigRepository
 import com.mbta.tid.mbta_app.repositories.DebugRepository
+import com.mbta.tid.mbta_app.repositories.DepartureGroupingPreferencesRepository
 import com.mbta.tid.mbta_app.repositories.ErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.FavoritesRepository
 import com.mbta.tid.mbta_app.repositories.GlobalRepository
@@ -25,6 +26,7 @@ import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import com.mbta.tid.mbta_app.repositories.IConfigRepository
 import com.mbta.tid.mbta_app.repositories.ICurrentAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.IDebugRepository
+import com.mbta.tid.mbta_app.repositories.IDepartureGroupingPreferencesRepository
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
@@ -60,6 +62,7 @@ import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
 import com.mbta.tid.mbta_app.repositories.MockConfigRepository
 import com.mbta.tid.mbta_app.repositories.MockCurrentAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.MockDebugRepository
+import com.mbta.tid.mbta_app.repositories.MockDepartureGroupingPreferencesRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
@@ -117,6 +120,7 @@ public interface IRepositories {
     public val sentry: ISentryRepository
     public val settings: ISettingsRepository
     public val stop: IStopRepository
+    public val departureGroupingPreferences: IDepartureGroupingPreferencesRepository
     public val subscriptions: ISubscriptionsRepository
     public val tabPreferences: ITabPreferencesRepository
     public val trip: ITripRepository
@@ -148,6 +152,7 @@ public class RepositoryDI : IRepositories, KoinComponent {
     override val sentry: ISentryRepository by inject()
     override val settings: ISettingsRepository by inject()
     override val stop: IStopRepository by inject()
+    override val departureGroupingPreferences: IDepartureGroupingPreferencesRepository by inject()
     override val subscriptions: ISubscriptionsRepository by inject()
     override val tabPreferences: ITabPreferencesRepository by inject()
     override val trip: ITripRepository by inject()
@@ -182,6 +187,7 @@ internal class RealRepositories : IRepositories {
     override val sentry = SentryRepository()
     override val settings = SettingsRepository()
     override val stop = StopRepository()
+    override val departureGroupingPreferences = DepartureGroupingPreferencesRepository()
     override val subscriptions = SubscriptionsRepository()
     override val tabPreferences = TabPreferencesRepository()
     override val trip = TripRepository()
@@ -216,6 +222,8 @@ public class MockRepositories : IRepositories {
     override var sentry: ISentryRepository = MockSentryRepository()
     override var settings: ISettingsRepository = MockSettingsRepository()
     override var stop: IStopRepository = IdleStopRepository()
+    override var departureGroupingPreferences: IDepartureGroupingPreferencesRepository =
+        MockDepartureGroupingPreferencesRepository()
     override var subscriptions: ISubscriptionsRepository = MockSubscriptionsRepository()
     override var tabPreferences: ITabPreferencesRepository = MockTabPreferencesRepository()
     override var trip: ITripRepository = IdleTripRepository()
