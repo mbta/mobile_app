@@ -6,7 +6,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsOff
@@ -204,11 +208,29 @@ class NotificationSettingsWidgetTest : KoinTest {
         composeTestRule.onNodeWithContentDescription("Select minutes").performClick()
         composeTestRule.onNodeWithContentDescription("45 minutes").performClick()
         composeTestRule.onNodeWithText("Okay").performClick()
+        // start time after the end time is moved to 15 minutes before the end time
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasTextMatching(Regex("10:45\\sAM", RegexOption.IGNORE_CASE)),
+            hasTextMatching(Regex("9:45\\sAM", RegexOption.IGNORE_CASE)),
         )
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
-            hasTextMatching(Regex("11:00\\sAM", RegexOption.IGNORE_CASE)),
+            hasTextMatching(Regex("10:00\\sAM", RegexOption.IGNORE_CASE)),
+        )
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
+            SemanticsMatcher.expectValue(SemanticsProperties.LiveRegion, LiveRegionMode.Polite)
+                .and(
+                    SemanticsMatcher("announces adjusted start time") { node ->
+                        node.config
+                            .getOrNull(SemanticsProperties.ContentDescription)
+                            .orEmpty()
+                            .any {
+                                Regex(
+                                        "Start time changed to 9:45\\sAM because end time is 10:00\\sAM\\.",
+                                        RegexOption.IGNORE_CASE,
+                                    )
+                                    .matches(it)
+                            }
+                    },
+                ),
         )
     }
 
@@ -441,14 +463,7 @@ class NotificationSettingsWidgetTest : KoinTest {
         composeTestRule.onNodeWithText("Evening").assertIsSelected()
 
         composeTestRule
-            .onNode(hasTextMatching(Regex("4:00\\sPM", RegexOption.IGNORE_CASE)))
-            .performClick()
-
-        composeTestRule.onNodeWithContentDescription("10 o'clock").performClick()
-        composeTestRule.onNodeWithText("Okay").performClick()
-
-        composeTestRule
-            .onNode(hasTextMatching(Regex("10:15\\sPM", RegexOption.IGNORE_CASE)))
+            .onNode(hasTextMatching(Regex("8:00\\sPM", RegexOption.IGNORE_CASE)))
             .performClick()
 
         composeTestRule.onNodeWithContentDescription("1 o'clock").performClick()

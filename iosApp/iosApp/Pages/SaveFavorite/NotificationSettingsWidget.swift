@@ -165,6 +165,84 @@ struct WindowWidget: View {
     let window: FavoriteSettings.NotificationsWindow
     let setWindow: (FavoriteSettings.NotificationsWindow) -> Void
     let deleteWindow: (() -> Void)?
+    var announceTimeAdjustment: (String) -> Void = { message in
+        UIAccessibility.post(
+            notification: .announcement,
+            argument: NSAttributedString(
+                string: message,
+                attributes: [.accessibilitySpeechQueueAnnouncement: true]
+            )
+        )
+    }
+
+    private func setStartTime(_ time: DateComponents) -> DateComponents {
+        let requestedStartTime = time.toLocalTime()
+        let startTime = FavoriteSettings.NotificationsWindow.companion.adjustedStartTime(
+            startTime: requestedStartTime,
+            endTime: window.endTime
+        )
+        let newWindow = window.doCopy(startTime: startTime, endTime: window.endTime)
+        setWindow(newWindow)
+        if startTime != requestedStartTime {
+            let start = timeDescription(startTime, newWindow.startType)
+            let end = timeDescription(newWindow.endTime, newWindow.endType)
+            announceTimeAdjustment(startTime == window.startTime
+                ? String(format: NSLocalizedString(
+                    "Start time kept at %1$@ because end time is %2$@.",
+                    comment: """
+                    VoiceOver announcement when the selected start time is rejected and the start time is unchanged, \
+                    e.g. "Start time kept at 3:00 AM, start of service because end time is 5:00 PM."
+                    """
+                ), start, end)
+                : String(format: NSLocalizedString(
+                    "Start time changed to %1$@ because end time is %2$@.",
+                    comment: """
+                    VoiceOver announcement when the selected start time is adjusted to fit the end time, \
+                    e.g. "Start time changed to 4:45 PM because end time is 5:00 PM."
+                    """
+                ), start, end))
+        }
+        return DateComponents.fromLocalTime(startTime)
+    }
+
+    private func setEndTime(_ time: DateComponents) -> DateComponents {
+        let requestedEndTime = time.toLocalTime()
+        let endTime = FavoriteSettings.NotificationsWindow.companion.adjustedEndTime(
+            startTime: window.startTime,
+            endTime: requestedEndTime
+        )
+        let newWindow = window.doCopy(startTime: window.startTime, endTime: endTime)
+        setWindow(newWindow)
+        if endTime != requestedEndTime {
+            let start = timeDescription(newWindow.startTime, newWindow.startType)
+            let end = timeDescription(endTime, newWindow.endType)
+            announceTimeAdjustment(endTime == window.endTime
+                ? String(format: NSLocalizedString(
+                    "End time kept at %1$@ because start time is %2$@.",
+                    comment: """
+                    VoiceOver announcement when the selected end time is rejected and the end time is unchanged, \
+                    e.g. "End time kept at 3:00 AM, end of service because start time is 1:00 AM."
+                    """
+                ), end, start)
+                : String(format: NSLocalizedString(
+                    "End time changed to %1$@ because start time is %2$@.",
+                    comment: """
+                    VoiceOver announcement when the selected end time is adjusted to fit the start time, \
+                    e.g. "End time changed to 5:15 PM because start time is 5:00 PM."
+                    """
+                ), end, start))
+        }
+        return DateComponents.fromLocalTime(endTime)
+    }
+
+    private func timeDescription(
+        _ time: Kotlinx_datetimeLocalTime,
+        _ type: FavoriteSettings.NotificationsWindowType
+    ) -> String {
+        let timeString = Date.fromLocalTime(time).formatted(date: .omitted, time: .shortened)
+        guard let note = timeNoteString(type) else { return timeString }
+        return "\(timeString), \(note)"
+    }
 
     var body: some View {
         HStack(spacing: 0) {
@@ -184,30 +262,14 @@ struct WindowWidget: View {
                             label: Text("Select start time"),
                             time: DateComponents.fromLocalTime(window.startTime),
                             type: window.startType,
-                            clampTime: nil,
-                            setTime: { time in
-                                let startTime = time.toLocalTime()
-                                setWindow(window.doCopy(
-                                    startTime: startTime,
-                                    endTime: FavoriteSettings.NotificationsWindow.companion
-                                        .safeEndTime(startTime: startTime, endTime: window.endTime),
-                                ))
-                            },
+                            setTime: setStartTime,
                         )
                         Text("to")
                         TimeInput(
                             label: Text("Select end time"),
                             time: DateComponents.fromLocalTime(window.endTime),
                             type: window.endType,
-                            clampTime: { time, roundUp in
-                                Date.fromLocalTime(FavoriteSettings.NotificationsWindow.companion
-                                    .safeEndTime(
-                                        startTime: window.startTime,
-                                        endTime: time.toLocalTime(),
-                                        roundUp: roundUp
-                                    ))
-                            },
-                            setTime: { time in setWindow(window.doCopy(endTime: time.toLocalTime())) },
+                            setTime: setEndTime,
                         )
                     }
                     HStack(spacing: 0) {
@@ -241,13 +303,26 @@ enum TimeIconPosition {
     case after
 }
 
-private func timeNoteText(_ type: FavoriteSettings.NotificationsWindowType) -> Text? {
+private func timeNoteString(_ type: FavoriteSettings.NotificationsWindowType) -> String? {
     switch onEnum(of: type) {
-    case .nextDay: Text("next day")
-    case .serviceEnd: Text("end of service")
-    case .serviceStart: Text("start of service")
+    case .nextDay: NSLocalizedString(
+            "next day",
+            comment: "Note next to a notification window end time that is after midnight"
+        )
+    case .serviceEnd: NSLocalizedString(
+            "end of service",
+            comment: "Used when an alert ends at the end of a service day"
+        )
+    case .serviceStart: NSLocalizedString(
+            "start of service",
+            comment: "Used when an alert begins at the start of a service day"
+        )
     default: nil
     }
+}
+
+private func timeNoteText(_ type: FavoriteSettings.NotificationsWindowType) -> Text? {
+    timeNoteString(type).map { Text(verbatim: $0) }
 }
 
 struct TimeIcon: View {
@@ -293,23 +368,27 @@ struct TimeInput: View {
     let label: Text
     let time: DateComponents
     let type: FavoriteSettings.NotificationsWindowType
-    let clampTime: ((Date, Bool) -> Date)?
-    let setTime: (DateComponents) -> Void
+    let setTime: (DateComponents) -> DateComponents
 
-    @State var roundUp: Bool = true
+    private struct AppliedSelection: Equatable {
+        let time: DateComponents
+        let id = UUID()
+    }
+
+    /// Applied selection locally (with a unique id) forces an immediate re-render with the adjusted time.
+    @State private var appliedSelection: AppliedSelection?
+
+    private var displayedTime: DateComponents { appliedSelection?.time ?? time }
+
+    let inspection = Inspection<Self>()
 
     private var dateBinding: Binding<Date> {
         Binding(
-            get: { time.nextDate },
+            get: { displayedTime.nextDate },
             set: { newDate in
-                var setDate = newDate
-                var components = time
-                if let clampTime {
-                    setDate = clampTime(newDate, roundUp)
-                    roundUp = if setDate == newDate { true } else { !roundUp }
-                }
-                components.nextDate = setDate
-                setTime(components)
+                var components = displayedTime
+                components.nextDate = newDate
+                appliedSelection = AppliedSelection(time: setTime(components))
             }
         )
     }
@@ -358,6 +437,8 @@ struct TimeInput: View {
         }
         .background(RoundedRectangle(cornerRadius: 6).fill(Color.fill2))
         .contentShape(Rectangle())
+        .onChange(of: time) { _ in appliedSelection = nil }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .enableInjection()
     }
 }

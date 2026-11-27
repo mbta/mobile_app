@@ -131,6 +131,8 @@
     <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">結束日期</string>
     <string name="end_of_service">營運結束</string>
+    <string name="end_time_changed_because_start_time">由於開始時間為 %2$s，結束時間已調整為 %1$s。</string>
+    <string name="end_time_kept_because_start_time">開始時間為 %2$s，因此結束時間仍維持在 %1$s。</string>
     <string name="error_loading_data">載入資料時發生錯誤</string>
     <string name="escalator_closed_sentence_case">手扶梯已關閉</string>
     <string name="escalator_closure">手扶梯已關閉</string>
@@ -394,6 +396,8 @@
     <string name="star_route_hint">將路線釘選在清單頂部</string>
     <string name="start">開始日期</string>
     <string name="start_of_service">營運開始</string>
+    <string name="start_time_changed_because_end_time">由於結束時間為 %2$s，開始時間已調整為 %1$s。</string>
+    <string name="start_time_kept_because_end_time">結束時間為 %2$s，因此開始時間仍維持在 %1$s。</string>
     <string name="start_to_end_of_service">從服務開始到結束</string>
     <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">明日起生效，直至另行通知</string>

@@ -9456,6 +9456,100 @@
         }
       }
     },
+    "End time changed to %1$@ because start time is %2$@." : {
+      "comment" : "VoiceOver announcement when the selected end time is adjusted to fit the start time, e.g. \"End time changed to 5:15 PM because start time is 5:00 PM.\"",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La hora de finalización cambió a %1$@ porque la hora de inicio es %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'heure de fin a été remplacée par %1$@, car l'heure de début est %2$@."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lè fen an te chanje pou %1$@ paske lè kòmansman an se %2$@."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O horário de término foi alterado para %1$@ porque o horário de início é %2$@."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thời gian kết thúc đã đổi thành %1$@ vì thời gian bắt đầu là %2$@."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "由于开始时间为 %2$@，结束时间已调整为 %1$@。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "由於開始時間為 %2$@，結束時間已調整為 %1$@。"
+          }
+        }
+      }
+    },
+    "End time kept at %1$@ because start time is %2$@." : {
+      "comment" : "VoiceOver announcement when the selected end time is rejected and the end time is unchanged, e.g. \"End time kept at 3:00 AM, end of service because start time is 1:00 AM.\"",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La hora de finalización se mantiene en %1$@ porque la hora de inicio es %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'heure de fin est maintenue à %1$@, car l'heure de début est %2$@."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lè fen an rete fikse nan %1$@ paske lè kòmansman an se %2$@."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O horário de término foi mantido em %1$@ porque o horário de início é %2$@."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thời gian kết thúc vẫn là %1$@ vì thời gian bắt đầu là %2$@."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "由于开始时间为 %2$@，结束时间保持为 %1$@。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開始時間為 %2$@，因此結束時間仍維持在 %1$@。"
+          }
+        }
+      }
+    },
     "Error loading data" : {
       "comment" : "Displayed when loading necessary information fails",
       "localizations" : {
@@ -13991,6 +14085,7 @@
       }
     },
     "next day" : {
+      "comment" : "Note next to a notification window end time that is after midnight",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -19800,6 +19895,100 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "營運開始"
+          }
+        }
+      }
+    },
+    "Start time changed to %1$@ because end time is %2$@." : {
+      "comment" : "VoiceOver announcement when the selected start time is adjusted to fit the end time, e.g. \"Start time changed to 4:45 PM because end time is 5:00 PM.\"",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La hora de inicio cambió a %1$@ porque la hora de finalización es %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'heure de début a été remplacée par %1$@, car l'heure de fin est %2$@."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lè kòmansman an chanje pou %1$@ paske lè fen an se %2$@."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O horário de início foi alterado para %1$@ porque o horário de término é %2$@."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thời gian bắt đầu đã đổi thành %1$@ vì thời gian kết thúc là %2$@."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "由于结束时间为 %2$@，开始时间已调整为 %1$@。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "由於結束時間為 %2$@，開始時間已調整為 %1$@。"
+          }
+        }
+      }
+    },
+    "Start time kept at %1$@ because end time is %2$@." : {
+      "comment" : "VoiceOver announcement when the selected start time is rejected and the start time is unchanged, e.g. \"Start time kept at 3:00 AM, start of service because end time is 5:00 PM.\"",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La hora de inicio se mantiene en %1$@ porque la hora de finalización es %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'heure de début est maintenue à %1$@, car l'heure de fin est %2$@."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lè kòmansman an rete nan %1$@ paske lè fen an se %2$@."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O horário de início foi mantido em %1$@ porque o horário de término é %2$@."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thời gian bắt đầu vẫn là %1$@ vì thời gian kết thúc là %2$@."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "由于结束时间为 %2$@，开始时间保持为 %1$@。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結束時間為 %2$@，因此開始時間仍維持在 %1$@。"
           }
         }
       }

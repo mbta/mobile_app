@@ -190,25 +190,51 @@ constructor(val notifications: Notifications = Notifications.disabled) {
                     }
                 }
 
-                /**
-                 * Returns a safe end time for a given start time and end time. If the given end
-                 * time is before the start time and after the 3am end of service, it's set to the
-                 * next 15 minute increment after the start time.
-                 */
-                @DefaultArgumentInterop.Enabled
-                public fun safeEndTime(
-                    startTime: LocalTime,
-                    endTime: LocalTime,
-                    roundUp: Boolean = false,
-                ): LocalTime =
-                    if (endTime > startTime || endTime <= serviceBoundary) endTime
-                    else if (roundUp) serviceBoundary else nextQuarterHour(startTime)
+                private const val MINIMUM_DURATION_MINUTES = 15
+                private const val MINUTES_PER_DAY = 24 * 60
 
-                /** Returns the next 15 minute increment strictly after the given time */
-                private fun nextQuarterHour(time: LocalTime): LocalTime {
-                    val nextMinute = ((time.minute / 15) + 1) * 15
-                    return if (nextMinute == 60) LocalTime(hour = (time.hour + 1) % 24, minute = 0)
-                    else LocalTime(hour = time.hour, minute = nextMinute)
+                private val LocalTime.minuteOfDay: Int
+                    get() = hour * 60 + minute
+
+                // Converts a minute of the day to a LocalTime, wrapping around at midnight.
+                private fun localTime(minuteOfDay: Int): LocalTime {
+                    val wrapped = minuteOfDay.mod(MINUTES_PER_DAY)
+                    return LocalTime(wrapped / 60, wrapped % 60)
+                }
+
+                /**
+                 * Returns the end time to use when the rider selects [endTime], keeping the window
+                 * valid. Times before the 3am [serviceBoundary] are "after midnight", times after
+                 * it are "during the day". An after midnight window can't cross the boundary, and
+                 * otherwise the end must be after the start.
+                 */
+                public fun adjustedEndTime(startTime: LocalTime, endTime: LocalTime): LocalTime {
+                    if (startTime == serviceBoundary || endTime == serviceBoundary) return endTime
+                    val start = startTime.minuteOfDay
+                    val end = endTime.minuteOfDay
+                    return when {
+                        startTime < serviceBoundary && endTime > serviceBoundary -> serviceBoundary
+                        startTime > serviceBoundary && endTime < serviceBoundary -> endTime
+                        end > start -> endTime
+                        else -> localTime(start + MINIMUM_DURATION_MINUTES)
+                    }
+                }
+
+                /**
+                 * Returns the start time to use when the rider selects [startTime], keeping the
+                 * window valid. A daytime window can't start after midnight, and otherwise the
+                 * start must be before the end.
+                 */
+                public fun adjustedStartTime(startTime: LocalTime, endTime: LocalTime): LocalTime {
+                    if (startTime == serviceBoundary || endTime == serviceBoundary) return startTime
+                    val start = startTime.minuteOfDay
+                    val end = endTime.minuteOfDay
+                    return when {
+                        startTime < serviceBoundary && endTime > serviceBoundary -> serviceBoundary
+                        startTime > serviceBoundary && endTime < serviceBoundary -> startTime
+                        end > start -> startTime
+                        else -> localTime(end - MINIMUM_DURATION_MINUTES)
+                    }
                 }
             }
         }

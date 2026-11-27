@@ -42,20 +42,26 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
@@ -90,6 +96,9 @@ import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.INotificationSettingsViewModel
 import com.mbta.tid.mbta_app.viewModel.NotificationSettingsViewModel
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.delay
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import org.koin.compose.koinInject
@@ -261,13 +270,67 @@ private fun WindowWidget(
     setWindow: (Window) -> Unit,
     deleteWindow: (() -> Unit)?,
 ) {
-    fun setStartTime(start: LocalTime) {
-        val end = Window.safeEndTime(start, window.endTime)
-        setWindow(window.copy(startTime = start, endTime = end))
+    val resources = LocalResources.current
+    var pendingAnnouncement by remember { mutableStateOf<String?>(null) }
+    var announcementCount by remember { mutableIntStateOf(0) }
+    var announcement by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(announcementCount) {
+        if (announcementCount == 0) return@LaunchedEffect
+        // Live regions only announce changes, so clear the previous message to allow repeats
+        announcement = null
+        // Closing the time picker moves TalkBack focus back to the time input, which would cut off
+        // an earlier announcement, so wait until that has settled
+        delay(ANNOUNCEMENT_DELAY)
+        announcement = pendingAnnouncement
+        // Clear the message so swiping through the screen doesn't land on a stale announcement
+        delay(ANNOUNCEMENT_DURATION)
+        announcement = null
     }
 
-    fun setEndTime(end: LocalTime) =
-        setWindow(window.copy(endTime = Window.safeEndTime(window.startTime, end)))
+    fun timeDescription(time: LocalTime, type: Window.Type): String {
+        val timeString =
+            EasternTimeInstant(EasternTimeInstant.now().local.date, time).formattedTime()
+        val note = timeNoteResource(type)?.let { resources.getString(it) }
+        return if (note != null) "$timeString, $note" else timeString
+    }
+
+    fun announce(message: String) {
+        pendingAnnouncement = message
+        announcementCount++
+    }
+
+    fun setStartTime(requested: LocalTime) {
+        val start = Window.adjustedStartTime(requested, window.endTime)
+        val newWindow = window.copy(startTime = start)
+        setWindow(newWindow)
+        if (start != requested) {
+            announce(
+                resources.getString(
+                    if (start == window.startTime) R.string.start_time_kept_because_end_time
+                    else R.string.start_time_changed_because_end_time,
+                    timeDescription(start, newWindow.startType),
+                    timeDescription(newWindow.endTime, newWindow.endType),
+                ),
+            )
+        }
+    }
+
+    fun setEndTime(requested: LocalTime) {
+        val end = Window.adjustedEndTime(window.startTime, requested)
+        val newWindow = window.copy(endTime = end)
+        setWindow(newWindow)
+        if (end != requested) {
+            announce(
+                resources.getString(
+                    if (end == window.endTime) R.string.end_time_kept_because_start_time
+                    else R.string.end_time_changed_because_start_time,
+                    timeDescription(end, newWindow.endType),
+                    timeDescription(newWindow.startTime, newWindow.startType),
+                ),
+            )
+        }
+    }
 
     Row(
         Modifier.haloContainer(
@@ -281,6 +344,13 @@ private fun WindowWidget(
             },
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        // Zero-size nodes are left out of the accessibility tree, so give the live region a size
+        Box(
+            Modifier.size(1.dp).semantics {
+                liveRegion = LiveRegionMode.Polite
+                announcement?.let { contentDescription = it }
+            },
+        )
         if (deleteWindow != null) {
             Surface(
                 onClick = deleteWindow,
@@ -352,6 +422,17 @@ private fun WindowWidget(
     }
 }
 
+private val ANNOUNCEMENT_DELAY = 500.milliseconds
+private val ANNOUNCEMENT_DURATION = 10.seconds
+
+private fun timeNoteResource(type: Window.Type): Int? =
+    when (type) {
+        Window.Type.ServiceStart -> R.string.service_day_start
+        Window.Type.ServiceEnd -> R.string.service_day_end
+        Window.Type.NextDay -> R.string.next_day
+        Window.Type.Basic -> null
+    }
+
 @Composable
 private fun TimeNote(type: Window.Type) {
     val arrangement =
@@ -367,15 +448,9 @@ private fun TimeNote(type: Window.Type) {
         Modifier.clearAndSetSemantics {}.padding(horizontal = 8.dp),
         horizontalArrangement = arrangement,
     ) {
-        if (type != Window.Type.Basic) {
+        timeNoteResource(type)?.let { note ->
             Text(
-                stringResource(
-                    when (type) {
-                        Window.Type.ServiceStart -> R.string.service_day_start
-                        Window.Type.ServiceEnd -> R.string.service_day_end
-                        Window.Type.NextDay -> R.string.next_day
-                    },
-                ),
+                stringResource(note),
                 style = Typography.footnote,
                 color = colorResource(R.color.deemphasized),
             )

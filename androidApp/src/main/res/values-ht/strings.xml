@@ -134,6 +134,8 @@
     <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">Fen</string>
     <string name="end_of_service">fen sèvis</string>
+    <string name="end_time_changed_because_start_time">Lè fen an te chanje pou %1$s paske lè kòmansman an se %2$s.</string>
+    <string name="end_time_kept_because_start_time">Lè fen an rete fikse nan %1$s paske lè kòmansman an se %2$s.</string>
     <string name="error_loading_data">Erè nan chajman done</string>
     <string name="escalator_closed_sentence_case">Eskalye a fèmen</string>
     <string name="escalator_closure">Fèmti Eskalye</string>
@@ -397,6 +399,8 @@
     <string name="star_route_hint">tache wout la nan tèt lis la</string>
     <string name="start">Kòmanse</string>
     <string name="start_of_service">kòmansman sèvis</string>
+    <string name="start_time_changed_because_end_time">Lè kòmansman an chanje pou %1$s paske lè fen an se %2$s.</string>
+    <string name="start_time_kept_because_end_time">Lè kòmansman an rete nan %1$s paske lè fen an se %2$s.</string>
     <string name="start_to_end_of_service">soti nan kòmansman rive nan fen sèvis la</string>
     <string name="start_to_end_time">%1$s – %2$s</string>
     <string name="starting_tomorrow_until_further_notice">Apati demen jiskaske yo bay lòt avi</string>

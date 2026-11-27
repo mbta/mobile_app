@@ -210,56 +210,246 @@ class FavoriteTest {
     }
 
     @Test
-    fun `safeEndTime keeps valid end times and adjusts invalid ones to the next quarter hour`() {
+    fun `adjustedEndTime keeps valid end times and adjusts invalid ones`() {
+        // start time is the 3am service boundary, so any end time is valid
         assertEquals(
-            LocalTime(9, 30),
-            Window.safeEndTime(
-                startTime = LocalTime(8, 30),
-                endTime = LocalTime(9, 30),
-            ),
-        )
-        // end time is before start time and after the 3am service boundary, so it's invalid and
-        // gets adjusted to the next 15 minute increment after the start time
-        assertEquals(
-            LocalTime(8, 45),
-            Window.safeEndTime(
-                startTime = LocalTime(8, 30),
-                endTime = LocalTime(7, 45),
+            LocalTime(1, 0),
+            Window.adjustedEndTime(
+                startTime = LocalTime(3, 0),
+                endTime = LocalTime(1, 0),
             ),
         )
         assertEquals(
-            LocalTime(23, 45),
-            Window.safeEndTime(
-                startTime = LocalTime(23, 30),
-                endTime = LocalTime(23, 0),
+            LocalTime(8, 0),
+            Window.adjustedEndTime(
+                startTime = LocalTime(3, 0),
+                endTime = LocalTime(8, 0),
             ),
         )
-        // end time before the 3am boundary is treated as a valid next-day end time
+        assertEquals(
+            LocalTime(3, 0),
+            Window.adjustedEndTime(
+                startTime = LocalTime(3, 0),
+                endTime = LocalTime(3, 0),
+            ),
+        )
+        // end time is the 3am service boundary, so it is valid for any start time
+        assertEquals(
+            LocalTime(3, 0),
+            Window.adjustedEndTime(
+                startTime = LocalTime(1, 0),
+                endTime = LocalTime(3, 0),
+            ),
+        )
+        assertEquals(
+            LocalTime(3, 0),
+            Window.adjustedEndTime(
+                startTime = LocalTime(8, 0),
+                endTime = LocalTime(3, 0),
+            ),
+        )
+        // start time is after midnight and end time is during the day, so the window would cross
+        // the 3am service boundary and the end time is set to the boundary
+        assertEquals(
+            LocalTime(3, 0),
+            Window.adjustedEndTime(
+                startTime = LocalTime(1, 0),
+                endTime = LocalTime(8, 0),
+            ),
+        )
+        assertEquals(
+            LocalTime(3, 0),
+            Window.adjustedEndTime(
+                startTime = LocalTime(2, 0),
+                endTime = LocalTime(3, 15),
+            ),
+        )
+        // start and end times are both after midnight
         assertEquals(
             LocalTime(2, 0),
-            Window.safeEndTime(
-                startTime = LocalTime(23, 30),
+            Window.adjustedEndTime(
+                startTime = LocalTime(1, 0),
                 endTime = LocalTime(2, 0),
+            ),
+        )
+        // end time is not after the start time, so it is set to 15 minutes after the start time
+        assertEquals(
+            LocalTime(2, 15),
+            Window.adjustedEndTime(
+                startTime = LocalTime(2, 0),
+                endTime = LocalTime(1, 0),
+            ),
+        )
+        assertEquals(
+            LocalTime(2, 15),
+            Window.adjustedEndTime(
+                startTime = LocalTime(2, 0),
+                endTime = LocalTime(2, 0),
+            ),
+        )
+        assertEquals(
+            LocalTime(3, 0),
+            Window.adjustedEndTime(
+                startTime = LocalTime(2, 45),
+                endTime = LocalTime(0, 0),
+            ),
+        )
+        // start and end times are both during the day
+        assertEquals(
+            LocalTime(17, 0),
+            Window.adjustedEndTime(
+                startTime = LocalTime(8, 0),
+                endTime = LocalTime(17, 0),
+            ),
+        )
+        // end time is not after the start time, so it is set to 15 minutes after the start time
+        assertEquals(
+            LocalTime(17, 15),
+            Window.adjustedEndTime(
+                startTime = LocalTime(17, 0),
+                endTime = LocalTime(8, 0),
+            ),
+        )
+        assertEquals(
+            LocalTime(0, 0),
+            Window.adjustedEndTime(
+                startTime = LocalTime(23, 45),
+                endTime = LocalTime(23, 45),
+            ),
+        )
+        // start time is during the day and end time is after midnight, so it is a valid next-day
+        // end time
+        assertEquals(
+            LocalTime(0, 30),
+            Window.adjustedEndTime(
+                startTime = LocalTime(17, 0),
+                endTime = LocalTime(0, 30),
             ),
         )
     }
 
     @Test
-    fun `safeEndTime rounds up to service end if boolean is passed`() {
+    fun `adjustedStartTime keeps valid start times and adjusts invalid ones`() {
+        // end time is the 3am service boundary, so any start time is valid
         assertEquals(
-            LocalTime(3, 0),
-            Window.safeEndTime(
-                startTime = LocalTime(8, 30),
-                endTime = LocalTime(8, 30),
-                roundUp = true,
+            LocalTime(1, 0),
+            Window.adjustedStartTime(
+                startTime = LocalTime(1, 0),
+                endTime = LocalTime(3, 0),
+            ),
+        )
+        assertEquals(
+            LocalTime(8, 0),
+            Window.adjustedStartTime(
+                startTime = LocalTime(8, 0),
+                endTime = LocalTime(3, 0),
             ),
         )
         assertEquals(
             LocalTime(3, 0),
-            Window.safeEndTime(
-                startTime = LocalTime(8, 30),
-                endTime = LocalTime(4, 0),
-                roundUp = true,
+            Window.adjustedStartTime(
+                startTime = LocalTime(3, 0),
+                endTime = LocalTime(3, 0),
+            ),
+        )
+        // start time is the 3am service boundary, so it is valid for any end time
+        assertEquals(
+            LocalTime(3, 0),
+            Window.adjustedStartTime(
+                startTime = LocalTime(3, 0),
+                endTime = LocalTime(1, 0),
+            ),
+        )
+        assertEquals(
+            LocalTime(3, 0),
+            Window.adjustedStartTime(
+                startTime = LocalTime(3, 0),
+                endTime = LocalTime(8, 0),
+            ),
+        )
+        // start time is during the day and end time is after midnight, so it is a valid next-day
+        // end time
+        assertEquals(
+            LocalTime(8, 0),
+            Window.adjustedStartTime(
+                startTime = LocalTime(8, 0),
+                endTime = LocalTime(1, 0),
+            ),
+        )
+        // start and end times are both after midnight
+        assertEquals(
+            LocalTime(1, 0),
+            Window.adjustedStartTime(
+                startTime = LocalTime(1, 0),
+                endTime = LocalTime(2, 0),
+            ),
+        )
+        // start time is not before the end time, so it is set to 15 minutes before the end time
+        assertEquals(
+            LocalTime(1, 45),
+            Window.adjustedStartTime(
+                startTime = LocalTime(2, 30),
+                endTime = LocalTime(2, 0),
+            ),
+        )
+        assertEquals(
+            LocalTime(1, 45),
+            Window.adjustedStartTime(
+                startTime = LocalTime(2, 0),
+                endTime = LocalTime(2, 0),
+            ),
+        )
+        assertEquals(
+            LocalTime(23, 45),
+            Window.adjustedStartTime(
+                startTime = LocalTime(1, 0),
+                endTime = LocalTime(0, 0),
+            ),
+        )
+        // start and end times are both during the day
+        assertEquals(
+            LocalTime(8, 0),
+            Window.adjustedStartTime(
+                startTime = LocalTime(8, 0),
+                endTime = LocalTime(17, 0),
+            ),
+        )
+        // start time is not before the end time, so it is set to 15 minutes before the end time
+        assertEquals(
+            LocalTime(7, 45),
+            Window.adjustedStartTime(
+                startTime = LocalTime(17, 0),
+                endTime = LocalTime(8, 0),
+            ),
+        )
+        assertEquals(
+            LocalTime(7, 45),
+            Window.adjustedStartTime(
+                startTime = LocalTime(8, 0),
+                endTime = LocalTime(8, 0),
+            ),
+        )
+        assertEquals(
+            LocalTime(3, 0),
+            Window.adjustedStartTime(
+                startTime = LocalTime(8, 0),
+                endTime = LocalTime(3, 15),
+            ),
+        )
+        // start time is after midnight and end time is during the day, so the window would cross
+        // the 3am service boundary and the start time is set to the boundary
+        assertEquals(
+            LocalTime(3, 0),
+            Window.adjustedStartTime(
+                startTime = LocalTime(1, 0),
+                endTime = LocalTime(17, 0),
+            ),
+        )
+        assertEquals(
+            LocalTime(3, 0),
+            Window.adjustedStartTime(
+                startTime = LocalTime(0, 0),
+                endTime = LocalTime(23, 45),
             ),
         )
     }
