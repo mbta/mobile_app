@@ -178,7 +178,7 @@ To upload the iOS code signing key if it needs to be updated (which is unlikely)
 ```
 bundle exec fastlane ios cert_create
 CERTID=$(basename iosApp/secrets/*.cer .cer)
-echo $CERTID > iosApp/secrets/certid.txt
+printf '%s' "$CERTID" > iosApp/secrets/certid.txt
 aws secretsmanager put-secret-value --secret-id mobile-app-ios-codesigning-id --secret-string file://iosApp/secrets/certid.txt
 rm iosApp/secrets/certid.txt
 aws secretsmanager put-secret-value --secret-id mobile-app-ios-codesigning-cer --secret-binary fileb://iosApp/secrets/${CERTID}.cer
